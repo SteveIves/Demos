@@ -1,0 +1,38 @@
+.script
+.date_generated "02/17/2004, 13:00"
+.version "8.1.5b"
+.column col_main, "Main"
+.entry btn_search, "Search", key(^S)
+.line
+.entry btn_exit, "Exit", key(^E)
+.end
+.column col_nav, "Navigate"
+.entry i_next, "Next Field", key(DOWN)
+.entry i_prev, "Presvious Field", key(UP)
+.entry btn_prev, "Previous", key(PREV)
+.entry btn_next, "Next", key(NEXT)
+.line
+.entry btn_close, "Close", key(^A)
+.end
+
+.input inp_spellit, 1, 78
+.placement 20, 3
+.title "Toolkit Spell Checker"
+.border on, dragbar(on)
+.repository_structure SPELL_IT
+.field SUGGESTION, pos(1, 2), fpos(1, 14)
+.button btn_spell, text("Replace")
+.button btn_ignore, text("Ignore")
+.button btn_exit, text("Close")
+.button_set end
+.end
+
+.input inp_text, 13, 76
+.placement 3, 5
+.title "Spell IT"
+.field text, 10a70, pos(2, 3), prompt("Text to Spell"), fpos(3, 3)
+.button btn_spell, text("Spell It")
+.button btn_default, text("Default")
+.button btn_clear, text("Clear")
+.button_set end
+.end
