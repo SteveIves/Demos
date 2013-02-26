@@ -1,0 +1,266 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config
+		Name="Release"
+		Type="java"
+		AppTypeList="application,applet,custom"
+		DebugCallbackName="jdwp"
+		AppType="application"
+		Version="8"
+		CompilerConfigName="Latest Version">
+		<AppTypeTargets Name="Debug">
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer -debug %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="jdb %cp WebSite"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<AppTypeTargets Name="Execute">
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				AppletClass="WebSite"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="java %cp WebSite"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Jar File"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildJar"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config
+		Name="Debug"
+		Type="java"
+		AppTypeList="application,applet,custom"
+		DebugCallbackName="jdwp"
+		AppType="application"
+		Version="8"
+		CompilerConfigName="Latest Version">
+		<AppTypeTargets Name="Debug">
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer -debug %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="jdb %cp WebSite"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<AppTypeTargets Name="Execute">
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				AppletClass="WebSite"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="java %cp WebSite"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Jar File"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildJar"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<CustomFolders>
+		<Folder
+			Name="Web Pages"
+			Filters="*.jsp;*.jsa">
+		</Folder>
+		<Folder
+			Name="Config Files"
+			Filters="*.ini;*.properties">
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</CustomFolders>
+	<Files AutoFolders="PackageView">
+		<Folder Name="/JRun4/servers/lib">
+			<F N="/JRun4/servers/lib/xfPool.properties"/>
+		</Folder>
+		<Folder Name="web">
+			<F N="web/index.jsp"/>
+			<F N="web/smpl.jsp"/>
+			<F N="web/xfNetLnk.ini"/>
+		</Folder>
+		<Folder Name="xfnljava">
+			<F N="xfnljava/PoolTest.jar"/>
+		</Folder>
+		<Folder
+			Name="Source Files"
+			Filters="*.java"/>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+</Project>

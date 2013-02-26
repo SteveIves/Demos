@@ -1,0 +1,18 @@
+[COMPONENT INFORMATION]
+Component_Name=PoolTestComponent
+Component_Directory=D:\Dev\Demos\JAVA_POOLING\component
+Generate_Javadoc=0
+Use_Alternate_Field_Names=0
+Repository_Main_File=D:\Dev\Demos\JAVA_POOLING\rps\rpsmain.ism
+Repository_Text_File=D:\Dev\Demos\JAVA_POOLING\rps\rpstext.ism
+Error_Tag=
+SMC_Directory=D:\Dev\Demos\JAVA_POOLING\xfpl
+Package_Name=PoolTest
+
+[GLOBAL]
+syn_version=6
+Synergy=JAVA
+
+[SMC Interfaces]
+Interface_0=SynergyMethods:
+

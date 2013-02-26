@@ -1,0 +1,5 @@
+Name: PoolTest\
+
+Name: PoolTest\SynergyMethods.class
+Java-Bean: True
+

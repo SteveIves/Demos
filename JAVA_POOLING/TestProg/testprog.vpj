@@ -1,0 +1,366 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Macro>
+		<ExecMacro CmdLine="syn_set CLASSPATH=C:\FILES\DEMO\JAVA_POOLING\component\PoolTestComponent.jar;C:\Program Files (x86)\Synergex\xfNLJava\xercesImpl.jar;C:\Program Files (x86)\Synergex\xfNLJava\xfnljav.jar;C:\Program Files (x86)\Synergex\xfNLJava\xml-apis.jar;C:\FILES\DEMO\JAVA_POOLING\TestProg\"/>
+	</Macro>
+	<Config
+		Name="Debug"
+		Type="java"
+		AppTypeList="application,applet,custom"
+		DebugCallbackName="jdwp"
+		AppType="application"
+		Version="8"
+		CompilerConfigName="Latest Version">
+		<AppTypeTargets Name="Debug">
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer -debug %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="jdb %cp testprog"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<AppTypeTargets Name="Execute">
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				AppletClass="testprog"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="java %cp testprog"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				Deletable="0">
+				<Exec CmdLine='javac -g %jbd %cp "%f"'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="javamake"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javarebuild"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form Debugger"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0">
+				<Exec CmdLine="java -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 %cp . "/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form Interpreter"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="java %cp . "/>
+			</Target>
+			<Target
+				Name="dash"
+				MenuCaption="-"
+				RunFromDir="%rw">
+				<Exec/>
+			</Target>
+			<Target
+				Name="View Javadoc"
+				MenuCaption="&amp;View Javadoc"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form javadoc"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent"
+				Deletable="0">
+				<Exec
+					CmdLine="javaviewdoc"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Javadoc All"
+				MenuCaption="Javadoc All"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form javadoc"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javamakedoc javadoc -d docs %cp %{*.java}"/>
+			</Target>
+			<Target
+				Name="dash2"
+				MenuCaption="-"
+				RunFromDir="%rw">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Make Jar"
+				MenuCaption="Make &amp;Jar"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form jar"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javamakejar jar cvf testprog.jar  %{*} %~other"/>
+			</Target>
+			<Target
+				Name="Java Options"
+				MenuCaption="Java &amp;Options"
+				ShowOnMenu="HideIfNoCmdLine"
+				Deletable="0">
+				<Exec
+					CmdLine="javaoptions"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<ClassPath>
+			<ClassPathElement Value="C:/FILES/DEMO/JAVA_POOLING/component/PoolTestComponent.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xercesImpl.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xfnljav.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xml-apis.jar"/>
+		</ClassPath>
+	</Config>
+	<Config
+		Name="Release"
+		Type="java"
+		AppTypeList="application,applet,custom"
+		DebugCallbackName="jdwp"
+		AppType="application"
+		Version="8"
+		CompilerConfigName="Latest Version">
+		<AppTypeTargets Name="Debug">
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer -debug %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="jdb %cp testprog"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<AppTypeTargets Name="Execute">
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form appletviewer"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				AppletClass="testprog"
+				Deletable="0"
+				AppType="applet">
+				<Exec CmdLine="appletviewer %h"/>
+			</AppTypeTarget>
+			<AppTypeTarget
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				AppType="custom">
+				<Exec CmdLine="java %cp testprog"/>
+			</AppTypeTarget>
+		</AppTypeTargets>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				Deletable="0">
+				<Exec CmdLine='javac %jbd %cp "%f"'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="javamake"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				Dialog="_java_options_form Compiler"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javarebuild"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				Dialog="_java_options_form Debugger"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0">
+				<Exec CmdLine="java -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 %cp . "/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				Dialog="_java_options_form Interpreter"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="java %cp . "/>
+			</Target>
+			<Target
+				Name="dash"
+				MenuCaption="-"
+				RunFromDir="%rw">
+				<Exec/>
+			</Target>
+			<Target
+				Name="View Javadoc"
+				MenuCaption="&amp;View Javadoc"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form javadoc"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent"
+				Deletable="0">
+				<Exec
+					CmdLine="javaviewdoc"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Javadoc All"
+				MenuCaption="Javadoc All"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form javadoc"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javamakedoc javadoc -d docs %cp %{*.java}"/>
+			</Target>
+			<Target
+				Name="dash2"
+				MenuCaption="-"
+				RunFromDir="%rw">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Make Jar"
+				MenuCaption="Make &amp;Jar"
+				ShowOnMenu="HideIfNoCmdLine"
+				Dialog="_java_options_form jar"
+				RunFromDir="%rw"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				Deletable="0">
+				<Exec CmdLine="javamakejar jar cvf testprog.jar  %{*} %~other"/>
+			</Target>
+			<Target
+				Name="Java Options"
+				MenuCaption="Java &amp;Options"
+				ShowOnMenu="HideIfNoCmdLine"
+				Deletable="0">
+				<Exec
+					CmdLine="javaoptions"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<ClassPath>
+			<ClassPathElement Value="C:/FILES/DEMO/JAVA_POOLING/component/PoolTestComponent.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xercesImpl.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xfnljav.jar"/>
+			<ClassPathElement Value="C:/Program Files (x86)/Synergex/xfNLJava/xml-apis.jar"/>
+		</ClassPath>
+	</Config>
+	<CustomFolders>
+		<Folder
+			Name="Source Files"
+			Filters="*.java;*.c;*.cpp;*.cxx;*.hxx;*.prg;*.pas;*.dpr;*.asm;*.bas;*.sc;*.e">
+		</Folder>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.jpg;*.gif;*.bmp"/>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</CustomFolders>
+	<Files AutoFolders="PackageView">
+		<Folder
+			Name="(default package)"
+			Type="Package">
+			<F N="testprog.java"/>
+			<F N="xfNetLnk.ini"/>
+			<F N="xfPool.properties"/>
+		</Folder>
+		<Folder Name="../component">
+			<F N="../component/PoolTestComponent.jar"/>
+		</Folder>
+	</Files>
+</Project>

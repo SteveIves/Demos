@@ -1,0 +1,142 @@
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+subroutine setGreeting
+	required in p1, a40
+	endparams
+	global data section gblsect
+		record                                             
+			greet, a30
+		endrecord
+	endglobal
+proc
+	greet = p1
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+subroutine getGreeting
+	required out p1, a40
+	endparams
+	global data section gblsect
+		record                                             
+			greet, a30
+		endrecord
+	endglobal
+proc
+	p1 = greet
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+function Initialize, ^VAL
+	endparams
+proc
+	xcall writeit("TEST:pooltest.log","Initialize called")
+	freturn 0
+endfunction
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+subroutine Cleanup
+	endparams
+proc
+	xcall writeit("TEST:pooltest.log","Cleanup called")
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+function CanBePooled, ^VAL
+	endparams
+proc
+     xcall writeit("TEST:pooltest.log","CanBePooled called")
+     freturn 1
+endfunction
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+subroutine Activate
+	endparams
+proc
+	xcall writeit("TEST:pooltest.log","Activate called")
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+subroutine Deactivate
+	endparams
+proc
+	xcall writeit("TEST:pooltest.log","Deactivate called")
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+
+subroutine writeit
+	required in filename, a
+	required in msg, a
+	endparams
+	stack record local_data
+		chan			,i4
+		time			,d6
+		group datetime	,a
+			adate		,a11
+						,a1
+			atime		,a8
+		endgroup
+	endrecord
+proc
+	init local_data
+	xcall date(adate)
+	xcall time(time)
+	atime = time, "XX:XX:XX"
+	open(chan, a, filename)
+	writes(chan, datetime + ": " + msg)
+	close chan
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+
+subroutine sayHello
+	required out var1, a5
+	endparams
+	global data section gblsect, INIT
+		record                                             
+			greet, a30
+		endrecord
+	endglobal
+proc
+	var1 = "hello"
+	xreturn
+endsubroutine
+;
+;------------------------------------------------------------------------------
+;
+
+subroutine sayhello2
+	endparams
+proc
+	xreturn
+endsubroutine
+

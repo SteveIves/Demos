@@ -1,0 +1,89 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%rp"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)src"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)obj"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)exe"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)rps\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)rps\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)xfpl"/>
+		<ExecMacro CmdLine="syn_set XFPL_INIPATH=%(ROOT)xfpl"/>
+		<ExecMacro CmdLine="syn_set PATH=%(PATH);C:\Program Files\Java\jdk1.6.0_22\bin"/>
+		<ExecMacro CmdLine="syn_set CLASSPATH=%(XFNLJAVA)xfnljav.jar;%(XFNLJAVA)xml-apis.jar;%(XFNLJAVA)xercesImpl.jar"/>
+	</Macro>
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Jar File"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildJar"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.java">
+			<F N="component/PoolTest/SynergyMethods.java"/>
+		</Folder>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat">
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</Files>
+</Project>
