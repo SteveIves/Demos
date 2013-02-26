@@ -1,0 +1,34 @@
+!	Synergy ISAM XDL File created Tue Feb 26 15:53:33 2013
+FILE
+	NAME		"aspnet_role.ism"
+	ADDRESSING	32
+	NETWORK_ENCRYPT	no
+	KEYS		1
+
+RECORD
+	SIZE		64
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Creation version 9.1.1a 
+	!File created on Fri Jul 27 17:58:03 2007
+	!Last cleared on Tue Jul 31 00:26:06 2007
+	!64 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!5 records, 1 free
+
+KEY 0
+	!Primary key
+	START		1:33
+	LENGTH		32:32
+	TYPE		alpha:alpha
+	ORDER		ascending:ascending
+	NAME		"APP_ROLE"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 7

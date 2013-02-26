@@ -1,0 +1,107 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config
+		Name="Release"
+		OutputFile=""
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Assembly"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildAssembly"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="build"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate C# Classes"
+				MenuCaption="Gener&amp;ate C# Classes"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateCSClasses"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.cs">
+			<F N="SynergyAspProvider/Aspnet_password_counters.cs"/>
+			<F N="SynergyAspProvider/Aspnet_role.cs"/>
+			<F N="SynergyAspProvider/Aspnet_user.cs"/>
+			<F N="SynergyAspProvider/Aspnet_user_role.cs"/>
+			<F N="SynergyAspProvider/AspProvider.cs"/>
+			<F N="SynergyAspProvider/AssemblyInfo.cs"/>
+			<F N="SynergyAspProvider/Date_time.cs"/>
+			<F N="SynergyAspProvider/IAspProvider.cs"/>
+		</Folder>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat">
+			<F N="build.bat"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%wp"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)SERVER\SRC"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)SERVER\OBJ"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)SERVER\EXE"/>
+		<ExecMacro CmdLine="syn_set DAT=%(ROOT)SERVER\DAT"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)SERVER\RPS\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)SERVER\RPS\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)SERVER\XFPL"/>
+	</Macro>
+</Project>

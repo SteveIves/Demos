@@ -1,0 +1,10 @@
+;
+; Global structures
+;
+.ifndef strUser
+.include "ASPNET_USER" repository, structure="strUser", end, prefix="u_"
+.include "ASPNET_ROLE" repository, structure="strRole", end, prefix="r_"
+.include "ASPNET_USER_ROLE" repository, structure="strUserRole", end, prefix="ur_"
+.include "ASPNET_PASSWORD_COUNTERS" repository, structure="strPasswordCounters", end
+.include "DATE_TIME" repository, structure="strDateTime", end
+.endc

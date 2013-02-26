@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+    <siteMapNode url="Default.aspx" title="Home"  description="">
+        <siteMapNode url="products/default.aspx"  title="Products"  description="">
+        <siteMapNode url="products/product1.aspx" title="Product 1" description="" />
+        <siteMapNode url="products/product2.aspx" title="Product 2" description="" />
+        <siteMapNode url="products/product3.aspx" title="Product 3" description="" />
+      </siteMapNode>
+      <siteMapNode url="services/default.aspx"  title="Services"  description="">
+        <siteMapNode url="services/service1.aspx" title="Service 1" description="" />
+        <siteMapNode url="services/service2.aspx" title="Service 2" description="" />
+        <siteMapNode url="services/service3.aspx" title="Service 3" description="" />
+      </siteMapNode>
+      <siteMapNode url="user/Default.aspx" title="Users Menu"  description="">
+        <siteMapNode url="user/profile.aspx" title="Update your profile"  description="" />
+        <siteMapNode url="user/password.aspx" title="Change your password"  description="" />
+      </siteMapNode>
+      <siteMapNode url="admin/Default.aspx" title="Site Admin"  description="">
+        <siteMapNode url="admin/Users.aspx" title="Manage users" description=""/>
+        <siteMapNode url="admin/Roles.aspx" title="Manage roles" description=""/>
+        <siteMapNode url="admin/AccessRules.aspx" title="Manage access rules" description=""/>
+        <siteMapNode url="admin/AccessSummary.aspx" title="Access rule summary" description=""/>
+        <siteMapNode url="admin/AddUser.aspx" title="Add a new user account" description=""/>
+      </siteMapNode>
+      <siteMapNode url="public/contact.aspx" title="Contact Us"  description="" />
+    </siteMapNode>
+</siteMap>

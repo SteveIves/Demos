@@ -1,0 +1,26 @@
+[GLOBAL]
+syn_version=6
+Synergy=NET
+Framework_SDK=2
+
+[COMPONENT INFORMATION]
+Component_Name=SynergyAspProvider
+Component_Directory=D:\Dev\Demos\WEB\AspProviders\COMPONENT
+Generate_API_Documentation=0
+Pooling=1
+Namespace=SynPSG.ASP
+Strong_Name_Key_File=
+Delay_Sign_Assembly=0
+Use_Alternate_Field_Names=0
+Repository_Main_File=D:\Dev\Demos\WEB\AspProviders\SERVER\RPS\rpsmain.ism
+Repository_Text_File=D:\Dev\Demos\WEB\AspProviders\SERVER\RPS\rpstext.ism
+SMC_Directory=D:\Dev\Demos\WEB\AspProviders\SERVER\XFPL
+Generate_Structure_Members_As=Properties
+Net_Env_Batch=%VS110COMNTOOLS%vsvars32.bat
+Generate_Output_Params_As=Ref
+Generate_WCF_Contracts=0
+Generate_INotifyPropertyChanged=0
+
+[SMC Interfaces]
+Interface_0=AspProvider::1
+

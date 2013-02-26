@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="FlightTrackDb">
+  <DataContextMoniker Name="/FlightTrackDbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="09fddf86-811b-45b2-b57e-b339e6a04faf" absoluteBounds="3.5, 1, 2, 1.9631982421875003">
+      <DataClassMoniker Name="/FlightTrackDbDataContext/Airline" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3d375a91-c6ec-4fb2-b7e7-f183ba57cb1b" absoluteBounds="3.515, 1.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="fe870eb7-83e8-4045-8ca4-1d31883cedab" absoluteBounds="3.5, 3.75, 2, 1.9631982421875005">
+      <DataClassMoniker Name="/FlightTrackDbDataContext/Airport" />
+      <nestedChildShapes>
+        <elementListCompartment Id="25483fb8-7c3d-4e8f-93f8-27d347bfaacb" absoluteBounds="3.515, 4.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a355ea03-db60-4987-92f5-a8035602ddc2" absoluteBounds="0.75, 2.75, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/FlightTrackDbDataContext/Country" />
+      <nestedChildShapes>
+        <elementListCompartment Id="956d59bf-e089-4c5f-a359-b1e8ed832112" absoluteBounds="0.765, 3.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(1.75 : 2.75); (1.75 : 1.8749995); (3.5 : 1.8749995)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/FlightTrackDbDataContext/Country/Country_Airline" />
+      <nodes>
+        <classShapeMoniker Id="a355ea03-db60-4987-92f5-a8035602ddc2" />
+        <classShapeMoniker Id="09fddf86-811b-45b2-b57e-b339e6a04faf" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 3.94399251302083); (1.75 : 4.82859587760417); (3.5 : 4.82859587760417)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/FlightTrackDbDataContext/Country/Country_Airport" />
+      <nodes>
+        <classShapeMoniker Id="a355ea03-db60-4987-92f5-a8035602ddc2" />
+        <classShapeMoniker Id="fe870eb7-83e8-4045-8ca4-1d31883cedab" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

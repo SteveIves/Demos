@@ -1,0 +1,21 @@
+.nolist
+
+external function
+	LowerCase				,a
+
+.ifdef ASPNET_INIT
+global data section ASP$PROVIDER$DATA, init
+.undefine ASPNET_INIT
+.else
+global data section ASP$PROVIDER$DATA
+.endc
+
+	record
+		ch_user				,i4
+		ch_role				,i4
+		ch_user_role		,i4
+	endrecord
+
+endglobal
+
+.list

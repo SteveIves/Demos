@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightTracker", "FlightTracker\FlightTracker.csproj", "{416814B8-B847-480E-937B-E76392F2B01B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServices", "WebServices\WebServices.csproj", "{B735D1E5-E998-4493-ADD1-D5EDCCD155B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{9CBEF328-CE97-481E-BF8B-0D7A1902D234}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{416814B8-B847-480E-937B-E76392F2B01B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{416814B8-B847-480E-937B-E76392F2B01B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{416814B8-B847-480E-937B-E76392F2B01B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{416814B8-B847-480E-937B-E76392F2B01B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B735D1E5-E998-4493-ADD1-D5EDCCD155B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B735D1E5-E998-4493-ADD1-D5EDCCD155B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B735D1E5-E998-4493-ADD1-D5EDCCD155B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B735D1E5-E998-4493-ADD1-D5EDCCD155B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CBEF328-CE97-481E-BF8B-0D7A1902D234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CBEF328-CE97-481E-BF8B-0D7A1902D234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CBEF328-CE97-481E-BF8B-0D7A1902D234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CBEF328-CE97-481E-BF8B-0D7A1902D234}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

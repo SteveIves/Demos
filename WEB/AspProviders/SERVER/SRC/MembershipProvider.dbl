@@ -1,0 +1,1249 @@
+;*******************************************************************************
+;
+; File:         MembershipProvider.dbl
+;
+; Description:  Support routines for the Synergy/DE ASP.NET Membership Provider
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date: 		July 2007
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely for use with your own applications.
+;               However, you may not under any circumstances distribute this
+;               code, or any modified version of this code, to any third party
+;               without first obtaining written permission to do so from
+;               Synergex.  In using this code you accept that it is provided
+;               as is, and without support or warranty.  Neither Synergex or the
+;               author accept any responsibility for any losses or damages of
+;               any nature which may arise from the use of this code.  This
+;               header information must remain, unaltered, in the code at all
+;               times.  Posession of this code, or any modified version of this
+;               code, indicates your acceptance of these terms.
+;
+;*******************************************************************************
+;
+; Global structures
+;
+.include "SRC:AspProviderStructures.def"
+;
+;*******************************************************************************
+;
+; Routine:      change_password.dbl
+;
+; Description:  Change a users password
+;
+;*******************************************************************************
+;
+function change_password, ^val
+
+    required in a_application   ,a
+    required in a_username      ,a
+    required in a_newpassword   ,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     		;Function return value
+	User			,strUser
+endrecord
+
+proc
+
+    init local_vars
+
+    ;Read and update the user record
+	User.u_application = a_application
+	User.u_username = a_username
+	try
+	begin
+        User.u_password = a_newpassword
+        User.u_last_password_change = %datetime
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	finally
+		unlock ch_user
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      change_password_question.dbl
+;
+; Description:  Change a users secret question and answer
+;
+;*******************************************************************************
+;
+function change_password_question, ^val
+
+    required in a_application   ,a
+    required in a_username      ,a
+    required in a_question      ,a
+    required in a_answer        ,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     	;Function return value
+	User			,strUser
+endrecord
+
+proc
+
+    init local_vars
+
+    ;Read and lock the user record
+	try
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_password_question = a_question
+		User.u_password_answer = a_answer
+		write(ch_user,User)
+	end
+	catch (ex, @exception)
+		error=1
+	finally
+		unlock ch_user
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      create_user.dbl
+;
+; Description:  Create a new user account
+;
+;*******************************************************************************
+;
+function create_user, ^val, reentrant
+
+	a_user			,strUser
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     ;Function return value
+endrecord
+
+proc
+
+    init local_vars
+
+    ;Create the new user record
+	try 
+		store(ch_user,a_user)
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      delete_user.dbl
+;
+; Description:  Delete a user account
+;
+;*******************************************************************************
+;
+function delete_user, ^val, reentrant
+
+    required in a_application   	,a
+    required in a_username      	,a
+	required in a_delete_related	,d
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     	;Function return value
+	GotRoles		,d1
+	User			,strUser
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+	init local_vars
+
+	;Delete the user
+	User.u_application = a_application
+	User.u_username = a_username
+	try
+	begin
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		delete(ch_user)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+	
+	if (!error&&a_delete_related)
+	begin
+		xcall remove_user_from_all_roles(a_application,a_username)
+		
+		;When the profile provider has been implemented this routine also
+		;needs to call a method to remove all profiole entries for the deleted
+		;user account
+		
+	end
+	
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      
+;
+; Description:  Return a collection of user records in a specified page range
+;
+;*******************************************************************************
+;
+subroutine get_all_users
+
+	required in a_application   ,a		;Application name
+	required in a_page_index    ,i		;Page being requested (0 based)
+	required in a_page_size     ,i		;Page size
+	required out a_users        ,i		;Returned collection of users
+	required out a_total_users  ,i		;Returned total user count
+	endparams
+
+.include "SRC:AspProviderData.def"
+.include "ASPNET_USER" repository, structure="fred"
+stack record local_vars
+    ms              ,i4
+    mc              ,i4
+	gotusers		,i4
+    start_index     ,i8
+    end_index       ,i8
+	User			,strUser
+endrecord
+
+proc
+
+	init local_vars
+	clear a_total_users
+
+	;Position to the first user record for the application
+	try 
+	begin
+		find(ch_user,,%atrim(a_application),KEYNUM:"APP_USER")
+		gotusers = 1
+	end
+	catch (ex)
+		nop
+	endtry
+
+	if (gotusers)
+	begin
+
+		end_index = (a_page_size*(a_page_index+1))
+		start_index = end_index-a_page_size+1
+
+		repeat
+		begin
+			;Get the next user record
+			try
+				reads(ch_user,User,,LOCK:Q_NO_LOCK)
+			catch (ex, @EndOfFileException)
+				exitloop
+			endtry
+		
+			;Make sure wr're still in the correct application
+			if (User.u_application!=a_application)
+				exitloop
+		
+			a_total_users+=1
+		
+			;Is this user record in our page range?
+			if ((a_total_users>=start_index)&&(a_total_users<=end_index))
+			begin
+				;Add this user to the returned collection
+				if ((mc+=1)>ms)
+					a_users = %mem_proc(DM_RESIZ,^size(strUser)*(ms+=100),a_users)
+				^m(fred[mc],a_users) = User
+				;^m(strUser[mc],a_users) = User
+			end
+			
+		end
+	
+		;Resize memory to exact number of users beign returned
+		if (mc)
+			a_users = %mem_proc(DM_RESIZ,(^size(strUser)*mc),a_users)
+	end
+
+	xreturn
+
+endsubroutine
+
+;*******************************************************************************
+;
+; Routine:      get_online_user_count.dbl
+;
+; Description:  Return the number of users who are currently online
+;
+;*******************************************************************************
+;
+function get_online_user_count, ^val, reentrant
+
+    required in a_application   ,a
+    required in a_datetime      ,strDateTime	;YYYYMMDDHHMMSS
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     	;Function return value
+	usercount		,i4			;Active user count
+	User			,strUser
+endrecord
+
+proc
+
+    init local_vars
+
+	;Look for the first record which has activity at or after the cutoff time
+	User.u_application = a_application
+	User.u_last_activity = a_datetime
+	try 
+		find(ch_user,,%atrim(%keyval(ch_user,User,3)),KEYNUM:"APP_LAST_ACTIVITY",MATCH:Q_GEQ)
+	catch (ex, @KeyNotSameException)
+	begin
+		if (User.u_application!=a_application)
+			freturn 0
+	end
+	catch (ex, @EndOfFileException)
+		freturn 0
+	endtry
+	
+	;Count the remaining records for this application
+	repeat
+	begin
+		;Get the next one
+		try
+			reads(ch_user,User,,LOCK:Q_NO_LOCK)
+		catch (ex, @EndOfFileException)
+			exitloop
+		endtry
+		
+		;Make sure we're still in the right application
+		if (User.u_application!=a_application)
+			exitloop
+
+		;We got a live one!
+        incr usercount
+
+	end
+	
+    freturn usercount
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_password.dbl
+;
+; Description:  Retrieve a users password
+;
+;*******************************************************************************
+;
+function get_password, ^val, reentrant
+
+    required in a_application       ,a
+    required in a_username          ,a
+    required out a_password			,a
+    required out a_password_answer	,a
+	required out a_locked_out		,i
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     	;Function return value
+	User			,StrUser
+endrecord
+
+proc
+
+    init local_vars
+	clear a_password, a_password_answer, a_locked_out
+
+    ;Read and the user record
+	try
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER",LOCK:Q_NO_LOCK)
+		a_password = User.u_password
+		a_password_answer = User.u_password_answer
+		a_locked_out = User.u_is_locked_out
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_password_counters.dbl
+;
+; Description:  Retrieve password counters for a user account
+;
+;*******************************************************************************
+;
+function get_password_counters, ^val, reentrant
+
+    required in a_application   ,a
+    required in a_username      ,a
+	required out a_counters		,strPasswordCounters
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error       ,i4     	;Function return value
+	User		,strUser
+endrecord
+
+proc
+
+    init local_vars
+
+    ;Read the user record
+	User.u_application = a_application
+	User.u_username = a_username
+	try
+	begin
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER",LOCK:Q_NO_LOCK)
+		a_counters.password_fail_count = User.u_failed_password_count
+		a_counters.password_window_date	= User.u_failed_password_window_date
+		a_counters.password_window_time	= User.u_failed_password_window_time
+		a_counters.answer_fail_count = User.u_failed_answer_count
+		a_counters.answer_window_date = User.u_failed_answer_window_date
+		a_counters.answer_window_time = User.u_failed_answer_window_time
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_user_by_pkid.dbl
+;
+; Description:  Retrieve a user record by pkid
+;
+;*******************************************************************************
+;
+function get_user_by_pkid, ^val, reentrant
+
+    required in a_pkid 		     	,a
+	required in a_update_activity	,d
+	required out a_user				,strUser
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error           ,i4     		;Function return value
+	lockmode		,d1				;Record locking mode
+endrecord
+
+.proc
+
+    init local_vars
+
+	if (a_update_activity) then 
+		lockmode = Q_AUTO_LOCK
+	else
+		lockmode = Q_NO_LOCK
+	
+	;Read and lock the user record
+	try 
+		read(ch_user,a_user,a_pkid,KEYNUM:"PKID",LOCK:lockmode)
+	catch (ex, @Exception)
+	begin
+		init a_user
+		error=1
+	end
+	endtry
+
+	;Update the last activity date/time
+	if ((!error) && (a_update_activity))
+	begin
+		a_user.u_last_activity = %datetime
+		try 
+			write(ch_user,a_user)
+		catch (ex, @exception)
+			nop
+		endtry
+	end
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_user_by_username.dbl
+;
+; Description:  Retrieve a user record by username
+;
+;*******************************************************************************
+;
+
+function get_user_by_username, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	required in a_update_activity	,d
+	required out a_user				,strUser
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+	error		,i4     			;Function return value
+	lockmode	,d1					;Record locking mode
+endrecord
+
+.proc
+
+    init local_vars
+
+	if (a_update_activity) then 
+		lockmode = Q_AUTO_LOCK
+	else
+		lockmode = Q_NO_LOCK
+
+	;Read the user record
+	try
+	begin
+		a_user.u_application = a_application
+		a_user.u_username = a_username
+		read(ch_user,a_user,%keyval(ch_user,a_user,1),KEYNUM:"APP_USER",LOCK:lockmode)
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		init a_user
+		error = -1
+	end
+	catch (ex, @KeyNotSameException)
+	begin
+		init a_user
+		error = -1
+	end
+	catch (ex, @Exception)
+	begin
+		init a_user
+		error=1
+	end
+	endtry
+
+	;Update the last activity date/time
+	if ((!error) && (a_update_activity))
+	begin
+		a_user.u_last_activity = %datetime
+		try 
+			write(ch_user,a_user)
+		catch (ex, @exception)
+			nop
+		endtry
+	end
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_username_by_email.dbl
+;
+; Description:  Retrieve a users username from their email address
+;
+;*******************************************************************************
+;
+function get_username_by_email, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_email          	,a
+	required out a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4			;Function return value
+	User		,strUser
+endrecord
+
+.proc
+
+	init local_vars
+	clear a_username
+
+	try
+	begin
+		User.u_application = a_application
+		User.u_email = a_email
+		read(ch_user,User,%keyval(ch_user,User,2),KEYNUM:"APP_EMAIL",LOCK:Q_NO_LOCK)
+		a_username = User.u_username
+	end
+	catch (ex, @EndOfFileException)
+		nop
+	catch (ex, @KeyNotSameException)
+		nop
+	catch (ex, @Exception)
+	begin
+		error=1
+	end
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      get_users_by_email.dbl
+;
+; Description:  Return a collection of users matching a partial email address
+;
+;*******************************************************************************
+;
+subroutine get_users_by_email
+
+    required in a_application	,a	;Application name
+	required in a_partial_email	,a	;Partial email to match
+    required in a_page_index	,i	;Page index to return	;0 based
+    required in a_page_size		,i	;Page size
+    required out a_users		,i	;Collection of user records
+    required out a_total_users	,i	;Total number of matching users
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    mc              ,i4
+	ms				,i4
+    start_index     ,i8
+    end_index       ,i8
+	gotusers		,i4			;No users in file
+	User			,strUser
+endrecord
+
+proc
+
+    init local_vars
+	clear a_total_users
+
+	;Figure out the start and end indexes we're expected to return
+	end_index = (a_page_size*(a_page_index+1))
+	start_index = end_index-a_page_size+1
+
+	;Position to first user for this application
+	try
+	begin
+		find(ch_user,,%atrim(a_application),KEYNUM:"APP_EMAIL")
+		gotusers=1
+	end
+	catch (ex, @Exception)
+		nop
+	endtry
+	
+	;Any problems so far?
+	if (gotusers)
+	begin
+		repeat
+		begin
+			;Read next user
+			try 
+				reads(ch_user,User,,LOCK:Q_NO_LOCK)
+			catch (ex, @EndOfFileException)
+				exitloop
+			endtry
+			
+			;Are we still in the right application?
+			if (User.u_application!=a_application)
+				exitloop
+			
+			;Does the email match our partial?
+			if (!%instr(1,%LowerCase(User.u_email),%LowerCase(a_partial_email)))
+				nextloop
+			
+			;Increment total matching records counter
+			incr a_total_users
+			
+			;Is it in the page range we're looking for? if not nextloop
+			if ((a_total_users<start_index)||(a_total_users>end_index))
+				nextloop
+			
+			;Store the record to dynamic memory
+			if ((mc+=1)>ms)
+				a_users = %mem_proc(DM_RESIZ,^size(strUser)*(ms+=100),a_users)
+			^m(strUser[mc],a_users) = User
+		end		
+	end
+	
+	;Resize memory to exact number of users beign returned
+	if (mc)
+		a_users = %mem_proc(DM_RESIZ,(^size(strUser)*mc),a_users)
+	
+    xreturn
+
+endsubroutine
+
+;*******************************************************************************
+;
+; Routine:      get_users_by_name.dbl
+;
+; Description:  Return a collection of users matching a partial username
+;
+;*******************************************************************************
+;
+subroutine get_users_by_name
+
+    required in a_application	,a	;Application name
+	required in a_partial_name	,a	;Partial username to match
+    required in a_page_index	,i	;Page index to return	;0 based
+    required in a_page_size		,i	;Page size
+    required out a_users		,i	;Collection of user records
+    required out a_total_users	,i	;Total number of matching users
+	endparams
+	
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    mc              ,i4
+	ms				,i4
+    start_index     ,i8
+    end_index       ,i8
+	gotusers		,i4		;No users in file
+	User			,strUser
+endrecord
+
+proc
+
+    init local_vars
+	a_total_users = 0
+
+	;Figure out the start and end indexes we're expected to return
+	end_index = (a_page_size*(a_page_index+1))
+	start_index = end_index-a_page_size+1
+
+	;Position to first user for this application
+	try 
+	begin
+		find(ch_user,,%atrim(a_application),KEYNUM:"APP_USER")
+		gotusers = 1
+	end
+	catch (ex, @Exception)
+		nop
+	endtry
+	
+	;Any problems so far?
+	if (gotusers)
+	begin
+		repeat
+		begin
+			;Read next user
+			try 
+				reads(ch_user,User,,LOCK:Q_NO_LOCK)
+			catch (ex, @EndOfFileException)
+				exitloop
+			endtry
+			
+			;Are we still in the right application?
+			if (User.u_application!=a_application)
+				exitloop
+			
+			if ((a_partial_name(2:1)=="%")&&(%LowerCase(User.u_username(1:1))==%LowerCase(a_partial_name(1:1)))) then
+				call AddThisUser
+			else if (%instr(1,%LowerCase(User.u_username),%LowerCase(a_partial_name)))
+				call AddThisUser
+		end		
+	end
+	
+	;Resize memory to exact number of users beign returned
+	if (mc)
+		a_users = %mem_proc(DM_RESIZ,(^size(strUser)*mc),a_users)
+	
+    xreturn
+
+AddThisUser,
+	
+	;Increment total matching records counter
+	incr a_total_users
+	
+	;Is it in the page range we're looking for? if not nextloop
+	if ((a_total_users>=start_index)&&(a_total_users<=end_index))
+	begin
+		;Store the record to dynamic memory
+		if ((mc+=1)>ms)
+			a_users = %mem_proc(DM_RESIZ,^size(strUser)*(ms+=100),a_users)
+		^m(strUser[mc],a_users) = User
+	end
+
+	return
+	
+endsubroutine
+
+;*******************************************************************************
+;
+; Routine:      increment_answer_failures.dbl
+;
+; Description:  Increment a user accounts password answer attempt failure count
+;
+;*******************************************************************************
+;
+function increment_answer_failures, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4     		;Function return value
+	User		,strUser		
+endrecord
+
+.proc
+
+	init local_vars
+
+	;Increment password answer failure count
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_failed_answer_count += 1
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error = 1
+	endtry
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      increment_password_failures.dbl
+;
+; Description:  Increment a user accounts password failure count
+;
+;*******************************************************************************
+;
+function increment_password_failures, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4			;Function return value
+	User		,strUser
+endrecord
+
+.proc
+
+	init local_vars
+
+	;Increment password failure count
+	if (!error) 
+	begin
+		try 
+		begin
+			User.u_application = a_application
+			User.u_username = a_username
+			read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+			User.u_failed_password_count += 1
+			write(ch_user,User)
+		end
+		catch (ex, @Exception)
+			error = 1
+		endtry
+	end
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      lock_user.dbl
+;
+; Description:  Lock a user account
+;
+;*******************************************************************************
+;
+function lock_user, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4				;Function return value
+	User		,strUser
+endrecord
+
+.proc
+
+	init local_vars
+
+	;Lock user and set last locked date/time
+	User.u_application = a_application
+	User.u_username = a_username
+	try
+	begin
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_is_locked_out = 1
+		User.u_last_locked_out = %datetime
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      set_last_login_date.dbl
+;
+; Description:  Update the date of last login for a user
+;
+;*******************************************************************************
+;
+
+subroutine set_last_login_date
+
+    required in a_application   	,a
+    required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+	User		,strUser
+endrecord
+	
+.proc
+
+    init local_vars
+
+	try 
+	begin
+		;Read and lock the user record
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		;Update date/time of last login
+		User.u_last_login=%datetime
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+	begin
+		nop
+	end
+	endtry
+
+    xreturn
+
+endsubroutine
+
+;*******************************************************************************
+;
+; Routine:      start_answer_fail_window.dbl
+;
+; Description:  Start a new password answer attempt failure window
+;
+;*******************************************************************************
+;
+function start_answer_fail_window, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4			;Function return value
+	User		,strUser
+endrecord
+
+.proc
+
+	init local_vars
+
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_failed_answer_count = 1
+		User.u_failed_answer_window = %datetime
+		write(ch_user,user)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      start_password_fail_window.dbl
+;
+; Description:  Start a new password attempt failure window
+;
+;*******************************************************************************
+;
+function start_password_fail_window, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4			;Function return value
+	User		,strUser
+endrecord
+
+.proc
+
+	init local_vars
+
+	try
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_failed_password_count = 1
+		User.u_failed_password_window = %datetime
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      unlock_user.dbl
+;
+; Description:  Unlock a user record
+;
+;*******************************************************************************
+;
+function unlock_user, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error		,i4				;Function return value
+	User		,strUser		
+endrecord
+
+.proc
+
+	init local_vars
+
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		clear User.u_is_locked_out
+		User.u_last_locked_out = %datetime
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+	freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      update_user.dbl
+;
+; Description:  Update data for an existing user account
+;
+;*******************************************************************************
+;
+function update_user, ^val, reentrant
+
+    required in a_application   ,a
+    required in a_username      ,a
+	required in a_email			,a
+	required in a_comment		,a
+	required in a_is_approved	,d
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error		,i4			;Function return value
+	User		,strUser
+endrecord
+
+proc
+
+    init local_vars
+
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_email = a_email
+		User.u_comment = a_comment
+		User.u_is_approved = a_is_approved
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+	
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      update_user_activity_time.dbl
+;
+; Description:  Update the date ane time of last activity for a user
+;
+;*******************************************************************************
+;
+function update_user_activity_time, ^val, reentrant
+
+	required in a_application   	,a
+	required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+	error		,i4			;Function return value
+	User		,strUser	
+endrecord
+
+.proc
+
+	init local_vars
+
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER")
+		User.u_last_activity = %datetime
+		write(ch_user,User)
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+    freturn error
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      validate_user.dbl
+;
+; Description:  Validate a login and return account status information
+;
+;*******************************************************************************
+;
+function validate_user, ^val, reentrant
+
+    required in a_application   ,a
+    required in a_username      ,a
+    required out a_password     ,a
+	required out a_isapproved	,d
+	required out a_islockedout	,d
+	endparams
+
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error           ,i4     	;Function return value
+	User			,strUser
+endrecord
+
+.proc
+
+    init local_vars
+
+	try 
+	begin
+		User.u_application = a_application
+		User.u_username = a_username
+		read(ch_user,User,%keyval(ch_user,User,1),KEYNUM:"APP_USER",LOCK:Q_NO_LOCK)
+		;Return data
+		a_password = User.u_password
+		a_isapproved = User.u_is_approved
+		a_islockedout = User.u_is_locked_out
+	end
+	catch (ex, @Exception)
+		error=1
+	endtry
+
+    freturn error
+
+endfunction
+

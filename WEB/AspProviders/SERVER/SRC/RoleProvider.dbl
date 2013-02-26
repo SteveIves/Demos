@@ -1,0 +1,679 @@
+;*******************************************************************************
+;
+; File:         RoleProvider.dbl
+;
+; Description:  Support routines for the Synergy/DE ASP.NET Role Provider
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date: 		July 2007
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely for use with your own applications.
+;               However, you may not under any circumstances distribute this
+;               code, or any modified version of this code, to any third party
+;               without first obtaining written permission to do so from
+;               Synergex.  In using this code you accept that it is provided
+;               as is, and without support or warranty.  Neither Synergex or the
+;               author accept any responsibility for any losses or damages of
+;               any nature which may arise from the use of this code.  This
+;               header information must remain, unaltered, in the code at all
+;               times.  Posession of this code, or any modified version of this
+;               code, indicates your acceptance of these terms.
+;
+;*******************************************************************************
+;
+; Global structures
+;
+.include "SRC:AspProviderStructures.def"
+;
+;******************************************************************************
+;
+; File:         add_users_to_roles.dbl
+;
+; Description:  Adds one or more users to one or more roles
+;
+;*******************************************************************************
+;
+function add_users_to_roles, ^val
+
+	required in a_application	,a		;Application name
+	required in a_username		,[*]a	;Array of usernames
+	required in a_role			,[*]a	;Array of role names
+    endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error			,i4
+	usercount		,i4
+	rolecount		,i4
+	c1				,i4
+	c2				,i4
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+    init local_vars
+
+	usercount = ^argdim(2,1)
+	rolecount = ^argdim(3,1)
+	
+	UserInRole.ur_application = a_application
+
+	for c1 from 1 thru usercount
+	begin
+
+		UserInRole.ur_username = a_username[c1]
+
+		for c2 from 1 thru rolecount
+		begin
+			;Add the user to the role
+			UserInRole.ur_role = a_role[c2]
+			try 
+				store(ch_user_role,UserInRole)
+			catch (ex)
+				nop
+			endtry
+		end
+
+	end
+
+    freturn error
+
+endfunction
+
+;******************************************************************************
+;
+; File:         create_role.dbl
+;
+; Description:  Creates a new role
+;
+;*******************************************************************************
+;
+function create_role, ^val
+
+	required in a_application	,a		;Application name
+	required in a_role			,a		;Role name
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error		,i4
+	Role		,strRole
+endrecord
+
+proc
+
+    init local_vars
+
+	;Create the role
+	try 
+	begin
+		Role.r_application = a_application
+		Role.r_role = a_role
+		store(ch_role,Role)
+	end
+	catch (ex)
+		error = 1
+	endtry
+	
+    freturn error
+
+endfunction
+
+;******************************************************************************
+;
+; File:         delete_role.dbl
+;
+; Description:  Deletes a role (and all user in role records for that role)
+;
+;*******************************************************************************
+;
+function delete_role, ^val
+
+	required in a_application	,a		;Application name
+	required in a_role			,a		;Role name
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error		,i4
+	GotUsers	,i4
+	Role		,strRole
+	UserInRole	,strUserRole
+endrecord
+	
+proc
+
+    init local_vars
+
+	;Find out if we have users assigned to this role
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_role = a_role
+		find(ch_user_role,,%atrim(%keyval(ch_user_role,UserInRole,1)),KEYNUM:"APP_ROLE_USER")
+		GotUsers = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	;Delete any user in role records for the role
+	if (GotUsers) 
+	begin
+		repeat
+		begin
+			try
+			begin
+				reads(ch_user_role,UserInRole)
+				if ((UserInRole.ur_application!=a_application)||(UserInRole.ur_role!=a_role))
+				begin
+					unlock ch_user_role
+					exitloop
+				end
+				delete(ch_user_role)
+			end
+			catch (ex, @EndOfFileException)
+				exitloop
+			endtry
+		end
+	end
+		
+	;Delete the role
+	try 
+	begin
+		Role.r_application = a_application
+		Role.r_role = a_role
+		read(ch_role,Role,Role,KEYNUM:"APP_ROLE")
+		delete(ch_role)
+	end
+	catch (ex)
+		error = 1
+	endtry
+	
+    freturn error
+
+endfunction
+
+;******************************************************************************
+;
+; File:         find_users_in_role.dbl
+;
+; Description:  Return a collection of users in a role, based on a partial
+;				username search
+;
+;*******************************************************************************
+;
+subroutine find_users_in_role
+
+	required in a_application	,a		;Application name
+	required in a_role			,a		;Role
+	required in a_userpattern	,a		;Partial username
+	required out a_users		,i		;Collection of matching users
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	gotusers		,i4
+	ms				,i4
+	mc				,i4
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+    init local_vars
+
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_role = a_role
+		find(ch_user_role,,%atrim(%keyval(ch_user_role,UserInRole,1)),KEYNUM:"APP_ROLE_USER")
+		gotusers = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	if (gotusers) 
+	begin
+		repeat
+		begin
+			try 
+			begin
+				reads(ch_user,UserInRole,,LOCK:Q_NO_LOCK)
+				;Make sure we're still in the requested application & role
+				if ((UserInRole.ur_application!=a_application)||(UserInRole.ur_role!=a_role))
+					exitloop
+				;Match the partial username
+				if (!%instr(1,%LowerCase(UserInRole.ur_username),%LowerCase(a_userpattern)))
+					nextloop
+				;Return this user
+				if ((mc+=1)>ms)
+					a_users = %mem_proc(DM_RESIZ,^size(strUserRole)*(ms+=10),a_users)
+				^m(strUserRole[mc],a_users) = UserInRole
+			end
+			catch (ex)
+				exitloop
+			finally
+				unlock ch_user
+			endtry
+		end
+		if (mc)
+			a_users = %mem_proc(DM_RESIZ,^size(strUserRole)*mc,a_users)
+	end
+
+    xreturn
+
+endsubroutine
+
+;******************************************************************************
+;
+; File:         get_all_roles.dbl
+;
+; Description:  Return a collection of all roles for this application
+;
+;*******************************************************************************
+;
+subroutine get_all_roles
+
+	required in a_application	,a		;Application name
+	required out a_roles		,i		;Collection of roles
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	gotroles	,i4
+	ms			,i4
+	mc			,i4
+endrecord
+
+proc
+
+    init local_vars
+	
+	;Position to the first role for the application
+	try
+	begin
+		find(ch_role,,%atrim(a_application),KEYNUM:"APP_ROLE")
+		gotroles = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	;Read the roles for the application
+	if (gotroles)
+	begin
+		repeat
+		begin
+			;Make room in memory
+			if ((mc+=1)>ms)
+				a_roles = %mem_proc(DM_RESIZ,^size(strRole)*(ms+=100),a_roles)
+			try 
+			begin
+				reads(ch_role,^m(strRole[mc],a_roles),,LOCK:Q_NO_LOCK)
+				if (^m(strRole[mc].r_application,a_roles)!=a_application)
+					exitloop
+			end
+			catch (ex)
+				exitloop
+			endtry
+		end
+		;Resize array to exact size of return data
+		a_roles = %mem_proc(DM_RESIZ,^size(strRole)*(mc-=1),a_roles)
+	end
+
+	xreturn
+
+endsubroutine
+
+;******************************************************************************
+;
+; File:         get_roles_for_user.dbl
+;
+; Description:  Return a collection of all roles for a user
+;
+;*******************************************************************************
+;
+subroutine get_roles_for_user
+
+	required in a_application	,a		;Application name
+	required in a_username		,a		;Username
+	required out a_roles		,i		;Collection of roles
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	gotroles		,i4
+	ms				,i4
+	mc				,i4
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+    init local_vars
+
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_username = a_username
+		find(ch_user_role,,%atrim(%keyval(ch_user_role,UserInRole,0)),KEYNUM:"APP_USER_ROLE")
+		gotroles = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	if (gotroles) 
+	begin
+		repeat
+		begin
+			try 
+			begin
+				reads(ch_user_role,UserInRole,,LOCK:Q_NO_LOCK)
+				if ((UserInRole.ur_application!=a_application)||(UserInRole.ur_username!=a_username))
+					exitloop
+				if ((mc+=1)>ms)
+					a_roles = %mem_proc(DM_RESIZ,^size(strRole)*(ms+=10),a_roles)
+				^m(strRole[mc].r_application,a_roles) = UserInRole.ur_application
+				^m(strRole[mc].r_role,a_roles) = UserInRole.ur_role
+			end
+			catch (ex)
+				exitloop
+			finally
+				unlock ch_user_role
+			endtry
+		end
+		if (mc)
+			a_roles = %mem_proc(DM_RESIZ,^size(strRole)*mc,a_roles)
+	end
+
+    xreturn
+
+endsubroutine
+
+;******************************************************************************
+;
+; File:         get_users_in_role.dbl
+;
+; Description:  Return a collection users for a role
+;
+;*******************************************************************************
+;
+subroutine get_users_in_role
+
+	required in a_application	,a		;Application name
+	required in a_role			,a		;Role name
+	required out a_users		,i		;Collection of users
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	gotusers		,i4
+	ms				,i4
+	mc				,i4
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+    init local_vars
+
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_role = a_role
+		find(ch_user_role,,%atrim(%keyval(ch_user_role,UserInRole,1)),KEYNUM:"APP_ROLE_USER")
+		gotusers = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	if (gotusers) 
+	begin
+		repeat
+		begin
+			try 
+			begin
+				reads(ch_user_role,UserInRole,,LOCK:Q_NO_LOCK)
+				if ((UserInRole.ur_application!=a_application)||(UserInRole.ur_role!=a_role))
+					exitloop
+				if ((mc+=1)>ms)
+					a_users = %mem_proc(DM_RESIZ,^size(strUserRole)*(ms+=10),a_users)
+				^m(strUserRole[mc],a_users) = UserInRole
+			end
+			catch (ex)
+				exitloop
+			finally
+				unlock ch_user_role
+			endtry
+		end
+		if (mc)
+		begin
+			a_users = %mem_proc(DM_RESIZ,^size(strUserRole)*mc,a_users)
+		end
+	end
+
+    xreturn
+
+endsubroutine
+
+;******************************************************************************
+;
+; File:         is_user_in_role.dbl
+;
+; Description:  Is a user a member of a role
+;
+;*******************************************************************************
+;
+function is_user_in_role, ^val
+
+	required in a_application	,a		;Application name
+	required in a_username		,a		;Username
+	required in a_role			,a		;Role
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	error			,i4
+	UserInRole		,strUserRole
+	UserIsInRole	,i4
+endrecord
+
+proc
+
+    init local_vars
+
+	;Find the record
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_username = a_username
+		UserInRole.ur_role = a_role		
+		find(ch_user_role,,UserInRole,KEYNUM:"APP_USER_ROLE")
+		UserIsInRole = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+    freturn UserIsInRole
+
+endfunction
+
+;*******************************************************************************
+;
+; File:         remove_user_from_all_roles.dbl
+;
+; Description:  Synergy/DE ASP.NET Membership Provider routine to remove all
+;				roles from a user account.
+;
+;*******************************************************************************
+;
+subroutine remove_user_from_all_roles
+
+    required in a_application   	,a
+    required in a_username      	,a
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+    error           ,i4     	;Function return value
+	GotRoles		,d1
+	UserInRole		,strUserRole
+endrecord
+
+proc
+
+	init local_vars
+
+	try 
+	begin
+		UserInRole.ur_application = a_application
+		UserInRole.ur_username = a_username
+		find(ch_user_role,,%atrim(%keyval(ch_user_role,UserInRole,0)),KEYNUM:"APP_USER_ROLE")
+		GotRoles = 1
+	end
+	catch (ex)
+		nop
+	endtry
+	
+	if (GotRoles) 
+	begin
+		repeat
+		begin
+			try 
+			begin
+				reads(ch_user_role,UserInRole)
+				if ((UserInRole.ur_application!=a_application)||(UserInRole.ur_username!=a_username))
+				begin
+					unlock ch_user_role
+					exitloop
+				end
+				delete(ch_user_role)
+			end
+			catch (ex)
+				nop
+			endtry
+		end
+	end
+	
+	return
+	
+endsubroutine
+
+;******************************************************************************
+;
+; File:         remove_users_from_roles.dbl
+;
+; Description:  Remove one or more users from one or more roles
+;
+;*******************************************************************************
+;
+function remove_users_from_roles, ^val
+
+	required in a_application	,a		;Application name
+	required in a_username		,[*]a	;Array of usernames
+	required in a_role			,[*]a	;Array of role names
+    endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	error		,i4
+	usercount	,i4
+	rolecount	,i4
+	c1			,i4
+	c2			,i4
+	UserInRole	,strUserRole
+endrecord
+
+proc
+
+	init local_vars
+
+	usercount = ^argdim(2,1)
+	rolecount = ^argdim(3,1)
+	
+	UserInRole.ur_application = a_application
+
+	for c1 from 1 thru usercount
+	begin
+
+		UserInRole.ur_username = a_username[c1]
+
+		for c2 from 1 thru rolecount
+		begin
+			try 
+			begin
+				UserInRole.ur_role = a_role[c2]
+				read(ch_user_role,UserInRole,UserInRole,KEYNUM:"APP_USER_ROLE")
+				delete(ch_user_role)
+			end
+			catch (ex)
+				unlock ch_user_role
+			endtry
+		end
+
+	end
+		
+    freturn error
+
+endfunction
+
+;******************************************************************************
+;
+; File:         role_exists.dbl
+;
+; Description:  Does a named role exist?
+;
+;*******************************************************************************
+;
+function role_exists, ^val
+
+	required in a_application	,a		;Application name
+	required in a_role			,a		;Role
+	endparams
+
+.include "SRC:AspProviderData.def"
+
+stack record local_vars
+	exists		,i4
+	Role		,strRole
+endrecord
+
+proc
+
+    init local_vars
+
+	try 
+	begin
+		Role.r_application = a_application
+		Role.r_role = a_role
+		find(ch_role,,Role,KEYNUM:"APP_ROLE")
+		exists = 1
+	end
+	catch (ex)
+		nop
+	endtry
+
+    freturn exists
+
+endfunction
+

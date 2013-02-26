@@ -1,0 +1,48 @@
+!	Synergy ISAM XDL File created Tue Feb 26 15:53:33 2013
+FILE
+	NAME		"aspnet_user_role.ism"
+	ADDRESSING	32
+	NETWORK_ENCRYPT	no
+	KEYS		2
+
+RECORD
+	SIZE		96
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Creation version 9.1.1a 
+	!File created on Fri Jul 27 17:58:24 2007
+	!Last cleared on Tue Jul 31 00:26:27 2007
+	!96 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!3 records, 1 free
+
+KEY 0
+	!Primary key
+	START		1:33:65
+	LENGTH		32:32:32
+	TYPE		alpha:alpha:alpha
+	ORDER		ascending:ascending:ascending
+	NAME		"APP_USER_ROLE"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 5
+
+KEY 1
+	!Alternate key #1
+	START		1:65:33
+	LENGTH		32:32:32
+	TYPE		alpha:alpha:alpha
+	ORDER		ascending:ascending:ascending
+	NAME		"APP_ROLE_USER"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0xc00, index depth 1
+	!Minimum keys per block 5

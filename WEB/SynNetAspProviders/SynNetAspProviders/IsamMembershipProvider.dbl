@@ -1,0 +1,239 @@
+import System
+import System.Collections.Specialized
+import System.Configuration.Provider
+import System.Diagnostics
+import System.Security.Cryptography
+import System.Text
+import System.Web.Configuration
+import System.Web.Security
+
+namespace SynNetAspProviders
+	
+	public sealed class IsamMembershipProvider extends MembershipProvider
+		
+		;; Global generated password length, generic exception message, event log info.
+		private newPasswordLength	,int	,8
+		private eventSource			,string	,"SynergyMembershipProvider"
+		private eventLog			,string	,"Application"
+		private exceptionMessage	,string	,"SynergyMembershipProvider: An exception occurred. Please check the Event Log."
+		
+		;;Used when determining encryption key values.
+		private machineKey			,@MachineKeySection
+		
+		;;If False, exceptions are thrown to the caller. If True exceptions are written to the event log.
+		private pWriteExceptionsToEventLog	,boolean
+		
+		public property WriteExceptionsToEventLog, boolean
+			method get
+			proc
+				mreturn pWriteExceptionsToEventLog
+			endmethod
+			method set
+			proc
+				pWriteExceptionsToEventLog = value
+			endmethod
+		endproperty
+		
+		public override method Initialize, void
+			byval name		,String
+			byval config	,@NameValueCollection
+			endparams
+		proc
+			;;Initialize values from web.config.
+			If (config==^null)
+				throw new ArgumentNullException("config")
+			
+			if ((name==^null) || (name.Length == 0))
+				name = "SynergyMembershipProvider"
+			
+			If (String.IsNullOrEmpty(config["description"]))
+			begin
+				config.Remove("description")
+				config.Add("description", "Synergy ASP.NET Membership provider")
+			end
+			
+			;;Initialize the abstract base class.
+			parent.Initialize(name, config)
+			
+			pApplicationName = getConfigValue(config["applicationName"], System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath)
+			pMaxInvalidPasswordAttempts = Convert.ToInt32(getConfigValue(config["MaxInvalidPasswordAttempts"], "5"))
+			pPasswordAttemptWindow = Convert.ToInt32(getConfigValue(config["PasswordAttemptWindow"], "10"))
+			pMinRequiredNonAlphanumericCharacters = Convert.ToInt32(getConfigValue(config["minRequiredAlphaNumericCharacters"], "1"))
+			pMinRequiredPasswordLength = Convert.ToInt32(getConfigValue(config["minRequiredPasswordLength"], "7"))
+			pPasswordStrengthRegularExpression = Convert.ToString(getConfigValue(config["passwordStrengthRegularExpression"], ""))
+			pEnablePasswordReset = Convert.ToBoolean(getConfigValue(config["EnablePasswordReset"], "True"))
+			pEnablePasswordRetrieval = Convert.ToBoolean(getConfigValue(config["EnablePasswordRetrieval"], "True"))
+			pRequiresQuestionAndAnswer = Convert.ToBoolean(getConfigValue(config["RequiresQuestionAndAnswer"], "False"))
+			pRequiresUniqueEmail = Convert.ToBoolean(getConfigValue(config["RequiresUniqueEmail"], "True"))
+			pWriteExceptionsToEventLog = Convert.ToBoolean(getConfigValue(config["WriteExceptionsToEventLog"], "True"))
+			
+			data temp_format, string, config["PasswordFormat"]
+			if (temp_format==^null)
+				temp_format = "Hashed"
+			
+			using temp_format select
+			("Hashed"),
+				pPasswordFormat = MembershipPasswordFormat.Hashed
+			("Encrypted"),
+				pPasswordFormat = MembershipPasswordFormat.Encrypted
+			("Clear"),
+				pPasswordFormat = MembershipPasswordFormat.Clear
+			(),
+				throw New ProviderException("SynergyMembershipProvider: Password format not supported.")
+			endusing
+			
+			;;Get encryption and decryption key information from the configuration.
+			data cfg, @System.Configuration.Configuration, WebConfigurationManager.OpenWebConfiguration(System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath)
+			machineKey = (@MachineKeySection)Cfg.GetSection("system.web/machineKey")
+			
+			if (machineKey.ValidationKey.Contains("AutoGenerate"))
+				if (PasswordFormat != MembershipPasswordFormat.Clear)
+					throw New ProviderException("SynergyMembershipProvider: Hashed or Encrypted passwords are not supported with auto-generated keys.")
+			
+		endmethod
+		
+		;;A helper function to retrieve config values from the configuration file.
+		private method getConfigValue, string
+			configValue		,string
+			defaultValue	,string
+			endparams
+		proc
+			if (String.IsNullOrEmpty(configValue)) then
+				mreturn defaultValue
+			else
+				mreturn configValue		
+		endmethod
+			
+		;;System.Web.Security.MembershipProvider properties.
+		
+		private pApplicationName, string
+		private pEnablePasswordReset, Boolean
+		private pEnablePasswordRetrieval, Boolean
+		private pRequiresQuestionAndAnswer, Boolean
+		private pRequiresUniqueEmail, Boolean
+		private pMaxInvalidPasswordAttempts, int
+		private pPasswordAttemptWindow, int
+		private pPasswordFormat, MembershipPasswordFormat
+		private pMinRequiredNonAlphanumericCharacters, int
+		private pPasswordStrengthRegularExpression, string
+		private pMinRequiredPasswordLength, int
+		
+		public override property ApplicationName, String
+			method get
+			proc
+				mreturn pApplicationName
+			endmethod
+		endproperty
+
+		public override property EnablePasswordReset, boolean
+			method get
+			proc
+				mreturn pEnablePasswordReset
+			endmethod
+		endproperty
+
+		public override property EnablePasswordRetrieval, boolean
+			method get
+			proc
+				mreturn pEnablePasswordRetrieval
+			endmethod
+		endproperty
+		
+		public override property RequiresQuestionAndAnswer, boolean
+			method get
+			proc
+				mreturn pRequiresQuestionAndAnswer
+			endmethod
+		endproperty
+		
+		public override property MaxInvalidPasswordAttempts, int
+			method get
+			proc
+				mreturn pMaxInvalidPasswordAttempts
+			endmethod
+		endproperty
+
+		public override property PasswordAttemptWindow, int
+			method get
+			proc
+				mreturn pPasswordAttemptWindow
+			endmethod
+		endproperty
+		
+		public override property PasswordFormat, MembershipPasswordFormat
+			method get
+			proc
+				mreturn pPasswordFormat
+			endmethod
+		endproperty
+
+		public override property MinRequiredNonAlphanumericCharacters, int
+			method get
+			proc
+				mreturn pMinRequiredNonAlphanumericCharacters
+			endmethod
+		endproperty
+
+		public override property MinRequiredPasswordLength, int
+			method get
+			proc
+				mreturn pMinRequiredPasswordLength
+			endmethod
+		endproperty
+
+		public override property PasswordStrengthRegularExpression, String
+			method get
+			proc
+				mreturn pPasswordStrengthRegularExpression
+			endmethod
+		endproperty
+		
+		;;System.Web.Security.MembershipProvider methods.
+		
+		;;MembershipProvider.ChangePassword
+		
+		public override method ChangePassword, Boolean
+			ByVal Username		,String
+			ByVal OldPassword	,String
+			ByVal NewPassword	,String
+			endparams
+		proc
+			;;Validate that we have been given the correct old password
+			if !ValidateUser(Username, OldPassword)
+				mreturn false
+				
+			;;Raise a ValidatingPassword event (if an event handler has been declared) 
+			data Args, @ValidatePasswordEventArgs, new ValidatePasswordEventArgs(Username, NewPassword, true)
+			OnValidatingPassword(Args)
+			
+			if (Args.Cancel)
+			begin
+				If (Args.FailureInformation!=^null) then
+					throw Args.FailureInformation
+				else
+					throw new ProviderException("SynergyMembershipProvider: Change password canceled due to New password validation failure.")
+			end
+				
+			;;Change the password in the Synergy database
+;			Dim Server As New SynPSG.ASP.AspProvider
+;			Try
+;				If Server.ChangePassword(pApplicationName, Username, EncodePassword(NewPassword)) = 0 Then
+;					Return True
+;				Else
+;					Return False
+;				End If
+;			Catch ex As Exception
+;				ThrowException("ChangePassword", ex)
+;			Finally
+;				Server.Dispose()
+;			End Try
+			open(ch_user=0,u:i,"DAT:aspnet_user.ism")
+
+			close ch_user
+
+		endmethod
+		
+	endclass
+	
+endnamespace
+

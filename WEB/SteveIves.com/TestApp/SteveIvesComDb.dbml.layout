@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="SteveIvesComDb">
+  <DataContextMoniker Name="/SteveIvesComDbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="d8b936db-e1fb-4ff5-842f-d44e5086a15f" absoluteBounds="3.5, 1, 2, 1.9631982421875003">
+      <DataClassMoniker Name="/SteveIvesComDbDataContext/Airline" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f1f0a50b-2496-4a4c-b56a-ac2d7869d1c7" absoluteBounds="3.515, 1.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e4db9886-ec8d-413a-bb4f-09da18d4892c" absoluteBounds="3.5, 3.75, 2, 1.9631982421875005">
+      <DataClassMoniker Name="/SteveIvesComDbDataContext/Airport" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5081d1f1-b3b0-4a1a-8cea-76e5d9ef284a" absoluteBounds="3.515, 4.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d9f59291-a3d4-4b99-ac46-ace6d9ddd8bb" absoluteBounds="0.75, 2.75, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/SteveIvesComDbDataContext/Country" />
+      <nestedChildShapes>
+        <elementListCompartment Id="225e82db-6b23-4ea5-8839-c458a07e5b25" absoluteBounds="0.765, 3.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(1.75 : 2.75); (1.75 : 1.8749995); (3.5 : 1.8749995)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SteveIvesComDbDataContext/Country/Country_Airline" />
+      <nodes>
+        <classShapeMoniker Id="d9f59291-a3d4-4b99-ac46-ace6d9ddd8bb" />
+        <classShapeMoniker Id="d8b936db-e1fb-4ff5-842f-d44e5086a15f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 3.94399251302083); (1.75 : 4.82859587760417); (3.5 : 4.82859587760417)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SteveIvesComDbDataContext/Country/Country_Airport" />
+      <nodes>
+        <classShapeMoniker Id="d9f59291-a3d4-4b99-ac46-ace6d9ddd8bb" />
+        <classShapeMoniker Id="e4db9886-ec8d-413a-bb4f-09da18d4892c" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

@@ -1,0 +1,192 @@
+;*******************************************************************************
+;
+; File:         ProviderSupport.dbl
+;
+; Description:  Support routines for the Synergy/DE ASP.NET Providers
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date: 		July 2007
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely for use with your own applications.
+;               However, you may not under any circumstances distribute this
+;               code, or any modified version of this code, to any third party
+;               without first obtaining written permission to do so from
+;               Synergex.  In using this code you accept that it is provided
+;               as is, and without support or warranty.  Neither Synergex or the
+;               author accept any responsibility for any losses or damages of
+;               any nature which may arise from the use of this code.  This
+;               header information must remain, unaltered, in the code at all
+;               times.  Posession of this code, or any modified version of this
+;               code, indicates your acceptance of these terms.
+;
+;******************************************************************************
+;
+; Routine:      initialize
+;
+; Description:  Pooling support method. Open files.
+;
+;*******************************************************************************
+;
+function initialize, ^val
+
+.define ASPNET_INIT
+.include "SRC:AspProviderData.def"
+	
+stack record local_vars
+    error		,i4
+endrecord
+
+proc
+
+    init local_vars
+
+    ;Open the user file
+	try
+		open(ch_user=%syn_freechn,u:i,"DAT:aspnet_user.ism")
+	catch (ex, @Exception)
+	begin
+		clear ch_user
+		error=1
+		.ifdef D_GUI
+		xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Failed to open file DAT:aspnet_user.ism")
+		.else
+		xcall syn_reportevent("Failed to open file DAT:aspnet_user.ism")
+		.endc
+	end
+	endtry
+
+	;Open the roles file
+	try 
+		open(ch_role=%syn_freechn,u:i,"DAT:aspnet_role.ism")
+	catch (ex, @Exception)
+	begin
+		clear ch_role
+		error=1
+		.ifdef D_GUI
+		xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Failed to open file DAT:aspnet_role.ism")
+		.else
+		xcall syn_reportevent("Failed to open file DAT:aspnet_role.ism")
+		.endc
+	end
+	endtry
+
+	;Open the users in role file
+	try 
+		open(ch_user_role=%syn_freechn,u:i,"DAT:aspnet_user_role.ism")
+	catch (ex, @Exception)
+	begin
+		clear ch_user_role
+		error=1
+		.ifdef D_GUI
+		xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Failed to open file DAT:aspnet_user_role.ism")
+		.else
+		xcall syn_reportevent("Failed to open file DAT:aspnet_user_role.ism")
+		.endc
+	end
+	endtry
+	
+	if (error) 
+	begin
+		;Close the users file
+		if (ch_user)
+			close ch_user
+		;Close the roles file
+		if (ch_role)
+			close ch_role
+		;Close the users in roles file
+		if (ch_user_role)
+			close ch_user_role		
+	end
+
+    freturn error
+
+endfunction
+
+;******************************************************************************
+;
+; Routine:      cleanup
+;
+; Description:  Pooling support method. Close files.
+;
+;*******************************************************************************
+;
+subroutine cleanup
+
+.include "SRC:AspProviderData.def"
+	
+proc
+
+	;Close the users file
+	if (ch_user)
+		close ch_user
+
+	;Close the roles file
+	if (ch_role)
+		close ch_role
+
+	;Close the users in roles file
+	if (ch_user_role)
+		close ch_user_role		
+
+    xreturn
+
+endsubroutine
+
+;*******************************************************************************
+;
+; Routine:      lowercase
+;
+; Description:  Convert a string to lower case
+;
+;*******************************************************************************
+;
+function LowerCase ;,a
+
+	required in a_string ,a
+	endparams
+	
+stack record
+	mh	,i4
+endrecord
+
+proc
+
+	mh = %mem_proc(DM_ALLOC,%trim(a_string))
+	^m(mh) = a_string
+	locase ^m(mh)
+
+	freturn ^m(mh)
+
+endfunction
+
+;*******************************************************************************
+;
+; Routine:      lowercase
+;
+; Description:  Convert a string to lower case
+;
+;*******************************************************************************
+;
+subroutine SendFeedback
+
+	required in a_name 		,a
+	required in a_email		,a
+	required in a_comments	,i
+	endparams
+	
+.include "SRC:AspProviderData.def"
+
+proc
+
+	
+	
+	
+	xreturn
+
+endsubroutine
+
+

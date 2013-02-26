@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="steveives" Class="FlightTrackDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=steveives.db.5797255.hostedresource.com;Initial Catalog=steveives;Persist Security Info=True;User ID=steveives" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="steveivesConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Airline" Member="Airlines">
+    <Type Name="Airline">
+      <Column Name="IcaoCode" Type="System.String" DbType="Char(3) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CallSign" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="CountryCode" Type="System.String" DbType="Char(2) NOT NULL" CanBeNull="false" />
+      <Column Name="FlightPrefix" Type="System.String" DbType="Char(2) NOT NULL" CanBeNull="false" />
+      <Column Name="WebSite" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Country_Airline" Member="Country" AccessModifier="Internal" ThisKey="CountryCode" OtherKey="CountryCode" Type="Country" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Airport" Member="Airports">
+    <Type Name="Airport">
+      <Column Name="AirportCode" Type="System.String" DbType="Char(3) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="City" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Region" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="CountryCode" Type="System.String" DbType="Char(2) NOT NULL" CanBeNull="false" />
+      <Column Name="WebSite" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Country_Airport" Member="Country" AccessModifier="Internal" ThisKey="CountryCode" OtherKey="CountryCode" Type="Country" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Country" Member="Countries">
+    <Type Name="Country">
+      <Column Name="CountryCode" Type="System.String" DbType="Char(2) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Country_Airline" Member="Airlines" AccessModifier="Internal" ThisKey="CountryCode" OtherKey="CountryCode" Type="Airline" />
+      <Association Name="Country_Airport" Member="Airports" AccessModifier="Internal" ThisKey="CountryCode" OtherKey="CountryCode" Type="Airport" />
+    </Type>
+  </Table>
+</Database>

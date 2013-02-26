@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+    <siteMapNode url="Default.aspx" title="PSG Web Applications"  description="">
+      <siteMapNode url="http://psg.synergex.com" title="PSG Team Site"  description="" />
+      <siteMapNode url="~/VaultService/index.html" title="Vault Source Control"  description="" />
+      <siteMapNode url="~/VaultService/VaultWeb/login.aspx" title="Vault Web Client"  description="" />
+      <siteMapNode url="~/ChangePassword.aspx" title="Change Password"  description="" />
+    </siteMapNode>
+</siteMap>
