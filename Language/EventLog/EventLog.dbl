@@ -1,0 +1,14 @@
+main EventLog
+
+proc
+
+	syn_reportevent(D_EVENTLOG_SUCCESS,"A success message")
+	syn_reportevent(D_EVENTLOG_ERROR_TYPE,"An error message")
+	syn_reportevent(D_EVENTLOG_WARNING_TYPE,"A warning message")
+	syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"An information message")
+	syn_reportevent(D_EVENTLOG_AUDIT_SUCCESS,"An audit success message")
+	syn_reportevent(D_EVENTLOG_AUDIT_FAILURE,"An audit failure message")
+	
+	stop
+
+endmain
