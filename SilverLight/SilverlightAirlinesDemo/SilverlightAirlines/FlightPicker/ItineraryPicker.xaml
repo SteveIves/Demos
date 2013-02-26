@@ -1,0 +1,29 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// ItineraryPicker.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <Rectangle Stroke="#FF817C77" RadiusX="6" RadiusY="6" Width="100" Height="100">
+    <Rectangle.Fill>
+      <LinearGradientBrush StartPoint="0.0484388,-0.00403677" EndPoint="0.0484388,0.997117">
+        <LinearGradientBrush.GradientStops>
+          <GradientStop Color="#FFBEE7FB" Offset="0"/>
+          <GradientStop Color="#FFFFFFFF" Offset="0.101695"/>
+          <GradientStop Color="#66FFFFFF" Offset="0.605932"/>
+        </LinearGradientBrush.GradientStops>
+      </LinearGradientBrush>
+    </Rectangle.Fill>
+  </Rectangle>
+</Canvas>

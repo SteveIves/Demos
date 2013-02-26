@@ -1,0 +1,69 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Paint"
+    xmlns:vsm="clr-namespace:System.Windows;assembly=System.Windows">
+
+
+    <Style TargetType="local:Linen">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:Linen">
+                    <Grid Background="{TemplateBinding Background}">
+                        <InkPresenter x:Name="Ink" Background="Transparent" />
+                        <ItemsPresenter/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PaintShape">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PaintShape">
+                    <Grid>
+                        <vsm:VisualStateManager.VisualStateGroups>
+                            <vsm:VisualStateGroup x:Name="SelectionStates">
+                                <vsm:VisualState x:Name="SelectionHide"/>
+                                <vsm:VisualState x:Name="SelectionShow">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionFrame" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </vsm:VisualState>
+                            </vsm:VisualStateGroup>
+                        </vsm:VisualStateManager.VisualStateGroups>
+
+                        <Rectangle Fill="{TemplateBinding Background}" StrokeThickness="0"/>
+                        
+                        <ContentPresenter Cursor="Hand"/>
+                        
+                        <Grid x:Name="SelectionFrame" Visibility="Collapsed">
+                            <Rectangle StrokeThickness="1" Stroke="White" Margin="2"/>
+                            <Rectangle StrokeThickness="1" Stroke="#FF3C92E6" StrokeDashArray="4 5" Margin="2"/>
+                            <Rectangle Tag="LeftUp" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="SizeNWSE"/>
+                            <Rectangle Tag="RightUp" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="SizeNESW"/>
+                            <Rectangle Tag="LeftDown" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="SizeNESW"/>
+                            <Rectangle Tag="RightDown" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE"/>
+                            <Rectangle Tag="Left" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Left" VerticalAlignment="Center" Cursor="SizeWE"/>
+                            <Rectangle Tag="Right" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="SizeWE"/>
+                            <Rectangle Tag="Up" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Top" Cursor="SizeNS"/>
+                            <Rectangle Tag="Down" Stroke="#FF606060" StrokeThickness="1" Width="5" Height="5" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Cursor="SizeNS"/>
+                        </Grid>
+                        
+                        
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

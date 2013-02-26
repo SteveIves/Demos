@@ -1,0 +1,31 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// Default.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:app="clr-namespace:Mix07;assembly=ClientBin/SilverlightAirlines.dll"
+  x:Name="rootCanvas"
+  Loaded="PageLoaded"
+  x:Class="Mix07.DefaultCanvas;assembly=ClientBin/SilverlightAirlines.dll"
+  Opacity="0.85"
+  Width="1093"
+  Height="488">
+
+  <app:Map x:Name="map" Canvas.Left="5" Canvas.Top="5" Width="850" Height="350" />
+
+  <app:Calendar x:Name="calendar" Canvas.Left="860" Canvas.Top="5" Width="228" Height="350" />
+
+  <app:ItineraryPicker x:Name="itineraryPicker" Canvas.Left="5" Canvas.Top="360" Width="1083" Height="123" />
+
+</Canvas>

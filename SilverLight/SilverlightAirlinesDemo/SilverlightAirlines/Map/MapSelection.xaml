@@ -1,0 +1,22 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// MapSelection.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Name="MapSelectionTemplate">
+
+  <!-- Path used to draw the selection -->
+  <Path x:Name="Path" StrokeThickness="3" StrokeLineJoin="Round" Stroke="#FFFF3300" />
+
+</Canvas>

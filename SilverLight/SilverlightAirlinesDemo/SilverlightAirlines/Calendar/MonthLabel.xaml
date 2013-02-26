@@ -1,0 +1,23 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// MonthLabel.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <TextBlock Name="text" Text="MMMM yy" FontSize="14" FontFamily="Arial" FontWeight="Bold" Width="100" Height="100">
+    <TextBlock.RenderTransform>
+      <RotateTransform Angle="-90" />
+    </TextBlock.RenderTransform>
+  </TextBlock>
+</Canvas>

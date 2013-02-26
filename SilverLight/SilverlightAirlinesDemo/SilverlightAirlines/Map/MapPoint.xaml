@@ -1,0 +1,90 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// MapPoint.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Name="MapPointTemplate" 
+  Width="10"
+  Height="10">
+
+  <Ellipse Name="City" Width="10" Height="10" Cursor="Hand" StrokeThickness="3" RenderTransformOrigin="0.5,0.5">
+    <Ellipse.Fill>
+    	<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+    		<GradientStop Color="#FFD12E05" Offset="1"/>
+    		<GradientStop Color="#FFEC856C" Offset="0"/>
+    	</LinearGradientBrush>
+    </Ellipse.Fill>
+    <Ellipse.RenderTransform>
+    	<TransformGroup>
+    		<ScaleTransform ScaleX="1" ScaleY="1"/>
+    		<SkewTransform AngleX="0" AngleY="0"/>
+    		<RotateTransform Angle="-464.457"/>
+    		<TranslateTransform X="0" Y="0"/>
+    	</TransformGroup>
+    </Ellipse.RenderTransform>
+    <Ellipse.Stroke>
+      <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+        <GradientStop Color="#FFA8442C" Offset="0"/>
+        <GradientStop Color="#FFFF3300" Offset="0.986"/>
+      </LinearGradientBrush>
+    </Ellipse.Stroke>
+  </Ellipse>
+
+  <!-- Label shadows...
+  <TextBlock Opacity="0.5" RenderTransformOrigin="0.5,0.5" Name="LabelBackgroundRight" Width="Auto" Height="Auto" Canvas.Left="11" Canvas.Top="11" FontSize="12" FontWeight="Bold" Foreground="#FFFFFFFF">
+    <TextBlock.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="0.75" ScaleY="1"/>
+        <TranslateTransform X="1" Y="0"/>
+      </TransformGroup>
+    </TextBlock.RenderTransform>
+  </TextBlock>
+  <TextBlock Opacity="0.5" RenderTransformOrigin="0.5,0.5" Name="LabelBackgroundLeft" Width="Auto" Height="Auto" Canvas.Left="11" Canvas.Top="11" FontSize="12" FontWeight="Bold" Foreground="#FFFFFFFF">
+    <TextBlock.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="0.75" ScaleY="1"/>
+        <TranslateTransform X="-1" Y="0"/>
+      </TransformGroup>
+    </TextBlock.RenderTransform>
+  </TextBlock>
+  <TextBlock Opacity="0.5" RenderTransformOrigin="0.5,0.5" Name="LabelBackgroundTop" Width="Auto" Height="Auto" Canvas.Left="11" Canvas.Top="11" FontSize="12" FontWeight="Bold" Foreground="#FFFFFFFF">
+    <TextBlock.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="0.75" ScaleY="1"/>
+        <TranslateTransform X="0" Y="-1"/>
+      </TransformGroup>
+    </TextBlock.RenderTransform>
+  </TextBlock>
+  <TextBlock Opacity="0.5" RenderTransformOrigin="0.5,0.5" Name="LabelBackgroundBottom" Width="Auto" Height="Auto" Canvas.Left="11" Canvas.Top="11" FontSize="12" FontWeight="Bold" Foreground="#FFFFFFFF">
+    <TextBlock.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="0.75" ScaleY="1"/>
+        <TranslateTransform X="0" Y="1"/>
+      </TransformGroup>
+    </TextBlock.RenderTransform>
+  </TextBlock>
+  -->
+
+  <TextBlock Name="Label"  FontSize="14" FontWeight="Bold" Canvas.Left="12.5" RenderTransformOrigin="0.5,0.5" Canvas.Top="0">
+    <TextBlock.Foreground>
+      <SolidColorBrush Color="#ff000000" />
+    </TextBlock.Foreground>
+    <TextBlock.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="0.75" ScaleY="1"/>
+      </TransformGroup>
+    </TextBlock.RenderTransform>
+  </TextBlock>
+  
+</Canvas>

@@ -1,0 +1,16 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// DefaultXaml.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas xmlns="http://schemas.microsoft.com/client/2007">
+  <TextBlock Text="This content is a temporary placeholder automatically provided by MixControl." />
+</Canvas>

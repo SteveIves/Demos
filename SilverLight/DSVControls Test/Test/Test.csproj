@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0C29862B-8611-4A53-AAB4-887D6207E7A1}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test</RootNamespace>
+    <AssemblyName>Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>Test.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Test.App</SilverlightAppEntry>
+    <TestPageFileName>TestPage.html</TestPageFileName>
+    <CreateTestPage>true</CreateTestPage>
+    <ValidateXaml>true</ValidateXaml>
+    <EnableOutOfBrowser>false</EnableOutOfBrowser>
+    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
+    <UsePlatformExtensions>false</UsePlatformExtensions>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <LinkedServerProject>
+    </LinkedServerProject>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DSV.Controls">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="DSV.Controls.Menu">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.Menu.dll</HintPath>
+    </Reference>
+    <Reference Include="DSV.Controls.Windows">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1b331ac6720247d9" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows" />
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Controls, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Windows.Controls.Input, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Controls.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TestPage2.xaml.cs">
+      <DependentUpon>TestPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="TestPage2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker1.png" />
+    <Resource Include="Images\Bullets\Marker2.png" />
+    <Resource Include="Images\Bullets\Marker3.png" />
+    <Resource Include="Images\Bullets\Marker4.png" />
+    <Resource Include="Images\Bullets\Marker5.png" />
+    <Resource Include="Images\Bullets\Marker6.png" />
+    <Resource Include="Images\Bullets\Marker7.png" />
+    <Resource Include="Images\Bullets\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker1.png" />
+    <Resource Include="Images\Numbering\Marker2.png" />
+    <Resource Include="Images\Numbering\Marker3.png" />
+    <Resource Include="Images\Numbering\Marker4.png" />
+    <Resource Include="Images\Numbering\Marker5.png" />
+    <Resource Include="Images\Numbering\Marker6.png" />
+    <Resource Include="Images\Numbering\Marker7.png" />
+    <Resource Include="Images\Numbering\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color0.png" />
+    <Resource Include="Images\Colors\Color1.png" />
+    <Resource Include="Images\Colors\Color2.png" />
+    <Resource Include="Images\Colors\Color3.png" />
+    <Resource Include="Images\Colors\Color4.png" />
+    <Resource Include="Images\Colors\Color5.png" />
+    <Resource Include="Images\Colors\Color6.png" />
+    <Resource Include="Images\Colors\Color7.png" />
+    <Resource Include="Images\Colors\Color8.png" />
+    <Resource Include="Images\Colors\Color9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient1.png" />
+    <Resource Include="Images\Gradients\Gradient10.png" />
+    <Resource Include="Images\Gradients\Gradient11.png" />
+    <Resource Include="Images\Gradients\Gradient2.png" />
+    <Resource Include="Images\Gradients\Gradient3.png" />
+    <Resource Include="Images\Gradients\Gradient4.png" />
+    <Resource Include="Images\Gradients\Gradient5.png" />
+    <Resource Include="Images\Gradients\Gradient6.png" />
+    <Resource Include="Images\Gradients\Gradient7.png" />
+    <Resource Include="Images\Gradients\Gradient8.png" />
+    <Resource Include="Images\Gradients\Gradient9.png" />
+    <Resource Include="Images\Gradients\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style1.png" />
+    <Resource Include="Images\Styles\Style10.png" />
+    <Resource Include="Images\Styles\Style11.png" />
+    <Resource Include="Images\Styles\Style12.png" />
+    <Resource Include="Images\Styles\Style13.png" />
+    <Resource Include="Images\Styles\Style14.png" />
+    <Resource Include="Images\Styles\Style15.png" />
+    <Resource Include="Images\Styles\Style16.png" />
+    <Resource Include="Images\Styles\Style2.png" />
+    <Resource Include="Images\Styles\Style3.png" />
+    <Resource Include="Images\Styles\Style4.png" />
+    <Resource Include="Images\Styles\Style5.png" />
+    <Resource Include="Images\Styles\Style6.png" />
+    <Resource Include="Images\Styles\Style7.png" />
+    <Resource Include="Images\Styles\Style8.png" />
+    <Resource Include="Images\Styles\Style9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\1.jpg" />
+    <Resource Include="Images\CoverPages\2.jpg" />
+    <Resource Include="Images\CoverPages\3.jpg" />
+    <Resource Include="Images\CoverPages\4.jpg" />
+    <Resource Include="Images\CoverPages\5.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\1.png" />
+    <Resource Include="Images\Shapes\10.png" />
+    <Resource Include="Images\Shapes\11.png" />
+    <Resource Include="Images\Shapes\12.png" />
+    <Resource Include="Images\Shapes\2.png" />
+    <Resource Include="Images\Shapes\3.png" />
+    <Resource Include="Images\Shapes\4.png" />
+    <Resource Include="Images\Shapes\5.png" />
+    <Resource Include="Images\Shapes\6.png" />
+    <Resource Include="Images\Shapes\7.png" />
+    <Resource Include="Images\Shapes\8.png" />
+    <Resource Include="Images\Shapes\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSaveAs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileOpen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileClose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PrintPreviewClose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Paste32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Cut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FormatPainter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Bold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Italic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Underline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\BlackAndWhiteBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FontColorMoreColorsDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TextFillMoreGradientsDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FontColorPicker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Bullets.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Numbering.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AlignCenter.png" />
+    <Resource Include="Icons\AlignJustify.png" />
+    <Resource Include="Icons\AlignLeft.png" />
+    <Resource Include="Icons\AlignRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClearFormatting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ApplyStylesPane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ChangeStylesMenu32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\QuickStylesSets32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ThemeColorsGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ThemeFontsGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FindDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\GoTo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ReplaceDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\SelectRecord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CoverPageInsertGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\BlankPageInsert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PageBreakInsertWord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CoverPageRemove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PictureInsertFromFile32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClipArtInsert32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ChartInsert32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\QuickStylesSets.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ShapesMoreShapes32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\windows.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSave32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Paint16.png" />
+    <Resource Include="Icons\Paint32.png" />
+    <Resource Include="Icons\Word16.png" />
+    <Resource Include="Icons\Word32.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

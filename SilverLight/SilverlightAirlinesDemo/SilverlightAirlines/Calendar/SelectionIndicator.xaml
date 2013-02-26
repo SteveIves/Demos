@@ -1,0 +1,21 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// SelectionIndicator.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <Rectangle Stroke="#FFFF3300" StrokeThickness="2" Fill="#80FFFFFF" RadiusX="8" RadiusY="8" Width="100" Height="100" />
+  <Rectangle x:Name="start" Fill="#FFFF3300" RadiusX="10" RadiusY="10" Opacity="0" Width="100" Height="100" />
+  <Rectangle x:Name="end" Fill="#73FF3300" RadiusX="10" RadiusY="10" Opacity="0" Width="100" Height="100" />
+</Canvas>

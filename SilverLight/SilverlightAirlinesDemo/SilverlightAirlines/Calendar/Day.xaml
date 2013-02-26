@@ -1,0 +1,33 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// Day.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <Rectangle Name="monthStyle" Fill="#00000000" Width="100" Height="100" />
+  <Rectangle Name="alternatingMonthStyle" Fill="#40817C77" Width="100" Height="100" Opacity="0" />
+  <Rectangle Name="weekendStyle" Fill="#00000000" Opacity="0.0" Width="100" Height="100" />
+  <Canvas Name="selectionContainer" Width="100" Height="100" />
+  <Ellipse Name="hoverIndicator" Stroke="#ffff3f3f" StrokeThickness="3" Opacity="0.0" Width="100" Height="100" />
+  <TextBlock Name="text" FontFamily="Arial" FontSize="14" Width="100" Height="100" />
+  <TextBlock Name="endText" FontFamily="Arial" FontSize="14" FontWeight="Bold" Foreground="#ffffffff" Opacity="0" Width="100" Height="100" />
+  <Canvas.Resources>
+    <Storyboard Name="EnableHoverStoryboard">
+      <DoubleAnimation Storyboard.TargetName="hoverIndicator" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.1" />
+    </Storyboard>
+    <Storyboard Name="DisableHoverStoryboard">
+      <DoubleAnimation Storyboard.TargetName="hoverIndicator" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.1" />
+    </Storyboard>
+  </Canvas.Resources>
+</Canvas>

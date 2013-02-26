@@ -1,0 +1,804 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	xmlns:local="clr-namespace:silverscreenPrototype"
+	x:Class="silverscreenPrototype.Wheel"
+	d:DesignWidth="519" d:DesignHeight="519">
+	
+	<UserControl.Resources>
+		<Style x:Key="videoCaptureBtn" TargetType="ToggleButton">
+			<Setter Property="Background" Value="#FF1F3B53"/>
+			<Setter Property="Foreground" Value="#FF000000"/>
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#FFA3AEB9" Offset="0"/>
+						<GradientStop Color="#FF8399A9" Offset="0.375"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ToggleButton">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="00:00:00.5000000">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="redBG" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FFD10004"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="White"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="White"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="10"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="redBG" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FF400001"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="Red"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="Red"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="Red"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="cameraIcon" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="10"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="highlight" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.946"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.946"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.525"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused"/>
+									<VisualState x:Name="Unfocused"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="CheckStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="0:0:0.5"/>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Checked">
+										<Storyboard RepeatBehavior="Forever" AutoReverse="True">
+											<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="redBG_Copy">
+												<EasingColorKeyFrame KeyTime="0" Value="#FFFF0005"/>
+												<EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF720F11"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="redBG_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingColorKeyFrame KeyTime="0" Value="White"/>
+												<EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFBFBFBF"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="10"/>
+												<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="10"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+												<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+												<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Unchecked">
+										<Storyboard>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="cameraIcon_Copy">
+												<EasingColorKeyFrame KeyTime="0" Value="#FFBFBFBF"/>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="redBG_Copy">
+												<EasingColorKeyFrame KeyTime="0" Value="#FF720F11"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="redBG_Copy">
+												<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Indeterminate"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Path x:Name="underHighlight" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" UseLayoutRounding="False" Margin="0,0,0,-1">
+								<Path.Stroke>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="White" Offset="1"/>
+										<GradientStop Color="Transparent"/>
+									</LinearGradientBrush>
+								</Path.Stroke>
+							</Path>
+							<Path x:Name="redBG" Fill="#FF720F11" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" Stroke="#FF383838" Height="75" Margin="0.5,0" VerticalAlignment="Center" Width="75" UseLayoutRounding="False"/>
+							<Path x:Name="redBG_Copy" Fill="#FF720F11" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" Stroke="#FF383838" Height="75" Margin="0.5,0" VerticalAlignment="Center" Width="75" UseLayoutRounding="False" Opacity="0"/>
+							<Path x:Name="highlight" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" UseLayoutRounding="False" Margin="2">
+								<Path.Stroke>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="#CCFFFFFF" Offset="0"/>
+										<GradientStop Color="Transparent" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Stroke>
+							</Path>
+							<Path x:Name="gloss" Stretch="Fill" Data="F1M461.188,653.685C461.188,674.499,478.06,691.371,498.873,691.371L498.873,691.371C519.688,691.371,536.558,674.499,536.558,653.685L536.558,653.685C536.558,632.872,519.688,616,498.873,616L498.873,616C478.06,616,461.188,632.872,461.188,653.685" Margin="1" UseLayoutRounding="False" RenderTransformOrigin="0.5,0.5">
+								<Path.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform/>
+										<SkewTransform/>
+										<RotateTransform/>
+										<TranslateTransform/>
+									</TransformGroup>
+								</Path.RenderTransform>
+								<Path.OpacityMask>
+									<RadialGradientBrush Center="0.491,-0.004" GradientOrigin="0.491,-0.004" RadiusX="0.606" RadiusY="0.606">
+										<GradientStop Color="Black" Offset="0"/>
+										<GradientStop Color="sc#0, 0, 0, 0" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.OpacityMask>
+								<Path.Fill>
+									<RadialGradientBrush Center="0.491,-0.004" GradientOrigin="0.491,-0.004" RadiusX="0.606" RadiusY="0.606">
+										<GradientStop Color="White" Offset="0"/>
+										<GradientStop Color="White" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.Fill>
+							</Path>
+							<Path x:Name="cameraIcon" Stretch="Fill" Data="F1M488.686,645.22C487.785,645.22,487.048,645.956,487.048,646.859L487.048,646.859L487.048,661.594C487.048,662.497,487.785,663.233,488.686,663.233L488.686,663.233L503.425,663.233C504.326,663.233,505.063,662.497,505.063,661.594L505.063,661.594L505.063,658.087L510.323,662.219C511.031,662.776,511.609,662.495,511.609,661.593L511.609,661.593L511.609,646.857C511.609,645.955,511.031,645.674,510.323,646.231L510.323,646.231L505.063,650.363L505.063,646.859C505.063,645.956,504.326,645.22,503.425,645.22L503.425,645.22z" Height="18" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="24.5" UseLayoutRounding="False">
+								<Path.Effect>
+									<DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="0" Opacity="0"/>
+								</Path.Effect>
+								<Path.Fill>
+									<RadialGradientBrush Center="0.14,0.198" GradientOrigin="0.14,0.198" RadiusX="0.438" RadiusY="0.598">
+										<GradientStop Color="White" Offset="0"/>
+										<GradientStop Color="#FFBFBFBF" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.Fill>
+							</Path>
+							<Path x:Name="cameraIcon_Copy" Stretch="Fill" Data="F1M488.686,645.22C487.785,645.22,487.048,645.956,487.048,646.859L487.048,646.859L487.048,661.594C487.048,662.497,487.785,663.233,488.686,663.233L488.686,663.233L503.425,663.233C504.326,663.233,505.063,662.497,505.063,661.594L505.063,661.594L505.063,658.087L510.323,662.219C511.031,662.776,511.609,662.495,511.609,661.593L511.609,661.593L511.609,646.857C511.609,645.955,511.031,645.674,510.323,646.231L510.323,646.231L505.063,650.363L505.063,646.859C505.063,645.956,504.326,645.22,503.425,645.22L503.425,645.22z" Height="18" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="24.5" UseLayoutRounding="False" Opacity="0">
+								<Path.Effect>
+									<DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="0" Opacity="0"/>
+								</Path.Effect>
+								<Path.Fill>
+									<RadialGradientBrush Center="0.14,0.198" GradientOrigin="0.14,0.198" RadiusX="0.438" RadiusY="0.598">
+										<GradientStop Color="White" Offset="0"/>
+										<GradientStop Color="#FFBFBFBF" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.Fill>
+							</Path>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="arrowBtn" TargetType="Button">
+			<Setter Property="Background" Value="#FF1F3B53"/>
+			<Setter Property="Foreground" Value="#FF000000"/>
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#FFA3AEB9" Offset="0"/>
+						<GradientStop Color="#FF8399A9" Offset="0.375"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="00:00:00.5000000">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="White"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.8"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="path" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="15"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="path" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed"/>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused"/>
+									<VisualState x:Name="Unfocused"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Grid x:Name="grid" Height="52" HorizontalAlignment="Center" VerticalAlignment="Center" Width="52" Opacity="0.595">
+								<Ellipse Stroke="White" Fill="Black">
+									<Ellipse.Effect>
+										<DropShadowEffect BlurRadius="10" Direction="-90" ShadowDepth="2"/>
+									</Ellipse.Effect>
+								</Ellipse>
+							</Grid>
+							<Path x:Name="path" Stretch="Fill" Height="18.322" HorizontalAlignment="Center" Margin="5,0,0,0" VerticalAlignment="Center" Width="18.322" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" Data="M0.5,0.5 L35.5,35.5 L0.5,35.5 z">
+								<Path.Effect>
+									<DropShadowEffect ShadowDepth="0" BlurRadius="0" Color="White" Opacity="0"/>
+								</Path.Effect>
+								<Path.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform/>
+										<SkewTransform/>
+										<RotateTransform Angle="45"/>
+										<TranslateTransform/>
+									</TransformGroup>
+								</Path.RenderTransform>
+								<Path.Fill>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="White" Offset="0"/>
+										<GradientStop Color="#FF9A9A9A" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Fill>
+							</Path>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="CameraButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF1F3B53"/>
+			<Setter Property="Foreground" Value="#FF000000"/>
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#FFA3AEB9" Offset="0"/>
+						<GradientStop Color="#FF8399A9" Offset="0.375"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="00:00:00.5000000">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="redBG" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FFD10004"/>
+											</ColorAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="redBG" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FF400001"/>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="highlight" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.946"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.946"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="gloss" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.525"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused"/>
+									<VisualState x:Name="Unfocused"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Path x:Name="underHighlight" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" UseLayoutRounding="False" Margin="0,0,0,-1">
+								<Path.Stroke>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="White" Offset="1"/>
+										<GradientStop Color="Transparent"/>
+									</LinearGradientBrush>
+								</Path.Stroke>
+							</Path>
+							<Path x:Name="redBG" Fill="#FF720F11" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" Stroke="#FF383838" Height="75" Margin="0.5,0" VerticalAlignment="Center" Width="75" UseLayoutRounding="False"/>
+							<Path x:Name="highlight" Stretch="Fill" Data="F1M536.5586,653.6855C536.5586,674.4985,519.6876,691.3715,498.8726,691.3715C478.0606,691.3715,461.1876,674.4985,461.1876,653.6855C461.1876,632.8725,478.0606,615.9995,498.8726,615.9995C519.6876,615.9995,536.5586,632.8725,536.5586,653.6855" UseLayoutRounding="False" Margin="2">
+								<Path.Stroke>
+									<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+										<GradientStop Color="#CCFFFFFF" Offset="0"/>
+										<GradientStop Color="Transparent" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Stroke>
+							</Path>
+							<Path x:Name="gloss" Stretch="Fill" Data="F1M461.188,653.685C461.188,674.499,478.06,691.371,498.873,691.371L498.873,691.371C519.688,691.371,536.558,674.499,536.558,653.685L536.558,653.685C536.558,632.872,519.688,616,498.873,616L498.873,616C478.06,616,461.188,632.872,461.188,653.685" Margin="1" UseLayoutRounding="False" RenderTransformOrigin="0.5,0.5">
+								<Path.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform/>
+										<SkewTransform/>
+										<RotateTransform/>
+										<TranslateTransform/>
+									</TransformGroup>
+								</Path.RenderTransform>
+								<Path.OpacityMask>
+									<RadialGradientBrush Center="0.491,-0.004" GradientOrigin="0.491,-0.004" RadiusX="0.606" RadiusY="0.606">
+										<GradientStop Color="Black" Offset="0"/>
+										<GradientStop Color="sc#0, 0, 0, 0" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.OpacityMask>
+								<Path.Fill>
+									<RadialGradientBrush Center="0.491,-0.004" GradientOrigin="0.491,-0.004" RadiusX="0.606" RadiusY="0.606">
+										<GradientStop Color="White" Offset="0"/>
+										<GradientStop Color="White" Offset="1"/>
+									</RadialGradientBrush>
+								</Path.Fill>
+							</Path>
+							<Canvas HorizontalAlignment="Center" Margin="0,1,0,0" Width="19" Height="16" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+								<Canvas.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+										<SkewTransform/>
+										<RotateTransform/>
+										<TranslateTransform/>
+									</TransformGroup>
+								</Canvas.RenderTransform>
+								<Path Stretch="Fill" Width="6.317" Data="F1M639.3,61.066C639.3,62.807,640.717,64.226,642.458,64.226L642.458,64.226C644.199,64.226,645.617,62.807,645.617,61.066L645.617,61.066C645.617,59.324,644.199,57.909,642.458,57.909L642.458,57.909C640.717,57.909,639.3,59.324,639.3,61.066" HorizontalAlignment="Left" UseLayoutRounding="False" Height="6.317" Canvas.Left="7.433" Canvas.Top="5.501">
+									<Path.Fill>
+										<RadialGradientBrush Center="0.246,0.288" GradientOrigin="0.246,0.288" RadiusX="0.5" RadiusY="0.5">
+											<GradientStop Color="White" Offset="0"/>
+											<GradientStop Color="#FFD2D2D2" Offset="1"/>
+										</RadialGradientBrush>
+									</Path.Fill>
+								</Path>
+								<Path Stretch="Fill" Width="19" Data="F1M639.209,52.566L636.877,55.191L635.584,55.191L635.584,53.566L633.209,53.566L633.209,55.191L631.709,55.191L631.709,66.192L639.05,66.192C640.027,66.8440000000001,641.198,67.225,642.458,67.225L642.458,67.225C643.717,67.225,644.89,66.8440000000001,645.866,66.192L645.866,66.192L650.709,66.192L650.709,55.191L647.917,55.191L645.584,52.566z M638.3,61.066C638.3,58.773,640.165,56.909,642.458,56.909L642.458,56.909C644.752,56.909,646.618,58.773,646.618,61.066L646.618,61.066C646.618,63.36,644.752,65.226,642.458,65.226L642.458,65.226C640.165,65.226,638.3,63.36,638.3,61.066" HorizontalAlignment="Left" UseLayoutRounding="False" Height="14.659">
+									<Path.Fill>
+										<RadialGradientBrush Center="0.24600000679493,0.287999987602234" GradientOrigin="0.24600000679493,0.287999987602234" RadiusY="0.5" RadiusX="0.5">
+											<RadialGradientBrush.RelativeTransform>
+												<MatrixTransform/>
+											</RadialGradientBrush.RelativeTransform>
+											<GradientStop Color="White" Offset="0"/>
+											<GradientStop Color="#FFD2D2D2" Offset="1"/>
+										</RadialGradientBrush>
+									</Path.Fill>
+								</Path>
+							</Canvas>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid x:Name="LayoutRoot">
+	<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="wheelRotation">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="0:0:0.6">
+						<VisualTransition.GeneratedEasingFunction>
+							<ElasticEase EasingMode="EaseOut" Oscillations="1"/>
+						</VisualTransition.GeneratedEasingFunction>
+					</VisualTransition>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="normal">
+					<Storyboard>
+						<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+							<EasingColorKeyFrame KeyTime="00:00:00" Value="#66000000"/>
+						</ColorAnimationUsingKeyFrames>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grid">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Collapsed</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="rotateRight">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="rotatingWheel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00" Value="45"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="rotateLeft">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="rotatingWheel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00" Value="-45"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+			<VisualStateGroup x:Name="Controls">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="0:0:0.2"/>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="ControlsVisible">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LeftButton">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RightButton">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="ControlsHidden">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LeftButton">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RightButton">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+			<VisualStateGroup x:Name="Mode">
+				<VisualState x:Name="VideoMode">
+					<Storyboard>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RecordButton">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Visible</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="CameraPictureButton">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Collapsed</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="CameraMode">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="CameraPictureButton">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="CameraPictureButton">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Visible</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RecordButton">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<Visibility>Collapsed</Visibility>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<Canvas x:Name="wheel" HorizontalAlignment="Center" Width="519">
+			<Ellipse x:Name="ellipse" Height="518" Width="518" Canvas.Top="1">
+				<Ellipse.Fill>
+					<RadialGradientBrush>
+						<GradientStop Color="#4C000000" Offset="0.772"/>
+						<GradientStop Offset="1"/>
+					</RadialGradientBrush>
+				</Ellipse.Fill>
+			</Ellipse>
+			<Grid x:Name="rotatingWheel" Height="460" Width="460" RenderTransformOrigin="0.5,0.5" Canvas.Left="30" Canvas.Top="30">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<Path x:Name="reel" Stretch="Fill" UseLayoutRounding="False" Data="F1M721.915,709.775C720.426,709.701,719.248,708.452,719.285,706.985C719.322,705.519,720.561,704.355,722.051,704.388C723.542,704.42,724.719,705.669,724.682,707.178C724.643,708.687,723.404,709.85,721.915,709.775 M721.133,720.524C719.649,720.379,718.535,719.075,718.646,717.612C718.758,716.149,720.055,715.047,721.542,715.15C723.029,715.254,724.143,716.558,724.028,718.063C723.913,719.567,722.617,720.67,721.133,720.524 M722.855,728.905C722.665,730.402,721.314,731.44,719.839,731.224C718.363,731.007,717.317,729.651,717.502,728.195C717.686,726.74,719.037,725.702,720.518,725.877C721.999,726.052,723.046,727.407,722.855,728.905 M721.161,739.679C720.896,741.164,719.494,742.136,718.031,741.848C716.568,741.56,715.591,740.155,715.849,738.711C716.106,737.267,717.508,736.296,718.979,736.542C720.449,736.788,721.427,738.192,721.161,739.679 M718.947,750.357C718.607,751.829,717.159,752.73,715.712,752.371C714.265,752.012,713.358,750.563,713.688,749.134C714.018,747.704,715.467,746.803,716.924,747.12C718.381,747.438,719.287,748.887,718.947,750.357 M716.217,760.917C715.805,762.369,714.313,763.199,712.884,762.77C711.456,762.341,710.623,760.85,711.023,759.438C711.424,758.027,712.916,757.198,714.356,757.586C715.796,757.974,716.63,759.465,716.217,760.917 M712.977,771.331C712.492,772.761,710.96,773.517,709.555,773.019C708.149,772.521,707.391,770.99,707.86,769.602C708.331,768.212,709.862,767.456,711.282,767.914C712.701,768.371,713.46,769.901,712.977,771.331 M709.23,781.575C708.678,782.979,707.11,783.659,705.73,783.094C704.352,782.527,703.668,780.963,704.207,779.598C704.745,778.233,706.313,777.554,707.708,778.08C709.104,778.605,709.785,780.171,709.23,781.575 M704.994,791.624C704.372,793,702.772,793.603,701.422,792.971C700.071,792.338,699.467,790.742,700.07,789.405C700.675,788.069,702.274,787.467,703.643,788.06C705.011,788.652,705.615,790.249,704.994,791.624 M700.272,801.456C699.584,802.8,697.958,803.323,696.64,802.627C695.321,801.93,694.794,800.307,695.463,799.001C696.132,797.695,697.758,797.171,699.096,797.83C700.434,798.489,700.961,800.112,700.272,801.456 M695.08,811.047C694.327,812.355,692.678,812.8,691.395,812.04C690.111,811.28,689.664,809.633,690.395,808.361C691.127,807.09,692.776,806.646,694.081,807.368C695.385,808.091,695.832,809.738,695.08,811.047 M687.742,585.022C686.975,583.773,687.34,582.142,688.609,581.348C689.867,580.561,691.57,580.939,692.36,582.225C693.113,583.533,692.681,585.205,691.395,585.96C690.108,586.714,688.473,586.295,687.742,585.022 M689.43,820.375C688.615,821.646,686.945,822.01,685.699,821.189C684.456,820.368,684.088,818.701,684.88,817.466C685.672,816.231,687.342,815.867,688.609,816.652C689.877,817.438,690.244,819.104,689.43,820.375 M682.007,576.052C681.178,574.842,681.465,573.193,682.695,572.34C683.915,571.492,685.632,571.789,686.485,573.033C687.301,574.305,686.949,575.995,685.699,576.811C684.451,577.627,682.799,577.286,682.007,576.052 M683.336,829.419C682.461,830.649,680.775,830.933,679.572,830.053C678.367,829.173,678.081,827.49,678.932,826.294C679.781,825.099,681.467,824.815,682.695,825.66C683.924,826.506,684.211,828.188,683.336,829.419 M675.847,567.366C674.956,566.201,675.168,564.538,676.354,563.627C677.531,562.721,679.259,562.937,680.174,564.137C681.049,565.366,680.779,567.072,679.572,567.947C678.364,568.822,676.696,568.562,675.847,567.366 M676.813,838.159C675.881,839.346,674.184,839.548,673.023,838.611C671.863,837.674,671.658,835.979,672.564,834.826C673.471,833.672,675.168,833.47,676.354,834.373C677.54,835.277,677.746,836.972,676.813,838.159 M669.275,558.987C668.325,557.87,668.461,556.195,669.6,555.229C670.734,554.267,672.465,554.402,673.442,555.553C674.375,556.739,674.188,558.457,673.023,559.389C671.859,560.321,670.182,560.142,669.275,558.987 M669.878,846.574C668.89,847.716,667.186,847.836,666.071,846.845C664.958,845.853,664.834,844.15,665.794,843.041C666.755,841.932,668.459,841.812,669.6,842.771C670.741,843.73,670.866,845.434,669.878,846.574 M662.309,550.934C661.301,549.867,661.359,548.186,662.45,547.166C663.539,546.149,665.271,546.206,666.306,547.304C667.295,548.444,667.189,550.169,666.071,551.155C664.953,552.143,663.269,552.043,662.309,550.934 M662.546,854.647C661.504,855.739,659.797,855.778,658.73,854.734C657.667,853.69,657.624,851.983,658.637,850.922C659.649,849.859,661.356,849.82,662.45,850.834C663.545,851.848,663.587,853.555,662.546,854.647 M654.963,543.225C653.901,542.212,653.883,540.525,654.922,539.456C655.962,538.387,657.689,538.364,658.781,539.406C659.823,540.498,659.801,542.226,658.73,543.266C657.662,544.305,655.976,544.286,654.963,543.225 M654.836,862.358C653.742,863.399,652.035,863.357,651.021,862.263C650.008,861.169,650.047,859.462,651.109,858.449C652.171,857.437,653.878,857.479,654.922,858.544C655.965,859.609,655.927,861.316,654.836,862.358 M647.254,535.879C646.145,534.919,646.045,533.234,647.031,532.116C648.018,530.998,649.743,530.893,650.884,531.882C651.981,532.917,652.039,534.648,651.021,535.737C650.002,536.828,648.32,536.886,647.254,535.879 M646.762,869.69C645.621,870.679,643.918,870.554,642.959,869.413C641.999,868.271,642.12,866.567,643.229,865.606C644.338,864.646,646.04,864.771,647.031,865.884C648.023,866.998,647.903,868.702,646.762,869.69 M639.199,528.912C638.046,528.006,637.866,526.328,638.799,525.164C639.73,524,641.447,523.812,642.635,524.745C643.785,525.722,643.921,527.453,642.959,528.587C641.992,529.728,640.317,529.862,639.199,528.912 M638.347,876.626C637.159,877.559,635.465,877.353,634.562,876.166C633.657,874.98,633.859,873.283,635.014,872.377C636.167,871.471,637.861,871.676,638.799,872.836C639.734,873.996,639.533,875.693,638.347,876.626 M630.821,522.341C629.625,521.491,629.365,519.823,630.24,518.615C631.115,517.408,632.821,517.138,634.051,518.014C635.252,518.929,635.467,520.655,634.562,521.834C633.649,523.02,631.986,523.231,630.821,522.341 M629.606,883.148C628.377,884.022,626.693,883.736,625.849,882.508C625.002,881.279,625.285,879.595,626.481,878.744C627.678,877.894,629.36,878.181,630.24,879.385C631.12,880.588,630.837,882.273,629.606,883.148 M622.137,516.181C620.901,515.389,620.561,513.735,621.377,512.487C622.192,511.238,623.883,510.887,625.154,511.702C626.398,512.556,626.696,514.272,625.849,515.492C624.994,516.722,623.346,517.01,622.137,516.181 M620.563,889.242C619.292,890.057,617.625,889.689,616.84,888.422C616.055,887.154,616.418,885.484,617.653,884.692C618.889,883.9,620.556,884.269,621.377,885.513C622.197,886.758,621.833,888.428,620.563,889.242 M613.165,510.445C611.893,509.715,611.474,508.079,612.228,506.793C612.982,505.507,614.654,505.074,615.963,505.827C617.248,506.617,617.627,508.319,616.84,509.578C616.046,510.848,614.414,511.213,613.165,510.445 M611.234,894.893C609.926,895.645,608.278,895.197,607.556,893.894C606.833,892.589,607.277,890.938,608.549,890.208C609.82,889.477,611.468,889.924,612.228,891.207C612.987,892.49,612.543,894.14,611.234,894.893 M607.152,718.349C606.881,719.867,605.477,720.85,604.018,720.545C602.558,720.239,601.58,718.832,601.836,717.402C602.089,715.973,603.5,714.99,604.965,715.206C606.45,715.425,607.421,716.831,607.152,718.349 M604.65,729.176C604.225,730.658,602.743,731.498,601.303,731.039C599.901,730.593,599.058,729.089,599.458,727.693C599.854,726.296,601.349,725.461,602.795,725.827C604.24,726.192,605.071,727.692,604.65,729.176 M601.644,900.085C600.3,900.773,598.677,900.246,598.018,898.908C597.358,897.571,597.883,895.944,599.188,895.275C600.494,894.606,602.117,895.134,602.814,896.452C603.512,897.771,602.987,899.396,601.644,900.085 M596.044,737.688C596.577,736.337,598.146,735.656,599.546,736.168C600.946,736.68,601.624,738.258,601.059,739.692C600.504,741.132,598.912,741.802,597.529,741.2C596.178,740.612,595.523,739.044,596.044,737.688 M596.416,749.789C595.733,751.172,594.045,751.657,592.743,750.925C591.445,750.195,590.991,748.589,591.632,747.284C592.294,745.991,593.918,745.473,595.26,746.124C596.602,746.775,597.119,748.416,596.416,749.789 M591.813,904.807C590.436,905.428,588.841,904.823,588.247,903.455C587.654,902.087,588.257,900.487,589.593,899.883C590.93,899.279,592.525,899.884,593.158,901.234C593.79,902.585,593.188,904.185,591.813,904.807 M586.27,756.387C587.054,755.164,588.717,754.809,589.986,755.593C591.254,756.377,591.608,758.064,590.775,759.362C589.967,760.676,588.199,760.962,586.997,760.114C585.762,759.245,585.51,757.626,586.27,756.387 M583.252,637.276C582.417,636.086,582.594,634.45,583.783,633.521C584.943,632.612,586.715,632.814,587.601,634.076C588.494,635.333,588.224,637.038,586.997,637.886C585.77,638.733,584.092,638.46,583.252,637.276 M584.199,768.318C583.233,769.52,581.472,769.647,580.354,768.678C579.219,767.693,579.106,766.036,580.017,764.904C580.914,763.761,582.601,763.571,583.783,764.479C584.965,765.388,585.153,767.107,584.199,768.318 M581.763,909.044C580.358,909.598,578.793,908.916,578.268,907.521C577.741,906.125,578.421,904.558,579.785,904.02C581.15,903.481,582.715,904.164,583.281,905.543C583.847,906.923,583.167,908.49,581.763,909.044 M576.757,776.569C575.643,777.634,573.908,777.616,572.885,776.531C571.863,775.446,571.887,773.753,572.938,772.751C573.94,771.699,575.633,771.676,576.719,772.698C577.804,773.721,577.821,775.455,576.757,776.569 M571.518,912.789C570.089,913.272,568.559,912.514,568.102,911.095C567.644,909.675,568.398,908.144,569.789,907.673C571.178,907.203,572.708,907.962,573.206,909.367C573.704,910.772,572.949,912.305,571.518,912.789 M564.667,783.596C563.759,782.413,563.947,780.727,565.092,779.829C566.224,778.919,567.881,779.031,568.865,780.167C569.836,781.284,569.707,783.046,568.506,784.013C567.295,784.966,565.575,784.778,564.667,783.596 M561.104,916.029C559.652,916.442,558.161,915.608,557.773,914.169C557.385,912.729,558.215,911.236,559.627,910.836C561.037,910.436,562.528,911.269,562.957,912.696C563.387,914.125,562.557,915.617,561.104,916.029 M555.78,789.799C554.996,788.53,555.352,786.866,556.574,786.082C557.813,785.322,559.433,785.573,560.301,786.81C561.149,788.013,560.863,789.779,559.549,790.589C558.252,791.421,556.564,791.066,555.78,789.799 M552.091,609.121C550.831,608.397,550.394,606.751,551.112,605.444C551.831,604.138,553.498,603.701,554.836,604.471C556.185,605.218,556.571,606.947,555.78,608.201C554.979,609.47,553.364,609.823,552.091,609.121 M550.545,918.76C549.074,919.1,547.625,918.193,547.308,916.736C546.99,915.279,547.892,913.83,549.321,913.5C550.75,913.171,552.199,914.077,552.559,915.524C552.918,916.972,552.017,918.42,550.545,918.76 M546.312,795.072C545.66,793.731,546.18,792.106,547.472,791.444C548.776,790.804,550.383,791.258,551.112,792.556C551.845,793.857,551.359,795.546,549.977,796.229C548.604,796.932,546.963,796.414,546.312,795.072 M542.729,604.228C541.406,603.629,540.806,602.03,541.388,600.658C541.971,599.285,543.582,598.687,544.987,599.322C546.401,599.938,546.98,601.58,546.312,602.928C545.653,604.251,544.063,604.807,542.729,604.228 M539.866,920.974C538.38,921.239,536.976,920.262,536.729,918.791C536.482,917.32,537.454,915.919,538.898,915.661C540.343,915.403,541.747,916.381,542.035,917.844C542.323,919.307,541.352,920.708,539.866,920.974 M537.875,795.856C539.23,795.336,540.8,795.99,541.388,797.342C541.989,798.725,541.318,800.316,539.88,800.871C538.445,801.437,536.867,800.759,536.355,799.358C535.844,797.958,536.524,796.39,537.875,795.856 M532.922,600.309C531.546,599.844,530.787,598.31,531.227,596.885C531.666,595.46,533.207,594.705,534.668,595.199C536.13,595.69,536.887,597.228,536.355,598.642C535.838,600.02,534.299,600.771,532.922,600.309 M529.093,922.668C527.595,922.858,526.239,921.812,526.064,920.331C525.89,918.85,526.928,917.499,528.383,917.314C529.839,917.13,531.194,918.176,531.411,919.651C531.628,921.127,530.59,922.478,529.093,922.668 M527.881,799.271C529.276,798.87,530.78,799.714,531.227,801.115C531.686,802.556,530.846,804.037,529.363,804.463C527.88,804.884,526.38,804.053,526.014,802.607C525.648,801.161,526.482,799.667,527.881,799.271 M522.766,597.409C521.35,597.083,520.44,595.631,520.732,594.17C521.024,592.706,522.479,591.802,523.981,592.148C525.484,592.497,526.396,593.942,526.014,595.393C525.637,596.826,524.181,597.738,522.766,597.409 M518.535,806.965C517.018,807.233,515.612,806.263,515.394,804.778C515.178,803.313,516.16,801.901,517.59,801.648C519.02,801.393,520.427,802.37,520.732,803.83C521.037,805.289,520.055,806.693,518.535,806.965 M518.25,923.841C516.745,923.955,515.441,922.842,515.338,921.354C515.234,919.867,516.337,918.57,517.8,918.459C519.263,918.349,520.566,919.462,520.712,920.945C520.857,922.43,519.755,923.726,518.25,923.841 M512.366,595.559C510.925,595.378,509.873,594.017,510.014,592.544C510.158,591.048,511.513,590.01,513.042,590.201C514.572,590.396,515.624,591.748,515.394,593.222C515.163,594.694,513.808,595.741,512.366,595.559 M507.514,808.354C505.977,808.469,504.676,807.361,504.607,805.863C504.541,804.382,505.66,803.078,507.108,802.97C508.558,802.859,509.858,803.974,510.014,805.456C510.17,806.939,509.051,808.237,507.514,808.354 M507.365,924.494C505.856,924.532,504.607,923.354,504.575,921.863C504.543,920.373,505.706,919.134,507.173,919.098C508.64,919.061,509.889,920.238,509.963,921.728C510.037,923.217,508.874,924.455,507.365,924.494 M501.83,594.768C500.377,594.73,499.194,593.491,499.188,592C499.181,590.509,500.424,589.33,501.965,589.369C503.506,589.408,504.688,590.648,504.607,592.137C504.526,593.626,503.283,594.805,501.83,594.768 M496.41,808.631C494.869,808.592,493.686,807.352,493.768,805.863C493.848,804.374,495.092,803.195,496.545,803.232C497.998,803.27,499.181,804.509,499.188,806C499.194,807.491,497.951,808.67,496.41,808.631 M496.462,924.632C494.953,924.594,493.762,923.354,493.8,921.863C493.839,920.373,495.059,919.194,496.525,919.232C497.992,919.27,499.185,920.509,499.188,922C499.19,923.491,497.971,924.67,496.462,924.632 M491.266,595.03C489.817,595.141,488.517,594.026,488.361,592.544C488.205,591.061,489.324,589.763,490.861,589.646C492.398,589.531,493.699,590.639,493.768,592.137C493.834,593.618,492.715,594.922,491.266,595.03 M485.563,924.254C484.059,924.14,482.928,922.842,483.037,921.354C483.146,919.867,484.422,918.752,485.885,918.863C487.346,918.992,488.479,920.254,488.412,921.728C488.344,923.233,487.066,924.386,485.563,924.254 M482.981,804.778C483.212,803.306,484.566,802.259,486.009,802.441C487.449,802.622,488.502,803.983,488.361,805.456C488.217,806.952,486.863,807.99,485.333,807.799C483.803,807.604,482.75,806.252,482.981,804.778 M480.785,596.352C479.355,596.607,477.947,595.63,477.643,594.17C477.338,592.711,478.32,591.307,479.838,591.035C481.357,590.767,482.763,591.737,482.981,593.222C483.197,594.687,482.215,596.099,480.785,596.352 M477.643,803.83C477.35,805.294,475.896,806.198,474.393,805.852C472.891,805.503,471.979,804.058,472.361,802.607C472.738,801.174,474.195,800.262,475.609,800.591C477.024,800.917,477.934,802.369,477.643,803.83 M474.693,923.354C473.196,923.165,472.129,921.811,472.311,920.331C472.492,918.851,473.818,917.801,475.273,917.986C476.727,918.198,477.803,919.454,477.663,920.945C477.525,922.424,476.188,923.571,474.693,923.354 M470.494,598.729C469.098,599.13,467.595,598.286,467.148,596.885C466.689,595.444,467.529,593.963,469.012,593.537C470.495,593.116,471.994,593.947,472.361,595.393C472.727,596.839,471.892,598.333,470.494,598.729 M467.148,801.115C466.709,802.54,465.168,803.295,463.707,802.801C462.245,802.31,461.488,800.772,462.02,799.358C462.537,797.98,464.076,797.229,465.453,797.691C466.829,798.156,467.588,799.69,467.148,801.115 M466.965,919.651C466.757,921.106,465.362,922.217,463.879,921.932C462.393,921.667,461.393,920.261,461.646,918.791C461.898,917.321,463.273,916.339,464.717,916.598C466.158,916.876,467.178,918.154,466.965,919.651 M460.5,602.144C459.144,602.664,457.575,602.01,456.986,600.658C456.385,599.275,457.056,597.684,458.495,597.129C459.93,596.563,461.508,597.241,462.02,598.642C462.531,600.042,461.85,601.61,460.5,602.144 M456.986,797.342C456.404,798.715,454.793,799.313,453.388,798.678C451.974,798.062,451.395,796.42,452.064,795.072C452.722,793.749,454.313,793.193,455.646,793.772C456.969,794.371,457.568,795.97,456.986,797.342 M456.34,917.844C456.061,919.296,454.619,920.308,453.145,919.985C451.674,919.646,450.744,918.191,451.066,916.736C451.391,915.28,452.813,914.368,454.241,914.698C455.674,915.011,456.625,916.367,456.34,917.844 M447.263,605.444C446.53,604.143,447.016,602.454,448.398,601.771C449.771,601.068,451.412,601.586,452.064,602.928C452.715,604.269,452.195,605.894,450.902,606.556C449.598,607.196,447.992,606.742,447.263,605.444 M447.263,792.556C446.544,793.862,444.877,794.299,443.541,793.529C442.19,792.782,441.804,791.053,442.596,789.799C443.395,788.53,445.012,788.177,446.283,788.879C447.543,789.603,447.981,791.249,447.263,792.556 M445.816,915.524C445.465,916.967,443.982,917.885,442.518,917.519C441.066,917.107,440.208,915.607,440.602,914.169C440.996,912.73,442.459,911.89,443.87,912.291C445.293,912.646,446.17,914.069,445.816,915.524 M438.073,611.19C437.226,609.987,437.512,608.221,438.825,607.411C440.123,606.579,441.811,606.934,442.596,608.201C443.379,609.47,443.023,611.134,441.801,611.918C440.562,612.678,438.942,612.427,438.073,611.19 M438.073,786.81C437.227,788.036,435.52,788.307,434.264,787.413C433.002,786.527,432.8,784.756,433.707,783.596C434.638,782.406,436.273,782.229,437.463,783.063C438.648,783.904,438.92,785.582,438.073,786.81 M435.418,912.696C434.996,914.126,433.475,914.954,432.023,914.536C430.594,914.053,429.811,912.512,430.273,911.095C430.737,909.678,432.24,908.909,433.629,909.38C435.039,909.785,435.841,911.266,435.418,912.696 M425.65,780.395C424.514,779.352,424.461,777.603,425.489,776.531C426.525,775.451,428.201,775.406,429.271,776.389C430.37,777.34,430.477,779.031,429.51,780.167C428.543,781.303,426.814,781.404,425.65,780.395 M425.168,909.367C424.678,910.775,423.119,911.523,421.689,911.039C420.281,910.496,419.576,908.911,420.107,907.521C420.641,906.125,422.176,905.439,423.543,905.968C424.934,906.438,425.66,907.959,425.168,909.367 M417.793,772.538C416.783,771.373,416.885,769.645,418.021,768.678C419.156,767.711,420.848,767.817,421.799,768.916C422.781,769.985,422.736,771.662,421.656,772.698C420.586,773.727,418.836,773.673,417.793,772.538 M414.592,633.521C413.409,632.612,413.223,630.893,414.176,629.682C415.142,628.48,416.903,628.353,418.021,629.322C419.156,630.307,419.269,631.964,418.358,633.096C417.461,634.239,415.774,634.429,414.592,633.521 M414.592,764.479C413.432,765.388,411.66,765.186,410.774,763.924C409.881,762.667,410.15,760.962,411.379,760.114C412.605,759.267,414.283,759.54,415.125,760.724C415.957,761.914,415.781,763.55,414.592,764.479 M415.094,905.543C414.535,906.926,412.942,907.597,411.538,907.043C410.154,906.44,409.531,904.816,410.128,903.455C410.729,902.085,412.292,901.482,413.637,902.067C415.002,902.604,415.654,904.161,415.094,905.543 M408.389,755.593C407.135,756.384,405.404,755.997,404.658,754.647C403.889,753.311,404.326,751.644,405.632,750.925C406.938,750.206,408.586,750.644,409.309,751.903C410.01,753.177,409.657,754.792,408.389,755.593 M405.217,901.234C404.591,902.588,402.969,903.181,401.593,902.559C400.237,901.896,399.695,900.238,400.357,898.908C401.025,897.568,402.613,897.046,403.931,897.69C405.268,898.295,405.844,899.881,405.217,901.234 M400.846,741.2C402.219,740.618,403.816,741.219,404.415,742.542C404.994,743.875,404.438,745.466,403.115,746.124C401.768,746.793,400.126,746.214,399.51,744.8C398.874,743.395,399.473,741.783,400.846,741.2 M395.387,734.48C394.893,733.02,395.647,731.479,397.072,731.039C398.498,730.6,400.031,731.358,400.496,732.734C400.958,734.111,400.207,735.65,398.829,736.168C397.416,736.699,395.877,735.942,395.387,734.48 M395.561,896.452C394.869,897.773,393.221,898.286,391.877,897.598C390.554,896.871,390.094,895.188,390.818,893.894C391.551,892.586,393.162,892.144,394.447,892.849C395.754,893.518,396.252,895.131,395.561,896.452 M392.73,709.827C394.204,709.686,395.565,710.737,395.746,712.179C395.93,713.62,394.883,714.976,393.409,715.206C391.936,715.437,390.583,714.385,390.389,712.854C390.197,711.325,391.234,709.971,392.73,709.827 M392.188,699C393.679,699.007,394.918,700.189,394.955,701.643C394.992,703.096,393.813,704.339,392.324,704.42C390.836,704.501,389.596,703.318,389.557,701.777C389.518,700.236,390.696,698.993,392.188,699 M386.147,506.793C385.388,505.51,385.832,503.86,387.141,503.107C388.449,502.355,390.097,502.803,390.818,504.106C391.543,505.411,391.098,507.062,389.826,507.793C388.555,508.523,386.907,508.076,386.147,506.793 M386.147,891.207C385.393,892.493,383.721,892.926,382.412,892.173C381.127,891.383,380.748,889.681,381.535,888.422C382.33,887.151,383.961,886.787,385.211,887.555C386.482,888.285,386.902,889.921,386.147,891.207 M376.998,512.487C376.178,511.242,376.542,509.572,377.813,508.758C379.084,507.943,380.75,508.311,381.535,509.578C382.32,510.846,381.957,512.516,380.721,513.308C379.486,514.1,377.82,513.731,376.998,512.487 M376.998,885.513C376.184,886.762,374.492,887.113,373.221,886.298C371.977,885.444,371.68,883.728,372.527,882.508C373.381,881.278,375.029,880.99,376.238,881.819C377.475,882.611,377.814,884.265,376.998,885.513 M368.135,518.615C367.255,517.412,367.539,515.727,368.769,514.852C369.999,513.978,371.682,514.264,372.527,515.492C373.373,516.721,373.089,518.406,371.893,519.256C370.697,520.106,369.016,519.819,368.135,518.615 M368.135,879.385C367.26,880.592,365.554,880.861,364.324,879.986C363.125,879.071,362.908,877.345,363.814,876.166C364.726,874.98,366.389,874.769,367.554,875.659C368.75,876.509,369.01,878.177,368.135,879.385 M359.576,525.164C358.64,524.004,358.842,522.308,360.029,521.375C361.216,520.441,362.91,520.647,363.814,521.834C364.717,523.021,364.516,524.717,363.361,525.623C362.209,526.529,360.514,526.324,359.576,525.164 M359.576,872.836C358.645,874,356.928,874.188,355.74,873.255C354.59,872.278,354.454,870.547,355.416,869.412C356.383,868.272,358.057,868.138,359.176,869.088C360.329,869.994,360.509,871.672,359.576,872.836 M351.344,532.116C350.352,531.002,350.473,529.298,351.613,528.31C352.754,527.321,354.457,527.446,355.416,528.588C356.377,529.729,356.256,531.433,355.146,532.394C354.037,533.354,352.336,533.229,351.344,532.116 M351.344,865.884C350.356,867.002,348.632,867.107,347.491,866.118C346.393,865.083,346.336,863.352,347.354,862.263C348.373,861.172,350.055,861.114,351.121,862.121C352.23,863.081,352.33,864.766,351.344,865.884 M343.453,539.456C342.409,538.391,342.447,536.684,343.541,535.642C344.633,534.601,346.34,534.643,347.354,535.737C348.367,536.831,348.328,538.538,347.266,539.551C346.204,540.563,344.497,540.521,343.453,539.456 M343.453,858.544C342.414,859.613,340.686,859.636,339.594,858.594C338.552,857.502,338.574,855.773,339.644,854.734C340.713,853.695,342.4,853.714,343.412,854.775C344.475,855.788,344.492,857.475,343.453,858.544 M335.924,547.166C334.83,546.152,334.788,544.445,335.83,543.353C336.871,542.261,338.578,542.222,339.644,543.266C340.708,544.31,340.751,546.017,339.738,547.078C338.727,548.141,337.018,548.18,335.924,547.166 M335.924,850.834C334.836,851.851,333.105,851.794,332.068,850.696C331.08,849.556,331.186,847.831,332.304,846.845C333.422,845.857,335.106,845.957,336.066,847.065C337.074,848.133,337.016,849.814,335.924,850.834 M328.775,555.229C327.633,554.27,327.51,552.566,328.498,551.426C329.486,550.285,331.189,550.164,332.304,551.155C333.417,552.147,333.541,553.851,332.581,554.959C331.621,556.068,329.916,556.188,328.775,555.229 M328.775,842.771C327.641,843.733,325.91,843.598,324.933,842.446C324,841.26,324.188,839.543,325.352,838.611C326.516,837.679,328.193,837.858,329.1,839.013C330.049,840.13,329.914,841.805,328.775,842.771 M322.021,563.627C320.836,562.723,320.629,561.028,321.563,559.841C322.494,558.654,324.191,558.452,325.352,559.389C326.512,560.326,326.717,562.021,325.811,563.175C324.904,564.328,323.207,564.53,322.021,563.627 M322.021,834.373C320.843,835.279,319.117,835.063,318.201,833.863C317.326,832.634,317.596,830.928,318.803,830.053C320.011,829.178,321.679,829.438,322.528,830.634C323.418,831.799,323.207,833.462,322.021,834.373 M315.68,572.34C314.451,571.494,314.164,569.812,315.039,568.581C315.914,567.351,317.6,567.067,318.803,567.947C320.007,568.827,320.294,570.51,319.443,571.706C318.594,572.901,316.908,573.185,315.68,572.34 M315.68,825.66C314.46,826.508,312.743,826.211,311.89,824.966C311.074,823.695,311.426,822.005,312.675,821.189C313.923,820.373,315.576,820.714,316.367,821.948C317.197,823.158,316.909,824.807,315.68,825.66 M309.766,581.348C308.498,580.562,308.131,578.896,308.945,577.625C309.76,576.354,311.43,575.99,312.675,576.811C313.92,577.632,314.287,579.299,313.495,580.534C312.703,581.769,311.033,582.133,309.766,581.348 M309.766,816.652C308.508,817.439,306.805,817.061,306.014,815.775C305.262,814.467,305.694,812.794,306.98,812.04C308.268,811.286,309.902,811.705,310.633,812.978C311.4,814.227,311.035,815.858,309.766,816.652 M304.295,807.368C302.999,808.094,301.316,807.634,300.59,806.311C299.901,804.967,300.414,803.318,301.736,802.627C303.057,801.936,304.67,802.434,305.338,803.739C306.045,805.025,305.602,806.637,304.295,807.368 M299.279,797.83C297.949,798.492,296.293,797.95,295.629,796.595C295.007,795.22,295.6,793.597,296.953,792.971C298.307,792.344,299.893,792.92,300.496,794.257C301.142,795.574,300.619,797.162,299.279,797.83 M291.145,786.649C290.591,785.245,291.262,783.653,292.645,783.094C294.026,782.533,295.582,783.186,296.12,784.551C296.705,785.896,296.102,787.459,294.732,788.06C293.371,788.657,291.746,788.033,291.145,786.649 M287.148,776.498C286.664,775.068,287.412,773.511,288.82,773.019C290.229,772.526,291.75,773.254,292.22,774.644C292.748,776.012,292.063,777.547,290.668,778.08C289.276,778.611,287.691,777.906,287.148,776.498 M283.65,766.164C283.234,764.713,284.063,763.192,285.49,762.77C286.922,762.347,288.402,763.149,288.807,764.559C289.277,765.948,288.51,767.45,287.093,767.914C285.676,768.377,284.135,767.594,283.65,766.164 M280.668,755.669C280.303,754.205,281.221,752.723,282.664,752.371C284.118,752.017,285.541,752.895,285.896,754.317C286.298,755.729,285.457,757.191,284.018,757.586C282.58,757.979,281.08,757.122,280.668,755.669 M278.201,745.042C277.881,743.567,278.893,742.127,280.344,741.848C281.82,741.563,283.176,742.514,283.489,743.946C283.82,745.375,282.907,746.796,281.451,747.12C279.996,747.443,278.541,746.514,278.201,745.042 M276.256,734.309C275.971,732.825,277.081,731.431,278.535,731.224C280.033,731.01,281.313,732.029,281.59,733.47C281.849,734.914,280.866,736.289,279.396,736.542C277.927,736.795,276.521,735.795,276.256,734.309 M274.833,723.494C274.615,721.999,275.764,720.663,277.242,720.524C278.733,720.385,279.99,721.462,280.201,722.914C280.387,724.369,279.337,725.696,277.857,725.877C276.377,726.059,275.022,724.991,274.833,723.494 M276.46,709.775C277.934,709.708,279.195,710.841,279.324,712.303C279.436,713.766,278.32,715.041,276.833,715.15C275.346,715.261,274.048,714.129,273.934,712.624C273.803,711.12,274.954,709.844,276.46,709.775 M276.188,699C277.679,699.003,278.918,700.195,278.955,701.662C278.992,703.129,277.814,704.349,276.324,704.388C274.833,704.426,273.594,703.234,273.556,701.726C273.518,700.217,274.696,698.997,276.188,699 M276.46,688.225C277.949,688.299,279.127,689.548,279.09,691.015C279.053,692.481,277.814,693.645,276.324,693.612C274.833,693.58,273.655,692.331,273.693,690.822C273.732,689.313,274.971,688.15,276.46,688.225 M277.242,677.476C278.727,677.621,279.839,678.925,279.729,680.388C279.617,681.851,278.32,682.953,276.833,682.85C275.346,682.746,274.232,681.442,274.347,679.937C274.461,678.433,275.758,677.33,277.242,677.476 M275.52,669.095C275.711,667.598,277.061,666.56,278.535,666.776C280.012,666.993,281.059,668.349,280.873,669.805C280.688,671.26,279.338,672.298,277.857,672.123C276.376,671.948,275.33,670.593,275.52,669.095 M277.214,658.321C277.479,656.836,278.881,655.864,280.344,656.152C281.807,656.44,282.783,657.845,282.526,659.289C282.269,660.733,280.867,661.704,279.396,661.458C277.926,661.212,276.947,659.808,277.214,658.321 M279.428,647.643C279.768,646.171,281.217,645.27,282.664,645.629C284.111,645.988,285.018,647.437,284.688,648.866C284.357,650.296,282.908,651.197,281.451,650.88C279.994,650.562,279.088,649.113,279.428,647.643 M282.158,637.083C282.57,635.631,284.063,634.801,285.49,635.23C286.918,635.659,287.752,637.15,287.352,638.562C286.951,639.973,285.459,640.803,284.018,640.414C282.578,640.026,281.746,638.535,282.158,637.083 M285.398,626.669C285.883,625.239,287.414,624.483,288.82,624.981C290.227,625.479,290.984,627.01,290.514,628.399C290.044,629.788,288.512,630.544,287.093,630.086C285.674,629.629,284.915,628.099,285.398,626.669 M289.143,616.425C289.697,615.021,291.265,614.341,292.645,614.906C294.023,615.473,294.706,617.037,294.168,618.402C293.631,619.767,292.063,620.446,290.668,619.92C289.271,619.395,288.59,617.829,289.143,616.425 M293.381,606.376C294.004,605,295.602,604.397,296.953,605.029C298.303,605.662,298.908,607.258,298.305,608.595C297.699,609.931,296.102,610.533,294.732,609.94C293.365,609.348,292.76,607.751,293.381,606.376 M298.102,596.544C298.791,595.2,300.418,594.677,301.736,595.373C303.055,596.07,303.581,597.693,302.912,598.999C302.244,600.305,300.617,600.829,299.279,600.17C297.941,599.511,297.414,597.888,298.102,596.544 M303.295,586.953C304.047,585.645,305.697,585.2,306.98,585.96C308.264,586.72,308.711,588.367,307.98,589.639C307.249,590.91,305.598,591.354,304.295,590.632C302.99,589.909,302.543,588.262,303.295,586.953 M395.219,691.079C395.109,692.527,393.806,693.646,392.324,693.58C390.826,693.512,389.719,692.211,389.834,690.674C389.95,689.137,391.248,688.018,392.73,688.173C394.215,688.329,395.328,689.63,395.219,691.079 M391.223,679.651C391.494,678.133,392.898,677.15,394.357,677.455C395.817,677.761,396.795,679.168,396.539,680.598C396.285,682.027,394.875,683.01,393.409,682.794C391.925,682.575,390.954,681.169,391.223,679.651 M395.58,725.827C394.13,726.208,392.685,725.297,392.336,723.794C391.99,722.291,392.894,720.837,394.357,720.545C395.818,720.253,397.271,721.163,397.598,722.578C397.926,723.993,397.014,725.449,395.58,725.827 M393.725,668.824C394.15,667.342,395.632,666.502,397.072,666.961C398.474,667.407,399.317,668.911,398.917,670.307C398.521,671.704,397.025,672.539,395.58,672.173C394.135,671.808,393.304,670.308,393.725,668.824 M396.73,497.915C398.075,497.227,399.699,497.754,400.357,499.092C401.017,500.43,400.492,502.056,399.188,502.725C397.881,503.394,396.258,502.866,395.561,501.548C394.863,500.229,395.388,498.604,396.73,497.915 M402.33,660.312C401.798,661.663,400.23,662.344,398.829,661.832C397.429,661.32,396.75,659.742,397.316,658.308C397.871,656.868,399.463,656.198,400.846,656.8C402.197,657.388,402.852,658.956,402.33,660.312 M401.959,648.211C402.642,646.828,404.33,646.343,405.632,647.075C406.93,647.805,407.385,649.411,406.743,650.716C406.081,652.009,404.457,652.527,403.115,651.876C401.773,651.225,401.256,649.584,401.959,648.211 M406.563,493.193C407.938,492.572,409.535,493.177,410.128,494.545C410.721,495.913,410.119,497.513,408.782,498.117C407.445,498.721,405.85,498.116,405.217,496.766C404.586,495.415,405.188,493.815,406.563,493.193 M412.105,641.613C411.322,642.836,409.657,643.191,408.389,642.407C407.121,641.623,406.766,639.936,407.6,638.638C408.408,637.324,410.176,637.038,411.379,637.886C412.613,638.755,412.865,640.374,412.105,641.613 M416.612,488.956C418.018,488.402,419.582,489.084,420.107,490.479C420.633,491.875,419.954,493.442,418.59,493.98C417.225,494.519,415.66,493.836,415.094,492.457C414.528,491.077,415.208,489.51,416.612,488.956 M421.617,621.431C422.732,620.366,424.467,620.384,425.489,621.469C426.512,622.554,426.488,624.247,425.436,625.249C424.434,626.301,422.742,626.324,421.656,625.302C420.57,624.279,420.553,622.545,421.617,621.431 M426.856,485.212C428.287,484.728,429.816,485.486,430.273,486.905C430.73,488.325,429.977,489.856,428.586,490.327C427.197,490.797,425.667,490.038,425.168,488.633C424.671,487.228,425.426,485.695,426.856,485.212 M433.707,614.404C434.615,615.587,434.426,617.273,433.283,618.171C432.15,619.081,430.494,618.969,429.51,617.833C428.541,616.716,428.668,614.954,429.869,613.987C431.08,613.034,432.8,613.222,433.707,614.404 M437.271,481.971C438.723,481.558,440.215,482.392,440.602,483.831C440.99,485.271,440.16,486.764,438.75,487.164C437.338,487.564,435.847,486.731,435.418,485.304C434.988,483.875,435.818,482.383,437.271,481.971 M447.83,479.24C449.301,478.9,450.75,479.807,451.066,481.264C451.385,482.721,450.482,484.17,449.055,484.5C447.625,484.829,446.176,483.923,445.816,482.476C445.457,481.028,446.359,479.58,447.83,479.24 M458.51,477.026C459.995,476.761,461.398,477.738,461.646,479.209C461.892,480.68,460.921,482.081,459.477,482.339C458.033,482.597,456.629,481.619,456.34,480.156C456.053,478.693,457.023,477.292,458.51,477.026 M469.283,475.332C470.78,475.142,472.135,476.188,472.311,477.669C472.485,479.15,471.447,480.501,469.992,480.686C468.537,480.87,467.182,479.824,466.965,478.349C466.747,476.873,467.785,475.522,469.283,475.332 M480.125,474.159C481.63,474.045,482.934,475.158,483.037,476.646C483.141,478.133,482.038,479.43,480.575,479.541C479.112,479.651,477.809,478.538,477.663,477.055C477.518,475.57,478.619,474.274,480.125,474.159 M491.01,473.506C492.518,473.468,493.768,474.646,493.8,476.137C493.832,477.627,492.67,478.865,491.203,478.902C489.736,478.939,488.486,477.762,488.412,476.272C488.338,474.783,489.502,473.545,491.01,473.506 M501.913,473.368C503.422,473.406,504.613,474.646,504.575,476.137C504.535,477.627,503.316,478.806,501.85,478.768C500.383,478.73,499.19,477.491,499.188,476C499.185,474.509,500.404,473.33,501.913,473.368 M512.812,473.746C514.317,473.86,515.447,475.158,515.338,476.646C515.229,478.133,513.953,479.248,512.49,479.137C511.028,479.008,509.896,477.746,509.963,476.272C510.031,474.767,511.308,473.615,512.812,473.746 M523.682,474.646C525.179,474.835,526.246,476.189,526.064,477.669C525.884,479.149,524.557,480.199,523.102,480.014C521.649,479.802,520.572,478.546,520.712,477.055C520.85,475.576,522.187,474.429,523.682,474.646 M531.411,478.349C531.618,476.894,533.013,475.783,534.496,476.068C535.982,476.333,536.982,477.739,536.729,479.209C536.477,480.679,535.102,481.661,533.658,481.402C532.217,481.124,531.197,479.846,531.411,478.349 M542.035,480.156C542.314,478.704,543.755,477.692,545.229,478.014C546.701,478.354,547.631,479.809,547.308,481.264C546.982,482.72,545.563,483.632,544.133,483.302C542.701,482.989,541.752,481.633,542.035,480.156 M552.559,482.476C552.91,481.033,554.393,480.114,555.856,480.481C557.31,480.893,558.167,482.393,557.773,483.831C557.379,485.27,555.916,486.11,554.505,485.709C553.082,485.354,552.205,483.931,552.559,482.476 M560.301,611.19C561.149,609.964,562.854,609.693,564.111,610.587C565.373,611.473,565.575,613.244,564.667,614.404C563.737,615.594,562.102,615.771,560.911,614.937C559.728,614.096,559.454,612.418,560.301,611.19 M562.957,485.304C563.38,483.874,564.9,483.046,566.352,483.464C567.781,483.947,568.564,485.488,568.102,486.905C567.638,488.322,566.135,489.091,564.746,488.62C563.337,488.215,562.534,486.734,562.957,485.304 M572.726,617.605C573.86,618.648,573.914,620.397,572.885,621.469C571.85,622.549,570.173,622.594,569.104,621.611C568.005,620.66,567.898,618.969,568.865,617.833C569.832,616.697,571.561,616.596,572.726,617.605 M573.206,488.633C573.698,487.225,575.256,486.477,576.686,486.961C578.094,487.504,578.799,489.089,578.268,490.479C577.734,491.875,576.199,492.561,574.832,492.032C573.442,491.562,572.714,490.041,573.206,488.633 M580.582,625.462C581.592,626.627,581.49,628.355,580.354,629.322C579.219,630.289,577.527,630.183,576.576,629.084C575.594,628.015,575.639,626.338,576.719,625.302C577.79,624.273,579.539,624.327,580.582,625.462 M583.281,492.457C583.841,491.074,585.433,490.403,586.837,490.957C588.221,491.559,588.845,493.184,588.247,494.545C587.646,495.915,586.083,496.518,584.738,495.933C583.374,495.396,582.721,493.839,583.281,492.457 M589.986,642.407C591.24,641.616,592.969,642.003,593.717,643.353C594.486,644.689,594.049,646.356,592.743,647.075C591.436,647.794,589.79,647.356,589.066,646.097C588.364,644.823,588.717,643.208,589.986,642.407 M593.158,496.766C593.783,495.412,595.407,494.819,596.782,495.441C598.138,496.104,598.68,497.762,598.018,499.092C597.35,500.432,595.762,500.954,594.444,500.31C593.107,499.705,592.531,498.118,593.158,496.766 M597.529,656.8C596.157,657.382,594.559,656.781,593.96,655.458C593.381,654.125,593.936,652.534,595.26,651.876C596.607,651.207,598.249,651.786,598.865,653.2C599.502,654.605,598.902,656.217,597.529,656.8 M602.988,663.52C603.482,664.98,602.728,666.521,601.303,666.961C599.877,667.4,598.344,666.642,597.879,665.266C597.417,663.889,598.168,662.35,599.546,661.832C600.96,661.301,602.498,662.058,602.988,663.52 M602.814,501.548C603.506,500.227,605.155,499.714,606.498,500.402C607.821,501.129,608.281,502.812,607.556,504.106C606.824,505.414,605.213,505.856,603.927,505.15C602.621,504.482,602.123,502.869,602.814,501.548 M600.778,675.422C600.449,674.007,601.361,672.551,602.795,672.173C604.245,671.792,605.69,672.703,606.039,674.206C606.385,675.709,605.481,677.163,604.018,677.455C602.557,677.747,601.104,676.837,600.778,675.422 M605.644,688.173C604.171,688.314,602.81,687.263,602.629,685.821C602.445,684.38,603.492,683.024,604.965,682.794C606.439,682.563,607.792,683.615,607.986,685.146C608.178,686.675,607.14,688.029,605.644,688.173 M608.542,707.326C608.425,708.863,607.127,709.982,605.644,709.827C604.16,709.671,603.047,708.37,603.157,706.921C603.266,705.473,604.568,704.354,606.051,704.42C607.549,704.488,608.656,705.789,608.542,707.326 M606.188,699C604.696,698.993,603.457,697.811,603.42,696.357C603.383,694.904,604.562,693.661,606.051,693.58C607.539,693.499,608.779,694.682,608.818,696.223C608.857,697.764,607.679,699.007,606.188,699 M694.081,590.632C695.377,589.906,697.059,590.366,697.785,591.689C698.474,593.033,697.961,594.682,696.64,595.373C695.318,596.064,693.705,595.566,693.037,594.261C692.331,592.975,692.773,591.363,694.081,590.632 M699.096,600.17C700.426,599.508,702.083,600.05,702.746,601.405C703.367,602.78,702.775,604.403,701.422,605.029C700.068,605.656,698.482,605.08,697.878,603.743C697.233,602.426,697.756,600.838,699.096,600.17 M707.23,611.351C707.783,612.755,707.113,614.347,705.73,614.906C704.349,615.467,702.792,614.814,702.255,613.449C701.67,612.104,702.272,610.541,703.643,609.94C705.004,609.343,706.629,609.967,707.23,611.351 M711.227,621.502C711.711,622.932,710.963,624.489,709.555,624.981C708.146,625.474,706.625,624.746,706.155,623.356C705.627,621.988,706.313,620.453,707.708,619.92C709.098,619.389,710.684,620.094,711.227,621.502 M714.724,631.836C715.142,633.287,714.313,634.808,712.884,635.23C711.453,635.653,709.973,634.851,709.566,633.441C709.097,632.052,709.865,630.55,711.282,630.086C712.699,629.623,714.24,630.406,714.724,631.836 M717.706,642.331C718.072,643.795,717.154,645.277,715.712,645.629C714.257,645.983,712.834,645.105,712.479,643.683C712.077,642.271,712.918,640.809,714.356,640.414C715.795,640.021,717.295,640.878,717.706,642.331 M720.174,652.958C720.495,654.433,719.482,655.873,718.031,656.152C716.555,656.437,715.198,655.486,714.885,654.054C714.556,652.625,715.468,651.204,716.924,650.88C718.379,650.557,719.834,651.486,720.174,652.958 M722.119,663.691C722.404,665.175,721.294,666.569,719.839,666.776C718.342,666.99,717.063,665.971,716.785,664.53C716.526,663.086,717.509,661.711,718.979,661.458C720.447,661.205,721.854,662.205,722.119,663.691 M723.542,674.506C723.759,676.001,722.611,677.337,721.133,677.476C719.642,677.615,718.385,676.538,718.174,675.086C717.988,673.631,719.038,672.304,720.518,672.123C721.998,671.941,723.352,673.009,723.542,674.506 M721.915,688.225C720.441,688.292,719.18,687.159,719.051,685.697C718.939,684.234,720.055,682.959,721.542,682.85C723.029,682.739,724.327,683.871,724.441,685.376C724.572,686.88,723.421,688.156,721.915,688.225 M724.818,696.274C724.857,697.783,723.679,699.003,722.188,699C720.696,698.997,719.457,697.805,719.42,696.338C719.381,694.871,720.561,693.651,722.051,693.612C723.542,693.574,724.781,694.766,724.818,696.274 M499.188,469C372.162,469,269.188,571.975,269.188,699C269.188,826.025,372.162,929,499.188,929C626.213,929,729.188,826.025,729.188,699C729.188,571.975,626.213,469,499.188,469" d:IsEffectDisabled="True">
+					<Path.OpacityMask>
+						<RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+							<GradientStop Color="Black" Offset="0"/>
+							<GradientStop Color="Black" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.OpacityMask>
+					<Path.Fill>
+						<RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+							<GradientStop Color="#FF333332" Offset="0"/>
+							<GradientStop Color="#FF040707" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Stroke="#FF050708" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M408.0137,488.0332L586.3617,910.9672" Margin="138.5,18.533,142.5,17.467" UseLayoutRounding="False"/>
+				<Path Stretch="Fill" Stroke="#FF050708" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M284.6016,613.0254L709.7716,785.9734" Margin="14.999,143.525,19.001,142.475" UseLayoutRounding="False"/>
+				<Path Stretch="Fill" Stroke="#FF050708" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M583.6602,486.915L410.7122,912.084" Margin="141.025,17.5,144.975,16.5" UseLayoutRounding="False"/>
+				<Path Stretch="Fill" Stroke="#FF050708" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M708.6523,610.3262L285.7193,788.6732" Margin="16.032,141,19.968,140" UseLayoutRounding="False"/>
+				<Canvas Height="425.335" Width="425.337" Opacity="0.14999400079250336" Margin="17,18,18,17">
+					<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="423.763" Width="179.754" Canvas.Left="122.793" Canvas.Top="0.786" Data="M409.8105,488.1182L588.5645,910.8812"/>
+					<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="173.54" Width="426.337" Canvas.Left="-0.5" Canvas.Top="125.897" Data="M286.5176,613.2295L711.8546,785.7695"/>
+					<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="426.335" Width="173.54" Canvas.Left="125.898" Canvas.Top="-0.5" Data="M585.4561,486.832L412.9161,912.167"/>
+					<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="179.753" Width="423.762" Canvas.Left="0.787" Canvas.Top="122.791" Data="M710.5664,610.123L287.8044,788.876"/>
+				</Canvas>
+				<Path x:Name="reelGloss" Stretch="Fill" UseLayoutRounding="False" Data="F1M721.915,709.775C720.426,709.701,719.248,708.452,719.285,706.985C719.322,705.519,720.561,704.355,722.051,704.388C723.542,704.42,724.719,705.669,724.682,707.178C724.643,708.687,723.404,709.85,721.915,709.775 M721.133,720.524C719.649,720.379,718.535,719.075,718.646,717.612C718.758,716.149,720.055,715.047,721.542,715.15C723.029,715.254,724.143,716.558,724.028,718.063C723.913,719.567,722.617,720.67,721.133,720.524 M722.855,728.905C722.665,730.402,721.314,731.44,719.839,731.224C718.363,731.007,717.317,729.651,717.502,728.195C717.686,726.74,719.037,725.702,720.518,725.877C721.999,726.052,723.046,727.407,722.855,728.905 M721.161,739.679C720.896,741.164,719.494,742.136,718.031,741.848C716.568,741.56,715.591,740.155,715.849,738.711C716.106,737.267,717.508,736.296,718.979,736.542C720.449,736.788,721.427,738.192,721.161,739.679 M718.947,750.357C718.607,751.829,717.159,752.73,715.712,752.371C714.265,752.012,713.358,750.563,713.688,749.134C714.018,747.704,715.467,746.803,716.924,747.12C718.381,747.438,719.287,748.887,718.947,750.357 M716.217,760.917C715.805,762.369,714.313,763.199,712.884,762.77C711.456,762.341,710.623,760.85,711.023,759.438C711.424,758.027,712.916,757.198,714.356,757.586C715.796,757.974,716.63,759.465,716.217,760.917 M712.977,771.331C712.492,772.761,710.96,773.517,709.555,773.019C708.149,772.521,707.391,770.99,707.86,769.602C708.331,768.212,709.862,767.456,711.282,767.914C712.701,768.371,713.46,769.901,712.977,771.331 M709.23,781.575C708.678,782.979,707.11,783.659,705.73,783.094C704.352,782.527,703.668,780.963,704.207,779.598C704.745,778.233,706.313,777.554,707.708,778.08C709.104,778.605,709.785,780.171,709.23,781.575 M704.994,791.624C704.372,793,702.772,793.603,701.422,792.971C700.071,792.338,699.467,790.742,700.07,789.405C700.675,788.069,702.274,787.467,703.643,788.06C705.011,788.652,705.615,790.249,704.994,791.624 M700.272,801.456C699.584,802.8,697.958,803.323,696.64,802.627C695.321,801.93,694.794,800.307,695.463,799.001C696.132,797.695,697.758,797.171,699.096,797.83C700.434,798.489,700.961,800.112,700.272,801.456 M695.08,811.047C694.327,812.355,692.678,812.8,691.395,812.04C690.111,811.28,689.664,809.633,690.395,808.361C691.127,807.09,692.776,806.646,694.081,807.368C695.385,808.091,695.832,809.738,695.08,811.047 M687.742,585.022C686.975,583.773,687.34,582.142,688.609,581.348C689.867,580.561,691.57,580.939,692.36,582.225C693.113,583.533,692.681,585.205,691.395,585.96C690.108,586.714,688.473,586.295,687.742,585.022 M689.43,820.375C688.615,821.646,686.945,822.01,685.699,821.189C684.456,820.368,684.088,818.701,684.88,817.466C685.672,816.231,687.342,815.867,688.609,816.652C689.877,817.438,690.244,819.104,689.43,820.375 M682.007,576.052C681.178,574.842,681.465,573.193,682.695,572.34C683.915,571.492,685.632,571.789,686.485,573.033C687.301,574.305,686.949,575.995,685.699,576.811C684.451,577.627,682.799,577.286,682.007,576.052 M683.336,829.419C682.461,830.649,680.775,830.933,679.572,830.053C678.367,829.173,678.081,827.49,678.932,826.294C679.781,825.099,681.467,824.815,682.695,825.66C683.924,826.506,684.211,828.188,683.336,829.419 M675.847,567.366C674.956,566.201,675.168,564.538,676.354,563.627C677.531,562.721,679.259,562.937,680.174,564.137C681.049,565.366,680.779,567.072,679.572,567.947C678.364,568.822,676.696,568.562,675.847,567.366 M676.813,838.159C675.881,839.346,674.184,839.548,673.023,838.611C671.863,837.674,671.658,835.979,672.564,834.826C673.471,833.672,675.168,833.47,676.354,834.373C677.54,835.277,677.746,836.972,676.813,838.159 M669.275,558.987C668.325,557.87,668.461,556.195,669.6,555.229C670.734,554.267,672.465,554.402,673.442,555.553C674.375,556.739,674.188,558.457,673.023,559.389C671.859,560.321,670.182,560.142,669.275,558.987 M669.878,846.574C668.89,847.716,667.186,847.836,666.071,846.845C664.958,845.853,664.834,844.15,665.794,843.041C666.755,841.932,668.459,841.812,669.6,842.771C670.741,843.73,670.866,845.434,669.878,846.574 M662.546,854.647C661.504,855.739,659.797,855.778,658.73,854.734C657.667,853.69,657.624,851.983,658.637,850.922C659.649,849.859,661.356,849.82,662.45,850.834C663.545,851.848,663.587,853.555,662.546,854.647 M654.836,862.358C653.742,863.399,652.035,863.357,651.021,862.263C650.008,861.169,650.047,859.462,651.109,858.449C652.171,857.437,653.878,857.479,654.922,858.544C655.965,859.609,655.927,861.316,654.836,862.358 M646.762,869.69C645.621,870.679,643.918,870.554,642.959,869.413C641.999,868.271,642.12,866.567,643.229,865.606C644.338,864.646,646.04,864.771,647.031,865.884C648.023,866.998,647.903,868.702,646.762,869.69 M638.347,876.626C637.159,877.559,635.465,877.353,634.562,876.166C633.657,874.98,633.859,873.283,635.014,872.377C636.167,871.471,637.861,871.676,638.799,872.836C639.734,873.996,639.533,875.693,638.347,876.626 M629.606,883.148C628.377,884.022,626.693,883.736,625.849,882.508C625.002,881.279,625.285,879.595,626.481,878.744C627.678,877.894,629.36,878.181,630.24,879.385C631.12,880.588,630.837,882.273,629.606,883.148 M620.563,889.242C619.292,890.057,617.625,889.689,616.84,888.422C616.055,887.154,616.418,885.484,617.653,884.692C618.889,883.9,620.556,884.269,621.377,885.513C622.197,886.758,621.833,888.428,620.563,889.242 M611.234,894.893C609.926,895.645,608.278,895.197,607.556,893.894C606.833,892.589,607.277,890.938,608.549,890.208C609.82,889.477,611.468,889.924,612.228,891.207C612.987,892.49,612.543,894.14,611.234,894.893 M601.644,900.085C600.3,900.773,598.677,900.246,598.018,898.908C597.358,897.571,597.883,895.944,599.188,895.275C600.494,894.606,602.117,895.134,602.814,896.452C603.512,897.771,602.987,899.396,601.644,900.085 M591.813,904.807C590.436,905.428,588.841,904.823,588.247,903.455C587.654,902.087,588.257,900.487,589.593,899.883C590.93,899.279,592.525,899.884,593.158,901.234C593.79,902.585,593.188,904.185,591.813,904.807 M581.763,909.044C580.358,909.598,578.793,908.916,578.268,907.521C577.741,906.125,578.421,904.558,579.785,904.02C581.15,903.481,582.715,904.164,583.281,905.543C583.847,906.923,583.167,908.49,581.763,909.044 M571.518,912.789C570.089,913.272,568.559,912.514,568.102,911.095C567.644,909.675,568.398,908.144,569.789,907.673C571.178,907.203,572.708,907.962,573.206,909.367C573.704,910.772,572.949,912.305,571.518,912.789 M561.104,916.029C559.652,916.442,558.161,915.608,557.773,914.169C557.385,912.729,558.215,911.236,559.627,910.836C561.037,910.436,562.528,911.269,562.957,912.696C563.387,914.125,562.557,915.617,561.104,916.029 M550.545,918.76C549.074,919.1,547.625,918.193,547.308,916.736C546.99,915.279,547.892,913.83,549.321,913.5C550.75,913.171,552.199,914.077,552.559,915.524C552.918,916.972,552.017,918.42,550.545,918.76 M539.866,920.974C538.38,921.239,536.976,920.262,536.729,918.791C536.482,917.32,537.454,915.919,538.898,915.661C540.343,915.403,541.747,916.381,542.035,917.844C542.323,919.307,541.352,920.708,539.866,920.974 M529.093,922.668C527.595,922.858,526.239,921.812,526.064,920.331C525.89,918.85,526.928,917.499,528.383,917.314C529.839,917.13,531.194,918.176,531.411,919.651C531.628,921.127,530.59,922.478,529.093,922.668 M518.25,923.841C516.745,923.955,515.441,922.842,515.338,921.354C515.234,919.867,516.337,918.57,517.8,918.459C519.263,918.349,520.566,919.462,520.712,920.945C520.857,922.43,519.755,923.726,518.25,923.841 M507.365,924.494C505.856,924.532,504.607,923.354,504.575,921.863C504.543,920.373,505.706,919.134,507.173,919.098C508.64,919.061,509.889,920.238,509.963,921.728C510.037,923.217,508.874,924.455,507.365,924.494 M332.188,699C332.188,606.769,406.956,532,499.188,532C591.418,532,666.188,606.769,666.188,699C666.188,791.231,591.418,866,499.188,866C406.956,866,332.188,791.231,332.188,699 M496.462,924.632C494.953,924.594,493.762,923.354,493.8,921.863C493.839,920.373,495.059,919.194,496.525,919.232C497.992,919.27,499.185,920.509,499.188,922C499.19,923.491,497.971,924.67,496.462,924.632 M485.563,924.254C484.059,924.14,482.928,922.842,483.037,921.354C483.146,919.867,484.422,918.752,485.885,918.863C487.346,918.992,488.479,920.254,488.412,921.728C488.344,923.233,487.066,924.386,485.563,924.254 M474.693,923.354C473.196,923.165,472.129,921.811,472.311,920.331C472.492,918.851,473.818,917.801,475.273,917.986C476.727,918.198,477.803,919.454,477.663,920.945C477.525,922.424,476.188,923.571,474.693,923.354 M466.965,919.651C466.757,921.106,465.362,922.217,463.879,921.932C462.393,921.667,461.393,920.261,461.646,918.791C461.898,917.321,463.273,916.339,464.717,916.598C466.158,916.876,467.178,918.154,466.965,919.651 M456.34,917.844C456.061,919.296,454.619,920.308,453.145,919.985C451.674,919.646,450.744,918.191,451.066,916.736C451.391,915.28,452.813,914.368,454.241,914.698C455.674,915.011,456.625,916.367,456.34,917.844 M445.816,915.524C445.465,916.967,443.982,917.885,442.518,917.519C441.066,917.107,440.208,915.607,440.602,914.169C440.996,912.73,442.459,911.89,443.87,912.291C445.293,912.646,446.17,914.069,445.816,915.524 M435.418,912.696C434.996,914.126,433.475,914.954,432.023,914.536C430.594,914.053,429.811,912.512,430.273,911.095C430.737,909.678,432.24,908.909,433.629,909.38C435.039,909.785,435.841,911.266,435.418,912.696 M425.168,909.367C424.678,910.775,423.119,911.523,421.689,911.039C420.281,910.496,419.576,908.911,420.107,907.521C420.641,906.125,422.176,905.439,423.543,905.968C424.934,906.438,425.66,907.959,425.168,909.367 M415.094,905.543C414.535,906.926,412.942,907.597,411.538,907.043C410.154,906.44,409.531,904.816,410.128,903.455C410.729,902.085,412.292,901.482,413.637,902.067C415.002,902.604,415.654,904.161,415.094,905.543 M405.217,901.234C404.591,902.588,402.969,903.181,401.593,902.559C400.237,901.896,399.695,900.238,400.357,898.908C401.025,897.568,402.613,897.046,403.931,897.69C405.268,898.295,405.844,899.881,405.217,901.234 M395.561,896.452C394.869,897.773,393.221,898.286,391.877,897.598C390.554,896.871,390.094,895.188,390.818,893.894C391.551,892.586,393.162,892.144,394.447,892.849C395.754,893.518,396.252,895.131,395.561,896.452 M386.147,891.207C385.393,892.493,383.721,892.926,382.412,892.173C381.127,891.383,380.748,889.681,381.535,888.422C382.33,887.151,383.961,886.787,385.211,887.555C386.482,888.285,386.902,889.921,386.147,891.207 M376.998,885.513C376.184,886.762,374.492,887.113,373.221,886.298C371.977,885.444,371.68,883.728,372.527,882.508C373.381,881.278,375.029,880.99,376.238,881.819C377.475,882.611,377.814,884.265,376.998,885.513 M368.135,879.385C367.26,880.592,365.554,880.861,364.324,879.986C363.125,879.071,362.908,877.345,363.814,876.166C364.726,874.98,366.389,874.769,367.554,875.659C368.75,876.509,369.01,878.177,368.135,879.385 M359.576,872.836C358.645,874,356.928,874.188,355.74,873.255C354.59,872.278,354.454,870.547,355.416,869.412C356.383,868.272,358.057,868.138,359.176,869.088C360.329,869.994,360.509,871.672,359.576,872.836 M351.344,865.884C350.356,867.002,348.632,867.107,347.491,866.118C346.393,865.083,346.336,863.352,347.354,862.263C348.373,861.172,350.055,861.114,351.121,862.121C352.23,863.081,352.33,864.766,351.344,865.884 M343.453,858.544C342.414,859.613,340.686,859.636,339.594,858.594C338.552,857.502,338.574,855.773,339.644,854.734C340.713,853.695,342.4,853.714,343.412,854.775C344.475,855.788,344.492,857.475,343.453,858.544 M335.924,850.834C334.836,851.851,333.105,851.794,332.068,850.696C331.08,849.556,331.186,847.831,332.304,846.845C333.422,845.857,335.106,845.957,336.066,847.065C337.074,848.133,337.016,849.814,335.924,850.834 M328.775,555.229C327.633,554.27,327.51,552.566,328.498,551.426C329.486,550.285,331.189,550.164,332.304,551.155C333.417,552.147,333.541,553.851,332.581,554.959C331.621,556.068,329.916,556.188,328.775,555.229 M328.775,842.771C327.641,843.733,325.91,843.598,324.933,842.446C324,841.26,324.188,839.543,325.352,838.611C326.516,837.679,328.193,837.858,329.1,839.013C330.049,840.13,329.914,841.805,328.775,842.771 M322.021,563.627C320.836,562.723,320.629,561.028,321.563,559.841C322.494,558.654,324.191,558.452,325.352,559.389C326.512,560.326,326.717,562.021,325.811,563.175C324.904,564.328,323.207,564.53,322.021,563.627 M322.021,834.373C320.843,835.279,319.117,835.063,318.201,833.863C317.326,832.634,317.596,830.928,318.803,830.053C320.011,829.178,321.679,829.438,322.528,830.634C323.418,831.799,323.207,833.462,322.021,834.373 M315.68,572.34C314.451,571.494,314.164,569.812,315.039,568.581C315.914,567.351,317.6,567.067,318.803,567.947C320.007,568.827,320.294,570.51,319.443,571.706C318.594,572.901,316.908,573.185,315.68,572.34 M315.68,825.66C314.46,826.508,312.743,826.211,311.89,824.966C311.074,823.695,311.426,822.005,312.675,821.189C313.923,820.373,315.576,820.714,316.367,821.948C317.197,823.158,316.909,824.807,315.68,825.66 M309.766,581.348C308.498,580.562,308.131,578.896,308.945,577.625C309.76,576.354,311.43,575.99,312.675,576.811C313.92,577.632,314.287,579.299,313.495,580.534C312.703,581.769,311.033,582.133,309.766,581.348 M309.766,816.652C308.508,817.439,306.805,817.061,306.014,815.775C305.262,814.467,305.694,812.794,306.98,812.04C308.268,811.286,309.902,811.705,310.633,812.978C311.4,814.227,311.035,815.858,309.766,816.652 M304.295,807.368C302.999,808.094,301.316,807.634,300.59,806.311C299.901,804.967,300.414,803.318,301.736,802.627C303.057,801.936,304.67,802.434,305.338,803.739C306.045,805.025,305.602,806.637,304.295,807.368 M299.279,797.83C297.949,798.492,296.293,797.95,295.629,796.595C295.007,795.22,295.6,793.597,296.953,792.971C298.307,792.344,299.893,792.92,300.496,794.257C301.142,795.574,300.619,797.162,299.279,797.83 M291.145,786.649C290.591,785.245,291.262,783.653,292.645,783.094C294.026,782.533,295.582,783.186,296.12,784.551C296.705,785.896,296.102,787.459,294.732,788.06C293.371,788.657,291.746,788.033,291.145,786.649 M287.148,776.498C286.664,775.068,287.412,773.511,288.82,773.019C290.229,772.526,291.75,773.254,292.22,774.644C292.748,776.012,292.063,777.547,290.668,778.08C289.276,778.611,287.691,777.906,287.148,776.498 M283.65,766.164C283.234,764.713,284.063,763.192,285.49,762.77C286.922,762.347,288.402,763.149,288.807,764.559C289.277,765.948,288.51,767.45,287.093,767.914C285.676,768.377,284.135,767.594,283.65,766.164 M280.668,755.669C280.303,754.205,281.221,752.723,282.664,752.371C284.118,752.017,285.541,752.895,285.896,754.317C286.298,755.729,285.457,757.191,284.018,757.586C282.58,757.979,281.08,757.122,280.668,755.669 M278.201,745.042C277.881,743.567,278.893,742.127,280.344,741.848C281.82,741.563,283.176,742.514,283.489,743.946C283.82,745.375,282.907,746.796,281.451,747.12C279.996,747.443,278.541,746.514,278.201,745.042 M276.256,734.309C275.971,732.825,277.081,731.431,278.535,731.224C280.033,731.01,281.313,732.029,281.59,733.47C281.849,734.914,280.866,736.289,279.396,736.542C277.927,736.795,276.521,735.795,276.256,734.309 M274.833,723.494C274.615,721.999,275.764,720.663,277.242,720.524C278.733,720.385,279.99,721.462,280.201,722.914C280.387,724.369,279.337,725.696,277.857,725.877C276.377,726.059,275.022,724.991,274.833,723.494 M276.46,709.775C277.934,709.708,279.195,710.841,279.324,712.303C279.436,713.766,278.32,715.041,276.833,715.15C275.346,715.261,274.048,714.129,273.934,712.624C273.803,711.12,274.954,709.844,276.46,709.775 M276.188,699C277.679,699.003,278.918,700.195,278.955,701.662C278.992,703.129,277.814,704.349,276.324,704.388C274.833,704.426,273.594,703.234,273.556,701.726C273.518,700.217,274.696,698.997,276.188,699 M276.46,688.225C277.949,688.299,279.127,689.548,279.09,691.015C279.053,692.481,277.814,693.645,276.324,693.612C274.833,693.58,273.655,692.331,273.693,690.822C273.732,689.313,274.971,688.15,276.46,688.225 M277.242,677.476C278.727,677.621,279.839,678.925,279.729,680.388C279.617,681.851,278.32,682.953,276.833,682.85C275.346,682.746,274.232,681.442,274.347,679.937C274.461,678.433,275.758,677.33,277.242,677.476 M275.52,669.095C275.711,667.598,277.061,666.56,278.535,666.776C280.012,666.993,281.059,668.349,280.873,669.805C280.688,671.26,279.338,672.298,277.857,672.123C276.376,671.948,275.33,670.593,275.52,669.095 M277.214,658.321C277.479,656.836,278.881,655.864,280.344,656.152C281.807,656.44,282.783,657.845,282.526,659.289C282.269,660.733,280.867,661.704,279.396,661.458C277.926,661.212,276.947,659.808,277.214,658.321 M279.428,647.643C279.768,646.171,281.217,645.27,282.664,645.629C284.111,645.988,285.018,647.437,284.688,648.866C284.357,650.296,282.908,651.197,281.451,650.88C279.994,650.562,279.088,649.113,279.428,647.643 M282.158,637.083C282.57,635.631,284.063,634.801,285.49,635.23C286.918,635.659,287.752,637.15,287.352,638.562C286.951,639.973,285.459,640.803,284.018,640.414C282.578,640.026,281.746,638.535,282.158,637.083 M285.398,626.669C285.883,625.239,287.414,624.483,288.82,624.981C290.227,625.479,290.984,627.01,290.514,628.399C290.044,629.788,288.512,630.544,287.093,630.086C285.674,629.629,284.915,628.099,285.398,626.669 M289.143,616.425C289.697,615.021,291.265,614.341,292.645,614.906C294.023,615.473,294.706,617.037,294.168,618.402C293.631,619.767,292.063,620.446,290.668,619.92C289.271,619.395,288.59,617.829,289.143,616.425 M293.381,606.376C294.004,605,295.602,604.397,296.953,605.029C298.303,605.662,298.908,607.258,298.305,608.595C297.699,609.931,296.102,610.533,294.732,609.94C293.365,609.348,292.76,607.751,293.381,606.376 M298.102,596.544C298.791,595.2,300.418,594.677,301.736,595.373C303.055,596.07,303.581,597.693,302.912,598.999C302.244,600.305,300.617,600.829,299.279,600.17C297.941,599.511,297.414,597.888,298.102,596.544 M303.295,586.953C304.047,585.645,305.697,585.2,306.98,585.96C308.264,586.72,308.711,588.367,307.98,589.639C307.249,590.91,305.598,591.354,304.295,590.632C302.99,589.909,302.543,588.262,303.295,586.953 M335.83,543.353C336.871,542.261,338.578,542.222,339.644,543.266C340.708,544.31,340.751,546.017,339.738,547.078C338.727,548.141,337.018,548.18,335.924,547.166C334.83,546.152,334.788,544.445,335.83,543.353 M343.541,535.642C344.633,534.601,346.34,534.643,347.354,535.737C348.367,536.831,348.328,538.538,347.266,539.551C346.204,540.563,344.497,540.521,343.453,539.456C342.409,538.391,342.447,536.684,343.541,535.642 M351.613,528.31C352.754,527.321,354.457,527.446,355.416,528.588C356.377,529.729,356.256,531.433,355.146,532.394C354.037,533.354,352.336,533.229,351.344,532.116C350.352,531.002,350.473,529.298,351.613,528.31 M360.029,521.375C361.216,520.441,362.91,520.647,363.814,521.834C364.717,523.021,364.516,524.717,363.361,525.623C362.209,526.529,360.514,526.324,359.576,525.164C358.64,524.004,358.842,522.308,360.029,521.375 M368.769,514.852C369.999,513.978,371.682,514.264,372.527,515.492C373.373,516.721,373.089,518.406,371.893,519.256C370.697,520.106,369.016,519.819,368.135,518.615C367.255,517.412,367.539,515.727,368.769,514.852 M377.813,508.758C379.084,507.943,380.75,508.311,381.535,509.578C382.32,510.846,381.957,512.516,380.721,513.308C379.486,514.1,377.82,513.731,376.998,512.487C376.178,511.242,376.542,509.572,377.813,508.758 M387.141,503.107C388.449,502.355,390.097,502.803,390.818,504.106C391.543,505.411,391.098,507.062,389.826,507.793C388.555,508.523,386.907,508.076,386.147,506.793C385.388,505.51,385.832,503.86,387.141,503.107 M396.73,497.915C398.075,497.227,399.699,497.754,400.357,499.092C401.017,500.43,400.492,502.056,399.188,502.725C397.881,503.394,396.258,502.866,395.561,501.548C394.863,500.229,395.388,498.604,396.73,497.915 M406.563,493.193C407.938,492.572,409.535,493.177,410.128,494.545C410.721,495.913,410.119,497.513,408.782,498.117C407.445,498.721,405.85,498.116,405.217,496.766C404.586,495.415,405.188,493.815,406.563,493.193 M416.612,488.956C418.018,488.402,419.582,489.084,420.107,490.479C420.633,491.875,419.954,493.442,418.59,493.98C417.225,494.519,415.66,493.836,415.094,492.457C414.528,491.077,415.208,489.51,416.612,488.956 M426.856,485.212C428.287,484.728,429.816,485.486,430.273,486.905C430.73,488.325,429.977,489.856,428.586,490.327C427.197,490.797,425.667,490.038,425.168,488.633C424.671,487.228,425.426,485.695,426.856,485.212 M437.271,481.971C438.723,481.558,440.215,482.392,440.602,483.831C440.99,485.271,440.16,486.764,438.75,487.164C437.338,487.564,435.847,486.731,435.418,485.304C434.988,483.875,435.818,482.383,437.271,481.971 M447.83,479.24C449.301,478.9,450.75,479.807,451.066,481.264C451.385,482.721,450.482,484.17,449.055,484.5C447.625,484.829,446.176,483.923,445.816,482.476C445.457,481.028,446.359,479.58,447.83,479.24 M458.51,477.026C459.995,476.761,461.398,477.738,461.646,479.209C461.892,480.68,460.921,482.081,459.477,482.339C458.033,482.597,456.629,481.619,456.34,480.156C456.053,478.693,457.023,477.292,458.51,477.026 M469.283,475.332C470.78,475.142,472.135,476.188,472.311,477.669C472.485,479.15,471.447,480.501,469.992,480.686C468.537,480.87,467.182,479.824,466.965,478.349C466.747,476.873,467.785,475.522,469.283,475.332 M480.125,474.159C481.63,474.045,482.934,475.158,483.037,476.646C483.141,478.133,482.038,479.43,480.575,479.541C479.112,479.651,477.809,478.538,477.663,477.055C477.518,475.57,478.619,474.274,480.125,474.159 M491.01,473.506C492.518,473.468,493.768,474.646,493.8,476.137C493.832,477.627,492.67,478.865,491.203,478.902C489.736,478.939,488.486,477.762,488.412,476.272C488.338,474.783,489.502,473.545,491.01,473.506 M501.913,473.368C503.422,473.406,504.613,474.646,504.575,476.137C504.535,477.627,503.316,478.806,501.85,478.768C500.383,478.73,499.19,477.491,499.188,476C499.185,474.509,500.404,473.33,501.913,473.368 M512.812,473.746C514.317,473.86,515.447,475.158,515.338,476.646C515.229,478.133,513.953,479.248,512.49,479.137C511.028,479.008,509.896,477.746,509.963,476.272C510.031,474.767,511.308,473.615,512.812,473.746 M523.682,474.646C525.179,474.835,526.246,476.189,526.064,477.669C525.884,479.149,524.557,480.199,523.102,480.014C521.649,479.802,520.572,478.546,520.712,477.055C520.85,475.576,522.187,474.429,523.682,474.646 M531.411,478.349C531.618,476.894,533.013,475.783,534.496,476.068C535.982,476.333,536.982,477.739,536.729,479.209C536.477,480.679,535.102,481.661,533.658,481.402C532.217,481.124,531.197,479.846,531.411,478.349 M542.035,480.156C542.314,478.704,543.755,477.692,545.229,478.014C546.701,478.354,547.631,479.809,547.308,481.264C546.982,482.72,545.563,483.632,544.133,483.302C542.701,482.989,541.752,481.633,542.035,480.156 M552.559,482.476C552.91,481.033,554.393,480.114,555.856,480.481C557.31,480.893,558.167,482.393,557.773,483.831C557.379,485.27,555.916,486.11,554.505,485.709C553.082,485.354,552.205,483.931,552.559,482.476 M562.957,485.304C563.38,483.874,564.9,483.046,566.352,483.464C567.781,483.947,568.564,485.488,568.102,486.905C567.638,488.322,566.135,489.091,564.746,488.62C563.337,488.215,562.534,486.734,562.957,485.304 M573.206,488.633C573.698,487.225,575.256,486.477,576.686,486.961C578.094,487.504,578.799,489.089,578.268,490.479C577.734,491.875,576.199,492.561,574.832,492.032C573.442,491.562,572.714,490.041,573.206,488.633 M583.281,492.457C583.841,491.074,585.433,490.403,586.837,490.957C588.221,491.559,588.845,493.184,588.247,494.545C587.646,495.915,586.083,496.518,584.738,495.933C583.374,495.396,582.721,493.839,583.281,492.457 M593.158,496.766C593.783,495.412,595.407,494.819,596.782,495.441C598.138,496.104,598.68,497.762,598.018,499.092C597.35,500.432,595.762,500.954,594.444,500.31C593.107,499.705,592.531,498.118,593.158,496.766 M602.814,501.548C603.506,500.227,605.155,499.714,606.498,500.402C607.821,501.129,608.281,502.812,607.556,504.106C606.824,505.414,605.213,505.856,603.927,505.15C602.621,504.482,602.123,502.869,602.814,501.548 M612.228,506.793C612.982,505.507,614.654,505.074,615.963,505.827C617.248,506.617,617.627,508.319,616.84,509.578C616.046,510.848,614.414,511.213,613.165,510.445C611.893,509.715,611.474,508.079,612.228,506.793 M621.377,512.487C622.192,511.238,623.883,510.887,625.154,511.702C626.398,512.556,626.696,514.272,625.849,515.492C624.994,516.722,623.346,517.01,622.137,516.181C620.901,515.389,620.561,513.735,621.377,512.487 M630.24,518.615C631.115,517.408,632.821,517.138,634.051,518.014C635.252,518.929,635.467,520.655,634.562,521.834C633.649,523.02,631.986,523.231,630.821,522.341C629.625,521.491,629.365,519.823,630.24,518.615 M638.799,525.164C639.73,524,641.447,523.812,642.635,524.745C643.785,525.722,643.921,527.453,642.959,528.587C641.992,529.728,640.317,529.862,639.199,528.912C638.046,528.006,637.866,526.328,638.799,525.164 M647.031,532.116C648.018,530.998,649.743,530.893,650.884,531.882C651.981,532.917,652.039,534.648,651.021,535.737C650.002,536.828,648.32,536.886,647.254,535.879C646.145,534.919,646.045,533.234,647.031,532.116 M654.922,539.456C655.962,538.387,657.689,538.364,658.781,539.406C659.823,540.498,659.801,542.226,658.73,543.266C657.662,544.305,655.976,544.286,654.963,543.225C653.901,542.212,653.883,540.525,654.922,539.456 M662.45,547.166C663.539,546.149,665.271,546.206,666.306,547.304C667.295,548.444,667.189,550.169,666.071,551.155C664.953,552.143,663.269,552.043,662.309,550.934C661.301,549.867,661.359,548.186,662.45,547.166 M694.081,590.632C695.377,589.906,697.059,590.366,697.785,591.689C698.474,593.033,697.961,594.682,696.64,595.373C695.318,596.064,693.705,595.566,693.037,594.261C692.331,592.975,692.773,591.363,694.081,590.632 M699.096,600.17C700.426,599.508,702.083,600.05,702.746,601.405C703.367,602.78,702.775,604.403,701.422,605.029C700.068,605.656,698.482,605.08,697.878,603.743C697.233,602.426,697.756,600.838,699.096,600.17 M707.23,611.351C707.783,612.755,707.113,614.347,705.73,614.906C704.349,615.467,702.792,614.814,702.255,613.449C701.67,612.104,702.272,610.541,703.643,609.94C705.004,609.343,706.629,609.967,707.23,611.351 M711.227,621.502C711.711,622.932,710.963,624.489,709.555,624.981C708.146,625.474,706.625,624.746,706.155,623.356C705.627,621.988,706.313,620.453,707.708,619.92C709.098,619.389,710.684,620.094,711.227,621.502 M714.724,631.836C715.142,633.287,714.313,634.808,712.884,635.23C711.453,635.653,709.973,634.851,709.566,633.441C709.097,632.052,709.865,630.55,711.282,630.086C712.699,629.623,714.24,630.406,714.724,631.836 M717.706,642.331C718.072,643.795,717.154,645.277,715.712,645.629C714.257,645.983,712.834,645.105,712.479,643.683C712.077,642.271,712.918,640.809,714.356,640.414C715.795,640.021,717.295,640.878,717.706,642.331 M720.174,652.958C720.495,654.433,719.482,655.873,718.031,656.152C716.555,656.437,715.198,655.486,714.885,654.054C714.556,652.625,715.468,651.204,716.924,650.88C718.379,650.557,719.834,651.486,720.174,652.958 M722.119,663.691C722.404,665.175,721.294,666.569,719.839,666.776C718.342,666.99,717.063,665.971,716.785,664.53C716.526,663.086,717.509,661.711,718.979,661.458C720.447,661.205,721.854,662.205,722.119,663.691 M723.542,674.506C723.759,676.001,722.611,677.337,721.133,677.476C719.642,677.615,718.385,676.538,718.174,675.086C717.988,673.631,719.038,672.304,720.518,672.123C721.998,671.941,723.352,673.009,723.542,674.506 M721.915,688.225C720.441,688.292,719.18,687.159,719.051,685.697C718.939,684.234,720.055,682.959,721.542,682.85C723.029,682.739,724.327,683.871,724.441,685.376C724.572,686.88,723.421,688.156,721.915,688.225 M724.818,696.274C724.857,697.783,723.679,699.003,722.188,699C720.696,698.997,719.457,697.805,719.42,696.338C719.381,694.871,720.561,693.651,722.051,693.612C723.542,693.574,724.781,694.766,724.818,696.274 M499.188,469C372.162,469,269.188,571.975,269.188,699C269.188,826.025,372.162,929,499.188,929C626.213,929,729.188,826.025,729.188,699C729.188,571.975,626.213,469,499.188,469">
+					<Path.OpacityMask>
+						<RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+							<GradientStop Color="sc#0, 0, 0, 0" Offset="0"/>
+							<GradientStop Color="sc#0, 0, 0, 0" Offset="0.60122698545455933"/>
+							<GradientStop Color="Black" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.OpacityMask>
+					<Path.Fill>
+						<RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+							<GradientStop Color="Transparent" Offset="0.60122698545455933"/>
+							<GradientStop Color="#75FFFFFF" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+				</Path>
+				<local:WheelWedge x:Name="Wedge3" Margin="141,0,143,229"/>
+				<local:WheelWedge x:Name="Wedge4" Margin="141,0,143,229" RenderTransformOrigin="0.5,1">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="45"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+				<local:WheelWedge x:Name="Wedge5" Margin="141,0,143,229" RenderTransformOrigin="0.5,1" UseLayoutRounding="False" d:LayoutRounding="Auto">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="90"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+				<local:WheelWedge x:Name="Wedge6" Margin="141,0,143,229" RenderTransformOrigin="0.5,1" UseLayoutRounding="False" d:LayoutRounding="Auto">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="135"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+				<local:WheelWedge x:Name="Wedge0" Margin="141,0,143,229" RenderTransformOrigin="0.5,1">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="225"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+				<local:WheelWedge x:Name="Wedge1" Margin="141,0,143,229" RenderTransformOrigin="0.5,1" UseLayoutRounding="False" d:LayoutRounding="Auto">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="270"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+				<local:WheelWedge x:Name="Wedge2" Margin="141,0,143,229" RenderTransformOrigin="0.5,1" UseLayoutRounding="False" d:LayoutRounding="Auto">
+					<local:WheelWedge.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="315"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</local:WheelWedge.RenderTransform>
+				</local:WheelWedge>
+			</Grid>
+			<Path x:Name="whiteWheel" Stretch="Fill" Height="99.687" Width="197.372" Canvas.Left="161.314" Canvas.Top="161.313" Data="F1M400.501,699C400.501,699.333,400.503,699.668,400.506,700L400.506,700L597.868,700C597.871,699.668,597.873,699.333,597.873,699L597.873,699C597.873,644.497,553.691,600.313,499.188,600.313L499.188,600.313C444.685,600.313,400.501,644.497,400.501,699">
+				<Path.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0.027">
+						<GradientStop Color="#FFB8B8B8" Offset="0"/>
+						<GradientStop Color="White" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.Fill>
+				<Path.Effect>
+					<DropShadowEffect BlurRadius="15" Direction="-90" Opacity="0.75" ShadowDepth="0"/>
+				</Path.Effect>
+			</Path>
+			<Path x:Name="whiteWheelBorder" Stretch="Fill" Stroke="#FF737474" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="198.374" Width="198.372" Canvas.Left="160.814" Canvas.Top="160.813" Data="M597.873,699C597.873,753.503,553.69,797.687,499.187,797.687C444.685,797.687,400.501,753.503,400.501,699C400.501,644.497,444.685,600.313,499.187,600.313C553.69,600.313,597.873,644.497,597.873,699z"/>
+			<Path x:Name="whiteWheelGloss" Stretch="Fill" Height="61.614" Width="156.645" Canvas.Left="181.819" Canvas.Top="163.524" Data="F1M421.006,641.677C422.094,641.146,423.21,640.631,424.371,640.139L424.371,640.139C466.802,622.19,485.554,634.943,501.484,647.697L501.484,647.697C519.9,662.443,534.547,677.188,577.651,644.489L577.651,644.489C560.38,619.158,531.299,602.524,498.33,602.524L498.33,602.524C466.602,602.524,438.472,617.936,421.006,641.677" UseLayoutRounding="False">
+				<Path.Fill>
+					<LinearGradientBrush EndPoint="0.497,1.216" StartPoint="0.497,0.008">
+						<GradientStop Color="White" Offset="0"/>
+						<GradientStop Color="#19FFFFFF" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.Fill>
+			</Path>
+			<Grid x:Name="EffectsButton" Height="46" Width="49" Canvas.Left="172" Canvas.Top="211" Cursor="Hand">
+				<Grid Height="371" Margin="-173,-216,-152,-109" Width="374">
+					<Image Source="Images/Image45.png" Stretch="Fill" d:LayoutOverrides="Width, Height">
+						<Image.RenderTransform>
+							<MatrixTransform Matrix="0.240000024437904,0,0,0.240000024437904,147.75,175.8701171875"/>
+						</Image.RenderTransform>
+						<Image.Clip>
+							<PathGeometry>
+								<PathGeometry.Transform>
+									<MatrixTransform Matrix="4.16666603088379,0,0,4.16666603088379,-1612.23937988281,-2561.95849609375"/>
+								</PathGeometry.Transform>
+								<PathFigure IsClosed="True" StartPoint="386.938,700">
+									<LineSegment Point="476.698,700"/>
+									<LineSegment Point="476.698,614.87"/>
+									<LineSegment Point="386.938,614.87"/>
+								</PathFigure>
+							</PathGeometry>
+						</Image.Clip>
+					</Image>
+					<Path Stretch="Fill" Height="23" Width="18" Data="F1M430.959,656.471C430.51,656.899,429.832,657.245,429.478,658.076L429.478,658.076C429.175,659.171,429.449,660.521,430.269,661.471L430.269,661.471C430.269,661.471,444.276,678.329,445.164,679.395L445.164,679.395C446.053,680.462,447.64,679.178,447.099,678.363L447.099,678.363C446.559,677.548,433.314,657.556,433.314,657.556L433.314,657.556C432.804,656.782,432.115,656.404,431.443,656.404L431.443,656.404C431.28,656.404,431.117,656.426,430.959,656.471" HorizontalAlignment="Right" Margin="0,0,165.829,130.397" VerticalAlignment="Bottom" UseLayoutRounding="False">
+						<Path.Fill>
+							<LinearGradientBrush EndPoint="0.419,0.555" StartPoint="0.592,0.464">
+								<GradientStop Color="#FF472640" Offset="0"/>
+								<GradientStop Color="#FFE2E3E3" Offset="0.14723199605941773"/>
+								<GradientStop Color="#FF4A2C43" Offset="0.46012899279594421"/>
+								<GradientStop Color="#FF040707" Offset="1"/>
+							</LinearGradientBrush>
+						</Path.Fill>
+					</Path>
+					<Path Stretch="Fill" Height="8" Width="7" Data="F1M430.959,656.471C430.51,656.899,429.832,657.245,429.478,658.076L429.478,658.076C429.175,659.171,429.449,660.521,430.269,661.471L430.269,661.471L432.88,664.507C432.88,664.507,434.257,664.759,435.263,663.788L435.263,663.788C436.702,662.408,436.039,661.668,436.039,661.668L436.039,661.668C436.039,661.668,433.314,657.557,433.314,657.556L433.314,657.556C432.804,656.782,432.115,656.404,431.443,656.404L431.443,656.404C431.28,656.404,431.117,656.426,430.959,656.471" HorizontalAlignment="Right" Margin="0,0,176.829,145.53" VerticalAlignment="Bottom" UseLayoutRounding="False">
+						<Path.Fill>
+							<LinearGradientBrush EndPoint="0.186,0.664" StartPoint="0.758,0.345">
+								<GradientStop Color="#FF9F5690" Offset="0"/>
+								<GradientStop Color="White" Offset="0.14723199605941773"/>
+								<GradientStop Color="#FFA76498" Offset="0.46012899279594421"/>
+								<GradientStop Color="#FF731D5D" Offset="1"/>
+							</LinearGradientBrush>
+						</Path.Fill>
+					</Path>
+					<Path Fill="White" Stretch="Fill" Height="5" Width="5" Data="F1M431.5684,651.1963L431.8704,653.2453L433.2284,654.8093L431.1784,655.1093L429.6144,656.4683L429.3144,654.4193L427.9554,652.8543L430.0054,652.5543z" HorizontalAlignment="Right" Margin="0,0,180.095,153.668" VerticalAlignment="Bottom" UseLayoutRounding="False"/>
+					<Path Fill="White" Stretch="Fill" Height="3" Data="F1M427.9414,659.0225L428.0894,660.0325L428.7594,660.8045L427.7484,660.9525L426.9764,661.6235L426.8304,660.6115L426.1594,659.8395L427.1704,659.6925z" Margin="186.972,0,184.028,147.977" VerticalAlignment="Bottom" UseLayoutRounding="False"/>
+					<Path Stretch="Fill" Height="5.051" Data="F1M423.254,679.8C423.254,681.195,429.046,682.326,436.191,682.326L436.191,682.326C443.336,682.326,449.128,681.195,449.128,679.8L449.128,679.8C449.128,678.406,443.336,677.275,436.191,677.275L436.191,677.275C429.046,677.275,423.254,678.406,423.254,679.8" Margin="184.066,0,164.06,127.623" VerticalAlignment="Bottom" UseLayoutRounding="False">
+						<Path.Fill>
+							<RadialGradientBrush Center="0.504,0.502" GradientOrigin="0.504,0.502" RadiusX="0.474" RadiusY="0.474">
+								<GradientStop Color="#33040707" Offset="0"/>
+								<GradientStop Color="#00040707" Offset="1"/>
+							</RadialGradientBrush>
+						</Path.Fill>
+					</Path>
+					<Rectangle Height="52" Margin="170,0,149,107" VerticalAlignment="Bottom">
+						<Rectangle.Fill>
+							<SolidColorBrush/>
+						</Rectangle.Fill>
+					</Rectangle>
+				</Grid>
+				<TextBlock Foreground="#FF484848" Text="EFFECTS" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom"/>
+			</Grid>
+			<ToggleButton x:Name="RecordButton" Height="76" Style="{StaticResource videoCaptureBtn}" Width="76" Canvas.Left="221" Canvas.Top="177" Content="Button"/>
+			<Grid x:Name="PublishButton" Height="46" Width="49" Canvas.Left="299" Canvas.Top="211" Cursor="Hand">
+				<Grid.Background>
+					<SolidColorBrush/>
+				</Grid.Background>
+				<Path Stretch="Fill" Data="F1M553.333,660.134C552.682,660.134,552.162,660.623,552.062,661.247L552.062,661.247L560.779,667.259C561.373,667.669,562.344,667.669,562.938,667.259L562.938,667.259L571.657,661.247C571.557,660.623,571.035,660.134,570.385,660.134L570.385,660.134z M562.938,668.987C562.344,669.397,561.373,669.397,560.779,668.987L560.779,668.987L552.022,662.947L552.022,673.25C552.022,673.972,552.613,674.561,553.333,674.561L553.333,674.561L570.385,674.561C571.107,674.561,571.696,673.972,571.696,673.25L571.696,673.25L571.696,662.947z" Height="14" Margin="13.879,0,15.121,0" VerticalAlignment="Top" UseLayoutRounding="False">
+					<Path.Fill>
+						<RadialGradientBrush Center="0.512,0.042" GradientOrigin="0.512,0.042" RadiusX="0.651" RadiusY="0.888">
+							<GradientStop Color="#FF63758A" Offset="0"/>
+							<GradientStop Color="#FF1D2636" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Data="F1M549.142,680.087C549.142,681.482,554.934,682.612,562.08,682.612L562.08,682.612C569.225,682.612,575.016,681.482,575.016,680.087L575.016,680.087C575.016,678.693,569.225,677.561,562.08,677.561L562.08,677.561C554.934,677.561,549.142,678.693,549.142,680.087" Height="5" Margin="11,17.264,12.126,13.685" Width="25" UseLayoutRounding="False">
+					<Path.Fill>
+						<RadialGradientBrush Center="0.504,0.502" GradientOrigin="0.504,0.502" RadiusX="0.474" RadiusY="0.474">
+							<GradientStop Color="#33040707" Offset="0"/>
+							<GradientStop Color="#00040707" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+				</Path>
+				<TextBlock VerticalAlignment="Bottom" Foreground="#FF484848" Text="PUBLISH" TextWrapping="Wrap" d:LayoutOverrides="VerticalAlignment, Width"/>
+			</Grid>
+			<Grid x:Name="grid" Height="17" Width="17" Canvas.Left="163" Canvas.Top="125" Visibility="Collapsed">
+				<Path Stretch="Fill" Height="5.026" Width="5.026" Data="F1M409.614,570.132C408.635,571.111,408.635,572.707,409.614,573.687L409.614,573.687C410.595,574.668,412.191,574.669,413.171,573.689L413.171,573.689C414.152,572.708,414.15,571.112,413.17,570.131L413.17,570.131C412.68,569.641,412.036,569.397,411.393,569.397L411.393,569.397C410.749,569.397,410.104,569.642,409.614,570.132" Margin="6.928,5.451,5.072,6.549" UseLayoutRounding="False">
+					<Path.Fill>
+						<RadialGradientBrush Center="-0.802,0.486" GradientOrigin="-0.802,0.486" RadiusX="1.299" RadiusY="1.299">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FFBFBFBF" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+				</Path>
+			</Grid>
+			<Ellipse Height="460" Width="460" Canvas.Left="30" Canvas.Top="30" d:IsLocked="True">
+				<Ellipse.Stroke>
+					<LinearGradientBrush EndPoint="0.5,0.504" StartPoint="0.5,0">
+						<GradientStop Color="#BFFFFFFF"/>
+						<GradientStop Color="Transparent" Offset="1"/>
+					</LinearGradientBrush>
+				</Ellipse.Stroke>
+			</Ellipse>
+			<Button x:Name="LeftButton" Height="52" Style="{StaticResource arrowBtn}" Width="52" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="-49" Canvas.Top="176"/>
+			<Button x:Name="RightButton" Height="52" Style="{StaticResource arrowBtn}" Width="52" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="516" Canvas.Top="176" RenderTransformOrigin="0.5,0.5">
+				<Button.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform ScaleX="-1"/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Button.RenderTransform>
+			</Button>
+			<Button x:Name="CameraPictureButton" Height="76" Style="{StaticResource CameraButtonStyle}" Width="76" Canvas.Left="222" Canvas.Top="177" Content="Button" Visibility="Collapsed"/>
+		</Canvas>
+	</Grid>
+</UserControl>

@@ -1,0 +1,43 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// ButtonLater.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  
+  <Rectangle x:Name="Background" Fill="#00000000" Width="100" Height="100"/>
+
+  <Canvas x:Name="Arrow">
+	  <Path Cursor="Hand" Canvas.Left="-11.74545" Canvas.Top="-8.5" Width="23.4909" Height="16.977" Stretch="Fill" Fill="#FF97D4FF" StrokeThickness="4" StrokeLineJoin="Round" Data="F1 M 15.4451,16.5325C 16.2515,15.7455 17.0578,14.9585 18.9191,13.1069C 20.7804,11.2553 23.6966,8.33911 25.1546,6.20754C 26.6127,4.07597 26.6127,2.72897 22.8462,2.05721C 19.0797,1.38544 11.5466,1.38891 7.78011,2.06413C 4.01359,2.73935 4.01359,4.08634 5.47167,6.21792C 6.92975,8.34949 9.8459,11.2656 11.7511,13.1155C 13.6564,14.9654 14.5507,15.7489 15.4451,16.5325 Z ">
+		  <Path.Stroke>
+			  <RadialGradientBrush RadiusX="1.14358" RadiusY="1.27895" Center="0.951837,0.15416" GradientOrigin="0.951837,0.15416">
+				  <RadialGradientBrush.GradientStops>
+					  <GradientStop Color="#FF97D4FF" Offset="0"/>
+					  <GradientStop Color="#FF0096FF" Offset="1"/>
+				  </RadialGradientBrush.GradientStops>
+				  <RadialGradientBrush.RelativeTransform>
+					  <TransformGroup>
+						  <SkewTransform CenterX="0.951837" CenterY="0.15416" AngleX="-14.5359" AngleY="0"/>
+						  <RotateTransform CenterX="0.951837" CenterY="0.15416" Angle="142.205"/>
+					  </TransformGroup>
+				  </RadialGradientBrush.RelativeTransform>
+			  </RadialGradientBrush>
+		  </Path.Stroke>
+	  </Path>
+    <Canvas.RenderTransform>
+      <ScaleTransform ScaleX=".75" ScaleY=".75" />
+    </Canvas.RenderTransform>
+  </Canvas>
+  
+</Canvas>

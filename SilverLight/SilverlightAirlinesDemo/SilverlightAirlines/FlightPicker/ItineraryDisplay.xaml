@@ -1,0 +1,30 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// ItineraryDisplay.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Cursor="Hand"
+  Width="100" Height="100">
+  <Rectangle Fill="#00000000" Width="100" Height="100" />
+  <Rectangle Name="highlight" Fill="#CDFF3300" Width="100" Height="100" Opacity="0" />
+  <!--<TextBlock Name="price" Text="$#" FontSize="12" />-->
+  <Canvas.Resources>
+    <Storyboard Name="ShowHighlight">
+      <DoubleAnimation Storyboard.TargetName="highlight" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.1" />
+    </Storyboard>
+    <Storyboard Name="HideHighlight">
+      <DoubleAnimation Storyboard.TargetName="highlight" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.1" />
+    </Storyboard>
+  </Canvas.Resources>
+</Canvas>

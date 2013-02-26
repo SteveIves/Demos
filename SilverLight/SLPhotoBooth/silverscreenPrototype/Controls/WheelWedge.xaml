@@ -1,0 +1,434 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="silverscreenPrototype.WheelWedge"
+	d:DesignWidth="176" d:DesignHeight="231">
+
+	<Grid x:Name="LayoutRoot">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="WedgeState">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="0"/>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="Image">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="VideoIcon">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ImageIcon">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="Thumb">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="Video">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ImageIcon">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="VideoIcon">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="Thumb">
+							<EasingDoubleKeyFrame KeyTime="0" Value="-1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="None">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="videoItem">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+			<VisualStateGroup x:Name="SelectionState">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="0:0:0.2"/>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="Selected">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="selectionWedge">
+							<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="NotSelected">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="selectionWedge">
+							<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<Canvas x:Name="selectionWedge" Opacity="0">
+			<Canvas.Clip>
+				<PathGeometry FillRule="Nonzero">
+					<PathGeometry.Transform>
+						<MatrixTransform Matrix="1,0,0,1,-410.123992919922,-469"/>
+					</PathGeometry.Transform>
+					<PathFigure StartPoint="410.124,486.885">
+						<LineSegment Point="410.247,486.915"/>
+						<LineSegment Point="456.914,600.428"/>
+						<BezierSegment Point1="456.475,599.104" Point2="457.135,597.653" Point3="458.495,597.129"/>
+						<LineSegment Point="458.495,597.129"/>
+						<BezierSegment Point1="459.93,596.564" Point2="461.507,597.242" Point3="462.02,598.642"/>
+						<LineSegment Point="462.02,598.642"/>
+						<BezierSegment Point1="462.532,600.042" Point2="461.849,601.61" Point3="460.5,602.144"/>
+						<LineSegment Point="460.5,602.144"/>
+						<BezierSegment Point1="459.195,602.643" Point2="457.705,602.051" Point3="457.069,600.804"/>
+						<LineSegment Point="457.069,600.804"/>
+						<LineSegment Point="497.848,700"/>
+						<LineSegment Point="497.914,700"/>
+						<LineSegment Point="583.125,493.923"/>
+						<BezierSegment Point1="583.045,493.446" Point2="583.086,492.941" Point3="583.281,492.457"/>
+						<LineSegment Point="583.281,492.457"/>
+						<BezierSegment Point1="583.481,491.966" Point2="583.813,491.57" Point3="584.217,491.281"/>
+						<LineSegment Point="584.217,491.281"/>
+						<LineSegment Point="586.355,486.111"/>
+						<BezierSegment Point1="559.469,475.091" Point2="530.042,469" Point3="499.188,469"/>
+						<LineSegment Point="499.188,469"/>
+						<BezierSegment Point1="467.608,469" Point2="437.518,475.369" Point3="410.124,486.885"/>
+					</PathFigure>
+					<PathFigure StartPoint="501.85,478.767">
+						<BezierSegment Point1="500.383,478.73" Point2="499.19,477.491" Point3="499.188,476"/>
+						<LineSegment Point="499.188,476"/>
+						<BezierSegment Point1="499.185,474.509" Point2="500.405,473.331" Point3="501.913,473.368"/>
+						<LineSegment Point="501.913,473.368"/>
+						<BezierSegment Point1="503.422,473.406" Point2="504.613,474.645" Point3="504.575,476.137"/>
+						<LineSegment Point="504.575,476.137"/>
+						<BezierSegment Point1="504.536,477.603" Point2="503.355,478.768" Point3="501.92,478.768"/>
+						<LineSegment Point="501.92,478.768"/>
+						<BezierSegment Point1="501.897,478.768" Point2="501.873,478.768" Point3="501.85,478.767"/>
+					</PathFigure>
+					<PathFigure StartPoint="488.412,476.273">
+						<BezierSegment Point1="488.338,474.783" Point2="489.502,473.545" Point3="491.009,473.506"/>
+						<LineSegment Point="491.009,473.506"/>
+						<BezierSegment Point1="492.518,473.468" Point2="493.768,474.645" Point3="493.799,476.137"/>
+						<LineSegment Point="493.799,476.137"/>
+						<BezierSegment Point1="493.832,477.627" Point2="492.67,478.866" Point3="491.203,478.902"/>
+						<LineSegment Point="491.203,478.902"/>
+						<BezierSegment Point1="491.181,478.903" Point2="491.158,478.903" Point3="491.136,478.903"/>
+						<LineSegment Point="491.136,478.903"/>
+						<BezierSegment Point1="489.698,478.903" Point2="488.486,477.739" Point3="488.412,476.273"/>
+					</PathFigure>
+					<PathFigure StartPoint="512.491,479.136">
+						<BezierSegment Point1="511.028,479.008" Point2="509.896,477.746" Point3="509.962,476.273"/>
+						<LineSegment Point="509.962,476.273"/>
+						<BezierSegment Point1="510.031,474.767" Point2="511.308,473.615" Point3="512.812,473.746"/>
+						<LineSegment Point="512.812,473.746"/>
+						<BezierSegment Point1="514.318,473.861" Point2="515.447,475.158" Point3="515.338,476.645"/>
+						<LineSegment Point="515.338,476.645"/>
+						<BezierSegment Point1="515.233,478.064" Point2="514.068,479.144" Point3="512.692,479.144"/>
+						<LineSegment Point="512.692,479.144"/>
+						<BezierSegment Point1="512.625,479.144" Point2="512.558,479.142" Point3="512.491,479.136"/>
+					</PathFigure>
+					<PathFigure StartPoint="477.663,477.055">
+						<BezierSegment Point1="477.517,475.571" Point2="478.619,474.275" Point3="480.125,474.159"/>
+						<LineSegment Point="480.125,474.159"/>
+						<BezierSegment Point1="481.63,474.045" Point2="482.934,475.158" Point3="483.037,476.645"/>
+						<LineSegment Point="483.037,476.645"/>
+						<BezierSegment Point1="483.141,478.133" Point2="482.038,479.43" Point3="480.575,479.541"/>
+						<LineSegment Point="480.575,479.541"/>
+						<BezierSegment Point1="480.508,479.546" Point2="480.442,479.549" Point3="480.376,479.549"/>
+						<LineSegment Point="480.376,479.549"/>
+						<BezierSegment Point1="478.996,479.549" Point2="477.802,478.47" Point3="477.663,477.055"/>
+					</PathFigure>
+					<PathFigure StartPoint="523.102,480.014">
+						<BezierSegment Point1="521.649,479.801" Point2="520.573,478.546" Point3="520.712,477.055"/>
+						<LineSegment Point="520.712,477.055"/>
+						<BezierSegment Point1="520.85,475.576" Point2="522.186,474.428" Point3="523.681,474.645"/>
+						<LineSegment Point="523.681,474.645"/>
+						<BezierSegment Point1="525.179,474.835" Point2="526.246,476.19" Point3="526.064,477.669"/>
+						<LineSegment Point="526.064,477.669"/>
+						<BezierSegment Point1="525.897,479.035" Point2="524.754,480.035" Point3="523.435,480.035"/>
+						<LineSegment Point="523.435,480.035"/>
+						<BezierSegment Point1="523.325,480.035" Point2="523.214,480.028" Point3="523.102,480.014"/>
+					</PathFigure>
+					<PathFigure StartPoint="466.965,478.349">
+						<BezierSegment Point1="466.747,476.873" Point2="467.785,475.523" Point3="469.283,475.332"/>
+						<LineSegment Point="469.283,475.332"/>
+						<BezierSegment Point1="470.78,475.141" Point2="472.135,476.189" Point3="472.31,477.669"/>
+						<LineSegment Point="472.31,477.669"/>
+						<BezierSegment Point1="472.486,479.151" Point2="471.447,480.501" Point3="469.993,480.685"/>
+						<LineSegment Point="469.993,480.685"/>
+						<BezierSegment Point1="469.881,480.699" Point2="469.769,480.706" Point3="469.659,480.706"/>
+						<LineSegment Point="469.659,480.706"/>
+						<BezierSegment Point1="468.336,480.706" Point2="467.165,479.711" Point3="466.965,478.349"/>
+					</PathFigure>
+					<PathFigure StartPoint="533.659,481.403">
+						<BezierSegment Point1="532.217,481.124" Point2="531.197,479.846" Point3="531.411,478.349"/>
+						<LineSegment Point="531.411,478.349"/>
+						<BezierSegment Point1="531.618,476.894" Point2="533.012,475.783" Point3="534.496,476.068"/>
+						<LineSegment Point="534.496,476.068"/>
+						<BezierSegment Point1="535.982,476.333" Point2="536.982,477.74" Point3="536.729,479.209"/>
+						<LineSegment Point="536.729,479.209"/>
+						<BezierSegment Point1="536.504,480.521" Point2="535.384,481.444" Point3="534.121,481.444"/>
+						<LineSegment Point="534.121,481.444"/>
+						<BezierSegment Point1="533.968,481.444" Point2="533.814,481.43" Point3="533.659,481.403"/>
+					</PathFigure>
+					<PathFigure StartPoint="456.34,480.156">
+						<BezierSegment Point1="456.052,478.694" Point2="457.024,477.292" Point3="458.509,477.027"/>
+						<LineSegment Point="458.509,477.027"/>
+						<BezierSegment Point1="459.995,476.76" Point2="461.398,477.739" Point3="461.645,479.209"/>
+						<LineSegment Point="461.645,479.209"/>
+						<BezierSegment Point1="461.892,480.68" Point2="460.921,482.081" Point3="459.477,482.339"/>
+						<LineSegment Point="459.477,482.339"/>
+						<BezierSegment Point1="459.321,482.367" Point2="459.165,482.38" Point3="459.012,482.38"/>
+						<LineSegment Point="459.012,482.38"/>
+						<BezierSegment Point1="457.743,482.38" Point2="456.597,481.461" Point3="456.34,480.156"/>
+					</PathFigure>
+					<PathFigure StartPoint="544.133,483.302">
+						<BezierSegment Point1="542.701,482.989" Point2="541.752,481.633" Point3="542.035,480.156"/>
+						<LineSegment Point="542.035,480.156"/>
+						<BezierSegment Point1="542.315,478.704" Point2="543.755,477.693" Point3="545.23,478.014"/>
+						<LineSegment Point="545.23,478.014"/>
+						<BezierSegment Point1="546.701,478.353" Point2="547.631,479.809" Point3="547.308,481.264"/>
+						<LineSegment Point="547.308,481.264"/>
+						<BezierSegment Point1="547.027,482.518" Point2="545.934,483.369" Point3="544.722,483.369"/>
+						<LineSegment Point="544.722,483.369"/>
+						<BezierSegment Point1="544.528,483.369" Point2="544.331,483.347" Point3="544.133,483.302"/>
+					</PathFigure>
+					<PathFigure StartPoint="445.817,482.475">
+						<BezierSegment Point1="445.457,481.028" Point2="446.359,479.58" Point3="447.83,479.24"/>
+						<LineSegment Point="447.83,479.24"/>
+						<BezierSegment Point1="449.301,478.901" Point2="450.75,479.807" Point3="451.066,481.264"/>
+						<LineSegment Point="451.066,481.264"/>
+						<BezierSegment Point1="451.385,482.721" Point2="450.482,484.17" Point3="449.055,484.5"/>
+						<LineSegment Point="449.055,484.5"/>
+						<BezierSegment Point1="448.857,484.546" Point2="448.659,484.568" Point3="448.463,484.568"/>
+						<LineSegment Point="448.463,484.568"/>
+						<BezierSegment Point1="447.245,484.568" Point2="446.126,483.722" Point3="445.817,482.475"/>
+					</PathFigure>
+					<PathFigure StartPoint="554.505,485.709">
+						<BezierSegment Point1="553.082,485.354" Point2="552.205,483.931" Point3="552.559,482.475"/>
+						<LineSegment Point="552.559,482.475"/>
+						<BezierSegment Point1="552.91,481.034" Point2="554.393,480.115" Point3="555.856,480.482"/>
+						<LineSegment Point="555.856,480.482"/>
+						<BezierSegment Point1="557.31,480.892" Point2="558.167,482.393" Point3="557.773,483.831"/>
+						<LineSegment Point="557.773,483.831"/>
+						<BezierSegment Point1="557.446,485.027" Point2="556.38,485.809" Point3="555.219,485.809"/>
+						<LineSegment Point="555.219,485.809"/>
+						<BezierSegment Point1="554.983,485.809" Point2="554.744,485.777" Point3="554.505,485.709"/>
+					</PathFigure>
+					<PathFigure StartPoint="435.418,485.304">
+						<BezierSegment Point1="434.988,483.875" Point2="435.819,482.383" Point3="437.27,481.971"/>
+						<LineSegment Point="437.27,481.971"/>
+						<BezierSegment Point1="438.723,481.557" Point2="440.215,482.392" Point3="440.601,483.831"/>
+						<LineSegment Point="440.601,483.831"/>
+						<BezierSegment Point1="440.99,485.272" Point2="440.16,486.764" Point3="438.75,487.164"/>
+						<LineSegment Point="438.75,487.164"/>
+						<BezierSegment Point1="438.51,487.232" Point2="438.268,487.265" Point3="438.03,487.265"/>
+						<LineSegment Point="438.03,487.265"/>
+						<BezierSegment Point1="436.862,487.265" Point2="435.774,486.489" Point3="435.418,485.304"/>
+					</PathFigure>
+					<PathFigure StartPoint="564.746,488.62">
+						<BezierSegment Point1="563.337,488.215" Point2="562.534,486.734" Point3="562.957,485.304"/>
+						<LineSegment Point="562.957,485.304"/>
+						<BezierSegment Point1="563.38,483.874" Point2="564.9,483.046" Point3="566.351,483.464"/>
+						<LineSegment Point="566.351,483.464"/>
+						<BezierSegment Point1="567.781,483.947" Point2="568.564,485.489" Point3="568.102,486.905"/>
+						<LineSegment Point="568.102,486.905"/>
+						<BezierSegment Point1="567.731,488.04" Point2="566.693,488.758" Point3="565.582,488.758"/>
+						<LineSegment Point="565.582,488.758"/>
+						<BezierSegment Point1="565.305,488.758" Point2="565.023,488.714" Point3="564.746,488.62"/>
+					</PathFigure>
+					<PathFigure StartPoint="425.168,488.633">
+						<BezierSegment Point1="424.671,487.227" Point2="425.426,485.696" Point3="426.857,485.212"/>
+						<LineSegment Point="426.857,485.212"/>
+						<BezierSegment Point1="428.288,484.727" Point2="429.817,485.486" Point3="430.274,486.905"/>
+						<LineSegment Point="430.274,486.905"/>
+						<BezierSegment Point1="430.73,488.325" Point2="429.977,489.856" Point3="428.586,490.327"/>
+						<LineSegment Point="428.586,490.327"/>
+						<BezierSegment Point1="428.308,490.421" Point2="428.023,490.466" Point3="427.742,490.466"/>
+						<LineSegment Point="427.742,490.466"/>
+						<BezierSegment Point1="426.624,490.466" Point2="425.567,489.756" Point3="425.168,488.633"/>
+					</PathFigure>
+					<PathFigure StartPoint="574.832,492.033">
+						<BezierSegment Point1="573.442,491.563" Point2="572.714,490.041" Point3="573.206,488.633"/>
+						<LineSegment Point="573.206,488.633"/>
+						<BezierSegment Point1="573.698,487.225" Point2="575.256,486.477" Point3="576.686,486.961"/>
+						<LineSegment Point="576.686,486.961"/>
+						<BezierSegment Point1="578.093,487.504" Point2="578.799,489.089" Point3="578.268,490.479"/>
+						<LineSegment Point="578.268,490.479"/>
+						<BezierSegment Point1="577.856,491.556" Point2="576.848,492.21" Point3="575.781,492.21"/>
+						<LineSegment Point="575.781,492.21"/>
+						<BezierSegment Point1="575.465,492.211" Point2="575.144,492.153" Point3="574.832,492.033"/>
+					</PathFigure>
+					<PathFigure StartPoint="415.094,492.457">
+						<BezierSegment Point1="414.528,491.078" Point2="415.208,489.51" Point3="416.613,488.956"/>
+						<LineSegment Point="416.613,488.956"/>
+						<BezierSegment Point1="418.018,488.402" Point2="419.582,489.084" Point3="420.107,490.479"/>
+						<LineSegment Point="420.107,490.479"/>
+						<BezierSegment Point1="420.633,491.875" Point2="419.954,493.443" Point3="418.59,493.98"/>
+						<LineSegment Point="418.59,493.98"/>
+						<BezierSegment Point1="418.273,494.105" Point2="417.946,494.164" Point3="417.622,494.164"/>
+						<LineSegment Point="417.622,494.164"/>
+						<BezierSegment Point1="416.552,494.164" Point2="415.529,493.516" Point3="415.094,492.457"/>
+					</PathFigure>
+					<PathFigure StartPoint="501.83,594.768">
+						<BezierSegment Point1="500.377,594.731" Point2="499.194,593.491" Point3="499.188,592"/>
+						<LineSegment Point="499.188,592"/>
+						<BezierSegment Point1="499.181,590.509" Point2="500.423,589.33" Point3="501.965,589.369"/>
+						<LineSegment Point="501.965,589.369"/>
+						<BezierSegment Point1="503.506,589.408" Point2="504.689,590.648" Point3="504.607,592.137"/>
+						<LineSegment Point="504.607,592.137"/>
+						<BezierSegment Point1="504.528,593.603" Point2="503.321,594.768" Point3="501.897,594.768"/>
+						<LineSegment Point="501.897,594.768"/>
+						<BezierSegment Point1="501.874,594.768" Point2="501.852,594.768" Point3="501.83,594.768"/>
+					</PathFigure>
+					<PathFigure StartPoint="488.362,592.544">
+						<BezierSegment Point1="488.205,591.06" Point2="489.325,589.763" Point3="490.861,589.646"/>
+						<LineSegment Point="490.861,589.646"/>
+						<BezierSegment Point1="492.398,589.531" Point2="493.699,590.638" Point3="493.768,592.137"/>
+						<LineSegment Point="493.768,592.137"/>
+						<BezierSegment Point1="493.834,593.618" Point2="492.715,594.922" Point3="491.266,595.03"/>
+						<LineSegment Point="491.266,595.03"/>
+						<BezierSegment Point1="491.199,595.035" Point2="491.133,595.038" Point3="491.067,595.038"/>
+						<LineSegment Point="491.067,595.038"/>
+						<BezierSegment Point1="489.701,595.038" Point2="488.509,593.959" Point3="488.362,592.544"/>
+					</PathFigure>
+					<PathFigure StartPoint="512.366,595.559">
+						<BezierSegment Point1="510.925,595.378" Point2="509.873,594.017" Point3="510.014,592.544"/>
+						<LineSegment Point="510.014,592.544"/>
+						<BezierSegment Point1="510.158,591.048" Point2="511.512,590.01" Point3="513.042,590.201"/>
+						<LineSegment Point="513.042,590.201"/>
+						<BezierSegment Point1="514.572,590.395" Point2="515.624,591.748" Point3="515.393,593.221"/>
+						<LineSegment Point="515.393,593.221"/>
+						<BezierSegment Point1="515.18,594.582" Point2="514.007,595.579" Point3="512.694,595.579"/>
+						<LineSegment Point="512.694,595.579"/>
+						<BezierSegment Point1="512.585,595.579" Point2="512.476,595.573" Point3="512.366,595.559"/>
+					</PathFigure>
+					<PathFigure StartPoint="477.643,594.17">
+						<BezierSegment Point1="477.337,592.711" Point2="478.32,591.307" Point3="479.838,591.035"/>
+						<LineSegment Point="479.838,591.035"/>
+						<BezierSegment Point1="481.358,590.767" Point2="482.763,591.737" Point3="482.981,593.221"/>
+						<LineSegment Point="482.981,593.221"/>
+						<BezierSegment Point1="483.197,594.687" Point2="482.215,596.099" Point3="480.785,596.352"/>
+						<LineSegment Point="480.785,596.352"/>
+						<BezierSegment Point1="480.632,596.379" Point2="480.479,596.392" Point3="480.328,596.392"/>
+						<LineSegment Point="480.328,596.392"/>
+						<BezierSegment Point1="479.066,596.392" Point2="477.915,595.473" Point3="477.643,594.17"/>
+					</PathFigure>
+					<PathFigure StartPoint="522.766,597.409">
+						<BezierSegment Point1="521.349,597.083" Point2="520.44,595.631" Point3="520.733,594.17"/>
+						<LineSegment Point="520.733,594.17"/>
+						<BezierSegment Point1="521.024,592.706" Point2="522.479,591.802" Point3="523.982,592.148"/>
+						<LineSegment Point="523.982,592.148"/>
+						<BezierSegment Point1="525.485,592.497" Point2="526.396,593.942" Point3="526.014,595.393"/>
+						<LineSegment Point="526.014,595.393"/>
+						<BezierSegment Point1="525.689,596.628" Point2="524.562,597.476" Point3="523.352,597.476"/>
+						<LineSegment Point="523.352,597.476"/>
+						<BezierSegment Point1="523.158,597.476" Point2="522.961,597.455" Point3="522.766,597.409"/>
+					</PathFigure>
+					<PathFigure StartPoint="467.149,596.885">
+						<BezierSegment Point1="466.69,595.444" Point2="467.529,593.963" Point3="469.012,593.537"/>
+						<LineSegment Point="469.012,593.537"/>
+						<BezierSegment Point1="470.495,593.116" Point2="471.994,593.948" Point3="472.361,595.393"/>
+						<LineSegment Point="472.361,595.393"/>
+						<BezierSegment Point1="472.727,596.839" Point2="471.892,598.333" Point3="470.494,598.729"/>
+						<LineSegment Point="470.494,598.729"/>
+						<BezierSegment Point1="470.258,598.797" Point2="470.019,598.829" Point3="469.783,598.829"/>
+						<LineSegment Point="469.783,598.829"/>
+						<BezierSegment Point1="468.62,598.829" Point2="467.52,598.05" Point3="467.149,596.885"/>
+					</PathFigure>
+					<PathFigure StartPoint="532.922,600.309">
+						<BezierSegment Point1="531.546,599.843" Point2="530.787,598.31" Point3="531.227,596.885"/>
+						<LineSegment Point="531.227,596.885"/>
+						<BezierSegment Point1="531.666,595.46" Point2="533.207,594.705" Point3="534.668,595.199"/>
+						<LineSegment Point="534.668,595.199"/>
+						<BezierSegment Point1="536.13,595.69" Point2="536.887,597.227" Point3="536.356,598.642"/>
+						<LineSegment Point="536.356,598.642"/>
+						<BezierSegment Point1="535.941,599.744" Point2="534.873,600.445" Point3="533.758,600.445"/>
+						<LineSegment Point="533.758,600.445"/>
+						<BezierSegment Point1="533.479,600.445" Point2="533.197,600.401" Point3="532.922,600.309"/>
+					</PathFigure>
+				</PathGeometry>
+			</Canvas.Clip>
+			<Path Stretch="Fill" Height="231" Width="176.231" Canvas.Left="0" Canvas.Top="0" Data="F1M410.124,486.885L410.247,486.915L456.914,600.428C456.475,599.104,457.135,597.653,458.495,597.129L458.495,597.129C459.93,596.564,461.507,597.242,462.02,598.642L462.02,598.642C462.532,600.042,461.849,601.61,460.5,602.144L460.5,602.144C459.195,602.643,457.705,602.051,457.069,600.804L457.069,600.804L497.848,700L497.914,700L583.125,493.923C583.045,493.446,583.086,492.941,583.281,492.457L583.281,492.457C583.481,491.966,583.813,491.57,584.217,491.281L584.217,491.281L586.355,486.111C559.469,475.091,530.042,469,499.188,469L499.188,469C467.608,469,437.518,475.369,410.124,486.885 M501.85,478.767C500.383,478.73,499.19,477.491,499.188,476L499.188,476C499.185,474.509,500.405,473.331,501.913,473.368L501.913,473.368C503.422,473.406,504.613,474.645,504.575,476.137L504.575,476.137C504.536,477.603,503.355,478.768,501.92,478.768L501.92,478.768C501.897,478.768,501.873,478.768,501.85,478.767 M488.412,476.273C488.338,474.783,489.502,473.545,491.009,473.506L491.009,473.506C492.518,473.468,493.768,474.645,493.799,476.137L493.799,476.137C493.832,477.627,492.67,478.866,491.203,478.902L491.203,478.902C491.181,478.903,491.158,478.903,491.136,478.903L491.136,478.903C489.698,478.903,488.486,477.739,488.412,476.273 M512.491,479.136C511.028,479.008,509.896,477.746,509.962,476.273L509.962,476.273C510.031,474.767,511.308,473.615,512.812,473.746L512.812,473.746C514.318,473.861,515.447,475.158,515.338,476.645L515.338,476.645C515.233,478.064,514.068,479.144,512.692,479.144L512.692,479.144C512.625,479.144,512.558,479.142,512.491,479.136 M477.663,477.055C477.517,475.571,478.619,474.275,480.125,474.159L480.125,474.159C481.63,474.045,482.934,475.158,483.037,476.645L483.037,476.645C483.141,478.133,482.038,479.43,480.575,479.541L480.575,479.541C480.508,479.546,480.442,479.549,480.376,479.549L480.376,479.549C478.996,479.549,477.802,478.47,477.663,477.055 M523.102,480.014C521.649,479.801,520.573,478.546,520.712,477.055L520.712,477.055C520.85,475.576,522.186,474.428,523.681,474.645L523.681,474.645C525.179,474.835,526.246,476.19,526.064,477.669L526.064,477.669C525.897,479.035,524.754,480.035,523.435,480.035L523.435,480.035C523.325,480.035,523.214,480.028,523.102,480.014 M466.965,478.349C466.747,476.873,467.785,475.523,469.283,475.332L469.283,475.332C470.78,475.141,472.135,476.189,472.31,477.669L472.31,477.669C472.486,479.151,471.447,480.501,469.993,480.685L469.993,480.685C469.881,480.699,469.769,480.706,469.659,480.706L469.659,480.706C468.336,480.706,467.165,479.711,466.965,478.349 M533.659,481.403C532.217,481.124,531.197,479.846,531.411,478.349L531.411,478.349C531.618,476.894,533.012,475.783,534.496,476.068L534.496,476.068C535.982,476.333,536.982,477.74,536.729,479.209L536.729,479.209C536.504,480.521,535.384,481.444,534.121,481.444L534.121,481.444C533.968,481.444,533.814,481.43,533.659,481.403 M456.34,480.156C456.052,478.694,457.024,477.292,458.509,477.027L458.509,477.027C459.995,476.76,461.398,477.739,461.645,479.209L461.645,479.209C461.892,480.68,460.921,482.081,459.477,482.339L459.477,482.339C459.321,482.367,459.165,482.38,459.012,482.38L459.012,482.38C457.743,482.38,456.597,481.461,456.34,480.156 M544.133,483.302C542.701,482.989,541.752,481.633,542.035,480.156L542.035,480.156C542.315,478.704,543.755,477.693,545.23,478.014L545.23,478.014C546.701,478.353,547.631,479.809,547.308,481.264L547.308,481.264C547.027,482.518,545.934,483.369,544.722,483.369L544.722,483.369C544.528,483.369,544.331,483.347,544.133,483.302 M445.817,482.475C445.457,481.028,446.359,479.58,447.83,479.24L447.83,479.24C449.301,478.901,450.75,479.807,451.066,481.264L451.066,481.264C451.385,482.721,450.482,484.17,449.055,484.5L449.055,484.5C448.857,484.546,448.659,484.568,448.463,484.568L448.463,484.568C447.245,484.568,446.126,483.722,445.817,482.475 M554.505,485.709C553.082,485.354,552.205,483.931,552.559,482.475L552.559,482.475C552.91,481.034,554.393,480.115,555.856,480.482L555.856,480.482C557.31,480.892,558.167,482.393,557.773,483.831L557.773,483.831C557.446,485.027,556.38,485.809,555.219,485.809L555.219,485.809C554.983,485.809,554.744,485.777,554.505,485.709 M435.418,485.304C434.988,483.875,435.819,482.383,437.27,481.971L437.27,481.971C438.723,481.557,440.215,482.392,440.601,483.831L440.601,483.831C440.99,485.272,440.16,486.764,438.75,487.164L438.75,487.164C438.51,487.232,438.268,487.265,438.03,487.265L438.03,487.265C436.862,487.265,435.774,486.489,435.418,485.304 M564.746,488.62C563.337,488.215,562.534,486.734,562.957,485.304L562.957,485.304C563.38,483.874,564.9,483.046,566.351,483.464L566.351,483.464C567.781,483.947,568.564,485.489,568.102,486.905L568.102,486.905C567.731,488.04,566.693,488.758,565.582,488.758L565.582,488.758C565.305,488.758,565.023,488.714,564.746,488.62 M425.168,488.633C424.671,487.227,425.426,485.696,426.857,485.212L426.857,485.212C428.288,484.727,429.817,485.486,430.274,486.905L430.274,486.905C430.73,488.325,429.977,489.856,428.586,490.327L428.586,490.327C428.308,490.421,428.023,490.466,427.742,490.466L427.742,490.466C426.624,490.466,425.567,489.756,425.168,488.633 M574.832,492.033C573.442,491.563,572.714,490.041,573.206,488.633L573.206,488.633C573.698,487.225,575.256,486.477,576.686,486.961L576.686,486.961C578.093,487.504,578.799,489.089,578.268,490.479L578.268,490.479C577.856,491.556,576.848,492.21,575.781,492.21L575.781,492.21C575.465,492.211,575.144,492.153,574.832,492.033 M415.094,492.457C414.528,491.078,415.208,489.51,416.613,488.956L416.613,488.956C418.018,488.402,419.582,489.084,420.107,490.479L420.107,490.479C420.633,491.875,419.954,493.443,418.59,493.98L418.59,493.98C418.273,494.105,417.946,494.164,417.622,494.164L417.622,494.164C416.552,494.164,415.529,493.516,415.094,492.457 M501.83,594.768C500.377,594.731,499.194,593.491,499.188,592L499.188,592C499.181,590.509,500.423,589.33,501.965,589.369L501.965,589.369C503.506,589.408,504.689,590.648,504.607,592.137L504.607,592.137C504.528,593.603,503.321,594.768,501.897,594.768L501.897,594.768C501.874,594.768,501.852,594.768,501.83,594.768 M488.362,592.544C488.205,591.06,489.325,589.763,490.861,589.646L490.861,589.646C492.398,589.531,493.699,590.638,493.768,592.137L493.768,592.137C493.834,593.618,492.715,594.922,491.266,595.03L491.266,595.03C491.199,595.035,491.133,595.038,491.067,595.038L491.067,595.038C489.701,595.038,488.509,593.959,488.362,592.544 M512.366,595.559C510.925,595.378,509.873,594.017,510.014,592.544L510.014,592.544C510.158,591.048,511.512,590.01,513.042,590.201L513.042,590.201C514.572,590.395,515.624,591.748,515.393,593.221L515.393,593.221C515.18,594.582,514.007,595.579,512.694,595.579L512.694,595.579C512.585,595.579,512.476,595.573,512.366,595.559 M477.643,594.17C477.337,592.711,478.32,591.307,479.838,591.035L479.838,591.035C481.358,590.767,482.763,591.737,482.981,593.221L482.981,593.221C483.197,594.687,482.215,596.099,480.785,596.352L480.785,596.352C480.632,596.379,480.479,596.392,480.328,596.392L480.328,596.392C479.066,596.392,477.915,595.473,477.643,594.17 M522.766,597.409C521.349,597.083,520.44,595.631,520.733,594.17L520.733,594.17C521.024,592.706,522.479,591.802,523.982,592.148L523.982,592.148C525.485,592.497,526.396,593.942,526.014,595.393L526.014,595.393C525.689,596.628,524.562,597.476,523.352,597.476L523.352,597.476C523.158,597.476,522.961,597.455,522.766,597.409 M467.149,596.885C466.69,595.444,467.529,593.963,469.012,593.537L469.012,593.537C470.495,593.116,471.994,593.948,472.361,595.393L472.361,595.393C472.727,596.839,471.892,598.333,470.494,598.729L470.494,598.729C470.258,598.797,470.019,598.829,469.783,598.829L469.783,598.829C468.62,598.829,467.52,598.05,467.149,596.885 M532.922,600.309C531.546,599.843,530.787,598.31,531.227,596.885L531.227,596.885C531.666,595.46,533.207,594.705,534.668,595.199L534.668,595.199C536.13,595.69,536.887,597.227,536.356,598.642L536.356,598.642C535.941,599.744,534.873,600.445,533.758,600.445L533.758,600.445C533.479,600.445,533.197,600.401,532.922,600.309">
+				<Path.OpacityMask>
+					<RadialGradientBrush Center="0.5,0.985" GradientOrigin="0.5,0.985" RadiusX="1.3" RadiusY="0.991">
+						<GradientStop Color="Black" Offset="0"/>
+						<GradientStop Color="sc#0, 0, 0, 0" Offset="1"/>
+					</RadialGradientBrush>
+				</Path.OpacityMask>
+				<Path.Fill>
+					<RadialGradientBrush Center="0.5,0.985" GradientOrigin="0.5,0.985" RadiusX="1.3" RadiusY="0.991">
+						<GradientStop Color="#FF4582C3" Offset="0"/>
+						<GradientStop Color="#FF4582C3" Offset="1"/>
+					</RadialGradientBrush>
+				</Path.Fill>
+			</Path>
+		</Canvas>
+		<Grid x:Name="videoItem" Height="60" Margin="47,31,48,0" VerticalAlignment="Top">
+			<Path Stretch="Fill" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M537.6875,554C537.6875,556.75,535.4375,559,532.6875,559L462.3485,559C459.5985,559,457.3485,556.75,457.3485,554L457.3485,505C457.3485,502.25,459.5985,500,462.3485,500L532.6875,500C535.4375,500,537.6875,502.25,537.6875,505L537.6875,554z" Fill="#FF424242" UseLayoutRounding="False">
+				<!--<Path.Effect>
+					<DropShadowEffect BlurRadius="50" Direction="-90" Opacity="0.31" ShadowDepth="3"/>
+				</Path.Effect>-->
+			</Path>
+			<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Opacity="0.5" Data="M537.6875,554C537.6875,556.75,535.4375,559,532.6875,559L462.3485,559C459.5985,559,457.3485,556.75,457.3485,554L457.3485,505C457.3485,502.25,459.5985,500,462.3485,500L532.6875,500C535.4375,500,537.6875,502.25,537.6875,505L537.6875,554z" UseLayoutRounding="False"/>
+			<Path x:Name="Thumb" Stretch="Fill" Stroke="Transparent" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Data="M537.6875,554C537.6875,556.75,535.4375,559,532.6875,559L462.3485,559C459.5985,559,457.3485,556.75,457.3485,554L457.3485,505C457.3485,502.25,459.5985,500,462.3485,500L532.6875,500C535.4375,500,537.6875,502.25,537.6875,505L537.6875,554z" UseLayoutRounding="False" RenderTransformOrigin="0.5,0.5">
+				<Path.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Path.RenderTransform>
+				<Path.Fill>
+					<SolidColorBrush/>
+				</Path.Fill>
+			</Path>
+			<Path Fill="#FF050708" Stretch="Fill" Height="23" Width="21" Opacity="0.60000598430633545" Data="F1M537.6875,554C537.6875,556.75,535.4375,559,532.6875,559L516.8545,559L516.8545,535.667L537.6875,535.667z" HorizontalAlignment="Left" Margin="59,36,0,0" VerticalAlignment="Top" UseLayoutRounding="False"/>
+			<Path x:Name="VideoIcon" Stretch="Fill" Height="15" Width="15" Data="F1M521.41,540.5C520.861,540.5,520.41,540.95,520.41,541.5L520.41,541.5L520.41,554.5C520.41,555.05,520.861,555.5,521.41,555.5L521.41,555.5L534.41,555.5C534.96,555.5,535.41,555.05,535.41,554.5L535.41,554.5L535.41,541.5C535.41,540.95,534.96,540.5,534.41,540.5L534.41,540.5z M532.41,543.5L532.41,542.5C532.41,541.95,532.86,541.5,533.41,541.5L533.41,541.5C533.96,541.5,534.41,541.95,534.41,542.5L534.41,542.5L534.41,543.5C534.41,544.05,533.96,544.5,533.41,544.5L533.41,544.5C532.86,544.5,532.41,544.05,532.41,543.5 M524.41,541.5L531.41,541.5L531.41,547.5L524.41,547.5z M521.41,543.5L521.41,542.5C521.41,541.95,521.86,541.5,522.41,541.5L522.41,541.5C522.96,541.5,523.41,541.95,523.41,542.5L523.41,542.5L523.41,543.5C523.41,544.05,522.96,544.5,522.41,544.5L522.41,544.5C521.86,544.5,521.41,544.05,521.41,543.5 M532.41,548.5L532.41,547.5C532.41,546.951,532.86,546.5,533.41,546.5L533.41,546.5C533.96,546.5,534.41,546.951,534.41,547.5L534.41,547.5L534.41,548.5C534.41,549.05,533.96,549.5,533.41,549.5L533.41,549.5C532.86,549.5,532.41,549.05,532.41,548.5 M521.41,548.5L521.41,547.5C521.41,546.951,521.86,546.5,522.41,546.5L522.41,546.5C522.96,546.5,523.41,546.951,523.41,547.5L523.41,547.5L523.41,548.5C523.41,549.05,522.96,549.5,522.41,549.5L522.41,549.5C521.86,549.5,521.41,549.05,521.41,548.5 M524.41,548.5L531.41,548.5L531.41,554.499L524.41,554.499z M532.41,553.5L532.41,552.5C532.41,551.95,532.86,551.5,533.41,551.5L533.41,551.5C533.96,551.5,534.41,551.95,534.41,552.5L534.41,552.5L534.41,553.5C534.41,554.05,533.96,554.5,533.41,554.5L533.41,554.5C532.86,554.5,532.41,554.05,532.41,553.5 M521.41,553.5L521.41,552.5C521.41,551.95,521.86,551.5,522.41,551.5L522.41,551.5C522.96,551.5,523.41,551.95,523.41,552.5L523.41,552.5L523.41,553.5C523.41,554.05,522.96,554.5,522.41,554.5L522.41,554.5C521.86,554.5,521.41,554.05,521.41,553.5" HorizontalAlignment="Right" Margin="0,0,3.778,4.5" VerticalAlignment="Bottom" UseLayoutRounding="False" Opacity="0">
+				<Path.Fill>
+					<RadialGradientBrush Center="0.188,0.308" GradientOrigin="0.188,0.308" RadiusX="0.5" RadiusY="0.5">
+						<GradientStop Color="White" Offset="0"/>
+						<GradientStop Color="#FFBFBFBF" Offset="1"/>
+					</RadialGradientBrush>
+				</Path.Fill>
+			</Path>
+			<Grid x:Name="ImageIcon" Height="17" HorizontalAlignment="Right" Margin="0,0,3,3" VerticalAlignment="Bottom" Width="17">
+				<Path Stretch="Fill" Data="F1M409.614,570.132C408.635,571.111,408.635,572.707,409.614,573.687L409.614,573.687C410.595,574.668,412.191,574.669,413.171,573.689L413.171,573.689C414.152,572.708,414.15,571.112,413.17,570.131L413.17,570.131C412.68,569.641,412.036,569.397,411.393,569.397L411.393,569.397C410.749,569.397,410.104,569.642,409.614,570.132" Margin="7.011,6.217,4.963,5.757" UseLayoutRounding="False" RenderTransformOrigin="0.5,0.5">
+					<Path.Fill>
+						<RadialGradientBrush Center="-0.802,0.486" GradientOrigin="-0.802,0.486" RadiusX="1.299" RadiusY="1.299">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FFBFBFBF" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+					<Path.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="45"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Path.RenderTransform>
+				</Path>
+				<Path Stretch="Fill" Height="16.886" Width="16.958" Data="F1M411.16,565.53L408.367,565.366L404.78,568.954L404.944,571.745L404.217,572.473L403.303,571.557L401.965,572.895L402.88,573.809L402.035,574.654L408.227,580.845L412.36,576.713C413.277,576.53,414.15,576.086,414.859,575.377L414.859,575.377C415.569,574.668,416.013,573.794,416.196,572.877L416.196,572.877L418.923,570.152L412.73,563.959z M409.052,574.249C407.76,572.959,407.76,570.859,409.052,569.569L409.052,569.569C410.341,568.279,412.442,568.277,413.734,569.568L413.734,569.568C415.024,570.858,415.024,572.96,413.734,574.251L413.734,574.251C413.089,574.896,412.242,575.218,411.394,575.218L411.394,575.218C410.546,575.219,409.697,574.895,409.052,574.249" UseLayoutRounding="False" Margin="0,0,0.042,0.114" RenderTransformOrigin="0.5,0.5">
+					<Path.Fill>
+						<RadialGradientBrush Center="0.17,0.467" GradientOrigin="0.17,0.467" RadiusX="0.385" RadiusY="0.387">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FFBFBFBF" Offset="1"/>
+						</RadialGradientBrush>
+					</Path.Fill>
+					<Path.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="45"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Path.RenderTransform>
+				</Path>
+			</Grid>
+		</Grid>
+	</Grid>
+</UserControl>

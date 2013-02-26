@@ -1,0 +1,32 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	xmlns:controlsToolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
+	xmlns:local="clr-namespace:silverscreenPrototype"
+	x:Class="silverscreenPrototype.BgColorPicker"
+	d:DesignWidth="100" d:DesignHeight="100">
+
+	<UserControl.Resources>
+		<ItemsPanelTemplate x:Key="BgKeyPanel">
+			<controlsToolkit:WrapPanel/>
+		</ItemsPanelTemplate>
+		<DataTemplate x:Key="BGItemTemplate">
+			<Grid Margin="0,0,5,5">
+				<Canvas Height="30" Width="34.451" Opacity="0.80000299215316772" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<Path Fill="#FF191A1A" Stretch="Fill" Stroke="#FF737474" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="31" Width="35.451" Canvas.Left="-0.5" Canvas.Top="-0.5" Data="M841.4063,345.4736C841.4063,347.1236,840.0563,348.4736,838.4063,348.4736L809.9553,348.4736C808.3043,348.4736,806.9553,347.1236,806.9553,345.4736L806.9553,321.4736C806.9553,319.8236,808.3043,318.4736,809.9553,318.4736L838.4063,318.4736C840.0563,318.4736,841.4063,319.8236,841.4063,321.4736L841.4063,345.4736z"/>
+				</Canvas>
+				<Grid HorizontalAlignment="Center" Height="24" VerticalAlignment="Center" Width="25">
+					<Path Stretch="Fill" Height="1.74" Data="F1M821.357,321.536C822.082,323.602,826.495,323.733,827.004,321.375L827.004,321.375C825.525,322.192,822.617,321.706,821.357,321.536" Margin="0.1,0,0,0" UseLayoutRounding="False" VerticalAlignment="Top" Width="5.64699935913086" HorizontalAlignment="Center" Fill="{Binding}"/>
+					<Path Stretch="Fill" Data="F1M821.035,321.536C819.281,322.416,817.396,323.166,815.391,323.795L815.391,323.795C813.721,325.781,812.971,328.685,811.68,331.053L811.68,331.053L811.68,331.214C812.686,331.983,813.93,332.512,815.391,332.826L815.391,332.826C816.261,332.783,815.852,331.461,816.842,331.536L816.842,331.536C818.468,335.324,816.84,340.254,816.52,344.44L816.52,344.44C817.793,345.693,820.517,345.495,822.649,345.891L822.649,345.891L825.874,345.891C827.976,345.465,830.746,345.709,832.004,344.44L832.004,344.44C831.387,340.229,830.162,335.645,831.52,331.536L831.52,331.536C832.481,331.435,832.298,332.477,832.81,332.826L832.81,332.826C834.386,332.575,835.67,332.031,836.68,331.214L836.68,331.214C835.114,328.896,835.165,325.369,832.971,323.795L832.971,323.795C831.367,322.643,829.219,322.896,827.487,321.536L827.487,321.536C826.414,323.896,822.065,324.046,821.035,321.536" Margin="0,0,0,-0.355" UseLayoutRounding="False" Fill="{Binding}"/>
+				</Grid>
+			</Grid>
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<Grid x:Name="LayoutRoot">
+		<local:SelectableItemsControl x:Name="ItemsList" ItemTemplate="{StaticResource BGItemTemplate}" ItemsPanel="{StaticResource BgKeyPanel}"/>
+	</Grid>
+</UserControl>

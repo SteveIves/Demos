@@ -1,0 +1,20 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// TimeDisplayTick.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <TextBlock FontSize="15" Foreground="#FF817C77" Width="100" Height="100"><Run x:Name="time" Text="h " /><Run x:Name="designator" FontSize="10" Text="tt" /></TextBlock>
+  <Line Name="line" Stroke="#FFC7C7BD" X1="0" Y1="0" X2="0" Y2="1000" />
+</Canvas>

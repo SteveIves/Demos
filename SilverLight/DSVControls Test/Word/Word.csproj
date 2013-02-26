@@ -1,0 +1,478 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C6A952EB-F141-4EDF-AB93-87852E285FB4}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Word</RootNamespace>
+    <AssemblyName>Word</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>Word.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Word.App</SilverlightAppEntry>
+    <TestPageFileName>WordTestPage.html</TestPageFileName>
+    <CreateTestPage>true</CreateTestPage>
+    <ValidateXaml>true</ValidateXaml>
+    <EnableOutOfBrowser>false</EnableOutOfBrowser>
+    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
+    <UsePlatformExtensions>false</UsePlatformExtensions>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <LinkedServerProject>
+    </LinkedServerProject>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DSV.Controls">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="DSV.Controls.Menu">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.Menu.dll</HintPath>
+    </Reference>
+    <Reference Include="DSV.Controls.Windows">
+      <HintPath>..\DSV.Controls.dll\DSV.Controls.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Controls, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Windows.Controls.Input, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Windows.Controls.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.xaml.cs">
+      <DependentUpon>MainForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PrintPreview.xaml.cs">
+      <DependentUpon>PrintPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Include="MainForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PrintPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AlignCenter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\word16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\word32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AlignJustify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AlignLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AlignRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ApplyStylesPane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\BlackAndWhiteBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\BlankPageInsert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Bold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Bullets.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ChangeStylesMenu32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ChartInsert32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClearFormatting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ClipArtInsert32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CoverPageInsertGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CoverPageRemove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Cut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileClose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileOpen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSave32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FileSaveAs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FindDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FontColorMoreColorsDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FontColorPicker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\FormatPainter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\GoTo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Italic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Numbering.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PageBreakInsertWord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Paste32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PictureInsertFromFile32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PrintPreviewClose.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\QuickStylesSets.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\QuickStylesSets32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ReplaceDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\SelectRecord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ShapesMoreShapes32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TextFillMoreGradientsDialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ThemeColorsGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ThemeFontsGallery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Underline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\Marker7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullets\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Colors\Color9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CoverPages\5.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\Gradient9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gradients\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\Marker7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Numbering\None.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Shapes\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style15.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Styles\Style9.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,24 @@
+﻿<!--
+/////////////////////////////////////////////////////////////
+//
+// FlightDisplay.xaml
+//
+// © 2007 Microsoft Corporation. All Rights Reserved.
+//
+// This file is licensed with terms as outlined here:
+// http://go.microsoft.com/fwlink/?LinkID=89145&clcid=0x409
+//
+/////////////////////////////////////////////////////////////
+-->
+
+<Canvas
+  xmlns="http://schemas.microsoft.com/client/2007"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Width="100" Height="100">
+  <Rectangle Stroke="#FF817C77" Fill="#c0FFFFFF" RadiusX="5" RadiusY="5" Width="100" Height="100" />
+  <TextBlock Name="identifier" FontSize="10" FontFamily="Arial" Foreground="#FF817C77" />
+  <TextBlock Name="from" FontSize="11" FontFamily="Arial" FontWeight="SemiBold" Foreground="#FF000000" />
+  <TextBlock Name="to" FontSize="11" FontFamily="Arial" FontWeight="SemiBold" Foreground="#FF000000" />
+  <TextBlock Name="departs" FontSize="10" FontFamily="Arial" Foreground="#FF817C77" Text="h:mm" Opacity="0" />
+  <TextBlock Name="arrives" FontSize="10" FontFamily="Arial" Foreground="#FF817C77" Text="h:mm" Opacity="0" />
+</Canvas>

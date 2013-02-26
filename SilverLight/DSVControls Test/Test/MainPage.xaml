@@ -1,0 +1,345 @@
+﻿<UserControl xmlns:controlsToolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"  x:Class="Test.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:controlsPrimitives="clr-namespace:System.Windows.Controls.Primitives;assembly=System.Windows"
+    xmlns:ribbon="clr-namespace:Controls.Menus.Ribbon;assembly=Controls.Menus"
+    xmlns:menu="clr-namespace:Controls.Menus.Menu;assembly=Controls.Menus"
+    xmlns:menusCommon="clr-namespace:Controls.Menus;assembly=Controls.Menus"
+    xmlns:local="clr-namespace:Test"
+    xmlns:vsm="clr-namespace:System.Windows;assembly=System.Windows"
+    mc:Ignorable="d" d:DesignWidth="942" d:DesignHeight="480">
+    
+    <Grid x:Name="LayoutRoot" Background="LightSteelBlue">
+        <ribbon:Ribbon Margin="0,24,0,0" >
+            <ribbon:Ribbon.QuickAccessToolBar>
+                <ribbon:QuickAccessToolBar >
+                    <ribbon:QuickAccessToolBar.OptionsButton>
+                        <ribbon:QATBOptionsButton>
+                            <ribbon:RibbonSeparator Label="Настройка панели быстрого доступа"/>
+                            <ribbon:RibbonButton Label="Разместить под лентой"/>
+                        </ribbon:QATBOptionsButton>
+                    </ribbon:QuickAccessToolBar.OptionsButton>
+                    <ribbon:RibbonSeparator/>
+                    <ribbon:RibbonToggleButton Label="Вырезать" ShowLabel="Collapsed" Image="Icons/Cut.png" ShowImage="Visible" ButtonSize="Large"/>
+                    <ribbon:RibbonSplitButton ShowLabel="Collapsed" Image="/Test;component/Icons/FontColorPicker.png" ShowImage="Visible" ButtonType="Button">
+                        <ribbon:RibbonItemsGallery ItemImageSize="13,13" ShowItemLabel="Collapsed" ColumnCount="10" Loaded="ColorsRibbonGallery_ItemsLoading"/>
+                        <ribbon:RibbonButton Label="Авто" OfficeImageId="/Test;component/Icons/BlackAndWhiteBlack.png" ShowImage="Visible" ShowLabel="Visible"/>
+                        <ribbon:RibbonButton Label="Другие цвета" Image="/Test;component/Icons/FontColorMoreColorsDialog.png" ShowImage="Visible" ShowLabel="Visible"/>
+                        <ribbon:RibbonMenu Label="Градиентная" Image="/Test;component/Icons/TextFillMoreGradientsDialog.png" ShowImage="Visible" >
+                            <ribbon:RibbonItemsGallery ItemImageSize="36,36" ShowItemLabel="Collapsed" ColumnCount="5">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/None.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient1.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient7.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient8.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient9.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient10.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient11.png"/>
+                            </ribbon:RibbonItemsGallery>
+                            <ribbon:RibbonButton Label="Другие градиентные заливки..." Image="/Test;component/Icons/TextFillMoreGradientsDialog.png" ShowImage="Visible" ShowLabel="Visible"/>
+                        </ribbon:RibbonMenu>
+                    </ribbon:RibbonSplitButton>
+
+                    <ribbon:RibbonGallery ShowLabel="Collapsed"  Image="Icons/Cut.png" ShowImage="Visible" ButtonSize="Large">
+                        <ribbon:RibbonGallery.Gallery>
+                            <ribbon:RibbonItemsGallery ShowItemLabel="Collapsed" ItemImageSize="64,48" ColumnCount="3">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style1.png" Click="RibbonDropDownItem_Click"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style7.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style8.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style9.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style10.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style11.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style12.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style13.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style14.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style15.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style16.png"/>
+                            </ribbon:RibbonItemsGallery>
+                        </ribbon:RibbonGallery.Gallery>
+                        <ribbon:RibbonButton Label="Очистить формат" Image="/Test;component/Icons/ClearFormatting.png" ShowImage="Visible"/>
+                        <ribbon:RibbonButton Label="Применить стили" Image="/Test;component/Icons/ApplyStylesPane.png" ShowImage="Visible"/>
+                    </ribbon:RibbonGallery>
+
+                    <ribbon:RibbonMenu Label="Изменить стили" Image="/Test;component/Icons/ChangeStylesMenu32.png" ShowImage="Visible" ButtonSize="Large" ItemSize="Small">
+                        <ribbon:RibbonMenu Label="Набор стилей" Image="/Test;component/Icons/QuickStylesSets.png" ShowImage="Visible" ItemSize="Large">
+                            <ribbon:RibbonToggleButton Label="Word 2003"/>
+                            <ribbon:RibbonToggleButton Label="Word 2010"/>
+                            <ribbon:RibbonToggleButton Label="Изысканные"/>
+                            <ribbon:RibbonToggleButton Label="Отличные"/>
+                            <ribbon:RibbonToggleButton Label="Простые"/>
+                            <ribbon:RibbonToggleButton Label="Рукописные"/>
+                            <ribbon:RibbonToggleButton Label="Современные"/>
+                            <ribbon:RibbonToggleButton Label="Строгие"/>
+                            <ribbon:RibbonToggleButton Label="Традиционные"/>
+                            <ribbon:RibbonToggleButton Label="Фигурные"/>
+                            <ribbon:RibbonToggleButton Label="ggg" Description="323323233" ShowImage="Visible" OfficeImageId="AppointmentColorDialog"/>
+                        </ribbon:RibbonMenu>
+                        <ribbon:RibbonGallery Label="Цвета" Image="/Test;component/Icons/ThemeColorsGallery.png" ShowImage="Visible">
+                        </ribbon:RibbonGallery>
+                        <ribbon:RibbonGallery Label="Шрифты" Image="/Test;component/Icons/ThemeFontsGallery.png" ShowImage="Visible">
+                        </ribbon:RibbonGallery>
+                        <ribbon:RibbonSeparator/>
+                        <ribbon:RibbonButton Label="По умолчанию"/>
+                    </ribbon:RibbonMenu>
+
+                    <ribbon:RibbonComboBox Label="Стиль" ShowLabel="Collapsed" Width="100" SelectedIndex="1">
+                        <ribbon:RibbonDropDownItem Label="Tahoma"/>
+                        <ribbon:RibbonDropDownItem Label="Arial"/>
+                        <ribbon:RibbonDropDownItem Label="Calibri"/>
+                        <ribbon:RibbonDropDownItem Label="Courier New"/>
+                        <ribbon:RibbonDropDownItem Label="Microsoft Sans Serif"/>
+                        <ribbon:RibbonDropDownItem Label="Times New Roman"/>
+                    </ribbon:RibbonComboBox>
+
+                    <ribbon:RibbonSeparator/>
+                </ribbon:QuickAccessToolBar>
+            </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:Ribbon.OfficeMenu>
+                <ribbon:RibbonOfficeMenu TabSelectedIndex="1">
+                    <ribbon:RibbonOfficeMenuButton Label="Сохранить" Image="/Test;component/Icons/FileSave.png"/>
+                    <ribbon:RibbonOfficeMenuButton Label="Сохранить как" Image="/Test;component/Icons/FileSaveAs.png"/>
+                    <ribbon:RibbonOfficeMenuButton Label="Открыть" Image="/Test;component/Icons/FileOpen.png"/>
+                    <ribbon:RibbonOfficeMenuButton Label="Закрыть" Image="/Test;component/Icons/FileClose.png"/>
+                    <ribbon:RibbonOfficeMenuTab Label="Печать">
+                        <Button Content="Печать" Width="100" Height="50"/>
+                    </ribbon:RibbonOfficeMenuTab>
+                    <ribbon:RibbonOfficeMenuTab Label="Сведения">
+                        <TextBlock Text="Сведения"/>
+                    </ribbon:RibbonOfficeMenuTab>
+                    <ribbon:RibbonOfficeMenuButton Label="Параметры"/>
+                    <ribbon:RibbonOfficeMenuButton Label="Выход" Image="/Test;component/Icons/PrintPreviewClose.png"/>
+                </ribbon:RibbonOfficeMenu>
+            </ribbon:Ribbon.OfficeMenu>
+            
+            <ribbon:RibbonTab Header="Главная" IsSelected="True">
+                <ribbon:RibbonGroup Label="Буфер обмена" ShowDialogLauncher="True">
+                    <ribbon:RibbonSplitButton ribbon:ScreenTip.Title="Title" ribbon:ScreenTip.Description="Description" Label="Вставить" Image="/Test;component/Icons/Paste32.png" ButtonSize="Large">
+                        <ribbon:RibbonButton Label="Специальная вставка"/>
+                    </ribbon:RibbonSplitButton>
+                    <ribbon:RibbonButton ribbon:ScreenTip.Title="sdsdsdsds sdsds" Label="Вырезать" Image="Icons/Cut.png" ShowImage="Visible"/>
+                    <ribbon:RibbonButton Label="Копировать" Image="Icons/Copy.png" ShowImage="Visible"/>
+                    <ribbon:RibbonToggleButton Label="Формат по образцу" Image="Icons/FormatPainter.png" ShowImage="Visible" Click="RibbonToggleButton_Click"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Label="Шрифт">
+                    <ribbon:RibbonBox Orientation="Horizontal">
+                        <ribbon:RibbonComboBox Label="Стиль" ShowLabel="Collapsed" Width="100" SelectedIndex="1">
+                            <ribbon:RibbonDropDownItem Label="Tahoma"/>
+                            <ribbon:RibbonDropDownItem Label="Arial"/>
+                            <ribbon:RibbonDropDownItem Label="Calibri"/>
+                            <ribbon:RibbonDropDownItem Label="Courier New"/>
+                            <ribbon:RibbonDropDownItem Label="Microsoft Sans Serif"/>
+                            <ribbon:RibbonDropDownItem Label="Times New Roman"/>
+                        </ribbon:RibbonComboBox>
+                        <ribbon:RibbonComboBox Label="Размер шрифта" ShowLabel="Collapsed" Width="50" SelectedIndex="2">
+                            <ribbon:RibbonDropDownItem Label="8"/>
+                            <ribbon:RibbonDropDownItem Label="10"/>
+                            <ribbon:RibbonDropDownItem Label="12"/>
+                            <ribbon:RibbonDropDownItem Label="14"/>
+                            <ribbon:RibbonDropDownItem Label="16"/>
+                            <ribbon:RibbonDropDownItem Label="20"/>
+                            <ribbon:RibbonDropDownItem Label="22"/>
+                            <ribbon:RibbonDropDownItem Label="24"/>
+                            <ribbon:RibbonDropDownItem Label="26"/>
+                            <ribbon:RibbonDropDownItem Label="28"/>
+                            <ribbon:RibbonDropDownItem Label="30"/>
+                            <ribbon:RibbonDropDownItem Label="36"/>
+                        </ribbon:RibbonComboBox>
+                    </ribbon:RibbonBox>
+                    <ribbon:RibbonBox Orientation="Horizontal">
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/Bold.png" ShowImage="Visible"/>
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/Italic.png" ShowImage="Visible"/>
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/Underline.png" ShowImage="Visible"/>
+                        <ribbon:RibbonSeparator/>
+                        
+                        <ribbon:RibbonSplitButton ShowLabel="Collapsed" Image="/Test;component/Icons/FontColorPicker.png" ShowImage="Visible" ButtonType="Button">
+                            <ribbon:RibbonItemsGallery ItemImageSize="13,13" ShowItemLabel="Collapsed" ColumnCount="10" Loaded="ColorsRibbonGallery_ItemsLoading"/>
+                            <ribbon:RibbonButton Label="Авто" OfficeImageId="/Test;component/Icons/BlackAndWhiteBlack.png" ShowImage="Visible" ShowLabel="Visible"/>
+                            <ribbon:RibbonButton Label="Другие цвета" Image="/Test;component/Icons/FontColorMoreColorsDialog.png" ShowImage="Visible" ShowLabel="Visible"/>
+                            <ribbon:RibbonMenu Label="Градиентная" Image="/Test;component/Icons/TextFillMoreGradientsDialog.png" ShowImage="Visible" >
+                                <ribbon:RibbonItemsGallery ItemImageSize="36,36" ShowItemLabel="Collapsed" ColumnCount="5">
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/None.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient1.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient2.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient3.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient4.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient5.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient6.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient7.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient8.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient9.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient10.png"/>
+                                    <ribbon:RibbonDropDownItem Image="/Test;component/Images/Gradients/Gradient11.png"/>
+                                </ribbon:RibbonItemsGallery>
+                                <ribbon:RibbonButton Label="Другие градиентные заливки..." Image="/Test;component/Icons/TextFillMoreGradientsDialog.png" ShowImage="Visible" ShowLabel="Visible"/>
+                            </ribbon:RibbonMenu>
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonBox>
+                    
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Label="Абзац">
+                    <ribbon:RibbonBox Orientation="Horizontal">
+                        <ribbon:RibbonSplitButton ShowLabel="Collapsed" Image="/Test;component/Icons/Bullets.png" ShowImage="Visible" ButtonType="ToggleButton">
+                            <ribbon:RibbonItemsGallery ItemImageSize="40,40" ShowItemLabel="Collapsed" ColumnCount="6">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/None.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker1.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Bullets/Marker7.png"/>
+                            </ribbon:RibbonItemsGallery>
+                            <ribbon:RibbonButton Label="Определить новый маркер" ShowImage="Collapsed" ShowLabel="Visible"/>
+                        </ribbon:RibbonSplitButton>
+                        
+                        <ribbon:RibbonSplitButton ShowLabel="Collapsed" Image="/Test;component/Icons/Numbering.png" ShowImage="Visible" ButtonType="ToggleButton">
+                            <ribbon:RibbonItemsGallery ItemImageSize="76,76" ShowItemLabel="Collapsed" ColumnCount="3">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/None.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker1.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Numbering/Marker7.png"/>
+                            </ribbon:RibbonItemsGallery>
+                            <ribbon:RibbonButton Label="Определить новый формат номера" ShowImage="Collapsed" ShowLabel="Visible"/>
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonBox>
+                    <ribbon:RibbonBox Orientation="Horizontal">
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/AlignLeft.png" ShowImage="Visible" Group="Align"/>
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/AlignCenter.png" ShowImage="Visible" Group="Align"/>
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/AlignRight.png" ShowImage="Visible" Group="Align"/>
+                        <ribbon:RibbonToggleButton ShowLabel="Collapsed" Image="/Test;component/Icons/AlignJustify.png" ShowImage="Visible" Group="Align"/>
+                    </ribbon:RibbonBox>
+                </ribbon:RibbonGroup>
+                
+                <ribbon:RibbonGroup Label="Стили">
+                    <ribbon:RibbonGallery ShowLabel="Collapsed"  Image="Icons/Cut.png" ShowImage="Visible" ButtonSize="Large">
+                        <ribbon:RibbonGallery.Gallery>
+                            <ribbon:RibbonItemsGallery ShowItemLabel="Collapsed" ItemImageSize="64,48" ColumnCount="3">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style1.png" Click="RibbonDropDownItem_Click"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style7.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style8.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style9.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style10.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style11.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style12.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style13.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style14.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style15.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Styles/Style16.png"/>
+                            </ribbon:RibbonItemsGallery>
+                        </ribbon:RibbonGallery.Gallery>
+                        <ribbon:RibbonButton Label="Очистить формат" Image="/Test;component/Icons/ClearFormatting.png" ShowImage="Visible"/>
+                        <ribbon:RibbonButton Label="Применить стили" Image="/Test;component/Icons/ApplyStylesPane.png" ShowImage="Visible"/>
+                    </ribbon:RibbonGallery>
+
+                    <ribbon:RibbonMenu Label="Изменить стили" Image="/Test;component/Icons/ChangeStylesMenu32.png" ShowImage="Visible" ButtonSize="Large" ItemSize="Small">
+                        <ribbon:RibbonMenu Label="Набор стилей" Image="/Test;component/Icons/QuickStylesSets.png" ShowImage="Visible" ItemSize="Large">
+                            <ribbon:RibbonToggleButton Label="Word 2003"/>
+                            <ribbon:RibbonToggleButton Label="Word 2010"/>
+                            <ribbon:RibbonToggleButton Label="Изысканные"/>
+                            <ribbon:RibbonToggleButton Label="Отличные"/>
+                            <ribbon:RibbonToggleButton Label="Простые"/>
+                            <ribbon:RibbonToggleButton Label="Рукописные"/>
+                            <ribbon:RibbonToggleButton Label="Современные"/>
+                            <ribbon:RibbonToggleButton Label="Строгие"/>
+                            <ribbon:RibbonToggleButton Label="Традиционные"/>
+                            <ribbon:RibbonToggleButton Label="Фигурные"/>
+                            <ribbon:RibbonToggleButton Label="ggg" Description="323323233" ShowImage="Visible" OfficeImageId="AppointmentColorDialog"/>
+                        </ribbon:RibbonMenu>
+                        <ribbon:RibbonGallery Label="Цвета" Image="/Test;component/Icons/ThemeColorsGallery.png" ShowImage="Visible">
+                        </ribbon:RibbonGallery>
+                        <ribbon:RibbonGallery Label="Шрифты" Image="/Test;component/Icons/ThemeFontsGallery.png" ShowImage="Visible">
+                        </ribbon:RibbonGallery>
+                        <ribbon:RibbonSeparator/>
+                        <ribbon:RibbonButton Label="По умолчанию"/>
+                    </ribbon:RibbonMenu>
+                </ribbon:RibbonGroup>
+                
+                <ribbon:RibbonGroup Label="Редактирование">
+                    <ribbon:RibbonSplitButton Label="Найти" Image="/Test;component/Icons/FindDialog.png" ShowImage="Visible">
+                        <ribbon:RibbonButton Label="Найти" Image="/Test;component/Icons/FindDialog.png" ShowImage="Visible"/>
+                        <ribbon:RibbonButton Label="Перейти" Image="/Test;component/Icons/GoTo.png" ShowImage="Visible"/>
+                    </ribbon:RibbonSplitButton>
+                    <ribbon:RibbonButton Label="Заменить" Image="/Test;component/Icons/ReplaceDialog.png" ShowImage="Visible"/>
+                    <ribbon:RibbonMenu Label="Выделить" Image="/Test;component/Icons/SelectRecord.png" ShowImage="Visible" ItemSize="Large">
+                        <ribbon:RibbonButton Label="Выделить всё" Description="wrwrwrewerer" OfficeImageId="SelectAll" ShowImage="Visible"/>
+                        <ribbon:RibbonButton Label="Выбор объектов" Description="tyty ytyt y t" OfficeImageId="SelectRecord" ShowImage="Visible"/>
+                        <ribbon:RibbonButton Label="Область выделения" Description="hghg ghghgh" OfficeImageId="SelectionPane" ShowImage="Visible"/>
+                    </ribbon:RibbonMenu>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            
+            <ribbon:RibbonTab x:Name="PasteTab" Header="Вставка">
+                <ribbon:RibbonGroup Label="Страницы">
+                    <ribbon:RibbonGallery Label="Титульная страница" Image="/Test;component/Icons/CoverPageInsertGallery.png" ShowImage="Visible" ButtonSize="Small">
+                        <ribbon:RibbonGallery.Gallery>
+                            <ribbon:RibbonItemsGallery ShowItemLabel="Collapsed" ItemImageSize="109,153" ColumnCount="3">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/CoverPages/1.jpg"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/CoverPages/2.jpg"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/CoverPages/3.jpg"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/CoverPages/4.jpg"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/CoverPages/5.jpg"/>
+                            </ribbon:RibbonItemsGallery>
+                        </ribbon:RibbonGallery.Gallery>
+                        <ribbon:RibbonButton Label="Удалить текущую титульную страницу" Image="/Test;component/Icons/CoverPageRemove.png" ShowImage="Visible"/>
+                    </ribbon:RibbonGallery>
+                    
+                    <ribbon:RibbonButton Label="Пустая страница" Image="/Test;component/Icons/BlankPageInsert.png" ShowImage="Visible" Click="RibbonButton_Click"/>
+                    <ribbon:RibbonButton Label="Разрыв страницы" Image="/Test;component/Icons/PageBreakInsertWord.png" ShowImage="Visible"/>
+                </ribbon:RibbonGroup>
+
+                <ribbon:RibbonGroup Label="Иллюстрации">
+                    <ribbon:RibbonButton Label="Рисунок" Image="/Test;component/Icons/PictureInsertFromFile32.png" ShowImage="Visible" ButtonSize="Large"/>
+                    <ribbon:RibbonButton Label="Картинка" Image="/Test;component/Icons/ClipArtInsert32.png" ShowImage="Visible" ButtonSize="Large"/>
+                    <ribbon:RibbonGallery Label="Фигуры" ButtonSize="Large">
+                        <ribbon:RibbonGallery.Gallery>
+                            <ribbon:RibbonItemsGallery ShowItemLabel="Collapsed" ItemImageSize="16,16" ColumnCount="8">
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/1.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/2.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/3.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/4.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/5.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/6.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/7.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/8.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/9.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/10.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/11.png"/>
+                                <ribbon:RibbonDropDownItem Image="/Test;component/Images/Shapes/12.png"/>
+                            </ribbon:RibbonItemsGallery>
+                        </ribbon:RibbonGallery.Gallery>
+                        <ribbon:RibbonButton Label="Новое полотно"/>
+                    </ribbon:RibbonGallery>
+                    <ribbon:RibbonButton Label="Диаграмма" Image="/Test;component/Icons/ChartInsert32.png" ShowImage="Visible" ButtonSize="Large"/>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+
+            <ribbon:RibbonTab Header="111" Visibility="Collapsed">
+                <ribbon:RibbonGroup Label="Страницы">
+                    <ribbon:RibbonButton Label="Пустая страница" Image="/Test;component/Icons/BlankPageInsert.png" ShowImage="Visible"/>
+                    <ribbon:RibbonButton Label="Разрыв страницы" Image="/Test;component/Icons/PageBreakInsertWord.png" ShowImage="Visible"/>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+
+        </ribbon:Ribbon>
+    </Grid>
+</UserControl>
