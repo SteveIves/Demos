@@ -1,0 +1,17 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would incorrectly allow the period to be omitted
+;			from .START compiler directives.
+;
+;			The V9 compiler correctly detects this invalid syntax and reports
+;			an "Invalid program entry at or near {start}" error.
+;
+; Solution:	Change "start" to ".start"
+
+start nopage
+
+.main
+
+.proc
+
+.end

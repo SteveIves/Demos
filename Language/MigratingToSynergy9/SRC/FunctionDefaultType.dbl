@@ -1,0 +1,44 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers had no way of validating the type being returned
+;			by an external function.
+;
+;			When the V9 compiler compiles an external function it determines
+;			the expected return type of the function based on the data type of
+;			the return value expression associated with the first FRETURN
+;			statement in the routine.
+;
+;			In the example below, the return type of the function is determined
+;			to be decimal by the statement "freturn 0", and therefor the three
+;			subsequent freturn statements, all of which return alpha expressions
+;			are determined to be invalid.  The compiler reports a "Type mismatch
+;			between D and A" error for each.
+;
+; Solution:	Change the first freturn statement to freturn "0".
+;
+.main FunctionReturnType
+external function 
+	GetGolor	,a	
+record 
+	retval		,a3
+.proc
+	retval = %MyFunction(2)
+.end
+
+.function GetColor
+	arg1	,n
+.proc
+
+	if (!^passed(arg1))
+		freturn 0
+
+	using arg1 select
+	(1),	freturn "Red"
+	(2),	freturn "Green"
+	(3),	freturn "Blue"
+	endusing
+
+	freturn ""
+
+.end
+

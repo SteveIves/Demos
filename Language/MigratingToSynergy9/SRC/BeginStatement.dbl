@@ -1,0 +1,23 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers incorrectly allowed statements to immediately
+;			follow BEGIN, on the same line.
+;
+;			The V9 compiler does not allow this incorrect syntax, and reports
+;			an "BEGIN should be followed by end of line" error.
+;
+; Solution:	Move the statement following the BEGIN to a seperate line
+
+.main BeginStatement
+record 
+	type	,d1
+	subtype	,d1
+.proc
+
+	if (type==4)
+	begin type = 5
+		subtype = 2
+	end
+		
+	
+.end

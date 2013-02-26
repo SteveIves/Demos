@@ -1,0 +1,45 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to allow certain control charaters (such as
+;			carriage-return or line-feed) to be embedded within strings in
+;			source code.
+;
+;			This situation is rare, because most modern editors will not allow
+;			this to happen, but can be common in source code that originated
+;			on an OpenVMS system (where the editors do support this ability).
+;
+;			The V9 compiler does not support some of these control characters
+;			to be embedded within source code.
+;
+; Solution:	Use %CHAR(asciicode) instead of embedded control characters
+;
+; NOTE:		It is not possible to create code that exhibits this behavior on
+;			windows.  If you were looking at code which exhibits this issue
+;			in an editor on an OpenVMS system, you would see control characters
+;			represented in an expanded, readable form.  For example, line-feed
+;			characters appear as <LF>, and carrigan-returns as <CR>. Such code
+;			can't be compiled with the V9 compiler.
+
+;.main EmbeddedControlChars
+;record 
+;	crlf	,a2,	"<CR><LF>"
+;	mybuf	,a10
+;.proc
+;	
+;	mybuf = "Hello<CR>World"
+;	
+;.end
+
+;Solution
+
+.main EmbeddedControlChars
+record 
+	crlf	,a2,	%char(13)+%char(10)
+	mybuf	,a10
+.proc
+	
+	mybuf = "Hello"+%char(13)+"World"
+	
+.end
+
+

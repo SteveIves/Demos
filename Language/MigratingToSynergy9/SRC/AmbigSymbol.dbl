@@ -1,0 +1,39 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:  Earlier compilers were single-pass compilers, and were not able to 
+;           resolve all possible scenarios where ambiguous symbols errors
+;           should occur.
+;
+;           In the example below , when the compiler is working on the line
+;           which defines the variable white, so far there is only one preceding
+;           definition for the symbol "green", so that symbol would be used,
+;           regardless of the possible conflicting definition further down in
+;           the code.
+;
+;           The V9 compiler, being a multi-pass compiler, is able to detect all
+;           such potential conflicts.
+;
+; Solution: For the first conflict, change ^size(green) to ^size(rec1.green)
+;
+;           We have a problem with the second conflict, as the variable we need
+;           to reference is in an unmamed record.  So first, name the containing
+;           record "rec3", then change ^size(red) to ^size(rec3.red)
+
+.main AmbigSymbol
+
+record rec1
+    green   ,d6
+
+record
+    red     ,a4
+
+record rec2
+    white   ,a ^size(green)
+    blue    ,a ^size(red)
+    green   ,a5
+    red     ,d2
+
+.proc
+    
+.end
+

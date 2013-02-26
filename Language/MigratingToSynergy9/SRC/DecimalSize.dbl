@@ -1,0 +1,28 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to allow decimal variables to be defined
+;			with a size exceeding the maximum supported size of 18 bytes.
+;			Assignments and if tests would work with such fields, but some
+;			arithmetic operations could result in runtime errors.
+;
+;			The V9 compiler correctly detects this situation and reports an
+;			"Invalid data size specification {d}" error.
+;
+; Solution:	Reduce the size if the field to D18, and remove two digits from the
+;			initial value
+;
+; Note:		You can also temporarily resolve this situation by using the new
+;			-qrelaxed compiler option (as shown, with no qualifiers).
+
+.main DecimalSize
+record MyRec
+	MyField	,d20, 	22222222222222222222
+.proc
+	open(1,i,"tt:")
+	writes(1,"["+MyRec+"]")
+
+	MyField/=2
+	writes(1,"["+MyRec+"]")
+
+	close 1
+.end

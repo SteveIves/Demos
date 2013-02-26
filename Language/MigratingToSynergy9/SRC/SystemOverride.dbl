@@ -1,0 +1,39 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier versions of Synergy Language were not strongly prototyped,
+;			so it was possible to override system routines (routines which are
+;			shipped as part of Synergy/DE) with other routines of the same name,
+;			but with different parameter signatures.
+;
+;			Synergy V9 is now a strongly prototyped language, and one of the
+;			impacts of this is that, when overriding system routines,
+;			developers must ensure that the signature of their override routine
+;			exactly matches the signature of the routine being overridden - only
+;			the implementation of the routine may be changed.
+;
+;			The routine below is overriding a system routine, but the argument
+;			signatures do not match.  In this case the mismatch may not be
+;			obvious, because it occurs as a result of default behaviors.
+;
+;			If argument modifiers are not specified for a subroutine or function
+;			then the defaults which apply are "byref optional".  The putcm
+;			system routine reqires a single alpha "byref required in" parameter. 
+;
+;			To see the differences in the actual and required signatures a
+;			developer can compile their override routine with the -W4 compiler
+;			option, which in this case reports:
+;
+;				System routine overridden. Invalid binding may occur
+;				Subroutine putcm does not match prototype
+;				proto: public static unique sub putcm(byref req in A)void
+;				declr: public static unique sub putcm(byref opt A)void
+;				No object file created
+;
+; Solution:	Add the argument mofifiers "required in" to the data argument
+
+.subroutine putcm
+	data, a
+
+.proc
+	xreturn
+.end

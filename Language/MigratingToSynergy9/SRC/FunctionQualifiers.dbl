@@ -1,0 +1,19 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to incorrectly allow multiple external
+;			function qualifiers which were not separated by commas.
+;
+;			The V9 compiler correctly requires each qualifier to be preceded
+;			by a comma.
+;
+;			Under V9 the code below produces an "Invalid expression at or near
+;			{reentrant}" compilation error.
+;
+; Solution:	Add a comma before "reentrant"
+
+.function MyFunction, ^val reentrant
+
+.proc
+
+.end
+

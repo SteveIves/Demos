@@ -1,0 +1,22 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to allow ^FIRST to be abbreviated to FIRST,
+;			and ^LAST to be abbreviated to LAST, in the key value argument to
+;			several I/O statements (e.g. READ and FIND).
+;
+; 			The V9 compiler no longer supports these abbreviations, and reports
+;			the FIRST or LAST identifiers as undefined variables.
+;
+; Solution:	Change FIRST to ^FIRST, and LAST to ^LAST
+
+.main firstlast
+record
+	buffer	,a1024
+.proc
+	open(1,i:i,"DBLDIR:syntxt.ism")
+	find(1,,FIRST)
+	read(1,buffer,LAST)
+	close 1
+	stop
+.end
+

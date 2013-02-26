@@ -1,0 +1,44 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers did not detect that ^passed was being used on a
+;			local variables rather than a routine parameter. The result bing
+;			that it would always evaluate to FALSE, and the following code
+;			would not execute!
+;
+;			The V9 compier detects this situation and reports an "invalid
+;			argument" error.
+;
+; Solution:	If there is no then/else block then remove the statement and the
+;			conditionally executed statement(s), as they would never execute.
+;
+;			If there is a then / else block then remove the test, and the then
+;			block code, leaving only the else block code, which would have
+;			previously always executed.
+;
+;			Reverse this if the conditional test includes a .NOT. (or !)
+
+.subroutine passed
+record 
+	somevar	,a1
+.proc
+
+	if (^passed(somevar))
+	begin
+		;This code never executes!
+		nop
+	end
+
+	if (^passed(somevar)) then 
+	begin
+		;This code never executes!
+		nop
+	end
+	else
+	begin
+		;This code always executes!
+		nop
+	end
+
+.end
+
+

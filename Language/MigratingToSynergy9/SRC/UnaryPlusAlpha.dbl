@@ -1,0 +1,22 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers did not detect additional addition (+) operators
+;			present in string arithmetic expressions.
+;
+;			The V9 compiler correctly treats the additional operator as a unary
+;			addition operator associated with the second alpha expression. Unary
+;			addition being invalid with alpha operands, the compiler reports a
+;			"Numeric operand required (unary '+')" error.
+;
+; Solution:	Remove one of the + operators.
+;			
+; Note:		You can also temporarily resolve this situation by using the new
+;			-qrelaxed compiler option (as shown, with no qualifiers).
+
+.main UnaryPlusAlpha
+record 
+	buffer	,a80
+.proc
+	buffer = "Hello " +
+	&	+ "World"
+.end

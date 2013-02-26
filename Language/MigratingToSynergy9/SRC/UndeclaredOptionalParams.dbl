@@ -1,0 +1,38 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would allow any number of parameters to be passed
+;			to an external subroutine or function, regardless of the number of
+;			parameters declared within the routine.
+;
+;			This capability was sometimes exploited as a way of supporting
+;			optional parameters.
+;
+;			The V9 compiler, because of strong prototyping, does not allow this
+;			behavior by default.
+;
+; Solution:	Add the second parameter declaration, "arg2, d".
+;
+;			Optionally change the two instances of "^argn(2)" to "arg2"
+;
+; Note:		This situation will only affect "local" routines (i.e. those in the
+;			same compilation unit) or routines which have been strongly
+;			prototyped with dblproto and imported at the point of use.  It is
+;			possible to temporarily resolve this issue through the use of the
+;			compiler qualifier -qrelaxed:local
+;
+.main UndeclaredOptionalParams
+.proc
+	xcall MySub("1",2)
+.end
+
+.subroutine MySub
+	arg1	,a
+record 
+	arg1val	,a1
+	arg2val	,d1
+.proc
+	arg1val = arg1
+	if (^passed(^argn(2)))
+		arg2val = ^argn(2)
+	xreturn
+.end

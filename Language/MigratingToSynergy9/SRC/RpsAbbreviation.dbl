@@ -1,0 +1,16 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would allow any unique abbreviation for various
+;			qualifiers to repository include compiler directives.
+;
+;			The V9 compiler only allows specific pre-defined abbreviations.
+;
+; Solution:	Change "nopre" to "noprec" or "noprecision"
+
+.main rpsabbreviation
+
+.include "TESTSTRUCT" repository, record="test",nopre
+
+.proc
+
+.end

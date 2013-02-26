@@ -1,0 +1,21 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	In some situations, earlier compilers would not detect a missing
+;			statement in the ELSE clause of an IF-THEN-ELSE construct.
+;
+;			The V9 copiler correctly detects this situation and reports a
+;			"STATEMENT expected" error.
+;
+; Solution:	Either add the required code to the ELSE clause, or remove the THEN
+;			an ELSE statements.
+
+main IfThenElseStatements
+
+proc
+
+	if (1) then 
+		nop
+	else
+		
+	
+end

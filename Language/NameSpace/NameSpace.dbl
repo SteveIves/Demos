@@ -1,0 +1,58 @@
+
+main NameSpace
+
+    record 
+        tt      ,int
+        ch      ,int
+        ns      ,int
+        ix      ,int
+        ac      ,int
+    endrecord
+
+    record syntxt
+        facility    ,a3
+        number      ,d5
+          msgid     ,a8 @facility
+        code        ,a10
+        message     ,a200
+    endrecord
+    
+proc
+    
+    open(tt=1,i,"tt:")
+    open(ch=2,i:i,"DBLDIR:syntxt.ism")
+    ns = nspc_open()
+    
+    repeat
+    begin
+        reads(ch,syntxt,eof)
+        xcall nspc_add(ns,msgid,syntxt)
+    end
+eof,
+    close ch
+
+    open(ch,o:s,"syntxt_new.txt")
+    
+    ;For each record in the customers namespace
+    for ix from 1 thru %nspc_find(ns)
+    begin
+        ;Get an access code for the item
+        ac = %nspc_stoa(ns,ix)
+
+        ;Get the data for this item
+        clear syntxt
+        xcall nspc_getdata(ns,ac,syntxt)
+
+        writes(ch,syntxt)
+
+    end
+
+    close ch
+
+    nspc_close(ns)
+
+    close tt
+    
+    stop
+
+endmain

@@ -1,0 +1,34 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:  Earlier compilers would incorrectly allow parentheses to be used to
+;			specify a structure index value instead of brackets, when accessing
+;			a dynamic memory handle (if no field specification followed).
+;
+;			The V9 compiler correctly detects this invalid syntax, and reports
+;			an "Indexing not allowed in structures" error.
+;
+; Solution:	In the WRITES statement, change contact(1) to contact[1].
+
+.main StructureIndex
+
+structure contact
+	name		,a20
+	phone		,a14
+
+record 
+	mh			,i4
+	
+.proc
+
+	open(1,i,"tt:")
+	mh = %mem_proc(DM_ALLOC,^size(contact)*1)
+
+	^m(contact[1].name,mh)  = "John Doe"
+	^m(contact[1].phone,mh) = "(555) 555-5555"
+	
+	writes(1,^m(contact(1),mh))
+	
+	mh = %mem_proc(DM_FREE,mh)	
+	close 1
+
+.end

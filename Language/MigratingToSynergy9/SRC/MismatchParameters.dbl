@@ -1,0 +1,70 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would allow any number of parameters to be passed
+;			to an external subroutine or function, regardless of the number of
+;			parameters declared within the routine.  One common use of this
+;			technique was to facilitate parameters where alpha or numeric values
+;			could be passed
+;
+;			The V9 compiler provides a mechanism which can allow you to retain
+;			this type of behavior, but without losing all of the benefits of
+;			strong prototyping.  The machanism is called "mismatch n" parameters.
+;
+;			A parameter defined as mismatch n is essentially a numeric parameter
+;			which can also receive alphanumeric (or mismatched) values.
+;
+;			By default compiling the routine below results in two "More argument
+;			values than declared parameters" errors.
+;
+; Solution:	Add an explicit argument declaration: required mismatch arg1, n
+;
+;			Optionally, change the "^arg(1)" in the using statement to "arg1"
+;			as it is now possible to address the argument by its name.
+;
+;			Althouth the ^arga(1) and ^argn(1) in the two assignment statements
+;			will continue to work, you could also address the passed argument
+;			by name here, replacing "^arga(1)" with "^a(arg1)", and replacing
+;			"^argn(1)" with "arg1"
+;
+; NOTE:		Having made this change it will not be possible to compile the code
+;			with the V8 compiler, which does not understand "required mismatch".
+;			If you require compatibility with the V8 compiler then use
+;			conditional compilation (.ifdef DBLV9 / .endc). This can't easily
+;			be simulated in this test environment (with V9's DBL8 compiler)
+;			because the DBLV9 identifier is set in the environment for both
+;			compilers.
+
+.main MismatchParameters
+.proc
+	xcall MySub("A")
+	xcall MySub(1)
+.end
+
+.subroutine MySub
+record 
+	afield	,a1
+	dfield	,d1
+.proc
+	using ^argtype(^arg(1)) select
+	(D_TYPE_A),
+		afield = ^arga(1)
+	(D_TYPE_D),
+		dfield = ^argn(1)
+	endusing
+	xreturn
+.end
+
+;.subroutine MySub
+;	required mismatch arg1, n
+;record 
+;	afield	,a1
+;	dfield	,d1
+;.proc
+;	using ^argtype(arg1) select
+;	(D_TYPE_A),
+;		afield = ^a(arg1)
+;	(D_TYPE_D),
+;		dfield = arg1
+;	endusing
+;	xreturn
+;.end

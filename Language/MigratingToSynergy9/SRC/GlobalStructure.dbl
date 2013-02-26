@@ -1,0 +1,36 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers only supported "local" structures, i.e. those
+;			defined within a specific code module.  In the example below, the
+;			two structures are part of the main program, but notice that there
+;			is no explicit .MAIN compiler directive to make this clear.
+;
+; 			V9 now supports "global" structures, defined outside of a routine
+;			in a source file. Global structures require the use of the new
+;			ENDSTRUCTURE statement.  In the example below, the two structures
+;			will be treated as global structures, because there is no preceding
+;			.MAIN, .SUBROUTINE or .FUNCTION to indicate that they are local
+;			structures.
+;
+; Solution:	If yo want the structures to remain as local structures (only
+;			available in the following main program) then add a .main before
+;			the structure definitions
+;
+;			If you want the structures to become global structures (so they
+;			can be used in the main program AND any subsequent external
+;			routines in the source file, then add ",end" to the repository
+;			include, and "endstructure" after the locally defined structure.
+;			For clarity you may also prefer to add a ".main" after the structure
+;			definitions
+
+.include "TESTSTRUCT" repository, structure="mystruct"
+
+structure otherstruct
+	fld1	,a10
+	fld2	,d10
+
+
+.proc
+	
+.end
+

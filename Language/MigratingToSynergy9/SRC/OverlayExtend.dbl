@@ -1,0 +1,17 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to allow the implicit extension of a record
+;			because of overlay fields extending beyond the end of the record.
+;
+; 			The V9 compiler detects this situation and reports a "Cannot extend
+;			record by {n} bytes with overlay field {field}" error.
+;
+; Solution:	Add an explicit unnamed a10 variable before the overlays
+
+.main OverlayExtend
+record
+	pbuff		,a80
+	  page_hdr 	,  a5	@pbuff
+	  page_text ,  a85	@pbuff+5
+.proc
+.end

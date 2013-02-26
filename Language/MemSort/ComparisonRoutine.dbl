@@ -1,0 +1,23 @@
+function ComparisonRoutine, ^val
+	
+	required in element_1	,a 	;Argument type must be the same as the
+	required in element_2	,a 	;array element
+	endparams
+
+	external common sortspec
+		pos		,i4
+		len		,i4
+	endcommon
+
+proc
+	
+	if (element_1(sortspec.pos:sortspec.len) .lt. element_2(sortspec.pos:sortspec.len))
+		freturn -1	;Return element #1 < element #2
+	
+	if (element_1(sortspec.pos:sortspec.len) .gt. element_2(sortspec.pos:sortspec.len))
+		freturn 1	;Return element #1 > element #2
+	
+	freturn 0
+
+endfunction
+

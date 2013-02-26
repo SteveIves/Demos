@@ -1,0 +1,52 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would allow any number of parameters to be passed
+;			to an external subroutine or function, regardless of the number of
+;			parameters declared within the routine.
+;
+;			This capability was often used as a mechanism to support routines
+;			with variable, even undefined parameter lists.
+;
+;			The V9 compiler, because of strong prototyping, does not allow this
+;			behavior by default.  However, there is a new optional external
+;			routine qualifier caled "varargs" that allows the functionality
+;			if required.
+;
+;			Varargs allows any number of trailing parameters to be specified,
+;			but those trailing parameters MAY NOT be used to pass any object
+;			types.
+;
+; Solution:	In this case, add ",varargs" after .subroutine MySub
+;
+; Notes:	It is always more efficient to declare an actual parameter list
+;			if possible, and as an added benefit you retain the strong
+;			prototyping of the routine. "Mismatch n" can help with this (see
+;			other example).
+;
+;			This situation will only affect "local" routines (i.e. those in the
+;			same compilation unit) or routines which have been strongly
+;			prototyped with dblproto and imported at the point of use.  It is
+;			possible to temporarily resolve this issue through the use of the
+;			compiler qualifier -qrelaxed:local
+;
+.main VariableParameters
+.proc
+	xcall MySub("1",2,"3",4,5.5)
+.end
+
+.subroutine MySub
+record 
+	param	,i4
+.proc
+	
+	for param from 1 thru %numargs
+	begin
+		if (^passed(^arg(param)))
+		begin
+			;Process the argument
+		end			
+	end
+	
+	xreturn
+
+.end

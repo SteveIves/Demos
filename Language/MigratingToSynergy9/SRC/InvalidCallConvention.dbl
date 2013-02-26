@@ -1,0 +1,26 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to allow external functions to be called
+;			via a $ instead of a %.  This was for compatibility with very old
+;			versions of DIBOL.
+;
+;			With the V9 compiler this functionality has been deprecated, and 
+;			by default is no longer available.
+;
+; Solution:	Either, change the $ to %, or simply remove the $ (as in V9 the %
+;			is no longer required in order to call an external function.
+;
+; Note:		This situation may also be temporarily addressed by compiling with
+;			the -qrelaxed:deprecate compiler qualifier.
+
+.main 
+record 
+	MyVar	,i4
+.proc
+	MyVar = $SomeFunction	
+.end
+
+.function SomeFunction
+.proc
+	freturn 1
+.end

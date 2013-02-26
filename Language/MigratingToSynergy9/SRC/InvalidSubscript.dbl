@@ -1,0 +1,32 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would incorrectly allow implied-decimal and even
+;			alpha variables to be used as array subscripts.  In the latter case
+;			this could result in "numeric digits expected in argument" errors
+;			at runtime.
+;
+;			The V9 compiler does not allow this behavior, and reports a
+;			"Decimal or integer expression required", or "Numeric expression 
+;			required" error.
+;
+; Solution:	Change the idx1 and idx2 variables from implied decimal and alpha
+;			to decimal or integer, and remove the quotes from the initial value
+;			of idx2.
+;
+;			An alternative would be to cast the index variables using ^d(), but
+;			bear in mind that this would not remove the possibility of runtime
+;			errors resulting from non-numeric characters in idx2.
+
+.main InvalidSubscript
+
+record 
+	array	,3a10
+	idx1	,d3.1	,2
+	idx2	,a1		,"2"
+	
+.proc
+
+	array(idx1) = "Red"
+	array(idx2) = "Green"
+	
+.end

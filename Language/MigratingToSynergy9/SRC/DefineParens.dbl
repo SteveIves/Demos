@@ -1,0 +1,21 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers used to incorrectly allow trailing parentheses
+;			following the identifier in a simple define statement (not a macro).
+;
+;			The V9 compiler does not allow this incorrect syntax, resulting in
+;			an "Invalid compiler directive:  )" compilation error.
+;
+; Solution:	Remove the () from the .define statement
+;			
+.main DefineParens
+record 
+	A	,d2, 65
+
+.define CapitalA() %char(a)
+
+.proc
+	open(1,o,"tt:")
+	writes(1,CapitalA)
+	close 1
+.end

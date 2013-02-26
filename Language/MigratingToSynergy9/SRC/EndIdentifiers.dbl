@@ -1,0 +1,30 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers implemented a subtle difference between END (when
+;			used as the end of a module) and .END, which was that with END, any
+;			defined identifiers were implicitly undefined and would not be
+;			avaialble in, or impact subsequent routines in the same source file.
+;			With .END the identifiers were not implicitly released and therefor
+;			could be used in, and could impact, subsequent routines.
+;
+;			In V9 the END and .END statements behave consistently, exhibiting
+;			the same bahavior as .END in earlier versions.
+;
+; Solution:	There are several possible ways to resolve this issue:
+;
+;			1. Explicitly undefine the FRED identifier before the next routine
+;
+;			2. Move the MySub routine into a seperate source file
+;
+;			3. Use the -qrelaxed:end compiler option
+
+main EndIdentifiers
+.define FRED "ABC"
+proc
+end
+
+subroutine MySub
+.define FRED "DEF"
+proc
+end
+

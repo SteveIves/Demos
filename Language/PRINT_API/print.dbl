@@ -1,0 +1,129 @@
+.main ;print.dbl
+
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+.include "DBLDIR:winprint.def"
+
+.define NUM_OPTS	,2
+.define LEN_OPTS	,20
+
+.align
+record clr_i
+	bld_id			,i4
+	wndid			,i4
+	report_handle	,i4
+	nothing			,i4
+	ds			,a^size(dialog_specs)
+
+record
+	filenames	,NUM_OPTS a LEN_OPTS
+	&			,"DBLDIR:REL_DBL.TXT"
+	&			,"WND:REL_DTK.TXT"
+
+record input
+	file_num	,d1
+
+.proc
+
+	clear ^i(clr_i)
+	xcall u_start
+
+	call init_toolkit
+
+	xcall e_enter
+	
+	xcall u_window(D_PLACE, wndid)
+	xcall i_init(wndid)
+	xcall i_next(wndid,, '*FRST*')
+	repeat
+	    begin
+	    xcall i_input(wndid,, input)
+	
+	    if (g_select) then
+		begin
+		;menu processing
+		using (g_entnam) select
+		(), nop
+		('O_EXIT'),
+		    begin
+	    	    call print
+		    end
+		('O_ABANDON'),
+		    exitloop
+		endusing
+		end
+	    else
+		begin
+		if(g_setsts) then
+		    begin
+		    ;break processing
+		    using g_fldnam select
+		    endusing
+		    xcall i_next(wndid,, '*FRST*')
+		    end
+		else
+		    begin
+		    ;set complete
+		    xcall i_next(wndid,, '*FRST*')
+		    end
+		end
+	    end ; repeat
+	
+	xcall e_exit
+	xcall flags(7000000,1)
+	stop
+
+init_toolkit,
+
+	;create client window
+	xcall ib_input(bld_id, 'PRINT', 5, 60)
+
+	xcall ib_field(bld_id, 'file_num', D_FLD_TYPE, D_DECIMAL, D_FLD_SIZE, 1,
+	&                          D_FLD_POS, 2, 2, D_FLD_FPOS, 2, 20,
+	&                          D_FLD_PROMPT, "File to print",
+	&                          D_FLD_ENUM, LEN_OPTS, 0, 1,
+	&                          D_FLD_SELECT, 1, 1, NUM_OPTS, LEN_OPTS, NUM_OPTS, filenames,
+	&                          D_FLD_RADIO)
+
+	xcall ib_end(bld_id, wndid)
+
+	xcall w_brdr(wndid, WB_TITLE, "Print Release Notes")
+
+	xcall b_button(wndid, 'O_EXIT', DSB_TEXT, "OK",,, "O")
+	xcall b_button(wndid, 'O_ABANDON', DSB_TEXT, "Cancel",,, "C")
+
+	return
+
+
+print,
+	report_handle = %wpr_info(nothing, DWP_GETPRINTER)
+	if(.not.report_handle)
+	  begin
+	    xcall u_message("Cannot get printer information")
+	    return
+	  end
+	^m(dialog_specs.flags,ds) = DWP_PRINTDLG_STYLEPRINT
+	if(%wpr_info(report_handle , DWP_PRINTDLG, ds))
+	begin
+		; Create the metafile
+		xcall wpr_print (report_handle, DWP_BEGINJOB)
+		; Specify the file to print
+		xcall wpr_print (report_handle, DWP_ADDFILE, filenames(file_num+1))
+
+		; Close the metafile
+		xcall wpr_print (report_handle, DWP_ENDJOB)
+
+		; Preview the report on the screen
+		if(%wpr_execute(report_handle,DWP_PREVIEW,,filenames(file_num+1)).eq.
+		&	DWP_PREVIEW_PRINT)
+		begin
+			; If exited by printing from preview, print
+			xcall wpr_execute(report_handle, DWP_PRINT)
+		end
+		; Release the printer
+		xcall wpr_info (report_handle, DWP_DELPRINTER)
+	end
+	return
+
+.end
+

@@ -1,0 +1,56 @@
+main memsort
+
+	structure testdata
+		f1		,a2
+		f2		,d2
+		f3		,a20
+	endstructure
+	
+	record
+		mh		,i4
+		ms		,i4
+		cnt		,i4
+	endrecord
+	
+	global common sortspec
+		pos		,i4
+		len		,i4
+	endcommon
+
+proc
+
+	open(1,o,"tt:")
+
+	mh = mem_proc(DM_ALLOC,^size(testdata)*(ms=5))
+
+	^m(testdata[1],mh)="AA05Item started at 1   "
+	^m(testdata[2],mh)="CC04Item started at 2   "
+	^m(testdata[3],mh)="EE01Item started at 3   "
+	^m(testdata[4],mh)="BB03Item started at 4   "
+	^m(testdata[5],mh)="DD02Item started at 5   "
+
+	display(1,13,10,"Original data",13,10)
+	for cnt from 1 thru 5
+		writes(1,^m(testdata[cnt],mh))
+
+	qsort(^m(testdata[1],mh),5)
+
+	display(1,13,10,"Results of default sort (simple alpha sort)",13,10)
+	for cnt from 1 thru 5
+		writes(1,^m(testdata[cnt],mh))
+
+	sortspec.pos=3
+	sortspec.len=2
+	qsort(^m(testdata[1],mh),5,"ComparisonRoutine")
+	
+	display(1,13,10,"Results of user specified sort (characters 3 and 4)",13,10)
+	for cnt from 1 thru 5
+		writes(1,^m(testdata[cnt],mh))
+
+	mh = mem_proc(DM_FREE,mh)
+	
+	close 1
+	stop
+
+endmain
+

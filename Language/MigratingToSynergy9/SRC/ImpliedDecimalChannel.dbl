@@ -1,0 +1,20 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers would incorrectly allow implied-decimal variables
+;			to be used as channel numbers.
+;
+;			The V9 compiler does not allow this behavior, and reports a
+;			"Decimal or integer expression required" error.
+;
+; Solution:	Change the chan variable from implied decimal to decimal or integer.
+
+.main ImpliedDecimalChannel
+
+record 
+	chan1	,d3.1, 1
+	
+.proc
+
+	open(chan1,i:i,"DBLDIR:syntxt.ism")
+	
+.end

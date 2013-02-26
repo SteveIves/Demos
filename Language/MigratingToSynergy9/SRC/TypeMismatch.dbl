@@ -1,0 +1,37 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:  Earlier compilers were not able to check the data type of parameters
+;			passed to external routines. Because of the underlying similarity
+;			of alpha and decimal variables in particular, programmers often
+;			took advantage of this, and passed inappropriate parameters.  In
+;			many cases (although not in this example) this would result in
+;			intermittent runtime errors.
+;
+;			The V9 compiler, bacause of strong prototyping, does not allow this
+;			behavior.  However, a simple cast is often all that is necessary to
+;			resolve the change.
+;
+; Solution:	In the call to %INSTR, change "DecimalVar" to "^a(DecimalVar)".
+;
+; Note:		Some of these issues can be temporarily addressed using the
+;			compiler qualifier -qrelaxed:param
+;
+.main TypeMismatch
+
+record 
+	DecimalVar		,d10	,1234567890
+.proc
+	if (%instr(1,DecimalVar,"456"))
+		nop		
+.end
+
+;In addition to %instr, the most common occurences of this problem seem to be:
+;
+;	xcall decml(DVAR)
+;	xcall getlog(DVAR,avar,len)
+;	xcall s_bld(DVAR...)
+;	%trim(DVAR)
+;	%trimz(DVAR)
+;	%char(“013”)
+;	Using alpha vars to u_dcddat, u_fmtdat and other Toolkit routines
+;	

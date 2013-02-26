@@ -1,0 +1,32 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers did not necessarily validate the return type of
+;			an external function against the declaration of the function.
+;
+;			The V9 compiler, by default, does perform this validation.
+;
+;			Under V9 the code below produces an "External function {function}
+;			does not match prototype" error.
+;
+; Solution:	Either eemove the quotes around the value being returned.
+;
+;			Or change the declared type of the routine in the external function
+;			statement
+;
+; Note:		This issue can also be resolved temporarily by using the compiler
+;			qualifier -qrelaxed:extf
+;
+.main FunctionReturnType
+external function
+	MyFunction	,d
+record 
+	retval		,d3
+.proc
+	retval = %MyFunction
+.end
+
+.function MyFunction
+.proc
+	  freturn "123"
+.end
+

@@ -1,0 +1,25 @@
+; This code compiles under Synergy V8 but not under Synergy V9
+;
+; Problem:	Earlier compilers did not strictly enforce the accuracy of initial
+;			values for implied decimal fields.  In the example below MyField1
+;			has too many digits to the left of the decimal place in the initial
+;			value, and MyField3 has too many digits to the right of the decimal
+;			place.
+;
+;			The V9 compiler correctly detects this situation and reports an
+;			"Initial value too long" error.
+;
+; Solution:	In MyField1, move the decimal place in the initial value one place
+;			to the left.
+;			
+; 			In MyField3, move the decimal place in the initial value one place
+;			to the right.
+
+.main DecimalPrecision
+record MyRec
+	MyField1	,d28.10, 	9999999999999999999.999999999
+	MyField2	,d28.10, 	999999999999999999.9999999999
+	MyField3	,d28.10, 	99999999999999999.99999999999
+.proc
+
+.end
