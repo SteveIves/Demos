@@ -1,0 +1,1069 @@
+;*****************************************************************************
+;
+; Title:		UpsRate
+;
+; Description:	An example of using the UPS Rates & Service Selection service
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+; Versions:		Synergy/DE V8.1.1 and higher (requires HTTPS)
+;
+; Platforms:	All platforms (requires OpenSSL to be installed)
+;
+;*****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;*****************************************************************************
+;
+; The following code provides an example of using the Synergy XML API and the
+; Synergy HTTP API to interact with the "UPS OnLine Tools Rates and Service
+; Selection" web service.
+;
+;   THIS CODE WILL NOT WORK UNTIL YOU HAVE TAKEN SEVERAL STEPS:
+;
+;		- Sign up for a login at UPS.COM
+;		- Obtain a UPS "Developer Key" and a UPS "XML Access Key"
+;		- Install and configure OpenSSL on your system
+;		- Create an HTTPS "CA File"
+;		- Setup the software by editing several .defines below
+;
+; Before you can do anything, you will need to sign up for developer access
+; at UPS.COM.  Once you have obtained a username and password, you next need to
+; apply (on-line) for a "developer key" which will be delivered to you by
+; e-mail.  Once you have your developer key, you will have access to download
+; the tools and documentation for the Rates and Service Selection application.
+; There are two variants, an HTTP version, and an XML version - get the XML one.
+; You will also need to obtain an "XML Access Key", again by filling out a
+; form on the web site.  Once you have your username, password, and XML access
+; key, you will need to edit the .defines in this file to specify them.
+;
+; UPS only expose their web service via HTTPS (SSL), so in order to use
+; this software you will need to install and configure the freeware OpenSSL
+; product.  OpenSSL is available in binary form for some operating systems
+; (including OpenVMS and Linux).  If you can't find a binary OpenSSL
+; distribution for your system then you can download the source code from:
+;
+;	http://www.openssl.org
+;
+; At the time of writing, Synergy currently uses OpenSSL V0.9.7, however I have
+; also tested this software with OpenSSL V0.9.8.  If you do have to download
+; OpenSSL in source code format, then you will need a Perl interpreter, a C
+; compiler, and a macro assembler.  Don't panic, all of these things are freely
+; available, and although it sounds quite daunting at first, obtaining the tools
+; and building OpenSSL is relatively painless.  Refer to the installation
+; instructions that you will find in text files in the OpenSSL root folder.
+; If OpenSSL is installed or configured, you will see a message "HTTPS is not
+; available".
+;
+; In order to use HTTPS as a client, you must provide a "CA File".  This is a
+; file which contains the public key information for all of the HTTPS
+; certification authorities that you are willing to trust.  The easiest way
+; to so this is to make sure that Internet Explorer has the appropriate
+; certificates installed (refer to the developer documentation from UPS for
+; more information on this) and then export those certificates to a file which
+; you can use with the Synergy HTTPS API. CA files exported from Internet
+; explorer are in a different format to that required for use with the Synergy
+; API, but you will find instructions on exporting and converting the file in
+; the Synergy Language Reference Manual.
+;
+;*****************************************************************************
+.ifdef UPSRATE_INCLUDE ;BEGINNING OF INCLUDE SECTION
+;*****************************************************************************
+.undefine UPSRATE_INCLUDE
+
+;-----------------------------------------------------------------------------
+.ifdef UPSRATE_INTERNAL
+.undefine UPSRATE_INTERNAL
+;
+; HTTP URL and authentication information for UPS servers
+;
+.define D_URI	"https://wwwcie.ups.com/ups.app/xml/Rate"	;Testing
+;.define D_URI	"https://153.2.232.229/ups.app/xml/Rate"	;Testing (Sun)
+;.define D_URI	"https://153.2.232.70/ups.app/xml/Rate"		;Testing (Linux)
+;.define D_URI	"https://www.ups.com/ups.app/xml/Rate"		;Live
+;
+; Note: at the time of writing, UPS were in the process of migrating from Sun
+; web servers to Linux web servers.  In theory, testing of this service should
+; be performed using their server at wwwcie.ups.com, but I experienced random
+; failures when using this name.  It turns out that wwwcie points randomly to
+; either a Sun server or a Linux server, and whenever it connected me to a Sun
+; server it would fail!  The resolution was to use the IP address of the Linux
+; server (see above).  UPS tell me that this should be resolved during October
+; 2005.  For live use, switch to the www.ups.com server above.
+;
+; Authentication information.  You will need to create an account on the
+; UPS.COM web site, and then obtain an XML access key.
+;
+;.define D_UPS_USERID		""						;UPS.COM username
+;.define D_UPS_PASSWORD		""						;UPS.COM password
+;.define D_UPS_ACCESS_CODE	""						;UPS XML Access Code
+.define D_UPS_USERID		"steveives"				;UPS.COM username
+.define D_UPS_PASSWORD		"beth5173"				;UPS.COM password
+.define D_UPS_ACCESS_CODE	"3BDB4D9C6B6983A4"		;UPS XML Access Code
+;
+; HTTP configuration.  You will need to create a CA file containing appropriate
+; SSL certificates for the UPS servers.  Threre is a discussion on making sure
+; that you have the correct certificates in the developer documentation for the
+; UPS OnLine Tools service.  Follow these instructions to install the
+; certificates into an IE browser, then refer to the Synergy HTTPS documentation
+; for instructions on how to export certificates from IE and use the OpenSSL
+; utility to convert them into the correct .pem format.  The default CA file
+; name is CA_FILE.PEM, but can be chjanged below.
+;
+.define D_HTTPS_CA_FILE		"ca_file.pem"			;HTTPS "CA file"
+.define D_HTTPS_LOG_FILE	"UpsRate.log"			;HTTP log file
+.define D_HTTPS_TIMEOUT		10						;HTTP request timeout
+;
+; HTTP proxy settings. Specify these values if you need to use a proxy server
+; to access the Internet.  HOST and PORT will likely be required, SUBNET and
+; LOCAL will only be required in some situations.  Refer to the proxy settings
+; in your browser to determine the details of your proxy server.
+;
+.define D_PROXY_HOST		""						;Proxy server
+.define D_PROXY_PORT		""						;Proxy server port
+.define D_PROXY_SUBNET		""						;proxy server subnet mask
+.define D_PROXY_LOCAL		""						;Proxy local requests
+;
+.endc ;UPSRATE_INTERNAL
+;-----------------------------------------------------------------------------
+
+.ifndef UPSRATE_DEFINES
+.define UPSRATE_DEFINES
+
+	;Defines go here
+.define RATE(ratedata,field)	^m(ups_rate.field,ratedata)
+
+.endc
+
+external function
+	UpsPackageType			,a
+	UpsPickupType			,a
+	UpsService				,a
+
+structure ups_rate
+	ur_pickup_type			,a2
+	ur_shipper_zip			,a9
+	ur_shipper_country		,a2
+	ur_shipto_zip			,a9
+	ur_shipto_country		,a2
+	ur_shipfrom_zip			,a9
+	ur_shipfrom_country		,a2
+	ur_service_code			,d2
+	ur_pkg_type				,a2
+	ur_pkg_dim_uom			,a3
+	ur_pkg_length			,d5.2
+	ur_pkg_width			,d5.2
+	ur_pkg_height			,d5.2
+	ur_pkg_weight_uom		,a3
+	ur_pkg_weight			,d7.1
+
+;*****************************************************************************
+.else ;UPSRATE_INCLUDE ;END OF INCLUDE SECTION, BEGINNING OF PROGRAM CODE
+;*****************************************************************************
+
+;=============================================================================
+;
+; Title:		UpsRateTest
+;
+; Description:	An example of using the UPS Rates & Selection web service
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.main UpsRateTest
+
+.define UPSRATE_INCLUDE
+.include "UpsRate.dbl"
+
+external function
+	IsNumeric		,^val
+
+record ivars
+	tt				,i4			;Terminal channel
+	status			,i4			;Status from routine
+	ups_error		,i4			;UPS error number
+	exit_app		,i4			;Exit the application
+	mh				,i4
+
+record avars
+	char			,a1			;A character
+	errtxt			,a79		;Returned error text
+	ratedata		,a^size(ups_rate)
+	tmpservice		,a2
+	tmpdim			,a6
+	tmpweight		,a8
+	tmpzip			,a9
+
+.proc
+
+	open(tt=%syn_freechn,i,"tt:")
+	xcall flags(7004020,1)
+
+	do
+	begin
+
+		display(tt,$SCR_CLR(SCREEN),
+		&		$scr_pos(1,1),"UPS Rates and Service Selection Test Program")
+
+		display(tt,
+		&		$scr_pos(3,1),"Service (1,2,3): ",
+		&		$scr_pos(4,1),"Ship from (ZIP): ",
+		&		$scr_pos(5,1),"Ship to   (ZIP): ",
+		&		$scr_pos(6,1),"Weight    (LBS): ",
+		&		$scr_pos(4,35),"Length (Inches): ",
+		&		$scr_pos(5,35),"Width  (Inches): ",
+		&		$scr_pos(6,35),"Height (Inches): ")
+
+		repeat
+		begin
+			clear tmpservice
+			display(tt,$scr_pos(3,18),tmpservice,$scr_pos(3,18))
+			reads(tt,tmpservice)
+			if (!tmpservice)
+			begin
+				exit_app=1
+				exitloop
+			end
+			if (%IsNumeric(tmpservice))
+			begin
+				RATE(ratedata,ur_service_code) = tmpservice
+				using RATE(ratedata,ur_service_code) select
+				(1,2,3),
+				begin
+					display(tt,$scr_pos(3,21),%UpsService(RATE(ratedata,ur_service_code)))
+					exitloop
+				end
+				(),
+					nextloop
+				endusing
+
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpzip
+				display(tt,$scr_pos(4,18),tmpzip,$scr_pos(4,18))
+				reads(tt,tmpzip)
+				if (!tmpzip)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpzip))
+				begin
+					RATE(ratedata,ur_shipper_zip) = tmpzip
+					RATE(ratedata,ur_shipfrom_zip) = tmpzip
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpzip
+				display(tt,$scr_pos(5,18),tmpzip,$scr_pos(5,18))
+				reads(tt,tmpzip)
+				if (!tmpzip)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpzip))
+				begin
+					RATE(ratedata,ur_shipto_zip) = tmpzip
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpweight
+				display(tt,$scr_pos(6,18),tmpweight,$scr_pos(6,18))
+				reads(tt,tmpweight)
+				if (!tmpweight)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpweight))
+				begin
+					RATE(ratedata,ur_pkg_weight) = tmpweight
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpdim
+				display(tt,$scr_pos(4,52),tmpdim,$scr_pos(4,52))
+				reads(tt,tmpdim)
+				if (!tmpdim)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpdim))
+				begin
+					RATE(ratedata,ur_pkg_length) = tmpdim
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpdim
+				display(tt,$scr_pos(5,52),tmpdim,$scr_pos(5,52))
+				reads(tt,tmpdim)
+				if (!tmpdim)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpdim))
+				begin
+					RATE(ratedata,ur_pkg_width) = tmpdim
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			repeat
+			begin
+				clear tmpdim
+				display(tt,$scr_pos(6,52),tmpdim,$scr_pos(6,52))
+				reads(tt,tmpdim)
+				if (!tmpdim)
+				begin
+					exit_app=1
+					exitloop
+				end
+				if (%IsNumeric(tmpdim))
+				begin
+					RATE(ratedata,ur_pkg_height) = tmpdim
+					exitloop
+				end
+			end
+		end
+
+		if (!exit_app)
+		begin
+			;Hard code the rest
+
+			RATE(ratedata,ur_pickup_type) = "06"
+			RATE(ratedata,ur_shipper_country) = "US"
+			RATE(ratedata,ur_shipto_country) = "=S"
+			RATE(ratedata,ur_shipfrom_country) = "US"
+			RATE(ratedata,ur_pkg_type) = "02"
+			RATE(ratedata,ur_pkg_dim_uom) = "IN"
+			RATE(ratedata,ur_pkg_weight_uom) = "LBS"
+
+			display(tt,$SCR_POS(3,1),$scr_clr(EOS),"Contacting UPS...")
+
+			mh = %mem_proc(DM_ALLOC,1)
+
+			status = %UpsRate(ratedata,mh,ups_error,errtxt)
+
+			display(tt,$SCR_POS(3,1),$scr_clr(LINE),$scr_pos(6,1),^m(mh))
+			mh = %mem_proc(DM_FREE,mh)
+
+			using status select
+			(0),
+				nop
+			(-1),	;UPS Error code
+			begin
+				 display(tt,$SCR_POS(3,1),"UPS error ",%string(ups_error),
+				 &       $scr_pos(4,1),%atrim(errtxt))
+			end
+			(-2),
+			begin
+				display(tt,$SCR_POS(3,1), "You have not configured D_UPS_USERID, ",
+				&		"D_UPS_PASSWORD, or D_UPS_ACCESS_CODE")
+			end
+			(),
+				display(tt,$SCR_POS(3,1),"Failure, error=",%string(status),
+				&		$SCR_POS(4,1),%atrim(errtxt))
+			endusing
+
+			accept(tt,char)
+		end
+	end
+	until (exit_app)
+
+	close tt
+	stop
+
+.end
+
+;=============================================================================
+;
+; Title:		UpsRate
+;
+; Description:	Function to call the UPS Rates & Service Selection web service
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function UpsRate, ^val
+
+	;Arguments
+	a_ratedata		,a		;In
+	a_retxml		,i		;Out
+	a_ups_error		,i		;Out
+	a_errtxt		,a		;Out
+	;End of arguments
+;
+.include "DBLDIR:synxml.def"
+.define UPSRATE_INCLUDE
+.define UPSRATE_INTERNAL
+.include "UpsRate.dbl"
+
+.align
+stack record ivars
+
+	retval			,i4						;Return value
+	err				,i4						;Error number
+
+	xmlstr			,XML_STRING_TYPE		;An XML string
+	parser			,XML_PARSER_TYPE		;An XML parser
+	doc				,XML_DOC_TYPE			;An XML document
+
+	root			,XML_ELEM_TYPE			;Root element
+	rootcount		,i4						;Loop counter
+	rootchildren	,XML_ELEMLIST_TYPE		;An XML element list
+	rootchildcount	,i4						;Loop counter
+	rootchild		,XML_ELEM_TYPE			;An element
+
+	child			,XML_ELEM_TYPE			;An element
+	child1			,XML_ELEM_TYPE			;An element
+	child2			,XML_ELEM_TYPE			;An element
+
+	children		,XML_ELEMLIST_TYPE		;An XML element list
+	children1		,XML_ELEMLIST_TYPE		;An XML element list
+
+	count			,i4						;Loop counter
+	count1			,i4						;Loop counter
+
+	ah				,D_ADDR					;Handle for authorization XML
+	th				,D_ADDR					;Handle for request XML
+
+	sh				,D_ADDR					;Handle for request to send
+	sl				,i4						;Length of send data
+
+	rh				,D_ADDR					;Handle for received data
+	rl				,i4						;Length of received data
+
+stack record avars
+	hdr				,[2]a60
+	errtxt			,a60					;Error text
+	char			,a1						;A character
+	elem_name		,a256
+	elem_text		,a1024
+	ups_status		,d1
+	ups_status_text	,a15
+	ups_error_text	,a79
+
+.proc
+
+	;Initialize data to a known state
+	clear ^i(ivars), avars, a_errtxt
+
+	;Make sure we have authentication info
+	if ((!%trimz(D_UPS_USERID))
+	&	 ||(!%trimz(D_UPS_PASSWORD))
+	&	 ||(!%trimz(D_UPS_ACCESS_CODE)))
+	begin
+		retval=-2
+		a_errtxt = "Authentication has not been configured (check .defines)."
+		freturn retval
+	end
+
+	;Setup HTTP proxy server details if required.
+
+	if (!%trimz("D_PROXY_HOST"))
+		xcall setlog("PROXY_HOST",D_PROXY_HOST,count)
+
+	if (!%trimz("D_PROXY_PORT"))
+		xcall setlog("PROXY_PORT",D_PROXY_PORT,count)
+
+	if (!%trimz("D_PROXY_SUBNET"))
+		xcall setlog("PROXY_SUBNET",D_PROXY_SUBNET,count)
+
+	if (!%trimz("D_PROXY_LOCAL"))
+		xcall setlog("PROXY_LOCAL",D_PROXY_LOCAL,count)
+
+	;Build the access request
+
+	doc = %xml_doc_create
+	.ifdef DBLV83
+	xcall xml_option("ENCODE",SYNESCAPE_ESCAPE)
+	.endc
+
+	;Name the root element and add attributes
+	root = %xml_doc_getroot(doc)
+	xcall xml_elem_setname(root,"AccessRequest")
+	xcall xml_elem_setattribute(root,"xml:lang","en-US")
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"AccessLicenseNumber")
+	xcall xml_elem_settext(child,D_UPS_ACCESS_CODE)
+	xcall xml_elem_addchild(root,child)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"UserId")
+	xcall xml_elem_settext(child,D_UPS_USERID)
+	xcall xml_elem_addchild(root,child)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Password")
+	xcall xml_elem_settext(child,D_UPS_PASSWORD)
+	xcall xml_elem_addchild(root,child)
+
+	;Get the XML for the auth request into a handle
+	xmlstr = %xml_doc_tostring(doc,1)
+	xcall xml_doc_delete(doc)
+	ah = %mem_proc(DM_ALLOC+DM_BLANK,%xml_string_getsize(xmlstr))
+	^m(ah) = ^m(%xml_string_gethandle(xmlstr))
+	xcall xml_string_delete(xmlstr)
+
+	;Build the rating request handle
+
+	doc = %xml_doc_create
+	root = %xml_doc_getroot(doc)
+
+	;Set root element name and arrtibutes
+	xcall xml_elem_setname(root,"RatingServiceSelectionRequest")
+	xcall xml_elem_setattribute(root,"xml:lang","en-US")
+
+	;Create child "Request" element
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Request")
+	xcall xml_elem_addchild(root,child)
+
+	;Now add things under "Request"
+	root = child
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"TransactionReference")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"CustomerContext")
+	xcall xml_elem_settext(child1,%datetime)
+	xcall xml_elem_addchild(child,child1)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"XpciVersion")
+	xcall xml_elem_settext(child1,"1.0001")
+	xcall xml_elem_addchild(child,child1)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"RequestAction")
+	xcall xml_elem_settext(child,"Rate")
+	xcall xml_elem_addchild(root,child)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"RequestOption")
+	xcall xml_elem_settext(child,"Rate")
+	xcall xml_elem_addchild(root,child)
+
+	;Go back to adding things under the main root
+	root = %xml_doc_getroot(doc)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"PickupType")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Code")
+	xcall xml_elem_settext(child1,RATE(a_ratedata,ur_pickup_type))
+	xcall xml_elem_addchild(child,child1)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Shipment")
+	xcall xml_elem_addchild(root,child)
+
+	;Everything else goes under Shipment
+	root = child
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Shipper")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Address")
+	xcall xml_elem_addchild(child,child1)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"PostalCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipper_zip)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"CountryCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipper_country)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"ShipTo")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Address")
+	xcall xml_elem_addchild(child,child1)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"PostalCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipto_zip)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"CountryCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipto_country)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"ShipFrom")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Address")
+	xcall xml_elem_addchild(child,child1)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"PostalCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipfrom_zip)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"CountryCode")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_shipfrom_country)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Service")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Code")
+	xcall xml_elem_settext(child1,%string(RATE(a_ratedata,ur_service_code)))
+	xcall xml_elem_addchild(child,child1)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Package")
+	xcall xml_elem_addchild(root,child)
+
+	;Everything else goes under Package
+	root = child
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"PackagingType")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Code")
+	xcall xml_elem_settext(child1,%atrim(RATE(a_ratedata,ur_pkg_type)))
+	xcall xml_elem_addchild(child,child1)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"Dimensions")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"UnitOfMeasure")
+	xcall xml_elem_addchild(child,child1)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"Code")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_pkg_dim_uom)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Length")
+	xcall xml_elem_settext(child1,%string(RATE(a_ratedata,ur_pkg_length),"ZZX.XX"))
+	xcall xml_elem_addchild(child,child1)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Width")
+	xcall xml_elem_settext(child1,%string(RATE(a_ratedata,ur_pkg_width),"ZZX.XX"))
+	xcall xml_elem_addchild(child,child1)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Height")
+	xcall xml_elem_settext(child1,%string(RATE(a_ratedata,ur_pkg_height),"ZZX.XX"))
+	xcall xml_elem_addchild(child,child1)
+
+	child = %xml_elem_create
+	xcall xml_elem_setname(child,"PackageWeight")
+	xcall xml_elem_addchild(root,child)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"UnitOfMeasure")
+	xcall xml_elem_addchild(child,child1)
+
+	child2 = %xml_elem_create
+	xcall xml_elem_setname(child2,"Code")
+	xcall xml_elem_settext(child2,%atrim(RATE(a_ratedata,ur_pkg_weight_uom)))
+	xcall xml_elem_addchild(child1,child2)
+
+	child1 = %xml_elem_create
+	xcall xml_elem_setname(child1,"Weight")
+	xcall xml_elem_settext(child1,%string(RATE(a_ratedata,ur_pkg_weight),"ZZZZZX.X"))
+	xcall xml_elem_addchild(child,child1)
+
+	;Get the XML for the rating request into a handle
+	xmlstr = %xml_doc_tostring(doc,1)
+	xcall xml_doc_delete(doc)
+	th = %mem_proc(DM_ALLOC+DM_BLANK,%xml_string_getsize(xmlstr))
+	^m(th) = ^m(%xml_string_gethandle(xmlstr))
+	xcall xml_string_delete(xmlstr)
+
+	;Consolidate the two xml documents into one
+	sl = %mem_proc(DM_GETSIZE,ah)+%mem_proc(DM_GETSIZE,th)
+	sh=%mem_proc(DM_ALLOC,sl)
+	^m(sh) = ^m(ah) + ^m(th)
+
+	ah = %mem_proc(DM_FREE,ah)
+	th = %mem_proc(DM_FREE,th)
+
+	;Set HTTP headers
+	hdr[1]="Content-Type: application/x-www-form-urlencoded"
+	hdr[2]="Content-Length: " + %string(sl)
+
+	;Delete the last log file
+	xcall delet(D_HTTPS_LOG_FILE)
+
+	;Call the web service
+	err = %http_client_post(D_URI,D_HTTPS_TIMEOUT,sh,sl,rh,rl,errtxt,hdr,
+	&		D_HTTPS_LOG_FILE,,,,D_HTTPS_CA_FILE)
+
+	;Did it work?
+	if (err) then
+	begin
+		;No
+		retval=-3
+		a_errtxt = "HTTP post failed: " + errtxt
+	end
+	else
+	begin
+		;Yes, did we get any data back?
+		if (rh && rl)
+		begin
+			a_retxml = %mem_proc(DM_RESIZ,rl,a_retxml)
+			^m(a_retxml) = ^m(rh)
+			call parse_results
+		end
+	end
+
+	;Clean up
+	sh = %mem_proc(DM_FREE,sh)
+	if (rh)
+		rh = %mem_proc(DM_FREE,rh)
+
+	freturn retval
+
+parse_results,
+
+	.ifdef DBLV83
+	xcall xml_option("ENCODE",SYNESCAPE_UNESCAPE)
+	.endc
+
+	xmlstr = %xml_string_create
+	xcall xml_string_appendhandle(xmlstr,rh,rl)
+
+	parser = %xml_parser_create
+
+	doc = %xml_parser_parsestring(parser,xmlstr)
+
+	xcall xml_string_delete(xmlstr)
+
+	if (!doc)
+	begin
+		retval=-4
+		xcall xml_parser_error(parser,errtxt)
+		a_errtxt = "Failed to parse response XML: " + errtxt
+	end
+
+	xcall xml_parser_delete(parser)
+
+	if (!retval)
+	begin
+		;Parse <RatingServiceSelectionResponse>
+
+		root = %xml_doc_getroot(doc)
+		xcall xml_elem_getname(root,elem_name)
+		if (elem_name!="RatingServiceSelectionResponse")
+		begin
+			retval=-5
+			a_errtxt = "Unexpected response root element: " + elem_name
+		end
+	end
+
+	if (!retval)
+	begin
+		rootchildren = %xml_elem_children(root)
+		rootchildcount = %xml_elemlist_count(rootchildren)
+		for rootcount from 1 thru rootchildcount
+		begin
+			rootchild = %xml_elemlist_item(rootchildren,rootcount)
+			xcall xml_elem_getname(rootchild,elem_name)
+			using elem_name select
+			("Response"),	;RatingServiceSelectionResponse/Response
+			begin
+				call parse_response
+				if (!ups_status)
+				begin
+					retval=-1
+					a_errtxt = ups_error_text
+					exitloop
+				end
+			end
+			("RatedShipment"),	;RatingServiceSelectionResponse/RatedShipment
+				call parse_rate_quote
+			endusing
+
+		end
+	end
+
+	if (doc)
+		xcall xml_doc_delete(doc)
+
+	return
+
+;-----------------------------------------------------------------------------
+;RatingServiceSelectionResponse/Response
+;
+parse_response,
+
+	children = %xml_elem_children(rootchild)
+	for count from 1 thru %xml_elemlist_count(children)
+	begin
+		child = %xml_elemlist_item(children,count)
+		xcall xml_elem_getname(child,elem_name)
+		xcall xml_elem_gettext(child,elem_text)
+		using elem_name select
+		("ResponseStatusCode"),
+			ups_status = elem_text
+		("ResponseStatusDescription"),
+			ups_status_text = elem_text
+		("Error"),
+			call parse_ups_error
+		endusing
+	end
+
+	return
+
+;-----------------------------------------------------------------------------
+;RatingServiceSelectionResponse/Response/Error
+;
+parse_ups_error,
+
+	children1 = %xml_elem_children(child)
+	for count1 from 1 thru %xml_elemlist_count(children1)
+	begin
+		child1 = %xml_elemlist_item(children1,count1)
+		xcall xml_elem_getname(child1,elem_name)
+		xcall xml_elem_gettext(child1,elem_text)
+		using elem_name select
+		("ErrorSeverity"),
+			nop
+		("ErrorCode"),
+			a_ups_error = %integer(%atrim(elem_text))
+		("ErrorDescription"),
+			ups_error_text = elem_text
+		endusing
+	end
+	return
+
+;-----------------------------------------------------------------------------
+;RatingServiceSelectionResponse/RatedShipment
+;
+parse_rate_quote,
+
+	nop
+
+	return
+
+.end
+
+;=============================================================================
+;
+; Title:		UpsPickupType
+;
+; Description:	Converts a 2-digit pickup type code to a pickup type description
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function UpsPickupType ;,a
+
+	a_pickup_type	,a
+
+stack record
+	retval			,a35
+
+.proc
+
+	clear retval
+
+	using a_pickup_type select
+	("01"), retval = "Daily Pickup"
+	("03"), retval = "Customer Counter"
+	("06"), retval = "One Time Pickup"
+	("07"), retval = "On Call Air Pickup®"
+	("11"), retval = "Suggested Retail Rates (UPS Store)"
+	("19"), retval = "Letter Center"
+	("20"), retval = "Air Service Center"
+	endusing
+
+	freturn %atrim(retval)
+
+.end
+
+;=============================================================================
+;
+; Title:		UpsPackageType
+;
+; Description:	Converts a 2-digit package type code to a description
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function UpsPackageType ;,a
+
+	a_package_type	,a
+
+stack record
+	retval			,a35
+
+.proc
+
+	clear retval
+
+	using a_package_type select
+	("01"), retval = "UPS Letter/UPS Express Envelope"
+	("02"), retval = "Package"
+	("03"), retval = "UPS Tube"
+	("04"), retval = "UPS Pak"
+	("21"), retval = "UPS Express Box"
+	("24"), retval = "UPS 25KG Box®"
+	("24"), retval = "UPS 10KG Box®"
+	endusing
+
+	freturn %atrim(retval)
+
+.end
+
+;=============================================================================
+;
+; Title:		UpsService
+;
+; Description:	Converts a service code to a service description
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function UpsService ;,a
+
+	a_service_code	,n
+
+stack record
+	retval			,a30
+
+.proc
+
+	clear retval
+
+	using a_service_code select
+	(1),  retval = "UPS Next Day Air"
+	(2),  retval = "UPS 2nd Day Air"
+	(3),  retval = "UPS Ground"
+	(7),  retval = "UPS Worldwide Express"
+	(8),  retval = "UPS Worldwide Expedited"
+	(11), retval = "UPS Standard"
+	(12), retval = "UPS 3 Day Select"
+	(13), retval = "UPS Next Day Air Saver"
+	(14), retval = "UPS Next Day Air Early A.M."
+	(54), retval = "UPS Worldwide Express Plus"
+	(59), retval = "UPS 2nd Dat Air A.M."
+	endusing
+
+	freturn %atrim(retval)
+
+.end
+
+;=============================================================================
+;
+; Title:		IsNumeric
+;
+; Description:	Validates a numeric value
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function IsNumeric, ^val
+
+	a_number		,a
+
+stack record
+	retval			,i4
+	number			,d28.10
+
+.proc
+
+	retval = 1
+
+	onerror ($ERR_DIGIT) bad
+
+	number = a_number
+	if (0)
+bad,	clear retval
+
+	offerror
+
+	freturn retval
+
+.end
+
+;*****************************************************************************
+.endc ;UPSRATE_INCLUDE - END OF PROGRAM CODE
+;*****************************************************************************
+
