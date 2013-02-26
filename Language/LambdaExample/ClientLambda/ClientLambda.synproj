@@ -19,6 +19,7 @@
     <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
     <ProjEnvVars>
     </ProjEnvVars>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
