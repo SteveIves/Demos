@@ -1,0 +1,43 @@
+[COMPILER]
+MACRO=set RPSMFIL=c:\\kenb\\rpsmain.ism\nset RPSTFIL=c:\\kenb\\rpstext.ism\nset WORK=c:\\kenb\\\n\n
+FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
+FILTERPATTERN=*.dbl;*.tpl\n*.def\n*.wsc\n*.*\n
+FILTERASSOCIATEFILETYPES=0 0 0 0
+FILTEREXPANSION=1 1 1 0
+Synergy=1
+compile=concur|capture|clear|nochangedir|:Compile:&Compile,dbl -dXT %n
+make=concur|capture|savenone|nochangedir|:Build:&Build,dblink -d %n DBLDIR:axlib.elb WND:tklib.elb RPSLIB:ddlib.elb
+rebuild=concur|capture|:Rebuild:&Rebuild,
+debug=nochangedir|:Debug:&Debug,dbr -d %n
+execute=nochangedir|:Execute:E&xecute,dbr %n
+user1=concur|capture|hide|savenone|nochangedir|:User 1:User 1,dblibr -r OBJ:%rn.olb OBJ:%n
+user2=concur|capture|hide|nochangedir|:User 2:User 2,dblink -dl EXE:%rn.elb OBJ:%rn.olb
+usertool_makelib=concur|capture|:MakeLib:&Make Library,dblibr -c OBJ:%rn.olb
+workingdir=C:\kenb\
+includedirs=
+tagfiles=
+reffile=
+[STATE]
+SCREEN: 1024 768 130 130 600 405 0 0 M 0 0 0 0 856 487
+CWD: C:\kenb
+BUFFER: BN="C:\SYNERG~1\WORKBE~1\WBCONFIG\vrestore.slk"
+BI: MA=1 254 1  TABS=1 9  WWS=3 IWT=0 ST=0 IN=0 BW=0 US=0 RO=0 SE=0 SN=0 BIN=0 MN=Fundamental	HM=0 MF=1 TL=0 MLL=0 ASE=0
+VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=5 BI=18 HT=0 HN=0 HF=0 HC=4
+FILEHIST: 9
+C:\Consulting\CEPM\quotes\test.dbl
+c:\SynergyDE\synergy.ini
+C:\Word Automation Demo\wordauto.dbl
+C:\Consulting\CEPM\quotes\script_document.dbl
+C:\Word Automation Demo\script_document.dbl
+C:\kenb\screens.wsc
+c:\nt\synergy.ini
+C:\kenb\wordauto.def
+C:\kenb\vbdoc.dbl
+PRINTER: 2
+
+
+[FILES]
+C:\kenb\screens.wsc
+C:\kenb\vbdoc.dbl
+C:\kenb\wordauto.def
+[ASSOCIATION]

@@ -1,0 +1,97 @@
+.main PsgMenu
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "DBLDIR:activex.def"
+
+.align
+record
+.include "INC:menu_control.def"
+
+.define PSG_MENU_INIT
+.include "INC:menu_global.def"
+
+.proc
+
+	xcall startup(menu_control)
+
+	;Resize the application window (to the same size as currently)
+	;to cause the resize event to resize the container window and control.
+	xcall w_proc(WP_RESIZE,WPR_SCREEN,ScreenRows,ScreenCols)
+	
+	;Place the container window
+	xcall u_window(D_PLACE,Window,1,1)
+
+	;Process the menu
+	repeat
+	begin
+		xcall ax_input(window)
+		case g_entnam of
+		begincase
+		"MB_EXIT":
+			exitloop
+		"EXPAND":
+		begin
+			xcall w_proc(WP_HOURGLASS_ON)
+			xcall ax_call(control,"ExpandAll")
+			xcall w_proc(WP_HOURGLASS_OFF)
+		end
+		"COLLAPSE":
+			xcall ax_call(control,"CollapseAll")
+		"V_":
+			call SetListView
+		"@@":
+			call LoadPrograms
+		"~~":
+			call RunProgram
+		endcase
+	end
+
+	xcall shutdown(menu_control)
+	stop
+
+
+SetListView,
+
+	case g_entnam of		
+	begincase
+		"V_UP":
+			xcall ax_call(control,"GotoParent")
+		"V_LARGE":
+			xcall ax_set(control,"ListMode",0)
+		"V_MLARGE":
+			;xcall tb_button(toolbar,TBB_SELECT,"V_LARGE",TBBS_LEFT)
+			nop
+		"V_SMALL":
+			xcall ax_set(control,"ListMode",1)
+		"V_MSMALL":
+			;xcall tb_button(toolbar,TBB_SELECT,"V_SMALL",TBBS_LEFT)
+			nop
+		"V_LIST":
+			xcall ax_set(control,"ListMode",2)
+		"V_MLIST":
+			;xcall tb_button(toolbar,TBB_SELECT,"V_LIST",TBBS_LEFT)
+			nop
+		"V_DETAIL":
+			xcall ax_set(control,"ListMode",3)
+		"V_MDETAIL":
+			;xcall tb_button(toolbar,TBB_SELECT,"V_DETAIL",TBBS_LEFT)
+			nop
+	endcase
+
+	return
+
+LoadPrograms,
+
+	xcall u_message("Load list for current tree item!")
+	return
+
+RunProgram,
+
+	xcall u_message("Run selected program!")
+	return
+
+
+.end
+
+

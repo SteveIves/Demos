@@ -1,0 +1,46 @@
+;----------------------------------------------------------------------
+;Subroutine:	AppClose
+;Description:	Event handler for application close event
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+;
+
+.subroutine AppClose
+
+;Argument list
+
+	a_noclr		,n
+	a_cancel	,n
+	a_type		,n
+
+;End of argument list
+
+.include "WND:tools.def"
+
+.proc
+	
+	case a_type of
+	begincase
+	  0:	nop			;U_FINISH called by program
+	  1:	call verify	;Close box or system menu close
+	  2:	call verify	;Interrupt detected
+	endcase
+
+	xreturn
+
+Verify,
+
+;	if ^passed(a_cancel)
+;	begin
+;		if %u_msgbox("Are you sure?",D_MYESNO+D_MICONQUESTION+D_MDEFBUTTON2,
+;&			"Close Application").eq.D_MIDYES
+;			xcall m_signal("QUIT")
+;		a_cancel=TRUE
+;	end
+
+	return
+
+.end
+
+
+

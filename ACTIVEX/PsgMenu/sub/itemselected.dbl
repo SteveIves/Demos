@@ -1,0 +1,19 @@
+;----------------------------------------------------------------------
+;Subroutine:	ItemSelecled
+;Description:	TreeMenu is requesting that a program be executed
+;Author:	        Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+
+.subroutine ItemSelected
+
+	a_control	,n
+	a_progno	,a
+
+.proc
+
+	xcall m_signal("~~" + a_progno)
+	xreturn
+
+.end
+
+

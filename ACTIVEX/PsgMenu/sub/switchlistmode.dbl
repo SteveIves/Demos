@@ -1,0 +1,31 @@
+
+;----------------------------------------------------------------------
+;Subroutine:	SwitchListMode
+;Description:	Switch the list control to a different mode, and update
+;				the Synergy toolbar.
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+
+.subroutine SwitchListMode
+
+	a_control	,n
+	a_mode		,n
+
+.include "WND:toolbar.def"
+.include "INC:menu_global.def"
+
+.proc
+
+	case a_mode of		
+	begincase
+	0:	xcall tb_button(tbid,TBB_SELECT,"V_LARGE",TBBS_LEFT)
+	1:	xcall tb_button(tbid,TBB_SELECT,"V_SMALL",TBBS_LEFT)
+	2:	xcall tb_button(tbid,TBB_SELECT,"V_LIST",TBBS_LEFT)
+	3:	xcall tb_button(tbid,TBB_SELECT,"V_DETAIL",TBBS_LEFT)
+	endcase
+
+	xreturn
+
+.end
+
+

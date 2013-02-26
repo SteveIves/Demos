@@ -1,0 +1,53 @@
+
+.main SynMapPoint
+
+.include "DBLDIR:activex.def"
+.include "WND:tools.def"
+
+record
+    window      ,i4
+    address1    ,a40
+    address2    ,a40
+
+.proc
+
+    xcall u_start(,1,0)
+
+    xcall u_update
+
+    window = %ax_tksingle("MAPCONTAINER",20,70,"SynMapPoint.MapPointControl",,,"map_")
+
+    xcall u_dialog(Address1,,,,"Address 1: ")
+    xcall ax_tkcall(window,"AddPushPin",address1,"From")
+
+    xcall u_dialog(Address2,,,,"Address 2: ")
+    xcall ax_tkcall(window,"AddPushPin",address2,"To")
+
+    xcall ax_tkcall(window,"CreateRoute")
+
+    xcall u_window(D_PLACE,window)
+
+    repeat
+    begin
+        xcall ax_input(window)
+
+        using g_entnam select
+        ("CLOSEMAP"),
+            exitloop
+        endusing
+    end
+
+    xcall u_window(D_DELETE,window)
+
+    xcall u_finish
+    stop
+
+.end
+
+.function map_tkevent_close
+.include "WND:tools.def"
+.proc
+    xcall m_signal("CLOSEMAP")
+    freturn TRUE
+.end
+

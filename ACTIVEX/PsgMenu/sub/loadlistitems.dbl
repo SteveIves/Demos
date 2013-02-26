@@ -1,0 +1,19 @@
+;----------------------------------------------------------------------
+;Subroutine:	LoadListItems
+;Description:	Tree menu is requesting the programs for a particular
+;				sub-system to be loaded into the listview control.
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+
+.subroutine LoadListItems
+
+	a_control	,n
+	a_key		,a
+
+.proc
+
+	xcall m_signal("@@" + %atrim(a_key))
+	xreturn
+
+.end
+

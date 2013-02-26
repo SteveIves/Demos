@@ -1,0 +1,85 @@
+.script
+.date_generated "09/27/1999, 14:46"
+.version "7.1.1"
+.column file, 'File'
+.entry mb_new, 'New...', key(^N), disable
+.entry mb_open, 'Open...', key(^O), disable
+.entry mb_close, 'Close'
+.line
+.entry mb_change, 'Change', key(F1), disable
+.entry mb_save, 'Save', key(^S), disable
+.line
+.entry u_prtset, 'Printer Setup', select(u)
+.entry mb_prtprv, 'Print Preview', select(v), disable
+.entry mb_print, 'Print', disable
+.line
+.entry o_exit, 'Exit', sel(x)
+.end
+.column edit, "Edit"
+.entry mb_undo, 'Restore details', key(^Z), disable
+.line
+.entry e_cut, "Cut", select(t), key(^x)
+.entry e_copy, "Copy", key(^c)
+.entry e_paste, "Paste", key(^v)
+.entry e_clear, "Clear", select(l)
+.line
+.entry mb_del, 'Delete record', disable
+.line
+.entry i_drill, 'Find'
+.end
+.column view, 'View'
+.entry mb_clrcng, 'Clear change highlight'
+.end
+.column data, "Navigate"
+.entry mb_query, "Query"
+.line
+.entry mb_first, "First"
+.entry mb_prev, "Previous"
+.entry mb_next, "Next"
+.entry mb_last, "Last"
+.end
+.listclass lookupclass, items(14), header(1), options(activex)
+.end
+.input db_connect, 6, 65
+.placement 3, 6
+.title "Connect to database"
+.field db_driver, a20, pos(2, 2), prompt("Database"), fpos(2, 12)
+.field db_username, a50, pos(4, 3), prompt("User name"), fpos(4, 13), -
+     required
+.field db_password, a50, pos(5, 3), prompt("Password"), fpos(5, 13), -
+     noecho("*")
+.box Box3, 3, 65, pos(1, 1)
+.box Box4, 4, 65, pos(3, 1)
+.button i_ok, text("Connect"), select("O")
+.button o_abandon, text("Cancel"), select("C")
+.structure db_data, db_driver, db_username, db_password
+.set all, db_data, db_driver, db_username, db_password
+.set data, db_data, db_username, db_password
+.end
+.column INPCOL, "Input"
+.entry I_PREV, "Previous field", key(UP)
+.entry I_NEXT, "Next field", key(DOWN)
+.entry I_FRST, "First field", key(^F)
+.entry I_LAST, "Last field", key(^L)
+.line
+.entry I_DONE, "Take defaults", key(F7)
+.entry I_OK, "Take defaults & exit", key(F8)
+.line
+.entry I_EDIT, "Edit field", key(RIGHT)
+.entry I_CANCEL, "Cancel field changes", key(F9)
+.end
+.column SELCOL, "Select"
+.entry S_UP, "Up", key(UP)
+.entry S_DOWN, "Down", key(DOWN)
+.entry S_LEFT, "Left", key(LEFT)
+.entry S_RIGHT, "Right", key(RIGHT)
+.end
+.column EDITCOL, "Edit"
+.entry E_LEFT, "Cursor left", key(LEFT)
+.entry E_RIGHT, "Cursor right", key(RIGHT)
+.entry E_BMOV, "Home", key(HOME)
+.entry E_EMOV, "End", key(END)
+.entry E_MODE, "Insert/Overstrike"
+.entry E_CDEL, "Delete", key(DEL)
+.entry E_LCLR, "Clear line"
+.end

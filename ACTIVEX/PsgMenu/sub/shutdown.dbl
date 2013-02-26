@@ -1,0 +1,29 @@
+;----------------------------------------------------------------------
+;Subroutine:	shutdown
+;Description:	Application shutdown processing
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+;
+
+.subroutine shutdown
+
+;Argument list
+
+	.include "INC:menu_control.def"
+
+;End of argument list
+
+.include "INC:menu_global.def"
+
+.proc
+
+	;Close UI toolkit
+	xcall u_finish
+	
+	;Close DLL's
+	User32DLL=%dll_close(User32DLL)
+
+	xreturn
+
+.end
+

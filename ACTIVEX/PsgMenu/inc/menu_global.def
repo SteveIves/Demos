@@ -1,0 +1,28 @@
+
+
+
+.ifdef PSG_MENU_INIT
+.undefine PSG_MENU_INIT
+global data section menu_global, INIT
+.else
+global data section menu_global
+.endc
+
+.align
+record
+	;Screen size variables
+	ScreenRows		,i4
+	ScreenCols		,i4
+
+	;Explorer Control
+	window			,i4
+	container		,i4
+	control			,i4
+
+	;DLL Handles
+	User32Dll		,i4
+
+	;Toolbar
+	tbid			,i4		;Main toolbar ID
+
+endglobal

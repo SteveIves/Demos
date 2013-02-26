@@ -1,0 +1,12 @@
+
+group menu_control	,a
+
+	;Menu Columns
+	mid_file		,i4		;File menu column ID
+	mid_edit		,i4		;Edit menu column ID
+	mid_navigate	,i4		;Navigate menu column ID
+	mid_tools		,i4		;Tools menu column ID
+	mid_window		,i4		;Window menu column ID
+	mid_help		,i4		;Help menu column ID
+
+endgroup

@@ -1,0 +1,205 @@
+;
+;This startup routine MUST be called after a call to u_start, for all program/routines
+;that use the syndev generated code.
+;
+;
+;
+.subroutine syndev_startup
+.include 'SDINC:menu_control.def'
+a_date_order,		n
+a_prg_title,		a
+a_prg_footer,		a
+a_no_rtn,			n
+
+;end of argument list
+
+.include 'WND:tkctl.def'
+.include 'WND:tools.def'
+.include 'WND:toolbar.def'
+.include 'WND:windows.def'
+.ifdef D_GUI
+.include 'DBLDIR:activex.def'
+.include 'DBLDIR:apmisc.def'
+.endc
+
+.align
+stack record
+	length,		i4		;work variable
+	hdl,		i4		;tree control handle
+	container_id,i4		;tree container id
+	control_id,	i4		;tree control id
+	tempa,		a10
+
+
+.define D_MENU_GLOBAL_REQUIRED
+.define D_MENU_GLOBAL_INIT
+.define D_MENU_AS_ARG
+
+.include 'SDINC:menu_control.def'
+
+.proc
+	;make sure we know where the menu control data is stored
+	
+	menu_control_pointer = ^addr(menu_control)
+
+	D_WORKINGON
+	
+	clear agent_alive	;no agent available.
+
+    if %passed(a_date_order)
+	then
+		g_date_order = a_date_order
+	else
+		g_date_order = 1	;ddmmyyyy
+	
+	;let's make sure we are using a nice font
+	
+	xcall u_wndfont(D_SETFONT, DF_DEFAULT, 'MS Sans Serif', 8, 'A')
+;	xcall u_wndfont(D_SETFONT, DF_DEFAULT, 'Times New Roman', 10, 'A')
+
+	;list renditions.
+	
+	xcall u_rend(D_LOAD, D_RND_LST_HDR, A_NONE, 7)
+	xcall u_rend(D_LOAD, D_RND_LST_FTR, A_NONE, 7)
+	xcall u_rend(D_LOAD, D_RND_USER_1, A_NONE, 10)
+	
+	if (%passed(a_prg_title))
+	then
+		xcall e_sect(a_prg_title, D_CAPTION, D_CLEAR, D_DISPLAY)
+	else
+		xcall e_sect("Program Title", D_CAPTION, D_CLEAR, D_DISPLAY)
+	if (%passed(a_prg_footer))
+	then
+		xcall e_sect(a_prg_footer, D_FOOTER, D_CLEAR, D_LEFT)
+	else
+		xcall e_sect("Generated using SynDev software", D_FOOTER, D_CLEAR, D_LEFT)
+	
+	;create a generic object close method set.
+	
+.ifdef D_GUI
+	close_method_set=%u_wndevents(D_CREATE,, D_EVENT_CLOSE, 'close_object'
+	&		,D_EVENT_SIZE, 'size_object')
+;	close_method_set=%u_wndevents(D_CREATE,, D_EVENT_CLOSE, 'close_object')
+	close_only_set=%u_wndevents(D_CREATE,, D_EVENT_CLOSE, 'close_object')
+.endc
+
+	;required for check box/radio button change methods
+	xcall e_state(D_ON, D_VALSTCHG)
+
+	if (.not.%passed(a_no_rtn))
+	then
+	begin
+		xcall e_state(D_ON, D_RETURNBTN)
+	end
+	else
+	begin
+		xcall e_state(D_OFF, D_RETURNBTN)
+	end
+
+	
+	clear back_containerid, back_controlid
+.ifdef D_GUI
+	;register required utility hooks.
+	xcall e_method(D_METH_APPCLOSE, 'close_application')
+;.ifdef 
+	xcall e_method(D_METH_APPSIZE, 'app_resize',
+	&			   D_METH_UTILS, 'syn_usrutils')
+
+	xcall ap_misc(MSC_WINDOW_RECT, %w_info(WIF_HWND, WIFH_app), application_rect)
+;.endc
+
+.endc
+
+	;can we load the spell checker?
+
+.ifdef D_GUI
+
+	onerror no_spell; sorry
+	spell_container_id = %ax_create
+	spell_control_id = %ax_load(spell_container_id, 'SynSpell.UsrSpellcheck')
+	if FALSE
+	begin
+no_spell,
+		clear spell_container_id
+	end
+	offerror
+
+.endc
+
+
+
+	;define the standard toolbar.
+
+	clear bitmap_dir
+.ifdef D_GUI
+	xcall getlog('TB_BMP', bitmap_dir, length)
+	
+	xcall tb_toolbar(TB_CREATE, tb_id, TBC_TOP,, D_TOOLBAR_HEIGHT)	
+	;set X offset of first button
+	next_btn_x = D_TOOLBAR_INDENT
+	xcall add_toolbar_button(tb_id, next_btn_x, "O_EXIT", %atrim(bitmap_dir)+"\exit.bmp", "Exit one level")
+	next_btn_x += D_TOOLBAR_INDENT	;Add space
+	xcall add_toolbar_button(tb_id, next_btn_x, 'E_CUT', %atrim(bitmap_dir)+"\cut.bmp", "Cut the selected entry")
+	xcall add_toolbar_button(tb_id, next_btn_x, 'E_COPY', %atrim(bitmap_dir)+"\copy.bmp", "Copy the selected entry")
+	xcall add_toolbar_button(tb_id, next_btn_x, 'E_PASTE', %atrim(bitmap_dir)+"\paste.bmp", "Paste clipboard into current entry")
+	next_btn_x += D_TOOLBAR_INDENT	;Add space
+	xcall add_toolbar_button(tb_id, next_btn_x, "O_HELP", %atrim(bitmap_dir)+"\help.bmp", "Help")
+
+	if spell_container_id
+	begin
+		xcall add_toolbar_button(tb_id, next_btn_x, "O_SPELL", %atrim(bitmap_dir)+"\spcheck.bmp", "Spell Check")
+	end
+
+	xcall tb_button(tb_id, TBB_DISABLE, 'E_CUT')
+	xcall tb_button(tb_id, TBB_DISABLE,'E_COPY')
+	xcall tb_button(tb_id, TBB_DISABLE,'E_PASTE')
+	
+	xcall tb_toolbar(TB_PLACE, tb_id)	;Place the completed toolbar
+.endc
+
+
+	;load menu application, and standard application objects
+	xcall m_ldcol(cidFile, g_utlib, "File", , , , D_GLOBAL)
+	xcall m_ldcol(cidEdit, g_utlib, "Edit", D_NOPLC)
+	xcall m_ldcol(cidView, g_utlib, "View", D_NOPLC)
+	xcall m_ldcol(cidData, g_utlib, "Data", D_NOPLC)
+
+	;cell based columns (required and placed by the toolkit!)
+	xcall m_ldcol(cidInpCol, g_utlib, "INPCOL", D_NOPLC)
+	xcall m_ldcol(cidSelCol, g_utlib, "SELCOL", D_NOPLC)
+	xcall m_ldcol(cidEditCol, g_utlib, "EDITCOL", D_NOPLC)
+
+	database = 1	;set db connection value
+
+	clear icon_dir
+
+.ifdef D_GUI
+	;do we have an icon file?
+	xcall getlog('TB_ICO', icon_dir, length)
+	if .not.length clear icon_dir
+
+	if icon_dir xcall u_icon(D_ICONSET, icon_dir, 1)
+	
+	;load, no place the calendar control
+
+	onerror no_calendar; sorry
+	cal_tkwin_id = %ax_tkwin('cal', 10, 50, cal_container_id)
+	cal_control_id = %ax_load(cal_container_id, 'MSCAL.Calendar.7')
+	xcall ax_bind(cal_control_id, 'DblClick', 'calendar_dblclick')
+	xcall win_event(menu_control, cal_tkwin_id)
+	if FALSE
+	begin
+no_calendar,
+		cal_tkwin_id=FALSE
+	end
+	offerror
+
+.endc
+	D_WORKINGOFF
+
+	xreturn
+
+.end
+
+
+

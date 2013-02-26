@@ -1,0 +1,30 @@
+;----------------------------------------------------------------------
+;Subroutine:	HelpMethod
+;Description:	Help processing method
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+;
+
+.subroutine HelpMethod
+
+;Argument list
+
+	a_helpid	,a		;(Optional) passed help identifier
+
+;End of argument list
+
+.include "WND:tools.def"
+
+.proc
+
+	if (^passed(a_helpid) .and. a_helpid) then
+		xcall u_message("Context specific help")
+	else
+		xcall u_message("General Help")
+
+	clear g_select
+	
+	xreturn
+
+.end
+

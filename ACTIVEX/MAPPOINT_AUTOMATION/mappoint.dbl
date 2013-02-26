@@ -1,0 +1,34 @@
+.main mappoint
+
+.include "DBLDIR:activex.def"
+
+record
+	container		,i4
+	control			,i4
+
+.proc
+
+	container = %ax_create
+	control = %ax_load(container,"SynMapPoint.Map")
+
+	xcall ax_bind(control,"Quit","MapPoint_Quit")
+
+	xcall ax_call(control,"GotoAddress","602 Mill Run Ct, Roseville, CA, 95747")
+    xcall ax_call(control,"AddPushPin","602 Mill Run Ct, Roseville, CA, 95747", "Home", "Note 1", 1)
+    xcall ax_call(control,"AddPushPin","2330 Gold Meadow Way, Gold River, CA, 95670", "Synergex", "Note 2", 1)
+	xcall ax_call(control,"CreateRoute")
+
+	xcall win_proc(1)
+
+	xcall ax_delete(container)
+
+	stop
+
+.end
+
+.subroutine MapPoint_Quit
+	a_control	,n
+.proc
+	xcall win_stop(1)
+	xreturn
+.end

@@ -1,0 +1,581 @@
+.script
+.date_generated "10/19/1999, 11:08"
+.version "7.0.1"
+.column qq_file,    "File"
+.entry O_HELP,      "Help",             key(F1)
+.entry O_ABANDON,   "Cancel",           key(F3)
+.entry O_EXIT,      "Exit",             key(F10),   select("X")
+.line
+.entry U_ABOUT,     "About"
+.end
+.column qq_options, "Options"
+.entry OP_NOTES,    "Notepad",          key(^N)
+.entry OP_FIND,     "Find",             key(HOME)
+.entry I_HYPER,     "Explode",          key(^E)
+.entry OP_DELETE,   "Delete",           key(DEL)
+.entry OP_INSERT,   "Insert",           key(INS)
+.end
+.column qq_tabnav,  "Tabset"
+.entry TS_TABPREV,  "Previous tab",     key(LEFT)
+.entry TS_TABNEXT,  "Next tab",         key(RIGHT)
+.end
+.column qq_input,   "Input"
+.entry I_PREV,      "Previous Field",   key(UP)
+.entry I_NEXT,      "Next Field",       key(DOWN)
+.entry I_FRST,      "First Field",      key(^F)
+.entry I_LAST,      "Last Field",       key(^L)
+.line
+.entry I_DONE,      "Take Defaults",    key(F11)
+.entry I_OK,        "Take defaults & exit", key(F12)
+.line
+.entry I_CANCEL,    "Cancel field changes", key(F9)
+.line
+.entry I_DRILL,     "Data Drill",       key(F7)
+.end
+.column qq_list,    "List"
+.entry s_up,        "Previous entry",   key(UP)
+.entry s_down,      "Next entry",       key(DOWN)
+.entry s_pgup,      "Previous page",    key(PREV)
+.entry s_pgdn,      "Next page",        key(NEXT)
+.entry s_top,       "First entry",      key(^F)
+.entry s_bottom,    "Last entry",       key(^L)
+.entry s_pgtop,     "Top of page",      key(^T)
+.entry s_pgbot,     "Bottom of page",   key(^B)
+.line
+.entry s_find,      "Find",             key(home)
+.entry smartfind,   "Smart find",       key(^Q)
+.entry s_findnext,  "Find next",        key(^N)
+.entry s_finddir,   "Forward/Reverse"
+.end
+.column qq_select, "Select"
+.entry s_up,        "Previous entry",   key(UP)
+.entry s_down,      "Next entry",       key(DOWN)
+.end
+.input qc_soldto, 13, 65
+.placement 5, 5
+.title "Sold To"
+; The sold to explosion screen will be displayed when the user
+; is positioned to the sold-to field and presses the EXPLODE key.
+;  If the address is not in the existing data base, and the user
+; wishes to input the information, this screen will be used for
+; input to capture the information.
+
+.repository_structure QUOTE_MASTER
+.field QM_SOLDREC, pos(2, 3), fpos(2, 19)
+.field QM_SOLDNAME, pos(4, 3), fpos(4, 19)
+.field QM_SOLD1, fpos(7, 3)
+.field QM_SOLD2, fpos(8, 3)
+.field QM_SOLD3, fpos(9, 3)
+.field QM_SOLD_CITY, pos(11, 3), fpos(11, 14)
+.field QM_SOLD_STATE, pos(12, 3), fpos(12, 14)
+.field QM_SOLD_ZIP, pos(12, 27), fpos(12, 32)
+.field QM_SOLD_ZPLUS, fpos(12, 40)
+.text Text1, pos(6, 2), margin(1, 52)
+ Address
+.set all, QUOTE_MASTER, QM_SOLDREC, QM_SOLDNAME, QM_SOLD1, QM_SOLD2, -
+     QM_SOLD3, QM_SOLD_CITY, QM_SOLD_STATE, QM_SOLD_ZIP, QM_SOLD_ZPLUS
+
+.set input, QUOTE_MASTER, QM_SOLDREC
+.end
+
+.input qc_billto, 13, 65
+.placement 5, 5
+.title "Bill To"
+; The bill to explosion screen will be displayed when the user
+; is positioned to the sold-to field and presses the EXPLODE key.
+;  If the address is not in the existing data base, and the user
+; wishes to input the information, this screen will be used for
+; input to capture the information.
+
+.repository_structure QUOTE_MASTER
+.field QM_BILLREC, pos(2, 3), fpos(2, 19)
+.field QM_BILLNAME, pos(4, 3), fpos(4, 19)
+.field QM_BILL1, fpos(7, 3)
+.field QM_BILL2, fpos(8, 3)
+.field QM_BILL3, fpos(9, 3)
+.field QM_BILL_CITY, pos(11, 3), fpos(11, 14)
+.field QM_BILL_STATE, pos(12, 3), fpos(12, 14)
+.field QM_BILL_ZIP, pos(12, 27), fpos(12, 32)
+.field QM_BILL_ZPLUS, fpos(12, 40)
+.text Text1, pos(6, 2), margin(1, 55)
+ Address
+.set all, QUOTE_MASTER, QM_BILLREC, QM_BILLNAME, QM_BILL1, QM_BILL2, -
+     QM_BILL3, QM_BILL_CITY, QM_BILL_STATE, QM_BILL_ZIP, QM_BILL_ZPLUS
+
+.set input, QUOTE_MASTER, QM_BILLREC
+.end
+
+.input qc_shipto, 13, 65
+.placement 5, 5
+.title "Ship To"
+; The ship to explosion screen will be displayed when the user
+; is positioned to the sold-to field and presses the EXPLODE key.  If
+; the address is not in the existing data base, and the user
+; wishes to input the information, this screen will be used for
+; input to capture the information.
+
+.repository_structure QUOTE_MASTER
+.field QM_SHIPREC, pos(2, 3), fpos(2, 19)
+.field QM_SHIPNAME, pos(4, 3), fpos(4, 19)
+.field QM_SHIP1, fpos(7, 3)
+.field QM_SHIP2, fpos(8, 3)
+.field QM_SHIP3, fpos(9, 3)
+.field QM_SHIP_CITY, pos(11, 3), fpos(11, 14)
+.field QM_SHIP_STATE, pos(12, 3), fpos(12, 14)
+.field QM_SHIP_ZIP, pos(12, 27), fpos(12, 32)
+.field QM_SHIP_ZPLUS, fpos(12, 40)
+.text Text1, pos(6, 2), margin(1, 55)
+ Address
+.set all, QUOTE_MASTER, QM_SHIPREC, QM_SHIPNAME, QM_SHIP1, QM_SHIP2, -
+     QM_SHIP3, QM_SHIP_CITY, QM_SHIP_STATE, QM_SHIP_ZIP, QM_SHIP_ZPLUS
+
+.set input, QUOTE_MASTER, QM_SHIPREC
+.end
+
+.input qc_quotelist, 3, 79
+.placement 2, 2
+.title "Quotes"
+.repository_structure QUOTE_MASTER
+.field QM_NUMBER, pos(1, 1), fpos(2, 1)
+.field QM_CREATE_DATE, pos(1, 10), fpos(2, 10)
+.field QM_TEAM, pos(1, 22), prompt("Team"), fpos(2, 23)
+.field QM_REP, pos(1, 27), prompt("Rep"), fpos(2, 27)
+.field QM_BUDGET, pos(1, 33), prompt("Budget"), fpos(2, 33)
+.field QM_SOLDNAME, pos(1, 49), fpos(2, 49)
+.end
+
+.input qc_notelist, 3, 78
+.title "Note List"
+; This screen provides a chronological list of the notes that have
+; been recorded against the current quote.  The chronological order
+; of display will be based on the preferences stored by the user in
+; their profile, as will the ability to suppress display of notes that
+; have been flagged for deletion.  Once the user selects a note (by
+; pressing RETURN), the display will shift to the next tab and display
+; the contents of the selected note.  If the user chooses to create a
+; note, the INSERT key will shift to the next tab with a blank screen
+; ready for input.
+.repository_structure QUOTE_NOTE
+.field QN_NUMBER, pos(1, 1), prompt("Quote"), fpos(2, 1)
+.field QN_CREATE_BY, pos(1, 10), prompt("Author"), fpos(2, 11)
+.field QN_TEXT1, pos(1, 17), prompt("First Line"), fpos(2, 17)
+.end
+
+.input qc_itemlist, 3, 78
+.title "Item List"
+; This is a list of the lines registered against this quotation.  The
+; maximum number of lines on a quote is 99.  When the user selects a
+; line (by pressing RETURN), that line becomes the current line and
+; the display is shifted to the next tab with that screen populated
+; with the information for the current line.  If the user wants to
+; add a new item, the INSERT key will shift the display to the next
+; tab page with  blank screen ready for input.
+
+.repository_structure QUOTE_ITEM
+.field QI_LINE, pos(1, 2), prompt("Line"), fpos(2, 2)
+.field QI_QTY, pos(1, 7), fpos(2, 7)
+.field QI_STATUS, pos(1, 18), fpos(2, 18)
+.field QI_DESC, pos(1, 32), fpos(2, 32)
+.end
+
+.input qc_notepad, 16, 78
+.title "Notepad"
+; This screen only allows input within the boundary of the notepad.
+;  All other fields are displayed for context only.  The notepad is
+; a simple word processor that supports all of the features on the
+; QQ_EDIT menu.  Continuous typing causes the editor to automatically
+; wrap the text on word boundaries.  As text is entered, the display
+; will scroll down to accommodate more text.  A total of 512 lines of
+; text may be entered for each note.
+.repository_structure QUOTE_NOTE
+.field QN_NUMBER, pos(2, 2), fpos(2, 16)
+.field QN_LINE, pos(2, 28), fpos(2, 40)
+.field QN_STATUS, pos(2, 50), fpos(2, 60)
+.field QN_CREATE_DATE, pos(4, 2), fpos(4, 13)
+.field QN_CREATE_BY, pos(4, 28), fpos(4, 40)
+.field QN_MODIFY_TIME, pos(4, 50), fpos(4, 58)
+.field QN_TEXT, fpos(9, 6)
+.text Text4, pos(6, 6), margin(5, 13)
+Please make the first line of the note reflective of
+the information that is contained in the rest of the note
+.set all, QUOTE_NOTE, QN_NUMBER, QN_LINE, QN_STATUS, QN_CREATE_DATE, -
+     QN_CREATE_BY, QN_MODIFY_TIME, QN_TEXT
+
+.set context, QUOTE_NOTE, QN_NUMBER, QN_LINE
+
+.set input, QUOTE_NOTE, QN_TEXT
+
+.set display, QN_STATUS, QN_CREATE_DATE, QN_CREATE_BY, QN_MODIFY_TIME,
+.end
+
+.input qc_general, 16, 78
+.title "General"
+; This screen will capture most of the basic information about the customer.
+; The first line is a status line that is provided for context only.  The quotation
+; numbers are assigned by the system.  During the initial phase of generation,
+; the only field that will be required is the Sold to #.   All of the fields
+; that reference a record number will provide the user with the ability to
+; "explode" the number.  This will pop up another window that displays the detail
+; for the record. This window also gives the user the capability to maintain
+; the general information relating to the quotation.  It is the primary interface
+; to the QUOTE_MASTER record.
+.repository_structure QUOTE_MASTER
+.field QM_NUMBER, pos(1, 3), fpos(1, 14)
+.field QM_LINES, pos(1, 29), fpos(1, 39)
+.field QM_STATUS, pos(1, 47), fpos(1, 60)
+.field QM_TEAM, pos(2, 3), fpos(2, 14)
+.field QM_REP, pos(2, 29), fpos(2, 39)
+.field QM_VALUE, pos(2, 47), fpos(2, 63)
+.field QM_SOLDREC, pos(4, 3), fpos(4, 14)
+.field QM_SOLDNAME, pos(4, 29), fpos(4, 44)
+.field QM_SHIPREC, pos(5, 3), fpos(5, 14)
+.field QM_SHIPNAME, pos(5, 29), fpos(5, 44)
+.field QM_BILLREC, pos(6, 3), fpos(6, 14)
+.field QM_BILLNAME, pos(6, 29), fpos(6, 44)
+.field QM_PHONE, pos(8, 3), fpos(8, 14)
+.field QM_PEXT, pos(8, 32), fpos(8, 37)
+.field QM_BUDGET, pos(8, 47), fpos(8, 63)
+.field QM_FAX, pos(9, 3), fpos(9, 14)
+.field QM_SALES1, pos(9, 47), fpos(9, 65)
+.field QM_EMAIL, pos(10, 3), fpos(10, 14)
+.field QM_SALES2, pos(10, 47), fpos(10, 65)
+.field QM_PAYMENT, pos(12, 3), fpos(12, 19)
+.field QM_CARD, pos(13, 3), fpos(13, 19)
+.field QM_CHECK, pos(13, 47), fpos(13, 56)
+.field QM_EXPIRE, pos(14, 3), fpos(14, 19)
+.field QM_PO, pos(14, 47), fpos(14, 56)
+.field QM_CARDNAME, pos(15, 3), fpos(15, 19)
+.set all, QUOTE_MASTER, QM_NUMBER, QM_LINES, QM_STATUS, QM_TEAM, QM_REP, -
+     QM_VALUE, QM_SOLDREC, QM_SOLDNAME, QM_SHIPREC, QM_SHIPNAME, -
+     QM_BILLREC, QM_BILLNAME, QM_PHONE, QM_PEXT, QM_BUDGET, QM_FAX, -
+     QM_SALES1, QM_EMAIL, QM_SALES2, QM_PAYMENT, QM_CARD, QM_CHECK, -
+     QM_EXPIRE, QM_PO, QM_CARDNAME
+.end
+
+.input qc_dates, 16, 78
+.title "Dates"
+; This screen reflects the historical activity against the important
+; milestones.  These dates, times and initials are captured by the
+; system and logged against the quote as it progresses through the
+; system.  This is a summary screen that does not accept user input,
+; but collects all of the dates for display in a single screen.
+
+.repository_structure QUOTE_MASTER
+.field QM_NUMBER, pos(2, 1), fpos(2, 15)
+.field QM_LINES, pos(2, 31), fpos(2, 38)
+.field QM_STATUS, pos(2, 51), fpos(2, 59)
+.field QM_ACTION, pos(4, 4), fpos(4, 33)
+.field QM_NEXT_DATE, pos(5, 4), fpos(5, 15)
+.field QM_NEXT_TIME, pos(5, 33), fpos(5, 37)
+.field QM_NEXT_INI, pos(5, 49), fpos(5, 54)
+.field QM_CREATE_DATE, pos(7, 4), fpos(7, 15)
+.field QM_CREATE_TIME, pos(7, 33), fpos(7, 37)
+.field QM_CREATE_INI, pos(7, 50), fpos(7, 54)
+.field QM_ASSIGN_DATE, pos(8, 4), fpos(8, 15)
+.field QM_ASSIGN_TIME, pos(8, 33), fpos(8, 37)
+.field QM_ASSIGN_INI, pos(8, 50), fpos(8, 54)
+.field QM_RELEASE_DATE, pos(9, 4), fpos(9, 15)
+.field QM_RELEASE_TIME, pos(9, 33), fpos(9, 37)
+.field QM_RELEASE_INI, pos(9, 50), fpos(9, 54)
+.field QM_COMMIT_DATE, pos(10, 4), fpos(10, 15)
+.field QM_COMMIT_TIME, pos(10, 33), fpos(10, 37)
+.field QM_COMMIT_INI, pos(10, 50), fpos(10, 54)
+.field QM_CANCEL_DATE, pos(11, 4), fpos(11, 15)
+.field QM_CANCEL_TIME, pos(11, 33), fpos(11, 37)
+.field QM_CANCEL_INI, pos(11, 50), fpos(11, 54)
+.field QM_INHAND_DATE, pos(13, 4), fpos(13, 15)
+.field QM_EVENT_DATE, pos(13, 33), fpos(13, 46)
+.set all, QUOTE_MASTER, QM_NUMBER, QM_LINES, QM_STATUS, QM_ACTION, -
+     QM_NEXT_DATE, QM_NEXT_TIME, QM_NEXT_INI, QM_CREATE_DATE, -
+     QM_CREATE_TIME, QM_CREATE_INI, QM_ASSIGN_DATE, QM_ASSIGN_TIME, -
+     QM_ASSIGN_INI, QM_RELEASE_DATE, QM_RELEASE_TIME, QM_RELEASE_INI, -
+     QM_COMMIT_DATE, QM_COMMIT_TIME, QM_COMMIT_INI, QM_CANCEL_DATE, -
+     QM_CANCEL_TIME, QM_CANCEL_INI, QM_INHAND_DATE, QM_EVENT_DATE
+
+.end
+
+.input qc_logo, 16, 78
+.title "Logo"
+; This screen describes the distinctive that will be applied
+; to the base item.  Multiple logos can be applied to a single
+; base item.  The same screen will display all of the Logos for
+; a given line.  Navigation will be accomplished by entering the
+; desired number in the sequence field.
+
+.repository_structure QUOTE_LOGO
+.field QL_NUMBER, pos(1, 4), fpos(1, 23)
+.field QL_LINE, pos(1, 35), fpos(1, 47)
+.field QL_SEQ, pos(2, 4), fpos(2, 23)
+.field QL_NAME, pos(2, 35), fpos(2, 47)
+.field QL_SOURCE, pos(4, 4), fpos(4, 20)
+.field QL_FILESPEC, pos(6, 5), fpos(6, 20)
+.field QL_TREATMENT, pos(8, 5), fpos(8, 20)
+.field QL_LOCATION, pos(9, 10), fpos(9, 20)
+.field QL_COLOR1, pos(11, 11), fpos(11, 20)
+.field QL_COLOR2, pos(12, 11), fpos(12, 20)
+.field QL_COLOR3, pos(13, 11), fpos(13, 20)
+.field QL_COLOR4, pos(14, 11), fpos(14, 20)
+.field QL_COLOR5, pos(15, 11), fpos(15, 20)
+.set all, QUOTE_LOGO, QL_NUMBER, QL_LINE, QL_SEQ, QL_NAME, QL_SOURCE, -
+     QL_FILESPEC, QL_TREATMENT, QL_LOCATION, QL_COLOR1, QL_COLOR2, -
+     QL_COLOR3, QL_COLOR4, QL_COLOR5
+.set context, QUOTE_LOGO, QL_NUMBER, QL_LINE
+.set input, QUOTE_LOGO, QL_SEQ, QL_NAME, QL_SOURCE, -
+     QL_FILESPEC, QL_TREATMENT, QL_LOCATION, QL_COLOR1, QL_COLOR2, -
+     QL_COLOR3, QL_COLOR4, QL_COLOR5
+.end
+
+.input qc_item, 16, 78
+.title "Item"
+; This screen is the beginning of the specification of the line
+; items that comprise the quotation.  The first line is a display
+; line for context only.  The current line is set by whatever choice
+; was made from the item list on the previous tab.
+
+.repository_structure QUOTE_ITEM
+.field QI_NUMBER, pos(1, 2), fpos(1, 12)
+.field QI_LINE, pos(1, 26), fpos(1, 34)
+.field QI_STATUS, pos(1, 45), fpos(1, 53)
+.field QI_DESC, pos(3, 7), fpos(3, 20)
+.field QI_COLOR, pos(5, 7), fpos(5, 20)
+.field QI_QTY, pos(7, 7), fpos(7, 20)
+.field QI_PACKAGE, pos(7, 36), fpos(7, 48)
+.field QI_PRE, pos(8, 36), fpos(8, 68)
+.field QI_SMALL, pos(9, 7), fpos(9, 20)
+.field QI_RANDOM, pos(9, 36), fpos(9, 68)
+.field QI_MEDIUM, pos(10, 7), fpos(10, 20)
+.field QI_LARGE, pos(11, 7), fpos(11, 20)
+.field QI_SHIPREC, pos(11, 36), fpos(11, 47)
+.field QI_XL, pos(12, 7), fpos(12, 20)
+.field QI_SHIPTO, pos(12, 36), fpos(12, 47)
+.field QI_2X, pos(13, 7), fpos(13, 20)
+.field QI_VIA, pos(13, 36), fpos(13, 47)
+.field QI_USER1, noprompt, fpos(14, 1)
+.field QI_SIZE1, fpos(14, 20)
+.field QI_USER2, noprompt, fpos(15, 1)
+.field QI_SIZE2, fpos(15, 20)
+.set all, QUOTE_ITEM, QI_NUMBER, QI_LINE, QI_STATUS, QI_DESC, QI_COLOR, -
+     QI_QTY, QI_PACKAGE, QI_PRE, QI_SMALL, QI_RANDOM, QI_MEDIUM, -
+     QI_LARGE, QI_SHIPREC, QI_XL, QI_SHIPTO, QI_2X, QI_VIA, QI_USER1, -
+     QI_SIZE1, QI_USER2, QI_SIZE2
+
+.set context, QUOTE_ITEM, QI_NUMBER, QI_LINE, QI_STATUS
+
+.set display, QUOTE_ITEM, QI_SHIPTO
+
+.set input, QUOTE_ITEM, QI_DESC, QI_COLOR, QI_QTY, QI_PACKAGE, QI_PRE, -
+     QI_SMALL, QI_RANDOM, QI_MEDIUM, QI_LARGE, QI_SHIPREC, QI_XL, QI_2X, -
+     QI_VIA, QI_USER1, QI_SIZE1, QI_USER2, QI_SIZE2
+.end
+.input qc_vendor, 17, 78
+.placement 2, 3
+.title "Vendor"
+; The vendor information screen will provide information about the vendors
+; selected for each line.  If multiple vendors are selected, the user will
+; be able to "scroll" through the vendors using the PAGE UP and PAGE DOWN keys.
+.repository_structure QUOTE_VENDOR
+.field QV_NUMBER, pos(1, 2), fpos(1, 11)
+.field QV_LINE, pos(1, 21), fpos(1, 27)
+.field QV_SEQ, pos(1, 33), fpos(1, 43)
+.field QV_STATUS, pos(1, 49), fpos(1, 57)
+.field QV_VENREC, pos(2, 2), fpos(2, 11)
+.field QV_NAME, pos(2, 24), fpos(2, 38)
+.field QV_PERSON, pos(3, 2), fpos(3, 11)
+.field QV_PHONE, pos(4, 2), fpos(4, 11)
+.field QV_PEXT, pos(4, 31), fpos(4, 37)
+.field QV_FAX, pos(4, 49), fpos(4, 54)
+.field QV_EMAIL, pos(5, 2), fpos(5, 11)
+.field QV_QTY, pos(6, 2), fpos(6, 11)
+.field QV_ITEM, pos(6, 23), fpos(6, 34)
+.field QV_DESC, pos(7, 2), fpos(7, 14)
+.field QV_LEADTIME, pos(9, 2), fpos(9, 24)
+.field QV_PROMISE, pos(9, 41), fpos(9, 61)
+.field QV_PERORDER, pos(10, 2), fpos(10, 24)
+.field QV_AMENDED, pos(10, 41), fpos(10, 61)
+.field QV_FREIGHT, pos(11, 2), fpos(11, 24)
+.field QV_TIER1, pos(12, 2), fpos(12, 9)
+.field QV_PRICE1, pos(12, 18), fpos(12, 24)
+.field QV_CONTACT_DATE, pos(12, 40), fpos(12, 48)
+.field QV_CONTACT_TIME, pos(12, 58), fpos(12, 61)
+.field QV_CONTACT_INI, pos(12, 68), fpos(12, 71)
+.field QV_TIER2, pos(13, 2), fpos(13, 9)
+.field QV_PRICE2, pos(13, 18), fpos(13, 24)
+.field QV_REPLY_DATE, pos(13, 40), fpos(13, 48)
+.field QV_REPLY_TIME, pos(13, 58), fpos(13, 61)
+.field QV_REPLY_INI, pos(13, 68), fpos(13, 71)
+.field QV_TIER3, pos(14, 2), fpos(14, 9)
+.field QV_PRICE3, pos(14, 18), fpos(14, 24)
+.field QV_PROMISE_DATE, pos(14, 40), fpos(14, 48)
+.field QV_PROMISE_TIME, pos(14, 57), fpos(14, 61)
+.field QV_PROMISE_INI, pos(14, 68), fpos(14, 71)
+.field QV_AMENDED_DATE, pos(15, 40), fpos(15, 48)
+.field QV_AMENDED_TIME, pos(15, 57), fpos(15, 61)
+.field QV_AMMENDED_INI, pos(15, 68), fpos(15, 71)
+.field QV_SHIPREC, pos(16, 2), fpos(16, 12)
+.field QV_SHIPVIA, pos(16, 27), fpos(16, 37)
+.field QV_SHIPTO, pos(17, 2), fpos(17, 12)
+.set all, QUOTE_VENDOR, QV_NUMBER, QV_LINE, QV_SEQ, QV_STATUS, QV_VENREC, -
+     QV_NAME, QV_PERSON, QV_PHONE, QV_PEXT, QV_FAX, QV_EMAIL, QV_QTY, -
+     QV_ITEM, QV_DESC, QV_LEADTIME, QV_PROMISE, QV_PERORDER, QV_AMENDED, -
+     QV_FREIGHT, QV_TIER1, QV_PRICE1, QV_CONTACT_DATE, QV_CONTACT_TIME, -
+     QV_CONTACT_INI, QV_TIER2, QV_PRICE2, QV_REPLY_DATE, QV_REPLY_TIME, -
+     QV_REPLY_INI, QV_TIER3, QV_PRICE3, QV_PROMISE_DATE, QV_PROMISE_TIME, -
+     QV_PROMISE_INI, QV_AMENDED_DATE, QV_AMENDED_TIME, QV_AMMENDED_INI, -
+     QV_SHIPREC, QV_SHIPVIA, QV_SHIPTO
+.end
+.select ql_art_sel
+.item "CEPM has art on file"
+.item "CEPM to create art"
+.item "Client to provide art"
+.end
+.select qm_action_sel
+.item "Assign to Team"
+.item "Assign to Representative"
+.item "Generate Quote"
+.item "Management Quote Approval"
+.item "Release to Client"
+.item "Follow-up with Vendor"
+.item "Follow-up with Client"
+.item "Quality Control Follow-up"
+.item "Remove from System"
+.end
+
+.input qa_profile, 16, 76
+; The personal profile screen will be used to maintain the information
+; in the QUOTE_ACCESS file.  Depending on the level of the user,
+; different fields will be enabled for user input.  Each user will
+; be responsible to maintain their contact information.  The Managers
+; will be responsible for maintaining the access information.
+.title "Personnel Profile Information"
+.repository_structure QUOTE_ACCESS
+.field QA_INITIALS, pos(1, 2), fpos(1, 13)
+.field QA_NAME, pos(1, 21), fpos(1, 28)
+.field QA_TEAM, pos(2, 2), fpos(2, 13)
+.field QA_LEVEL, pos(2, 21), fpos(2, 28)
+.field QA_DELETE, pos(2, 48), fpos(2, 67)
+.field QA_AVAILABLE, pos(3, 2), fpos(3, 13)
+.field QA_ACTIVE, pos(3, 21), fpos(3, 28)
+.field QA_OVERRIDE, pos(3, 48), fpos(3, 67)
+.field QA_MOD_DAY, pos(5, 3), fpos(5, 22)
+.field QA_MOD_TIME, pos(5, 38), fpos(5, 41)
+.field QA_MOD_BY, pos(5, 55), fpos(5, 58)
+.field QA_MODWHY, pos(6, 3), fpos(6, 22)
+.field QA_PHONE, pos(9, 2), fpos(9, 9)
+.field QA_EXT, pos(9, 34), fpos(9, 40)
+.field QA_QUOTEORD, pos(9, 49), fpos(9, 63)
+.field QA_FAX, pos(10, 2), fpos(10, 9)
+.field QA_BUILDING, pos(10, 27), fpos(10, 40)
+.field QA_NOTEORDER, pos(10, 49), fpos(10, 63)
+.field QA_EMAIL, pos(11, 2), fpos(11, 9)
+.field QA_SHOWDELETE, pos(11, 49), fpos(11, 63)
+.field QA_STREET, pos(13, 2), fpos(13, 9)
+.field QA_CITY, pos(14, 2), fpos(14, 9)
+.field QA_STATE, pos(15, 2), fpos(15, 9)
+.field QA_ZIP, pos(15, 17), fpos(15, 22)
+.field QA_ZIPPLUS, fpos(15, 30)
+.box Box1, 9, 46, pos(8, 1)
+.box Box2, 7, 29, pos(8, 47)
+.text Text1, pos(12, 15), margin(14, 47)
+ Outside Mail
+.text Text2, pos(8, 13), margin(12, 43)
+ Contact Information
+.text Text3, pos(8, 54), margin(53, 10)
+ Preferences
+.set all, QUOTE_ACCESS, QA_INITIALS, QA_NAME, QA_TEAM, QA_LEVEL, -
+     QA_DELETE, QA_AVAILABLE, QA_ACTIVE, QA_OVERRIDE, QA_MOD_DAY, -
+     QA_MOD_TIME, QA_MOD_BY, QA_MODWHY, QA_PHONE, QA_EXT, QA_QUOTEORD, -
+     QA_FAX, QA_BUILDING, QA_NOTEORDER, QA_EMAIL, QA_SHOWDELETE, -
+     QA_STREET, QA_CITY, QA_STATE, QA_ZIP, QA_ZIPPLUS
+.set context, QUOTE_ACCESS, QA_INITIALS, QA_NAME, QA_TEAM, QA_LEVEL
+.set inp_self, QA_TEAM, QA_AVAILABLE, QA_PHONE, QA_EXT, QA_QUOTEORD, -
+     QA_FAX, QA_BUILDING, QA_NOTEORDER, QA_EMAIL, QA_SHOWDELETE, -
+     QA_STREET, QA_CITY, QA_STATE, QA_ZIP, QA_ZIPPLUS
+.set inp_mgr, QUOTE_ACCESS, QA_TEAM, QA_LEVEL, -
+     QA_DELETE, QA_AVAILABLE, QA_ACTIVE, QA_OVERRIDE
+.set display, QUOTE_ACCESS, QA_MOD_DAY, QA_MOD_TIME, QA_MOD_BY, QA_MODWHY
+.end
+
+.input qa_contact, 13, 55
+; The contact explosion screen will be a display-only screen that
+; will be displayed whenever the user presses the EXPLODE option
+; while positioned over a field that contains user initials.  Its
+; purpose is to provide the user with the ability to view the contact
+; information for a user without having to go to the Administration
+; Component and looking up the user.
+.title "Contact information"
+.repository_structure QUOTE_ACCESS
+.field QA_INITIALS, pos(1, 4), prompt("Initials"), fpos(1, 14)
+.field QA_NAME, pos(2, 4), fpos(2, 14)
+.field QA_TEAM, pos(3, 4), fpos(3, 14)
+.field QA_LEVEL, pos(3, 20), fpos(3, 29)
+.field QA_PHONE, pos(6, 8), fpos(6, 15)
+.field QA_EXT, pos(6, 40), fpos(6, 46)
+.field QA_FAX, pos(7, 8), fpos(7, 15)
+.field QA_BUILDING, pos(7, 33), fpos(7, 46)
+.field QA_EMAIL, pos(8, 8), fpos(8, 15)
+.field QA_STREET, pos(10, 8), fpos(10, 15)
+.field QA_CITY, pos(11, 8), fpos(11, 15)
+.field QA_STATE, pos(12, 8), fpos(12, 15)
+.field QA_ZIP, pos(12, 23), fpos(12, 28)
+.field QA_ZIPPLUS, fpos(12, 36)
+.box Box1, 9, 47, pos(5, 6)
+.text Text1, pos(9, 21), margin(20, 20)
+ Outside Mail
+.text Text2, pos(5, 19), margin(18, 17)
+ Contact Information
+.set all, QUOTE_ACCESS, QA_INITIALS, QA_NAME, QA_TEAM, QA_LEVEL, -
+     QA_PHONE, QA_EXT, QA_FAX, QA_BUILDING, QA_EMAIL, QA_STREET, QA_CITY, -
+     QA_STATE, QA_ZIP, QA_ZIPPLUS
+.end
+
+.input qa_assign, 16, 76
+; The quotation assignment screen is used to control the work flow of quotations
+; as they move throughout the system. Depending on the level of the user
+;, different capabilities will be allowed.
+.title "Quotation Assignment Screen"
+.repository_structure QUOTE_MASTER
+.field QM_NUMBER, pos(2, 3), fpos(2, 20)
+.field QM_STATUS, pos(2, 36), fpos(2, 52)
+.field QM_TEAM, pos(3, 3), fpos(3, 20)
+.field QM_EVENT_DATE, pos(3, 36), fpos(3, 52)
+.field QM_REP, pos(4, 3), fpos(4, 20)
+.field QM_INHAND_DATE, pos(4, 36), fpos(4, 52)
+.field QM_BUDGET, pos(5, 3), fpos(5, 20)
+.field QM_VALUE, pos(5, 36), fpos(5, 52)
+.field QM_ACTION, pos(7, 3), fpos(7, 28)
+.field QM_NEXT_INI, pos(8, 12), fpos(8, 16)
+.field QM_NEXT_DATE, pos(8, 24), fpos(8, 28)
+.field QM_NEXT_TIME, pos(8, 44), fpos(8, 48)
+.field QM_CREATE_DATE, pos(11, 8), fpos(11, 21)
+.field QM_CREATE_TIME, pos(11, 39), fpos(11, 43)
+.field QM_CREATE_INI, pos(11, 51), fpos(11, 55)
+.field QM_ASSIGN_DATE, pos(12, 8), fpos(12, 21)
+.field QM_ASSIGN_TIME, pos(12, 39), fpos(12, 43)
+.field QM_ASSIGN_INI, pos(12, 51), fpos(12, 55)
+.field QM_RELEASE_DATE, pos(13, 8), fpos(13, 21)
+.field QM_RELEASE_TIME, pos(13, 39), fpos(13, 43)
+.field QM_RELEASE_INI, pos(13, 51), fpos(13, 55)
+.field QM_COMMIT_DATE, pos(14, 8), fpos(14, 21)
+.field QM_COMMIT_TIME, pos(14, 39), fpos(14, 43)
+.field QM_COMMIT_INI, pos(14, 51), fpos(14, 55)
+.field QM_CANCEL_DATE, pos(15, 8), fpos(15, 21)
+.field QM_CANCEL_TIME, pos(15, 39), fpos(15, 43)
+.field QM_CANCEL_INI, pos(15, 51), fpos(15, 55)
+.box Box1, 7, 59, pos(10, 5)
+.text Text1, pos(10, 27), margin(26, 36)
+ Date Summary
+.set all, QUOTE_MASTER, QM_NUMBER, QM_STATUS, QM_TEAM, QM_EVENT_DATE, -
+     QM_REP, QM_INHAND_DATE, QM_BUDGET, QM_VALUE, QM_ACTION, QM_NEXT_INI, -
+     QM_NEXT_DATE, QM_NEXT_TIME, QM_CREATE_DATE, QM_CREATE_TIME, -
+     QM_CREATE_INI, QM_ASSIGN_DATE, QM_ASSIGN_TIME, QM_ASSIGN_INI, -
+     QM_RELEASE_DATE, QM_RELEASE_TIME, QM_RELEASE_INI, QM_COMMIT_DATE, -
+     QM_COMMIT_TIME, QM_COMMIT_INI, QM_CANCEL_DATE, QM_CANCEL_TIME, -
+     QM_CANCEL_INI
+.set CONTEXT, QUOTE_MASTER, QM_NUMBER
+.set INPUT, QUOTE_MASTER, QM_STATUS, QM_TEAM, QM_EVENT_DATE, QM_REP, QM_INHAND_DATE, -
+     QM_BUDGET, QM_VALUE, QM_ACTION, QM_NEXT_INI, QM_NEXT_DATE, QM_NEXT_TIME
+.set DISPLAY, QUOTE_MASTER, QM_CREATE_DATE, QM_CREATE_TIME, QM_CREATE_INI, -
+     QM_ASSIGN_DATE, QM_ASSIGN_TIME, QM_ASSIGN_INI, QM_RELEASE_DATE, -
+     QM_RELEASE_TIME, QM_RELEASE_INI, QM_COMMIT_DATE, QM_COMMIT_TIME, -
+     QM_COMMIT_INI, QM_CANCEL_DATE, QM_CANCEL_TIME, QM_CANCEL_INI
+.end

@@ -1,0 +1,228 @@
+
+.main ExcelSheet
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "DBLDIR:activex.def"
+
+.align
+common
+	Container		,i4
+	Control			,i4
+	Mode			,i4
+	Status			,i4
+	FileName		,a60
+
+.proc
+
+	xcall u_start(,1,0)
+	xcall e_sect("Excel Automation Test Program", D_HEADER)
+
+	xcall e_state(D_ON,D_LOWER)
+	;============================================================
+	; Get Filename for Excel Sheet
+	;============================================================
+	xcall u_dialog(FileName,,,,"Enter a file spec for the spreadsheet to be created",
+	&			   "Example: C:\temp\test.xls",
+	&			   "(Existing files will be overwritten!)","")
+
+	mode=D_MYESNO+D_MDEFBUTTON2+D_MICONQUESTION
+	if (%u_msgbox("Use ActiveX debugger?",mode,"Debug Mode").eq.D_MIDYES) then
+		xcall setlog("AXDEBUG","yes",Status)
+	else
+		xcall setlog("AXDEBUG",,Status)
+	;============================================================
+
+	xcall w_proc(WP_HOURGLASS_ON)
+	;============================================================
+	;Create an ActiveX Container
+	; Uset Defaults for Optional Parameters
+	;	xpos (The X pixel Screen Position of the Upper Left Corner
+	;	ypos (The Y pixel Screen Position of the Upper Left Corner
+	;	xsize ( The Pixel Width of the ActiveX container
+	;	yxize ( The Pixel Height of the ActiveX Container
+	;	parent_handle (The Handle of a Parent window for the ActiveX Container
+	;============================================================
+	container=%ax_create
+	;============================================================
+	; Load the ActiveX Control into a Container
+	;============================================================
+	control=%ax_load(container,"SynExcel.ExcelSheet")
+	;============================================================
+	xcall w_proc(WP_HOURGLASS_OFF)
+	;============================================================
+	; Call the CreateSheet Method within the ActiveX Control
+	;============================================================
+	if %ax_call(control,"Createbook","Title_1","Subject_1","Demo_1") then
+	begin
+		xcall w_proc(WP_HOURGLASS_ON)
+		;====================================================
+		;Sheet heading
+		;====================================================
+		xcall ax_call(control,"RangeContent",1,"B1","1999 Sales")
+		xcall ax_call(control,"RangeBold",1,"B1")	
+
+		xcall ax_call(control,"RangeContent",2,"B1","2000 Projection")
+		xcall ax_call(control,"RangeBold",2,"B1")	
+		;====================================================
+		;Row headings
+		;====================================================
+		xcall ax_call(control,"RangeContent",1,"A4","Sales")
+		xcall ax_call(control,"RangeContent",1,"A5","Cost of sales")
+		xcall ax_call(control,"RangeContent",1,"A6","Gross profit")
+		xcall ax_call(control,"RangeBold",1,"A4:A6")
+		xcall ax_call(control,"RangeAlign",1,"A4:A6",D_JST_RIGHT)
+		xcall ax_call(control,"ColumnWidth",1,1,20)	
+
+		xcall ax_call(control,"RangeContent",2,"A4","Sales")
+		xcall ax_call(control,"RangeContent",2,"A5","Cost of sales")
+		xcall ax_call(control,"RangeContent",2,"A6","Gross profit")
+		xcall ax_call(control,"RangeBold",2,"A4:A6")
+		xcall ax_call(control,"RangeAlign",2,"A4:A6",D_JST_RIGHT)
+		xcall ax_call(control,"ColumnWidth",2,1,20)
+
+		;====================================================
+		;Column headings
+		;====================================================
+		xcall ax_call(control,"RangeContent",1,"B3","Jan 99")
+		xcall ax_call(control,"CellContent",1,3,3,"Feb 99")
+		xcall ax_call(control,"CellContent",1,3,4,"Mar 99")
+		xcall ax_call(control,"CellContent",1,3,5,"Apr 99")
+		xcall ax_call(control,"CellContent",1,3,6,"May 99")
+		xcall ax_call(control,"CellContent",1,3,7,"Jun 99")
+		xcall ax_call(control,"CellContent",1,3,8,"Jul 99")
+		xcall ax_call(control,"CellContent",1,3,9,"Aug 99")
+		xcall ax_call(control,"CellContent",1,3,10,"Sep 99")
+		xcall ax_call(control,"CellContent",1,3,11,"Oct 99")
+		xcall ax_call(control,"CellContent",1,3,12,"Nov 99")
+		xcall ax_call(control,"CellContent",1,3,13,"Dec 99")
+		xcall ax_call(control,"RangeBold",1,"B3:M3")
+		xcall ax_call(control,"RangeAlign",1,"B3:M3",D_JST_RIGHT)
+		xcall ax_call(control,"ColumnRangeWidth",1,"B:M",13)	
+
+		xcall ax_call(control,"RangeContent",2,"B3","Jan 00")
+		xcall ax_call(control,"CellContent",2,3,3,"Feb 00")
+		xcall ax_call(control,"CellContent",2,3,4,"Mar 00")
+		xcall ax_call(control,"RangeBold",2,"B3:D3")
+		xcall ax_call(control,"RangeAlign",2,"B3:D3",D_JST_RIGHT)
+		xcall ax_call(control,"ColumnRangeWidth",2,"B:D",15)	
+
+		;====================================================
+		;Sales values
+		;====================================================
+		xcall ax_call(control,"RangeContent",1,"B4",15245.23)
+		xcall ax_call(control,"CellContent",1,4,3,18270)
+		xcall ax_call(control,"CellContent",1,4,4,14187.55)		
+		xcall ax_call(control,"CellContent",1,4,5,12153.49)		
+		xcall ax_call(control,"CellContent",1,4,6,11200.66)		
+		xcall ax_call(control,"CellContent",1,4,7,17899.21)		
+		xcall ax_call(control,"CellContent",1,4,8,18487.00)		
+		xcall ax_call(control,"CellContent",1,4,9,19215.23)		
+		xcall ax_call(control,"CellContent",1,4,10,17148.87)		
+		xcall ax_call(control,"CellContent",1,4,11,20357.24)		
+		xcall ax_call(control,"CellContent",1,4,12,21141.49)		
+		xcall ax_call(control,"CellContent",1,4,13,16157.68)		
+
+		xcall ax_call(control,"RangeContent",2,"B4",15245.23)
+		xcall ax_call(control,"CellContent",2,4,3,18270)
+		xcall ax_call(control,"CellContent",2,4,4,14187.55)		
+
+		;====================================================
+		;Cost of sales values
+		;====================================================
+		xcall ax_call(control,"RangeContent",1,"B5",-12455)
+		xcall ax_call(control,"CellContent",1,5,3,-13656.99)
+		xcall ax_call(control,"CellContent",1,5,4,-11250)
+
+		xcall ax_call(control,"CellContent",1,5,5,-10269.50)
+		xcall ax_call(control,"CellContent",1,5,6,-10348.49)
+		xcall ax_call(control,"CellContent",1,5,7,-14536.54)
+		xcall ax_call(control,"CellContent",1,5,8,-15923.56)
+		xcall ax_call(control,"CellContent",1,5,9,-16423.55)
+		xcall ax_call(control,"CellContent",1,5,10,-14953.99)
+		xcall ax_call(control,"CellContent",1,5,11,-16532.12)
+		xcall ax_call(control,"CellContent",1,5,12,-15401.01)
+		xcall ax_call(control,"CellContent",1,5,13,-11586.49)
+
+		xcall ax_call(control,"RangeItalic",1,"B5:M5")	
+
+
+		xcall ax_call(control,"RangeContent",2,"B5",-12455)
+		xcall ax_call(control,"CellContent",2,5,3,-13656.99)
+		xcall ax_call(control,"CellContent",2,5,4,-11250)
+		xcall ax_call(control,"RangeItalic",2,"B5:D5")	
+		;====================================================
+		;Gross profit calculations
+		;====================================================
+		xcall ax_call(control,"RangeFormula",1,"B6","=SUM(B4:B5)")
+		xcall ax_call(control,"CellFormula",1,6,3,"=SUM(C4:C5)")
+		xcall ax_call(control,"CellFormula",1,6,4,"=SUM(D4:D5)")
+
+		xcall ax_call(control,"CellFormula",1,6,5,"=SUM(E4:E5)")
+		xcall ax_call(control,"CellFormula",1,6,6,"=SUM(F4:F5)")
+		xcall ax_call(control,"CellFormula",1,6,7,"=SUM(G4:G5)")
+		xcall ax_call(control,"CellFormula",1,6,8,"=SUM(H4:H5)")
+		xcall ax_call(control,"CellFormula",1,6,9,"=SUM(I4:I5)")
+		xcall ax_call(control,"CellFormula",1,6,10,"=SUM(J4:J5)")
+		xcall ax_call(control,"CellFormula",1,6,11,"=SUM(K4:K5)")
+		xcall ax_call(control,"CellFormula",1,6,12,"=SUM(L4:L5)")
+		xcall ax_call(control,"CellFormula",1,6,13,"=SUM(M4:M5)")
+
+		xcall ax_call(control,"RangeBold",1,"B6:M6")
+		xcall ax_call(control,"RangeFormat",1,"B4:M6","$#,##0.00_);[Red]($#,##0.00)")
+
+
+		xcall ax_call(control,"RangeFormula",2,"B6","=SUM(B4:B5)")
+		xcall ax_call(control,"CellFormula",2,6,3,"=SUM(C4:C5)")
+		xcall ax_call(control,"CellFormula",2,6,4,"=SUM(D4:D5)")
+		xcall ax_call(control,"RangeBold",2,"B6:D6")
+		xcall ax_call(control,"RangeFormat",2,"B4:D6","$#,##0.00_);[Red]($#,##0.00)")
+		;====================================================
+		; Rename Sheet1 as Demo_2 and Select
+		;====================================================
+		xcall ax_call(control,"NameSheet",2,"Demo_2")
+		xcall ax_call(control,"CellFont",1,4,4,3,14)
+		xcall ax_call(control,"CellFont",1,5,4,2,14)
+		xcall ax_call(control,"CellFont",1,6,4,1,14)
+		xcall ax_call(control,"RangeFont",1,"B4:M4",2,14)
+		xcall ax_call(control,"RangeFont",1,"B5:M5",2,12)
+		xcall ax_call(control,"RangeFont",1,"B6:M6",2,14)
+
+		xcall ax_call(control,"RangeGrid",1,"A4:M6")
+		xcall ax_call(control,"RangeGridOutside",1,"A1:M1")
+		xcall ax_call(control,"RangeGridRight",1,"A4:A6")
+		xcall ax_call(control,"RangeGridBottom",1,"A5:D5")
+		xcall w_proc(WP_HOURGLASS_OFF)
+		;====================================================
+		; Create a 3D Column Chart
+		;====================================================
+		xcall ax_call(control,"CreateColChart",1,"A3:M6","99_Sales_1","Sales Analysis for 1999")
+		;====================================================
+		; Create a 3D Bar Chart
+		;====================================================
+		xcall ax_call(control,"CreateBarChart",1,"A3:M6","99_Sales_2","Sales Analysis for 1999")
+		;====================================================
+		; Create a 3D Pie Chart
+		;====================================================
+		xcall ax_call(control,"CreatePieChart",1,"A3:M6","99_Sales_3","Sales Analysis for 1999")
+		;====================================================
+		; Save the Book using Filename
+		;====================================================
+		if %ax_call(control,"SaveBook",%atrim(FileName)) Then
+			xcall u_message("Created spreadsheet " + %atrim(FileName))
+		else
+			xcall u_message("Failed to save spreadsheet as " + %atrim(FileName))	
+		;====================================================
+		; Close the Book
+		;====================================================
+		xcall ax_call(control,"CloseBook")
+	end
+	else
+		xcall u_message("Failed to create Excel spreadsheet!")
+
+	xcall ax_delete(container)
+
+	xcall u_finish
+	stop
+
+.end

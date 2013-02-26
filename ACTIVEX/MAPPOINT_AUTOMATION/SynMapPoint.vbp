@@ -1,0 +1,36 @@
+Type=Control
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\WINDOWS\system32\STDOLE2.TLB#OLE Automation
+Reference=*\G{31851F80-AFE6-11D2-A3C9-00C04F72F340}#8.1#0#..\..\..\Program Files\Microsoft MapPoint\MPNA82.tlb#Microsoft MapPoint 9.0 Object Library (North America)
+UserControl=Map.ctl
+Startup="(None)"
+ExeName32="SynMapPoint.ocx"
+Command32=""
+Name="SynMapPoint"
+HelpContextID="0"
+CompatibleMode="1"
+CompatibleEXE32="SynMapPoint.ocx"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Synergex"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+ThreadingModel=1
+
+[MS Transaction Server]
+AutoRefresh=1

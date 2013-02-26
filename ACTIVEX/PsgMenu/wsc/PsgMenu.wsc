@@ -1,0 +1,75 @@
+.script
+.date_generated "09/27/1999, 14:46"
+.version "7.1.1"
+;
+;
+;
+.column FILE, "File"
+.entry MB_NEW,"New...", key(^N), disable
+.entry MB_OPEN,"Open...", key(^O), disable
+.entry MB_CANCEL,"Close", key(ESC), disable
+.line
+.entry MB_SAVE,"Save", key(^S), disable
+.entry MB_SAVEAS,"Save As...", disable, select(A)
+.line
+.entry U_PSETUP,"Printer Setup", select(U)
+.entry MB_PREVIEW,"Print Preview", disable, select(V)
+.entry MB_PRINT,"Print", disable
+.line
+.entry MB_EXIT,"Exit", select(X)
+.end
+;
+;
+;
+.column EDIT, "Edit"
+.entry I_CANCEL,"Restore Field", key(^U), disable, select(R)
+.entry MB_RESTORE,"Restore Window", key(^Z), disable, select(W)
+.line
+.entry E_CUT,"Cut", key(^X), disable, select(T)
+.entry E_COPY,"Copy", key(^C), disable, select(C)
+.entry E_PASTE,"Paste", key(^V), disable, select(P)
+.line
+.entry MB_DELETE,"Delete", key(DEL), disable, select(D)
+.line
+.entry U_FIND,"Find", key(^F), disable, select(F)
+.entry S_FINDNEXT,"Find Next", key(^G), disable, select(N)
+.end
+;
+;
+;
+.column NAVIGATE, "Navigate"
+.entry MB_FIRST,"First Record", key(HOME), disable
+.entry MB_LAST,"Last Record", key(END), disable
+.entry MB_PREV,"Previous Record", key(UP), disable
+.entry MB_NEXT,"Next Record", key(DOWN), disable
+.end
+;
+;
+;
+.column TOOLS, "Tools"
+.entry U_CALC,"Calculator", select(L)
+.entry U_CALENDAR,"Calendar", select(C)
+.entry U_EMAIL,"E-Mail", select(E)
+.end
+;
+;
+;
+.column WINDOW, "Window"
+.entry MB_WND1,"<Window 1>", disable, select(1)
+.entry MB_WND2,"<Window 2>", disable, select(2)
+.entry MB_WND3,"<Window 3>", disable, select(3)
+.end
+;
+;
+;
+.column HELP, "Help"
+.entry U_HCONTENT,"Contents", select(C)
+.entry U_HINDEX,"Index", select(I)
+.entry U_HSEARCH,"Search", select(H)
+.entry O_HELP,"Context Specific", key(F1), select(X)
+.line
+.entry U_USEHELP, "Help on Using Help"
+.line
+.entry U_ABOUT,"About", select(A)
+.end
+

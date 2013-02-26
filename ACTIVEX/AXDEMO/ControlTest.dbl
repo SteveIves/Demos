@@ -1,0 +1,980 @@
+;----------------------------------------------------------------------
+.main ControlTest
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "WND:inpctl.def"
+.include "DBLDIR:activex.def"
+
+.define APP_TITLE	"SPC99 ActiveX Seminar Test Program"
+.define APP_VERSION	"1.0"
+
+.align
+common
+	container		,i4
+	control			,i4
+	ControlOnApp	,i4
+
+.align
+record
+	app_hwnd		,i4
+	idc_file		,i4
+	idc_test		,i4
+	idc_graph		,i4
+	idc_cal			,i4
+	window			,i4
+	WndEvents		,i4
+	CloseEvent		,i4
+	Status			,i4
+	width			,i4
+	height			,i4
+	min				,i4
+	max				,i4
+	value			,i4
+	init			,i4
+	pattern			,a30
+	buffer			,a60
+	menubuild		,a2000
+
+	Count			,i4
+	Col				,i4
+	Row				,i4
+
+	GraphData		,[3,12]d8
+&								, 300,200, 400, 450, 200,-250, 200, 200, 200, 200,200,100
+&								,1000,500,1800,1750,2500,1950,2500,2000,1500,1000,500,250
+&								,1300,700,2200,2200,2700,1700,2700,2200,1700,1200,700,350
+	GraphLabel		,[3]a15		,"Profit or Loss", "Cost of Sales", "Sales Revenue"
+
+
+.align
+record ReturnData
+				,a2
+	Year		,d4
+	Month		,d2
+	Day			,d2
+
+.define D_YESNO D_MYESNO+D_MDEFBUTTON2+D_MICONQUESTION
+
+.proc
+
+	xcall u_start(,1,0)
+	xcall e_sect(APP_TITLE, D_HEADER)
+
+	WndEvents = %u_wndevents(
+	&	D_CREATE,,D_EVENT_SIZE, "ToolkitWindowResize",
+	&	D_EVENT_CLOSE,			"ToolkitWindowClose",
+	&	D_EVENT_MAXIMIZE, 		"ToolkitWindowMaximize" )
+	
+	CloseEvent = %u_wndevents(D_CREATE,,D_EVENT_CLOSE,"ToolkitWindowClose")
+
+	xcall e_method(D_METH_UTILS,"util_method")
+
+	xcall e_method(D_METH_APPSIZE,"ApplicationResize")
+
+	xcall mb_column(menubuild,"FILE","File",D_GLOBAL)
+	xcall mb_entry(menubuild,"U_ABOUT","About")
+	xcall mb_entry(menubuild,"O_EXIT","Exit",F4_KEY,,"X")
+	xcall mb_end(menubuild,idc_file)
+	
+	xcall mb_column(menubuild,"TEST","Test")
+	xcall mb_entry(menubuild,"CALENDAR","Calendar")
+	xcall mb_entry(menubuild,"MONTHVIEW","Month View")
+	xcall mb_line(menubuild)
+	xcall mb_entry(menubuild,"GRAPH","Graph")
+	xcall mb_entry(menubuild,"BACKGRAPH","Graph as Backdrop")
+	xcall mb_line(menubuild)
+	xcall mb_entry(menubuild,"EXCEL","Excel Automation")
+	xcall mb_line(menubuild)
+	xcall mb_entry(menubuild,"PROGRESS","Progress Bar")
+	xcall mb_line(menubuild)
+	xcall mb_entry(menubuild,"IMAGE","Image Display")
+	xcall mb_entry(menubuild,"BACKIMAGE","Image Display as Backdrop")
+	xcall mb_line(menubuild)
+	xcall mb_entry(menubuild,"LOGIN","Login Dialog")
+	xcall mb_end(menubuild,idc_test)
+
+	xcall m_defcol(0)
+	
+	;Find out if user wants the ActiveX debugger switched on
+	if (%u_msgbox("Use ActiveX debugger?",D_YESNO,"Debug Mode").eq.D_MIDYES) then
+		xcall setlog("AXDEBUG","YES",Status)
+	else
+		xcall setlog("AXDEBUG",,Status)
+
+	repeat
+	begin
+		xcall m_process()
+		case g_entnam of
+		begincase
+		"CALENDAR": 	call Calendar
+		"MONTHVIEW": 	call MonthView
+		"GRAPH":        call Graph
+		"BACKGRAPH":    call GraphBackdrop
+		"EXCEL":        call Excel
+		"PROGRESS": 	call Progress
+		"IMAGE":    	call Image
+		"BACKIMAGE":    call ImageBackdrop
+		"LOGIN":        call Login
+		"O_EXIT":         exitloop
+		endcase
+	end
+
+	xcall u_finish
+	stop
+
+;----------------------------------------------------------------------
+Calendar,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	xcall e_sect("Double-click on a date to select it",D_INFO)
+
+	;Create a "Calendar" menu column
+	xcall mb_column(menubuild,"CALENDAR","Calendar")
+	xcall mb_entry(menubuild,"C_TDAY","Today")
+	xcall mb_entry(menubuild,"C_PDAY","Previous day")
+	xcall mb_entry(menubuild,"C_NDAY","Next day")
+	xcall mb_entry(menubuild,"C_PWK","Previous week")
+	xcall mb_entry(menubuild,"C_NWK","Next week")
+	xcall mb_entry(menubuild,"C_PMON","Previous month")
+	xcall mb_entry(menubuild,"C_NMON","Next month")
+	xcall mb_entry(menubuild,"C_PYR","Previous Year")
+	xcall mb_entry(menubuild,"C_NYR","Next Year")
+	xcall mb_end(menubuild,idc_cal)
+
+	;Create a UI Toolkit ActiveX Container window,
+	;set the title and assign the close event
+	Window=%ax_tkwin("WND1",10,40,Container)
+	xcall w_brdr(window,WB_TITLE,"Select a Date")
+	xcall u_wndevents(D_ASSIGN,CloseEvent,Window)
+
+	;Load the calendar control into the container
+	Control=%ax_load(Container,"MSCAL.Calendar")
+
+	;Register a call-back routine for the controls DblClick and AfterUpdate events
+	xcall ax_bind(Control,"DblClick","CalendarDblClick")
+	xcall ax_bind(Control,"AfterUpdate","CalendarAfterUpdate")
+
+	;Place the window on the screen
+	xcall u_window(D_PLACE,Window,4,20)
+
+	;Process the control
+	repeat
+	begin
+		xcall ax_input(Window)			;Returns on menu entry
+		case g_entnam of		
+		begincase
+		"@@":							;Date selected
+		begin
+			ReturnData = g_entnam
+			xcall s_bld(Buffer,,"Date %d/%d/%d selected",Day,Month,Year)
+			xcall u_message(Buffer)
+		end
+		"O_EXIT":							;No date selected
+			exitloop
+		"C_":
+			call ChangeDate
+		endcase
+	end
+
+	xcall e_exit
+	return
+
+ChangeDate,
+
+	case g_entnam of
+	begincase
+	"C_TDAY":	xcall ax_call(control,"Today")
+	"C_PDAY":	xcall ax_call(control,"PreviousDay")
+	"C_NDAY":	xcall ax_call(control,"NextDay")
+	"C_PWK":	xcall ax_call(control,"PreviousWeek")
+	"C_NWK":	xcall ax_call(control,"NextWeek")
+	"C_PMON":	xcall ax_call(control,"PreviousMonth")
+	"C_NMON":	xcall ax_call(control,"NextMonth")
+	"C_PYR":	xcall ax_call(control,"PreviousYear")
+	"C_NYR":	xcall ax_call(control,"NextYear")
+	endcase
+
+	return
+
+;----------------------------------------------------------------------
+MonthView,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	xcall e_sect("Double-click on a date to select it",D_INFO)
+
+	;Create a UI Toolkit ActiveX Container window,
+	;set the title and assign the close event
+	Window=%ax_tkwin("WND1",8,23,Container)
+	xcall w_brdr(window,WB_TITLE,"Select a Date")
+	xcall u_wndevents(D_ASSIGN,CloseEvent,Window)
+
+	;Load the calendar control into the container
+	Control=%ax_load(Container,"MSComCtl2.MonthView.2")
+
+	;Register a call-back routine for the controls DblClick and AfterUpdate events
+	xcall ax_bind(Control,"DblClick","CalendarDblClick")
+
+	;Place the window on the screen
+	xcall u_window(D_PLACE,Window,4,20)
+
+	;Process the control
+	repeat
+	begin
+		xcall ax_input(Window)			;Returns on menu entry
+		case g_entnam of		
+		begincase
+		"@@":							;Date selected
+		begin
+			ReturnData = g_entnam
+			xcall s_bld(Buffer,,"Date %d/%d/%d selected",Day,Month,Year)
+			xcall u_message(Buffer)
+		end
+		"O_EXIT":							;No date selected
+			exitloop
+		endcase
+	end
+
+	xcall e_exit
+	return
+
+;----------------------------------------------------------------------
+Graph,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	call CreateGraphColumn
+
+	;Create container
+	window=%ax_tkwin("WND1",20,74,container)
+	xcall u_wndevents(D_ASSIGN,WndEvents,window)
+	xcall w_brdr(window,WB_SBOFF,WB_TITLE,"Graph Control")
+
+	;Load control & set control properties
+	control=%ax_load(container,"Spc99Controls.Graph")
+
+	;Set initial control properties
+	xcall ax_set(Control,"Title","Sales, Cost of Sales & Margin")
+	xcall ax_set(Control,"Footnote","Calendar year 1999")
+	xcall ax_set(Control,"ShowLegend",TRUE)
+	xcall ax_set(Control,"ColumnCount",3)
+	xcall ax_set(Control,"StartMonth",9)
+
+	;Load dummy data into the control
+	for Col from 1 thru 3
+	begin
+		xcall ax_set(Control, "Column",Col)
+		xcall ax_set(Control, "ColumnLabel",GraphLabel[Col])
+		for Row from 1 thru 12
+		begin
+			xcall ax_set(Control,"Row",Row)
+			xcall ax_set(Control,"Data",GraphData[Col,Row])
+		end
+	end
+
+	;Display container window
+	xcall u_window(D_PLACE,window,1,2)
+
+	;Process the control
+	repeat
+	begin
+		xcall ax_input(Window)
+		if (g_select)
+		begin
+			case g_entnam of		
+			begincase
+			"O_EXIT":						;Exit
+				exitloop
+			"LEGEND":					;Toggle graph legend
+				call ToggleLegend
+			"TYPE":						;Change graph type
+				call ChartType
+			"COPY":						;Copy graph to clipboard
+				xcall ax_call(Control,"EditCopy")
+			endcase
+		end
+	end
+
+	xcall e_exit
+
+	return
+
+CreateGraphColumn,
+
+	;Create a "Graph" menu column
+	xcall mb_column(MenuBuild,"GRAPH","Graph")
+	xcall mb_entry(MenuBuild,"LEGEND","Toggle Legend",,,"L")
+	xcall mb_line(MenuBuild)
+	xcall mb_entry(MenuBuild,"TYPE00","3D Bar",,,"0")
+	xcall mb_entry(MenuBuild,"TYPE01","2D Bar",,,"1")
+	xcall mb_entry(MenuBuild,"TYPE02","3D Line",,,"2")
+	xcall mb_entry(MenuBuild,"TYPE03","2D Line",,,"3")
+	xcall mb_entry(MenuBuild,"TYPE04","3D Area",,,"4")
+	xcall mb_entry(MenuBuild,"TYPE05","2D Area",,,"5")
+	xcall mb_entry(MenuBuild,"TYPE06","3D Step",,,"6")
+	xcall mb_entry(MenuBuild,"TYPE07","2D Step",,,"7")
+	xcall mb_entry(MenuBuild,"TYPE08","3D Combo",,,"8")
+	xcall mb_entry(MenuBuild,"TYPE09","2D Combo",,,"9")
+	xcall mb_entry(MenuBuild,"TYPE14","2D Pie")
+	xcall mb_entry(MenuBuild,"TYPE16","2D XY")
+	xcall mb_list(MenuBuild,"TYPES",12,"TYPE00","TYPE01","TYPE02","TYPE03","TYPE04","TYPE05","TYPE06","TYPE07","TYPE08","TYPE09","TYPE14","TYPE16")
+	xcall mb_end(MenuBuild,idc_graph)
+
+	;Disable default graph type & default to no pulled-down columns
+	xcall m_disable(D_ENTRY,idc_graph,"TYPE01")
+
+	return
+
+;---------------------------------------------------------
+;If the leged is off, switch it on, etc.
+
+ToggleLegend,
+
+	if (%ax_getint(control,"ShowLegend")) then
+		xcall ax_set(control,"ShowLegend",FALSE)
+	else
+		xcall ax_set(control,"ShowLegend",TRUE)
+
+	return
+
+;---------------------------------------------------------
+;Select a different graph type
+;
+
+ChartType,
+
+	xcall ax_set(Control,"ChartType",^d(g_entnam(5:2)))
+	xcall m_enable(D_LIST,idc_graph,"TYPES")
+	xcall m_disable(D_ENTRY,idc_graph,g_entnam)
+
+	return
+
+;----------------------------------------------------------------------
+GraphBackdrop,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+
+	call CreateGraphColumn
+
+	;Create container
+
+	app_hwnd=%w_info(WIF_HWND,WIFH_APP)
+	xcall ClientRect(0,width,height)
+	container=%ax_create(0,0,width,height,app_hwnd)
+	ControlOnApp=TRUE
+
+	control=%ax_load(container,"Spc99Controls.Graph")
+
+	;Set initial control properties
+	xcall ax_set(Control,"Title","Sales, Cost of Sales & Margin")
+	xcall ax_set(Control,"Footnote","Calendar year 1999")
+	xcall ax_set(Control,"ShowLegend",TRUE)
+	xcall ax_set(Control,"ColumnCount",3)
+	xcall ax_set(Control,"StartMonth",9)
+
+	;Load dummy data into the control
+	for Col from 1 thru 3
+	begin
+		xcall ax_set(Control, "Column",Col)
+		xcall ax_set(Control, "ColumnLabel",GraphLabel[Col])
+		for Row from 1 thru 12
+		begin
+			xcall ax_set(Control,"Row",Row)
+			xcall ax_set(Control,"Data",GraphData[Col,Row])
+		end
+	end
+
+	xcall ax_show(container)
+
+	;Process the control
+	repeat
+	begin
+		xcall m_process
+		if (g_select)
+		begin
+			case g_entnam of		
+			begincase
+			"O_EXIT":						;Exit
+				exitloop
+			"LEGEND":					;Toggle graph legend
+				call ToggleLegend
+			"TYPE":						;Change graph type
+				call ChartType
+			"COPY":						;Copy graph to clipboard
+				xcall ax_call(Control,"EditCopy")
+			endcase
+		end
+	end
+
+	xcall ax_delete(container)
+	clear ControlOnApp
+
+	xcall e_exit
+
+	return
+
+
+;----------------------------------------------------------------------
+Excel,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	container=%ax_create
+	control=%ax_load(container,"Spc99Controls.ExcelSheet")
+
+	xcall ax_call(control,"CreateSheet")
+
+	;Sheet heading
+	xcall ax_call(control,"RangeContent","B1","Quarterly Gross Profit Analysis")
+	xcall ax_call(control,"RangeBold","B1")
+
+	;Row headings
+	xcall ax_call(control,"RangeContent","A4","Sales")
+	xcall ax_call(control,"RangeContent","A5","Cost of sales")
+	xcall ax_call(control,"RangeContent","A6","Gross profit")
+	xcall ax_call(control,"RangeBold","A4:A6")
+	xcall ax_call(control,"RangeAlign","A4:A6",D_JST_RIGHT)
+	xcall ax_call(control,"ColumnWidth",1,20)
+
+	;Column headings
+	xcall ax_call(control,"RangeContent","B3","Jan 99")
+	xcall ax_call(control,"CellContent",3,3,"Feb 99")
+	xcall ax_call(control,"CellContent",3,4,"Mar 99")
+	xcall ax_call(control,"RangeBold","B3:D3")
+	xcall ax_call(control,"RangeAlign","B3:D3",D_JST_RIGHT)
+	xcall ax_call(control,"ColumnRangeWidth","B:D",15)
+
+	;Sales values
+	xcall ax_call(control,"RangeContent","B4",15245.23)
+	xcall ax_call(control,"CellContent",4,3,18270)
+	xcall ax_call(control,"CellContent",4,4,14187.55)
+	
+	;Cost of sales values
+	xcall ax_call(control,"RangeContent","B5",-12455)
+	xcall ax_call(control,"CellContent",5,3,-13656.99)
+	xcall ax_call(control,"CellContent",5,4,-11250)
+	xcall ax_call(control,"RangeItalic","B5:D5")
+
+	;Gross profit calculations
+	xcall ax_call(control,"RangeFormula","B6","=SUM(B4:B5)")
+	xcall ax_call(control,"CellFormula",6,3,"=SUM(C4:C5)")
+	xcall ax_call(control,"CellFormula",6,4,"=SUM(D4:D5)")
+	xcall ax_call(control,"RangeBold","B6:D6")
+
+	xcall ax_call(control,"RangeFormat","B4:D6","$#,##0.00_);[Red]($#,##0.00)")
+
+	xcall ax_call(control,"SaveSheet","c:\test.xls")
+
+	xcall ax_call(control,"CloseSheet")
+
+	xcall ax_delete(container)
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	xcall u_message("Spreadsheet C:\test.xls has been created")
+
+	xcall e_exit
+
+	return
+
+;----------------------------------------------------------------------
+Progress,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	Min=0
+	Max=10000
+
+	window=%ax_tkwin("WND1",3,36,container)
+	xcall w_brdr(window,WB_DRAGOFF)
+	xcall u_window(D_PLACE,window,8,22)
+	xcall ax_show(container)
+	
+	control=%ax_load(container,"Spc99Controls.Progress",,,,)
+
+	xcall ax_set(control,"Min",Min)
+	xcall ax_set(control,"Max",Max)
+	xcall ax_set(control,"Caption","Testing progress control")
+
+	xcall u_update
+	
+	for Value from Min thru Max
+		xcall ax_set(control,"Value",Value)
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+	xcall e_exit
+
+	return
+
+;----------------------------------------------------------------------
+Image,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	;Create container
+	window=%ax_tkwin("WND1",15,60,container)
+	xcall u_wndevents(D_ASSIGN,WndEvents,window)
+	xcall w_brdr(window,WB_SBOFF,WB_TITLE,"Image Display Control")
+
+	;Load control & set control properties
+	control=%ax_load(container,"Spc99Controls.Image")
+	xcall ax_set(control,"Stretch",1)
+	xcall ax_set(control,"Picture","test.jpg")
+
+	;Display container window
+	xcall u_window(D_PLACE,window,3,10)
+
+	;Process the control
+	repeat
+	begin
+		xcall ax_input(window)
+		if (g_select)
+		begin
+			case g_entnam of		
+			begincase
+			  "O_EXIT":
+				exitloop
+			endcase
+		end
+	end
+
+	xcall e_exit
+
+	return
+
+;----------------------------------------------------------------------
+ImageBackdrop,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+
+	;Create container
+	app_hwnd=%w_info(WIF_HWND,WIFH_APP)
+	xcall ClientRect(0,width,height)
+	container=%ax_create(0,0,width,height,app_hwnd)
+	ControlOnApp = TRUE
+
+	;Load control & set control properties
+	control=%ax_load(container,"Spc99Controls.Image")
+	xcall ax_set(control,"Picture","test.jpg")
+
+	xcall ax_show(container)
+
+	;Process the control
+	repeat
+	begin
+		xcall m_process
+		if (g_select)
+		begin
+			case g_entnam of		
+			begincase
+			  "O_EXIT":
+				exitloop
+			endcase
+		end
+	end
+
+	xcall ax_delete(container)
+	clear ControlOnApp
+
+	xcall e_exit
+
+	return
+
+
+;----------------------------------------------------------------------
+Login,
+
+	xcall e_enter
+	xcall m_disable(D_COLUMN,idc_test)
+	
+	;Create UI Toolkit ActiveX container
+	Window=%ax_tkwin("WND1",6,30,Container)
+
+	;Load control & set control properties
+	Control=%ax_load(Container,"Spc99Controls.Login")
+	
+	;Bind event handler routines
+	xcall ax_bind(control,"Login","Login")
+	xcall ax_bind(control,"Cancel","Cancel")
+	
+    ;Set the title of the container window
+	xcall w_brdr(Window,WB_SBOFF,WB_TITLE,"Login Control")
+
+	;Display container window
+	xcall ax_show(Container)
+	xcall u_window(D_PLACE,Window,8,20)
+
+	;Process the control
+	repeat
+	begin
+		xcall ax_input(Window)
+		if (g_select)
+		begin
+			case g_entnam of		
+			begincase
+			"O_EXIT":					;Exit
+				exitloop
+			endcase
+		end
+	end
+
+	xcall e_exit
+
+	return
+
+.end
+
+;----------------------------------------------------------------------
+;Function:		ToolkitWindowResize
+;Description:	UI Toolkit window resize method
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.function ToolkitWindowResize, ^VAL
+	
+	a_res1				,a
+	a_res2				,a
+	^val(a_wndid)		,i
+	^val(a_event)		,i
+	^val(a_col_width)	,i
+	^val(a_row_height)	,i
+	^val(a_pixel_width)	,i
+	^val(a_pixel_height),i
+
+common
+	Container		,i4
+	Control			,i4
+	ControlOnApp	,i4
+
+.align
+record
+	r				,[4]i4 ,1,1
+
+.proc
+
+	;The toolkit window has been re-sized, but the container that it
+	;contains has not.  So, let's TRY to resize the ActiveX container.
+	r[3] = a_pixel_width
+	r[4] = a_pixel_height
+    xcall ax_set(container,"EXT_RECT",r)
+
+	;And now, let's tell the control to resize also
+	xcall ax_call(control,"Resize", a_pixel_width, a_pixel_height)
+
+	freturn TRUE
+
+.end
+
+;----------------------------------------------------------------------
+;Function:		ApplicationResize
+;Description:	UI Toolkit application resize method
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.function ApplicationResize, ^VAL
+
+	a_columns	,n
+	a_rows		,n
+	a_width		,n	;Pixels
+	a_height	,n	;Pixels
+
+.include "WND:tools.def"
+
+common
+	container		,i4
+	control			,i4
+	ControlOnApp	,i4
+
+.align
+
+record
+	r			,[4]i4 ,0,0
+
+.proc
+
+	if (ControlOnApp)
+	begin
+		
+		;The application window has been re-sized, but the container that it
+		;contains has not.  So, let's TRY to resize the ActiveX container.
+		r[3]=a_width
+		r[4]=a_height
+		xcall ax_set(container,"EXT_RECT",r)
+
+		;And now, let's tell the control to resize also
+		xcall ax_call(control,"Resize", r[3], r[4])
+
+	end
+
+	freturn TRUE
+
+.end
+;----------------------------------------------------------------------
+;Function:		ToolkitWindowMaximize
+;Description:	UI Toolkit window maximize method
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.function ToolkitWindowMaximize, ^VAL
+	
+	a_res1				,a
+	a_res2				,a
+	^val(a_wndid)		,i
+	^val(a_event)		,i
+
+.proc
+
+
+	;The toolkit window has been maximized. We don't need to do anything
+	;specific here, as the Toolkit will also call the resize event.
+	
+	freturn TRUE
+
+.end
+
+;----------------------------------------------------------------------
+;Subroutine:	ToolkitWindowClose
+;Description:	UI Toolkit window close method
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.subroutine ToolkitWindowClose
+
+.include "WND:tools.def"
+
+.proc
+	
+	xcall m_signal("O_EXIT")
+	xreturn
+
+.end
+
+
+;----------------------------------------------------------------------
+;Function:		ClientRect
+;Description:	Gets pixel dimensions of a window
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.function ClientRect, ^VAL
+
+	a_winid			,n		;ID of a Synergy window
+	a_width			,n		;(Returned) Width of client area in pixels
+	a_height		,n		;(Returned) Height of client area in pixels
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+
+.align LONG
+record
+	handle			,i4		;DLL handle
+	status			,i4		;DLL call status (TRUE = OK)
+	hwnd			,i4		;HWND of the Synergy window
+    group rectangle	,i
+	  left			,i4
+	  top			,i4
+	  right			,i4
+	  bottom		,i4
+	endgroup
+
+.proc
+
+	;Default to success
+	status = 1
+
+	xcall e_enter
+
+
+	if (a_winid) then
+	begin
+		;We got a window ID, so let's make sure that the window is placed.
+		;The GetClientRect routine only returns accurate information about placed windows.
+		if (.not.%w_info(WIF_PLCFLG,a_winid))
+			xcall u_window(D_PLACE,a_winid,1,1)
+		;Get the window handle of the Synergy window
+		hwnd=%w_info(WIF_HWND,a_winid)
+	end
+	else
+	begin
+		;No window ID, so they want the dimensions of the main applicationn window client area
+		hwnd=%w_info(WIF_HWND,WIFH_APP)
+	end
+
+
+	;Get the synergy windows client area dimensions
+	handle=%dll_open("user32.dll")
+	status=%dll_call(handle,DLL_TYPE_WINAPI,"GetClientRect",hwnd,^addr(rectangle))
+	xcall dll_close(handle)
+
+	;Return size of client area (pixels)
+	a_width = right
+	a_height = bottom
+
+	xcall e_exit
+
+	freturn status
+
+.end
+
+;----------------------------------------------------------------------
+;Subroutine:	CalendarAfterUpdate
+;Description:	Callback routine for controls AfterUpdate event
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+;
+;The value selected in the control has changed.  Reflect the currently
+;selected date in the information line
+
+.subroutine CalendarAfterUpdate
+
+	a_control		,n
+
+.include "WND:tools.def"
+.include "DBLDIR:activex.def"
+
+record
+	Date			,a14
+	Year			,a4 @Date
+	Month			,a2 @Date+4
+	Day				,a2 @Date+6
+	Buffer			,a40
+
+.proc
+
+	;Get the current date from the control
+	xcall ax_get(a_control,"Value",Date)
+	
+	;Put it into the status bar
+	xcall s_bld(Buffer,,"Currently selected date is %d/%d/%d",Day,Month,Year)
+	xcall e_sect(Buffer,D_INFO,D_LEFT,D_CLEAR)
+	
+	;This line is a work-around for a problem in 6.4.3d.
+	;It would not normally be necessary.
+	xcall u_update
+	
+	xreturn
+
+.end
+
+;----------------------------------------------------------------------
+;Subroutine:	CalendarDblClick
+;Description:	Callback routine for calendar controls DblClick event
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+;
+;The user has double-clicked in the control, indicating the selection
+;of a date.
+
+.subroutine CalendarDblClick
+
+	a_control		,n
+
+.include "WND:tools.def"
+.include "DBLDIR:activex.def"
+
+record DateSelected
+					,a14
+	
+record ReturnData
+					,a2, "@@"
+	Date			,a8
+
+.proc
+
+	;Get the value of the controls date property.
+	xcall ax_get(a_control,"Value",DateSelected)
+	
+	;Now extract the portion of the date we are interested in
+    Date = DateSelected
+	
+	;Raise a UI Toolkit menu entry, containing the selected date.
+	;This "cheat" can be used to avoid global data, as the data we
+	;want to return is less than 10- characters it will fit into
+	;g_entnam, so using M_SIGNAL will both cause AX_INPUT to return,
+	;AND return the appropriate data!
+    
+	xcall m_signal(ReturnData)
+
+	xreturn
+
+.end
+
+;----------------------------------------------------------------------
+;Subroutine:	Login
+;Description:	Callback routine for Login controls Login event
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.subroutine Login
+
+	a_control		,n
+	a_username		,a
+	a_password		,a
+
+.include "WND:tools.def"
+
+record
+	buffer		,a60
+
+.proc
+    xcall s_bld(buffer,,"Username: %a Password: %a",a_username,a_password)
+	xcall u_message(buffer)
+	xcall ax_call(a_control,"Reset")
+	xreturn
+.end
+
+;----------------------------------------------------------------------
+;Subroutine:	Cancel
+;Description:	Callback routine for Login controls Cancel event
+;Author:		Steve Ives
+;Date:			4/27/1999 (12:57pm)
+
+.subroutine Cancel
+
+	a_control		,n
+
+.include "WND:tools.def"
+
+.proc
+	xcall m_signal("O_EXIT")
+	xreturn
+.end
+;----------------------------------------------------------------------
+;Subroutine:	util_method
+;Description:	Utility processing method
+;Author:		Steve Ives
+;Date:			5/17/1999 (12:44pm)
+;
+
+.subroutine util_method
+
+.include "WND:tools.def"
+
+.proc
+
+	case g_entnam of
+	begincase
+	  "U_ABOUT":
+		xcall u_about(APP_TITLE,APP_VERSION,%datecompiled)
+	endcase
+
+	clear g_select
+	
+	xreturn
+
+.end

@@ -1,0 +1,40 @@
+;----------------------------------------------------------------------
+;Function:		UtilMethod
+;Description:	Utility processing method
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+;
+
+.subroutine UtilMethod
+
+;Argument list
+
+	a_record	,a		;(Optional) passed data area (from I_INPUT)
+
+;End of argument list
+
+.include "WND:tools.def"
+
+.proc
+	case g_entnam of
+	begincase
+	"U_PSETUP":
+		xcall u_message("Print Setup")
+	"U_ABOUT":
+		xcall u_message("About")
+	"U_HCONTENT":
+		xcall u_message("Help Contents")
+	"U_HINDEX":
+		xcall u_message("Help index")
+	"U_HSEARCH":
+		xcall u_message("Search for help on")
+	"U_USEHELP":
+		xcall u_message("Help on using help")
+	endcase
+
+	clear g_select
+	
+	xreturn
+
+.end
+

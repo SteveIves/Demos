@@ -1,0 +1,926 @@
+.main autodoc
+.nolist
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+.include "wordauto.def"
+.include "DBLDIR:activex.def"
+.list
+
+structure wind
+    w_name      ,a16
+    w_title     ,a80
+    w_numfields ,i4
+    w_numsets   ,i4
+    w_nummeths  ,i4
+    w_phandle   ,i4
+    w_shandle   ,i4
+    w_mhandle   ,i4
+    w_stable    ,i4
+    w_ftable    ,i4
+    w_mtable    ,i4
+    w_comments  ,a4096
+
+structure methods
+    m_name      ,a32
+    m_type      ,a10
+
+structure buff
+    b_field     ,a4096
+
+structure sets
+    s_name      ,a15
+    s_structure ,a32
+    s_fields    ,a2048
+
+structure prop
+    p_row       ,d3
+    p_col       ,d3
+    p_name      ,a30
+    p_prompt    ,a50
+    p_short     ,a40
+    p_type      ,a8
+    p_size      ,a5
+    p_format    ,a32
+    p_bzero     ,d1
+    p_uc        ,d1
+    p_min       ,a28                                    ;fti_rgmin
+    p_max       ,a28                                    ;fti_rgmax
+    p_default   ,a80
+    p_base      ,a4
+    p_step      ,a4
+    p_select    ,a200
+    p_arrive    ,a32
+    p_leave     ,a32
+    p_change    ,a32
+    p_drill     ,a32
+    p_hyper     ,a32
+
+.define wfield(fieldname)   ^m(wind[w_ind].fieldname,whandle)
+.define pfield(fieldname)   ^m(prop[p_ind].fieldname,^m(wind[w_ind].w_phandle,whandle))
+.define sfield(fieldname)   ^m(sets[s_ind].fieldname,^m(wind[w_ind].w_shandle,whandle))
+.define mfield(fieldname)   ^m(methods[m_ind].fieldname,^m(wind[w_ind].w_mhandle,whandle))
+.define precord,            ^m(prop[p_ind],^m(wind[w_ind].w_phandle,whandle))
+.define srecord,            ^m(sets[s_ind],^m(wind[w_ind].w_shandle,whandle))
+.define brecord(ind)        ^m(buff[ind].b_field,bhandle)
+.define num_fields,         ^m(wind[w_ind].w_numfields,whandle)
+.define num_sets,           ^m(wind[w_ind].w_numsets,whandle)
+.define num_meths,          ^m(wind[w_ind].w_nummeths,whandle)
+
+
+record
+    lit_cr      ,i1,13
+      cr        ,a1@lit_cr
+
+.align
+record
+    container   ,i4
+    control     ,i4
+    table       ,i4
+    bhandle     ,i4
+    whandle     ,i4
+    bmax        ,i4
+    bline       ,i4
+    inchan      ,i4
+    outchan     ,i4
+    i           ,i4
+    w_ind       ,i4                                   ;window index
+    p_ind       ,i4                                   ;field index
+    s_ind       ,i4                                   ; set index
+    m_ind       ,i4                                        ;method index
+    continue    ,i4
+    first       ,i4
+    last        ,i4
+    num_wind    ,i4
+    pos         ,i4
+    row         ,i4
+    col         ,i4
+    size        ,i4
+    errnum      ,i4
+    collect     ,i4
+    type        ,a12
+    precision   ,a2
+    base        ,a4
+    step        ,a4
+    filename    ,a255
+    directory   ,a200
+    st_name     ,a32                                  ;structure name
+    f_name      ,a32                                  ;field name
+    w_name      ,a16                                  ;window name
+    name        ,a32                                       ;method name
+    buffer      ,a4096                                ;for reading script files
+    tbuff       ,a4096
+    pline       ,a500                                 ;print line
+
+.proc
+    call initialize
+    
+	xcall e_sect("Building lines structure", D_CLEAR, D_LEFT)
+    xcall u_update
+	if (continue)
+		call build_lines_structure
+    
+	xcall e_sect("Building windows array", D_CLEAR, D_LEFT)
+    xcall u_update
+    if (continue)
+		call build_window_array
+    
+	xcall e_sect("Sorting fields", D_CLEAR, D_LEFT)
+    xcall u_update
+    if (continue)
+		call sort_fields
+    
+	xcall e_sect("Creating the document", D_CLEAR, D_LEFT)
+    xcall u_update
+    if (continue)
+		call create_as_document
+    
+	call shutdown
+    
+	stop
+
+initialize,
+    
+	xcall flags(7000000,1)
+    xcall u_start()
+    xcall getlog("work",directory,size)
+    if (size)
+    then
+      if (directory(%trim(directory):1) .ne. "\")
+      directory = %atrim(directory) + "\"
+    else
+      directory = "c:\temp\"
+    xcall dd_init(dcs)
+    whandle = %mem_proc(DM_ALLOC,1)                    ;just create the handle
+    bhandle = %mem_proc(DM_ALLOC,1)                    ;just create the handle
+    clear num_wind, bline , filename
+    if(continue = %u_getfilename(filename,"Select script file",1,"Script Files","*.wsc"))
+      begin
+        xcall u_open(inchan,"I",%atrim(filename),,errnum)
+        continue = .not. errnum
+        collect = FALSE                                    ;until we are in a window
+      end
+    
+	xcall StartWord(container,control)
+	
+	return
+
+shutdown,
+
+	xcall StopWord(container,control)
+	xcall dd_exit(dcs)
+    xcall u_close(outchan)
+    xcall u_finish
+    
+	return
+
+build_lines_structure,
+    
+	clear bmax
+    repeat
+      begin
+        reads(inchan,buffer,done_script)
+        if (.not. buffer)
+          nextloop
+        call shift_buffer_left
+        bmax += 1
+        bhandle = %mem_proc(DM_RESIZ,bmax*%size(buff),bhandle)
+        brecord(bmax) = %atrim(buffer)
+      end
+
+done_script,
+    
+	return
+
+build_window_array,
+    
+	repeat
+      begin
+        bline  += 1
+        if (bline  .gt. bmax)
+          exitloop
+        buffer = brecord(bline )
+        call shift_buffer_left
+        using buffer select
+        (".INPUT",".input"),
+          begin
+            num_wind += 1
+            whandle = %mem_proc(DM_RESIZ,num_wind*%size(wind),whandle)
+            w_ind = num_wind                               ;point to the structure
+            pos = %instr(1,buffer," ")
+            buffer = buffer(pos,size)
+            call shift_buffer_left
+            pos = %instr(1,buffer,",")
+            wfield(w_name) = buffer(1,pos-1)               ;get the name
+            wfield(w_phandle) = %mem_proc(DM_ALLOC,1)      ;allocate a segment for properties
+            wfield(w_shandle) = %mem_proc(DM_ALLOC,1)      ;allocate a segment for sets
+            wfield(w_mhandle) = %mem_proc(DM_ALLOC,1)      ;allocate a segment for methods
+            clear wfield(w_numfields)                      ;number of fields
+            clear wfield(w_numsets)                        ;number of sets
+            clear wfield(w_nummeths)                       ;number of methods
+            clear wfield(w_comments)                       ; narrative text from comments
+            clear st_name                                  ; and structure name
+            collect = TRUE                                 ; collect notes flag
+          end
+        (".TITLE", ".title"),
+           begin
+            first = %instr(1,buffer,'"') + 1
+            last = %instr(first,buffer,'"') - 1
+            wfield(w_title) = buffer(first,last)
+           end
+        (".REPOSITORY",".repository"),
+          begin
+            pos = %instr(1,buffer," ")
+            buffer = buffer(pos,size)
+            call shift_buffer_left
+            st_name = buffer                               ; save the structure name
+          end
+        (".FIELD",".field"),
+          begin
+            collect = FALSE                                ; stop collecting notes
+            pos = %trim(buffer)
+            if (buffer(pos:1) .eq. "-")
+              begin
+                clear buffer(pos:1)                        ; ditch the dash
+                tbuff = buffer                             ;hold the first line
+                repeat
+                  begin
+                    bline  += 1
+                    buffer = brecord(bline )
+                    call shift_buffer_left
+                    tbuff = %atrim(tbuff) + " " + buffer
+                    pos = %trim(tbuff)
+                    if (tbuff(pos:1) .eq. "-")
+                      begin
+                        clear tbuff(pos:1)
+                        nextloop
+                      end
+                    buffer = tbuff
+                    exitloop
+                  end
+              end
+            pos = %instr(1,buffer," ")
+            buffer = buffer(pos+1 ,%size(buffer))          ;ditch the .field
+            call shift_buffer_left
+            wfield(w_numfields) += 1                       ;count the field
+            p_ind = wfield(w_numfields)
+            wfield(w_phandle) = %mem_proc(DM_RESIZ,         ; resize array
+            &      wfield(w_numfields) * %size(prop),
+            &      wfield(w_phandle))
+            clear precord                                  ;clear entire structure
+            pos = %instr(1,buffer,",")
+            pfield(p_name) = buffer(1,pos-1)               ;log the name
+            call get_script_info                           ; parse out the script info
+            if (st_name)
+              call get_repository_info
+          end
+        (".set", ".SET"),
+          begin
+            pos = %trim(buffer)
+            if (buffer(pos:1) .eq. "-")
+              begin
+                clear buffer(pos:1)                        ; ditch the dash
+                tbuff = buffer                             ;hold the first line
+                repeat
+                  begin
+                    bline  += 1
+                    buffer = brecord(bline)
+                    call shift_buffer_left
+                    tbuff = %atrim(tbuff) + " " + buffer
+                    pos = %trim(tbuff)
+                    if (tbuff(pos:1) .eq. "-")
+                      begin
+                        clear tbuff(pos:1)
+                        nextloop
+                      end
+                    buffer = tbuff
+                    exitloop
+                  end
+              end
+            wfield(w_numsets) += 1                         ;count the set
+            s_ind = wfield(w_numsets)
+            wfield(w_shandle) = %mem_proc(DM_RESIZ,        ; resize array
+            &      wfield(w_numsets) * %size(sets),
+            &      wfield(w_shandle))
+            pos = %instr(1,buffer," ")
+            buffer = buffer(pos + 1,%size(buffer))
+            pos = %instr(1,buffer,",")
+            sfield(s_name) = buffer(1,pos-1)               ;get set name
+            buffer = buffer(pos+1,%size(buffer))           ; and scrap it
+            call shift_buffer_left
+            pos = %instr(1,buffer,",")
+            sfield(s_structure) = buffer(1,pos-1)          ;get structure name
+            buffer = buffer(pos+1,%size(buffer))           ; and scrap it
+            call shift_buffer_left
+            sfield(s_fields) = buffer                      ;get the fields
+           end
+        (";"),
+            begin
+              if (.not. collect)
+                exit                                       ;not collecting now
+              pos = %instr(1,buffer," ")
+              buffer = buffer(pos,%size(buffer))
+              call shift_buffer_left
+              if (wfield(w_comments))
+              then
+                wfield(w_comments) = %atrim(wfield(w_comments)) + " " + %atrim(buffer)
+              else
+                wfield(w_comments) = %atrim(wfield(w_comments)) + %atrim(buffer)
+            end
+        (),               nextloop
+        endusing
+      end
+
+shift_buffer_left,
+    
+	repeat
+      begin
+        size = %trim(buffer)
+        if (buffer(1:1))
+        then
+          exitloop
+        else
+          begin
+            buffer = buffer(2,size)                        ;shift left
+            nextloop
+          end
+      end
+    return
+
+get_script_info,
+
+    tbuff = buffer
+    upcase tbuff
+    if (%instr(1,tbuff,"POS",pos))
+      begin
+        first = %instr(pos,buffer,'(') + 1
+        last = %instr(first,buffer,',') - 1
+        pfield(p_row) = buffer(first,last)
+        first = last + 2
+        last = %instr(first +1, buffer,")") -1
+        pfield(p_col) = buffer(first,last)
+      end
+    if(%instr(1,tbuff,"NOPROMPT",pos))
+    then
+      pfield(p_prompt) = "No Prompt!"
+    else
+      if(%instr(1,tbuff,"PROMPT",pos))
+        begin
+          first = %instr(pos,buffer,'"') + 1
+          last = %instr(first,buffer,'"') - 1
+          pfield(p_prompt) = "* " + buffer(first,last)
+        end
+    if(pos = %instr(1,tbuff,"LEAVE"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_LEAVE) = "* " + buffer(first,last)
+        type = "LEAVE"
+        call log_method
+      end
+    if(pos = %instr(1,tbuff,"ARRIVE"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_ARRIVE) = "* " + buffer(first,last)
+        type = "ARRIVE"
+        call log_method
+      end
+    if(pos = %instr(1,tbuff,"DRILL"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_DRILL) = "* " + buffer(first,last)
+        type = "DRILL"
+        call log_method
+      end
+    if(pos = %instr(1,tbuff,"HYPER"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_HYPER) = "* " + buffer(first,last)
+        type = "HYPER"
+        call log_method
+      end
+    if(pos = %instr(1,tbuff,"CHANGE"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_change) = "* " + buffer(first,last)
+        type = "CHANGE"
+        call log_method
+      end
+    if(pos = %instr(1,tbuff,"BZ"))
+      pfield(p_BZERO) = TRUE
+    if(pos = %instr(1,tbuff,"FORMAT"))
+      begin
+        first = %instr(pos,buffer,'"') + 1
+        last = %instr(first,buffer,'"') - 1
+        pfield(p_FORMAT) = "* " + buffer(first,last)
+      end
+    if(pos = %instr(1,tbuff,"UC"))
+      pfield(p_UC) = TRUE
+    if(pos = %instr(1,tbuff,"UPPER"))
+      pfield(p_UC) = TRUE
+    
+	return
+
+sort_fields,
+
+    p_ind = 1
+    for w_ind from 1 thru num_wind
+      begin
+        xcall qsort(precord,num_fields)
+      end
+    return
+
+create_as_document,
+    
+	for w_ind from 1 thru num_wind
+      begin
+        xcall StartDocument(control)
+        xcall SetMargins(control,2,2,1.5,1.5)
+        
+		xcall AddHeading(control,"Documentation for " + %atrim(filename),wdStyleHeading1)
+        xcall e_sect("Processing window named " + wfield(w_name), D_CLEAR, D_LEFT)
+        xcall u_update
+        
+		xcall AddHeading(control,%atrim(wfield(w_title)) + " (" + %atrim(wfield(w_name)) + ")",wdStyleHeading2)
+
+		xcall AddHeading(control,"Description",wdStyleHeading3)
+		
+		xcall AddText(control,wfield(w_comments))
+		xcall EndParagraph(control)
+
+		xcall AddHeading(control,"Behavior",wdStyleHeading3)
+        xcall AddText(control,"<describe window behavior> ")
+		xcall EndParagraph(control)
+
+        if (num_sets)
+          begin
+            xcall AddHeading(control,"Sets for processing",wdStyleHeading3)
+            wfield(w_stable)=%AddTable(control,num_sets + 1,3)
+            xcall TableAutoFormat(control,wfield(w_stable),wdTableFormatColorful2)
+            xcall SetTableCell(control,wfield(w_stable),1,1,"Set name")
+            xcall SetTableCell(control,wfield(w_stable),1,2,"Structure")
+            xcall SetTableCell(control,wfield(w_stable),1,3,"List of Fields")
+            for s_ind from 1 thru num_sets
+              begin
+                row = s_ind + 1
+                xcall SetTableCell(control,wfield(w_stable),row,1,sfield(s_name))
+                xcall SetTableCell(control,wfield(w_stable),row,2,sfield(s_structure))
+                xcall SetTableCell(control,wfield(w_stable),row,3,sfield(s_fields))
+              end
+           end
+        if (num_fields)
+          begin
+            xcall AddHeading(control,"Field Information",wdStyleHeading3)
+            wfield(w_ftable)=%AddTable(control,num_fields + 1,5)
+            xcall TableAutoFormat(control,wfield(w_ftable),wdTableFormatColorful2)
+            xcall SetTableCell(control,wfield(w_ftable),1,1,"Field name")
+            xcall SetTableCell(control,wfield(w_ftable),1,2,"Prompt")
+            xcall SetTableCell(control,wfield(w_ftable),1,3,"Type")
+            xcall SetTableCell(control,wfield(w_ftable),1,4,"Size")
+            xcall SetTableCell(control,wfield(w_ftable),1,5,"Additional Information")
+            for p_ind from 1 thru num_fields
+              begin
+                row = p_ind + 1
+                xcall SetTableCell(control,wfield(w_ftable),row,1,pfield(p_name))
+                xcall SetTableCell(control,wfield(w_ftable),row,2,pfield(p_prompt))
+                xcall SetTableCell(control,wfield(w_ftable),row,3,pfield(p_type))
+                xcall SetTableCell(control,wfield(w_ftable),row,4,pfield(p_size))
+                call build_buffer_line
+                xcall SetTableCell(control,wfield(w_ftable),row,5,buffer)
+              end
+          end
+        if (num_meths)
+          begin
+            
+			xcall AddHeading(control,"Supporting Methods",wdStyleHeading3)
+            
+			wfield(w_mtable)=%AddTable(control,num_meths + 1,2)
+            xcall TableAutoFormat(control,wfield(w_mtable),wdTableFormatColorful2)
+            xcall SetTableCell(control,wfield(w_mtable),1,1,"Method type")
+            xcall SetTableCell(control,wfield(w_mtable),1,2,"Method name")
+            for s_ind from 1 thru num_meths
+              begin
+                row = s_ind + 1
+                xcall SetTableCell(control,wfield(w_mtable),row,1,mfield(m_type))
+                xcall SetTableCell(control,wfield(w_mtable),row,2,mfield(m_name))
+              end
+          end
+        xcall AddHeading(control,"Menu Processing Options",wdStyleHeading3)
+        
+		xcall AddText(control,"<Insert list of menu options and choices here>")
+        xcall EndParagraph(control)
+        
+		filename = %atrim(directory) + %atrim(wfield(w_name)) + ".doc"
+        xcall EndDocument(control,filename)
+exitloop ;just do first document!
+	end
+
+	return
+
+build_buffer_line,
+    
+	buffer = %atrim(pfield(p_short))
+    if (pfield(p_format))
+      buffer = %atrim(buffer) + cr  + %atrim(pfield(p_format))
+    if (pfield(p_base))
+      buffer = %atrim(buffer) + cr  +  "Enumerated, base =  "  +
+      &       %atrim(pfield(p_base)) + ", step = "  + %atrim(pfield(p_step))
+    if (pfield(p_select))
+      buffer = %atrim(buffer) + cr  + %atrim(pfield(p_select))
+    if (pfield(p_bzero))
+      buffer = %atrim(buffer) + cr  + "Blank if zero"
+    if (pfield(p_uc))
+      buffer = %atrim(buffer) + cr  + "Upper cased"
+    if (pfield(p_min))
+      buffer = %atrim(buffer) + cr  + "Minimum = " + %atrim(pfield(p_min))
+    if (pfield(p_max))
+      buffer = %atrim(buffer) + cr  + "Maximum = " + %atrim(pfield(p_max))
+    if (pfield(p_arrive))
+      buffer = %atrim(buffer) + cr  + "Arrive - " + %atrim(pfield(p_arrive))
+    if (pfield(p_leave))
+      buffer = %atrim(buffer) + cr  + "Leave - " + %atrim(pfield(p_leave))
+    if (pfield(p_change))
+      buffer = %atrim(buffer) + cr  + "Change - " + %atrim(pfield(p_change))
+    if (pfield(p_drill))
+      buffer = %atrim(buffer) + cr  + "Drill - " + %atrim(pfield(p_drill))
+    if (pfield(p_hyper))
+      buffer = %atrim(buffer) + cr  + "Hyper - " + %atrim(pfield(p_hyper))
+    return
+
+get_repository_info,
+
+    xcall dd_struct(dcs, DDS_INFO, %atrim(st_name), s_info)
+    xcall dd_field(dcs, DDF_INFO, %atrim(pfield(p_name)), f_info)
+    if (fi_desc)
+      xcall dd_field(dcs, DDF_TEXT, fi_desc, pfield(p_short))
+    if (fi_prompt .and. .not. pfield(p_prompt))
+      xcall dd_field(dcs, DDF_TEXT, fi_prompt, pfield(p_prompt))
+    if (fi_fmt .and. .not. pfield(p_format))
+      xcall dd_format(dcs,DDM_INFO,fi_fmt,type,pfield(p_format))
+    if (fi_range .and. .not. pfield(p_min))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_range, fti_range)
+        pfield(p_min) = fti_rgmin, "ZZZZZZZZZZZZZZZZZZ.ZZZZZZZZZZ"
+        pfield(p_max) = fti_rgmax, "ZZZZZZZZZZZZZZZZZZ.ZZZZZZZZZZ"
+      end
+    if (fi_enum .and. .not. pfield(p_base))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_enum, fti_enum)
+        pfield(p_base) = fti_enmbase [LEFT]
+        pfield(p_step) = fti_enmstep [LEFT]
+      end
+    if (fi_sellist .and. .not. pfield(p_select))
+    then
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_sellist, fti_entlst)
+        for i from 1 thru fi_selct
+          pfield(p_select) =  %atrim(pfield(p_select)) +
+          &                 "[" + %atrim(fti_entlstary(i)) + "]"
+      end
+    else
+      if (fi_selwin .and. .not. pfield(p_select))
+        pfield(p_select) =   "Selections from " + %atrim(fi_selwin)
+    pfield(p_size) = fi_size [LEFT]
+    if (fi_prec .and. .not. pfield(p_size))
+      begin
+        precision = fi_prec [LEFT]
+        pfield(p_size) = %atrim(pfield(p_size)) +
+        &                   "." + %atrim(precision)
+      end
+    if (fi_type .eq. T_DEC)
+    then
+      using fi_class select
+        (C_YYMMDD),     begin
+                          pfield(p_type) = "Date"
+                          pfield(p_format) =  " MM/DD/YY"
+                        end
+        (C_YYYYMMDD),   begin
+                          pfield(p_type) = "Date"
+                          pfield(p_format) =   " MM/DD/CCYY"
+                        end
+        (C_YYJJJ),      pfield(p_type) = "Date"
+        (C_YYYYJJJ),    pfield(p_type) = "Date"
+        (C_YYPP),       pfield(p_type) = "Date"
+        (C_YYYYPP),     pfield(p_type) = "Date"
+        (C_HHMMSS),     begin
+                          pfield(p_type) = "Time"
+                          pfield(p_format) =   " HH:MM:SS"
+                        end
+        (C_HHMM),       begin
+                          pfield(p_type) = "Time"
+                          pfield(p_format) =   " HH:MM"
+                        end
+        (),           pfield(p_type) = "Decimal"
+      endusing
+    else
+      if (fi_class .eq. C_BINARY)
+      then  pfield(p_type) = "Integer"
+      else  pfield(p_type) = "Alpha"
+    if (fi_bzro .and. .not. pfield(p_bzero))
+      pfield(p_bzero) =  TRUE
+    if (fi_uc .and. .not. pfield(p_uc))
+      pfield(p_uc) =  TRUE
+    if (fi_arrivemeth .and. .not. pfield(p_arrive))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_arrivemeth, pfield(p_arrive))
+        type = "ARRIVE"
+        call log_method
+      end
+    if (fi_leavemeth .and. .not. pfield(p_leave))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_leavemeth, pfield(p_leave))
+        type = "LEAVE"
+        call log_method
+      end
+    if (fi_changemeth .and. .not. pfield(p_change))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_changemeth, pfield(p_change))
+        type = "CHANGE"
+        call log_method
+      end
+    if (fi_drillmeth .and. .not. pfield(p_drill))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_drillmeth, pfield(p_drill))
+        type = "DRILL"
+        call log_method
+      end
+    if (fi_hypermeth .and. .not. pfield(p_hyper))
+      begin
+        xcall dd_field(dcs, DDF_TEXT, fi_hypermeth, pfield(p_hyper))
+        type = "HYPER"
+        call log_method
+      end
+    return
+
+log_method,
+
+    locase type
+    upcase type(1:1)
+    using type select
+      ("A"), name = pfield(p_arrive)
+      ("C"), name = pfield(p_change)
+      ("D"), name = pfield(p_drill)
+      ("H"), name = pfield(p_hyper)
+      ("L"), name = pfield(p_leave)
+    endusing
+    if (num_meths)
+      begin
+        for m_ind from 1 thru num_meths
+          if (mfield(m_type) .eq. type .and. mfield(m_name) .eq. name)
+            return                                         ;we found it
+      end
+    wfield(w_nummeths) +=1                                 ;bump the counter
+    m_ind = num_meths                                      ; set the index
+    wfield(w_mhandle) = %mem_proc(DM_RESIZ,                ;allocate another segment
+    &      wfield(w_nummeths)*%size(methods), wfield(w_mhandle))
+    mfield(m_type) = type
+    mfield(m_name) = name
+    return
+
+.end
+
+
+;--------------------------------------------------------------------------------
+;Creates the container window and loads the control.  This starts Word.
+;
+.subroutine StartWord
+;Argument list
+        a_container             ,n              ;Returned container ID (i4)
+        a_control               ,n              ;Returned control ID (i4)
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        a_container=%ax_create
+        a_control=%ax_load(a_container,"PSG.MsWord")
+        xreturn
+.end
+
+;--------------------------------------------------------------------------------
+;Creates the container window and loads the control
+;
+.subroutine StartDocument
+;Argument list
+        a_control               ,n              ;Returned control ID (i4)
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"StartDocument")
+		xreturn
+.end
+;--------------------------------------------------------------------------------
+;Saves generated word document
+;
+.subroutine EndDocument
+;Argument list
+        a_control               ,n              ;Control ID (from StartDocument)
+        a_docname               ,a              ;Name of document to create
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"EndDocument",a_docname)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Closes word and tears down ActiveX container
+;
+.subroutine StopWord
+;Argument list
+        a_container             ,n              ;Container ID (from StartDocument)
+        a_control               ,n              ;Control ID (from StartDocument)
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_delete(a_control)
+        xcall ax_delete(a_container)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Adds text, with optional text formatting
+.subroutine AddText
+;Argument list
+        a_control               ,n              ;Control ID (from StartDocument)
+        a_text                  ,a              ;Text to display
+		a_style					,n				;(Optional) text style (default Normal)
+        a_size                  ,n              ;(Optional) point size (default 12)
+        a_face                  ,a              ;(Optional) font face (defailt Times New Roman)
+        a_bold                  ,n              ;(Optional) bold = 1
+        a_italic                ,n              ;(Optional) italic = 1
+        a_underline             ,n              ;(Optional) underline = 1
+        a_nospace               ,n              ;(Optional) don't add space = 1
+;End of argument list
+.include "DBLDIR:activex.def"
+.align
+stack record
+        style					,i4
+		size                    ,i4
+        bold                    ,i4
+        italic                  ,i4
+        underline               ,i4
+        nospace                 ,i4
+        face                    ,a50
+.proc
+        if (^passed(a_style))
+		  then style = a_style
+		  else style = wdStyleNormal
+
+		if (^passed(a_size))
+          then  size=a_size
+          else  size=10
+
+        if (^passed(a_face))
+          then face=a_face
+          else face="Arial"
+
+        if (^passed(a_bold))
+          then bold=a_bold
+          else bold=0
+
+        if (^passed(a_italic))
+          then  italic=a_italic
+          else  italic=0
+
+        if (^passed(a_underline))
+          then  underline = a_underline
+          else  underline=0
+
+        if (^passed(a_nospace))
+          then  nospace = a_nospace
+          else  nospace=0
+
+        xcall ax_call(a_control,"AddText",a_text,style,size,face,bold,italic,underline,nospace)
+
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Ends a paragraph
+;
+.subroutine EndParagraph
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"EndParagraph")
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+.subroutine AddHeading
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_text          ,a              ;Text for heading
+		a_style			,n
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"AddHeading",a_text,a_style)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Inserts a table with pre-defined rows & columns.  Returns "Table ID"
+;
+.function AddTable, ^VAL
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_rows          ,n              ;Table rows
+        a_cols          ,n              ;Table columns
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+    freturn %ax_call(a_control,"AddTable",a_rows,a_cols)
+.end
+;--------------------------------------------------------------------------------
+;Auto-format a table
+.subroutine TableAutoFormat
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_table         ,n              ;Table ID (from %AddTable)
+        a_format        ,n              ;Auto-format number
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"TableAutoFormat",a_table,a_format)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Inserts text into a table cell
+.subroutine SetTableCell
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_table         ,n              ;Table ID (from %AddTable)
+        a_row           ,n              ;Row number
+        a_col           ,n              ;Column number
+        a_text          ,a              ;Text to display
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"SetTableCell",a_table,a_row,a_col,a_text)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Shades a table cell in 20% gray
+.subroutine ShadeTableCell
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_table         ,n              ;Table ID (from %AddTable)
+        a_row           ,n              ;Row of cell to shade
+        a_col           ,n              ;Column of cell to shade
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"ShadeTableCell",a_table,a_row,a_col)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+;Converts a table row to "reverse video"
+.subroutine ReverseTableRow
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_table         ,n              ;Table ID (from %AddTable)
+        a_row           ,n              ;Row to reverse
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"ReverseTableRow",a_table,a_row)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+.subroutine ReverseTableColumn
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_table         ,n              ;Table ID (from %AddTable)
+        a_col           ,n
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"ReverseTableColumn",a_table,a_col)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+.subroutine SetOrientation
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_orient        ,n
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_set(a_control,"Orientation",a_orient)
+        xreturn
+.end
+;--------------------------------------------------------------------------------
+.subroutine SetMargins
+;Argument list
+        a_control       ,n              ;Control ID (from StartDocument)
+        a_top           ,n
+        a_bottom        ,n
+        a_left          ,n
+        a_right         ,n
+;End of argument list
+.include "DBLDIR:activex.def"
+.proc
+        xcall ax_call(a_control,"SetMargins",a_top,a_bottom,a_left,a_right)
+        xreturn
+.end
+

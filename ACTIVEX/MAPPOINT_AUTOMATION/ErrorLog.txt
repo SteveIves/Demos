@@ -1,0 +1,2 @@
+Diff Error :<diff: Unknown option "-ae">  
+ Ending Merge session !!!

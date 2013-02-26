@@ -1,0 +1,169 @@
+.subroutine startup
+
+;Argument list
+
+	.include "INC:menu_control.def"
+
+;End of argument list
+
+.include "WND:tools.def"
+.include "WND:tkctl.def"
+.include "WND:toolbar.def"
+.include "WND:windows.def"
+.include "DBLDIR:activex.def"
+
+.include "INC:menu_global.def"
+
+.define MIN_TOOLKIT_VERSION	"7.1.1"
+
+.align
+record
+	version		,a10
+
+.proc
+
+	xcall u_start("EXE:psgmenu.ism",1,0)
+
+	;Check minimum UI Toolkit version reqirements
+	xcall u_version(version)
+	xcall u_checkversion("UI Toolkit",version,MIN_TOOLKIT_VERSION)
+   	
+	;Switch on the hourglass for startup processing
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;Set a global proportional font
+	xcall u_wndfont(D_SETFONT,DF_DEFAULT,"MS Sans Serif",8,"A")
+
+	xcall e_state(D_ON, D_RETURNBTN, D_VALSTCHG, D_OFF, D_CBADVANCE)
+
+	;Register UI Toolkit environment methods
+	xcall e_method(D_METH_APPCLOSE,	"AppClose",
+&			   D_METH_APPSIZE,	"AppResize",
+&			   D_METH_HELP,		"HelpMethod",
+&			   D_METH_UTILS,	"UtilMethod")
+
+
+	xcall e_sect("PSG Menu System",D_HEADER)
+	xcall e_sect("Select an option from the menu",D_INFO,D_LEFT)
+
+	xcall m_ldcol(mid_file,		g_utlib,	"FILE")
+	xcall m_ldcol(mid_edit,		g_utlib,	"EDIT")
+	xcall m_ldcol(mid_navigate,	g_utlib,	"NAVIGATE")
+	xcall m_ldcol(mid_tools,	g_utlib,	"TOOLS")
+	xcall m_ldcol(mid_window,	g_utlib,	"WINDOW")
+	xcall m_ldcol(mid_help,		g_utlib,	"HELP")
+
+	xcall m_defcol(0)
+
+	;Setup the toolbar
+	xcall tb_toolbar(TB_CREATE,tbid,TBC_TOP,,24)
+	xcall tb_button(tbid,TBB_LOAD,"MB_NEW",1,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:new.bmp","New",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_OPEN",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:open.bmp","Open",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_SAVE",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:save.bmp","Save",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_DELETE",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:delete.bmp","Delete",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"MB_PREVIEW",109,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:preview.bmp","Print Preview",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_PRINT",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:print.bmp","Print",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"E_CUT",169,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:cut.bmp","Cut",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"E_COPY",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:copy.bmp","Copy",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"E_PASTE",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:paste.bmp","Paste",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"MB_RESTORE",253,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:restore.bmp","Restore Window",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"U_FIND",289,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:find.bmp","Find",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"MB_FIRST",325,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:first.bmp","First Record",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_PREV",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:prev.bmp","Previous Record",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_NEXT",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:next.bmp","Next Record",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"MB_LAST",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:last.bmp","Last Record",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_LOAD,"U_HCONTENT",433,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:hcontent.bmp","Help Contents",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	xcall tb_button(tbid,TBB_LOAD,"O_HELP",,,24,24,TBLOAD_TYPE_BMAP,
+	&				"BMP:help.bmp","Context Help",,,
+	&				"ToolbarClick",,,"ToolbarClick",,,"ToolbarClick")
+	
+	xcall tb_button(tbid,TBB_DISABLE,"MB_NEW")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_OPEN")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_SAVE")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_PREVIEW")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_PRINT")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_RESTORE")
+	xcall tb_button(tbid,TBB_DISABLE,"E_CUT")
+	xcall tb_button(tbid,TBB_DISABLE,"E_COPY")
+	xcall tb_button(tbid,TBB_DISABLE,"E_PASTE")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_DELETE")
+	xcall tb_button(tbid,TBB_DISABLE,"U_FIND")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_FIRST")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_PREV")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_NEXT")
+	xcall tb_button(tbid,TBB_DISABLE,"MB_LAST")
+	xcall tb_toolbar(TB_PLACE,tbid)
+
+	;Open required DLL's
+	User32DLL=%dll_open("user32.dll")
+
+	;Setup ActiveX menu control
+	ScreenRows = %w_info(WIF_SROWS)
+	ScreenCols = %w_info(WIF_SCOLS)
+
+	;Create broderless container for ActiveX tree menu
+	Window=%ax_tkwin("MENU",ScreenRows,ScreenCols,Container)
+	xcall w_brdr(Window,WB_OFF)
+
+	;Load tree menu control
+	onerror ($ERR_AXNOLOAD) NoTreeControl
+	Control=%ax_load(Container,"PsgMenu.Explorer")
+	offerror
+	
+	if (FALSE)
+	begin
+NoTreeControl,
+		xcall u_abort("PsgMenu.Explorer ActiveX Control is not registered!")
+	end
+
+	;Bind control callback routines
+	xcall ax_bind(Control,"LoadListItems","LoadListItems")
+	xcall ax_bind(Control,"ItemSelected","ItemSelected")
+	xcall ax_bind(Control,"SwitchListMode","SwitchListMode")
+
+	xcall ax_set(control,"ShowHeading",0)
+
+	;Switch the hourglass off
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	xreturn
+
+.end

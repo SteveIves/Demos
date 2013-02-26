@@ -1,0 +1,79 @@
+;
+;
+;Driver program.  this program is the main line that include the minimum you need to call
+;a code generated program.  This should be used as a basis of a menu program.
+;
+;
+;
+;SI.include 'WND:tkctl.def'
+;SI.include 'WND:tools.def'
+;SI.include 'WND:toolbar.def'
+;SI.include 'WND:windows.def'
+;SI.ifdef D_GUI
+;SI.include 'DBLDIR:activex.def'
+;SI.endc
+
+;SIglobal data section gbl_menu_control, INIT
+;SIrecord
+;SI	.include 'SDINC:menu_control.def'
+;SIendglobal
+
+.align
+	record
+	length,		i4		;work variable
+	hdl,		i4		;tree control handle
+	container_id,i4		;tree container id
+	control_id,	i4		;tree control id
+	tempa,		a10
+
+
+
+.proc
+	
+	call startup
+	if %db_connect(menu_control)	;returns true if connection made
+		call process
+	call shutdown
+	stop	;end of program!
+
+;===============================================================================
+
+startup,
+	xcall u_start(, 1, 1)
+
+	xcall syndev_startup(menu_control)
+
+return
+
+process,
+
+	;CALL THE REQUIRED PROGRAM!!!!!!
+	
+	xcall e_enter		;new environment for the application program
+	xcall tb_button(tb_id, TBB_ENABLE, 'E_CUT')
+	xcall tb_button(tb_id, TBB_ENABLE,'E_COPY')
+	xcall tb_button(tb_id, TBB_ENABLE,'E_PASTE')
+	
+	;PLACE THE CALL TO YOU PROGRAM HERE
+
+	;xcall program_name(menu_control)
+	
+	xcall tb_button(tb_id, TBB_DISABLE, 'E_CUT')
+	xcall tb_button(tb_id, TBB_DISABLE,'E_COPY')
+	xcall tb_button(tb_id, TBB_DISABLE,'E_PASTE')
+	xcall e_exit
+	clear g_entnam, g_select
+
+return
+
+shutdown,
+	xcall e_sect("Closing database connection.  Please wait.......", D_INFO, D_CLEAR, D_LEFT)
+	xcall u_update
+	if data_access .eq. D_ACCESS_SQL xcall ssc_release(database)	;bye bye database!
+	xcall u_finish				;close the toolkit down
+
+return
+
+.end
+
+

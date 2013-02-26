@@ -1,0 +1,45 @@
+[COMPILER]
+FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
+FILTERPATTERN=*.dbl\n*.def\n*.wsc\n*.*\n
+FILTERASSOCIATEFILETYPES=0 0 0 0
+FILTEREXPANSION=1 1 0 0
+Synergy=1
+MACRO=\n
+compile=concur|capture|clear|:Compile:&Compile,dbl -dXTl %n %n
+make=concur|capture|:Build:&Build,dblink -d %n  WND:tklib.elb DBLDIR:axlib.elb RPSLIB:ddlib.elb
+rebuild=concur|capture|:Rebuild:&Rebuild,
+debug=:Debug:&Debug,dbr -d %n
+execute=:Execute:E&xecute,dbr %n
+user1=hide|:User 1:User 1,
+user2=hide|:User 2:User 2,
+workingdir=
+includedirs=
+tagfiles=
+reffile=
+[FILES]
+C:\Word Automation Demo\script_document.dbl
+C:\Word Automation Demo\wordauto.dbl
+C:\Word Automation Demo\wordauto.def
+[ASSOCIATION]
+[STATE]
+SCREEN: 1024 768 130 130 600 405 0 0 M 0 0 0 0 815 461
+CWD: C:\Word Automation Demo
+BUFFER: BN="C:\Word Automation Demo\wordauto.dbl"
+BI: MA=1 80 1  TABS=1 9  WWS=0 IWT=1 ST=0 IN=2 BW=0 US=1000 RO=0 SE=0 SN=0 BIN=0 MN=DBL	HM=0 MF=48 TL=0 MLL=0 ASE=0
+VIEW: LN=.1965 CL=1 LE=0 CX=0 CY=24 WI=5 BI=20 HT=0 HN=0 HF=0 HC=4
+WINDOW: 0 0 618 355 -1 -1 N  WF=0 WT=1 "OEM Fixed Font,10,0,1"
+BUFFER: BN="C:\Word Automation Demo\wordauto.dbl"
+VIEW: LN=.1965 CL=1 LE=0 CX=0 CY=24 WI=123 BI=20 HT=0 HN=0 HF=0 HC=4
+FILEHIST: 9
+A:\tkp_state_list.dbl
+C:\Beers\tkp_routines\tkp_state_list.dbl
+C:\Consulting\CEPM\quotes\tkp_state_list.dbl
+C:\Consulting\CEPM\quotes\script_tables.dbl
+C:\Consulting\CEPM\quotes\test.dbl
+c:\SynergyDE\synergy.ini
+C:\Word Automation Demo\wordauto.dbl
+C:\Consulting\CEPM\quotes\script_document.dbl
+C:\Word Automation Demo\script_document.dbl
+PRINTER: 2
+
+

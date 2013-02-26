@@ -1,0 +1,71 @@
+;----------------------------------------------------------------------
+;Function:		AppResize
+;Description:	Event handler for application resize event
+;Author:		Steve Ives (Synergex Professional Services Group)
+;Date:			24th June 1999
+;
+
+.function AppResize, ^VAL
+
+;Argument list
+	
+	a_columns	,n		;New application window width  (columns)
+	a_rows		,n		;New application window height (rows)
+	a_width		,n		;New application window width  (pixels)
+	a_height	,n		;New application window height (pixels)
+
+;End of argument list
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "DBLDIR:activex.def"
+
+.include "INC:menu_global.def"
+
+.align
+record
+	HWnd		,i4				;Window handle
+	R			,[4]i4 ,0,0		;Client rectangle (Top, Left, Width, Height)
+	Bar			,i2 ,3			;Scroll bars to disable (SB_BOTH=3)
+	No			,i1	,0			;Show scroll bars? Repaint Window?
+
+
+.proc
+
+	;Record the new application window size (rows & columns)
+	ScreenRows = a_rows
+	ScreenCols = a_columns
+	
+	;The application window has been re-sized, so we need to resize the
+	;ActiveX container window and the ActiveX container, and tell the
+	;control to resize.
+
+	if (Window)
+	begin
+	
+		;Disable both scroll bars
+		HWnd = %w_info(WIF_HWND,WIFH_APP)
+		xcall dll_call(User32DLL,DLL_TYPE_WINAPI,"ShowScrollBar",HWnd,Bar,No)
+
+		;Find the size of the application client area
+		xcall dll_call(User32DLL,DLL_TYPE_WINAPI,"GetClientRect",HWnd,^addr(R))
+
+		;Resize UI Toolkit container window to size of the client area
+		HWnd = %w_info(WIF_HWND,Window)
+		xcall dll_call(User32DLL,DLL_TYPE_WINAPI,"MoveWindow",HWnd,R[1],R[2],R[3],R[4],No)
+
+		;Resize the ActiveX container
+		xcall ax_set(Container,"EXT_RECT",R)
+		
+		;Resize the control
+		xcall ax_call(Control,"Resize", R[3], R[4])
+		
+	end
+
+
+	freturn TRUE
+
+.end
+
+
+

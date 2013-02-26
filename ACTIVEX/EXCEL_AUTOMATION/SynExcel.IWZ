@@ -1,0 +1,224 @@
+
+[InstallShield Wizard]
+iDate=1
+iTime=1
+Flag=f6000000
+ISX.EXE Size=657920
+ISX.EXE Date=11:03:16  14/11/1998
+ISX.EXE Ver=2.1.1.3
+SETUP.EXE Size=45312
+SETUP.EXE Date=15:21:02  1/10/1998
+SETUP.EXE Ver=3.0.111.0
+SETUP.INS Size=70547
+SETUP.INS Date=16:49:22  12/11/1998
+SETUP.INS Ver=Not available
+_INST16.EX_ Size=282766
+_INST16.EX_ Date=15:20:56  1/10/1998
+_INST16.EX_ Ver=Not available
+_INST32I.EX_ Size=320411
+_INST32I.EX_ Date=15:20:56  1/10/1998
+_INST32I.EX_ Ver=Not available
+ISDEPEND.INI Size=320411
+ISDEPEND.INI Date=15:20:56  1/10/1998
+ISDEPEND.INI Ver=Not available
+SWDEPEND.INI Size=320411
+SWDEPEND.INI Date=15:20:56  1/10/1998
+SWDEPEND.INI Ver=Not available
+ICOMP.EXE Size=119808
+ICOMP.EXE Date=15:21:00  1/10/1998
+ICOMP.EXE Ver=3.00.062
+SPLIT.EXE Size=90624
+SPLIT.EXE Date=15:21:02  1/10/1998
+SPLIT.EXE Ver=3.00.060
+PACKLIST.EXE Size=87552
+PACKLIST.EXE Date=15:21:00  1/10/1998
+PACKLIST.EXE Ver=3.00.060
+Version=2.11
+DevTool=for Visual Basic 6.0
+Platform=Win32
+DisksBuilt=1
+DisksDir=SynExcel\144MB\
+TabsVisit=11111111100000011101
+LangNum=451
+LangDir=LANG\ENG\
+
+[VisualDesign]
+AppName=Synergy Excel Automation Demo
+AppExe=[Program Files]\SynExcel.ocx
+AppExeFile=
+Version=6.3.1
+Company=Synergex
+Title=Synergy Excel Automation Demo
+TitleType=1
+BackgrndBmp=
+BackgrndAlign=4
+Backgrnd=1
+BackgrndColor=10
+Uninstall=1
+Silent=1
+SmsMode=0
+
+[Types]
+Types=1
+Type1Components=1
+Type1Name=Complete
+Type1ComponentList=1 
+
+[Components]
+Components=1
+Component1Groups=2
+Component1Name=Application Files
+Component1Description=Application files needed to run the application
+Component1GroupList=1 2 
+
+[Groups]
+Groups=2
+Group1Size=100075
+Group1Files=10
+Group1Name=Program Files
+Group1Dir=<INSTALLDIR>
+Group1Update=0
+Group1TargetOS=-1
+Group1File1=S:\Source\VB\ExcelAutomation\SynExcel.ocx
+Group1File1Reg=1
+Group1File2=S:\Source\VB\ExcelAutomation\build.bat
+Group1File3=S:\Source\VB\ExcelAutomation\SynExcel.vbw
+Group1File4=S:\Source\VB\ExcelAutomation\ExcelSheet.dbl
+Group1File5=S:\Source\VB\ExcelAutomation\ExcelSheet.DBR
+Group1File6=S:\Source\VB\ExcelAutomation\ReadMe.doc
+Group1File7=S:\Source\VB\ExcelAutomation\SynExcel.exp
+Group1File8=S:\Source\VB\ExcelAutomation\SynExcel.lib
+Group1File9=S:\Source\VB\ExcelAutomation\SynExcel.vbp
+Group1File10=S:\Source\VB\ExcelAutomation\ExcelSheet.ctl
+Group1Reg=1
+Group2Size=2337072
+Group2Files=5
+Group2Auto=2
+Group2ID=38802
+Group2Name=System Files - WinSysDir
+Group2Dir=<WINSYSDIR>
+Group2Update=-1
+Group2TargetOS=-1
+Group2File1=C:\NT\SYSTEM32\MSVBVM60.DLL
+Group2File1Auto=2
+Group2File1Reg=1
+Group2File2=C:\NT\SYSTEM32\STDOLE2.TLB
+Group2File2Auto=2
+Group2File2Reg=1
+Group2File3=C:\NT\SYSTEM32\OLEAUT32.DLL
+Group2File3Auto=2
+Group2File3Reg=1
+Group2File4=C:\NT\SYSTEM32\OLEPRO32.DLL
+Group2File4Auto=2
+Group2File4Reg=1
+Group2File5=C:\NT\SYSTEM32\ASYCFILT.DLL
+Group2File5Auto=2
+Group2Reg=1
+
+[Sequence]
+DestinationLocationDir=<WINDISK>\SynExcel
+SelectProgramFolderName=Synergy Excel Automation Demo
+WelcomeMessage=1
+WelcomeMessageFile=
+DestinationLocation=1
+SelectProgramFolder=1
+BeginFileTransfer=1
+ProgressBar=1
+SetupComplete=1
+SetupCompleteExec=
+SetupCompleteExecParam=
+SetupCompleteExecReadme=[Program Files]\ReadMe.doc
+
+[RegEntries]
+Reg1Path=HKEY_CLASSES_ROOT
+Reg1Val1Type=0
+Reg1Val1Name=(Default)
+Reg1Val1Data=(value not set)
+Reg1Vals=1
+Reg2Path=HKEY_CURRENT_USER
+Reg2Val1Type=0
+Reg2Val1Name=(Default)
+Reg2Val1Data=(value not set)
+Reg2Vals=1
+Reg3Path=HKEY_LOCAL_MACHINE
+Reg3Val1Type=0
+Reg3Val1Name=(Default)
+Reg3Val1Data=(value not set)
+Reg3Vals=1
+Reg4Path=HKEY_USERS
+Reg4Val1Type=0
+Reg4Val1Name=(Default)
+Reg4Val1Data=(value not set)
+Reg4Vals=1
+Reg5Path=HKEY_CURRENT_CONFIG
+Reg5Val1Type=0
+Reg5Val1Name=(Default)
+Reg5Val1Data=(value not set)
+Reg5Vals=1
+Reg6Path=HKEY_DYN_DATA
+Reg6Val1Type=0
+Reg6Val1Name=(Default)
+Reg6Val1Data=(value not set)
+Reg6Vals=1
+Regs=6
+
+[Registry]
+
+[Icons]
+Icons=4
+Icon1Param=
+Icon1Cmd=[Program Files]\ExcelSheet.dbl
+Icon1Description=ExcelSheet.dbl
+Icon1WorkingDir=[Program Files]
+Icon1IconFile=
+Icon1RealFile=S:\Source\VB\ExcelAutomation\ExcelSheet.dbl
+Icon1WhichIcon=0
+Icon1KeyVirtual=0
+Icon1KeyFlags=0
+Icon1StartMenu=0
+Icon1Window=0
+Icon2Param=
+Icon2Cmd=[Program Files]\ReadMe.doc
+Icon2Description=ReadMe
+Icon2WorkingDir=[Program Files]
+Icon2IconFile=
+Icon2RealFile=S:\Source\VB\ExcelAutomation\ReadMe.doc
+Icon2WhichIcon=0
+Icon2KeyVirtual=0
+Icon2KeyFlags=0
+Icon2StartMenu=0
+Icon2Window=0
+Icon3Param=
+Icon3Cmd=[Program Files]\SynExcel.vbp
+Icon3Description=SynExcel Source (VB6)
+Icon3WorkingDir=[Program Files]
+Icon3IconFile=
+Icon3RealFile=S:\Source\VB\ExcelAutomation\SynExcel.vbp
+Icon3WhichIcon=0
+Icon3KeyVirtual=0
+Icon3KeyFlags=0
+Icon3StartMenu=0
+Icon3Window=0
+Icon4Param=
+Icon4Cmd=[Program Files]\ExcelSheet.DBR
+Icon4Description=ExcelSheet.dbr
+Icon4WorkingDir=[Program Files]
+Icon4IconFile=
+Icon4RealFile=S:\Source\VB\ExcelAutomation\ExcelSheet.DBR
+Icon4WhichIcon=0
+Icon4KeyVirtual=0
+Icon4KeyFlags=0
+Icon4StartMenu=0
+Icon4Window=0
+
+[Autoexec]
+PathDir=
+ShareLocks=
+ShareFiles=
+Command=
+
+[CopyToFloppy]
+DriveOption=Path for a 1 File Installation.
+DestinationPath=
+DestinationPathOneFile=S:\Source\VB\ExcelAutomation\SYNEXCEL\144MB\
+Password=

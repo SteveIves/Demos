@@ -1,0 +1,452 @@
+.main wordauto
+
+.include "wordauto.def"
+
+.align
+record
+	container	,i4
+	control		,i4
+	table		,i4
+
+.proc
+
+	xcall flags(7000000,1)
+
+
+	xcall StartDocument(container,control)
+
+	xcall SetMargins(control,2,2,1.5,1.5)
+	
+	xcall AddHeading1(control,"Steve's Test Document")
+	
+	xcall AddText(control,"This is a sentence of normal text. ")
+	xcall AddText(control,"This is a sentence of bold text. ",,,1)
+	xcall AddText(control,"This is a sentence of italic text. ",,,,1)
+	xcall AddText(control,"This is a sentence of underlined text. ",,,,,1)
+	xcall AddText(control,"This is a sentence of bold, italic, underlined text. ",,,1,1,1)
+	xcall AddText(control,"This sentence is followed by an end of paragraph.")
+	
+	xcall EndParagraph(control)
+	
+	xcall AddText(control,"This sentence is not followed by an end of paragraph.")
+	
+	xcall AddHeading2(control,"Heading 2")
+	
+	xcall AddText(control,"Below this paragraph is a table:")
+	xcall EndParagraph(control)
+	
+	table=%AddTable(control,4,5)
+	xcall TableAutoFormat(control,table,wdTableFormatGrid8)
+	xcall SetTableCell(control,table,1,1,"Field Name")
+	xcall SetTableCell(control,table,1,2,"Prompt")
+	xcall SetTableCell(control,table,1,3,"Type")
+	xcall SetTableCell(control,table,1,4,"Size")
+	xcall SetTableCell(control,table,1,5,"Additional Information")
+	xcall SetTableCell(control,table,2,1,"QA_INITIALS")
+	xcall SetTableCell(control,table,2,2,"E-Mail Address")
+	xcall SetTableCell(control,table,2,3,"Decimal")
+	xcall SetTableCell(control,table,2,4,"10")
+	xcall SetTableCell(control,table,2,5,"Hyper - explode_initials_hyper")
+	
+	xcall AddHeading3(control,"Heading 3")
+
+	xcall SaveDocument(container,control,"C:\steve.doc")
+
+	stop
+
+.end
+
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine StartDocument
+
+;Argument list
+
+	a_container		,n		;Returned container ID (i4)
+	a_control		,n		;Returned control ID (i4)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	a_container=%ax_create
+	a_control=%ax_load(a_container,"PSG.MsWord")
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Saves generated word document, closes word and tears down ActiveX container
+;
+
+.subroutine SaveDocument
+
+;Argument list
+
+	a_container		,n		;Container ID (from StartDocument)
+	a_control		,n		;Control ID (from StartDocument)
+	a_docname		,a		;Name of document to create
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+
+.proc
+
+	xcall ax_call(a_control,"SaveDocument",a_docname)
+	
+	xcall ax_delete(a_control)
+	xcall ax_delete(a_container)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Adds text, with optional text formatting
+;
+
+.subroutine AddText
+
+;Argument list
+
+	a_control		,n		;Control ID (from StartDocument)
+	a_text			,a		;Text to display
+	a_size			,n		;(Optional) point size (default 12)
+	a_face			,a		;(Optional) font face (defailt Times New Roman)
+	a_bold			,n		;(Optional) bold = 1
+	a_italic		,n		;(Optional) italic = 1
+	a_underline		,n		;(Optional) underline = 1
+	a_nospace		,n		;(Optional) don't add space = 1
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.align
+stack record
+	size			,i4
+	bold			,i4
+	italic			,i4
+	underline		,i4
+	nospace			,i4
+	face			,a50
+
+.proc
+
+	if (^passed(a_size)) then
+		size=a_size
+	else
+		size=12
+
+	if (^passed(a_face)) then
+		face=a_face
+	else
+		face="Times New Roman"
+
+	if (^passed(a_bold)) then
+		bold=a_bold
+	else
+		bold=0
+
+	if (^passed(a_italic)) then
+		italic=a_italic
+	else
+		italic=0
+
+	if (^passed(a_underline)) then
+		underline = a_underline
+	else
+		underline=0
+
+	if (^passed(a_nospace)) then
+		nospace = a_nospace
+	else
+		nospace=0
+
+	xcall ax_call(a_control,"AddText",a_text,size,face,bold,italic,underline,nospace)
+
+	xreturn
+
+.end
+
+;--------------------------------------------------------------------------------
+;Ends a paragraph
+;
+
+.subroutine EndParagraph
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"EndParagraph")
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine AddHeading1
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_text		,a		;Text for heading
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"AddHeading1",a_text)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine AddHeading2
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_text		,a		;Text for heading
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"AddHeading2",a_text)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine AddHeading3
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_text		,a		;Text for heading
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"AddHeading3",a_text)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Inserts a table with pre-defined rows & columns.  Returns "Table ID"
+;
+
+.function AddTable, ^VAL
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_rows		,n		;Table rows
+	a_cols		,n		;Table columns
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+    freturn %ax_call(a_control,"AddTable",a_rows,a_cols)
+
+.end
+;--------------------------------------------------------------------------------
+;Auto-format a table
+;
+
+.subroutine TableAutoFormat
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_table		,n		;Table ID (from %AddTable)
+	a_format	,n		;Auto-format number
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"TableAutoFormat",a_table,a_format)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Inserts text into a table cell
+;
+
+.subroutine SetTableCell
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_table		,n		;Table ID (from %AddTable)
+	a_row		,n		;Row number
+	a_col		,n		;Column number
+	a_text		,a		;Text to display
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"SetTableCell",a_table,a_row,a_col,a_text)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Shades a table cell in 20% gray
+;
+
+.subroutine ShadeTableCell
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_table		,n		;Table ID (from %AddTable)
+	a_row		,n		;Row of cell to shade
+	a_col		,n		;Column of cell to shade
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"ShadeTableCell",a_table,a_row,a_col)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;Converts a table row to "reverse video"
+;
+
+.subroutine ReverseTableRow
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_table		,n		;Table ID (from %AddTable)
+	a_row		,n		;Row to reverse
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+
+.proc
+
+	xcall ax_call(a_control,"ReverseTableRow",a_table,a_row)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine ReverseTableColumn
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_table		,n		;Table ID (from %AddTable)
+	a_col		,n
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+
+.proc
+
+	xcall ax_call(a_control,"ReverseTableColumn",a_table,a_col)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine SetOrientation
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_orient	,n
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_set(a_control,"Orientation",a_orient)
+
+	xreturn
+
+.end
+;--------------------------------------------------------------------------------
+;
+;
+
+.subroutine SetMargins
+
+;Argument list
+
+	a_control	,n		;Control ID (from StartDocument)
+	a_top		,n
+	a_bottom	,n
+	a_left		,n
+	a_right		,n
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+.proc
+
+	xcall ax_call(a_control,"SetMargins",a_top,a_bottom,a_left,a_right)
+
+	xreturn
+
+.end
+
