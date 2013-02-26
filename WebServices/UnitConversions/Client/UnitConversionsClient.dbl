@@ -1,0 +1,88 @@
+;******************************************************************************
+;
+; Title         UnitConversionsClient.dbl
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         7th May June 2004
+;
+; Platforms:    All supported platforms
+;
+; Versions:     Synergy/DE 8.1.1 or higher
+;
+; Requirements: In order for this program to operate correctly, the host system
+;               must be able to communicate with the Internet on port 80.
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+; The web service invoked by this program is provided for customer training and
+; testing purposes only, and is published without warranty or support. By using
+; the web service you accept that neither the author or Synergex accept any
+; responsibility for any loss or damage which may result from the use of the
+; service. In addition, Synergex reserves the right to modify or withdraw the
+; web service at any time, and without notice.
+;
+;******************************************************************************
+
+main UnitConversionsClient
+
+	.include "WND:tools.def"
+	.include "WND:inpctl.def"
+	.include "WND:windows.def"
+
+	record 
+		colFile 	,i4
+		colConvert	,i4
+		tmpBuf		,a500
+	endrecord
+	
+proc
+
+    ;Start UI Toolkit and set application title
+    xcall u_start(,1,0)
+    xcall w_caption(WC_SET,"Synergex PSG Web Services Examples")
+    xcall e_state(D_ON,D_RETURNBTN)
+
+	xcall mb_column(tmpBuf,"FILE","File",D_GLOBAL)
+	xcall mb_entry(tmpBuf,"O_EXIT","Exit",F4_KEY)
+	xcall mb_end(tmpBuf,colFile)
+	
+	xcall mb_column(tmpBuf,"CONVERT","Convert")
+	xcall mb_entry(tmpBuf,"AREA","Areas")
+	xcall mb_entry(tmpBuf,"DATA","Data Storage")
+	xcall mb_entry(tmpBuf,"LENGTH","Distances")
+	xcall mb_entry(tmpBuf,"TEMP","Temperatures")
+	xcall mb_entry(tmpBuf,"WEIGHT","Weights")
+	xcall mb_end(tmpBuf,colConvert)
+
+	xcall m_defcol(1)
+	
+	repeat
+	begin
+		xcall m_process
+		using g_entnam select
+		("AREA "),
+			xcall ConvertArea
+		("DATA "),
+			xcall ConvertDataStorage
+		("LENGTH "),
+			xcall ConvertLength
+		("TEMP "),
+			xcall ConvertTemperature
+		("WEIGHT "),
+			xcall ConvertWeight
+		("O_EXIT "),
+			exitloop
+		endusing
+	end
+	
+    ;Clean up
+    xcall u_finish
+    stop
+
+endmain
+
