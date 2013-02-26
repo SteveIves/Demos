@@ -1,0 +1,35 @@
+;who_details.dbl
+
+.subroutine who_details
+
+.include 'demoprog.def'
+
+group quote_head,      a
+    .include 'QUOTE_HEAD' repository, norecord
+endgroup
+
+;end af argument list
+
+.include 'WND:tools.def'
+
+.align
+stack record
+    window_id,          i4      		;who window id
+
+.proc
+	
+    xcall e_enter
+
+    xcall i_ldinp(window_id, g_utlib, "who")
+
+    xcall i_next(window_id,, '*FRST*')
+
+	xcall i_input(window_id,, quote_head, minput_mid, mselect_mid,, D_NOTERM,,, program_data)
+
+    xcall e_exit
+
+	xreturn
+
+.end
+
+

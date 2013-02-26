@@ -1,0 +1,10 @@
+;create some list data.  This is declaired in each list method, and thus should
+;really be in an include file.
+
+.align QUAD
+record list_data
+        leave_item, i4
+    current_item,   i4
+        doing_the_move, i4
+endrecord
+

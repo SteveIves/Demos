@@ -1,0 +1,437 @@
+;******************************************************************************
+;
+.subroutine enable_contact_processing
+
+.include "SRC:system.def"
+
+stack record
+	ctr					,i4		;Id of list container window
+	dll					,i4		;Dll handle
+
+.proc
+
+	dll=%dll_open("user32")
+
+	;Enable the contact list
+	xcall l_status(idl_contact,D_LCTRID,ctr)
+	xcall dll_call(dll,DLL_TYPE_WINAPI,
+	&	"EnableWindow",%w_info(WIF_HWND,ctr),%integer(TRUE))	
+
+	;Enable the contact tabset
+	xcall dll_call(dll,DLL_TYPE_WINAPI,
+	&	"EnableWindow",%w_info(WIF_HWND,tabset),%integer(TRUE))	
+
+	xcall dll_close(dll)
+	contacts_enabled=TRUE
+	
+	xreturn
+	
+.end
+	
+;******************************************************************************
+;
+.subroutine disable_contact_processing
+
+.include "SRC:system.def"
+
+stack record
+	ctr					,i4		;Id of list container window
+	dll					,i4		;Dll handle
+
+.proc
+
+	dll=%dll_open("user32")
+
+	;Disable the contact list
+	xcall l_status(idl_contact,D_LCTRID,ctr)
+	xcall dll_call(dll,DLL_TYPE_WINAPI,
+	&	"EnableWindow",%w_info(WIF_HWND,ctr),%integer(FALSE))
+
+	;Disable the contact tabset
+	xcall dll_call(dll,DLL_TYPE_WINAPI,
+	&	"EnableWindow",%w_info(WIF_HWND,tabset),%integer(FALSE))	
+
+	xcall dll_close(dll)
+
+	contacts_enabled=FALSE
+	
+	xreturn
+	
+.end
+
+;******************************************************************************
+;
+; Window close method
+;
+.subroutine close_window
+
+.include "SRC:system.def"
+
+.proc
+
+	xcall m_signal("O_ABANDON")
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+; Window resize method
+;
+.function resize_window ,^val ,reentrant
+
+	reserved1			,a		; Reserved by system
+	reserved2			,a		; Reserved by system
+	^val(a_wndid)		,i		; Window id receiving event
+	^val(a_event)		,i		; Mouse/window event
+	^val(a_cellheight)	,i		; Width of logical window (Number of columns)
+	^val(a_cellwidth)	,i		; Height of logical window (Number of columns)
+	^val(a_pixheight)	,i		; Width of client area (Number of pixels)
+	^val(a_pixwidth)	,i		; Height of client area (Number of pixels)
+
+.include "SRC:system.def"
+
+.proc
+
+	freturn TRUE
+
+.end
+
+;******************************************************************************
+;
+; Toolbar left-click method
+;
+.subroutine toolbar_click
+
+	a_button			,a	;Name of button clicked
+	
+.include "SRC:system.def"
+
+.proc
+
+	xcall m_signal(a_button)
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+; Display an informational message
+;
+.subroutine info_message
+
+	a_text				,a	;Message to display
+
+.include "SRC:system.def"
+
+.proc
+
+	xcall u_msgbox(a_text,D_MICONINFO|D_MCENTER,"Information")
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+; Display an error message
+;
+.subroutine error_message
+
+	a_text				,a	;Message to display
+
+.include "SRC:system.def"
+
+.proc
+
+	xcall u_msgbox(a_text,D_MICONEXCLAM|D_MCENTER,"Error")
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+;Ask a yes/no question
+;
+.function yesno, ^val
+
+	a_text				,a	;Message to display
+
+.include "SRC:system.def"
+
+.proc
+
+	freturn (%u_msgbox(a_text,D_MYESNO|D_MICONQUESTION|D_MCENTER|D_MDEFBUTTON2,
+	&	"Confirm")==D_MIDYES)
+
+.end
+
+;******************************************************************************
+;
+.subroutine utilities
+	
+.include "SRC:system.def"
+	
+.proc
+	
+	using g_entnam select
+
+	("U_AUTOSAVE"),
+	begin
+		autosave=!autosave
+		xcall utm_check("Options/Auto Save Contacts",autosave)
+	end
+
+	("U_DEFCONT"),
+	begin
+		new_contact_default=!new_contact_default
+		xcall utm_check("Options/Provide Defaults for New Contacts",new_contact_default)
+	end
+
+	("U_CDELCUST"),
+	begin
+		confirm_delcust=!confirm_delcust
+		xcall utm_check("Options/Confirm Customer Delete",confirm_delcust)
+	end
+
+	("U_CDELCONT"),
+	begin
+		confirm_delcont=!confirm_delcont
+		xcall utm_check("Options/Confirm Contact Delete",confirm_delcont)
+	end
+	
+	endusing
+	
+	xreturn
+	
+.end
+
+;******************************************************************************
+;
+.subroutine entrst
+
+	a_nomod		,n		;field is not modified
+	a_reset		,n		;field does not need resetting
+	;End of arguments
+
+.include "SRC:system.def"
+
+.proc
+
+	if (!a_nomod)
+		a_reset = FALSE
+
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+.subroutine reload_data
+	
+	.include "CUSTOMER" repository, group="a_customer"
+	.include "CONTACT" repository, group="a_contact"
+	;End of arguments
+
+.include "SRC:system.def"
+	
+stack record ivars
+	ok					,i4		;OK to continue
+	ch_tmp1				,i4		;Temp channel
+	ch_tmp2				,i4		;Temp channel
+	
+.proc
+
+	ok=TRUE
+	
+	if (%yesno("Restore saved data?"))
+	begin
+
+		;Make sure we can open the relative files
+
+		xcall u_open(ch_tmp1,"i:r","DAT:customer.sav",,,errnum)
+		if (errnum) 
+		begin
+			xcall error_message("Saved customers file not found!")
+			clear OK
+		end
+		
+		if (ok) 
+		begin
+			xcall u_open(ch_tmp2,"i:r","DAT:contact.sav",,,errnum)
+			if (errnum) 
+			begin
+				xcall error_message("Saved contacts file not found!")
+				xcall u_close(ch_tmp1)
+				clear OK
+			end
+		end
+		
+		if (ok) 
+		begin
+			;Close the ISAM files
+			xcall u_close(ch_customer,ch_contact)
+
+			onerror ($ERR_FINUSE) inuse
+			begin
+
+				;Empty the ISAM files
+				xcall isclr("DAT:customer.ism",errnum)
+				xcall isclr("DAT:contact.ism",errnum)
+				offerror
+
+				;Re-open the ISAM files
+				xcall u_open(ch_customer,"U:I","DAT:customer.ism")
+				xcall u_open(ch_contact,"U:I","DAT:contact.ism")
+
+				;Reload the customer file
+				repeat
+				begin
+					reads(ch_tmp1,a_customer,eof1)
+					store(ch_customer,a_customer)
+				end
+
+eof1,			;Reload the contact file
+				repeat
+				begin
+					reads(ch_tmp2,a_contact,eof2)
+					store(ch_contact,a_contact)
+				end
+
+eof2,       	exit
+
+inuse,          xcall error_message("Can't get exclusive access to data files!")
+			end
+
+			;Close the relative files
+			xcall u_close(ch_tmp1,ch_tmp2)
+
+			;Clear out the UI
+			clear a_customer,a_contact
+			xcall l_restart(idl_customer)
+			xcall l_restart(idl_contact)
+			xcall contact_clear(a_contact)
+			xcall i_enable(D_SET,idi_contact1,"ALL")
+			xcall i_enable(D_SET,idi_contact2,"ALL")
+			xcall i_enable(D_SET,idi_contact3,"ALL")
+			
+			;Set up the initial UI
+			xcall ui_control(D_OFF,D_OFF,D_OFF,D_OFF,D_OFF,D_OFF)
+			xcall e_sect("",D_POSITION,1,1)
+
+			;Start back at the customer list
+			.ifdef DO_CONTAINER
+			xcall c_container(DC_CONTEXT,container,1)
+			.endc
+		end
+	end 
+
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+.subroutine save_data
+	
+	;End of arguments
+
+.include "SRC:system.def"
+.include "CUSTOMER" repository, stack record="customer"
+.include "CONTACT" repository, stack record="contact"
+	
+stack record ivars
+	ok					,i4		;OK to continue
+	ch_tmp1				,i4		;Temp channel
+	ch_tmp2				,i4		;Temp channel
+
+.proc
+
+	ok=TRUE
+	
+	if (%yesno("Save current data?"))
+	begin
+
+		;Make sure we can open the relative files
+
+		xcall u_open(ch_tmp1,"o:r","DAT:customer.sav","RECSIZ:"+%string(^size(customer)),,errnum)
+		if (errnum) 
+		begin
+			xcall error_message("Failed to open customer save file!")
+			clear OK
+		end
+		
+		if (ok) 
+		begin
+			xcall u_open(ch_tmp2,"o:r","DAT:contact.sav","RECSIZ:"+%string(^size(contact)),,errnum)
+			if (errnum) 
+			begin
+				xcall error_message("Failed to open contact save file!")
+				xcall u_close(ch_tmp1)
+				clear OK
+			end
+		end
+		
+		if (ok) 
+		begin
+
+			;Save the customer file
+			find(ch_customer,,^FIRST,KEYNUM:0)
+			repeat
+			begin
+				reads(ch_customer,customer,eof1,LOCK:Q_NO_LOCK)
+				writes(ch_tmp1,customer)
+			end
+
+eof1,
+			;Load the contact file
+			find(ch_contact,,^FIRST,KEYNUM:0)
+			repeat
+			begin
+				reads(ch_contact,contact,eof2,LOCK:Q_NO_LOCK)
+				writes(ch_tmp2,contact)
+			end
+eof2,
+			;Close the relative files
+			xcall u_close(ch_tmp1,ch_tmp2)
+
+		end
+
+	end 
+
+	xreturn
+
+.end
+
+;******************************************************************************
+; Display text to a window
+;
+.subroutine window_text
+
+	a_wndid				,n		;Window ID
+	a_row				,n		;Window row
+	a_col				,n		;Window column
+	a_text				,a		;Text to display
+
+	;This routine displays text to a window, but uses positioning based on the
+	;default fixed-pitch font even if a proportional-spaced font is being
+	;used in the window.
+	
+.include "SRC:system.def"
+
+.proc
+
+	if (a_col>1) then
+		xcall w_disp(a_wndid,
+		&	WD_POS,a_row,a_col-1,
+		&	WD_ATTR,ATTR_LOAD+ATTR_BOLD,
+		&	" ",
+		& 	WD_ATTR,ATTR_LOAD+ATTR_NONE,
+		&	%atrim(a_text))
+	else
+		xcall w_disp(a_wndid,WD_POS,a_row,a_col,%atrim(a_text))
+	
+	xreturn
+	
+.end
+
+

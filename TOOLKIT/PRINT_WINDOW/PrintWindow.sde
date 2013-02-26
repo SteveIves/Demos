@@ -1,0 +1,10 @@
+[GLOBAL]
+syn_version=6
+Synergy=DBL
+Subtype=APP
+
+[COMPILE SCRIPTS]
+Library_Name=demo.ism
+Overwrite=1
+Files=<ALL>,demo.wsc
+

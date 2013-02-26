@@ -1,0 +1,118 @@
+;------------------------------------------------------------------------------
+;
+; Title:        DisabledFieldColor.dbl
+;
+; Description:  Changes the foreground color for disabled fields
+;
+; Author:       Sterling W. "Chip" Camden (from www.chipstips.com)
+;
+; Discussion:   In Synergy/DE on Windows, the colors applied to some parts of
+;               your application are determined by the Windows registry, rather
+;               than by renditions settings in Synergy/DE. This means that most
+;               of the time a user can figure out how to control a given
+;               component's rendition by looking in Windows Control Panel or
+;               the Synergy Control Panel.
+;
+;               Not so for disabled fields. Windows does not provide a visual
+;               means for altering the "gray text" rendition, and it forces
+;               that rendition on all disabled fields. There is literally no
+;               way around it, short of subclassing the display for edit
+;               controls. With the default background color being a darker
+;               gray, the text of disabled fields can be difficult to read,
+;               which has caused some frustration for Synergy/DE users and
+;               developers.
+;
+;               All Windows colors can be programmatically manipulated via the
+;               user32.dll function "SetSysColors". The download below
+;               demonstrates how to modify the COLOR_GRAYTEXT system color to
+;               whatever color you would like.
+;
+; IMPORTANT:    Note that after you change the color, the change takes effect
+;               for ALL applications from this point forward for the current
+;               user. Wield this weapon with care!
+;
+;------------------------------------------------------------------------------
+;
+.main DisabledFieldColor
+
+.include "WND:tools.def"
+
+.align
+stack record
+    user32          ,D_ADDR
+    bldid           ,D_NATINT
+    inpid           ,D_NATINT
+    group data      ,a
+        color       ,i4
+        dummy       ,a10
+    endgroup
+
+literal
+    COLOR_GRAYTEXT  ,i4, 17
+
+.proc
+    xcall u_start
+
+    user32 = %dll_open("user32")
+
+    xcall ib_input(bldid, "", 4, 40)
+    xcall ib_field(bldid, "color",
+    &              D_FLD_TYPE, D_INTEGER,
+    &              D_FLD_SIZE, 4,
+    &              D_FLD_PROMPT, "Disabled color ",
+    &              D_FLD_DRILL, "drill_choosecolor")
+    xcall ib_field(bldid, "dummy",
+    &              D_FLD_TYPE, D_ALPHA,
+    &              D_FLD_SIZE, 10,
+    &              D_FLD_POS, 2, 1,
+    &              D_FLD_PROMPT, "Disabled field ",
+    &              D_FLD_DISABLED)
+    xcall ib_button(bldid, "Apply")
+    xcall ib_end(bldid, inpid)
+
+    color = %dll_call(user32, DLL_TYPE_WINAPI, "GetSysColor", COLOR_GRAYTEXT)
+
+    dummy = "ABCDEFGHIJ"
+
+    xcall i_display(inpid,, data)
+    xcall u_window(D_PLACE, inpid, 5, 21)
+    xcall i_next(inpid,, "*FRST*")
+
+    repeat
+    begin
+        xcall i_input(inpid,, data)
+        if (g_select)
+        begin
+            using g_entnam select
+            ("APPLY "),
+                xcall dll_call(user32, DLL_TYPE_WINAPI, "SetSysColors",
+                &              %integer(1),^addr(COLOR_GRAYTEXT), ^addr(color))
+            endusing
+        end
+    end
+
+    xcall dll_close(user32)
+
+    xcall u_finish
+
+.end
+
+.subroutine drill_choosecolor ,reentrant
+
+    .include "WND:inpinf.def"
+
+    a_record    ,a
+
+.align
+stack record
+    color   ,i4
+
+.proc
+
+    xcall i_getfld(inp_wndid,, a_record, "color", color)
+    color = %u_wincolor(D_CHOOSECOLOR, color)
+    xcall i_putfld(inp_wndid,, a_record, "color", color)
+
+    xreturn
+
+.end

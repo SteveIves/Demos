@@ -1,0 +1,39 @@
+ 
+;  SYNERGY DATA LANGUAGE OUTPUT
+;
+;  REPOSITORY     : C:\Dev\Demos\TOOLKIT\MDI\rpsmain.ism
+;                 : C:\Dev\Demos\TOOLKIT\MDI\rpstext.ism
+;                 : Version 8.1.7
+;
+;  GENERATED      : 16-FEB-2012, 09:52:03
+;                 : Version 9.3.1b
+;  EXPORT OPTIONS : [ALL] 
+ 
+ 
+Structure CUSTOMER   DBL ISAM
+   Description "Customer"
+ 
+Field CUSTOMERID   Type ALPHA   Size 10
+   Description "Customer ID"
+   Prompt "Customer ID"
+ 
+Field COMPANY   Type ALPHA   Size 30
+   Description "Company name"
+   Prompt "Company"
+ 
+Field STREET   Type ALPHA   Size 30
+   Description "Street address"
+   Prompt "Street"
+ 
+Field CITY   Type ALPHA   Size 20
+   Description "City"
+   Prompt "City"
+ 
+Field STATE   Type ALPHA   Size 2
+   Description "State"
+   Prompt "State"
+ 
+Field ZIP   Type DECIMAL   Size 5
+   Description "ZIP code"
+   Prompt "Zip"   Blankifzero
+ 

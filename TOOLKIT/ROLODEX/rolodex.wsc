@@ -1,0 +1,197 @@
+.script
+.version "6.0.4b"
+.date_generated "22-FEB-1997"
+
+
+.column general, "General"
+.entry o_help, "Help", key(F1)
+.entry o_exit, "Exit", key(F4)
+.entry o_abandon, "Abort", key(^A)
+.entry g_about, "About"
+.end
+
+.column options, "Rolodex options"
+.entry p_insert, "Insert entry", key(INS)
+.entry p_remove, "Delete entry", key(DEL)
+.entry p_modify, "Modify entry", key(F5)
+.entry p_replicate, "Replicate entry", key(F6)
+.entry p_display, "Display entry", key(F7)
+.line
+.entry p_nextcat, "Next group", key(F8)
+.entry p_backcat, "Back a group", key(F9)
+.entry s_top, "Top of list", key(HOME)
+.entry s_bottom, "End of list", key(END)
+.line
+.entry p_query, "Query database", key(^Q)
+.entry s_find, "Find", key(^F)
+.entry s_findnext, "Find next", key(^N)
+.entry s_finddir, "Reverse Direction", key(^R)
+.entry p_poptop, "Pop to top", key(F10)
+.end
+
+.column listtype, "Types of lists"
+.entry p_alphabet, "By header", key(^H)
+.entry p_category, "By type", key(^T)
+.entry p_geograph, "By state", key(^S)
+.end
+
+.column text_col, "Editing keys"
+.entry e_left, "Move left", key(LEFT)
+.entry e_right, "Move right", key(RIGHT)
+.entry e_emov, "End of line", key(END)
+.entry e_bmov, "Beginning of line", key(HOME)
+.entry e_xup, "Move up", key(UP)
+.entry e_xdown, "Move down", key(DOWN)
+.end
+
+.column inp_col, "Field commands"
+.entry i_prev, "Previous field", key(UP)
+.entry i_next, "Next field", key(DOWN)
+.entry i_frst, "First field", key(^F)
+.entry i_last, "Last field", key(^L)
+.entry i_done, "Done", key(^D)
+.entry i_cancel, "Cancel", key(^X)
+.end
+
+.column sel_col, "Selection keys"
+.entry s_up, "Up", key(UP)
+.entry s_down, "Down", key(DOWN)
+.line
+.entry s_pgup, "Page up", key(PREV)
+.entry s_pgdn, "Page down", key(NEXT)
+.end
+
+.window dummy, 4, 76
+.placement 19, 1
+.border off
+.end
+
+.window press_cr, 2, 13
+.placement 12, 63
+.border off
+.text WndTxt1, position(1, 1)
+Press Return to continue
+.end
+
+.window h_general, 10, 40
+.placement 10, 20
+.text WndTxt2, position(1, 1)
+There is no help for this field.  This is just a filler window.
+.trim 1
+.end
+
+.window h_address, 40, 40
+.display_area 1, 1, 10, 40
+.placement 10, 20
+.text WndTxt5, position(1, 1)
+This field is for street or post box information.
+Please use any of compbination of letters and numbers that compose
+a valid address.  Your input will have the first letter of each
+word uppercased for you, so there is no need for you to do this.
+.trim 1
+.end
+
+.select category, 21
+.placement 2, 2
+.border on, color(1)
+.item "Automotive"
+.item "Synergex"
+.item "Neighbor"
+.item "Networking"
+.item "Commercial"
+.item "Travel"
+.item "Medical"
+.item "Education"
+.item "Financial"
+.item "Personal"
+.item "Student"
+.end
+
+.input rolodex, 17, 76
+.placement 2, 2
+.border off
+.repository_structure rolodex
+.field header,	pos(1,1),	fpos(1,20), break, leave("upcase_first")
+.field category,	pos(2,54),	fpos(2,64), selwnd(1,1,category)
+.field address1, 	pos(2,1),	fpos(2,20), help("h_address")
+.field address2, 	pos(3,1),	fpos(3,20), help("h_address"), leave("upcase_first")
+.field city, 	pos(4,1),	fpos(4,20), leave("upcase_first")
+.field state, 	pos(4,42),	fpos(4,48)
+.field zip, 	pos(4,54),	fpos(4,65)
+.field zip_plus, 	fpos(4,72),	noprompt
+.field phone, 	pos(5,1),	fpos(5,20), format("(XXX) XXX-XXXX")
+.field fax, 	pos(5,42),	fpos(5,62), format("(XXX) XXX-XXXX")
+.field comment, 	pos(6,20),	fpos(7,3)
+.button I_OK, text(OK)
+.button O_ABANDON, text(Cancel)
+.button_set bottom(2)
+.end
+
+.input state_line, 1, 72
+.placement 1, 1
+.border off
+.repository_structure rolodex
+.field state, noprompt, fpos(1,1)
+.field header, noprompt, fpos(1,5)
+.field phone, noprompt, fpos(1,59), format("(XXX)XXX-XXXX")
+.end
+
+.input cat_line, 1, 72
+.placement 1, 1
+.border off
+.repository_structure rolodex
+.field category, noprompt, fpos(1,1)
+.field header, noprompt, fpos(1,5)
+.field phone, noprompt, fpos(1,59), format("(XXX)XXX-XXXX")
+.end
+
+.input phone_line, 1, 72
+.placement 1, 1
+.border off
+.repository_structure rolodex
+.field phone, noprompt, fpos(1,1), format("(XXX)XXX-XXXX")
+.field header, noprompt, fpos(1,20)
+.end
+
+.input fax_line, 1, 72
+.placement 1, 1
+.border off
+.repository_structure rolodex
+.field fax, noprompt, fpos(1,1), format("(XXX)XXX-XXXX")
+.field header, noprompt, fpos(1,20)
+.end
+
+.input name_line, 1, 72
+.placement 1, 1
+.border off
+.repository_structure rolodex
+.field header, noprompt, fpos(1,1)
+.field state, noprompt, fpos(1,55)
+.field phone, noprompt, fpos(1,59), format("(XXX)XXX-XXXX")
+.end
+
+.listclass head_lclass, items(15), headers(1),  -
+ load_method("rolotab_load_method")
+.placement 1, 1
+.end
+
+.listclass phone_lclass, items(15), headers(1),  -
+ load_method("rolotab_load_method")
+.placement 1, 1
+.end
+
+.listclass fax_lclass, items(15), headers(1),  -
+ load_method("rolotab_load_method")
+.placement 1, 1
+.end
+
+.listclass cat_lclass, items(15), headers(1),  -
+ load_method("rolotab_load_method")
+.placement 1, 1
+.end
+
+.listclass state_lclass, items(15), headers(1),  -
+ load_method("rolotab_load_method")
+.placement 1, 1
+.end
+

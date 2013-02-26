@@ -1,0 +1,22 @@
+subroutine countem
+
+record
+    c   ,i4
+    buffer  ,a256
+
+proc
+
+    open(1,i,"ax.log")
+    repeat
+    begin
+        reads(1,buffer,eof)
+        c+=1
+    end
+eof,
+    close 1
+    open(1,o,"tt:")
+    writes(1,%string(c))
+    accept(1,buffer)
+    close 1
+    xreturn
+endsubroutine

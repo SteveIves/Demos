@@ -1,0 +1,29 @@
+main demo
+
+    .include "WND:tools.def"
+    .include "customer" repository, record="customer"
+
+    record
+        idi_customer    ,i4
+        idf_customer    ,i4
+    endrecord
+
+proc
+
+    xcall u_start("demo.ism",1,0,,70,130)
+    xcall u_resize(25,80)
+
+    xcall u_open(idf_customer,"i:i","customer.ism")
+    read(idf_customer,customer,"SYN001")
+    xcall u_close(idf_customer)
+
+    xcall i_ldinp(idi_customer,,"CUSTOMER",D_NOPLC)
+    xcall i_display(idi_customer,,customer)
+
+    xcall print_form(idi_customer)
+
+    xcall u_finish
+
+    stop
+
+endmain

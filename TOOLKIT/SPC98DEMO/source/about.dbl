@@ -1,0 +1,125 @@
+; ABOUT.DBL
+
+.subroutine usr_utils
+
+.include 'WND:tools.def'
+
+.proc
+
+	using g_entnam select
+	('U_ABOUT'), xcall about_box
+	endusing
+
+	xreturn
+
+.end
+
+
+.subroutine about_box
+
+.include 'DBLDIR:activex.def'
+.include 'WND:tools.def'
+
+.align
+stack record
+	axwid,		i4						;need a container window id
+	about_id,	i4						;about control id
+	error,		i4						;error finding file
+	chan,		i4						;channel
+	avifile,	a256
+	wavfile,	a256	
+
+.proc
+
+.ifdef D_GUI
+
+	;this routine displays the program about box
+
+    ;create a container control
+	axwid = %ax_create(200, 150, 400, 300, )
+	xcall ax_bind(axwid, 'OnClose', 'closeabout')	
+	
+	onerror no_control
+	;load the about control
+    about_id = %ax_load(axwid, 'PrgAboutBox.UsrAboutBox', , , , )
+	if FALSE
+	  begin
+no_control,
+		offerror
+		xcall u_message("Cannot load ProgAboutBox control")
+		xreturn
+	  end
+
+	offerror
+
+	xcall ax_bind(about_id, 'CloseAbout', 'closeabout')
+
+	; check the avi and wav files exist
+	
+	call check_movie
+	
+	if(avifile.and.wavfile)
+	  xcall ax_call(about_id, 'SetAviFile', %atrim(avifile), %atrim(wavfile))
+	
+	;place the control on the screen
+	; note, if you show about_id before axwid, you may see some screen flickering
+	
+	xcall ax_show(axwid)
+    xcall ax_show(about_id)
+
+    xcall win_proc(1)
+
+    xcall ax_delete(axwid)
+
+.endc
+
+    clear g_select
+
+	xreturn
+
+	;******************************************************
+
+.ifdef D_GUI
+
+check_movie,
+
+	xcall getlog('DEMOABTAVI', avifile, error)
+	if(error) then
+	  begin
+		xcall u_open(chan, 'I', avifile,,, error)
+		if(error) then
+			clear avifile
+		else
+			xcall u_close(chan)
+	  end
+	else
+		clear avifile
+
+	xcall getlog('DEMOABTWAV', wavfile, error)
+	if(error) then
+	  begin
+		xcall u_open(chan, 'I', wavfile,,, error)
+		if(error) then
+			clear wavfile
+		else
+			xcall u_close(chan)
+	  end
+	else
+		clear wavfile
+
+	return
+.endc
+
+.end
+
+	;++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
+.subroutine closeabout
+
+.proc
+
+    xcall win_stop(1)
+    xreturn
+
+.end
+

@@ -1,0 +1,74 @@
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "WND:toolbar.def"
+.include "DBLDIR:activex.def"
+
+.ifdef SYSTEM_INIT
+.undefine SYSTEM_INIT
+global data section COMPOSITE$DATA, init
+.else
+global data section COMPOSITE$DATA
+.endc
+
+record
+
+    ;Menu columns
+	idc_file			,i4		;File menu column id
+	idc_edit			,i4		;Edit menu column
+	idc_options			,i4		;Options menu column
+	idc_customer		,i4		;Customer menu
+
+	;Input windows
+	idi_lcustomer		,i4		;Customer list input window
+	idi_lcontact		,i4		;Contact list input window
+	idi_contact1		,i4		;Contact input window 1
+	idi_contact2		,i4		;Contact input window 2
+	idi_contact3		,i4		;Contact input window 3
+	idi_customer		,i4		;Customer maintenance window
+	
+	;List classes
+	lc_customer			,i4		;List class for customer list
+	lc_contact			,i4		;List class for contact list
+	
+	;Lists
+	idl_customer		,i4		;Customer list
+	idl_contact			,i4		;Contact list
+
+	;ActiveX Container Windows
+	idw_image			,i4		;Image control container window
+	idw_graph			,i4		;Graph control container window
+	
+	;ActiveX controls
+	idx_customer		,i4		;Customer list ActiveX control
+	idx_contact			,i4		;Contact list ActiveX control
+	
+	;Toolbars
+	toolbar				,i4		;Toolbar ID
+	
+	;Containers
+	tabset				,i4		;Contact maintenance tabset
+	container			,i4		;Composite window container
+	
+	;Files
+	ch_customer			,i4		;Customer master file
+	ch_contact			,i4		;Contact master file
+
+	;Window events method sets
+	msetclose			,i4		;Close window method set
+	
+	;Miscellaneous variables
+	length				,i4		;Length of a string
+	errnum				,i4		;An error number
+	create_mode			,i4		;In create mode
+	autosave			,i4		;Auto save contacts
+	new_contact_default	,i4		;Default info for new contacts from company
+	confirm_delcust		,i4		;Confirm deletion of customers
+	confirm_delcont		,i4		;Confirm deletion of contacts
+	contacts_enabled	,i4		;Is the contact list enabled
+	
+	imgdir				,a128	;Images directory path
+	
+	tmpa				,a80
+
+endglobal

@@ -1,0 +1,491 @@
+ 
+;  SYNERGY DATA LANGUAGE OUTPUT
+;
+;  REPOSITORY FILES   : LIB:RPSMAIN.ISM
+;                     : LIB:RPSTEXT.ISM
+;
+;  CREATION DATE      : 10-AUG-98, 11:16:58
+;  REPOSITORY VERSION : 6.3e
+ 
+ 
+Structure ALM_PRICE   DBL ISAM
+   Description "ALM price file"
+ 
+Field PRC_KEY   Type ALPHA   Size 10
+   Description "Primary key"
+ 
+Field PRC_PRODUCT   Type ALPHA   Size 5   Overlay PRC_KEY:0
+   Description "Product code"
+   Prompt "Product"   Info Line "Product code (license mnemonic)"
+   Uppercase
+ 
+Field PRC_USERS   Type DECIMAL   Size 5   Overlay PRC_KEY:5
+   Description "No of Users"
+   Prompt "No of Users"
+ 
+Field PRC_FEE   Type DECIMAL   Size 10   Precision 2
+   Description "ALM Fee"
+   Prompt "ALM Fee"   Info Line "Fee per user"
+ 
+Field PRC_SYSTEM_FEE   Type DECIMAL   Size 10   Precision 2
+   Description "System Fee"
+   Prompt "System Fee"   Info Line "One-off fee for the system"
+ 
+Key MAIN   ACCESS   Order ASCENDING   Dups NO
+   Description "Main"
+   Segment FIELD   PRC_PRODUCT
+   Segment FIELD   PRC_USERS
+ 
+Structure LABEL_STYLE   ASCII
+   Description "Label Styles"
+ 
+Field NAME   Type ALPHA   Size 10
+   Description "Label name"
+ 
+Field NO_OF_COLS   Type DECIMAL   Size 1
+   Description "Number of columns on label sheet"
+ 
+Field NO_OF_ROWS   Type DECIMAL   Size 2
+   Description "Number of lables in each column"
+ 
+Field FIRST_DROP   Type DECIMAL   Size 2
+   Description "Number of blank lines before printing"
+ 
+Field NO_ROWS   Type DECIMAL   Size 2
+   Description "number of printable rows"
+ 
+Field NEXT_DROP   Type DECIMAL   Size 2
+   Description "Number of blank lines to bottom of print"
+ 
+Field FIRST_GAP   Type DECIMAL   Size 2
+   Description "Number of characters before printing"
+ 
+Field NO_CHARS   Type DECIMAL   Size 2
+   Description "Number of printable characters"
+ 
+Field NEXT_GAP   Type DECIMAL   Size 2
+   Description "Number of blank chars after printing"
+ 
+Field DROP_INDEX   Type DECIMAL   Size 2
+   Description "Drop to Index"
+ 
+Field INDEX_CHARS   Type DECIMAL   Size 2
+   Description "No of characters in index"
+ 
+Field NEXT_INDEX   Type DECIMAL   Size 2
+   Description "Drop after index"
+ 
+Field FONT_TYPE   Type DECIMAL   Size 1
+   Description "Font Type"
+   Prompt "Font type"
+   Selection List 0 0 0  Entries "Compressed", "Standard", "12 CPI"
+   Enumerated 15 0 1
+ 
+Field FILLER   Type ALPHA   Size 18
+   Description "Filler"
+ 
+Structure QUOTE_DETAIL   DBL ISAM
+   Description "quote detail layout"
+ 
+Field QD_NAME   Type ALPHA   Size 20
+   Description "quote name"
+   ODBC Name LICENSEE_NAME
+ 
+Field QD_LINE_NO   Type DECIMAL   Size 4
+   Description "line number in file"
+   ODBC Name ITEM_NUMBER
+ 
+Field QD_VERSION   Type DECIMAL   Size 1
+   Description "version number"
+   ODBC Name VERSION
+ 
+Field QD_SYS_CODE   Type DECIMAL   Size 3
+   Description "System code"
+   ODBC Name SYSTEM_CODE
+ 
+Field QD_PROD_CODE   Type ALPHA   Size 6
+   Description "Product code"
+   ODBC Name PRODUCT_CODE
+ 
+Field QD_PROD_DESC   Type ALPHA   Size 75
+   Description "Product description"
+   ODBC Name DESCRIPTION
+ 
+Field QD_QTY   Type DECIMAL   Size 3
+   Description "quantity ordered"
+   ODBC Name ITEM_QUANTITY
+ 
+Field QD_UNIT   Type DECIMAL   Size 5
+   Description "Number of units"
+   ODBC Name UNIT_NUMBER
+ 
+Field QD_VALUE   Type DECIMAL   Size 10   Precision 2
+   Description "Line value"
+   ODBC Name LINE_VALUE
+ 
+Field QD_LINE   Type ALPHA   Size 103   Overlay QD_VERSION:0
+   Description "line overlay"
+ 
+Field QD_DESCRIPTION   Type ALPHA   Size 75
+   Description "description"
+   Prompt "Description"   ODBC Name PROD_DESCRIPTION
+ 
+Field QD_SPARE   Type ALPHA   Size 13
+   Description "spare"
+ 
+Key QUOTE_NAME_AND_NUMBER   ACCESS   Order ASCENDING   Dups NO
+   Description "name and line number"
+   Segment FIELD   QD_NAME
+   Segment FIELD   QD_LINE_NO
+ 
+Structure QUOTE_HEAD   DBL ISAM
+   Description "Quote header file"
+ 
+Field QH_SAVENAME   Type ALPHA   Size 20
+   Description "name quote is saved as"
+   Prompt "Save name"   Info Line "Name to save the quote under"
+ 
+Field QH_LIC_NAME   Type ALPHA   Size 40
+   Description "License name"
+   Prompt "Licensee name"
+   Info Line "Name  of the licensee for the registration string"
+   ODBC Name LICENSEE_NAME
+   Drill Method "qh_lic_name_drill"
+ 
+Field QH_NAME   Type ALPHA   Size 40
+   Description "requestor name"
+   Prompt "Requested by"
+   Info Line "Enter the name of the person requesting the details"
+   ODBC Name REQUESTED_BY
+ 
+Field QH_EMAIL   Type ALPHA   Size 40
+   Description "email address"
+   Prompt "Email address"
+   Info Line "Specify the address the details will be sent to"
+   ODBC Name EMAIL_ADDRESS
+ 
+Field QH_DATE   Type DATE   Size 8   Stored YYYYMMDD
+   Description "date"
+   ODBC Name DATE_GENERATED
+ 
+Field QH_SPARE   Type ALPHA   Size 2
+   Description "spare"
+ 
+Key QUOTE_SAVE_NAME   ACCESS   Order ASCENDING   Dups NO
+   Description "save name of the quote"
+   Segment FIELD   QH_SAVENAME
+ 
+Structure SPC_EXT   DBL ISAM
+   Description "Extended descriptions"
+ 
+Field EXT_KEY   Type ALPHA   Size 6
+   Description "Primary key"
+ 
+Field EXT_PROD   Type ALPHA   Size 6   Overlay EXT_KEY:0
+   Description "Product"
+ 
+Field EXT_DESC   Type ALPHA   Size 1000
+   Description "Extended Description"
+ 
+Structure SPC_LINE   DBL ISAM
+   Description "SPC Line item"
+ 
+Field PRODUCT_CODE   Type ALPHA   Size 10
+   Description "Prodcut Code"
+   Prompt "Product Code"
+ 
+Field SYS_CODE   Type DECIMAL   Size 3   Overlay PRODUCT_CODE:1
+   Description "System Code"
+ 
+Field PRODUCT   Type ALPHA   Size 6   Overlay PRODUCT_CODE:4
+   Description "Product type"
+   Selection Window 0 0 "product"
+ 
+Field PRODUCT_DESCRIPTION   Type ALPHA   Size 75
+   Description "Description"
+   Prompt "Description"
+ 
+Field QUANTITY_ORDERED   Type DECIMAL   Size 3
+   Description "Number of Licenses"
+   Prompt "Number of Licenses"
+ 
+Field UNITS   Type DECIMAL   Size 5
+   Description "Units"
+   Prompt "Units per License"
+ 
+Field LINE_VALUE   Type DECIMAL   Size 10   Precision 2
+   Description "Extended Line Value"
+   Prompt "Line Total"
+ 
+Structure SPC_SYSTEM   DBL ISAM
+   Description "System"
+ 
+Field SYSTEM_CODE   Type ALPHA   Size 3
+   Description "System Code"
+ 
+Field SYSTEM_CDE   Type DECIMAL   Size 3   Overlay SYSTEM_CODE:0
+ 
+Field SYSTEM_DESC   Type ALPHA   Size 20
+ 
+Structure SPC_WIZARD   DBL ISAM
+   Description "SPC Wizard"
+ 
+Field SYS_CODE   Type DECIMAL   Size 4
+   Description "System Code"
+   Prompt "System code"   Info Line "Select the required system code"
+   Selection List 0 0 0  Entries "101", "102", "003", "004", "005", "009",
+         "010", "012", "020", "021", "200", "201"
+ 
+Field SYS_CODE_FOR_SCREEN   Type DECIMAL   Size 4
+   Description "system code seen on the screen"
+   Prompt "System code"
+   Selection Window 0 0 "sys_code"
+   Enumerated 40 1 1
+   Leave Method "move_to_sys_field"
+ 
+Field ENV_TYPE   Type DECIMAL   Size 4
+   Description "Environment type"
+   Prompt "Environment"
+   Selection List 0 0 0  Entries "Standalone", "Multi-User", "Client/Server"
+   Enumerated 10 0 1
+ 
+Field NUM_PSDE   Type DECIMAL   Size 4
+   Description "Developers"
+   Prompt "No of Developers"   User Text "[PSDE]"
+ 
+Field NUM_RUN   Type DECIMAL   Size 4
+   Description "Runtime license"
+   Prompt "Runtime licenses"
+   Info Line "This is in addition to any PSDE licenses"   User Text "[RUN]"
+ 
+Field NUM_RW   Type DECIMAL   Size 4
+   Description "ReportWriter developers"
+   Prompt "ReportWriter Developers"   User Text "[RWR]"
+ 
+Field NUM_RWR   Type DECIMAL   Size 4
+   Description "ReportWriter Runtimes"
+   Prompt "ReportWriter licenses"   User Text "[WRUN]"
+ 
+Field SQL_DRIVER_FOR_SCREEN   Type DECIMAL   Size 4
+   Description "list of supported sql drivers"
+   Prompt "Database"   Info Line "Select the required database"
+   Selection Window 0 0 "dbdriver"
+   Enumerated 20 1 1
+ 
+Field SQL_LOCAL_NUM   Type DECIMAL   Size 4
+   Description "number of local connections"
+   Prompt "Local"   Info Line "Enter the number of local connections"
+ 
+Field SQL_REMOTE_NUM   Type DECIMAL   Size 4
+   Description "number of remote connections"
+   Prompt "Remote"   Info Line "enter the number of remote connections"
+ 
+Field DB_L_ORACLE   Type DECIMAL   Size 4
+   Description "Local Oracle"
+   User Text "[LD00]"
+ 
+Field DB_L_RDB   Type DECIMAL   Size 4
+   Description "local RDB"
+   User Text "[LD01]"
+ 
+Field DB_L_SYBASE   Type DECIMAL   Size 4
+   Description "Local Sybase"
+   User Text "[LD02]"
+ 
+Field DB_L_SYNERGY   Type DECIMAL   Size 4
+   Description "Local Synergy"
+   User Text "[LD04]"
+ 
+Field DB_L_INFORMIX   Type DECIMAL   Size 4
+   Description "Local Informix"
+   User Text "[LD05]"
+ 
+Field DB_L_ALLBASE   Type DECIMAL   Size 4
+   Description "Local Allbase"
+   User Text "[LD06]"
+ 
+Field DB_L_DB2   Type DECIMAL   Size 4
+   Description "Local DB2"
+   User Text "[LD07]"
+ 
+Field DB_L_INGRESS   Type DECIMAL   Size 4
+   Description "Local Ingress"
+   User Text "[LD08]"
+ 
+Field DB_L_ODBC   Type DECIMAL   Size 4
+   Description "Local ODBC"
+   User Text "[LD11]"
+ 
+Field DB_L_SQL   Type DECIMAL   Size 4
+   Description "Local Sql Server"
+   User Text "[LD12]"
+ 
+Field DB_LOCAL_OVERLAY   Type DECIMAL   Size 4   Dimension 10
+   Overlay DB_L_ORACLE:0
+   Description "local db overlay field"
+ 
+Field SYS_CODE_DB   Type DECIMAL   Size 4
+   Description "system code for relational database"
+   Prompt "System code for RDB access"
+ 
+Field DB_R_ORACLE   Type DECIMAL   Size 4
+   Description "Remote Oracle"
+   User Text "[DB00]"
+ 
+Field DB_R_RDB   Type DECIMAL   Size 4
+   Description "Remote RDB"
+   User Text "[DB01]"
+ 
+Field DB_R_SYBASE   Type DECIMAL   Size 4
+   Description "Remote Sybase"
+   User Text "[DB02]"
+ 
+Field DB_R_SYNERGY   Type DECIMAL   Size 4
+   Description "Remote Synergy"
+   User Text "[DB04]"
+ 
+Field DB_R_INFORMIX   Type DECIMAL   Size 4
+   Description "Remote Informix"
+   User Text "[DB05]"
+ 
+Field DB_R_ALLBASE   Type DECIMAL   Size 4
+   Description "Remote Allbase"
+   User Text "[DB06]"
+ 
+Field DB_R_DB2   Type DECIMAL   Size 4
+   Description "Remote DB2"
+   User Text "[DB07]"
+ 
+Field DB_R_INGRESS   Type DECIMAL   Size 4
+   Description "Remote Ingress"
+   User Text "[DB08]"
+ 
+Field DB_R_ODBC   Type DECIMAL   Size 4
+   Description "Remote ODBC"
+   User Text "[DB11]"
+ 
+Field DB_R_SQL   Type DECIMAL   Size 4
+   Description "Remote SQL server"
+   User Text "[DB12]"
+ 
+Field DB_REMOTE_OVERLAY   Type DECIMAL   Size 4   Dimension 10
+   Overlay DB_R_ORACLE:0
+   Description "remote db overlay field"
+ 
+Field DB_OVERLAY   Type ALPHA   Size 84   Overlay DB_L_ORACLE:0
+   Description "overlay for clearing"
+ 
+Field NUM_GENL   Type DECIMAL   Size 4
+   Description "NUMBER OF LOCAL odbc CONNECTIONS"
+   Prompt "Number of connections"
+ 
+Field SYS_CODE_ODBC   Type DECIMAL   Size 4
+   Description "system code for the ODBC driver"
+   Prompt "System code for ODBC licensing"
+ 
+Field NUM_GENR   Type DECIMAL   Size 4
+   Description "number of remote odbc connections"
+   Prompt "Number of remote OBC connections"
+ 
+Field SYS_CODE_XFSV   Type DECIMAL   Size 4
+   Description "system code for xfserver"
+ 
+Field NUM_XFSV   Type DECIMAL   Size 4
+   Description "xfServer licenses"
+   Prompt "concurrent connections"
+   Info Line "Enter the number of concurrent connections"
+ 
+Field NUM_XFSP   Type DECIMAL   Size 4
+   Description "Number of xfServer Plus licenses"
+   Prompt "Web enablment option"   Checkbox
+ 
+Field NUM_ONET   Type DECIMAL   Size 4
+   Description "Number of SQL OpenNet licenses"
+ 
+Field NUM_DISA   Type DECIMAL   Size 4
+   Description "Number of Document set A's"
+   Checkbox
+ 
+Field NUM_DISB   Type DECIMAL   Size 4
+   Description "Numober of Document set B's"
+ 
+Field NUM_DISC   Type DECIMAL   Size 4
+   Description "Number of Document set C's"
+ 
+Field NUM_DISD   Type DECIMAL   Size 4
+   Description "Number of Document set D's"
+ 
+Field NUM_DIS_FOR_SCREEN   Type DECIMAL   Size 4
+   Description "distribution types"
+   Radio
+   Selection List 0 0 0  Entries "Media kit with online and printed       documentation",
+         "Media kit with printed documentation",
+         "Media kit with online documentation",
+         "Media kit with printed installation and configuration guide"
+   Enumerated 40 1 1
+ 
+Field DOC_CD   Type DECIMAL   Size 4
+   Description "docs on cd"
+   Prompt "Documentation on CD"   Checkbox
+ 
+Field DOC_FULL   Type DECIMAL   Size 4
+   Description "full document set (paper)"
+   Prompt "Full documentation (printed)"   Checkbox
+   Change Method "check_full"
+ 
+Field DOC_DEV_GUIDE   Type DECIMAL   Size 4
+   Description "psde doc manual"
+   Prompt "Developers guide"   Checkbox
+ 
+Field DOC_PORT   Type DECIMAL   Size 4
+   Description "portability guide"
+   Prompt "Portability guide"   Checkbox
+ 
+Field DOC_LANG   Type DECIMAL   Size 4
+   Description "language reference"
+   Prompt "Language ref."   Checkbox
+ 
+Field DOC_UI   Type DECIMAL   Size 4
+   Prompt "UI/Toolkit"   Checkbox
+ 
+Field DOC_REP   Type DECIMAL   Size 4
+   Description "repository"
+   Prompt "Repository"   Checkbox
+ 
+Field DOC_REPORT   Type DECIMAL   Size 4
+   Description "report writer docs"
+   Prompt "ReportWriter"   Checkbox
+ 
+Field DOC_SQL   Type DECIMAL   Size 4
+   Description "sql user guide"
+   Prompt "SQL Connection"   Checkbox
+ 
+Field DOC_ODBC   Type DECIMAL   Size 4
+   Description "odbc driver docs"
+   Prompt "xfODBC User guide"   Checkbox
+ 
+Field DOC_ISAM   Type DECIMAL   Size 4
+   Description "isam api reference"
+   Prompt "xfISAM Reference"   Checkbox
+ 
+Field DOC_INSTALL   Type DECIMAL   Size 4
+   Description "installation docs"
+   Prompt "Installation guide"   Checkbox
+ 
+Structure SYSTEM   ASCII
+   Description "System codes"
+ 
+Field SYSTEM_CODE   Type DECIMAL   Size 3
+   Description "System code"
+ 
+Field SYSTEM_DESC   Type ALPHA   Size 40
+   Description "System descriptions"
+ 
+File QUOTE_DETAIL   DBL ISAM   "DEMODAT:quote_detail.ism"
+   Description "Quote detail file"
+   Assign QUOTE_DETAIL
+ 
+File QUOTE_HEAD   DBL ISAM   "DEMODAT:quote_head.ism"
+   Description "Quote header file"
+   Assign QUOTE_HEAD
+ 

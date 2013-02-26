@@ -1,0 +1,9 @@
+.script
+.date_generated "03/06/2003, 11:08"
+.version "8.1.1"
+
+.window HELLO, 5, 48
+.placement 2, 3
+.text Text1, pos(2, 3), margin(2, 3)
+Bonjour Le Monde!
+.end

@@ -1,0 +1,1056 @@
+.main rolodex
+.title  "Rolodex Program - Sample code"
+;-------------------------------------------------------------------------------
+;  File name:   rolodex.dbl
+;
+;  Function:    Rolodex display, maintenance, and input
+;
+;  Environment: Runs under all supported Synergy platforms 6.1 and higher
+;
+;  $Revision: 1 $
+;
+;  Author:     Kenneth J. Beers, SYNERGEX
+;
+;  Notes:
+;       The purpose of this program is to showcase the capability
+;       of the Synergy Toolkit.  It will be used as a sample for
+;       the Toolkit classes, therefore, some of the things we do are
+;       somewhat contrived to utilize as many of the different functions as
+;       is possible.  
+;-------------------------------------------------------------------------------
+.include "WND:tools.def"
+.include "WND:toolbar.def"
+.include "WND:windows.def"
+
+.define LIBRARY_FILE,		"OFFICE:winlib"
+.define ROLODEX_FILE,		"OFFICEDAT:rolodex"
+.define ICON_FILE,		"OFFICE:rolodex.ico"
+
+.define TITLE,          	"Rolodex Program"
+.define VERSION,        	"2.0"
+.define BANNER,			"Office Demo Software from Synergex"
+
+.define UNKNOWN_DEFAULT,   	"Unknown"
+.define ROWS, 18
+.define WIDE, 78
+
+.define WINDOWSNT,  	11					; Windows NT
+.define WINDOWS31,  	12					; Windows 3.1
+.define WINDOWS95,  	13					; Windows-95
+
+.define NUMLISTS,		5
+
+.define recsize 664
+.define numkeys 5
+
+literal
+	key1		,a*,"start=1, len=50, nodups"		; header
+	key2		,a*,"start=51:1, len=3:50"		; category, header
+	key3		,a*,"start=134:1, len=2:50"		; state, header
+	key4		,a*,"start=145:1, len=10:50"		; phone, header
+	key5		,a*,"start=155:1, len=10:50"		; fax, header
+
+literal
+	tip		,[NUMLISTS]a25,
+  &		"Listing by Name",
+  &		"Listing by Category",
+  &		"Listing by State",
+  &		"Listing by Phone",
+  &		"Listing by Fax"
+	window	,[NUMLISTS]a15,
+  &		"name_line",
+  &		"cat_line",
+  &		"state_line",
+  &		"phone_line",
+  &		"fax_line"
+	wtitle	,[NUMLISTS]a20,
+  &		"By Name",
+  &		"By Category",
+  &		"By State",
+  &		"By Phone",
+  &		"By FAX"
+	l_class	,[NUMLISTS]a20,
+  &		"head_lclass",
+  &		"cat_lclass",
+  &		"state_lclass",
+  &		"phone_lclass",
+  &		"fax_lclass"
+	head		,[NUMLISTS]a78,
+  &		"Name                                                State      Phone",
+  &		"Cat           Name                                             Phone",
+  &		"State         Name                                             Phone",
+  &		"Telephone           Name",
+  &		"FAX Number          Name"
+
+.include "ROLODEX" REPOSITORY, RECORD = "ROLODEX"
+
+.align quad
+global common
+	rolo_update		,i4						; update channel
+	rolo_input		,[NUMLISTS]i4				; input channel ID array
+	list_id		,[NUMLISTS]i4				; list IDs array
+	restart		,[NUMLISTS]i4				; restart flags array
+	list_tab		,i4						; id of the list tab set
+	o_menucol		,i4						; Options column id
+	g_menucol		,i4               		  	; General column id
+	run_gui		,i4						; TRUE if in a gui environment
+	tab			,i4						; number of the current tab
+	target		,a^size(header)				; used for searches
+
+.align quad
+record
+	listel_id		,[numlists]i4				; array of list element window IDui's
+	head_leid		,i4                 			; list element window header id
+	cat_leid		,i4                 			; list element window category id
+	state_leid		,i4                 			; list element window state id
+	search          	,i4                 			; search variable for loads
+	continue        	,i4                 			; process flag
+	request		,i4						; List process communication variable
+	error           	,i4                 			; general purpose error flag
+	icon_count	    	,i4						; number of icons in file
+	temp_id	    	,i4						; temporary id 
+	msg_resp	    	,i4						; return value from %U_msgbox
+	toolbar_id	    	,i4						; ID of the toolbar
+	i			,i4						; loop index
+.page
+.proc
+	call initialization
+	if (continue .and. run_gui) 
+	  xcall make_toolbar(toolbar_id)
+	if (continue) 
+	  call create_tabset
+	if (continue) 
+	  call process_tabset
+	call cleanup_shutdown
+	stop                         
+
+initialization,
+	xcall u_start(LIBRARY_FILE, 1, 1)				; 1 header line, 1 footer
+	clear target
+	for i from 1 thru NUMLISTS
+	  clear restart[i]						; restart flags
+ 	continue = TRUE                         			; processing flag
+	xcall e_sect(BANNER, D_CAPTION)
+	xcall m_ldcol(g_menucol, g_utlib, "general")		; place & load the general column
+      xcall m_ldcol(o_menucol, g_utlib, "options")		; place & load the options menu
+	xcall e_state(D_ON, D_LOWER)            			; allow lower case
+;	xcall e_state(D_OFF,D_INTR)             			; disallow control C
+	xcall e_method(D_METH_APPCLOSE, "close_method")
+
+	xcall envrn(temp_id)                    			; determine platform
+	run_gui = (temp_id.eq.WINDOWSNT .or.			; Windows NT 
+  &              temp_id.eq.WINDOWS31 .or.			; Windows 3.1 or Workgroups 3.11 
+  &              temp_id.eq.WINDOWS95)    			; Windows 95
+
+	xcall e_sect("Rolodex",D_CAPTION)				; Set the title information
+	if (%u_icon(D_ICONCOUNT, ICON_FILE, icon_count))	; returns # of icons
+	  if (.not. (%u_icon(D_ICONSET, ICON_FILE, icon_count)))
+	    xcall u_message("Could not change Icon")		; say something
+	xcall u_open(rolo_update, "U:I", ROLODEX_FILE,,, error)
+	if (error .eq. $ERR_FNF)					; file not found error
+	  begin								; Try to create it
+	    msg_resp = %u_msgbox("Creating the Rolodex file.", D_MOK+D_MICONEXCLAM)
+          xcall isamc(rolodex_file, recsize, numkeys, key1, key2, key3, key4, key5)
+	    xcall u_open(rolo_update, "U:I", ROLODEX_FILE,,, error)	; open it
+	  end
+	if (error)								; open still failed
+	  begin
+	    msg_resp = %u_msgbox("Can not open the Rolodex file.", D_MOK+D_MICONEXCLAM)
+	    continue = FALSE
+	    return
+	  end
+	for i from 1 thru NUMLISTS
+	  begin
+	    xcall u_open(rolo_input[i], "I:I", ROLODEX_FILE,,, error)
+	    if (error)
+	      begin
+	        msg_resp = %u_msgbox("Can not open the Rolodex file.", D_MOK+D_MICONEXCLAM)
+	        continue = FALSE
+	        return
+	  	end
+	    find(rolo_input[i], rolodex, ^FIRST, KEYNUM:i-1)[$ERR_EOF=end_of_file]
+end_of_file,							; OK if no records
+									; load the list element windows
+	    xcall i_ldinp(listel_id[i], g_utlib, %atrim(window[i]), D_NOPLC, search, error)
+									; assign a string
+	    xcall w_brdr(listel_id[i], WB_TITLE, %atrim(wtitle[i]))
+									; create the list, don't place it
+	    xcall l_create(list_id[i], listel_id[i], rolodex, g_utlib, 
+  &				%atrim(l_class[i]), 1, 1, D_NOPLC)
+	    tab = i							; for the load method channel array
+									; initialize the list
+	    xcall l_process(list_id[i], request=D_LNOP, rolodex)
+									;associate the column headings
+	    xcall l_sect(list_id[i], %atrim(head[i]), D_HEADER, D_POSITION, 1, 1)
+									; associate a double click method
+	    xcall l_method(list_id[i], D_LDBLCLK, "list_double")
+	  end
+	return
+
+create_tabset,
+      list_tab = %ts_tabset(DTS_CREATE, "", ROWS, WIDE)
+	for i from 1 thru NUMLISTS
+     	  xcall ts_tabset(DTS_LIST, list_tab, list_id[i], "process_list",, %atrim(TIP[i]))
+	return
+
+process_tabset,
+	xcall w_brdr(list_tab, WB_TITLE, "title_line", WB_COLOR, 2)
+	xcall u_window(D_PLACE, list_tab, 2, 1)
+	repeat
+	  begin
+	    xcall ts_process(list_tab)
+	    if (g_select)
+		begin
+		  case g_entnam of
+		  begincase
+		  "O_EXIT":		exitloop
+		  "O_ABANDON":	exitloop
+		  "O_ABOUT":	xcall u_about(TITLE, VERSION, %datecompiled)
+		  endcase
+		end
+	  end
+      return
+
+cleanup_shutdown,
+	xcall u_close(rolo_update)
+	for i from 1 thru numlists
+	  xcall u_close(rolo_input[i])
+	if(run_gui) 
+	  xcall make_toolbar(toolbar_id, TB_DELETE)
+	xcall u_finish
+	return
+.end
+
+.subroutine process_list
+;-------------------------------------------------------------------------------
+;	This routine is called by all three lists in the tab set.
+;     It processes the list in the tabset and does implicit menu processing
+;     for all of the major functions that are enabled on the menu bar.
+;     It is  driven by a repeat loop that does list selection.  Most of the
+;     functions are based on a "current" item in the list.  In the list,
+;     there is always an item that is current, and most of the operations
+;     are based on this selection.  We determine what list we are processing 
+;	by an xcall to TS_TABSET and use this as an index into out array of IDs.
+;	Arguments
+	a_listid	,n
+;-------------------------------------------------------------------------------
+
+.include "WND:tools.def"
+
+.include "rolodex" REPOSITORY, record="rolodex"
+
+literal RECORD_EXISTS
+	,a*,"This record exists, select retry to enter another heading "
+	,a*,"or cancel to abort this transaction"
+
+literal RECORD_LOCKED
+	,a*,"This record is locked, select retry or abort"
+
+literal RECORD_NOTFOUND
+	,a*,"This record no longer exists in the database, "
+	,a*,"press return to continue"
+
+structure original
+	hold		,a^size(rolodex)
+
+external common
+.align quad
+	rolo_update		,i4						; update channel
+	rolo_input		,[NUMLISTS]i4				; input channel array
+	list_id		,[NUMLISTS]i4				; list IDs array
+	restart		,[NUMLISTS]i4				; restart array
+	list_tab		,i4						; id of the list tab set
+	run_gui		,i4						; TRUE if in a gui environment
+	o_menucol		,i4						; Opptions column id
+	g_menucol		,i4               		  	; General column id
+	tab			,i4						; number of the current tab
+	target		,a^size(header)				; used for searches
+
+.align quad
+record
+	s_menucol	,i4            		         		; Selection column id
+	i_menucol	,i4							; input menu column id
+	e_menucol	,i4							; edit menu column id
+	t_menucol	,i4							; text editing menu column id
+	handle	,i4							; pointer for dynamic memory
+	search	,i4              		      	 	; search variable for loads
+	request	,i4                    			 	; communications w/ lists
+	continue	,i4                     			; process flag
+	error		,i4                     			; general purpose error flag
+	found_flag	,i4							; TRUE if find successful
+	modify_flag	,i4                    				; TRUE if in modify mode
+	locked_flag ,i4                     			; TRUE if record is locked
+	delete_flag ,i4                     			; TRUE if record to be deleted
+	cancel_flag ,i4                     			; TRUE if cancel transaction
+	msg_resp    ,i4                     			; return value from %u_msgbox
+	input_winid	,i4							; ID of the input window
+	temp		,i4							; temporary variable for functions
+	i		,i4							; loop counter
+.page
+.proc
+	xcall e_enter
+	call initialize
+	if (continue)
+	  call process_list
+	xcall e_exit
+	xreturn
+
+initialize,
+	continue = TRUE
+	handle = %mem_proc(DM_ALLOC, %size(rolodex))		; allocate a hold area
+	tab = %ts_tabset(DTS_ACTIVE, list_tab)			; get the index
+										; initialize the list
+	xcall l_process(list_id[tab], request=D_LRESTORE, rolodex)
+	using tab select
+	(1,4,5),	xcall m_disable(o_menucol, "P_NEXTCAT", "P_BACKCAT")
+	(2,3),	xcall m_enable(o_menucol, "P_NEXTCAT", "P_BACKCAT")
+	endusing
+	xcall i_ldinp(input_winid, g_utlib, "rolodex", D_NOPLC, search, error)
+      xcall m_ldcol(s_menucol, g_utlib, "sel_col", D_NOPLC, search, error)
+      xcall m_ldcol(i_menucol, g_utlib, "inp_col", D_NOPLC, search, error)
+      xcall m_ldcol(e_menucol, g_utlib, "edit_col", D_NOPLC, search, error)
+      xcall m_ldcol(t_menucol, g_utlib, "text_col", D_NOPLC, search, error)
+	call set_default_find						; set find parameters
+	return
+
+process_list,
+	repeat
+	  begin
+	    if (restart[tab])
+	      begin
+		  find(rolo_input[tab], rolodex, ^FIRST, KEYNUM:tab-1)
+	        xcall l_restart(list_id[tab])			; restart the lists
+		  clear restart[tab]	
+		end
+	    if (target) 							; position to something in the list
+		begin
+		  xcall l_findspec(list_id[tab], target, 
+  &                     %i_fldstrpos(input_winid, "header"),
+  &                     %i_fldsize(input_winid, "header"), 
+  &                     D_LFND_FRWD, D_LFND_NOCASE, D_LFND_EQ, 
+  &                     D_LFND_CURR, D_LFND_WRAP)
+		  xcall l_process(list_id[tab], request=D_LFIND, rolodex)
+		  clear target
+		end
+	    xcall l_select(list_id[tab], request, rolodex,,,,,, s_menucol)     
+	    if (request.eq.D_LABORT) 
+	      exitloop   						; bad list, exit everything
+	    case g_entnam of                    		; supported menu entries
+	      begincase
+	      "G_ABOUT":      xcall u_about(TITLE, VERSION, %datecompiled)
+		"O_EXIT":	    exitloop			; they want out of ROLODEX
+		"TS_TAB":       begin				; they want another tab, so
+					target = header		; we are going to set the target string
+					exitloop			; and exit out of the loop
+				    end
+	      "O_ABANDON":    exitloop
+	      "P_POPTOP":     xcall set_to_top_line(list_id[tab], rolodex)
+	      "P_NEXTCAT":    using tab select
+					(2,3), 	call next_category	; category and state
+					(),		nextloop			; ignore all others
+				    endusing
+	      "P_BACKCAT":    using tab select
+					(2,3), 	call back_category	; category and state
+					(),		nextloop			; ignore all others
+				    endusing 
+	      "P_REMOVE":     
+		  call remove_entry
+
+	      "P_COPY":	    
+		  call replicate_entry
+
+	      "P_DISPLAY":    
+		  call display_current
+
+	      "P_MODIFY":     
+		  call modify_entry
+
+	      "P_INSERT":     
+		  call insert_entry
+
+	      "P_QUERY":      
+		  xcall tkp_field_search(list_id[tab])
+
+	      "P_ALPHABET":   
+		begin
+		  temp = %TS_TABSET(DTS_ACTIVE, list_tab, 1)
+		  exitloop
+		end
+
+	      "P_CATEGORY":   
+		begin
+		  temp = %TS_TABSET(DTS_ACTIVE, list_tab, 2)
+		  exitloop
+		end
+
+	      "P_GEOGRAPH":   
+		begin
+		  temp = %TS_TABSET(DTS_ACTIVE, list_tab, 3)
+		  exitloop
+		end  
+	      endcase
+	    else 
+		call display_current
+	  end
+	return
+
+display_current,
+	xcall e_enter                           ; so we can restore the screen
+	xcall i_display(input_winid,, rolodex)  ; fill the window with data
+	xcall u_window(D_PLACE, input_winid, 1, 1)      ; place the window
+	if (run_gui) then                       ; windows environment
+	  xcall u_popup(g_utlib,"press_cr")     ; this is a real window
+	else                                    ; cell environment
+	  xcall u_popup(g_utlib,"dummy")        ; this is a transparent window
+	xcall e_exit                            ; then restore the screen
+	return
+
+set_default_find,
+;-------------------------------------------------------------------------------
+;       This routine sets the defaults for future finds to be based on the
+;       contents of the header, forward, not case sensitive, substring search
+;       does not consider the current item, and will wrap if not found.
+;-------------------------------------------------------------------------------
+
+	xcall l_findspec(list_id[tab],, 
+  &                     %i_fldstrpos(input_winid, "header"),
+  &                     %i_fldsize(input_winid, "header"), 
+  &                     D_LFND_FRWD, D_LFND_NOCASE, D_LFND_CONTAIN, 
+  &                     D_LFND_NOCURR, D_LFND_WRAP)
+	return
+
+set_find_category_fwd,
+;-------------------------------------------------------------------------------
+;       This routine sets the find parameters to look at the category field
+;       in a forward direction, not case sensitive, greater-than search, does
+;       not consider the current item and will not wrap if not found.
+;-------------------------------------------------------------------------------
+	xcall l_findspec(list_id[tab],category,
+  &                     %i_fldstrpos(input_winid, "category"),
+  &                     %i_fldsize(input_winid, "category"), D_LFND_FRWD,
+  &                     D_LFND_NOCASE, D_LFND_GT, D_LFND_NOCURR, D_LFND_NOWRAP)
+	return
+
+set_find_category_rev,                               ; sets find reverse by category
+;-------------------------------------------------------------------------------
+;       This routine sets the find parameters to look at the category field
+;       in a reverse direction, not case sensitive, less-than search, does
+;       not consider the current item and will not wrap if not found.
+;-------------------------------------------------------------------------------
+	xcall l_findspec(list_id[tab],category,
+  &                     %i_fldstrpos(input_winid, "category"),
+  &                     %i_fldsize(input_winid, "category"), D_LFND_RVRS,
+  &                     D_LFND_NOCASE, D_LFND_LT, D_LFND_NOCURR, D_LFND_NOWRAP)
+	return
+
+set_find_state_fwd,
+;-------------------------------------------------------------------------------
+;       This routine sets the find parameters to look at the state field
+;       in a forward direction, not case sensitive, greater-than search, does
+;       not consider the current item and will not wrap if not found.
+;-------------------------------------------------------------------------------
+	xcall l_findspec(list_id[tab],state,
+  &                     %i_fldstrpos(input_winid, "state"),
+  &                     %i_fldsize(input_winid, "state"), D_LFND_FRWD,
+  &                     D_LFND_NOCASE, D_LFND_GT, D_LFND_NOCURR, D_LFND_NOWRAP)
+	return
+
+set_find_state_rev,   
+;-------------------------------------------------------------------------------
+;       This routine sets the find parameters to look at the state field
+;       in a reverse direction, not case sensitive, less-than search, does
+;       not consider the current item and will not wrap if not found.
+;-------------------------------------------------------------------------------
+	xcall l_findspec(list_id[tab],state,
+  &                     %i_fldstrpos(input_winid, "state"),
+  &                     %i_fldsize(input_winid, "state"), D_LFND_RVRS,
+  &                     D_LFND_NOCASE, D_LFND_LT, D_LFND_NOCURR, D_LFND_NOWRAP)
+	return
+
+next_category,
+;-------------------------------------------------------------------------------
+;       This routine will position the current list item to the first entry       
+;       of the next category and position it to the top line of the display.
+;       Notice the imbedded assignment of the request variable on the xcalls
+;       to l_process.  This sets the variable as well as passes it to the
+;       subroutine as an argument.
+;-------------------------------------------------------------------------------
+
+	using tab select
+	  (2),	call set_find_category_fwd
+	  (3),      call set_find_state_fwd
+	endusing
+	xcall l_process(list_id[tab], request = D_LFIND, rolodex)
+	xcall l_status(list_id[tab], D_LFOUND, found_flag)
+	if (found_flag) then                    ; found the next category  
+	  xcall set_to_top_line(list_id[tab], rolodex)
+	else                                    ; didn"t find next cat
+	  xcall l_process(list_id[tab], request = D_LTOP, rolodex)
+	call set_default_find                 ; restore default
+	return
+
+back_category,
+;-------------------------------------------------------------------------------
+;       This routine will position the current list item to the first entry       
+;       of the previous category and position it to the top line of the display.
+;-------------------------------------------------------------------------------
+	using tab select
+	  (2),	call set_find_category_rev
+	  (3),      call set_find_state_rev
+	endusing
+	xcall l_process(list_id[tab], request = D_LFIND, rolodex)
+	xcall l_status(list_id[tab], D_LFOUND, found_flag)
+	if (found_flag) then                     ; got the last one
+	  begin
+	    using tab select
+	    (2),	call set_find_category_rev
+	    (3),	call set_find_state_rev
+	    endusing
+	    request = D_LFIND                   ; get the last of the previous
+	    xcall l_process(list_id[tab], request, rolodex)
+	    xcall l_status(list_id[tab], D_LFOUND, found_flag)       ; did we find one?
+	    if (found_flag) then               ; we are not at the top
+	      begin
+		request = D_LDOWN               ; so move to the first one
+		xcall l_process(list_id[tab], request, rolodex)
+		xcall set_to_top_line(list_id[tab], rolodex)
+	      end
+	    else
+	        xcall l_process(list_id[tab], request = D_LTOP, rolodex)
+	  end
+	else                                    ; go to the top
+	    xcall l_process(list_id[tab], request = D_LTOP, rolodex)
+	call set_default_find                 ; reset find to header
+	return
+
+remove_entry,
+;-------------------------------------------------------------------------------
+;       This routine will remove an item from the list and the file
+;-------------------------------------------------------------------------------
+	xcall e_enter
+	xcall i_display(input_winid,, rolodex)
+	xcall u_window(D_PLACE, input_winid, 1, 1)
+	if (%u_msgbox("Do you wish to delete this record?",
+  &                    D_MYESNO+D_MICONSTOP, "Delete").eq.D_MIDYES)
+	  repeat                                	; just for retry on failures
+	    begin                               	; lock the record if possible
+	      read(rolo_update, rolodex, header) 	; by reading on update channel
+  &               [$ERR_EOF = rem_notfound,    	; error checks
+  &                $ERR_LOCKED = rem_locked,   	; if we fall through, we found it
+  &                $ERR_KEYNOT = rem_notfound] 	; so we can proceed to 
+	      delete(rolo_update)                	; remove it from the file, and
+	      request = D_LDELITEM			; remove it from the list, and
+	      xcall l_process(list_id[tab], request, rolodex)
+		for i from 1 thru NUMLISTS
+		  if(i .ne. tab) 
+		    restart[i] = TRUE			; set the other restart flags
+	      exitloop					; we are done
+rem_locked,							; locked record
+	      msg_resp = %u_msgbox(RECORD_LOCKED, D_MRETRYCANCEL+D_MICONSTOP,
+  &                                "Locked record")
+	      case msg_resp of
+		begincase
+		FALSE:            
+		    exitloop      ; menu entry
+
+		D_MIDRETRY:       
+		    nextloop      ; they want to retry
+
+		D_MIDCANCEL:      
+		    exitloop      ; they want to cancel
+		endcase
+rem_notfound,
+	      msg_resp = %u_msgbox(RECORD_NOTFOUND, D_MOK+D_MICONEXCLAM,
+  &                      "Non-existant record") ; tell them its gone
+	      exitloop                          ; nothing else we can do
+	    end
+	xcall e_exit
+	return
+
+modify_entry,                                 ; modify the current record
+;-------------------------------------------------------------------------------
+;       This routine will modify the current entry.  This is accomplished by a
+;       call to process_entry.  Note that we delete the existing record to 
+;       allow the user to change the header.
+;-------------------------------------------------------------------------------
+	xcall e_enter
+	modify_flag = TRUE				; set flag
+	^m(original[1].hold, handle)  = rolodex	; copy of the original
+	read(rolo_update, rolodex, header)       	; lock the record
+	delete(rolo_update)                      	; this allows changing keys
+	call remove_from_list                   	; remove from the list
+	rolodex = ^m(original[1].hold, handle)	; restore the record
+	xcall i_display(input_winid,, rolodex)	; fill with data
+	call process_entry  				; do the input processing
+	clear modify_flag					; clear flag
+	xcall e_exit
+	return
+
+replicate_entry,                             	; duplicate an existing record
+;-------------------------------------------------------------------------------
+;       This routine will copy all of the fields except the header.  The 
+;       header will be cleared and then process_entry will be called 
+;       which will force the user to enter a new header that is unique.
+;-------------------------------------------------------------------------------
+	xcall e_enter
+	xcall i_display(input_winid,, rolodex)          ; fill with data
+	xcall i_init(input_winid,, rolodex, "header")   ; clear header
+	xcall i_next(input_winid,, "*FRST*")            ; set to first field
+	call process_entry                              ; do the input processing
+	xcall e_exit
+	return
+
+insert_entry,                                      	; add a brand new record
+;-------------------------------------------------------------------------------
+;       This routine will create a new entry by calling process_entry 
+;       with the record and window in a pristine state.
+;-------------------------------------------------------------------------------
+	xcall e_enter
+ 	xcall i_init(input_winid, "*CURR*", rolodex)	; start with a clean slate
+	call process_entry					; do the input processing
+	xcall e_exit
+	return
+
+process_entry,
+;-------------------------------------------------------------------------------
+;       This routine is the main input processing for ROLODEX records.  It 
+;       essentially is a modify process, if you consider that insert is really
+;       the modification of an empty record, replicate is modification of an
+;       existing record with a blank header, and modify is itself.  There is 
+;       only one break field here, the header; which does a check to insure
+;       that the ISAM key is unique.
+;-------------------------------------------------------------------------------
+	if (run_gui) 					; place edit menu for gui
+	    xcall m_column(D_PLACE,t_menucol)
+	xcall u_window(D_PLACE, input_winid, 1, 1); then place the input window
+	xcall i_next(input_winid,, "*FRST*")    	; set to first field
+	repeat                                  	; input loop
+	  begin
+	    xcall i_input(input_winid,, rolodex, i_menucol, s_menucol, 
+  &                       t_menucol, D_NOTERM,,, UNKNOWN_DEFAULT)
+	    if (g_setsts) then                  	; menu entry or break field
+	      begin
+		if (g_select) then              	; menu selection
+		  begin
+		    case g_entnam of            	; test for honored menu entries
+		     begincase
+		     "O_EXIT":   	
+			begin
+			  if (modify_flag)
+			      call abort_processing
+			  exitloop
+			end
+
+		     "G_ABOUT":        
+			xcall u_about(TITLE, VERSION, %datecompiled)
+
+		     "O_ABANDON":	
+			begin
+			  if (modify_flag) 
+			      call abort_processing
+			  exitloop
+			end
+		     endcase
+		  end
+		else                            ; break field
+		  begin
+		    case g_fldnam of
+		    begincase                   ; test for duplicates
+		    "HEADER":   		
+		      begin
+		        call check_for_dups
+			if (locked_flag .or. cancel_flag) 
+			    exitloop
+		      end
+		    endcase
+		  end
+	      end
+	    else                                	; end of processing
+	      begin     
+		store(rolo_update, rolodex)      	; put into the file
+		call insert_to_list             	; put it into the list
+		exitloop                        	; and return to the list
+	      end
+	  end
+	target = header					; set up for positioning
+	return
+
+check_for_dups,
+;-------------------------------------------------------------------------------
+;       This routine will check the existing record against the file to 
+;       see if the key is unique.  If not, it will return an error and
+;       allow the user the choice of cancelling the request or retrying.
+;-------------------------------------------------------------------------------
+	repeat
+	  begin
+	    clear locked_flag
+	    find(rolo_input, rolodex, header, KEYNUM:0); check on primary key
+  &             [$ERR_EOF = cfd18_notfound,   ; error trapping
+  &              $ERR_LOCKED = cfd18_locked,
+  &              $ERR_KEYNOT = cfd18_notfound]
+cfd18_found,                                ; can not have duplicates
+	    cancel_flag = TRUE                  ; default is to cancel
+	    msg_resp = %u_msgbox(RECORD_EXISTS, D_MICONSTOP+D_MRETRYCANCEL,
+  &                             "Record exists")
+	    case msg_resp of
+	      begincase
+	      FALSE:            
+		  exitloop        ; this would be a menu entry
+
+	      D_MIDRETRY:       
+		begin           ; Retry button
+		  xcall i_init(input_winid,, rolodex, "header")
+		  xcall i_next(input_winid,, "*FRST*")
+		  clear cancel_flag
+		end
+
+	      D_MIDCANCEL:      
+		  exitloop        ; Cancel button
+	      endcase
+
+cfd18_notfound,                                 ; great! we can continue
+	    exitloop
+
+cfd18_locked,
+	    locked_flag = TRUE
+	    msg_resp = %u_msgbox(RECORD_LOCKED, D_MRETRYCANCEL+D_MICONSTOP,
+  &                             "Locked record")
+	    case msg_resp of
+	      begincase
+	      FALSE:            
+		  exitloop        ; menu entry
+
+	      D_MIDRETRY:       
+		  nextloop        ; they want to retry
+
+	      D_MIDCANCEL:      
+		  exitloop        ; they want to cancel
+	      endcase       
+	  end
+	return
+
+remove_from_list,
+;-------------------------------------------------------------------------------
+;       This routine will remove the current item from the list.  It is  
+;       very important to make sure that you are selected to the correct
+;       item when this routine is called.
+;-------------------------------------------------------------------------------
+	request = D_LDELITEM                    ; remove from the list
+	xcall l_process(list_id[tab], request, rolodex)
+	for i from 1 thru NUMLISTS
+	  if (i .ne. tab)
+	    restart[tab] = TRUE				; set restart flag for other lists
+	return
+
+abort_processing,
+;-------------------------------------------------------------------------------
+;       This routine will re-insert the original record into the ISAM file 
+;       and replace the item into the correct place on the list.
+;-------------------------------------------------------------------------------
+	rolodex = ^m(original[1].hold, handle)		; reset the record
+	store(rolo_update, rolodex)              		; put into the file
+	call insert_to_list        	          		; put it back in the list
+	return
+
+insert_to_list,
+	for i from 1 thru NUMLISTS
+	  restart[i] = TRUE					; set the restart flag
+	return
+.end
+
+.subroutine set_to_top_line
+;-------------------------------------------------------------------------------
+;       This routine will take the current item and position it to the top
+;       line of the list display, unless it is within a screen length of the
+;       bottom of the list, in which case, it will display the last screen 
+;       of the list and re-position to the correct item.  We use the a_size
+;	  argument to accomodate different size lists.
+;
+;	arguments
+	a_listid	,n				; PASSED, ID of the current list
+	a_data	,a				; PASSED, data area associated with the list
+;-------------------------------------------------------------------------------
+.include "WND:tools.def"
+
+.align quad
+record
+  ivar		,i4			; loop counter
+  lvar		,i4			; loop counter
+  bottom_flag	,i4			; TRUE if at bottom
+  request		,i4			; list communication variable
+  display_size	,i4			; size of the display list
+
+.proc
+	xcall l_status(a_listid, D_LHEIGHT, display_size)
+	for ivar from 1 thru display_size -1
+	  begin
+	    request = D_LDOWN
+	    xcall l_process(a_listid, request, a_data)
+	    xcall l_status(a_listid, D_LATBOTTOM, bottom_flag)
+	    if (bottom_flag) exitloop           ; at the bottom
+	  end
+	if (bottom_flag) then                   ; at the bottom
+	  begin                                 ; so 
+	    for lvar from 1 thru ivar
+	      begin                             ; move back to first one
+		request = D_LUP                 
+		xcall l_process(a_listid, request, a_data)
+	      end
+	  end   
+	else                                    ; set to top of page
+	  begin
+	    request = D_LPGTOP
+	    xcall l_process(a_listid, request, a_data)
+	  end
+	xreturn
+.end
+
+.subroutine make_toolbar
+;-------------------------------------------------------------------------------
+;       The routine below creates a toolbar, and places it on the top line.  
+;       If a_delete is passed, and TRUE, the existing toolbar will be deleted
+;
+; Arguments
+	a_toolid		,n		; RETURNED, PASSED, ID of the toolbar
+	a_delete   		,n		; OPTIONAL, PASSED, TRUE if delete requested
+;-------------------------------------------------------------------------------
+.define TOOLBAR_HEIGHT, 25                      ; height of toolbar in pixels
+.define BUTTON_HEIGHT,  24                      ; height of button in pixels
+.define BUTTON_WIDTH,   70                      ; width of each button in pixels
+.define NUM_BUTTONS,    9                       ; number of buttons
+
+literal
+  TOOLBAR_TEXT   ,[NUM_BUTTONS]a10,
+  &             "Alpha","Cat", "State", "Prev", "Next",
+  &             "Exit", "Abort", "Copy", "Modify"
+
+  TOOLBAR_TIP	,[NUM_BUTTONS]a25,
+  &		"List alphabeticly","List by category","List by state",
+  &		"Previous category", "Next category",
+  &		"Finished processing", "Cancel transaction",
+  &		"Create duplicate entry", "Modify this entry"
+
+.include "WND:tools.def"
+.include "WND:toolbar.def"
+
+.align quad
+record
+	msg_resp        ,i4                     ; message function return value
+	ivar            ,i4                     ; loop counter
+	continue	    ,i4			    ; processing flag
+.page
+.proc
+	continue = TRUE
+	if (%passed(a_delete) .and. a_delete .eq. TB_DELETE)
+	  then
+          begin
+            if (.not.%tb_toolbar(TB_DELETE, a_toolid))
+	      msg_resp = %u_msgbox("Unable to delete toolbar.", D_MOK+D_MICONEXCLAM)
+            xreturn
+          end
+	  else
+	    begin
+	      if (.not.%tb_toolbar(TB_CREATE, a_toolid, TBC_TOP,, TOOLBAR_HEIGHT))
+	        begin
+	          msg_resp = %u_msgbox("Unable to create toolbar.", D_MOK+D_MICONEXCLAM)
+	          continue = FALSE
+	        end
+;-------------------------------------------------------------------------------
+;       This loop will process the array TOOLBAR_TEXT and create a button
+;       for each entry specified in the array.  Note the use of the return
+;       value of the function as the conditional for the if test for errors.
+;	The TBB_GROUP function that follows the loop just groups the three 
+;	buttons that determine the order of the list.  They are grouped 
+;	together since they are mutually exclusive.  Only one will be shown
+;	to be in the "down" state at runtime.
+;-------------------------------------------------------------------------------
+	      if (continue)
+		  for ivar from 1 thru NUM_BUTTONS        
+	          if (.not. %tb_button(a_toolid, TBB_LOAD, %atrim(TOOLBAR_TEXT[ivar]),
+  &                             ,, BUTTON_WIDTH, BUTTON_HEIGHT,
+  &                             TBLOAD_TYPE_TEXT, %atrim(TOOLBAR_TEXT[ivar]),
+  &                             %atrim(TOOLBAR_TIP[ivar]),,, "tool_keys"))
+	          begin                               ; in case of failure
+		      msg_resp = %u_msgbox("Unable to include the "
+  &                             + %atrim(TOOLBAR_TEXT[ivar]) + " button.", 
+  &                             D_MOK+D_MICONEXCLAM)
+		      continue = FALSE
+			exitloop
+		    end
+	        if (continue .and. (.not. %tb_button(a_toolid, TBB_GROUP, %atrim(TOOLBAR_TEXT[1]),
+  &			%atrim(TOOLBAR_TEXT[2]), %atrim(TOOLBAR_TEXT[3]))))
+		    msg_resp = %u_msgbox("Unable to group buttons", D_MOK+D_MICONEXCLAM)
+ 
+	        if (.not. %tb_toolbar(TB_PLACE, a_toolid).and. continue)
+	          begin                                    ; in case of a failure
+	            msg_resp = %u_msgbox("Unable to place the button bar.", D_MOK+D_MICONEXCLAM)
+	            continue = FALSE
+		    end
+	    end
+	xreturn
+.end
+
+.subroutine     rolotab_load_method
+;-------------------------------------------------------------------------------
+;  Description: Load method for the rolodex program
+;
+;  Arguments
+;               These arguments are defined by the Toolkit documentation
+;               and must remain in this order.  Since this routine is not
+;               ever called by the rolodex program, but rather called by
+;               the toolkit on its behalf, the argumentation is pre-defined.
+	a_listid        ,n              ; List id 
+	a_request       ,n              ; RETURNED - LP communication variable
+	a_data          ,a              ; data area (ROLODEX record)
+	a_inpid         ,n              ; ID of the associated window 
+	a_disabled      ,n              ; unused in this example 
+	a_itemindex     ,n              ; unused in this example 
+;-------------------------------------------------------------------------------
+.include "WND:tools.def"
+
+external common
+	rolo_input      	,[NUMLISTS]i4                 ; input channel of the data file
+	tab			,i4					; current tab index
+
+.proc 
+ 	reads(rolo_input[tab], a_data, no_more_records) 
+	  begin
+	    xcall i_display(a_inpid,, a_data)       ; put it on the list
+	    exit
+no_more_records,
+	    a_request = D_LEOF
+	  end
+	xreturn                                                           
+.end
+
+.subroutine tool_keys
+;-------------------------------------------------------------------------------
+;       This method routine simply signals the Toolkit with the   
+;       corresponding menu entry value for each toolbar button created,
+;       which will then be registered back to the main line program.
+;  Arguments
+	a_key   ,a                      ; the name of the key
+;-------------------------------------------------------------------------------
+.proc
+	case a_key of                   ; match and signal the appropriate
+	  begincase                     ; menu entry
+	  "EXIT":       
+	      xcall m_signal("O_EXIT")
+
+	  "ABORT":      
+	      xcall m_signal("O_ABANDON")
+
+	  "COPY":       
+	      xcall m_signal("P_COPY") 
+
+	  "MODIFY":     
+	      xcall m_signal("P_MODIFY")
+
+	  "STATE":      
+	      xcall m_signal("P_GEOGRAPH")
+
+	  "ALPHA":      
+	      xcall m_signal("P_ALPHABET")
+
+	  "CAT":	    
+	      xcall m_signal("P_CATEGORY")
+
+	  "PREV":       
+	      xcall m_signal("P_BACKCAT")
+
+	  "NEXT":       
+	      xcall m_signal("P_NEXTCAT")
+	  endcase
+	xreturn
+.end
+
+.subroutine list_double
+;-------------------------------------------------------------------------------
+;       This routine is a double click method that enables the user
+;       to double click on any list item and it will invoke the
+;       display routine by signaling the toolkit with P_DISPLAY.
+;	This is functionally eqivalent to selecting it from the menu.
+;-------------------------------------------------------------------------------
+.proc
+	xcall m_signal("P_DISPLAY")
+	xreturn
+.end
+
+.subroutine close_method, REENTRANT
+a_noclear	,n
+a_cancel	,n
+a_type	,n
+
+.include "WND:tools.def"
+
+.define END_QUESTION,	"Do you wish to cancel this session of ROLODEX?"
+.proc
+	if (.not. a_type)
+	  xreturn			; this method was called by u_finish
+	if (%passed(a_cancel))
+	  begin
+	    a_cancel =  (%u_msgbox(END_QUESTION,D_MYESNO+D_MDEFBUTTON2) .ne. 
+  &			D_MIDYES)
+	    if (a_cancel)
+	      begin
+		  sleep 1		; put your close down stuff here
+		end
+	  end
+	xreturn
+.end
+
+.subroutine upcase_first
+;-------------------------------------------------------------------------
+;	The first argument is an example of how a group can be used to define	
+;	a subroutine argument.  All of the fields will be filled in correctly.
+;
+.include "WND:inpinf.def"		; PASSED, group field information
+;	The second argument is the data record that is operational for the window
+a_inprec		,a			; PASSED, RETURNED, the data area for the window
+;	The third argument is the optional argument that is specified to the i_input
+;	routine.  Up to 20 suplemental arguments can be passed and will be available
+;	to the arrive and leave methods when they are called by the toolkit.
+a_passed_arg	,a			; PASSED, suplemental arguments for methods
+
+.include 'WND:tools.def'
+
+.include "ROLODEX" DICTIONARY, RECORD = "ROLODEX"
+
+.align quad
+record
+  i			,i4
+  doit			,i4
+  start			,i4
+  length		,i4
+  fldname       	,a30
+  buffer        	,a50
+
+.proc
+	rolodex = a_inprec
+	clear doit
+      fldname= %i_getstring(inp_wndid, inp_fldnam)
+      start = %i_fldstrpos(inp_wndid,fldname)
+	length = %i_fldsize(inp_wndid,fldname)
+      buffer = rolodex(start:length)
+      if (buffer) 
+	  then 
+	    begin
+              upcase buffer(1:1)
+              for i from 2 thru ^size(buffer)
+;                if (buffer(i:1) .eqs. " ")
+		    if (.not. buffer(i:1))				; the byte is a space
+	            then 
+			  doit = TRUE
+	            else
+		        begin
+                     if (doit) upcase buffer(i:1)
+		         clear doit
+			  end  
+	    end
+	  else
+          buffer = a_passed_arg
+      rolodex(start:length) = buffer
+      a_inprec = rolodex
+      xcall i_display(inp_wndid,, rolodex, fldname)
+	xreturn
+.end

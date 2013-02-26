@@ -1,0 +1,137 @@
+.main listfonts
+
+.include "WND:tools.def"
+.include "DBLDIR:activex.def"
+
+.align
+record
+	clsid		,i4
+	bldid		,i4
+	inpid		,i4
+	lstid		,i4
+	control		,i4
+	req			,i4
+
+record buffer
+	field1		,a30
+	field2		,a30
+
+record font
+	name		,a40
+	size		,i4
+
+.proc
+
+	xcall u_start(,1,0)
+	xcall e_sect("ActiveX List Font Test",D_CAPTION)
+
+	xcall ib_input(bldid,"LSTWND",1,60)
+	xcall ib_field(bldid,"FIELD1",
+	&			   D_FLD_TYPE,D_ALPHA,
+	&			   D_FLD_SIZE,30,
+	&			   D_FLD_POS,1,1)
+	xcall ib_field(bldid,"FIELD2",
+	&			   D_FLD_TYPE,D_ALPHA,
+	&			   D_FLD_SIZE,30,
+	&			   D_FLD_POS,1,31)
+	xcall ib_end(bldid,inpid)
+
+	xcall l_class(clsid,"CLASS1",5,10,10,1,,1,1,,,"load_method","ACTIVEX")
+	xcall l_create(lstid,inpid,buffer,,"CLASS1")
+	xcall l_sect(lstid,"Test List",D_TITLE)
+	xcall l_sect(lstid,"Column 1|Column 2|",D_HEADER)
+	xcall l_sect(lstid,"Selecting an item to change list item font",D_FOOTER)
+
+	xcall l_button(lstid,DSB_ADD,"HEADER",DSB_TEXT,"Header")
+	xcall l_button(lstid,DSB_ADD,"ITEM",DSB_TEXT,"Item")
+	xcall l_button(lstid,DSB_ADD,"FOOTER",DSB_TEXT,"Footer")
+	xcall l_button(lstid,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	xcall l_buttonset(lstid,,,DSB_END)
+
+	xcall l_status(lstid, D_LAXCTRL, control)
+	
+	xcall u_update
+
+	repeat
+	begin
+		xcall l_select(lstid,req,buffer)
+
+		if (g_select) then
+			using g_entnam select
+			("HEADER"),
+				call set_header_font
+			("ITEM"),
+				call set_item_font
+			("FOOTER"),
+				call set_footer_font
+			("CLOSE"),
+				exitloop
+			endusing
+		else
+			call set_item_font
+	end
+
+	xcall u_finish
+	stop
+
+set_header_font,
+
+	if %u_wndfont(D_CHOOSEFONT, font.name, font.size,,,,,"Select HEADER font")
+	begin
+		xcall ax_set(control, "HeaderFontName", font.name)
+		xcall ax_set(control, "HeaderFontSize", font.size)
+	end
+
+	return
+	
+set_footer_font,
+
+	if %u_wndfont(D_CHOOSEFONT, font.name, font.size,,,,,"Select FOOTER font")
+	begin
+		xcall ax_set(control, "FooterFontName", font.name)
+		xcall ax_set(control, "FooterFontSize", font.size)
+	end
+
+	return
+	
+set_item_font,
+
+	if %u_wndfont(D_CHOOSEFONT, font.name, font.size,,,,,"Select ITEM font")
+	begin
+		xcall ax_set(control, "FontName", font.name)
+		xcall ax_set(control, "FontSize", font.size)
+	end
+	
+	return
+
+.end
+
+.subroutine load_method
+	
+	a_listid		,n
+	a_req			,n
+	group a_data	,a
+	  field1		,a30
+	  field2		,a30
+	endgroup
+	a_inpid			,n
+	a_disable		,n
+	a_index			,n
+
+.include "WND:tools.def"
+
+.proc
+		
+	if (a_index<=25) then
+	begin
+		field1 = "Row " + %string(a_index) + " column 1"
+		field2 = "Row " + %string(a_index) + " column 2"
+		xcall i_display(a_inpid,,a_data)
+	end
+	else
+		a_req = D_LEOF
+
+	xreturn
+
+.end
+

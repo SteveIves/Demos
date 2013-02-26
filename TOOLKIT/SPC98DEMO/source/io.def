@@ -1,0 +1,55 @@
+ ;general I/O defines...
+
+.ifndef D_IO_OPEN_INP
+
+  .define D_IO_OPEN_INP    ,-1     ;open the file
+  .define D_IO_OPEN_UPD    ,-2
+  .define D_IO_FIND        ,1
+  .define D_IO_READ_FIRST  ,2
+  .define D_IO_READ        ,3
+  .define D_IO_READ_NEXT   ,4
+  .define D_IO_CREATE      ,5
+  .define D_IO_DELETE      ,6
+  .define D_IO_UPDATE      ,7
+  .define D_IO_UNLOCK      ,8
+  .define D_IO_CLOSE       ,9
+
+  .define D_DISPLAY_ERR  ,1      ;display access error messages
+  .define D_NODISPLAY_ERR,0      ;don't display error messages
+
+ ;I/O key definitions
+  .define D_PRIMKEY        ,0
+  .define D_ALTKEY1        ,1
+
+ ;I/O return conditions...
+  .define D_IO_OK          ,1
+  .define D_IO_NOT_FOUND   ,-1
+  .define D_IO_DUP_KEY     ,-2
+  .define D_IO_NO_CUR_REC  ,-3
+  .define D_IO_EOF         ,-4
+  .define D_IO_OPN_ERR		,-5
+  .define D_IO_FATAL       ,-9
+
+.endc
+
+;.ifndef error_flg
+;  .align quad
+;  STACK record
+;    error_flag,         i4
+;.endc
+;
+;.ifndef search_var
+;  .align quad
+;  STACK record
+;    search,             i4
+;.endc
+;
+;.align QUAD
+;STACK record
+;  key_of_ref,   i4      ;key of reference to use
+;  errno,        i4      ;hold error number
+;  lineno,       i4      ;and error line number
+;  errmsg,       a45     ;error message
+;  message,      a80     ;user message
+;  hold_key,     a50     ;hold original key
+

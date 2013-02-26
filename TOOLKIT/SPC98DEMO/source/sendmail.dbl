@@ -1,0 +1,203 @@
+;sendmail.dbl
+
+.function send_mail, ^VAL		;function returns TRUE if mail message sent
+
+a_disp_name,	a						;display name
+a_email,		a						;to address
+a_subject,		a						;subject matter
+a_message_file,	a						;message text file to send
+
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+.include 'DBLDIR:activex.def'
+
+.align
+stack record
+	axwid,					i4			;need a container window id
+	winid,					i4			;toolkit window id for the container	
+	
+	working_id,				i4			;id of the working message control
+	
+	mapisession_cntr,		i4			;mapi session container id
+	mapisession_id,			i4			;mapi session id
+
+	mapi_connected,			i4			;mail system connected id
+
+	mapimessage_id,			i4			;message id
+
+	msg_sent,				i4			;message sent OK flag
+
+	ret_status,				i4			;call return status
+
+.align
+stack record
+	file_name,				a256		;text file name
+	mouse_file,				a256		;mouse file name for cursor
+	path_name,              a256    	;path name
+    message,				a50			;message text
+	
+.proc
+
+;This routine will create an active x container, and load into it the
+;MAPISession and MAPIMessage controls.  These controls are both
+;invisable at runtime, and so are not seen.  The message properties
+;are then set, and the 'Send' method called.  This method will display the
+;send to/compose dialog box.
+
+	xcall getlog('DEMOTMP', path_name, ret_status)
+	if(.not.ret_status)
+	  begin
+		xcall u_message("DEMOTMP logical not defined")
+		freturn FALSE
+	  end
+    path_name = %atrim(path_name)
+
+	xcall getlog('DEMOWRK', file_name, ret_status)
+	if(.not.ret_status)
+	  begin
+		xcall u_message("DEMOWRK logical not defined")
+		freturn FALSE
+	  end
+
+	;get mouse cursor filename
+	xcall getlog('DEMOMSI', mouse_file, ret_status)
+	if(.not.ret_status)
+	  begin
+		xcall u_message("DEMOMSI logical not defined")
+		freturn FALSE
+	  end
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;create a toolkit window container
+	winid = %ax_tkwin('mailctl', 5, 40, axwid)
+	
+	xcall w_brdr(winid, WB_DRAGOFF)
+
+	;load the mail working animated control
+	
+	onerror no_control
+	working_id = %ax_load(axwid, 'UsrMailWorking.CtlMailWorking')
+	
+	if(FALSE)
+	  begin
+no_control,
+		offerror
+		xcall w_proc(WP_HOURGLASS_OFF)
+		xcall u_message("Unable to load UsrMailWorking control")
+		xcall u_window(D_DELETE, winid)
+		freturn FALSE
+	  end
+
+	offerror
+
+	onerror file_error
+	xcall ax_call(working_id, 'FileName', %atrim(file_name), %atrim(mouse_file))
+	
+	if(FALSE)
+	  begin
+file_error,
+		offerror
+		xcall w_proc(WP_HOURGLASS_OFF)
+		xcall u_message("Unable mail file:"+%atrim(file_name)+" :"+%atrim(mouse_file))
+		xcall u_window(D_DELETE, winid)
+		freturn FALSE
+	  end
+
+	offerror	
+
+	;set the working label, indicating connecting to mail server
+	ret_status = %ax_set(working_id, 'Label', "Connecting to mail server, please wait....")
+
+	;place the control on the screen
+	xcall u_window(D_PLACE, winid, 8, 35)
+	xcall u_update
+
+	;Load the session control
+	onerror no_mapisession
+	mapisession_id = %ax_load(axwid, 'MSMAPI.MAPISession.1')
+
+	if(FALSE)
+	  begin
+no_mapisession,
+		offerror
+		xcall w_proc(WP_HOURGLASS_OFF)
+		xcall u_message("Unable to load MSMAPI control - Microsoft Mail is not correctly installed")
+		xcall u_window(D_DELETE, winid)
+		freturn FALSE
+	  end
+
+	offerror
+
+	;first, lets tell mapi not to download any mail, as we are sending only
+	ret_status = %ax_set(mapisession_id, 'DownLoadMail', FALSE)
+	ret_status = %ax_set(mapisession_id, 'LogonUI', TRUE)
+
+	;make a connection to the mail sub system.
+	ret_status = %ax_call(mapisession_id, 'SignOn')	
+
+	;get the returned session handle
+	mapi_connected = %ax_getint(mapisession_id, 'SessionID')
+
+	;connected to the mail service
+	onerror no_mapimail
+	mapimessage_id = %ax_load(axwid, 'MSMAPI.MAPIMessages.1')
+
+	if(FALSE)
+	  begin
+no_mapimail,
+		offerror
+		xcall w_proc(WP_HOURGLASS_OFF)
+		xcall u_message("Unable to load MSMAPI control - Microsoft Mail is not correctly installed")
+		xcall u_window(D_DELETE, winid)
+		freturn FALSE
+	  end
+
+	offerror
+
+	;set the working label
+	ret_status = %ax_set(working_id, 'Label', "Building mail message, please wait....")
+
+	;set the message properties
+	ret_status = %ax_set(mapimessage_id, 'SessionID', mapi_connected)
+	ret_status = %ax_set(mapimessage_id, 'MsgIndex', -1)
+	ret_status = %ax_set(mapimessage_id, 'RecipAddress', a_email)
+	ret_status = %ax_set(mapimessage_id, 'RecipDisplayName', a_disp_name)
+	ret_status = %ax_set(mapimessage_id, 'MsgSubject', a_subject)
+	message = "Please see attachment for details"
+	ret_status =  %ax_set(mapimessage_id, 'MsgNoteText', message)
+	ret_status =  %ax_set(mapimessage_id, 'AttachmentIndex', 0)
+	ret_status =  %ax_set(mapimessage_id, 'AttachmentPosition', %trim(message)-1)
+	ret_status =  %ax_set(mapimessage_id, 'AttachmentPathName', a_message_file)
+	ret_status =  %ax_set(mapimessage_id, 'AttachmentName', a_message_file)
+	
+	xcall w_proc(WP_HOURGLASS_OFF)		;hourglass is turned off to avoid
+										; cursor modality issues with windows
+
+	;call the message send method - to send the message!
+	ret_status = %ax_call(mapimessage_id, 'Send', TRUE)
+	
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;set the working label
+	ret_status = %ax_set(working_id, 'Label', "Checking delivery status, please wait...")
+
+	;check the message was sent
+	msg_sent = %ax_getint(mapimessage_id, 'MsgSent')
+
+	;Sign off from the mail session
+	ret_status = %ax_call(mapisession_id, 'SignOff')	
+	
+	;delete the control and remove the toolkit window
+	xcall u_window(D_DELETE, winid)
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	;all complete, return TRUE
+	if(msg_sent) then
+		freturn TRUE 		;worked
+	else
+		freturn FALSE		;failed
+	
+.end
+

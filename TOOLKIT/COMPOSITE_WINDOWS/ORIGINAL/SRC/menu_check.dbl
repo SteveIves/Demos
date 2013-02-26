@@ -1,0 +1,178 @@
+;******************************************************************************
+;
+; Toggle the check on a menu entry
+;
+.function utm_toggle	,^val, reentrant
+
+	a_mnustrng	,a	;Path to menu item "Column/Entry/Subentry..."
+	;End of arguments
+	;
+	; Return value:  Previous state of the check
+	;
+external function
+	utm_check			,^val
+
+.proc
+
+	freturn (%utm_check(a_mnustrng,
+	&	 (.not. %utm_check(a_mnustrng))))
+
+.end
+
+;******************************************************************************
+;
+; Set/Unset/Retrieve menu item check mark
+;
+.function utm_check	,^val, reentrant
+
+	a_mnustrng	,a	;Path to menu item "Column/Entry/Subentry..."
+
+	a_check		,n	;(Optional) new value of check (TRUE/FALSE)
+
+	;End of arguments
+	;
+	; Return value:	Previous state of check on entry, or -1 if entry not found
+	;
+
+.define MF_BYPOSITION	,^x(00000400)
+.define MF_CHECKED		,^x(00000008)
+.define MF_UNCHECKED	,^x(00000000)
+
+.align
+stack record
+	user32				,i4	;Handle to user32.dll
+	hmenu				,i4	;Handle to menu
+	itmno				,i4	;Item number (base 0)
+	options				,i4	;Options for CheckMenuItem
+	rval				,i4	;Returned value
+
+external function
+	utm_getitem	,^val	;Find handle and item number of a menu entry
+
+.proc
+
+	user32 = %dll_open("user32")
+	clear hmenu
+	itmno=%utm_getitem(hmenu,a_mnustrng)	;Get the menu handle and item #
+	if (hmenu) then
+	begin
+		options = MF_BYPOSITION
+		;
+		; Get the current state of the check
+		;
+		rval=(%dll_call(user32,DLL_TYPE_WINAPI,"GetMenuState",hmenu,itmno,
+		&	options).band.MF_CHECKED)
+		;
+		; If we're changing it...
+		;
+		if (^passed(a_check) .and. (a_check .ne. rval))
+		begin
+			if (a_check) then    	;Checked?
+				options = options .bor. MF_CHECKED
+			else			; or unchecked?
+				options = options .bor. MF_UNCHECKED
+			xcall dll_call(user32,DLL_TYPE_WINAPI,"CheckMenuItem",hmenu,
+			&	itmno,options)
+		end
+	end
+	else
+		rval = -1			;Not a valid menu entry
+
+	xcall dll_close(user32)
+
+	freturn rval
+
+.end
+
+;******************************************************************************
+;
+; Find the handle and item number of a menu entry
+;
+.function utm_getitem	,^val, reentrant
+
+	a_hmenu		,n	;Handle to menu, or 0 for menu bar
+
+	a_mnustrng	,a	;Menu string (entry/subentry/...)
+	;
+	; Return value:	Item number (base 0)
+	;
+	; Notes:	a_hmenu may be returned modified.  If the entry is on
+	;		a submenu, then a_hmenu will be the handle to that submenu.
+	;		If the entry is not found, a_hmenu is returned 0.
+	;
+.include "DBLDIR:windows.def"
+
+.align
+stack record
+	user32				,i4	;Handle to user32.dll
+	itmno				,i4	;Item number
+	count				,i4	;Count of items in the menu
+	ptr					,i4	;Index of "/" in a_mnustrng
+	ptr2				,i4	;Index of ampersand or null
+	text				,a84	;Menu item text
+
+.proc
+
+	user32=%dll_open("user32")
+	itmno=-1
+	if (.not.a_hmenu)	;We start at the menu bar if no handle passed
+		a_hmenu=%dll_call(user32,DLL_TYPE_WINAPI,"GetMenu",
+		&	%w_info(WIF_HWND,WID_CONTAINER))
+
+	if (a_hmenu)		;Got one?
+	begin
+		ptr = %instr(1,a_mnustrng,"/")
+		if (.not.ptr)					;Find the delimiter
+			ptr=%trimz(a_mnustrng)+1	;Past the end if not one
+		if (ptr .le. 1) then
+			clear a_hmenu				;/ at the beginning, or no text at all
+		else
+		begin
+			;Get the number of items in this menu
+			count=%dll_call(user32,DLL_TYPE_WINAPI,"GetMenuItemCount",a_hmenu)
+			;Search through them for the one we're after
+			for itmno from 0 thru (count-1)
+			begin
+				xcall dll_call(user32,DLL_TYPE_WINAPI,"GetMenuStringA",a_hmenu,
+				&		itmno,text,%integer(^size(text)-1),MF_BYPOSITION)
+				if (ptr2=%instr(1,text,%char(0)))
+					clear text(ptr2,^size(text))	;Un-null terminate
+				ptr2=1
+				;Strip out single &'s (used for select character)
+				while (ptr2=%instr(ptr2,text,"&"))
+				begin
+					text(ptr2,^size(text)) = text(ptr2+1,^size(text))
+					incr ptr2	;Avoid removing second in pair (&&)
+				end
+				while (.not. text(1:1))
+					text = text(2,^size(text))		;Trim leading spaces
+				if (text .eq. a_mnustrng(1,ptr-1))	;Does it match?
+				  exitloop
+			end
+			if (itmno.ge.count) then				;Off the end
+			begin
+				clear a_hmenu
+				itmno = -1
+			end
+			else					;Got one
+			begin
+				if (ptr .lt. %trimz(a_mnustrng))	;Submenu requested?
+				begin
+					;Get the handle to the submenu
+					a_hmenu=%dll_call(user32,DLL_TYPE_WINAPI,"GetSubMenu",
+					&	a_hmenu,itmno)
+					if (a_hmenu) then				;If we have one, recurse
+						itmno=%utm_getitem(a_hmenu,a_mnustrng(ptr+1,^size(a_mnustrng)))
+					else		;No submenu, didn't find what we wanted
+						itmno = -1
+				end
+			end
+		end
+	end
+
+	xcall dll_close(user32)		;Deaccess user32.dll
+
+	freturn itmno
+
+.end
+

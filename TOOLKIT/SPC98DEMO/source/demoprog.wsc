@@ -1,0 +1,322 @@
+.script
+.date_generated "05/17/1998, 20:11"
+.version "6.3"
+
+.input backdrop, 17, 77
+.placement 2, 2
+.title "Main window"
+.border nocell
+.field null, a1, fpos(5, 5)
+.end
+
+.column mfile, 'File'
+.entry o_new, "New", key(^N)
+.entry o_open, "Open", key(^O)
+.entry o_close, "Close"
+.line
+.entry o_save, "Save", key(^s)
+.entry o_saveas, "Save as...", select(a)
+.line
+.entry o_prtprev, "Print preview"
+.entry o_print, "Print..."
+.line
+.entry o_sendmail, 'Send e-mail'
+.line
+.entry o_exit, "Exit", select(x)
+.list initial=o_close, o_save, o_saveas, o_prtprev, o_print, o_sendmail
+.list all=o_open, o_new, o_close, o_save, o_saveas, o_prtprev, o_print, o_sendmail
+.end
+.column medit, "Edit"
+.entry e_cut, "Cut", select(t), key(^x)
+.entry e_copy, "Copy", key(^c)
+.entry e_paste, "Paste", key(^v)
+.entry e_clear, "Clear", select(l)
+.end
+
+.input report, 7, 61
+.font Default
+.placement 5, 5
+.title "Reporting"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.text Text3, pos(2, 4), margin(3, 0)
+The Synergy/DE ReportWriter is a powerful Synergy/DE UIToolkit driven reporting tool.  Use it to create or execute custom reports.
+.box Box5, 5, 61, pos(1, 1)
+.repository_structure SPC_WIZARD
+.field NUM_RW, pos(6, 11), prompt("ReportWriter"), fpos(6, 23)
+.field NUM_RWR, pos(6, 36), prompt("Runtime Only"), fpos(6, 48)
+.button b_help, text("Help"), select("H")
+.button_set right
+.set data, SPC_WIZARD, NUM_RW, NUM_RWR
+.end
+
+
+.column mtool, "Tools"
+.entry o_wizard, "Configuration wizard", key(F2)
+.entry o_web, "License key configuration", key(F3)
+.end
+
+.input lines, 2, 80
+.display_area 1, 1, 2, 77
+.placement 3, 6
+.title "Processed items"
+.repository_structure SPC_LINE
+.field LINE_VALUE, noprompt, fpos(1, 24)
+.field PRODUCT_DESCRIPTION, noprompt, fpos(2, 1)
+.field PRODUCT, fpos(1, 1)
+.field QUANTITY_ORDERED, noprompt, fpos(1, 10)
+.field UNITS, noprompt, fpos(1, 16)
+.set all, SPC_LINE, LINE_VALUE, PRODUCT_DESCRIPTION, PRODUCT, -
+     QUANTITY_ORDERED, UNITS
+.set input, SPC_LINE, PRODUCT, QUANTITY_ORDERED, UNITS
+.end
+
+
+
+.listclass linclass, items(2), header(1), footer(1, static), -
+ load('load_lines'), options("gridcolor(,11)")
+.placement 1,1
+.end
+
+.input dev, 7, 61
+.placement 5, 6
+.title "Development"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.box Box4, 5, 61, pos(1, 1)
+.repository_structure SPC_WIZARD
+.field NUM_PSDE, pos(6, 8), fpos(6, 24)
+.button b_help, text("Help"), select("H")
+.text Text2, pos(2, 2), margin(1, 3)
+Professional Series provides the core toolset for professional developers.
+.button_set right
+.set data, SPC_WIZARD, NUM_PSDE
+.end
+
+.input run, 7, 61
+.placement 4, 5
+.title "Runtime"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.box Box1, 5, 61, pos(1, 1)
+.repository_structure SPC_WIZARD
+.field NUM_RUN, pos(6, 10), fpos(6, 26)
+.button b_help, text("Help"), select("H")
+.text Text1, pos(2, 2), margin(1, 1)
+Select the type of license(s) and number for each license.
+.button_set right
+.set data, SPC_WIZARD, NUM_RUN
+.end
+
+
+
+.column mwind, 'Windows'
+.entry MV_TAB, 'Product window'
+.entry MV_LIST, 'List window'
+.line
+.entry O_SEELIST, 'Show list', DISABLE
+.end
+
+.input xfserver, 7, 61
+.placement 4, 5
+.title "xfServer"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.text Text1, pos(2, 2), margin(1, 1)
+Access the ISAMxf data on the main host system from remote Synergy applications running on Windows95 or WindowsNT platforms.
+.box Box1, 5, 61, pos(1, 1)
+.repository_structure SPC_WIZARD
+.field NUM_XFSV, pos(6, 5), fpos(6, 27)
+.button_set right
+.set data, SPC_WIZARD, NUM_XFSV
+.end
+
+.input docs, 7, 61
+.placement 7, 6
+.title "Documentation"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.repository_structure SPC_WIZARD
+.field DOC_CD, fpos(2, 5)
+.field DOC_FULL, fpos(3, 5)
+.field DOC_DEV_GUIDE, fpos(4, 5)
+.field DOC_PORT, fpos(5, 5)
+.field DOC_LANG, fpos(6, 5)
+.field DOC_UI, fpos(7, 5)
+.field DOC_REP, fpos(2, 36)
+.field DOC_REPORT, fpos(3, 36)
+.field DOC_SQL, fpos(4, 36)
+.field DOC_ODBC, fpos(5, 36)
+.field DOC_ISAM, fpos(6, 36)
+.field DOC_INSTALL, fpos(7, 36)
+.button_set right
+.set data, SPC_WIZARD, DOC_CD, DOC_FULL, DOC_DEV_GUIDE, DOC_PORT, -
+     DOC_LANG, DOC_UI, DOC_REP, DOC_REPORT, DOC_SQL, DOC_ODBC, DOC_ISAM, -
+     DOC_INSTALL
+.set rest, SPC_WIZARD, DOC_DEV_GUIDE, DOC_PORT, DOC_LANG, DOC_UI, -
+     DOC_REP, DOC_REPORT, DOC_SQL, DOC_ODBC, DOC_ISAM, DOC_INSTALL
+.end
+
+.input opsys, 7, 62
+.placement 7, 5
+.title "Operating system"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.text Text1, pos(2, 6), margin(5, 5)
+Please select the target platform from the list
+.box Box1, 5, 61, pos(1, 1)
+.repository_structure SPC_WIZARD
+.field SYS_CODE_FOR_SCREEN, pos(6, 12), fpos(6, 23)
+.button_set right
+.set data, SPC_WIZARD, SYS_CODE_FOR_SCREEN
+.end
+
+.select sys_code
+.item "Altos 386"
+.item "Data General AViiON"
+.item "DEC Alpha, with Digital UNIX"
+.item "DEC Alpha, with OpenVMS"
+.item "DEC Alpha, with WindowsNT"
+.item "DEC VAX (with OpenVMS)"
+.item "HP9000 series"
+.item "IBM RS/6000 series"
+.item "SCO UNIX/UNIXware"
+.item "Windows95, WindowsNT"
+.item "Silicon Graphics"
+.item "sun Solaris II (SPARC series)"
+.end
+.select product
+.item "PSDE"
+.item "RUN"
+.item "RW"
+.item "RWR"
+.end
+
+.input name, 1, 43
+.placement 4, 8
+.title "Save as"
+.border on, dragbar(on)
+.button I_OK, text("Save"), select("S")
+.button O_ABANDON, text("Cancel"), select("C")
+.repository_structure QUOTE_HEAD
+.field QH_SAVENAME, pos(1, 2), fpos(1, 11)
+.end
+
+.input load, 1, 43
+.placement 4, 8
+.title "Load"
+.border on, dragbar(on)
+.button i_ok, text("Load"), select("L")
+.button o_abandon, text("Cancel"), select("C")
+.repository_structure QUOTE_HEAD
+.field QH_SAVENAME, pos(1, 1), prompt("Load name"), fpos(1, 12)
+.end
+
+.input odbc, 7, 61
+.placement 5, 6
+.title "xfODBC"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.box Box1, 5, 61, pos(1, 1)
+.text Text1, pos(2, 3), margin(2, 2)
+Synergy/DE xfODBC allows thrid-party ODBC-enabled applications to access your Synergy ISAMxf databases.
+.repository_structure SPC_WIZARD
+.field NUM_GENL, pos(6, 7), prompt("Local connections"), fpos(6, 24)
+.field NUM_GENR, pos(6, 34), prompt("Remote connection"), fpos(6, 51)
+.button_set right
+.set data, SPC_WIZARD, NUM_GENL, NUM_GENR
+.end
+
+.input sql, 7, 61
+.placement 4, 5
+.title "SQL Connection"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.box Box1, 5, 61, pos(1, 1)
+.text Text1, pos(2, 2), margin(1, 2)
+Synergy/DE SQL Connection allows you to access third-party relational databases from your Synergy applications.
+.repository_structure SPC_WIZARD
+.field SQL_DRIVER_FOR_SCREEN, pos(6, 2), fpos(6, 10)
+.field SQL_LOCAL_NUM, pos(6, 33), fpos(6, 38)
+.field SQL_REMOTE_NUM, pos(6, 47), fpos(6, 54)
+.button_set right
+.set data, SPC_WIZARD, SQL_DRIVER_FOR_SCREEN, SQL_LOCAL_NUM, -
+     SQL_REMOTE_NUM
+.end
+.select dbdriver
+.item 'Oracle'
+.item 'RDB'
+.item 'Sybase'
+.item 'Informix'
+.item 'Allbase'
+.item 'DB2'
+.item 'Ingres'
+.item 'ODBC'
+.item 'SQL'
+.end
+
+.input dist, 7, 61
+.placement 4, 5
+.title "Distribution"
+.button b_add, text("Add"), select("A")
+.button b_reset, text("Reset"), select("R")
+.button o_help, text("Help"), select("H")
+.repository_structure SPC_WIZARD
+.field NUM_DIS_FOR_SCREEN, fpos(3, 3), select(0, 0, 4, -
+     "Media kit with online and printed documentation        ", -
+     "Media kit with printed documentation                   ", -
+     "Media kit with online documentation                    ", -
+     "Media kit with printed installation and configuration g")
+.button_set right
+.set data, SPC_WIZARD, NUM_DIS_FOR_SCREEN
+.end
+.column input, 'Input'
+.entry i_next, 'Next entry', key(down)
+.entry i_prev, 'Previous entry', key(up)
+.line
+.entry ts_tabnext, 'Next page', key(next)
+.entry ts_tabprev, 'Previous page', key(prev)
+.line
+.entry ts_tab1, 'Operating system'
+.entry ts_tab2, 'Development'
+.entry ts_tab3, 'Runtime'
+.entry ts_tab4, 'ReportWriter'
+.entry ts_tab5, 'xfServer'
+.entry ts_tab6, 'Documentation'
+.entry ts_tab7, 'ODBC Drivers'
+.entry ts_tab8, 'Sql Connection'
+.entry ts_tab9, 'Distributions'
+.end
+.column select, 'Select'
+.entry s_up, 'Up', key (up)
+.entry s_down, 'Down', key(down)
+.end
+
+.column list, 'List'
+.entry s_up, 'Previous item', key(up)
+.entry s_down, 'Next item', key(down)
+.entry s_pgup, 'Page up', key(prev)
+.entry s_pgdn, 'Page down', key(next)
+.end
+
+.input who, 7, 59
+.placement 3, 3
+.title "Licensee details"
+.repository_structure QUOTE_HEAD
+.field QH_LIC_NAME, pos(2, 2), fpos(2, 15)
+.field QH_NAME, pos(4, 2), fpos(4, 15)
+.field QH_EMAIL, pos(6, 2), fpos(6, 15)
+.button i_ok, text("OK"), select("O")
+.set data, QUOTE_HEAD, QH_LIC_NAME, QH_NAME, QH_EMAIL
+.end
+
+.column mhelp, 'Help'
+.entry o_help, 'Help topics', key(f1)
+.line
+.entry u_about, 'About Synergy'
+.end

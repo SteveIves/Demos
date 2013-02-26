@@ -1,0 +1,360 @@
+;
+;Program to demonstrate list input.
+;
+;This program shows the problems with list input under windows, and solutions
+;to those problems.  Many are contained within the list methods, and making sure
+;that an invalid list entry can not be left, either by mouse or keyboard.
+;
+;Also look at the script file (listinp.wsc) which goes with this program.  The
+;.listclass used uses the input_snapshot setting.  This is required to preserve
+;the input window context of the item the user has tried to move to, when the
+;item being left is invalid.
+;
+;Please also note.  ALL fields on the input window MUST be 'view as field'.  That 
+;is, they should not be assigned selection lists, radio buttons, etc.  These
+;are not supported within the input within the list.  Each field is given an edit
+;control as the field is focused.  All other fields do not have this control, and
+;you can not move between fields within the same item of the list with the
+;mouse.  You can change list items with the keyboard or mouse.  If the item being
+;left is valid, then the selected item is highlighted for input.  By default, the
+;list will focus on the same field you were on in the previous item.  This program
+;forces focus to the first field for each item.
+;
+;Field methods.  All field methods are supported within the list, but there
+;is no visual indication of this.  You need to add menu entries for I_DRILL and 
+;I_HYPER to enable the use to signal them.  Remember, you will still have the
+;same problems within these methods, as you do in I_INPUT.
+;
+;
+;Author : Richard C. Morris
+;
+
+.include 'WND:tools.def'
+
+.include 'CMPDT' repository, record='CMPDT'
+
+.align
+record
+	inp_id,			i4
+	temp_id,		i4
+	no_find,		i4
+	main_cid,		i4
+	list_id,		i4
+	req,			i4
+	curr_item,		i4
+	list_ok,		i4
+	mode,			i4
+	
+.define D_MODE_AMEND	,1
+.define D_MODE_INSERT	,2
+
+;include our list data definitions
+
+.include 'listinp.def'
+
+.proc
+
+	xcall u_start('listinp',1,1)
+	
+	
+	;load required menu columns, and create the list
+	
+	xcall m_ldcol(main_cid, g_utlib, 'main')
+ 	
+	xcall i_ldinp(inp_id, g_utlib, "listinp", D_NOPLC)
+	
+	xcall i_ldinp(temp_id, g_utlib, "listinp_tmp", D_NOPLC,,, "listinp")
+	
+
+	xcall l_create(list_id, inp_id, cmpdt, g_utlib, 'listclass', 5, 10)
+	
+	clear leave_item, current_item, doing_the_move
+	
+	xcall l_user(list_id, D_LOAD, list_data)
+	
+	;drive the list with the L_SELECT routine.  From here we can select an item
+	;to modify it, or press the insert/delete keys.	
+	
+	;for this to work in character cell, pass the required movement
+	;menu column id's
+
+	repeat
+	begin
+		xcall l_select(list_id, req=D_LNOP, cmpdt,,,,,,,,,,,, D_GLOBAL)
+		
+		if g_select
+		then
+		begin
+			case g_entnam of		
+			begincase
+			"O_EXIT" :
+			begin
+				exitloop
+			end
+			"O_INSERT" :	;insert a new item
+			begin
+				mode=D_MODE_INSERT
+				xcall l_process(list_id, req=D_LAPPEND, cmpdt)
+				
+				xcall i_init(inp_id,, cmpdt)
+				
+				;xcall i_display(inp_id, "*CURR*", cmpdt)
+				
+				call input_into_list
+			end
+			endcase
+		end
+		else
+		begin	;modify selected list item
+			mode=D_MODE_AMEND
+			xcall i_display(inp_id, "*CURR*", cmpdt)
+			
+			call input_into_list
+		end
+			
+	end
+	
+	
+	;this section of the code will simply show that the list data, and the window
+	;data is the same, and thus we have not corrupted our list! (we hope)
+	
+	xcall u_window(D_PLACE, temp_id, 1, 1)
+	
+	req=D_LFIRST
+	repeat
+	begin
+		xcall l_data(list_id, req, temp_id, cmpdt,, no_find)
+		if no_find exitloop     ;all done
+		req=D_LNEXT
+		xcall u_message(cmpdt)
+	end
+
+	xcall u_finish
+	
+	stop
+	
+input_into_list,
+
+	;start from the first field!
+	
+	xcall i_next(inp_id, "*CURR*", '*FRST*')
+	repeat
+	begin
+		;make sure we use L_INPUT  to perform input processing
+		xcall l_input(list_id, , cmpdt,cmpdt,,,, D_NOTERM)
+		
+		if g_select
+		then
+		begin
+			case g_entnam of
+			begincase
+			"O_EXIT" :	;they canceled/exited - delete the item.
+			begin 
+				if mode.eq.D_MODE_INSERT
+				begin
+					xcall l_process(list_id, req=D_LDELITEM, cmpdt)
+				end
+				exitloop
+			end
+			"MOVEINLIST" :
+			begin
+				;in the leave method for the list, the list data is validated.
+				;if not valid, this routine is used to place the user back
+				;at the invalid list item.
+				
+				xcall move_in_list(list_id, inp_id, cmpdt)
+				
+				;ensure you place message AFTER the list has been sorted out!!!
+				
+				xcall u_message('Data Invalid')
+			end
+			endcase
+		end
+		else
+		begin
+			;you may want to re-signal the leave method, to validate if the 
+			;data entered is still correct.
+			
+			clear g_select
+			xcall l_status(list_id, D_LCURITM, curr_item)
+			
+			xcall xsubr('leave_method', list_ok, list_id,, cmpdt, inp_id,, curr_item)
+			if .not.list_ok
+			begin
+				xcall i_next(inp_id,, '*FRST*')
+				nextloop
+			end
+			
+			;if we get here, all ok, update and return to list selection routine
+			;we could add code in here to process multiple insertions.
+
+			exitloop
+		end
+	end
+	
+	return
+
+.end
+
+;the list load method simply fills the data with numbers.  This is so we have 
+
+
+.subroutine list_input_load	;
+a_listid,			n
+a_request,			n
+a_itemdata,			a	;Optional
+a_inpid,			n
+a_disabled_flag,	n	;Optional
+a_itemindex,		n
+
+.include 'WND:tools.def'
+
+.proc
+
+	;start with a blank list -
+	
+	a_request=D_LEOF
+	xcall m_signal('O_INSERT')
+	xreturn
+	
+	;if you want to pre-load the list, write your load method as normal!	
+
+	
+xreturn
+.end
+
+.subroutine leave_method	;
+a_status,			n
+a_listid,			n
+a_win_event,		n
+group a_itemdata,			a	;Optional
+	.include 'CMPDT' repository, norecord
+endgroup
+a_inpid,			n	;Optional
+a_disabled_flag,	n	;Optional
+a_itemindex,		n
+a_visable_row,		n
+
+.include 'WND:tools.def'
+
+.include 'listinp.def'
+
+.proc
+
+	a_status=TRUE
+
+	xcall l_user(a_listid,D_COPY,list_data)
+	
+	if doing_the_move xreturn	;we are moving around the list!
+			
+	;put your initial validation code in here.
+	
+	if cmpdt_meth_id.eq.'          '
+	begin
+		;if entry not valid, re-signal this method.  This will keep the
+		;list looking correct.  If you don't, and update the screen, then the 
+		;list item you have moved to looks corrupted!
+
+		leave_item=a_itemindex	;store so we can move back to this item.
+		
+		xcall l_user(a_listid, D_LOAD, list_data)
+		
+		a_status=FALSE
+	end	
+
+	xreturn
+
+.end
+
+.subroutine arrive_method	;
+a_status,			n
+a_listid,			n
+a_win_event,	    n
+group a_itemdata,			a	;Optional
+	.include 'CMPDT' repository, norecord
+endgroup
+a_inpid,			n	;Optional
+a_disabled_flag,	n	;Optional
+a_itemindex,		n
+a_visable_row,		n
+
+.include 'WND:tools.def'
+
+.include 'listinp.def'
+
+.align QUAD
+stack record
+	number,			i4
+	count,			i4
+	
+.proc
+	xcall l_user(a_listid, D_COPY, list_data)
+	
+	if doing_the_move xreturn	;moving around the list!
+	
+	if .not.leave_item xreturn	;no action required
+	
+	;if here, then we must move to the last item we where at.
+
+	current_item=a_itemindex
+	
+	xcall l_user(a_listid, D_LOAD, list_data)
+	
+	xcall m_signal('MOVEINLIST')
+	
+xreturn
+.end
+
+.subroutine move_in_list
+a_listid,			n
+a_inpid,			n
+a_itemdata,			a
+
+.include 'WND:tools.def'
+
+.include 'listinp.def'
+
+.align QUAD
+stack record
+	request,		i4
+	store_request,	i4
+	number,			i4
+	count,			i4
+	
+.proc
+
+	xcall l_user(a_listid, D_COPY, list_data)
+
+	doing_the_move=TRUE
+	
+	xcall l_user(a_listid, D_LOAD, list_data)
+
+	if leave_item.gt.current_item
+	then
+	begin
+		store_request=D_LDOWN		
+		number=leave_item-current_item
+	end
+	else
+	begin
+		store_request=D_LUP
+		number=current_item-leave_item
+	end
+	
+	for count from 1 thru number
+	begin
+		xcall l_process(a_listid, request=store_request, a_itemdata)
+	end	
+
+	clear leave_item, current_item, doing_the_move
+	
+	xcall l_user(a_listid, D_LOAD, list_data)
+
+	;start from the first field!
+	xcall i_next(a_inpid,, '*FRST*')
+	
+	xcall m_signal('DONOTHING')
+	
+xreturn
+.end
+

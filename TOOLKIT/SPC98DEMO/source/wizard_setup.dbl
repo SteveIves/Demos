@@ -1,0 +1,553 @@
+;wizard_setup.dbl
+
+.subroutine wizard_setup
+
+.include 'demoprog.def'
+group spc_line,		a
+	.include 'SPC_LINE' repository, norecord
+endgroup
+
+;This wizard setup routine uses several activeX controls, to ask the
+;user a series of questions which are used to configure and price the
+;required license
+
+.include 'DBLDIR:activex.def'
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+
+.define D_GLOBAL_CONTROL_INIT
+.include 'wizard_setup.gbl'
+
+;include the wizard details record layout
+global data section wizard, INIT
+.include 'SPC_WIZARD' repository, record = 'spc_wizard'
+endglobal
+
+.include 'SPC_LINE' repository, record='new_spc_line', nofields
+
+.align
+stack record
+	ret_status,				i4			;return status flag
+	len,					i4			;length of return product list data	
+	count,					i4			;loop counter
+	request,				i4			;list request flag
+	sound_name,				a255
+	 cnt,					 a2 @sound_name
+								   		;alpha counter for error processing
+										
+stack record returned_lines
+returned_line,				D_LINE_MAX a ^size(new_spc_line)
+	
+.proc
+
+	xcall getlog('DEMOWAV', sound_name, ret_status)
+	if(.not.ret_status)
+	  begin
+		xcall u_message('DEMOWAV logical not defined')
+		xreturn
+	  end
+	
+	xcall e_enter
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	clear spc_wizard
+
+	;create a single container window
+	container_id = %ax_create(100, 50, 450, 450)
+	xcall ax_set(container_id, 'Caption', 'Synergy Wizard')
+	xcall ax_bind(container_id, 'OnClose', 'closecontrol')	
+	
+	;load each control into the container window, and bind the
+	;required synergy subroutines to the controls events.
+
+	ret_status = 98
+
+	onerror no_control
+	for count from 1 thru D_MAX_PAGE
+	  begin
+		page_array_id[count] = %ax_load(container_id, %atrim(page_name[count]), , , , )
+	  end
+	clear ret_status				 	;no error loading control
+	offerror
+
+no_control,
+	if(ret_status.eq.98) then
+	  begin
+		cnt = count
+		xcall u_message("Cannot load Wizard control for page "+cnt+":"+%atrim(page_name[count]))
+		quote_to_save = FALSE
+	  end
+	else
+		call process_wizard
+
+	xcall ax_delete(container_id)
+	
+	xcall w_proc(WP_HOURGLASS_OFF)
+	xcall e_exit
+
+	xreturn
+
+
+process_wizard,
+	;each page has the same four buttons.  The following loop
+	;binds these four buttons on each active page to a synergy
+	;method routine
+
+	for count from 1 thru D_MAX_PAGE
+	  begin
+		xcall ax_bind(page_array_id[count], 'CloseControl', 'CloseControl')
+		xcall ax_bind(page_array_id[count], 'ForwardPage', 'forwardpage')
+		xcall ax_bind(page_array_id[count], 'BackPage', 'Backpage')
+		xcall ax_bind(page_array_id[count], 'WizardFinished', 'wizardfinished')
+	  end
+
+	;now we need to bind page specific events to synergy routines
+
+	xcall ax_bind(page_sql_id, 'DefSysCode', 'def_sys_code')
+
+	ret_status = %ax_call(page_done_id, 'StartSound', sound_name)
+
+	;make the first page visible
+	current_page = 1	;set to first page
+	new_page = 1		;make the new page the first also
+	xcall set_current_page
+
+	;now process the container.
+	xcall ax_show(container_id)
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	ret_status = %win_proc(1)
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;on return, the user has either completed the control, and entered all
+	;required details, or canceled the operation.
+	;a return status of 99 indicates the user aborted
+
+	if(ret_status.ne.99) call complete_wizard_details
+
+	return
+
+
+complete_wizard_details,
+
+;now the wizard is complete, we can work out line values for
+;all selected products.
+
+	spc_wizard.env_type = 2  			;client server mode
+	
+	len = %convert_spc_wizard(spc_wizard, returned_lines)
+	
+	if(len.gt.0)
+	  begin
+		call load_product_list
+		quote_to_save = TRUE
+	  end
+	
+	return
+
+
+load_product_list,
+
+	;make sure we are at the bottom of the list
+	xcall l_queue(list_lid, D_LBOTTOM)
+	
+	;for each returned product - load into the list
+	for count from 1 thru len
+	  begin
+	
+		;get the new line data from the convertion routine return data
+		new_spc_line = returned_line(count)
+		xcall add_to_list(spc_line, new_spc_line, program_data)
+	  end
+
+	return
+
+.end
+
+
+.subroutine closecontrol
+
+;subroutine called by the control when the user select to close,
+;or cancel the wizard operation
+
+.proc
+
+	xcall win_stop(99)
+
+	xreturn
+
+.end
+
+
+.subroutine forwardpage
+
+a_control_id,		n					;control ID
+
+.include 'wizard_setup.gbl'
+
+.align
+record
+	result,			i4					;ax call result
+
+.proc
+
+	new_page = current_page + 1
+	xcall set_current_page
+
+	xreturn
+	
+.end
+
+.subroutine backpage
+
+a_control_id,		n					;control ID
+
+.include 'wizard_setup.gbl'
+	
+.proc
+
+	new_page = current_page - 1
+	xcall set_current_page
+
+	xreturn
+
+.end
+
+
+.subroutine set_current_page
+
+;based on the two variables, current_page and new_page, held in the
+;global data section, hide the current page and make the new page
+;visible
+
+global data section wizard
+.include 'SPC_WIZARD' repository, record = 'spc_wizard'
+endglobal
+
+.align
+stack record
+	result,			i4					;ax call result
+	check,			i4					;result of a check box on a ax control
+	sys_index,		i4					;curent system index
+	type,			a1					;distribution type
+	name,			a15					;db name
+	done_text,		a2000				;done text for last window
+
+
+.include 'wizard_setup.gbl'
+
+.proc
+
+	using new_page select
+	(.lt.1), new_page = 1
+	(.gt.D_MAX_PAGE), new_page = D_MAX_PAGE
+	endusing
+
+	if(new_page.ne.current_page)
+	  begin
+		call copy_page_properties
+		xcall ax_hide(page_array_id[current_page])
+	  end
+
+	current_page = new_page
+	xcall ax_show(page_array_id[current_page])
+
+	xreturn
+
+
+copy_page_properties,
+
+	;based on the current page, get the porperties from the page, and/or
+	;update the current page properties.  Also use the new page to set/
+	;get properties.
+
+	using current_page select
+;page_welcome_id
+	(1),	nop
+;page_os_id
+	(2),	call os_page
+;page_env_id
+	(3),	call env_page
+;page_rep_id
+	(4),	call rep_page
+;page_odbc_id
+	(5),	call odbc_page
+;page_sql_id
+	(6),	call sql_page
+;page_net_id
+	(7),	call net_page
+;page_dist_id
+	(8),	call dist_page
+;page_doc_id
+	(9),	call doc_page
+;page_web_id
+	(10),	call web_page
+	endusing
+
+	return
+
+;os_page
+os_page,
+	sys_code = %ax_getint(page_array_id[current_page], 'OSSysCode')
+	sys_index = %ax_getint(page_array_id[current_page], 'GetCurrentSysIndex')
+	
+	;now update other pages with the default
+	
+	xcall ax_set(page_odbc_id, 'SetSysIndex', sys_index)
+	xcall ax_set(page_net_id, 'SetSysIndex', sys_index)
+	xcall ax_set(page_sql_id, 'SetSysIndex', sys_index)
+	
+	return
+
+;page_env_id
+env_page,
+
+	num_psde = %ax_getint(page_array_id[current_page], 'ENVPsdeNum')
+	num_run = %ax_getint(page_array_id[current_page], 'ENVRunNum')
+
+	return
+
+;page_rep_id
+rep_page,
+
+	num_rw = %ax_getint(page_array_id[current_page], 'REPRwNum')
+	num_rwr = %ax_getint(page_array_id[current_page], 'REPRunNum')
+	
+	return
+
+;page_odbc_id
+odbc_page,
+	
+	clear num_genl, num_genr
+	result = %ax_getint(page_array_id[current_page], 'ODBCNumCons')
+	if(%ax_getint(page_array_id[current_page], 'ODBCClientServer')) then
+		num_genr = result
+	else
+		num_genl = result
+	sys_code_odbc = %ax_getint(page_array_id[current_page], 'ODBCSysCode')
+
+	return
+
+;page_sql_id
+sql_page,
+	clear db_overlay
+	result = %ax_getint(page_array_id[current_page], 'SQLNumCons')
+	check = %ax_getint(page_array_id[current_page], 'SQLClientServer')
+	
+	case %ax_getint(page_array_id[current_page], 'SQLDataBase') of
+	begincase
+	0 :	if check
+		then db_r_allbase = result
+		else db_l_allbase = result
+	1 :	if check
+		then db_r_db2 = result
+		else db_l_db2 = result
+	2 :	if check
+		then db_r_informix = result
+		else db_l_informix = result
+	3 :	if check
+		then db_r_ingress = result
+		else db_l_ingress = result
+	4 :	if check
+		then db_r_odbc = result
+		else db_l_odbc = result
+	5 :	if check
+		then db_r_oracle = result
+		else db_l_oracle = result
+	6 :	if check
+		then db_r_rdb = result
+		else db_l_rdb = result
+	7 :	if check
+		then db_r_sql = result
+		else db_l_sql = result
+	8 :	if check
+		then db_r_sybase = result
+		else db_l_sybase = result
+	endcase
+
+	sys_code_db = %ax_getint(page_array_id[current_page], 'SQLSysCode')
+
+	return
+
+;page_net_id
+net_page,
+
+	clear num_xfsv
+	num_xfsv = %ax_getint(page_array_id[current_page], 'NETNumCons')
+	sys_code_xfsv = %ax_getint(page_array_id[current_page], 'NETSysCode')
+
+	return
+
+;page_dist_id
+dist_page,
+
+	clear num_disa,num_disb,num_disc,num_disd
+	xcall ax_get(page_array_id[current_page], 'DISTType', type)
+	using type select
+	('A'), num_disa = 1
+	('B'), num_disb = 1
+	('C'), num_disc = 1
+	('D'), num_disd = 1
+	endusing
+	
+	return
+
+;page_doc_id
+doc_page,
+
+	doc_cd = %ax_getint(page_array_id[current_page], 'DOConCD')
+	doc_cd = -doc_cd
+	doc_full = %ax_getint(page_array_id[current_page], 'DOConPaper')
+	doc_full = -doc_full
+
+	return
+
+;page_web_id
+web_page,
+
+	num_xfsp = %ax_getint(page_array_id[current_page], 'WEBRequired')
+
+	;if moving to the done page, set done page poperties!
+
+	if(new_page.gt.current_page)
+	  begin
+		xcall make_quote_text(spc_wizard, done_text)
+		call done_page
+	  end
+	
+	return
+
+;page_done_id
+done_page,
+
+	xcall make_quote_text(spc_wizard)
+
+	return
+
+.end
+
+
+.subroutine wizardfinished				;called when all details complete
+
+.proc
+
+	xcall win_stop(1)
+	
+	xreturn
+
+.end
+
+
+.subroutine def_sys_code
+
+a_object_id,		n
+a_sys_code,			n
+
+;when the sql page initialises, this method is called.
+;here we can pass back the required sys default code
+
+global data section wizard
+.include 'SPC_WIZARD' repository, record = 'spc_wizard'
+endglobal
+
+.align
+record
+	result,			i4					;result of function call
+
+.proc
+
+	result = %ax_newval(a_sys_code, sys_code)
+
+	xreturn
+.end
+
+
+.subroutine make_quote_text, varargs
+group spc_wizard,	a
+	.include 'SPC_WIZARD' repository, norecord
+endgroup
+
+.include 'wizard_setup.gbl'
+
+.align
+record
+	count,			i4					;counter
+	sql_count,		i4					;counter
+	result,			i4					;ax call result
+	name,			a15					;db name
+	
+record
+	sys,            [12] a*
+&                       ,'003 SCO Unix'
+&                       ,'004 IBM RS/6000'
+&                       ,'005 Altos 386'
+&                       ,'009 HP 9000'
+&                       ,'010 DG AViiON'
+&                       ,'012 Silicon Graphics'
+&                       ,'020 SUN Solaris II'
+&                       ,'021 Digital Unix'
+&                       ,'101 Win95/NT (Intel)'
+&                       ,'102 Win95/NT (AXP)'
+&                       ,'200 AXP/VMS'
+&                       ,'201 VAX/VMS'
+
+
+.proc
+
+	;find system code in array
+	for count from 1 thru 10
+		if (%instr(1, sys[count], %string(sys_code,'XXX'))) exitloop
+	
+	xcall ax_call(page_done_id, 'ClearLic')
+
+	xcall ax_set(page_done_id, 'ServerName', sys[count])
+
+	if num_psde
+		xcall ax_set(page_done_id, 'NumPSDE', num_psde)
+	if num_run
+		xcall ax_set(page_done_id, 'NumRUN', num_run)
+	if num_rw
+		xcall ax_set(page_done_id, 'NumRPTW', num_rw)
+	if num_rwr
+		xcall ax_set(page_done_id, 'NumWRUN', num_rwr)
+
+	for sql_count from 1 thru 10
+		if db_local_overlay[sql_count] .or. db_remote_overlay[sql_count] exitloop	
+	
+	if sql_count.le.10
+	  begin
+		case sql_count of
+		begincase
+		1: name = "Oracle"
+		2: name = "Rdb"
+		3: name = "Sybase"
+		5: name = "Informix"
+		6: name = "Allbase"
+		7: name = "DB2"
+		8: name = "Ingress"
+		9: name = "ODBC"
+		10 : name = "SQL"
+		endcase
+		xcall ax_set(page_done_id, 'NumSQL',
+&				db_local_overlay[sql_count] + db_remote_overlay[sql_count])
+		xcall ax_set(page_done_id, 'SQLName', name)
+	  end
+
+	if num_genl .or. num_genr
+		xcall ax_set(page_done_id, 'NumODBC', num_genl+num_genr)
+	
+	if num_xfsv
+		xcall ax_set(page_done_id, 'NumXFSV', num_xfsv)
+	
+	if num_xfsp
+		xcall ax_set(page_done_id, 'NumXFSP', num_xfsp)
+
+	if num_disa	.or. num_disb .or. num_disc	.or. num_disd
+		xcall ax_set(page_done_id, 'NumDOC', num_disa+num_disb+num_disc+num_disd)
+		
+	xreturn
+
+.end
+
+

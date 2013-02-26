@@ -1,0 +1,215 @@
+ 
+;  SYNERGY DATA LANGUAGE OUTPUT
+;
+;  REPOSITORY     : C:\Dev\Demos\TOOLKIT\LIST_INPUT\rpsmain.ism
+;                 : C:\Dev\Demos\TOOLKIT\LIST_INPUT\rpstext.ism
+;                 : Version 9.5.3
+;
+;  GENERATED      : 16-FEB-2012, 12:51:16
+;                 : Version 9.3.1b
+;  EXPORT OPTIONS : [ALL] 
+ 
+ 
+Template ELB_NAME   Type ALPHA   Size 255
+   Description "Name of the ELB where routine lives"
+   Prompt "ELB name"
+   Info Line "Name, including logicals, of the library holding the routine"
+   Required
+ 
+Template NUM_PARAM   Type DECIMAL   Size 2
+   Description "paramater numbers"
+   Prompt "Number of parameters"
+   Info Line "Total/maximum number of parameters"
+ 
+Template ARRAY_DIM   Type DECIMAL   Size 1
+   Description "array dimension"
+   Prompt "Dimensions"   Info Line "Number of array dimensions"
+   Default "1"   Automatic
+   Range 1 1
+ 
+Template DATA_TYPE   Type DECIMAL   Size 1
+   Description "parameter data type"
+   Prompt "Data type"   Info Line "Select parameter data type"
+   Default "A"
+   Required
+   Selection List 0 0 0  Entries "Alpha", "Decimal", "Implied decimal",
+         "Integer"
+   Enumerated 15 1 1
+   Leave Method "lv_data_type"
+ 
+Template ELB_NAME_ARRAY   Parent ELB_NAME   Size 50   Dimension 5
+ 
+Template END_CHAR   Type ALPHA   Size 1
+   Description "End character"
+   Prompt "End Character"   Info Line "Any non-blank character"
+   Default "X"
+ 
+Template FILE_DATE   Type DATE   Size 8   Stored YYYYMMDD
+   Description "Date field last updated"
+   Prompt "Date last updated"
+ 
+Template MAX_PARAM   Parent NUM_PARAM
+   Prompt "Maximum Number of parameters"
+ 
+Template METHOD_ID   Type ALPHA   Size 10
+   Description "method identifier"
+   Prompt "Method ID"
+   Info Line "The name of the function/subroutine being defined"
+   Uppercase
+   Required
+ 
+Template METHOD_TYPE   Type ALPHA   Size 1
+   Description "Type of method being defined"
+   Prompt "Type"   Info Line "Type of method"
+   Uppercase   Default "F"
+   Required
+   Selection List 0 0 0  Entries "F (Synergy routine)"
+ 
+Template MIN_PARAM   Parent NUM_PARAM
+   Prompt "Minimum Number of parameters"
+   Info Line "Minimum number of parameters"
+ 
+Template PRECISION   Type DECIMAL   Size 2
+   Description "implied decimal precision"
+   Prompt "Precision"   Info Line "Implied decimal precision value"
+   Break   Required
+   Range 1 10
+   Leave Method "lv_precision"
+ 
+Template REQ_FLAG   Type ALPHA   Size 1
+   Description "Set if parameter is required"
+   Prompt "Required ?"
+   Info Line "Any non-blank character indicates parameter is required"
+   Selection Window 0 0 "req_sel"
+ 
+Template RETURN   Type ALPHA   Size 1
+   Description "non-blank chatacter if updateable"
+   Prompt "Updateable ?"
+   Info Line "Any non-blank character if parameter is updateable"
+   Selection Window 0 0 "upd_sel"
+ 
+Template RETURN_LEN   Type DECIMAL   Size 2
+   Description "Length of the return value"
+   Prompt "Length"   Info Line "Length in bytes of the return value"
+ 
+Template RETURN_TYPE   Type DECIMAL   Size 1
+   Description "return type, if a function"
+   Prompt "Return Type"
+   Info Line "Define the returned data type of a function"
+   Selection List 0 0 0  Entries "No return value", "Alpha", "Decimal",
+         "Implied decimal", "Integer", "^VAL"
+   Enumerated 15 0 1
+   Leave Method "lv_return_type"
+ 
+Template SEQ_PARAM   Parent NUM_PARAM
+   Description "Parameter sequence number"
+   Prompt "Sequence number"
+   Info Line "Argument/parameter position as declaired in the routine"
+   Required
+ 
+Template SIZE   Type DECIMAL   Size 6
+   Description "Size of the parameter"
+   Prompt "Size"   Info Line "Size in bytes of the parameter"
+   Required
+ 
+Template SUB_NAME   Type ALPHA   Size 30
+   Description "name of the subroutine in the ELB"
+   Prompt "Name"   Info Line "Name of the function, or subroutine"
+   Uppercase
+   Required
+ 
+Template TYPE_IND   Type ALPHA   Size 1
+   Description "^VAL/^REF indicator"
+   Prompt "Parameter indicator"
+   Info Line "Either (V) for ^VAL, or (R) for ^REF"
+   Selection List 0 0 0  Entries "None", "^Val", "^Ref"
+ 
+Structure CDT   DBL ISAM
+   Description "Method descriptor table"
+ 
+Field CDT_METHOD_ID   Template METHOD_ID
+   Noarrive Method   Leave Method "force_entry"   Nodrill Method
+ 
+Field CDT_METH_TYPE   Template METHOD_TYPE
+ 
+Field CDT_NAME   Template SUB_NAME
+ 
+Field CDT_RET_TYPE   Template RETURN_TYPE
+ 
+Field CDT_RET_LEN   Template RETURN_LEN
+ 
+Field CDT_NUM_PARAM   Template MAX_PARAM
+ 
+Field CDT_MIN_PARAM   Template MIN_PARAM
+ 
+Field CDT_FILE_DATE   Template FILE_DATE
+ 
+Field CDT_ELB_NAME   Template ELB_NAME_ARRAY
+ 
+Field CDT_SPARE   Type ALPHA   Size 5
+   Description "spare"
+ 
+Field CDT_ELB_SHORT   Template ELB_NAME   Size 50   Overlay CDT_ELB_NAME:0
+ 
+Field CDT_END_CHAR   Template END_CHAR
+ 
+Key PRIMARY   ACCESS   Order ASCENDING   Dups NO
+   Description "method id"
+   Segment FIELD   CDT_METHOD_ID
+ 
+Key SUB_NAME   ACCESS   Order ASCENDING   Dups YES
+   Description "name of the subroutine"
+   Segment FIELD   CDT_NAME
+ 
+Structure CMPDT   DBL ISAM
+   Description "Method parameter descriptor table"
+ 
+Field CMPDT_METH_ID   Template METHOD_ID
+ 
+Field CMPDT_PARAM_SEQ   Template SEQ_PARAM
+ 
+Field CMPDT_PRIM_KEY   Type ALPHA   Size 12   Overlay CMPDT_METH_ID:0
+   Description "primary key"
+ 
+Field CMPDT_DATA_TYPE   Template DATA_TYPE
+ 
+Field CMPDT_ARRAY_DIM   Template ARRAY_DIM
+ 
+Field CMPDT_SIZE   Template SIZE
+ 
+Field CMPDT_PRECISION   Template PRECISION
+   Leave Method "lv_precision"
+ 
+Field CMPDT_RETURN   Template RETURN
+ 
+Field CMPDT_RETURN_OL   Template RETURN   Type DECIMAL   Overlay CMPDT_RETURN:0
+   Checkbox
+   Noselect
+   Noenumerated
+ 
+Field CMPDT_PARAM_IND   Template TYPE_IND
+ 
+Field CMPDT_PARAM_IND_OL   Template TYPE_IND   Type DECIMAL
+   Overlay CMPDT_PARAM_IND:0
+   Radio
+   Enumerated 4 0 1
+ 
+Field CMPDT_REQ   Template REQ_FLAG
+ 
+Field CMPDT_REQ_OL   Template REQ_FLAG   Type DECIMAL   Overlay CMPDT_REQ:0
+   Checkbox
+   Noselect
+   Noenumerated
+ 
+Key PRIMARY   ACCESS   Order ASCENDING   Dups NO
+   Description "method name and sequence number"
+   Segment FIELD   CMPDT_PRIM_KEY
+ 
+File CDT   DBL ISAM   "cdt.ism"
+   Description "Method parameter table"
+   Assign CDT
+ 
+File CMPDT   DBL ISAM   "cmpdt.ism"
+   Description "Method descriptor table"
+   Assign CMPDT
+ 

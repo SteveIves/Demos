@@ -1,0 +1,767 @@
+.main
+
+;;
+;; SCRCMP.dbl
+;;
+;; This program builds a window library, from a list of script files
+;;
+;; Change History
+;;   8th Feb 1999    Initial Coding
+;;
+
+.include 'WND:tools.def'
+
+
+.define D_BWL_APP		,"SCRCMP"	;application name
+.define D_BWL_VERSION		,"1.0"		;application version
+
+.define D_MEM_INIT		,20		;memory array initial size
+.define D_MEM_INCR		,20		;memory array increment
+
+.define D_ERR_OPEN		,-2		;cannot open library
+.define D_ERR_NODATA	,-1			;no data arguments passed
+.define D_ERR_NONE		,0		;no error
+.define D_ERR_SCRIPT	,1			;script processing error
+
+.align
+literal
+		;warning messages
+		txt_wlns		,a* 	,'Window library not specified'
+		txt_processing		,a*	,'Processing...'
+		txt_usage		,a*	,'USAGE:dbr scrcmp -w window_library [-c] [-r] [-n] [-l script_file_list] [-s script_file]'
+		txt_sfns		,a*	,'Script file not specified'
+		txt_wldne		,a*	,'Window Library does not exist'
+		txt_sfdne		,a*	,'Script file does not exist'
+		txt_overwrite		,a*	,'Overwrite'
+		txt_wlae		,a*	,'Window Library already exists'
+
+		txt_stats		,a*	,'Library Stats'
+		txt_warning		,a*	,'Total of %d errors and %d warnings in library "%a"'
+
+		;screen prompts
+		txt_window_library	,a*	,'Window Library'
+		txt_create_mode		,a*	,'Create mode'	
+		txt_script_file		,a*	,'Script file'
+
+		;button & menu column prompts
+		txt_script		,a*	,'Script'
+		txt_quit		,a*	,'Quit'
+
+		;menu column heading
+		txt_options		,a*	,'Options'
+		txt_about		,a*	,'About'
+
+.define D_MODE_SIZ			,16	;MODE array : field size
+.define D_MODE_NUM			,3	;MODE array : number of entries
+		
+		; create mode selection window
+		mode,			D_MODE_NUM a D_MODE_SIZ
+		&				,'Do not Create   '
+		&				,'Create if needed'
+		&				,'Create always   '
+
+
+external function
+		btrim			,a	;trim both ends of string and
+												; remove surrounding quote chars
+		process_script	,^VAL		;process script
+		
+structure array
+		scr_fil			,a255	;array of script file names
+
+.align
+record window_data
+		wnd_library		,a50	;window library name
+		create_mode		,d1	;window create mode
+		script_file		,a50	;script file name
+
+.align
+record clr
+		command			,a255	;command line
+		message			,a255	;message
+		menu_control		,a500	;menu control string
+		fld			,a30	;input field
+
+.align
+record clr_i
+		status			,i4	;function return status
+		inp_chan		,i4	;input channel
+		arr_num			,i4	;number of entries in array
+		arr_siz			,i4	;size of array
+		col_id			,i4	;menu column id
+		win_id			,i4	;input window id
+		build_id		,i4	;build window id
+		pos			,i4	;position in command line
+		pos2			,i4	;position in command line
+		parse_error		,i4	;parse error
+		m_arr			,i4	;memory handle
+		len			,i4	;length of message
+		c_mode			,i4	;create mode argument passed
+
+.proc
+
+		clear clr, ^i(clr_i)
+
+		xcall u_start
+
+		;allocate memory for array of filenames
+		arr_siz = D_MEM_INIT
+		m_arr = %mem_proc(DM_ALLOC, ^size(array)*arr_siz)
+		clear ^m(array(1,arr_siz*^size(array)), m_arr)
+
+		; get command line
+		xcall cmdln(command)
+
+		; decode command line parameters
+		if (command)
+			call process_command_line
+
+		; no/invalid command line, setup toolkit to ask for script file
+		if (.not. command)
+		  begin
+		    ;setup input window
+		    call setup_window
+
+		    clear window_data
+		    ;set create mode to never
+		    create_mode = D_CREATE_NEVER
+			
+		    xcall i_dspfld(win_id, 'CREATE_MODE', create_mode)
+		  end
+
+		;main processing loop (only performed once if command parameters passed)
+		do
+		  begin
+		    ;ask for window library and script file
+		    if ( .not. command)
+		      call get_script_file
+
+		    ;something to process?
+		    if (arr_num)
+		      begin
+			;remove window
+			xcall u_window(D_REMOVE, win_id)
+				
+			;display 'processing' message
+			xcall e_sect(%atrim(txt_processing), D_INFO, D_CLEAR, 
+  &				D_LEFT)
+			xcall u_update
+
+			;compile script
+			status = %process_script(wnd_library, create_mode, 
+  &				arr_num, ^m(array,m_arr))
+
+			;clear processing message
+			xcall e_sect(' ', D_INFO, D_CLEAR, D_LEFT)
+			;replace window
+			xcall u_window(D_MOVE, win_id, 0, 0)
+		      end
+		  end
+		until (.not.arr_num .or. (status .lt. D_ERR_NONE) .or. command)
+		;exit if no script files entered or fatal script processing 
+		; error or command line arguments were passed (only need to 
+		; execute loop once)
+
+		;display window library error stats
+		if (wnd_library .and. %scr_errorcount(D_ALL, D_LIBRARY))
+		  call display_error
+
+		xcall u_finish
+		stop
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; process the command line, and see if a valid file was passed
+; if not, clear the command line value
+
+process_command_line,
+
+	clear window_data, parse_error, c_mode
+
+	;find first parameter
+	pos = %instr(1, command, '-')
+	if (.not. pos)
+	  begin			;no parameters
+	    clear command
+	    return
+	  end
+
+	while(pos)
+	  begin
+	    pos += 1
+			
+	    ;find next parameter
+	    pos2 = %instr(pos, command, '-')
+	    if(.not. pos2) 
+	      pos2 = %trim(command) + 1
+			
+	    ;which parameter?
+	    using command(pos:1) select
+('w'),	      ;window library filename
+	      begin
+		if (wnd_library) 
+		  parse_error = 1
+		wnd_library = %btrim(command(pos+1, pos2-1))
+	      end
+('c'),	      ;create = always
+	      begin
+		if (c_mode) then
+		  parse_error = 1
+		else
+		  c_mode = 1
+		create_mode = D_CREATE_ALWAYS
+	      end
+('r'),	      ;create = if required
+	      begin
+		if (c_mode) then
+		  parse_error = 1
+		else
+		  c_mode = 1
+		create_mode = D_CREATE_IFNEEDED
+	      end
+('n'),	      ;create = never
+	      begin
+		if(c_mode) then
+		  parse_error = 1
+		else
+		  c_mode = 1
+		create_mode = D_CREATE_NEVER
+	      end
+('l'),	      ;window script list filename
+	      begin
+		script_file = %btrim(command(pos+1, pos2-1))
+		if (script_file) then
+		  call load_script_list
+		else
+		  parse_error = 1
+	      end
+('s'),	      ;window script filename
+	      begin
+		script_file = %btrim(command(pos+1, pos2-1))
+		if (script_file) then
+		  call add_to_array
+		else
+		  parse_error = 1
+	      end
+(),	      parse_error = 1
+	    endusing
+
+	    ;look for next parameter
+	    if ((pos2 .lt. %trim(command)) .and. .not. parse_error) then
+	      pos = pos2
+	    else
+	      clear pos
+	  end
+
+	if ((.not. wnd_library) .or. (.not. arr_num) .or. parse_error)
+	  begin
+	    ;invalid command options
+	    xcall u_message(txt_usage)
+	    clear command
+	  end
+
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; read list of scripts from input file
+load_script_list,
+
+	xcall u_open(inp_chan, 'I', script_file,,, status)
+	if (status)
+	  begin
+	    parse_error = 1
+	    return
+	  end
+
+	;read first record
+	call read_input_file
+
+	while(script_file)
+	  begin
+	    call add_to_array
+
+	    ;read next record
+	    call read_input_file
+	  end
+		
+	xcall u_close(inp_chan)
+		
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; add script file to array
+add_to_array,
+
+	if (arr_num.ge.arr_siz) 
+	  call resize_array
+
+	arr_num += 1
+	^m(scr_fil(arr_num), m_arr) = script_file
+
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; get script file from input file
+read_input_file,
+
+	onerror no_script_file
+	reads(inp_chan, script_file)
+	offerror
+	return
+
+no_script_file,
+
+	offerror
+	clear script_file
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; get script file from user
+get_script_file,
+	if (wnd_library)
+	  begin
+	    ;reset create mode to 'never'
+	    create_mode = D_CREATE_NEVER
+	    xcall i_dspfld(win_id, 'CREATE_MODE', create_mode)
+
+	    ;clear script file
+	    clear script_file
+	    xcall i_dspfld(win_id, 'SCRIPT_FILE', script_file)
+
+	    ;next field is 'script_file'
+	    xcall i_next(win_id,, 'SCRIPT_FILE')
+	  end
+
+	do
+	  begin
+  	    xcall i_input(win_id,, window_data)
+	    if (g_select) then
+	      call process_menu
+	    else
+	      begin
+		if (g_setsts) then
+		  call process_break
+		else
+		  call process_set
+	      end
+	  end
+	until(g_select)
+		
+	;reset memory array
+	clear arr_num
+	clear ^m(array((arr_num+1)*^size(array),arr_siz*^size(array)), m_arr)
+
+	if (g_entnam .eq. 'SCRIPT ')
+	  begin
+	    ;disable the window library field (once selected)
+	    xcall i_disable(win_id,'WND_LIBRARY')
+	    ;disable the create_mode field
+	    xcall i_disable(win_id,'CREATE_MODE')
+
+	    call add_to_array
+	  end
+		
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+;menu column entry selected
+process_menu,
+		
+	using g_entnam select
+('SCRIPT'),
+	  begin
+	    ;validate fields are correct
+	    call check_fields
+	    if (fld)
+	      begin
+		xcall i_next(win_id,, fld)
+		clear g_select
+	      end
+	  end
+('O_QUIT'),
+	  nop
+('ABOUT'),
+	  begin
+	    ;display about box
+	    xcall u_about(D_BWL_APP, D_BWL_VERSION, %datecompiled)
+	    clear g_select
+	  end
+(),	  clear g_select
+	endusing
+		
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+;break field processing
+process_break,
+
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+;input set complete
+process_set,
+
+	;check all fields are valid
+	call check_fields
+	if (fld) then
+	  begin
+	    xcall i_next(win_id,, fld)
+	    clear g_select
+	  end
+	else
+	  begin
+	    ;'signal' SCRIPT and process
+	    g_select = 1
+	    g_entnam = 'SCRIPT'
+	  end
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; check fields are valid.
+;  if not, return 'FLD' with the invalid fieldname
+check_fields,
+
+	if (.not. wnd_library)
+	  begin
+	    xcall u_message(txt_wlns)
+	    fld = 'WND_LIBRARY'
+	    return
+	  end
+		
+	if (.not.script_file)
+	  begin
+	    xcall u_message(txt_sfns)
+	    fld = 'SCRIPT_FILE'
+	    return
+	  end
+
+	; not creating a new window library
+	if (create_mode .eq. D_CREATE_NEVER)
+	  begin
+	    xcall u_open(inp_chan, 'I', wnd_library,,, status)
+
+	    ; error opening window library
+	    if(status)
+	      begin				
+		xcall u_message(txt_wldne)
+		fld = 'WND_LIBRARY'
+		return
+	      end
+	    xcall u_close(inp_chan)
+	  end
+
+	; make sure script file
+	xcall u_open(inp_chan, 'I', script_file,,, status)
+
+	; error opening script file
+	if (status)
+	  begin
+	    xcall u_message(txt_sfdne)
+	    fld = 'SCRIPT_FILE'
+	    return
+	  end
+	xcall u_close(inp_chan)
+
+
+	; creating a new window library
+	if (create_mode .eq. D_CREATE_ALWAYS)
+	  begin
+	    xcall u_open(inp_chan, 'I', wnd_library,,, status)
+
+	    ; opening window library
+	    if (.not. status)
+	      begin
+		xcall u_close(inp_chan)
+
+		;Overwrite existing window library?
+		if (%u_msgbox(txt_overwrite,
+  &			D_MYESNO+D_MICONQUESTION+D_MDEFBUTTON2, 
+  &			txt_wlae) .eq. D_MIDNO)
+		  begin
+		    fld = 'WND_LIBRARY'
+		    return
+	          end
+	      end
+	  end
+		
+	clear fld
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+;create input window(s) and menu column(s)
+setup_window,
+
+	clear window_data
+
+	xcall ib_input(build_id, 'INPUT1', 10, 71)
+	xcall ib_field(build_id, 'WND_LIBRARY', D_FLD_TYPE, D_ALPHA,
+	&			   D_FLD_SIZE, ^size(wnd_library),
+	&			   D_FLD_FPOS, 2, 20,
+	&			   D_FLD_POS, 2, 2,
+	&			   D_FLD_PROMPT, txt_window_library)
+	xcall ib_field(build_id, 'CREATE_MODE', D_FLD_TYPE, D_NUMERIC,
+	&			   D_FLD_SIZE, 1,
+	&			   D_FLD_FPOS, 4, 20,
+	&			   D_FLD_POS, 4, 2,
+	&			   D_FLD_PROMPT, txt_create_mode,
+	&			   D_FLD_ENUM, D_MODE_SIZ, 0, 1,
+	&			   D_FLD_SELECT, 1, 1, 1,, 
+	&			   D_MODE_NUM, mode, D_FLD_RADIO)
+	xcall ib_field(build_id, 'SCRIPT_FILE', D_FLD_TYPE, D_ALPHA,
+	&			   D_FLD_SIZE, ^size(script_file),
+	&			   D_FLD_FPOS, 8, 20,
+	&			   D_FLD_POS, 8, 2,
+	&			   D_FLD_PROMPT, txt_script_file)
+	xcall ib_button(build_id, 'SCRIPT', DSB_TEXT, txt_script)
+	xcall ib_button(build_id, 'O_QUIT', DSB_TEXT, txt_quit)
+	xcall ib_buttonset(build_id, DSB_BOTTOM,, DSB_BEGIN)
+	xcall ib_end(build_id, win_id)
+
+	xcall u_window(D_PLACE, win_id, 1, 1)
+		
+	xcall mb_column(menu_control, 'COLUMN1', txt_options)
+	xcall mb_entry(menu_control, 'SCRIPT', txt_script)
+	xcall mb_entry(menu_control, 'O_QUIT', txt_quit)
+	xcall mb_entry(menu_control, 'ABOUT', txt_about)
+	xcall mb_end(menu_control, col_id)
+		
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; display error message(s)
+display_error,
+		
+	xcall s_bld(message, len, txt_warning,
+	&           %scr_errorcount(D_ERROR, D_LIBRARY),
+	&           %scr_errorcount(D_ALERT, D_LIBRARY),
+	&           wnd_library)
+	status = %u_msgbox(message(1:len), D_MOK+D_MICONINFO, txt_stats)
+		
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+; resize dynamic memory array
+resize_array,
+		
+	arr_siz += D_MEM_INCR
+	m_arr = %mem_proc(DM_RESIZ, ^size(array)*arr_siz)
+	clear ^m(array((arr_num+1)*^size(array),arr_siz*^size(array)), m_arr)
+	return
+.end
+
+
+;==============================================
+; process script into window library
+
+.function process_script ,^VAL
+
+	a_wnd_library		,a	;window library name
+	a_create_mode		,n	;window library create mode
+	a_num_script_files	,n	;number of script filenames
+	a_script_file		,a	;array of script filenames
+
+.include 'WND:tools.def'
+
+.align
+record clr_i
+	return_status		,i4	;function return status
+	create_mode		,i4	;window create mode
+	status			,i4	;status
+	cnt			,i4	;array cound
+		
+.proc
+
+	; validate that required parameters are passed
+	if (.not. ^passed(a_wnd_library) .or.
+	&   .not. ^passed(a_num_script_files) .or.
+	&   .not. ^passed(a_script_file)) 
+	  freturn D_ERR_NODATA
+
+	clear ^i(clr_i)
+
+	; set create mode
+	if (^passed(a_create_mode)) then
+	  create_mode = a_create_mode
+	else
+	  create_mode = D_CREATE_NEVER
+
+	; enter a new environment
+	xcall e_enter
+
+	; set script error method
+	xcall e_method(D_METH_SCRIPTERR, 'usr_scripterr')
+
+	; open window library
+	if (%scr_openlibrary(a_wnd_library, create_mode)) then
+	  begin
+	    ; assume no errors
+	    return_status = D_ERR_NONE
+
+	    for cnt from 1 thru a_num_script_files
+	      begin
+		;process script
+		status = %scr_process(a_script_file(cnt))
+		if (.not. status)
+		  return_status = D_ERR_SCRIPT
+	      end
+	    ; close window library
+	    xcall scr_closelibrary
+	  end
+	else
+	  return_status = D_ERR_OPEN
+
+	xcall e_exit
+	freturn return_status
+
+.end
+
+;==============================================
+; script error
+
+.subroutine usr_scripterr
+
+	a_type		,n	;message type
+				; Allowed values :
+				; D_ERROR, D_ALERT, D_INFO
+	a_message	,a	;message text
+	a_filename	,a	;library or script filename
+	a_linnum	,n	;script line number
+	a_line		,a	;script line text
+	a_ndx		,n	;script token start position
+	a_len		,n	;script token length
+		
+.include 'WND:tools.def'
+
+.align
+literal
+	txt_error	,a*	,'Error'
+	txt_warning	,a*	,'Warning'
+	txt_info	,a*	,'Info'
+	txt_msg_1	,a*	,'%a: at line %d of script %a [token %a]'
+	txt_msg_2	,a*	,'%a: in library %a'
+	txt_msg_3	,a*	,'%a:'
+	txt_warn_1	,a*	,'%a: at line %d of script %a [token %a]'
+	txt_warn_2	,a*	,'%a: in library %a'
+	txt_warn_3	,a*	,'%a:'
+	txt_info_1	,a*	,'%a:'
+
+	scr_err		,d1	,2	;script error
+	lib_err		,d1	,1	;library error
+	other_err	,d1	,0	;other error
+
+.align
+record clr
+	message		,a255
+
+.align
+record clr_i
+	len		,i4
+	status		,i4
+	type		,i4	;error type (script or library or other)
+.proc
+
+	;determine the type of error based on the parameters passed
+	if (.not. %passed(a_filename)) then
+	  type = other_err
+	else
+	  begin
+	    if (%passed(a_linnum)) then
+	      type = scr_err
+	    else
+	      type = lib_err
+	  end
+
+	;process the error
+	using a_type select
+(D_ERROR), call display_error
+(D_ALERT), call display_warning
+(D_INFO),  call display_info
+	endusing
+
+	xreturn
+		
+;++++++++++++++++++++++++++++++++++++++++++++++
+		
+display_error,
+
+	using type select
+(scr_err), xcall s_bld(message, len, txt_msg_1, txt_error, a_linnum, 
+	   &           a_filename, a_line(a_ndx:a_len))
+(lib_err), xcall s_bld(message, len, txt_msg_2, txt_error, a_filename)
+(), 	   xcall s_bld(message, len, txt_msg_3, txt_error)
+	endusing
+		
+	status = %u_msgbox(message(1:len)+'\n'+a_message, D_OK+D_MICONSTOP,
+	&		txt_error)
+
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+
+display_warning,
+		
+	using type select
+(scr_err), xcall s_bld(message, len, txt_warn_1, txt_warning, a_linnum,
+	   &           a_filename, a_line(a_ndx:a_len))
+(lib_err), xcall s_bld(message, len, txt_warn_2, txt_warning, a_filename)
+(), 	   xcall s_bld(message, len, txt_warn_3, txt_warning)
+	endusing
+	status = %u_msgbox(message(1:len)+'\n'+a_message, D_OK+D_MICONEXCLAM,
+	&	txt_warning)
+
+	return
+
+;++++++++++++++++++++++++++++++++++++++++++++++
+
+display_info,
+
+	xcall s_bld(message, len, txt_info_1, txt_info)
+		
+	status = %u_msgbox(message(1:len)+a_message, D_OK+D_MICONINFO,
+	&		txt_info)
+		
+	return
+.end
+
+
+;==============================================
+; trim both ends of a string
+
+.function btrim
+
+	a_string	,a
+
+.align
+record
+	pos		,i4	;position in string
+	len		,i4	;length of string
+
+.proc
+	; no string passed or string is empty
+	if(.not. ^passed(a_string) .or. (.not. a_string))
+	  freturn ' '
+
+	; find first non-space
+	pos = 1
+	while (.not. a_string(pos:1)) 
+	  pos += 1
+
+	;get position last non-space
+	len = %trim(a_string)
+
+	using a_string(pos:1) select
+('"',"'"), begin
+	     ; remove quotes
+	     if (a_string(len:1) .eq. a_string(pos:1))
+	       begin
+		 pos += 1
+		 len -= 1
+	       end
+	   end
+	endusing
+
+	; invalid string
+	if (len .lt. pos)
+	  freturn ' '
+
+	freturn a_string(pos, len)
+.end

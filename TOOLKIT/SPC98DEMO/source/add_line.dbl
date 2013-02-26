@@ -1,0 +1,57 @@
+;add_line.dbl
+
+; Add a line to the list of selected items.  Assumes the list is already created.
+
+.subroutine add_to_list
+
+group spc_line_current,			a
+	.include 'SPC_LINE' repository, norecord, nofields
+endgroup
+
+group spc_line_new,				a
+	.include 'SPC_LINE' repository, norecord
+endgroup
+
+.include 'demoprog.def'
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+.align
+stack record
+	request,			i4		;list request
+	num_item,			i4		;number of items in list
+	
+.proc
+
+	;find out hom many entries in the list
+	xcall l_status(list_lid, D_LLASTITM, num_item)
+
+	;append a new item into the list
+	xcall l_process(list_lid, request=D_LAPPEND, spc_line_current)	
+		
+    ;update the window list data
+	xcall i_display(list_iid,, spc_line_new)
+
+    xcall u_update
+		
+    ;update the newly inserted list item
+	xcall l_process(list_lid, request=D_LNOP, spc_line_new)
+		
+    ;update the list total
+	list_total += line_value
+		
+	;display the current order total
+	xcall l_sect(list_lid, "Total order value $ "+%string(list_total,'ZZZZX.XX'), D_CLEAR, D_FOOTER, D_POSITION, 1, 1)
+	
+	spc_line_current = spc_line_new
+
+	;make the list visible, once there is something to see
+	if (.not.num_item)
+	  xcall m_signal('O_SEELIST1')
+		
+	xreturn
+
+.end
+

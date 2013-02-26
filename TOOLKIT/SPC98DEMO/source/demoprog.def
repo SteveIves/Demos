@@ -1,0 +1,70 @@
+; demoprog.def
+
+group program_data, a
+	opsys_iid,			i4		;operating system window
+	opsys_index,		i4		;tab page index
+	dev_iid,			i4		;development input window
+	dev_index,			i4		;development tab index
+	run_iid,			i4		;runtime input window
+	run_index,			i4		;runtime tab index
+	report_iid,			i4		;report input window
+	report_index,		i4		;report tab index.
+	xfserver_iid,		i4		;report input window
+	xfserver_index,		i4		;report tab index.
+	docs_iid,			i4		;report input window
+	docs_index,			i4		;report tab index.
+	odbc_iid,			i4		;odbc input window
+	odbc_index,			i4		;odbc tab index.
+	sql_iid,			i4		;sql input window
+	sql_index,			i4		;sql tab index.
+	dist_iid,			i4		;distribution input window
+	dist_index,			i4		;distribution tab index.
+	;
+	list_iid,			i4		;list input window id
+	list_tmp_iid,		i4		;copy of the above window for l_data use!
+	list_lid,			i4		;products list id
+	list_visible,		i4		;set if list visible
+	backdrop_wid,		i4		;backdrop window id
+	;
+	tab_id,				i4		;tab container id
+	;
+	blank_set,			i4		;blank window events set
+	method_set,			i4		;windows method set id
+	tab_method_set,		i4		;method set to change focus to the tab
+	lst_method_set,		i4		;list requires focus
+	;
+	current_object,		i4
+	;
+	error_flag,			i4		;window load error flag
+	;
+	mfile_mid,			i4		;file menu id
+	medit_mid,			i4		;edit column
+	mtool_mid,			i4		;tools column id	
+	mwind_mid,			i4		;window coilumn id
+	minput_mid,			i4		;input entries
+	mselect_mid,		i4		;select list entries
+	mlist_mid,			i4		;list entries
+	mhelp_mid,          i4      ;help menu column
+    ;	
+	tb_id,				i4		;toolbar id
+	next_btn_x,			i4		;button position
+	;
+	quote_head_chan,	i4		;quote header channel
+	quote_detail_chan,	i4		;quote detail channel number
+	;
+	quote_to_save,		i4		;set if require saving	
+	;
+	running_gui,		i4		;set if on GUI
+	;
+	list_total,			d10.2
+	;
+	quote_name,			a30		;name of loaded/saved quote
+		
+endgroup
+
+
+.ifndef D_AS_SAVE
+	.define D_AS_SAVE		,1
+	.define D_AS_SAVEAS		,2
+	.define D_AS_OPEN		,3
+.endc

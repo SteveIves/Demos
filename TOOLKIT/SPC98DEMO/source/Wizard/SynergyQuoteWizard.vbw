@@ -1,0 +1,15 @@
+UsrWizardOS = 21, 49, 490, 433, C, 5, 20, 508, 494, C
+UsrWizardWelcome = 8, 8, 490, 468, C, 2, 8, 505, 481, C
+UsrWizardENV = 131, 172, 582, 578, C, 6, 34, 508, 507, C
+UsrSysCode = 48, 4, 571, 607, C, 98, 147, 641, 485, C
+UsrSqlDB = -140, 4, 435, 532, C, 94, 77, 455, 415, C
+UsrWizardREP = 87, 49, 579, 515, C, 1, 5, 502, 476, C
+UsrWizardODBC = -94, 6, 494, 501, C, 0, 5, 504, 479, C
+UsrWizardSQL = 190, 107, 661, 701, C, 0, 0, 334, 338, C
+UsrWizardNET = -34, -6, 486, 493, C, -2, -1, 502, 474, C
+UsrWizardDOC = 0, 0, 347, 346, C, 0, 0, 494, 488, C
+UsrWizardWEB = 110, 110, 471, 448, C, 9, 11, 508, 486, C
+UsrWizardDONE = 19, 18, 677, 677, , 0, 0, 478, 472, 
+UsrWizardDIST = 98, 134, 566, 577, C, -1, 7, 480, 463, C
+UsrSqlDbCmb = -101, 33, 424, 473, C, 96, 121, 621, 561, C
+UsrSysCodeCmb = 110, 110, 635, 550, C, 95, 101, 620, 541, C

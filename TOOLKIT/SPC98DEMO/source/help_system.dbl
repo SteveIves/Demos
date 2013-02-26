@@ -1,0 +1,26 @@
+.subroutine help_system
+a_ident,		a
+
+.include 'WND:tools.def'
+
+stack record
+	data,	a30
+
+.proc
+
+	;this routine is registered as the help method for the SynergyDemo program.
+	;It uses a Windows help file and the windows help system to display
+	;help about the program.
+	
+	if %passed(a_ident)
+	then data = a_ident
+	else clear data
+	
+  	if (.not. %u_winhelp(, 'DEMOHLP:demoprog.hlp', WHELP_CONTENTS, data))
+		xcall u_message("Unable to locate help file")
+
+	clear g_select
+	
+	xreturn
+
+.end

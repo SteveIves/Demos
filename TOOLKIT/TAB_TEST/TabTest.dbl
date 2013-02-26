@@ -1,0 +1,178 @@
+.main TabTest
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+
+.include "TESTRECORD" repository, record="testrecord"
+
+record
+    idcFile		,i4
+    idcTab		,i4
+    inpwnd		,[6]i4
+    tabset		,[2]i4
+    count		,i4
+    wndevents		,i4
+
+.proc
+
+	;Start UI toolkit
+    xcall u_start("TabTest.ism",1,0)
+	xcall w_caption(WC_SET,"Multiple Tabset Test")
+
+	
+	
+	;Create a window events method set
+	wndevents = %u_wndevents(D_CREATE,,D_EVENT_CLOSE,"close_box")
+
+	m_ldcol(idcFile,,"FILE",,,,D_GLOBAL)
+	m_ldcol(idcTab,,"TAB",,,,D_GLOBAL)
+	
+    ;Create tabset 1 containing input windows 1, 2 and 3
+    tabset[1] = %ts_tabset(DTS_CREATE,"TABSET1",10,60)
+    for count from 1 thru 3
+    begin
+		xcall i_ldinp(inpwnd[count],g_utlib,"INPWND"+%string(count),D_NOPLC)
+		xcall ts_tabset(DTS_WINDOW,tabset[1],inpwnd[count],"process_input")
+    end
+    
+	;Set parent tabset title and apply window events
+	xcall u_wndevents(D_ASSIGN,wndevents,tabset[1])
+	
+	;Add buttons to parent tabset
+	xcall ts_tabset(DTS_BUTTON,tabset[1],"OK",DSB_TEXT,"OK")
+    xcall ts_tabset(DTS_BUTTON,tabset[1],"CANCEL",DSB_TEXT,"Cancel")
+    xcall ts_tabset(DTS_BUTTON,tabset[1],"CONTINUE",DSB_TEXT,"Continue")
+	xcall b_disable(tabset[1],"CONTINUE")
+
+    ;Create child tabset containing windows 4, 5 and 6
+    tabset[2] = %ts_tabset(DTS_CREATE,"TABSET2",10,60,,,DTS_BOTTOM)
+    xcall w_brdr(tabset[2],WB_TITLE,"More")
+    for count from 4 thru 6
+    begin
+		xcall i_ldinp(inpwnd[count],g_utlib,"INPWND"+%string(count),D_NOPLC)
+		xcall ts_tabset(DTS_WINDOW,tabset[2],inpwnd[count],"process_input")
+    end
+
+    ;Add child tabset to page 4 of the parent tabset
+    xcall ts_tabset(DTS_WINDOW,tabset[1],tabset[2],"process_child_tabset")
+
+    ;Process the parent tabset
+	xcall u_window(D_PLACE,tabset[1],4,10)
+    repeat
+    begin
+		
+		xcall w_brdr(tabset[1],WB_TITLE,"Processing Parent Tab Set")
+		xcall ts_process(tabset[1],tabset,testrecord)
+	
+		using g_entnam select
+		("OK"),
+		begin
+			xcall u_message("Save the data!")
+			exitloop
+		end
+		("CANCEL"),
+			exitloop
+		("CONTINUE"),
+			nop
+		endusing
+    
+	end
+
+	;All done
+    xcall u_finish
+    stop
+
+.end
+
+;-------------------------------------------------------------------------------
+;This routine is called to process the input windows on all 6 input pages
+;
+.subroutine process_input
+
+    a_inpid		,i			;ID of input window on this page
+    a_tabset	,[*]i		;ID's of both tabsets
+    a_data		,a			;Input record
+
+.include "WND:tools.def"
+
+.proc
+
+    repeat
+    begin
+		xcall i_input(a_inpid,,a_data,,,,D_NOTERM)
+		if (g_select) then
+			exitloop
+		else
+			xcall i_next(a_inpid,,"*FRST*")
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;This routine is called to process the "child"
+;
+.subroutine process_child_tabset
+
+    a_tabid		,i			;ID of input window on this page
+    a_tabset	,[*]i       ;ID's of both tabsets
+    a_data		,a          ;Input record
+
+.include "WND:tools.def"
+
+.proc
+
+	xcall ts_tabset(DTS_DISABLE,a_tabset[1],1)
+	xcall ts_tabset(DTS_DISABLE,a_tabset[1],2)
+	xcall ts_tabset(DTS_DISABLE,a_tabset[1],3)
+
+	;Switch parent tabset button states
+	xcall b_disable(a_tabset[1],"OK")
+	xcall b_enable(a_tabset[1],"CONTINUE")
+
+	;Always start on page 1 of the child tabset
+	xcall ts_tabset(DTS_ACTIVE,a_tabset[2],1)
+
+	;Process the child tabset
+	repeat
+	begin
+
+		xcall w_brdr(a_tabset[1],WB_TITLE,"Processing Child Tab Set")
+		xcall ts_process(a_tabset[2],a_tabset,a_data)
+
+		using g_entnam select
+		("CONTINUE","CANCEL"),
+			exitloop
+		endusing
+
+	end
+
+	;Re-enable pages 1, 2 and 3 on the parent tabset
+	xcall ts_tabset(DTS_ENABLE,a_tabset[1],1)
+	xcall ts_tabset(DTS_ENABLE,a_tabset[1],2)
+	xcall ts_tabset(DTS_ENABLE,a_tabset[1],3)
+
+	;Switch button states back
+	xcall b_enable(a_tabset[1],"OK")
+	xcall b_disable(a_tabset[1],"CONTINUE")
+
+	;After processing the child tabset, continue on page 1 of the parent tabset
+	xcall ts_tabset(DTS_ACTIVE,a_tabset[1],1)
+
+	xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;This routine is called when the user closes a window
+;
+.subroutine close_box
+
+.proc
+	
+	xcall m_signal("CANCEL")
+	
+	xreturn
+
+.end

@@ -1,0 +1,41 @@
+
+subroutine extract_window_data
+
+	required in  a_winid	,n	;window id to extract from!
+	required out a_prtblock	,i	;return the text in a memory handle
+	optional out a_numline	,n	;return the number of lines in the window
+	optional out a_numcol	,n	;return the number of columns in the window
+	endparams
+
+	.include "DBLDIR:windows.def"
+
+	stack record local_data
+		win_area,		8d3
+		num_row,		d3@win_area + 6
+		num_col,		d3@win_area + 9
+	endrecord
+
+proc
+
+	init local_data
+
+	xcall w_info(WI_AREAS, a_winid, win_area)
+
+	xcall w_area(a_winid, WA_SET, 1, 1, num_row, num_col)
+
+	;Allocate dynamic memory for window data
+	a_prtblock = %mem_proc(DM_ALLOC+DM_STATIC+DM_BLANK,(num_row*num_col))
+
+	xcall w_info(WI_XFR, a_winid, WIX_DGET, ^m(a_prtblock))
+
+	if (^passed(a_numline))
+		a_numline = num_row
+
+	if (^passed(a_numcol))
+		a_numcol = num_col
+	
+	xreturn
+
+endsubroutine
+
+

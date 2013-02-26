@@ -1,0 +1,64 @@
+.main demo
+
+.include "WND:tools.def"
+
+external function
+	getmsg	,a
+
+.proc
+
+	xcall setup
+
+	xcall u_popup(,"HELLO")
+
+	xcall u_message(%message(1))
+
+	xcall u_finish
+
+.end
+
+.function message
+
+	msgnum	,n
+
+stack record
+	text	,a80
+
+.proc
+
+	xcall xsubr("getmsg",msgnum,text)
+	freturn %atrim(text)
+
+.end
+
+.subroutine setup
+
+.include "WND:tools.def"
+
+record
+	lang	,a10
+	len		,i4
+	winlib	,a40
+
+.proc
+
+	xcall getlog("LANG",lang,len)
+
+	using lang select
+	("EN"),
+	begin
+		winlib = "demo_en.ism"
+		xcall openelb("demo_en.elb")
+	end
+	("FR"),
+	begin
+		winlib = "demo_fr.ism"
+		xcall openelb("demo_fr.elb")
+	end
+	endusing
+
+	xcall u_start(winlib,1,0)
+
+	xreturn
+
+.end

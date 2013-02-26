@@ -1,0 +1,48 @@
+.script
+.date_generated "09/07/2005, 11:46"
+.version "8.1.7e"
+;
+.column FILE, "File"
+.entry CANCEL, "Exit"
+.end
+;
+.column TAB, "Tab"
+.entry TS_TABNEXT, "Next Tab", key(TAB)
+.end
+;
+.input INPWND1, 10, 60
+.title "Window 1"
+.repository_structure TESTRECORD
+.field FIELD1, pos(2, 3), fpos(2, 12)
+.end
+;
+.input INPWND2, 10, 60
+.title "Window 2"
+.repository_structure TESTRECORD
+.field FIELD2, pos(2, 3), fpos(2, 12)
+.end
+;
+.input INPWND3, 10, 60
+.title "Window 3"
+.repository_structure TESTRECORD
+.field FIELD3, pos(2, 3), fpos(2, 12)
+.end
+;
+.input INPWND4, 8, 50
+.title "Window 4"
+.repository_structure TESTRECORD
+.field FIELD4, pos(2, 3), fpos(2, 12)
+.end
+;
+.input INPWND5, 8, 50
+.title "Window 5"
+.repository_structure TESTRECORD
+.field FIELD5, pos(2, 3), fpos(2, 12)
+.end
+;
+.input INPWND6, 8, 50
+.title "Window 6"
+.repository_structure TESTRECORD
+.field FIELD6, pos(2, 3), fpos(2, 12)
+.end
+

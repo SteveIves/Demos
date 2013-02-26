@@ -1,0 +1,1042 @@
+;convert_spc_wizard.dbl
+
+.function convert_spc_wizard ,^VAL
+
+;********************************************************************
+; Converts data from the SPC quotation wizard into a series of products that can be ordered
+;
+;
+; 23-Apr-1998 v1.0 WJH  Initial programming
+; 28-Apr-1998 v1.1 RCM	Added logic for multiple system codes
+; 02-May-1998 v1.2 WJH	Added logic for distribution sets & documentation
+; 12-May-1998 v1.3 WJH	Check relevant system codes are set up when adding onet
+; 13-May-1998 v1.4 WJH	Added M_GET_CHAN macro to search for an unopened channel
+; 07-Aug-1998 v1.5 WJH	Code review changes
+;
+;********************************************************************
+
+group a_wiz,	a						;data from quote wizard
+.include 'SPC_WIZARD' REPOSITORY ,norecord
+endgroup
+
+a_output,       a						;buffer returned to calling routine
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+	external function
+build_line		,a						;build record LINE from wizard info
+find_line		,^VAL					;found product in LINE's buffer
+
+
+.include 'SPC_LINE' REPOSITORY  ,structure='line'
+
+.include 'ALM_PRICE' REPOSITORY  ,record='prc_rec'
+.include 'SPC_SYSTEM' REPOSITORY  ,record='system'
+.include 'SPC_SYSTEM' REPOSITORY  ,record='db_system_layout'
+.include 'SPC_SYSTEM' REPOSITORY  ,record='odbc_system_layout'
+.include 'SPC_SYSTEM' REPOSITORY  ,record='xfsv_system_layout'
+
+.define D_NUM_SYS_CODE   ,13
+
+	literal
+										;this array is an alternative to having
+										; an isam file to describe available
+										; system codes and description
+										; the first entry is blank to avoid
+										; subscript errors with array processing
+sys,            D_NUM_SYS_CODE a ^size(system)
+&                       ,'000                    '
+&                       ,'003SCO Unix'
+&                       ,'004IBM RS/6000'
+&                       ,'005Altos 386'
+&                       ,'009HP 9000'
+&                       ,'010DG AViiON'
+&                       ,'012Silicon Graphics'
+&                       ,'020SUN Solaris II'
+&                       ,'021Digital Unix'
+&                       ,'101Win95/NT (Intel)'
+&                       ,'102Win95/NT (AXP)'
+&                       ,'200AXP/VMS'
+&                       ,'201VAX/VMS'
+
+price_file,	a*	,'DEMODAT:price'		;pricing isam file name
+
+.align
+        record clr_i
+errno,          i4                      ;error return
+										; ( 0 - no error, >0 - fatal error, <0 - non-fatal error)
+lin_handle,     i4                      ;line memory handle
+item_no,        i4                      ;item number
+line_mem,		i4						;number of line structures allocated in memory
+ctr,            i4                      ;counter
+ch_price,		i4						;pricing isam file channel number
+xfserver,		i4						;xfServer already on quote
+onet,			i4						;SQLOpenNet already on quote
+error,			i4						;error flag
+
+
+.align
+        record clr
+systm,          a3						;system code
+data,			a ^size(line)			;data (returned from build_line)
+curr_prc_key,	a ^size(prc_key)		;current price key
+that_dreaded_word, d4.2					;discount
+price,			d8.2					;price
+total,			d8.2					;total price
+
+
+.ifndef M_WZ_LIC
+
+.define M_WZ_LIC(field) if(a_wiz.num_`field`) call gen_`field`
+										;process runtime
+
+.define M_WZ_DOC(field) if(a_wiz.doc_`field`) call gen_`field`
+										;process documentaion
+
+.define M_WZ_L_DB(field) if(a_wiz.db_l_`field`) call gen_l_`field`
+										;process local db driver
+
+.define M_WZ_R_DB(field) if(a_wiz.db_r_`field`) call gen_r_`field`
+										;process remote db driver
+
+.define M_BLD_LINE(prod, qty, num) data = %build_line(system, `prod`, `qty`, `num`)
+										;build line (with standard system code)
+
+.define M_BLD_LN(system, prod, qty, num) data = %build_line(`system`, `prod`, `qty`, `num`)
+										;build line (with specified system code-
+
+.define M_GET_CHAN(ch) while(%chopen(ch).and.ch.lt.255) ch += 1
+										;search for an unused channel
+
+.define M_LN(fld) ^m(line[item_no].`fld`, lin_handle)
+										;access data
+
+.define D_FIRST_CHAN	,10				;first free channel to check when looking for
+										; unused channels
+										
+.define D_MEM_CHUNK		,10				;number of lines to allocate in memeory
+
+.endc
+
+.proc
+	
+	clear ^i(clr_i), clr, a_output
+
+	;due to changes elsewhere, we must duplicate data from some fields into others
+	
+	db_l_synergy = num_genl
+	db_r_synergy = num_genr
+
+	;work out if we have a system code for SQL
+	
+	systm = a_wiz.sys_code_db,'XXX'		;system code (alpha)
+
+	clear db_system_layout
+	ctr = D_NUM_SYS_CODE
+	while(sys(ctr).ne.systm.and.ctr.gt.1) ctr -= 1
+	if(systm.eq.sys(ctr))				;valid system code - continue
+		db_system_layout = sys(ctr)		;system description
+	
+	;work out the system code for synergy xfODBC
+	
+	systm = a_wiz.sys_code_odbc,'XXX'	;system code (alpha)
+
+	clear odbc_system_layout
+	ctr = D_NUM_SYS_CODE
+	while(sys(ctr).ne.systm.and.ctr.gt.1) ctr -= 1
+	if(systm.eq.sys(ctr))				;valid system code - continue
+		odbc_system_layout = sys(ctr)	;system description
+	
+	;work out the system code for synergy xfServer / xfServerPlus
+	
+	systm = a_wiz.sys_code_xfsv,'XXX'	;system code (alpha)
+
+	clear xfsv_system_layout
+	ctr = D_NUM_SYS_CODE
+	while(sys(ctr).ne.systm.and.ctr.gt.1) ctr -= 1
+	if(systm.eq.sys(ctr))				;valid system code - continue
+		xfsv_system_layout = sys(ctr)	;system description
+	
+	;primary system platform code
+	
+	systm = a_wiz.sys_code, 'XXX'		;system code (alpha)
+
+	ctr = D_NUM_SYS_CODE
+	while(sys(ctr).ne.systm.and.ctr.gt.1) ctr -= 1
+	if(systm.eq.sys(ctr)) then
+      begin            					;valid system code - continue on
+		system = sys(ctr)				;system description
+		if (.not.db_system_layout) db_system_layout = system
+		if (.not.odbc_system_layout) odbc_system_layout = system
+		if (.not.xfsv_system_layout) xfsv_system_layout = system
+		call valid_system
+	  end
+	else
+	  errno = 1
+
+    if(errno)
+	  item_no = -errno					;return the error number
+	
+	freturn item_no
+
+;       *************************************************************
+
+valid_system,
+
+    line_mem = D_MEM_CHUNK
+	onerror no_mem_alloc
+	lin_handle = %mem_proc(DM_ALLOC, ^size(line)*line_mem)
+										;allocate memory
+	offerror
+
+	clear ^m(line[1], lin_handle)		;clear allocated memory
+
+    using a_wiz.env_type select
+    (0),    call standalone
+    (1),    call multi_user
+    (2),    call client_server
+    (),     errno = 1
+    endusing
+
+	if(errno.le.0.and.item_no)
+	  begin
+	    call price_system				;guess what?
+
+		if(errno.le.0.and.item_no)
+	        a_output = ^m(line(1,(item_no*^size(line))), lin_handle)
+      end
+
+    lin_handle = %mem_proc(DM_FREE, lin_handle)
+										;release memory
+
+	return
+
+no_mem_alloc,
+	offerror
+	clear a_output						;cannot return anything
+	
+	return
+
+;       *************************************************************
+
+standalone,
+
+    if(.not.errno)
+		begin
+		
+		M_WZ_LIC(psde)
+		M_WZ_LIC(run)
+		M_WZ_LIC(rw)
+		M_WZ_LIC(rwr)
+
+		M_WZ_L_DB(oracle)
+		M_WZ_L_DB(rdb)
+		M_WZ_L_DB(sybase)
+		M_WZ_L_DB(synergy)
+		M_WZ_L_DB(informix)
+		M_WZ_L_DB(allbase)
+		M_WZ_L_DB(db2)
+		M_WZ_L_DB(ingress)
+		M_WZ_L_DB(odbc)
+		M_WZ_L_DB(sql)
+
+		M_WZ_LIC(disa)
+		M_WZ_LIC(disb)
+		M_WZ_LIC(disc)
+		M_WZ_LIC(disd)
+		
+		M_WZ_DOC(cd)
+		M_WZ_DOC(full)
+		M_WZ_DOC(dev_guide)
+		M_WZ_DOC(port)
+		M_WZ_DOC(lang)
+		M_WZ_DOC(ui)
+		M_WZ_DOC(rep)
+		M_WZ_DOC(report)
+		M_WZ_DOC(sql)
+		M_WZ_DOC(odbc)
+		M_WZ_DOC(isam)
+		M_WZ_DOC(install)
+
+;*; add more products here for standalone, multi-user & client/server systems
+
+		end
+
+    return
+
+;       *************************************************************
+
+multi_user,
+
+    call standalone
+
+	if(.not.error)
+	  begin		
+		
+		M_WZ_R_DB(oracle)
+		M_WZ_R_DB(rdb)
+		M_WZ_R_DB(sybase)
+		M_WZ_R_DB(synergy)
+		M_WZ_R_DB(informix)
+		M_WZ_R_DB(allbase)
+		M_WZ_R_DB(db2)
+		M_WZ_R_DB(ingress)
+		M_WZ_R_DB(odbc)
+		M_WZ_R_DB(sql)				
+
+;*; add more products here for multi-user & client/server systems
+
+	  end
+	
+    return
+
+;       *************************************************************
+
+check_onet,
+
+		onet = %find_line(^m(line(1,(item_no*^size(line))), lin_handle), 'ONET')
+										;find ONET
+		if(.not.onet)
+		  begin							;add OpenNet
+			if(a_wiz.sys_code_db)
+			  begin
+				M_BLD_LN(db_system_layout, 'ONET', 1, 1)
+				call add_line_array
+			  end
+			
+			if(a_wiz.sys_code_odbc.and.a_wiz.sys_code_odbc.ne.a_wiz.sys_code_db)
+			  begin
+				M_BLD_LN(odbc_system_layout, 'ONET', 1, 1)
+				call add_line_array
+			  end
+		  end
+
+		return
+		
+;       *************************************************************
+
+client_server,
+
+	call multi_user
+
+	if(.not.error)
+	  begin
+		
+		M_WZ_LIC(xfsv)
+		M_WZ_LIC(xfsp)
+		
+;*; add more products here for client/server systems
+       	
+		using system select
+		('101','102'), nop				;nothing special on Windows platforms
+		(),	begin
+			if(a_wiz.db_r_synergy)
+			  begin
+				xfserver = %find_line(^m(line(1,(item_no*^size(line))), lin_handle), 'XFSV')
+										;find xfServer
+
+				if(.not.xfserver)
+				  begin					;add xfServer
+					M_BLD_LN(xfsv_system_layout, 'XFSV', db_r_synergy, 1)
+					call add_line_array
+				  end
+			  end
+			end
+		endusing
+	  end
+
+	return
+
+;       *************************************************************
+
+gen_psde,
+
+	M_BLD_LINE('PSDE', num_psde, 1)
+
+    call add_line_array
+	return
+
+;       *************************************************************
+
+gen_run,
+
+	M_BLD_LINE('RUN ', num_run, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_rw,
+
+	M_BLD_LINE('RPTW', num_rw, 1)
+
+	call add_line_array
+    return
+
+;       *************************************************************
+
+gen_rwr,
+
+	M_BLD_LINE('WRUN', num_rwr, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_oracle,
+
+	M_BLD_LINE('LD00', db_l_oracle, 1)
+
+	call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_rdb,
+
+	M_BLD_LINE('LD01', db_l_rdb, 1)
+
+	call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_sybase,
+
+	M_BLD_LINE('LD02', db_l_sybase, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_synergy,
+
+	M_BLD_LINE('GENL', db_l_synergy, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_informix,
+
+	M_BLD_LINE('LD05', db_l_informix, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_allbase,
+
+	M_BLD_LINE('LD06', db_l_allbase, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_db2,
+
+	M_BLD_LINE('LD07', db_l_db2, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_ingress,
+
+	M_BLD_LINE('LD08', db_l_ingress, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_odbc,
+
+	M_BLD_LINE('LD11', db_l_odbc, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_l_sql,
+
+	M_BLD_LINE('LD12', db_l_sql, 1)
+
+    call add_line_array
+    return
+
+;       *************************************************************
+
+gen_r_oracle,
+	
+	M_BLD_LN(db_system_layout,'DB00', db_r_oracle, 1)
+
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_rdb,
+	
+	M_BLD_LN(db_system_layout,'DB01', db_r_rdb, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_sybase,
+	M_BLD_LN(db_system_layout,'DB02', db_r_sybase, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_synergy,
+	
+	M_BLD_LN(odbc_system_layout,'GENR', db_r_synergy, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_informix,
+	
+	M_BLD_LN(db_system_layout,'DB05', db_r_informix, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_allbase,
+	
+	M_BLD_LN(db_system_layout,'DB06', db_r_allbase, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_db2,
+	
+	M_BLD_LN(db_system_layout,'DB07', db_r_db2, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_ingress,
+	
+	M_BLD_LN(db_system_layout,'DB08', db_r_ingress, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_odbc,
+	
+	M_BLD_LN(db_system_layout,'DB11', db_r_odbc, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_r_sql,
+	
+	M_BLD_LN(db_system_layout,'DB12', db_r_sql, 1)
+	
+	call add_line_array
+	call check_onet
+	return
+
+;       *************************************************************
+
+gen_disa,
+	
+	M_BLD_LN(sys(1) ,'DOCA', num_disa, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_disb,
+	
+	M_BLD_LN(sys(1) ,'DOCB', num_disb, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_disc,
+	
+	M_BLD_LN(sys(1) ,'DOCC', num_disc, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_disd,
+	
+	M_BLD_LN(sys(1) ,'DOCD', num_disd, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_cd,
+	
+	M_BLD_LN(sys(1) ,'MCD ', doc_cd, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_full,
+	
+	M_BLD_LN(sys(1) ,'MSET', doc_full, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_dev_guide,
+	
+	M_BLD_LN(sys(1) ,'MDG ', doc_dev_guide, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_port,
+	
+	M_BLD_LN(sys(1) ,'MPG ', doc_port, 1)
+	
+	call add_line_array
+	return
+	
+;       *************************************************************
+
+gen_lang,
+	
+	M_BLD_LN(sys(1) ,'MLRM', doc_lang, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_ui,
+	
+	M_BLD_LN(sys(1) ,'MUI ', doc_ui, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_rep,
+	
+	M_BLD_LN(sys(1) ,'MREP', doc_rep, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_report,
+	
+	M_BLD_LN(sys(1) ,'MRPT', doc_report, 1)
+	
+	call add_line_array
+	return
+	
+;       *************************************************************
+
+gen_sql,
+	
+	M_BLD_LN(sys(1) ,'MSQL', doc_sql, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_odbc,
+	
+	M_BLD_LN(sys(1) ,'MODBC', doc_odbc, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_isam,
+	
+	M_BLD_LN(sys(1) ,'MISAM', doc_isam, 1)
+	
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_install,
+	
+	M_BLD_LN(sys(1) ,'MINST', doc_install, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_xfsv,
+	
+	M_BLD_LN(xfsv_system_layout ,'XFSV', num_xfsv, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_xfsp,
+	
+	M_BLD_LN(xfsv_system_layout ,'XFSP', num_xfsp, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_genl,
+	
+	M_BLD_LINE('GENL', num_genl, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_genr,
+	
+	M_BLD_LINE('GENL', num_genr, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+gen_onet,
+	
+	M_BLD_LINE('ONET', num_onet, 1)
+
+	call add_line_array
+	return
+
+;       *************************************************************
+
+;*; add more product logic here
+
+;       *************************************************************
+
+add_line_array,
+
+	if(data) then
+	  begin
+		item_no += 1					;another one bite's the dust!
+		line_mem -= 1
+
+		if(.not.line_mem)
+		  begin
+			onerror no_memory
+			line_mem = D_MEM_CHUNK
+			lin_handle = %mem_proc(DM_RESIZ, ^size(line)*(item_no+line_mem), lin_handle)
+										;resize dynamic memory allocation
+			offerror
+		  end
+		
+		^m(line[item_no], lin_handle) = data
+										;add to result to memory
+	  end
+	else
+	  errno = -1
+	
+	return
+
+no_memory,
+	offerror
+	errno = -1
+	return
+	
+;       *************************************************************
+
+price_system,
+
+	ch_price = D_FIRST_CHAN				;start looking for a free channel here
+	M_GET_CHAN(ch_price)
+	
+	ctr = 1								;assume an error will occur
+	onerror badfile
+	open(ch_price, I:I, price_file)		;open price file
+	clear ctr							;no error occurred
+badfile,
+	offerror
+	
+	if(.not.ctr) then
+	  begin
+		ctr = item_no	       			;save item number
+
+		clear total			   			;total quote value
+
+		for item_no from 1 thru ctr
+		  begin
+			call calc_price				;calculate price
+
+			total += price
+
+			M_LN(line_value) = price
+		  end
+
+		item_no = ctr					;reset item number
+		
+		close(ch_price)
+	  end
+	 else
+	   errno = -99						;could not open price file
+
+	return
+
+;       *************************************************************
+
+calc_price,
+										;set price key fields
+	prc_product = M_LN(product)
+	prc_users = M_LN(units)
+
+	if (prc_key.ne.curr_prc_key)
+		call read_price_file
+
+	price = (prc_fee * M_LN(units)) + prc_system_fee
+										;full price
+
+	if(that_dreaded_word)
+		price -= (price * that_dreaded_word)
+										;apply customer discount
+
+	return
+
+;       *************************************************************
+
+read_price_file,
+
+	curr_prc_key = prc_key
+
+	onerror ($ERR_KEYNOT) read_price53, no_read_prc
+
+	read(ch_price, prc_rec, prc_key, keynum:0)
+
+	offerror
+
+	return
+
+
+read_price53,
+	offerror
+										
+	;found a invalid record
+	; if we got the correct product but the wrong number of users
+	; then record is still valid
+
+	if (prc_product.ne.curr_prc_key)
+	  prc_rec = curr_prc_key
+	
+	return
+
+
+no_read_prc,
+	offerror
+	prc_rec = curr_prc_key
+
+	return
+
+;       *************************************************************
+.end
+
+
+
+;       *************************************************************
+.function build_line
+;       *************************************************************
+
+group a_system,	a			;system code + system description
+.include 'SPC_SYSTEM' REPOSITORY  ,norecord
+endgroup
+
+a_product,	a			;product code
+
+a_users,	n			;users per license
+
+a_qty,		n			;number of licenses
+
+;end of argument list
+
+.include 'SPC_LINE' REPOSITORY  ,record='line'
+
+.proc
+
+	clear line
+										;hard code description here
+										; instead of using isam database
+    using a_product select
+	('PSDE'),	product_description = 'Development Environment'
+	('RUN '),	product_description = 'Runtime License'	
+	('RPTW'),	product_description = 'Report Writer Development'
+	('WRUN'),	product_description = 'ReportWriter Runtime license'
+	('LD00'),	product_description = 'Local Oracle db Driver'
+	('LD01'),	product_description = 'Local RDB db Driver'
+	('LD02'),	product_description = 'Local Sybase db Driver'
+	('GENL'),	product_description = 'Local Synergy db Driver'
+	('LD05'),	product_description = 'Local Informix db Driver'
+	('LD06'),	product_description = 'Local Allbase db Driver'
+	('LD07'),	product_description = 'Local DB2 db Driver'
+	('LD08'),	product_description = 'Local Ingress db Driver'
+	('LD11'),	product_description = 'Local ODBC db Driver'
+	('LD12'),	product_description = 'Local SQL Server db Driver'
+	('DB00'),	product_description = 'Remote Oracle db Driver'
+	('DB01'),	product_description = 'Remote RDB db Driver'
+	('DB02'),	product_description = 'Remote Sybase db Driver'
+	('GENR'),	product_description = 'Remote Synergy db Driver'
+	('DB05'),	product_description = 'Remote Informix db Driver'
+	('DB06'),	product_description = 'Remote Allbase db Driver'
+	('DB07'),	product_description = 'Remote DB2 db Driver'
+	('DB08'),	product_description = 'Remote Ingress db Driver'
+	('DB11'),	product_description = 'Remote ODBC db Driver'
+	('DB12'),	product_description = 'Remote SQL Server db Driver'
+	('ONET'),	product_description = 'SQL OpenNet'
+	('XFSV'),	product_description = 'xfServer'
+	('XFSP'),	product_description = 'xfServer Plus'
+	('DOCA'),	product_description = 'Document Kit A (Docs & CD-ROM)'
+	('DOCB'),	product_description = 'Document Kit B (Docs only)'
+	('DOCC'),	product_description = 'Document Kit C (CD-ROM only)'
+	('DOCD'),	product_description = 'Document Kit D (Install.Guide)'
+	('MCD '),	product_description = 'On-Line Documentation (CD-ROM)'
+	('MSET'),	product_description = 'Full Document Set'
+	('MDG '),	product_description = 'Developers Guide'
+	('MPG '),	product_description = 'Portability Guide'
+	('MLRM'),	product_description = 'Synergy Language Reference Manual'
+	('MUI '),	product_description = 'UI Toolkit Manual'
+	('MREP'),	product_description = 'Synergy Repository Manual'
+	('MRPT'),	product_description = 'Synergy Report Writer Manual'
+	('MSQL'),	product_description = 'SQL Connection Manual'
+	('MODBC'),	product_description = 'xfODBC Guide'
+	('MISAM'),	product_description = 'xfISAM Manual'
+	('MINST'),	product_description = 'Installation Guide'
+
+;*; add more descriptions here (as required)
+
+	(),		product_description = 'Unknown product'
+	endusing
+
+    product_description = 'Synergy/DE ' + product_description
+	
+	if(system_desc) product_description = %atrim(product_description) + ' for ' + system_desc
+
+	product_code = '6' + system_code + a_product
+										;Synergex Order Processing system product code
+
+	; if a_users < 0 then customer wants a_qty * (a_users user per license)
+	; else customer wants a_user * (a_qty users per license)
+	
+	if(a_users.ge.0) then
+	  begin
+		quantity_ordered = a_qty		;number of licenses
+        units = a_users					;number of users
+	  end
+	else
+	  begin
+		quantity_ordered = -a_users		;number of licenses
+		units = a_qty					;number of users
+	  end
+
+	line_value = 0						;calculate value later
+
+    freturn line
+.end
+
+
+
+;       *************************************************************
+.function find_line, ^VAL
+;       *************************************************************
+
+a_line,		a							;buffer containing all quote lines
+
+a_search,	a							;product to search for
+
+;end of argument list
+
+.include 'SPC_LINE' REPOSITORY  ,structure='line'
+
+.align
+	record clr_i
+result,		i4							;1/0 (true/false) found product flag
+pos,		i4							;position of search
+start,		i4							;position of next search
+
+.define D_POS_PRODUCT	,5				;assuming the product code is 6xxxYYYYY
+										; where 6 is the Synergy version number
+										; xxx is the Synergex system code
+										; YYYYY is the product
+										;5 is the position of the product within product code
+.proc
+
+	clear ^i(clr_i)
+
+	pos = %instr(start, a_line, a_search)
+	while(pos)
+	    begin
+	    start = pos + %trim(a_search)
+	    pos -= ((pos/^size(line))*^size(line))
+	    if(pos.eq.D_POS_PRODUCT) then
+	      begin							;only want it if its in right position
+		    result = 1					; of the product code
+		    clear pos					;force end of loop
+		  end
+	    else
+		  pos = %instr(start, a_line, a_search)
+										;next search
+	    end
+
+	freturn result
+.end
+

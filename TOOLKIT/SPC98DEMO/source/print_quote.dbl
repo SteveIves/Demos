@@ -1,0 +1,1053 @@
+;print_quote.dbl
+
+.function print_quote ,^VAL
+
+a_lst_id,		n						;list id (full of goodies)
+a_win_id,		n						;associated input window id
+a_preview,		n						;if passed, then print preview mode else print only
+
+.include 'DBLDIR:winprint.def'
+.include 'WND:tools.def'
+
+.ifndef D_PRT_RND_CLR
+
+.define D_PRT_RND_CLR		,0			;clear rendition
+.define D_PRT_RND_SET		,1			;set rendition
+
+.define D_PRT_RND_BOLD		,-1			;bold
+.define D_PRT_RND_UNDR		,-2			;underline
+.define D_PRT_RND_ITAL  	,-3			;italics
+.define D_PRT_RND_STRIKEOUT	,-4			;strikeout
+
+.define D_PRT_RND_FONT		,-10		;set font size
+.define D_PRT_RND_SMALLR	,-11		;set font size smaller (by 2 point sizes)
+.define D_PRT_RND_LARGER	,-12		;set fond size larger (by 2 point sizes)
+.define D_PRT_RND_FIXED 	,-13		;set font as fixed
+.define D_PRT_RND_FONTNAME	,-14		;set fontname
+
+.define D_MASK_MONEY		,'ZZZZZZZZX.XX'
+
+.define D_LOGO_WID			,1800
+.define D_LOGO_HGT			,400
+.define D_LOGO_ROW			,600
+.define D_LOGO_OFF			,100
+
+.endc
+
+; M_LN is used elsewhere, so check if it's already defined
+
+.ifdef M_LN
+.undefine M_LN
+.endc
+
+.define M_LN(fld) ^m(line[item_no].`fld`, lin_handle)
+
+.define M_PRTPOS(fld, col) flg = %wpr_print(p_handle, DWP_WRITEOUT, `col`, prt_lin_no, %atrim(`fld`))
+
+.define M_PEN(fld) ^m(pen_specs.`fld`, pen_handle)
+
+.define M_LINE(la,ca,lb,cb) flg = %wpr_print(p_handle, DWP_LINE, h_pen, `la`, `ca`, `lb`, `cb`)
+
+.define M_LEN(fld) %wpr_info(p_handle, DWP_TEXTWIDTH, `fld`)
+
+.define M_RIGHT_JUST(fld, col) `col` - M_LEN(`fld`)
+
+
+	external function
+set_font_size		,^VAL				;set font size
+
+
+.include 'SPC_LINE' REPOSITORY  ,structure='line'
+
+.include 'SPC_EXT' REPOSITORY  ,record='ext_rec'
+
+
+.align
+	literal
+title_fixed,	i4 ,D_PRT_RND_FIXED
+title_font,		a* ,'Times New Roman'
+
+desc_file,		a* ,'DEMODAT:descrip'
+
+preview_title,	a* ,"Synergy Quote Preview"
+title,			a* ,"Synergy/DE Quotation"
+printing_txt,	a* ,"Printing..."
+prod_txt,		a* ,"Product"
+desc_txt,		a* ,"Description"
+qty_txt,		a* ,"Qty"
+units_txt,		a* ,"Units"
+value_txt,		a* ,"Value"
+contin_txt,		a* ,"Continued.."
+total_txt,		a* ,"Total"
+ship_txt,		a* ,"Shipping"
+ship_fee_txt,	a* ,"Actual Fees"
+
+; Put your company details here
+companyname_txt,a* ,"Company Name"
+address1_txt,	a* ,"Address line 1"
+address2_txt,	a* ,"Address line 2"
+address3_txt,	a* ,"Address line 3"
+address4_txt,	a* ,"Address line 4"
+
+
+.align
+	record clr_i
+ret_status,		i4						;return status
+pen_handle,		i4						;pen structure handle
+lin_handle,     i4                      ;line structure memory handle
+txt_handle,		i4						;text structure memory handle
+p_handle,		i4						;printer handle
+h_pen,			i4						;pen handle
+max_no,			i4						;maximum number of items
+item_no,		i4						;current item number
+item_mem,		i4						;current item count for memory allocation
+prt_lin_no,		i4						;print line number
+prt_pag_no,		i4						;print page number
+prt_lin_max,	i4						;print line number (max)
+prt_col_max,	i4						;print column number (max)
+print_pos,		i4						;position of print buffer
+cw,				i4						;font character witch
+rh,				i4						;font row height
+wrapped,		i4						;product description wrapped
+len1,			i4						;length of first segment
+start2,			i4						;start of second segment
+len2,			i4						;length of second segment
+flg,			i4						;flag
+preview_mode,	i4						;print preview mode
+font,			i4						;font size (returned from %set_font_size)
+pos_prod,		i4						;position of product code
+pos_desc,		i4						;position of description
+pos_qty,		i4						;position of quantity
+pos_units,		i4						;position of units
+pos_value,		i4						;position of value
+pos_end,		i4						;position of end
+len_desc,		i4						;length of description
+rpos_qty,		i4						;position of quantity (right justification)
+rpos_units,		i4						;position of units (right justification)
+rpos_value,		i4						;position of value (right justification)
+strt_lin_no,	i4						;start line number (for drawing)
+line_adj,		i4						;position adjustment when printing horizontal lines
+ch_desc,		i4						;description isam file channel
+print_mode,		i4						;print mode (0-not printing, 1-printing)
+start_lin,		i4						;prt_lin_no at start of current print line
+
+
+.align
+	record clr
+date,			a11						;system date
+total,			d10.2					;quote total
+buffer,			a200					;print buffer(s)
+ buf_prod,	 	 a10 @buffer			;product code
+  buf_prod_key,	  a6@buf_prod+4			;product type
+ buf_qty,	 	 a3 @buffer				;quantity
+ buf_units,	 	 a5 @buffer				;no of licenses
+ buf_value,	 	 a11 @buffer			;value
+buffer2,		a ^size(product_description)
+bitmap_file,	a256					;logo bitmap file
+
+
+.proc
+
+	clear clr, ^i(clr_i)				;clear local records
+
+	item_mem = 10
+	onerror no_mem_alloc
+	lin_handle = %mem_proc(DM_ALLOC, ^size(line)*item_mem)
+										;allocate memory
+	offerror
+
+	ret_status = TRUE					;assume no error
+	
+	call load_from_list					;load memory from list
+
+	if(max_no.and.ret_status.eq.TRUE) call process
+										;process data (list not empty)
+
+	lin_handle = %mem_proc(DM_FREE, lin_handle)
+										;release memory
+
+	freturn ret_status
+
+	
+no_mem_alloc,
+	offerror
+										;error allocating memory
+	freturn FALSE
+	
+;--------------------------------------------------------------------
+; process the quote
+
+process,
+
+	xcall progress_start(1, max_no, printing_txt)
+
+	if(%passed(a_preview)) preview_mode = a_preview
+										;print preview mode in operation
+	
+	xcall getlog('DEMOLGO', bitmap_file, flg)
+	if(.not.flg)
+	  begin
+		bitmap_file = 'DEMOBMP:logo.bmp'
+	  end
+
+	date = %date
+	clear date(3:1), date(7:1)			;remove '-' from date
+	locase date(5:2)					;make month look nice
+
+	xcall u_open(ch_desc, 'I:I', desc_file,,, flg)
+	if(flg) clear ch_desc				;just in case
+
+	p_handle = %wpr_info(flg, DWP_GETPRINTER)
+										;get current printer handle
+	
+	flg = %wpr_print(p_handle, DWP_BEGINJOB)
+										;start print job
+
+	font = %set_font_size(p_handle, 80, cw, rh, prt_col_max, prt_lin_max)
+	line_adj = rh / 2					;allow 1/2 character for horizontal lines
+
+	txt_handle = %mem_proc(DM_ALLOC, ^size(text_specs))
+										;allocate memory for font resize
+
+	pen_handle = %mem_proc(DM_ALLOC, ^size(pen_specs))
+										;allocate memory for pen
+	M_PEN(pen_style) = DWP_GEOMETRIC
+	M_PEN(line_style) = DWP_SOLID
+	M_PEN(line_width) = 2
+	M_PEN(brush_style) = DWP_BS_SOLID
+	M_PEN(brush_color) = M_RGB(0,0,0)	;red/green/blue = black
+	M_PEN(hatch_style) = DWP_HS_CROSS
+
+	h_pen = %wpr_info(p_handle, DWP_GETPEN, ^m(pen_specs, pen_handle))
+
+	call position_fields				;reposition fields
+										; based on font and orientation
+
+	prt_lin_no = prt_lin_max     		;force a new page
+
+	for item_no from 1 thru max_no
+	  begin
+		xcall progress_update(item_no)
+
+		strt_lin_no = prt_lin_no		;save start line number (for drawing)
+
+		if(prt_lin_no.lt.prt_lin_max)
+		  begin
+			clear print_mode			;not really printing - just testing to
+										; see if there's enough room to print
+			call print
+		  end
+
+		print_mode = 1					;now we're really printing
+
+		if(prt_lin_no.ge.prt_lin_max) then
+		  begin
+			prt_lin_no = strt_lin_no	;reset start of job position
+			call print_headings			;print headings section
+		  end
+		else
+			prt_lin_no = strt_lin_no	;reset start of job position
+
+		call print						;printy bit
+	  end
+
+	if(prt_pag_no) then
+	  begin
+		call print_total				;print total
+
+		call print_shipping				;print shipping
+
+		call print_terms				;print terms
+
+
+		flg = %wpr_print(p_handle, DWP_ENDPAGE)
+		flg = %wpr_print(p_handle, DWP_ENDJOB)
+
+		xcall progress_finish
+
+		if(preview_mode) then
+			flg = %wpr_execute(p_handle, DWP_PREVIEW,, preview_title)
+										;print preveiw
+		else
+			flg = DWP_PREVIEW_PRINT
+
+		if(flg.eq.DWP_PREVIEW_PRINT)
+			flg = %wpr_execute(p_handle, DWP_PRINT)
+
+	  end
+	 else
+	    xcall progress_finish
+
+
+	if(ch_desc) xcall u_close(ch_desc)	;close description file
+
+	flg = %wpr_info(p_handle, DWP_DELPEN, h_pen)
+										;delete pen
+
+	pen_handle = %mem_proc(DM_FREE, pen_handle)
+										;release memory
+	txt_handle = %mem_proc(DM_FREE, txt_handle)
+										;release memory
+	p_handle = %wpr_info(p_handle, DWP_DELPRINTER)
+
+	return
+
+;--------------------------------------------------------------------
+; load the quote details from a UI toolkit list.
+
+load_from_list,
+
+	item_no = 1
+	xcall l_data(a_lst_id, D_LFIRST, a_win_id, ^m(line[item_no], lin_handle),, flg)
+										;get first item from list
+	while(.not.flg)
+	  begin
+		item_no += 1
+       	item_mem -= 1
+		if(.not.item_mem)
+		  begin
+			item_mem = 10
+			onerror no_memory
+			lin_handle = %mem_proc(DM_RESIZ, ^size(line)*(item_no+item_mem), lin_handle)
+										;resize dynamic memory allocation
+			offerror
+		  end
+		
+		xcall l_data(a_lst_id, D_LNEXT, a_win_id, ^m(line[item_no], lin_handle),, flg)
+										;get next item from list
+	  end
+
+	clear ^m(line[item_no], lin_handle)	;clear memory buffer of last (unused) item
+
+	max_no = item_no - 1				;reset line number to last loaded value
+
+	return
+
+no_memory,
+	offerror
+
+	ret_status = FALSE					;error allocating memory
+	
+	max_no = item_no - 1
+	
+	return
+	
+;--------------------------------------------------------------------
+; print the line details
+
+print,
+	prt_lin_no += line_adj
+
+	if(print_mode)
+	  begin
+		clear buffer
+
+		buf_prod = M_LN(product_code)
+		M_PRTPOS(buf_prod, pos_prod)	;print product code
+
+		buf_qty = M_LN(quantity_ordered)
+		print_pos = M_RIGHT_JUST(buf_qty, rpos_qty)
+		M_PRTPOS(buf_qty, print_pos)	;print quantity ordered
+
+		buf_units = M_LN(units)
+		print_pos = M_RIGHT_JUST(buf_units, rpos_units)
+		M_PRTPOS(buf_units, print_pos)	;print units (no of licenses)
+
+		buf_value = M_LN(line_value), D_MASK_MONEY
+		print_pos = M_RIGHT_JUST(buf_value, rpos_value)
+		M_PRTPOS(buf_value, print_pos)	;print value
+
+		xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_BOLD)
+										;bold font
+		call set_cw_rh					;set character width
+
+		buffer2 = M_LN(product_description)
+
+		xcall p_wrap(p_handle, buffer2, len_desc, len1, start2, len2, wrapped)
+
+		buffer = buffer2(1:len1)
+		M_PRTPOS(buffer, pos_desc)		;first line of descrition
+
+	  end
+
+	prt_lin_no += rh
+
+	while(wrapped)
+	  begin
+		buffer2 = buffer2(start2, ^size(buffer2))
+		xcall p_wrap(p_handle, buffer2, len_desc, len1, start2, len2, wrapped)
+
+		if(print_mode)
+		  begin
+			buffer = buffer2(1:len1)
+			M_PRTPOS(buffer, pos_desc)	;next line of description
+		  end
+		prt_lin_no += rh
+	  end
+
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_BOLD)
+										;clear bold font
+	call set_cw_rh						;set character width
+
+	if(ch_desc)
+	  begin
+		call read_desc_file				;read extended product description
+
+		if(ext_desc) call print_extra_desc
+	  end
+
+	call draw_box
+
+	if(print_mode) total += M_LN(line_value)
+										;quote total
+	return
+
+;--------------------------------------------------------------------
+; print and extra descriptive text.
+
+print_extra_desc,
+
+ 	xcall p_wrap(p_handle, ext_desc, len_desc, len1, start2, len2, wrapped)
+
+	if(print_mode)
+	  begin
+		buffer = ext_desc(1:len1)
+		M_PRTPOS(buffer, pos_desc)		;first line of extra description
+	  end
+
+	prt_lin_no += rh
+
+	while(wrapped)
+	  begin
+		ext_desc = ext_desc(start2, ^size(ext_desc))
+		xcall p_wrap(p_handle, ext_desc, len_desc, len1, start2, len2, wrapped)
+
+		if(print_mode)
+		  begin
+			buffer = ext_desc(1:len1)
+			M_PRTPOS(buffer, pos_desc)	;next line of extra descritpion
+		  end
+		prt_lin_no += rh
+	  end
+
+	return
+
+;--------------------------------------------------------------------
+; print the main page headings of this quote
+;
+; No print_mode logic here - assume heading will fit on page!!
+
+print_headings,
+
+	if(prt_pag_no)
+	  begin
+		call print_continuation			;print continued message
+        flg = %wpr_print(p_handle, DWP_ENDPAGE)
+	  end
+
+
+    flg = %wpr_print(p_handle, DWP_BEGINPAGE)
+
+    clear prt_lin_no
+    prt_pag_no += 1
+
+	flg = %wpr_print(p_handle, DWP_BITMAP, bitmap_file, (pos_end-D_LOGO_WID)/2, D_LOGO_ROW,
+	&		D_LOGO_WID, D_LOGO_HGT, 1)
+										;center logo
+
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, title_fixed, D_PRT_RND_FONTNAME, title_font)
+										;proportional fonts
+
+	xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_BOLD, D_PRT_RND_LARGER, D_PRT_RND_LARGER)
+										;bold, larger font
+	call set_cw_rh						;set character width
+
+	;logical position on page
+	; Positions were calculated with a trial and error basis, to be pleasing to the eye.
+	prt_lin_no = D_LOGO_ROW + D_LOGO_HGT + (2 * D_LOGO_OFF)
+
+	M_PRTPOS(title, (pos_end-(^size(title)*cw))/2)
+										;center title
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_BOLD, D_PRT_RND_SMALLR, D_PRT_RND_SMALLR)
+										;clear bold, smaller font
+	call set_cw_rh						;set character width
+
+	;reposition on page
+	prt_lin_no = D_LOGO_ROW + D_LOGO_HGT + (1 * D_LOGO_OFF)
+
+	M_PRTPOS(date, pos_prod)
+
+	prt_lin_no += 2*rh
+
+
+	M_PRTPOS(companyname_txt, pos_prod)
+	prt_lin_no += rh
+
+	M_PRTPOS(address1_txt, pos_prod)
+	prt_lin_no += rh
+
+	M_PRTPOS(address2_txt, pos_prod)
+	prt_lin_no += rh
+
+	M_PRTPOS(address3_txt, pos_prod)
+	prt_lin_no += rh
+
+	M_PRTPOS(address4_txt, pos_prod)
+	prt_lin_no += rh
+
+	prt_lin_no += rh					;blank line
+
+	strt_lin_no = prt_lin_no
+
+	prt_lin_no += line_adj
+
+	xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_BOLD, D_PRT_RND_ITAL)
+										;bold & italics
+	call set_cw_rh
+	
+    M_PRTPOS(prod_txt, pos_prod)
+    M_PRTPOS(desc_txt, pos_desc)
+    M_PRTPOS(qty_txt, pos_qty)
+	buf_units = units_txt
+	print_pos = M_RIGHT_JUST(buf_units, rpos_units)
+	M_PRTPOS(buf_units, print_pos)
+	buf_value = value_txt
+	print_pos = M_RIGHT_JUST(buf_value, rpos_value)
+	M_PRTPOS(buf_value, print_pos)
+
+	prt_lin_no += rh
+
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_BOLD, D_PRT_RND_ITAL)
+										;clear bold & italics
+	call set_cw_rh
+
+	M_LINE(pos_prod-cw,  strt_lin_no,  pos_end,  strt_lin_no)
+										;draw top line of box
+										
+	call draw_box
+
+	return
+
+;--------------------------------------------------------------------
+; draw the bottom and sides of the grid surrounding text.
+
+draw_box,
+
+	prt_lin_no += line_adj
+
+	if(print_mode)
+	  begin
+		M_LINE(pos_prod-cw,  prt_lin_no,  pos_end,      prt_lin_no)
+
+		M_LINE(pos_prod-cw,  strt_lin_no, pos_prod-cw,  prt_lin_no)
+		M_LINE(pos_desc-cw,  strt_lin_no, pos_desc-cw,  prt_lin_no)
+		M_LINE(pos_qty-cw,   strt_lin_no, pos_qty-cw,   prt_lin_no)
+		M_LINE(pos_units-cw, strt_lin_no, pos_units-cw, prt_lin_no)
+		M_LINE(pos_value-cw, strt_lin_no, pos_value-cw, prt_lin_no)
+		M_LINE(pos_end,      strt_lin_no, pos_end,      prt_lin_no)
+	  end
+
+	return
+
+;--------------------------------------------------------------------
+; print the total for this quotation.
+
+print_continuation,
+
+	prt_lin_no += line_adj
+
+	if(print_mode)
+	  begin
+		xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_ITAL)
+										;italics on
+		call set_cw_rh
+		M_PRTPOS(contin_txt, pos_value)
+		xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_ITAL)
+										;italics off
+		call set_cw_rh
+	  end
+
+	return
+
+;--------------------------------------------------------------------
+; print the total for this quotation.
+
+print_total,
+
+	strt_lin_no = prt_lin_no
+
+	prt_lin_no += line_adj
+
+	xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_BOLD)
+										;bold font
+	call set_cw_rh						;set character width
+
+	if(print_mode)
+	  begin
+		M_PRTPOS(total_txt, pos_desc)
+
+		buf_value = total, D_MASK_MONEY
+		print_pos = M_RIGHT_JUST(buf_value, rpos_value)
+		M_PRTPOS(buf_value, print_pos)
+	  end
+
+	prt_lin_no += rh
+
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_BOLD)
+										;clear bold font
+	call set_cw_rh						;set character width
+
+	call draw_box
+
+	return
+
+;--------------------------------------------------------------------
+; print a 'dummy' shipping line.  This is for information only.
+
+print_shipping,
+
+	strt_lin_no = prt_lin_no
+
+	prt_lin_no += line_adj
+
+	if(print_mode)
+	  begin
+		M_PRTPOS(ship_txt, pos_desc)
+		M_PRTPOS(ship_fee_txt, pos_value)
+	  end
+
+	prt_lin_no += rh
+
+	call draw_box
+
+	return
+
+;--------------------------------------------------------------------
+; print the standard terms and conditions
+
+print_terms,
+
+    ext_prod = 'TERMS'					;set key field
+	
+	call read_desc						;get the current terms
+	if(.not.ext_desc) return			;no terms found
+
+	xcall proc_rend(p_handle, D_PRT_RND_SET, D_PRT_RND_ITAL)
+
+	prt_lin_no += rh
+
+	xcall p_wrap(p_handle, ext_desc, pos_end, len1, start2, len2, wrapped)
+
+	if(print_mode)
+	  begin
+		buffer = ext_desc(1:len1)
+		M_PRTPOS(buffer, pos_prod)		;first line of text
+	  end
+
+	prt_lin_no += rh
+
+	while(wrapped)
+	  begin
+		ext_desc = ext_desc(start2, ^size(ext_desc))
+		xcall p_wrap(p_handle, ext_desc, pos_end, len1, start2, len2, wrapped)
+
+		if(print_mode)
+		  begin
+			buffer = ext_desc(1:len1)
+			M_PRTPOS(buffer, pos_prod)
+										;next line of text
+		  end
+		prt_lin_no += rh
+	  end
+
+	xcall proc_rend(p_handle, D_PRT_RND_CLR, D_PRT_RND_ITAL)
+
+	return
+
+;--------------------------------------------------------------------
+; get the average character width and row height
+
+set_cw_rh,
+
+	flg = %wpr_info(p_handle, DWP_TEXTMETRICS, ^m(text_specs, txt_handle))
+	rh = ^m(text_specs.height, txt_handle)
+	cw = ^m(text_specs.avewidth, txt_handle)
+	return
+
+;--------------------------------------------------------------------
+; Position fields in order product, description, qty, units, value.
+;
+; All fields, execpt description, cannot be wrapped, so they are positioned first,
+; and what's left will be used by the description.
+;
+; line looks like this :
+;
+; product_code  description  quantity  units  value
+;             	a            d         c      b
+;
+; This routine
+position_fields,
+
+	pos_prod   = cw
+	pos_desc   = pos_prod + cw + M_LEN('8888WWWWWW')
+			 							;position A
+	pos_end    = prt_col_max
+
+	rpos_value = pos_end - cw
+	pos_value  = rpos_value - M_LEN('88888888.88')
+										;position B
+										
+	rpos_units = pos_value - (2*cw)
+	pos_units  = rpos_units - M_LEN('888888')
+										;position C
+										
+	rpos_qty   = pos_units - (2*cw)
+	pos_qty    = rpos_qty - M_LEN('8888')
+										;position D
+										
+	len_desc = (pos_qty - pos_desc) - (4*cw)
+										;length of description
+	return
+
+;--------------------------------------------------------------------
+; read the description isam file for any additional descriptive text.
+
+read_desc_file,
+
+	buf_prod = M_LN(product_code)		;get whole product code
+
+	ext_prod = buf_prod_key				;setup key
+
+read_desc,
+	onerror no_read_ext
+	read(ch_desc, ext_rec, ext_key, keynum:0)
+	offerror
+
+	return
+
+no_read_ext,
+	offerror
+	clear ext_rec						;no extra descriptive text
+
+	return
+
+.end
+
+;********************************************************************
+
+.subroutine proc_rend
+
+a_handle,		n						;printer memory handle
+a_rend1,        n       				;rendition
+a_rend2,        n       				;rendition
+a_rend3,        n       				;rendition
+a_rend4,        n       				;rendition
+a_rend5,        n       				;rendition
+a_rend6,        n       				;rendition
+a_rend7,        n       				;rendition
+a_rend8,        n       				;rendition
+a_rend9,        n       				;rendition
+
+
+.include 'DBLDIR:winprint.def'
+
+.align
+        record clr_i
+flg,            i4      				;flag
+fon_handle,     i4      				;font_specs memory handle
+arg_no,         i4      				;current argument being processed
+arg_val,        i4      				;current argument value
+font_size,      i4      				;current font size
+rendition,      i4      				;rendition setting (true/false)
+
+.proc
+
+	clear ^i(clr_i)
+	rendition = 1					;default to 'set rendition'
+
+	fon_handle = %mem_proc(DM_ALLOC, ^size(font_specs))
+
+	flg = %wpr_getdevice(a_handle, DWP_FONT, ^m(font_specs, fon_handle))
+
+	for arg_no from 1 thru %numargs
+	  begin
+		arg_val = ^argn(arg_no)
+		call process_rend
+	  end
+
+	flg = %wpr_setdevice(a_handle, DWP_FONT, ^m(font_specs, fon_handle))
+
+	fon_handle = %mem_proc(DM_FREE, fon_handle)
+	xreturn
+
+;--------------------------------------------------------------------
+
+process_rend,
+
+	using arg_val select
+	 (D_PRT_RND_SET), rendition = 1
+
+	 (D_PRT_RND_CLR), clear rendition
+
+	 (D_PRT_RND_BOLD),
+		begin
+		  if(rendition) then
+			^m(font_specs.weight, fon_handle) = 700
+		  else
+			^m(font_specs.weight, fon_handle) = 400
+		end
+
+	 (D_PRT_RND_UNDR),
+		begin
+		  ^m(font_specs.underline, fon_handle) = rendition
+		end
+
+	 (D_PRT_RND_LARGER),
+		begin
+		  ^m(font_specs.pointsize, fon_handle) += 2
+		end
+
+	 (D_PRT_RND_SMALLR),
+		begin
+		  ^m(font_specs.pointsize, fon_handle) -= 2
+		end
+
+	 (D_PRT_RND_FONT),
+		begin
+		  arg_no += 1
+		  using ^argn(arg_no) select
+		   (D_PRT_RND_LARGER), ^m(font_specs.pointsize, fon_handle) += 2
+		   (D_PRT_RND_SMALLR), ^m(font_specs.pointsize, fon_handle) -= 2
+		   (),                 ^m(font_specs.pointsize, fon_handle) = ^argn(arg_no)
+		  endusing
+		end
+
+	 (D_PRT_RND_ITAL),
+		begin
+		  ^m(font_specs.italic, fon_handle) = rendition
+		end
+
+	 (D_PRT_RND_STRIKEOUT),
+		begin
+		 ^m(font_specs.strikeout, fon_handle) = rendition
+		end
+
+	 (D_PRT_RND_FIXED),
+		begin
+		  ^m(font_specs.fixed, fon_handle) = rendition
+		end
+
+	 (D_PRT_RND_FONTNAME),
+		begin
+		  arg_no += 1
+		  ^m(font_specs.facename, fon_handle) = ^arga(arg_no)
+		end
+
+	endusing
+
+	return
+
+.end
+
+;********************************************************************
+;
+; This routine calculates that largest font size that will fit the required print width
+
+
+.function set_font_size, ^VAL
+
+a_handle,			n					;printer handle
+a_want_width,		n					;[optional] required print width (characters)
+
+;return values
+
+a_cw,				n					;[optional] character width (pixels)
+a_rh,				n					;[optional] character height (pixels)
+a_pw,				n					;[optional] page width (pixels)
+a_ph,				n					;[optional] page height (pixels)
+
+;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+
+.align
+	literal
+default_font,		a* ,'Times New Roman'
+default_fixed,		d1 ,0				;fixed font (or not)
+	
+.align
+	record clr_i
+prt_handle,			i4					;print detail memory handle
+fon_handle,			i4					;font detail memory handle
+txt_handle,			i4					;text specs memory handle
+font_size,      	i4      			;current font size
+flg,				i4					;flag
+ap_want_width,		i4              	;required page width
+ap_papersize,       i4              	;paper size
+ap_papersource,     i4              	;paper source
+ap_orientation,     i4              	;paper orientation
+ap_rheight,         i4              	;row height (pixels)
+ap_cwidth,          i4              	;column width (pixels)
+ap_page_len,        i4              	;number of lines per page
+ap_page_width,      i4              	;number of columns per page
+
+.align
+	record clr
+ap_printer,         D_PRINTERNAME   	;printer name
+
+
+.proc
+
+	if(%passed(a_want_width)) then
+		ap_want_width = a_want_width
+	else
+		ap_want_width = 132
+
+	prt_handle = %mem_proc(DM_ALLOC, ^size(print_specs))
+	fon_handle = %mem_proc(DM_ALLOC, ^size(font_specs))
+	txt_handle = %mem_proc(DM_ALLOC, ^size(text_specs))
+
+	flg = %wpr_getdevice(a_handle, DWP_SPECS, ^m(print_specs, prt_handle))
+
+	ap_printer = ^m(print_specs.printer, prt_handle)
+	ap_papersource = 0
+	ap_papersize = ^m(print_specs.paper_size, prt_handle)
+	ap_orientation = ^m(print_specs.orientation, prt_handle)
+
+
+	clear ^m(font_specs, fon_handle)
+	^m(font_specs.facename, fon_handle) = default_font
+	^m(font_specs.weight, fon_handle) = 400
+	^m(font_specs.italic, fon_handle) = 0
+	^m(font_specs.underline, fon_handle) = 0
+	^m(font_specs.strikeout, fon_handle) = 0
+	^m(font_specs.fixed, fon_handle) = default_fixed
+
+	using ap_orientation select
+	 (DWPO_LANDSCAPE),
+	   begin
+		if(ap_want_width.gt.120) then
+			font_size = 10
+		else
+			font_size = 13
+	   end
+	 (DWPO_PORTRAIT),
+	   begin
+		if(ap_want_width.gt.120) then
+			font_size = 8
+		else
+			font_size = 13
+	   end
+	endusing
+
+	do call size_font
+	until((ap_page_width/ap_cwidth).ge.ap_want_width.or.font_size.lt.6)
+									;stop when it fits or we get to 6 point
+									; which is about the limit of readability
+									
+	prt_handle = %mem_proc(DM_FREE, prt_handle)
+	fon_handle = %mem_proc(DM_FREE, fon_handle)
+	txt_handle = %mem_proc(DM_FREE, txt_handle)
+
+	if(%passed(a_cw)) a_cw = ap_cwidth
+	if(%passed(a_rh)) a_rh = ap_rheight
+	if(%passed(a_pw)) a_pw = ap_page_width
+	if(%passed(a_ph)) a_ph = ap_page_len
+
+	freturn font_size
+
+;--------------------------------------------------------------------
+
+size_font,
+
+	decr font_size
+
+	^m(font_specs.pointsize, fon_handle) = font_size
+
+	flg = %wpr_setdevice(a_handle, DWP_FONT, ^m(font_specs, fon_handle))
+
+	flg = %wpr_getdevice(a_handle, DWP_SPECS, ^m(print_specs, prt_handle))
+
+	ap_page_width = ^m(print_specs.pixelwidth, prt_handle)
+	ap_page_len = ^m(print_specs.pixelheight, prt_handle)
+
+	flg = %wpr_info(a_handle, DWP_TEXTMETRICS, ^m(text_specs, txt_handle))
+	
+	ap_rheight = ^m(text_specs.height, txt_handle)
+	ap_cwidth = ^m(text_specs.avewidth, txt_handle)
+
+	return
+
+.end
+
+
+;********************************************************************
+; Wrap text buffers based upon the number of pixels required.  Similar to S_WRAP
+
+.subroutine p_wrap
+
+a_handle,	n							;printer handle
+a_buffer,	a							;buffer to split
+a_maxlen,	n							;maximum number of pixels
+a_len1,		n							;length of first segment (chars)
+a_start2,	n							;start of second segment (chars)
+a_len2,		n							;length of second segment (chars)
+a_wrapped,	n							;wrapped (or not)
+
+
+.include 'DBLDIR:winprint.def'
+
+.align
+	record clr
+text,		a2000						;text buffer to wrap
+
+.align
+	record clr_i
+buf_len,	i4							;number of characters in buffer
+position,	i4							;position in buffer [in chars]
+length,		i4							;lenght of buffer(1:position) [in pixels]
+wrapped,	i4							;can this buffer be wrapped
+
+.proc
+	
+	clear a_len1, a_start2, a_len2, a_wrapped, clr, ^i(clr_i)
+
+	buf_len = %trim(a_buffer)
+
+	length = %wpr_info(a_handle, DWP_TEXTWIDTH, a_buffer(1:buf_len))
+
+	if(length.gt.a_maxlen)
+	  begin								;text needs wrapping
+		position = buf_len
+		while(length.gt.a_maxlen.and.position.gt.0)
+		  begin
+			while(position.and.a_buffer(position:1)) position -= 1
+										;found beginning of last word
+
+			while(position.and..not.a_buffer(position:1)) position -= 1
+										;found end of previous word
+
+			if(position)
+				length = %wpr_info(a_handle, DWP_TEXTWIDTH, a_buffer(1:position))
+		  end
+	  end
+
+	if(position) then
+	  begin
+		a_wrapped = 1					;buffer can be wrapped
+		a_len1 = position				;end of first segment
+
+		a_start2 = a_len1+1				;find start of next word
+		while(.not.a_buffer(a_start2:1).and.a_start2.lt.buf_len) a_start2 += 1
+
+		a_len2 = buf_len - a_start2 + 1
+										;end of last word
+	  end
+	else
+	    a_len1 = buf_len				;end of last word
+
+	xreturn
+
+.end
+

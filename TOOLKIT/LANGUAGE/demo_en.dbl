@@ -1,0 +1,16 @@
+
+.subroutine getmsg
+
+	msgnum		,n
+	text		,a
+
+.proc
+
+	using msgnum select
+	(1),	text = "Message One"
+	(2),	text = "Message Two"
+	endusing
+
+	xreturn
+
+.end

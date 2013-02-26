@@ -1,0 +1,142 @@
+;progress.dbl
+
+.subroutine progress_start
+a_min,          n	;start value for the progress bar
+a_max,          n	;mixumim value for the progress bar count
+a_label,		a	;description label
+
+.include "DBLDIR:activex.def"
+.include 'WND:tools.def'
+.include "DBLDIR:windows.def"
+
+.align
+global common
+	axwid,					i4	;need a container window id
+	winid,					i4	;toolkit window id for the container	
+	
+	progress_id,			i4	;id of the working message control
+	
+	ret_status,				i4	;call return status
+	
+	demo_sleep,				d4	;sleep for the demo
+
+.align
+stack record
+	old_font,				i4	;old font
+	old_size,				i4	;old font size
+
+.proc
+	;this routine creates a toolkit container window, and
+	;sets the required properties for the progress bar.
+	
+	;create a toolkit window container
+
+	;the logical DEMOSLEEP is used to slow down the progress bar progression
+	; so that it can be seen by the user.  Most operations were too quick
+	; for the eye to see
+	
+	xcall getlog('DEMOSLEEP', ^a(demo_sleep), ret_status)
+	
+	winid = %ax_tkwin("prgctl", 4, 45, axwid)
+	
+	xcall w_brdr(winid, WB_DRAGOFF)
+
+	onerror no_control
+	;load the progress control into the container window
+	progress_id = %ax_load(axwid, 'usrProgress.CtlProgress')
+
+	if FALSE
+	  begin
+no_control,
+		offerror
+		xcall u_message("Cannot load usrProgress Control")
+		clear progress_id
+		xreturn
+	  end
+	offerror
+
+	;if we have been passed arguments, update the controls	
+	;properties
+	
+	if(%passed(a_min).and.a_min)
+		ret_status = %ax_set(progress_id, 'SetMin', a_min)
+	
+	if(%passed(a_max).and.a_max)
+	  begin
+		if(a_max.le.a_min) a_max = a_min + 1
+		ret_status = %ax_set(progress_id, 'SetMax', a_max)
+	  end
+	
+	if(%passed(a_label)) then
+	    ret_status = %ax_set(progress_id, 'SetLabel', a_label)
+	else
+		ret_status = %ax_set(progress_id, 'SetLabel', "Working, please wait...")
+
+	;place the control on the screen
+	xcall u_window(D_PLACE, winid, 8, 30)
+	xcall u_update
+
+	xreturn
+
+.end
+
+
+
+.subroutine progress_update
+
+a_value,		n						;new/update value for the progress bar
+
+.include "DBLDIR:activex.def"
+
+external common
+	axwid,					i4			;need a container window id
+	winid,					i4			;toolkit window id for the container	
+	
+	progress_id,			i4			;id of the working message control
+	
+	ret_status,				i4			;call return status
+
+	demo_sleep,				d4			;sleep for the demo
+	
+.proc
+
+	if(.not.progress_id) xreturn
+
+	if(a_value.lt.0) then
+		ret_status = %ax_set(progress_id, 'Complete', a_value)
+	else
+		ret_status = %ax_set(progress_id, 'UpdValue', a_value)
+	
+	if(demo_sleep) sleep 1
+
+	xreturn
+
+.end
+
+
+
+.subroutine progress_finish
+
+.include "DBLDIR:activex.def"
+
+external common
+	axwid,					i4			;need a container window id
+	winid,					i4			;toolkit window id for the container	
+	
+	progress_id,			i4			;id of the working message control
+	
+	ret_status,				i4			;call return status
+	
+	demo_sleep,				d4			;sleep for the demo
+
+.proc
+
+	xcall progress_update(-1)
+	xcall u_window(D_DELETE, winid)
+	xcall u_update						;make sure to goes away!
+
+	xreturn
+
+.end
+
+

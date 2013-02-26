@@ -1,0 +1,48 @@
+.ifdef D_GLOBAL_CONTROL_INIT
+.undefine D_GLOBAL_CONTROL_INIT
+        global data section control_data, INIT
+.else
+        global data section control_data
+.endc
+
+.ifndef D_MAX_PAGE
+.define D_MAX_PAGE	,11
+.endc
+
+.align
+record
+   current_page,			i4	        ;current page visible
+
+   new_page,				i4	        ;new page to display
+
+   container_id,			i4	        ;activex control container ID
+   page_welcome_id,			i4	        ;activex page welcome id
+   page_os_id,				i4	        ;activex page operating system id
+   page_env_id,				i4	        ;activex page environment id
+   page_rep_id,				i4	        ;activex page reporting id
+   page_odbc_id,			i4	        ;activex page odbc id
+   page_sql_id,				i4	        ;activex page sql id
+   page_net_id,				i4	        ;activex page network(client server) id
+   page_dist_id,            i4          ;activex page distribution media
+   page_doc_id,				i4	        ;activex page documentation id
+   page_web_id,				i4	        ;activex page WEB enablement
+   page_done_id,			i4	        ;last/complete page
+
+   page_array_id,			[D_MAX_PAGE]i4 @ page_welcome_id
+   page_name,				[D_MAX_PAGE]a35,
+&								'SynergyQuoteWizard.UsrWizardWelcome',
+&								'SynergyQuoteWizard.UsrWizardOS',
+&								'SynergyQuoteWizard.UsrWizardENV',
+&								'SynergyQuoteWizard.UsrWizardREP',
+&								'SynergyQuoteWizard.UsrWizardODBC',
+&								'SynergyQuoteWizard.UsrWizardSQL',
+&								'SynergyQuoteWizard.UsrWizardNET',
+&								'SynergyQuoteWizard.UsrWizardDIST',
+&								'SynergyQuoteWizard.UsrWizardDOC',
+&								'SynergyQuoteWizard.UsrWizardWEB',
+&								'SynergyQuoteWizard.UsrWizardDONE'
+
+endglobal
+
+
+

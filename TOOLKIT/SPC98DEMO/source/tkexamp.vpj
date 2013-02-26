@@ -1,0 +1,36 @@
+[COMPILER]
+FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
+FILTERPATTERN=*.dbl\n*.def\n*.wsc\n*.*\n
+FILTERASSOCIATEFILETYPES=0 0 0 0
+FILTEREXPANSION=1
+Synergy=DBL
+compile=concur|capture|:Compile:&Compile,%(DBLDIR)\bin\dbl %(SYN_DBG) -XT "%p%n%e"
+make=concur|capture|:Build:&Build,%(DBLDIR)\bin\dblink %(SYN_DBG) %n WND:tklib.elb DBLDIR:axlib.elb
+rebuild=concur|capture|:Rebuild:&Rebuild,
+debug=:Debug:&Debug,%(DBLDIR)\bin\dbr -d %n
+execute=:Execute:E&xecute,%(DBLDIR)\bin\dbr %(SYN_DBG) %n
+user1=hide|:User 1:User 1,
+user2=hide|:User 2:User 2,
+workingdir=.
+includedirs=
+reffile=
+MACRO=\n
+[FILES]
+about.dbl
+add_line.dbl
+convert_spc_wizard.dbl
+demoprog.dbl
+demoprog.def
+demoprog.wsc
+file_io.dbl
+help_system.dbl
+i_disable_set.dbl
+i_enable_set.dbl
+io.def
+print_quote.dbl
+progress.dbl
+sendmail.dbl
+webbrowser.dbl
+who_details.dbl
+wizard_setup.dbl
+[ASSOCIATION]

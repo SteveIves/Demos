@@ -1,0 +1,116 @@
+
+.include "WND:tools.def"
+
+record buffer
+                ,a1000
+
+record
+    idi_input1  ,i4
+    idc_popup   ,i4
+    mset        ,i4
+
+common
+    pixx        ,i4
+    pixy        ,i4
+
+.proc
+
+    xcall u_start("ContextMenu.ism",1,0)
+
+    xcall m_ldcol(idc_popup,,"POPUPCOL",D_NOPLC)
+
+    mset = %u_wndevents(D_CREATE,,
+    &       D_EVENT_RIGHT_CLICK,"win_right_click",
+    &       D_EVENT_CLOSE, "win_close")
+
+    xcall i_ldinp(idi_input1,,"INPUT1")
+    xcall u_wndevents(D_ASSIGN,mset,idi_input1)
+
+    repeat
+    begin
+        xcall i_input(idi_input1,,buffer,,,,D_NOTERM)
+
+        if (g_setsts) then
+        begin
+
+            if (g_entnam.eq."~POPMENU~")
+                if (.not. %m_popup(idc_popup))
+                    clear g_entnam
+
+            if (g_entnam)
+            begin
+                using g_entnam select
+                ("PE1"),
+                    xcall u_message("Popup entry 1")
+                ("PE2"),
+                    xcall u_message("Popup entry 2")
+                ("PE3"),
+                    xcall u_message("Popup entry 3")
+                ("PE4"),
+                    xcall u_message("Popup entry 4")
+                ("PE5"),
+                    xcall u_message("Popup entry 5")
+                ("CANCEL"),
+                    exitloop
+                endusing
+            end
+
+        end
+        else
+            exitloop
+
+    end
+
+    xcall u_finish
+    stop
+
+.end
+
+; Window CLICK event method
+
+.function win_right_click ,^val ,reentrant
+    reserved1       ,a      ; Reserved by system
+    reserved2       ,a      ; Reserved by system
+    ^val(a_wndid)   ,i      ; Window id receiving event
+    ^val(a_event)   ,i      ; Mouse/window event
+    ^val(a_cellxpos),i      ; row number
+    ^val(a_cellypos),i      ; column number
+    ^val(a_pixxpos) ,i      ; row position in pixels
+    ^val(a_pixypos) ,i      ; column position in rows
+    ^val(a_arg9)    ,i      ; Argument 9 - additional mouseclick information
+
+.include "WND:tools.def"
+
+stack record
+    event       ,a10
+
+common
+    pixx        ,i4
+    pixy        ,i4
+
+.proc
+
+    pixx = a_pixxpos
+    pixy = a_pixypos
+
+    xcall m_signal("~POPMENU~")
+
+    freturn TRUE
+
+.end
+
+; Window CLOSE event method
+
+.function win_close ,^val ,reentrant
+    reserved1   ,a      ; Reserved by system
+    reserved2   ,a      ; Reserved by system
+    ^val(a_wndid)   ,i      ; Window id receiving event
+    ^val(a_event)   ,i      ; Mouse/window event
+
+.include "WND:tools.def"
+
+.proc
+    xcall m_signal("CANCEL")
+    freturn TRUE
+.end
+

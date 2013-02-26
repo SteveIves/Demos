@@ -1,0 +1,19 @@
+.script
+.date_generated "09/28/2004, 18:01"
+.version "8.1.7"
+
+.input CUSTOMER, 8, 48
+.placement 2, 2
+.title "Customer Details"
+.repository_structure CUSTOMER
+.field CUSTOMERID, pos(2, 3), fpos(2, 15)
+.field COMPANY, pos(4, 7), fpos(4, 15)
+.field STREET, pos(5, 8), fpos(5, 15)
+.field CITY, pos(6, 10), fpos(6, 15)
+.field STATE, pos(7, 9), fpos(7, 15)
+.field ZIP, pos(7, 21), fpos(7, 25)
+.box Box1, 8, 47, pos(1, 1)
+.button I_OK, text("OK"), select("O")
+.button CANCEL, text("Cancel"), select("C")
+.button_set end
+.end

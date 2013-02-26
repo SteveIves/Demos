@@ -1,0 +1,15 @@
+subroutine temp_file_name
+
+	required out a_return_name	,a	;Temp file name
+	required in  a_extension	,a	;File extension
+	endparams
+
+proc
+
+	xcall s_bld(a_return_name,, '%aTMP_%d_%d.%a',
+	&			'TEMP:',%jbno,%datetime,a_extension)
+
+	xreturn
+
+endsubroutine
+

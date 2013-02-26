@@ -1,0 +1,33 @@
+.script
+.date_generated "02/12/2004, 16:49"
+.version "8.1.5b"
+
+
+
+
+.input Input1, 9, 39
+.font Status
+.placement 3, 11
+.title "A Dialog"
+.field InputField1, d1, enum(7, 1, 1), pos(2, 3), prompt("Option"), fpos(2, -
+     10), select(1, 2, 1, "Entry 1", "Entry 2", "Entry 3"), radio
+.field InputField2, a10, pos(4, 3), prompt("Field1"), fpos(4, 10), -
+     view_length(23)
+.field InputField3, a10, pos(6, 3), prompt("Field 2"), fpos(6, 10)
+.field InputField4, d1, prompt("Check"), fpos(8, 28), checkbox
+.field InputField5, a10, pos(8, 3), prompt("Field 3"), fpos(8, 10), -
+     select(1, 2, 3, "Entry 1", "Entry 2", "Entry 3")
+.button I_OK, text("OK"), select("O")
+.button CANCEL, text("Cancel"), select("C")
+.button_set end
+.end
+;
+;
+;
+.column popupcol, "Popup column"
+.entry PE1, "Option 1"
+.entry PE2, "Option 2"
+.entry PE3, "Option 3"
+.entry PE4, "Option 4"
+.entry PE5, "Option 5"
+.end

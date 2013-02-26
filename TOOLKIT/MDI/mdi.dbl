@@ -1,0 +1,102 @@
+.main mdi
+
+.include "WND:tools.def"
+
+.include "CUSTOMER" repository, structure="customer_s"
+
+.define WND_COUNT 4
+global common
+	inpwnd		,[WND_COUNT]i4
+
+record
+	customer	,[WND_COUNT]a^size(customer_s)
+	c			,i4
+	curwnd		,i4
+	wndevents	,i4
+
+
+.proc
+
+	xcall u_start("mdi.ism",1,0)
+
+	;Create window events method set
+	wndevents = %u_wndevents(D_CREATE,,	D_EVENT_CLOSE,		"wndevents_method",
+	&									D_EVENT_LEFT_CLICK,	"wndevents_method")
+
+	;Load input windows
+	for c from 1 thru WND_COUNT
+	begin
+		xcall i_ldinp(inpwnd[c],,"CUSTOMER"+%string(c),D_NOPLC,,,"CUSTOMER")
+		xcall u_wndevents(D_ASSIGN,wndevents,inpwnd[c])
+		if (c>1) 
+            xcall i_disable(D_ALL,inpwnd[c])
+		xcall u_window(D_PLACE,inpwnd[c],c+1,c*2)
+		xcall i_frames(inpwnd[c])
+	end
+
+	curwnd=1
+	repeat
+	begin
+		
+		xcall i_input(inpwnd[curwnd],,^m(customer[curwnd]),,,,D_NOTERM)
+
+		if (g_select)
+		begin
+			using g_entnam select
+			("CANCEL"),
+				exitloop
+			("~~SWITCH"),
+			begin
+				xcall i_disable(D_ALL,inpwnd[curwnd])
+				curwnd=^d(g_entnam(9:1))
+				xcall i_enable(D_ALL,inpwnd[curwnd])
+				xcall u_window(D_REMOVE,inpwnd[curwnd],D_PLACE,inpwnd[curwnd])
+			end
+			endusing
+		end
+	end
+
+	xcall u_finish
+	stop
+
+.end
+
+.function wndevents_method ,^VAL
+	a_reserved1		,a
+	a_reserved2		,a
+	^VAL(a_wndid)	,i
+	^VAL(a_event)	,i
+    ^VAL(a_xcell)	,i
+	^VAL(a_ycell)	,i
+	^VAL(a_xpixel)	,i
+	^VAL(a_pixel)	,i
+	^VAL(a_where)	,i
+
+external common
+	inpwnd		,[WND_COUNT]i4
+
+stack record
+	cnt			,i4
+	retval		,i4
+
+.proc
+
+	using a_event select
+	(D_EVENT_CLOSE),
+	begin
+		xcall m_signal("CANCEL")
+		retval=true
+	end
+	(D_EVENT_LEFT_CLICK),
+		if (a_where==D_AREA_NONCLIENT)
+			for cnt from 1 thru WND_COUNT
+				if (a_wndid==inpwnd[cnt])
+				begin
+					xcall m_signal("~~SWITCH"+%string(cnt))
+					retval=false
+				end
+	endusing
+	
+	freturn true
+
+.end

@@ -1,0 +1,18 @@
+;	Synergy ISAM PAR File created Mon Dec 14 09:02:43 1998
+price
+30	;record size
+1	;number of keys
+	;5ca5 magic, revision 3, 1 byte record overhead
+	;Shared index cache allowed
+	;creation version 6.3.0
+	;10 byte longest key
+	;2 free index blocks, 0x1400 free list head
+	;158 records, 0 free
+
+	;primary key
+10	;key size
+1	;start position
+N	;duplicates allowed
+A	;ascending/descending
+	;root 0x800, index depth 2
+	;minimum keys per block 36

@@ -1,0 +1,26 @@
+.script
+.date_generated "09/30/2004, 09:59"
+.version "8.1.7"
+
+.input CUSTOMER, 70, 105
+.title "Customer Detail"
+.border off
+.text Text1, pos(3, 79), margin(78, 2)
+@IMG:SynergyDE.gif(15*4)
+.repository_structure CUSTOMER
+.field ACCOUNT, pos(2, 4), fpos(2, 14)
+.field COMPANY, pos(3, 4), fpos(3, 14)
+.field STREET, pos(4, 4), fpos(4, 14)
+.field CITY, pos(5, 4), fpos(5, 14)
+.field STATE, pos(6, 4), fpos(6, 14)
+.field ZIP, pos(7, 4), fpos(7, 14)
+.box Box1, 8, 103, pos(1, 2)
+.box Box2, 59, 103, pos(9, 2)
+.line Line1, 59, pos(9, 8), vertical
+.line Line2, 59, pos(9, 26), vertical
+.line Line3, 59, pos(9, 67), vertical
+.line Line5, 59, pos(9, 77), vertical
+.line Line6, 59, pos(9, 91), vertical
+.line Line4, 103, pos(11, 2)
+.line Line7, 103, pos(64, 2)
+.end

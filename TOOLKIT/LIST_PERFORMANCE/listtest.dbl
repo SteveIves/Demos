@@ -1,0 +1,119 @@
+.main listtest
+
+.include "WND:tools.def"
+
+record
+    bldid       ,i4
+    inpid       ,i4
+    clsid       ,i4
+    lstid       ,i4
+    c           ,i4
+    req         ,i4
+    option      ,a10
+    cols        ,d3
+    acols       ,a3
+    rows        ,d6
+    arows       ,a6
+    vrows       ,d2
+    avrows      ,a2
+
+.define D_LOGFILE "AX.LOG"
+
+.proc
+
+    xcall delet(D_LOGFILE)
+
+    xcall u_start(,1,0,,40,140)
+
+    if (%u_msgbox("ActiveX List?",D_MICONQUESTION+D_MYESNO+D_MDEFBUTTON1,"Option")==D_MIDYES)
+    begin
+        option="ACTIVEX"
+        if (%u_msgbox("ActiveX debugger?",D_MICONQUESTION+D_MYESNO+D_MDEFBUTTON2,"Option")==D_MIDYES)
+        begin
+            if (%u_msgbox("Log to file?",D_MICONQUESTION+D_MYESNO+D_MDEFBUTTON1,"Option")==D_MIDYES) then
+                xcall setlog("AXDEBUG","FILE="+D_LOGFILE,c)
+            else
+                xcall setlog("AXDEBUG","YES",c)
+        end
+    end
+
+    xcall u_dialog(avrows,,,,"How many visible rows (1-30)? ")
+    vrows=avrows
+    if ((vrows<1)||(vrows>30))
+        xcall u_abort("Number of visible rows must be between 1 and 30")
+
+    xcall u_dialog(acols,,,,"How many columns (1-253)? ")
+    cols=acols
+    if ((cols<1)||(cols>253))
+        xcall u_abort("Number of columns must be between 1 and 253")
+
+    xcall u_dialog(arows,,,,"How many rows (enter=no preload)? ")
+    rows=arows
+
+    xcall ib_input(bldid,"LSTWND",1,cols*10)
+    xcall ib_dsp_area(bldid,1,1,1,70)
+    for c from 1 thru cols
+        xcall ib_field(bldid,"FIELD"+%string(c),D_FLD_TYPE,D_ALPHA,D_FLD_SIZE,10,D_FLD_FPOS,1,(c*10)-9)
+    xcall ib_end(bldid,inpid)
+
+    xcall l_class(clsid,"CLASS1",2,2,vrows,1,0,1,1,,,"load_method",option)
+
+    xcall l_create(lstid,inpid,,,"CLASS1")
+    xcall l_button(lstid,DSB_ADD,"CANCEL",DSB_TEXT,"Cancel",,,"C")
+
+    if (rows) then
+        req=D_LBOTTOM
+    else
+        req=D_LNOP
+
+    repeat
+    begin
+        xcall l_select(lstid,req,,,,,,,,,,,,,,rows)
+
+        if (g_select&&(g_entnam=="CANCEL"))
+            exitloop
+
+
+    end
+    xcall u_finish
+
+    xcall countem
+
+    stop
+
+.end
+
+.subroutine load_method ,stack
+    a_listid    ,n          ; List id
+    a_req       ,n          ; Request flag
+    a_data      ,a          ; Item data
+    a_inpid     ,n          ; Input window id
+    a_disable   ,n          ; (Optional) Disable flag
+    a_index     ,n          ; Loading index
+    a_rows      ,n          ; Optional method data argument
+
+.include "WND:tools.def"
+
+static record
+    dspdata     ,[253]a10
+    c           ,i4
+
+.proc
+
+    if (!a_rows || (a_index<=a_rows)) then
+    begin
+        if (a_index==1)
+            for c from 2 thru 253
+                dspdata[c]=%string(c)
+
+        dspdata[1]=%string(a_index)
+
+        xcall i_display(a_inpid,,dspdata)
+    end
+    else
+        a_req=D_LEOF
+
+    xreturn
+
+.end
+

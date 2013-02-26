@@ -1,0 +1,105 @@
+.script
+.date_generated "02/27/2007, 11:11"
+.version "9.0.1e"
+
+.column FILE, "File"
+.entry DATASAVE, "Save Current Data"
+.entry DATARELOAD, "Restore Saved Data"
+.line
+.entry O_ABANDON, "Close Window", key(F4)
+.entry O_EXIT, "Exit", select(x)
+.end
+
+.column OPTIONS, "Options"
+.entry U_DEFCONT,  "Provide Defaults for New Contacts"
+.entry U_CDELCUST, "Confirm Customer Delete"
+.entry U_CDELCONT, "Confirm Contact Delete"
+.entry U_AUTOSAVE, "Auto Save Contacts"
+.end
+
+.column EDIT, "Edit"
+.entry E_CUT, "Cut", key(^X)
+.entry E_COPY,"Copy", key(^C)
+.entry E_PASTE, "Paste", key(^V)
+.list CCP=E_CUT,E_COPY,E_PASTE
+.end
+
+.column CUSTOMER, "Customer"
+.entry ADDCUST, "New Customer Account"
+.entry EDTCUST, "Edit Customer Account", disable
+.entry DELCUST, "Delete Customer Account", disable
+.line
+.entry ADDCONT, "Add Contact", disable
+.entry EDTCONT, "Edit Contact", disable
+.entry DELCONT, "Remove Contact", disable
+.end
+
+.input LCUSTOMER, 1, 60
+.title "Customers"
+.border on, dragbar(on)
+.display_area 1,1,1,59
+.repository_structure CUSTOMER
+.field ACCOUNT, noprompt, fpos(1, 1)
+.field COMPANY, noprompt, fpos(1, 10)
+.field CITY, noprompt, fpos(1, 31)
+.field STATE, noprompt, fpos(1, 52)
+.end
+
+.input LCONTACT, 1, 28
+.display_area 1, 1, 1, 27
+.placement 2, 2
+.title "Contacts"
+.border on, dragbar(on)
+.repository_structure CONTACT
+.field FIRST_NAME, noprompt, fpos(1, 1), view_length(12)
+.field LAST_NAME, noprompt, fpos(1, 14), view_length(11)
+.end
+
+.input ICONTACT1, 9, 59
+.title "Contact"
+.repository_structure CONTACT
+.field EMAIL, pos(8, 2), fpos(8, 13)
+.field FIRST_NAME, pos(2, 2), fpos(2, 13)
+.field LAST_NAME, pos(2, 30), fpos(2, 40)
+.field PHONE, pos(4, 2), fpos(4, 13)
+.field FAX, pos(5, 2), fpos(5, 13)
+.field CELL, pos(6, 2), fpos(6, 13)
+.set ALL, CONTACT, FIRST_NAME, LAST_NAME, PHONE, FAX, CELL, EMAIL
+.end
+
+.input ICONTACT2, 9, 59
+.title "Address"
+.repository_structure CONTACT
+.field ADDRESS, pos(2, 2), fpos(2, 11)
+.field CITY, pos(4, 2), fpos(4, 11)
+.field STATE, pos(6, 2), fpos(6, 11)
+.field ZIP, pos(6, 16), fpos(6, 21)
+.set ALL, CONTACT, ADDRESS, CITY, STATE, ZIP
+.end
+
+.input ICONTACT3, 9, 59
+.title "Photograph"
+.repository_structure CONTACT
+.field PHOTO, pos(2, 2)
+.set ALL, CONTACT, PHOTO
+.end
+
+.input ICUSTOMER, 7, 73
+.title "Customer account Details"
+.repository_structure CUSTOMER
+.field ACCOUNT, pos(2, 2), fpos(2, 10)
+.field COMPANY, pos(2, 27), fpos(2, 35)
+.field PHONE, pos(4, 2), fpos(4, 10)
+.field FAX, pos(5, 2), fpos(5, 10)
+.field ADDRESS, pos(4, 27), fpos(4, 35)
+.field CITY, pos(5, 27), fpos(5, 35)
+.field STATE, pos(6, 27), fpos(6, 35)
+.field ZIP, pos(6, 41), fpos(6, 50)
+.button I_OK, text("OK")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.set ALL, CUSTOMER, ACCOUNT, COMPANY, PHONE, FAX, ADDRESS, CITY, STATE, -
+     ZIP
+.set KEY, CUSTOMER, ACCOUNT
+.set DATA, CUSTOMER, COMPANY, PHONE, FAX, ADDRESS, CITY, STATE, ZIP
+.end

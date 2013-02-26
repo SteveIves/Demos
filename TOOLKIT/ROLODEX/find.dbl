@@ -1,0 +1,348 @@
+.subroutine tkp_field_search
+.title  "List Search Specification Window - Sample code"
+;-------------------------------------------------------------------------------
+;  File name:   find.dbl
+;
+;  Function:    Enhance the functionality of the List Processing Find processing
+;		    by allowing the specification of the search parameters by the 
+;		    user at run-time.  See notes for added features
+;
+;  Environment: Runs under all supported Synergy platforms 6.1 and higher
+;
+;  $Revision: 1 $
+;
+;  Authors:     Kenneth J. Beers, SYNERGEX
+;               Richard C. Morris, SYNERGEX
+;
+;  Notes:
+;	The purpose of this program is to showcase the capability
+;	of the Synergy Toolkit.  It will be used as a sample for
+;	the Toolkit classes, therefore, some of the things we do are
+;	somewhat contrived to utilize as many of the different functions as
+;	is possible.  
+;
+;	This routine will pop up an input window that is built on-the-fly
+;	with selections built on-the-fly and allow the user to specify the field
+;	to be searched, the direction of the search, the type of search, and
+;	the text for the search.  The specification of the window is found
+;	at create_window.  Everything that is done in the input window 
+;	is to get the parameters that are going to be used as arguments to
+;	the xcall to l_findspec.  This routine does not perform the search, but
+;	rather queues up the request for the calling routine.
+;
+;	To use this routine, the repository must have been used to process the
+;	script with the fields to be displayed containing the correct tokens in
+;	their user data field.  This routine can be modified for use by customers
+;	by changing the vaues .DEFINED below.  The current usage is L<xxxx>, where 
+;	xxxx represents the text that will be displayed on the list of fields, 
+;		or
+;	xxxx is the special indicator * that says to use the field name.
+;
+;	in either case, there must be an entry in the user data field for the field
+;	to be included in the list by this routine.
+;
+;	arguments
+	a_list_id,n				; PASSED id of the list we are searching
+						; it should be placed and active
+;-------------------------------------------------------------------------------
+.include "WND:system.def"
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "WND:setinf.def"
+.include "WND:inpctl.def"
+.include "WND:fldinf.def"
+
+.define BLANKS, "          "
+.define WAIT_TIME,	30
+;----------------------------------------------------------------------------
+;	To modify the indicators that are parsed from the user_data field, just
+;	change the following definitions.
+;----------------------------------------------------------------------------
+.define TOKEN_START,	"L<"			; start of string indicator
+.define TOKEN_LENGTH,	2			; this is the length of TOKEN_START
+.define TOKEN_END,	">"			; end of string indicator
+.define TOKEN_NOT,	"*"			; indicator to use the fieldname
+
+.define TITLE_STRING,	"Extended Search Selection Specification"
+
+structure text
+	string	,a30
+
+structure field
+	gs_pos	,i4
+	gs_siz	,i4
+	gs_typ	,i4
+	gs_usrptr	,a2				; this is a 16-bit pointer
+
+stack record  find_record                     	; a local record to
+	find_field		,d2                     ; be associated with
+	find_dir		,d1                     ; the "Query" window
+	find_case		,d1				; must be in the same
+	find_type		,d1                     ; order and size as
+	find_string		,a50                    ; the window that references it
+
+.align quad
+record
+	v_handle		,D_ADDR
+	f_handle		,D_ADDR
+	s_menucol		,i4
+	q_type_id		,i4
+	c_type_id		,i4
+  	temp_id		,i4
+  	find_winid		,i4
+  	inp_winid		,i4
+  	search		,i4
+  	error			,i4
+	request		,i4
+  	continue		,i4
+	max			,i4
+	fnum			,i4
+	num_fields		,i4
+	temp			,i4
+	start			,i4
+	i			,i4
+	match			,i4
+	set_num		,i4
+	set_name		,a32
+	user_data		,a80
+	control		,a1000
+	field_name		,a32
+
+.define head	,"Selection"			; Selection column visable text
+.define name	,"fs_sel_col"			; Selection window name
+literal						; strings for building the selection menu
+	entry		,[2]a6,"S_UP","S_DOWN"
+	m_text	,[2]a10,"Move up","Move down"
+	s_cut		,[2]i1, UP_KEY, DOWN_KEY
+
+.define D_QNUM,	8				; items in the query selection window
+.define D_DNUM,	2				; items in the direction selection window
+.define D_CNUM,	2				; items in the case selection window
+
+literal						; text items for the selection windows
+	q_data	,[D_QNUM]a13, "Contains", "Wildcards", "Equal",
+  &			"Not-equal", "Greater-than", "Less-than",
+  &			"Greater-equal", "Less-equal"	
+	q_type	,[D_QNUM]d1, D_SEL_ENTRY,D_SEL_ENTRY,D_SEL_ENTRY,D_SEL_ENTRY,
+  &			D_SEL_ENTRY,D_SEL_ENTRY,D_SEL_ENTRY,D_SEL_ENTRY
+	d_data	,[D_DNUM]a7, "Forward", "Reverse"
+	c_data	,[D_CNUM]a11, "Sensitive", "Insensitive" 
+
+.page
+.proc
+	call initialize
+	if (continue) 
+	    call create_menu
+	if (continue) 
+	    call create_selection
+	if (continue) 
+	    call create_fields
+	if (continue) 
+	    call create_window
+	if (continue) 
+	    call process_window
+	call shutdown
+	xreturn
+
+initialize,
+	xcall e_enter
+	continue = TRUE
+	clear temp_id, find_winid
+	xcall l_status(a_list_id, D_LINPID, inp_winid)	; get the id of the input window
+	return
+
+shutdown,
+	xcall u_window(D_DELETE, find_winid, q_type_id, c_type_id)
+	xcall e_exit
+	return
+
+create_menu,
+;-------------------------------------------------------------------------------
+;	This routine will build a selection menucolumn that is used by the i_input
+;	routine to process the selection windows, and ths does not need to have a 
+;	selection menu column available from the calling program.
+;-------------------------------------------------------------------------------
+	xcall mb_column(control, name, head)
+	for i from 1 thru 2
+	  xcall mb_entry(control, entry[i], m_text[i], s_cut[i])
+	xcall mb_end(control, s_menucol)
+	return
+
+;------------------------------------------------------------------------------
+;	This routine will build a selection window that will allow the user to
+;	select the kind of search desired.  It will be mapped to the find_type
+;	field in the input window. An alternative method is to use the second
+;	array to implicitly build the window by specifying D_FLD_SELECT option
+;	in the ib_field creation process.
+;------------------------------------------------------------------------------
+create_selection,
+	xcall s_selbld(q_type_id, "query_type", D_QNUM, D_QNUM, q_data, q_type)
+	xcall u_logwnd(q_type_id)
+	xcall s_selbld(c_type_id, "query_case", D_CNUM, D_CNUM, c_data, q_type,,, 2)
+	xcall u_logwnd(c_type_id)
+	return
+
+;-------------------------------------------------------------------------------
+;	This routine will scan the list of fields in the list element window and
+;	if the user data contains the indicator L<xxxx> (where xxxx is the text)
+;	that text will be used as an item on the selection window presented for
+;	the search.  This will allow programs to display meaningful text descriptions
+;	of the fields that have cryptic names.
+;-------------------------------------------------------------------------------
+create_fields,					; get the set information
+	set_num = 1
+	clear set_name				; we want the first input set
+	xcall i_setinf(inp_winid, set_name, set_num,, gs_fldset)
+							; allocate memory for arrays
+	v_handle=%mem_proc(DM_ALLOC, gs_setcnt*^size(text))	; visual array
+	f_handle=%mem_proc(DM_ALLOC, gs_setcnt*^size(field))	; controls array
+	i = 1						; index for the storage array
+	clear fnum, max
+	repeat
+	  begin
+	    incr fnum				; field number in the set
+	    clear field_name
+	    xcall i_fldinf(inp_winid, field_name, fnum,, gs_inpfld)
+	    if (field_name .eq. BLANKS) exitloop		; end of fields in the set
+	    ^m(field[i].gs_pos, f_handle) = gs_inpfld.gs_pos
+	    ^m(field[i].gs_siz, f_handle) = gs_inpfld.gs_siz
+	    ^m(field[i].gs_typ, f_handle) = gs_inpfld.gs_typ
+	    ^m(field[i].gs_usrptr, f_handle) = gs_inpfld.gs_usrptr
+	    user_data = %i_getstring(inp_winid, ^m(field[i].gs_usrptr, f_handle))
+	    if (start = %instr(1, user_data, TOKEN_START))
+	      begin
+              ^m(text[i].string, v_handle) = user_data(start + TOKEN_LENGTH,
+  &			 %instr(start, user_data, TOKEN_END) -1)
+		  if (%atrim(^m(text[i].string, v_handle)) .eq. TOKEN_NOT)
+		    ^m(text[i].string, v_handle) = %atrim(field_name)
+		  if (max .lt. temp = %trim(^m(text[i].string, v_handle))) max = temp
+		  incr i
+		end
+	  end
+	num_fields = i - 1
+	if (.not.num_fields) continue = FALSE		; no fields to display
+	return
+
+;-------------------------------------------------------------------------------
+;       This routine creates an input window "on-the-fly" that consists
+;       of four fields and the standard buttons "OK" and "CANCEL".  Note  
+;       the inclusion of selection windows, an enumerated field, and
+;       the standard buttons in the input window.
+;-------------------------------------------------------------------------------
+create_window,
+	xcall ib_input(temp_id, "find_window", 5, 66)
+	
+	xcall ib_field(temp_id, "find_field", D_FLD_TYPE, D_DECIMAL,
+  &                    D_ON, D_FLD_POS, 1, 2, D_FLD_FPOS, 1, 15,
+  &                    D_FLD_ENUM, max, 1, 1, D_FLD_PROMPT, "Field", D_FLD_SIZE, 2,
+  &			     D_FLD_SELECT, 1, 1, num_fields,, num_fields,
+  &			     ^m(text[1].string, v_handle), D_FLD_BRK_RTRN)
+	
+	xcall ib_field(temp_id, "find_dir", D_FLD_TYPE, D_DECIMAL,
+  &                    D_ON, D_FLD_POS, 1, 35, D_FLD_FPOS, 2, 35,
+  &                    D_FLD_PROMPT, "Direction", D_FLD_SIZE, 1,
+  &			     D_FLD_ENUM, 7, 0, 1, D_FLD_RADIO,
+  &                    D_FLD_SELECT, 1, 1, D_DNUM,, D_DNUM, d_data)
+	
+	xcall ib_field(temp_id, "find_case", D_FLD_TYPE, D_DECIMAL,
+  &                    D_ON, D_FLD_POS, 1, 50, D_FLD_FPOS, 2, 50,
+  &                    D_FLD_PROMPT, "Case", D_FLD_SIZE, 1,
+  &			     D_FLD_ENUM, 11, 0, 1, D_FLD_RADIO,
+  &                    D_FLD_SELWND, 1, 1, "query_case")
+	
+	xcall ib_field(temp_id, "find_type", D_FLD_TYPE, D_DECIMAL,
+  &                    D_ON, D_FLD_POS, 3, 2, D_FLD_FPOS, 3, 15,
+  &                    D_FLD_PROMPT, "Search type", D_FLD_SIZE, 1,
+  &                    D_FLD_ENUM, 15, 0, 1, 
+  &                    D_FLD_SELWND, 1, 1, "query_type")
+	
+	xcall ib_field(temp_id, "find_string", D_FLD_TYPE, D_ALPHA,
+  &                    D_ON, D_FLD_POS, 5, 2, D_FLD_FPOS, 5, 15,
+  &                    D_FLD_PROMPT, "Target", D_FLD_SIZE, 50,) 
+						; include the OK & Cancel buttons
+	xcall ib_stdbuttons(temp_id, D_BTNOK, D_BTNCANCEL)
+						; and end the definition
+	xcall ib_end(temp_id, find_winid, g_utlib)
+	xcall w_brdr(find_winid, WB_TITLE, title_string)	; set title.
+										; set the time-out value
+	xcall i_fldmod(find_winid,"find_string",,,D_FLD_WAIT,WAIT_TIME)
+	return
+;------------------------------------------------------------------------------
+;	This routine actually processes the input window built above and performs
+;	the search on the list with the given parameters.
+;------------------------------------------------------------------------------
+process_window,
+	xcall u_window(D_PLACE, find_winid, 7, 2)
+	xcall i_init(find_winid,, find_record)  ; initialize the data area
+	repeat                                  ; input loop
+	  begin
+	    xcall i_input(find_winid,,find_record,, s_menucol,, D_NOTERM)
+	    if (g_setsts) then                  ; menu entry or break field
+	      begin
+		if (g_select) then              ; we have a menu selection
+		  begin
+		    case g_entnam of            ; all honored entries
+		      begincase
+		      "O_TIMEOUT":	
+			begin
+			  xcall u_message("Timed out, sorry")
+			  xcall i_next(find_winid,,"*FRST*")
+			end
+
+		      "O_ABANDON": 	
+			  exitloop
+
+		      "I_OK":	 	
+			begin
+			  call process_find
+			  clear g_select, g_entnam
+			  exitloop
+			end
+
+		      endcase
+			else			
+			    exitloop	; return to calling program
+		  end
+		else
+		  begin
+		    case g_fldnam of
+		    begincase
+		    "FIND_FIELD":  	
+		      begin	; set size to match field
+			xcall i_fldmod(find_winid,"find_string",
+  &        		^m(field[find_field].gs_siz, f_handle),
+  &		        ^m(field[find_field].gs_typ, f_handle))
+		      end
+		    endcase
+		  end 
+	      end                               
+	    else                                	; finished processing
+	      begin
+		call process_find				; so, do the search
+		clear g_select, g_entnam
+		exitloop
+	      end
+	  end
+	return
+
+;---------------------------------------------------------------------------------
+;	This routine will establish the search parameters and queue the request to
+;	to do the find by the calling routine.  The parameters are determined by the
+;	user input specified when the input window was processed.  The index into the
+;	dynamic memory array is based on the enumarated value contained in the first
+;	field (find_field).  This routine does not actually do the search, it just sets
+;	the required parameters.
+;---------------------------------------------------------------------------------
+
+process_find,
+	xcall l_findspec(a_list_id, %atrim(find_string),			
+  &				^m(field[find_field].gs_pos, f_handle),		
+  &				^m(field[find_field].gs_siz, f_handle),		
+  &                             find_dir, find_case, find_type,			
+  &                             D_LFND_NOCURR, D_LFND_WRAP)				
+			; not current item & wrap
+	; queue it up for the calling routine
+	xcall l_queue(a_list_id, D_LFIND)
+	return
+.end
+

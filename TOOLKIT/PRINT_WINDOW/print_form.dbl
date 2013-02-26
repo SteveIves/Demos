@@ -1,0 +1,35 @@
+subroutine PRINT_FORM
+	
+	required in  a_winid		,n
+	optional in  a_nopreview	,n
+	endparams
+
+	.include "WND:tools.def"
+
+	stack record local_data
+		.include "prt_control.def"
+		prt_iid			,i4
+		row				,i4
+	endrecord
+
+proc
+
+	init local_data
+	e_enter()
+
+	xcall prt_start(prt_control,1,1)
+
+	prt_nopreview=^passed(a_nopreview)&&a_nopreview
+
+	if (prt_handle)
+	begin
+		xcall print_window(prt_control, row=1,a_winid,1)
+		xcall prt_finish(prt_control)
+	end
+
+	e_exit
+
+	xreturn
+
+endsubroutine
+

@@ -1,0 +1,116 @@
+;webbrowser.dbl
+
+.subroutine synergex_web_page
+.include 'demoprog.def'
+
+;this routine uses the web browser control to allow
+;access to the Synergex Home Page.
+;There is no other user interface, and thus this is the only
+;location it will go to.  This could easly be extended.
+;
+
+.include 'DBLDIR:activex.def'
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+
+.align
+stack record
+	axwid,					i4			;need a container window id
+	winid,					i4			;toolkit window id for the container	
+	
+	web_id,					i4			;id of the working message control
+	
+	ret_status,				i4			;call return status
+	user_url,				a100		;user assigned URL
+
+
+record
+	url,					a*, 'http://synergex.com/'
+	chr,					a1			;temp character field
+	
+.proc
+
+	;we do not know where we have come from
+	; remove any windows/lists etc, and disable menu columns, and toolbars.
+	
+	xcall e_enter
+	
+	xcall u_window(D_REMOVE, D_ALL)
+	xcall l_remove(list_lid)
+	xcall m_disable(D_COLUMN, mfile_mid, medit_mid, mtool_mid, mwind_mid)
+	xcall tb_toolbar(TB_DISABLE, tb_id)
+
+	winid = %ax_tkwin('WebWindow', 20, 80, axwid)
+	xcall w_brdr(winid, WB_ON, WB_TON, WB_TITLE, "Synergex home page web browser")
+	
+	;load the progress control into the container window
+	onerror no_web
+	web_id = %ax_load(axwid, 'SynergexWeb.SimpleWebControl')
+
+	if(FALSE)
+	  begin
+no_web,
+		offerror
+		xcall u_message("Unable to load SynergexWeb control")
+		goto exit
+	  end
+	
+	offerror
+
+	xcall getlog('DEMOURL', user_url, ret_status)
+	
+	if(.not.ret_status) then
+	  begin
+		xcall ax_set(web_id, 'NavigateURL', url)
+		xcall ax_set(web_id, 'SetComment', "Synergy  Web  Site  located !")
+	  end
+	else
+	  begin
+		xcall ax_set(web_id, 'NavigateURL', %atrim(user_url))
+		xcall ax_set(web_id, 'SetComment', 'URL : ' + %atrim(user_url))
+	  end
+	xcall ax_bind(web_id, 'CloseBrowser', 'close_browser')
+
+	;place the window
+	xcall u_window(D_PLACE, winid, 1, 1)
+	xcall u_update						;for the control/window to be displayed
+	
+	xcall e_state(D_OFF, D_ECHO, D_CURSOR)
+	
+	do
+	  begin
+		xcall u_chr(chr, winid)
+	  end
+	until(g_select)
+
+	xcall win_stop(1)	
+
+	using g_entnam select
+	('CLOSEBRWSR'),	clear g_select
+	('O_EXIT'),		clear g_select
+	endusing
+
+
+exit,
+	xcall e_exit						;back to the way we were
+	xcall tb_toolbar(TB_ENABLE, tb_id)
+
+	xreturn
+
+.end
+
+
+;this subroutine if fired when the user selects the close browser
+;button of the control
+
+.subroutine close_browser
+
+
+.proc
+	
+	xcall m_signal('CLOSEBRWSR')
+	
+	xreturn
+
+.end
+

@@ -1,0 +1,9 @@
+[GLOBAL]
+syn_version=5
+Synergy=DBL
+
+[COMPILE SCRIPTS]
+Library_Name=\DEMO\TOOLKIT\COMPOSITE_WINDOWS\ORIGINAL\EXE\composite.ism
+Overwrite=1
+Files=<ALL>,\DEMO\TOOLKIT\COMPOSITE_WINDOWS\ORIGINAL\SRC\composite.wsc
+

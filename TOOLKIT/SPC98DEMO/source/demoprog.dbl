@@ -1,0 +1,1456 @@
+.main ;demoprog.dbl
+
+.include 'DBLDIR:windows.def'
+.include 'WND:tools.def'
+.include 'WND:gblctl.def'				;Synergy Toolkit global controls
+
+.define D_PRINT_PREVIEW	,1
+.define D_DEF_SYS_CODE	,101
+.define D_DEF_SYS_NUM	,10
+.define D_DEF_DATABASE	,1
+
+.define D_LINE_MAX		,10				;number of lines to process
+										; in convert_spc_wizard
+	
+;from the repository
+
+.include 'SPC_LINE' repository, record = 'spc_line'
+.include 'SPC_WIZARD' repository, record = 'spc_wizard'
+.include 'QUOTE_HEAD' repository, record = 'quote_head'
+.include 'QUOTE_DETAIL' repository, record = 'quote_detail'
+
+;program definitions and control record area
+
+.align
+record
+.include 'DEMOSRC:demoprog.def'
+
+;local fields
+.align
+record
+	count,					i4			;counter
+
+.align
+record menu_name 						;menu entry signal
+	ent,					a4
+	row,					d3
+	col,					d3
+
+.align
+record
+	mail_subject,			a50
+
+.include 'WND:toolbar.def'
+
+.align
+record
+	len,					i4
+	old_size,				i4			;Save off old font size
+	old_font,				a60			; and typeface
+	dir_path,				a100
+	
+
+.define D_TOOLBAR_HEIGHT	,32			;Height of the toolbar in pixels
+.define D_TOOLBAR_INDENT	,4			;Number of pixels to indent buttons (X/Y)
+.define D_TOOLBAR_BTNHEIGHT	,(D_TOOLBAR_HEIGHT - (D_TOOLBAR_INDENT * 2))
+										;Height of a toolbar button
+.define D_TOOLBAR_BTNWIDTH	,D_TOOLBAR_BTNHEIGHT
+										;Make the buttons square
+.define D_TOOLBAR_DELTAX	,D_TOOLBAR_BTNWIDTH
+										;Offset to next button
+
+external function
+	compose_message	,a
+
+
+;start of program code.....
+
+.proc
+
+	call startup						;start toolkit, and load objects
+    call process						;process the quote details
+	call shutdown						;bye!
+	stop
+	
+startup,
+;
+	clear ^i(program_data), spc_wizard, list_total, quote_name
+	
+	;startup the toolkit
+
+	xcall u_start('DEMOLIB:demo', 1, 0)
+	xcall e_sect('Synergy Quote Demo', D_CAPTION, D_CLEAR, D_DISPLAY)
+
+	xcall envrn(running_gui)
+	if (running_gui.lt.13) clear running_gui
+	
+	xcall w_proc(WP_HOURGLASS_ON)
+	xcall e_state(D_ON, D_VALSTCHG)
+	xcall e_method(D_METH_APPCLOSE, 'close_application',
+&				D_METH_HELP, 'help_system',
+&				D_METH_UTILS, 'usr_utils')	
+
+	;set the tab container call back method address
+
+.ifdef D_GUI
+	g_tbs_callback = %xaddr('Tabset_Callback')
+										;Overload tabset callback routine
+										; This is an undocumented feature,
+										; that may not work in future releases
+.endc
+										
+	;Create a toolbar
+	
+	xcall tb_toolbar(TB_CREATE, tb_id, TBC_TOP,, D_TOOLBAR_HEIGHT)	
+	;set X offset of first button
+	next_btn_x = D_TOOLBAR_INDENT
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_NEW', 'DEMOBMP:new.bmp', 'New')
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_OPEN', 'DEMOBMP:open.bmp', 'Open')
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_SAVE', 'DEMOBMP:save.bmp', 'Save')
+	next_btn_x += D_TOOLBAR_INDENT	;Add space
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_PRINT', 'DEMOBMP:print.bmp', 'Print')
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_PRTPREV', 'DEMOBMP:preview.bmp', 'Print preview')
+	next_btn_x += D_TOOLBAR_INDENT	;Add space
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_WIZARD', 'DEMOBMP:wizard.bmp', 'Configuration wizard')
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_SENDMAIL', 'DEMOBMP:mail.bmp', 'Send qoute')
+	next_btn_x += D_TOOLBAR_INDENT	;Add space before Internet button
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_WEB', 'DEMOBMP:entirnet.bmp', 'Synergy home page')
+	next_btn_x += D_TOOLBAR_INDENT	;Add space before help button
+	xcall add_toolbar_button(tb_id, next_btn_x, 'O_HELP', 'DEMOBMP:help.bmp', 'Help')
+
+	xcall tb_toolbar(TB_PLACE, tb_id)	;Place the completed toolbar
+
+	;load the application objects....
+
+	xcall m_ldcol(mfile_mid, g_utlib, 'MFILE', , , , D_GLOBAL,)
+	xcall m_ldcol(medit_mid, g_utlib, 'MEDIT', , , , ,)
+	xcall m_ldcol(mtool_mid, g_utlib, 'MTOOL', , , , ,)	
+	xcall m_ldcol(mwind_mid, g_utlib, 'MWIND', , , , ,)	
+	xcall m_ldcol(mhelp_mid, g_utlib, 'MHELP', , , , ,)	
+	xcall m_ldcol(minput_mid, g_utlib, 'input', D_NOPLC, , , ,)	
+	xcall m_ldcol(mselect_mid, g_utlib, 'select', D_NOPLC, , , ,)	
+	xcall m_ldcol(mlist_mid, g_utlib, 'list', D_NOPLC, , , ,)	
+		
+	;create a window events method set
+	blank_set = %u_wndevents(D_CREATE)
+	method_set = %u_wndevents(D_CREATE,, D_EVENT_LEFT_CLICK, 'click_tab')
+	tab_method_set = %u_wndevents(D_CREATE,, D_EVENT_LEFT_CLICK, 'click_tab',
+&								D_EVENT_MOVE, 'move_window',
+&								D_EVENT_CLOSE, 'close_window')
+	lst_method_set = %u_wndevents(D_CREATE,, D_EVENT_LEFT_CLICK, 'click_lst',
+&								D_EVENT_MOVE, 'list_moved',
+&								D_EVENT_CLOSE, 'close_list')
+	
+	;load the product windows, and create a tab set container.
+	
+	tab_id = %ts_tabset(DTS_CREATE, 'products', 7, 75)
+	xcall u_wndevents(D_ASSIGN, tab_method_set, tab_id)
+	if (running_gui)
+	then
+		xcall w_brdr(tab_id, WB_ON, WB_TITLE, 'Configuration Selection')
+	else
+	  begin
+		xcall w_brdr(tab_id, WB_ON)
+	  end
+
+	xcall i_ldinp(opsys_iid, g_utlib, 'opsys', D_NOPLC, , , )
+	opsys_index = %ts_tabset(DTS_WINDOW, tab_id, opsys_iid, 'product_input_method', , 'Choose a platform')
+	xcall u_wndevents(D_ASSIGN, method_set, opsys_iid)
+	
+	xcall i_ldinp(dev_iid, g_utlib, 'dev', D_NOPLC, , , )
+	dev_index = %ts_tabset(DTS_WINDOW, tab_id, dev_iid, 'product_input_method', , 'Synergy/DE Development license')
+	xcall u_wndevents(D_ASSIGN, method_set, dev_iid)
+	
+	xcall i_ldinp(run_iid, g_utlib, 'run', D_NOPLC, , , )
+	run_index = %ts_tabset(DTS_WINDOW, tab_id, run_iid, 'product_input_method', , 'Runtime only options')
+	xcall u_wndevents(D_ASSIGN, method_set, run_iid)
+	
+	xcall i_ldinp(report_iid, g_utlib, 'report', D_NOPLC, , , )
+	report_index = %ts_tabset(DTS_WINDOW, tab_id, report_iid, 'product_input_method', , 'Synergy/DE Reporting tools')
+	xcall u_wndevents(D_ASSIGN, method_set, report_iid)
+
+	xcall i_ldinp(xfserver_iid, g_utlib, 'xfserver', D_NOPLC, , , )
+	xfserver_index = %ts_tabset(DTS_WINDOW, tab_id, xfserver_iid, 'product_input_method', , 'Synergy/DE xfServer data access')
+	xcall u_wndevents(D_ASSIGN, method_set, xfserver_iid)
+
+	xcall i_ldinp(docs_iid, g_utlib, 'docs', D_NOPLC, , , )
+	docs_index = %ts_tabset(DTS_WINDOW, tab_id, docs_iid, 'product_input_method', , 'Synergy/DE Documentation')
+	xcall u_wndevents(D_ASSIGN, method_set, docs_iid)
+
+	xcall i_ldinp(odbc_iid, g_utlib, 'odbc', D_NOPLC, , , )
+	odbc_index = %ts_tabset(DTS_WINDOW, tab_id, odbc_iid, 'product_input_method', , 'Synergy/DE xfODBC Driver')
+	xcall u_wndevents(D_ASSIGN, method_set, odbc_iid)
+
+	xcall i_ldinp(sql_iid, g_utlib, 'sql', D_NOPLC, , , )
+	sql_index = %ts_tabset(DTS_WINDOW, tab_id, sql_iid, 'product_input_method', , 'Synergy/DE SQL Connection')
+	xcall u_wndevents(D_ASSIGN, method_set, sql_iid)
+
+	xcall i_ldinp(dist_iid, g_utlib, 'dist', D_NOPLC, , , )
+	dist_index = %ts_tabset(DTS_WINDOW, tab_id, dist_iid, 'product_input_method', , 'Meida and distribution options')
+	xcall u_wndevents(D_ASSIGN, method_set, dist_iid)
+
+	;create the product lines list, which appears at the bottom of the main window.
+	
+	xcall i_ldinp(list_iid, g_utlib, 'LINES', D_NOPLC, , , )
+	xcall i_ldinp(list_tmp_iid, g_utlib, 'TMPLINES', D_NOPLC, , , 'LINES')
+	xcall l_create(list_lid, list_iid, spc_line, g_utlib, 'linclass', , , D_NOPLC, , , , )
+	xcall l_sect(list_lid, "Product code|Quantity ordered|Licensed units|Line value|", D_HEADER, D_CLEAR, D_DISPLAY)
+	xcall l_sect(list_Lid, "Total order value $ "+%string(list_total,'ZZZZX.XX'), D_FOOTER, D_CLEAR, D_DISPLAY)
+
+	;assign the move event to the window
+	xcall l_method(list_lid, D_LWNDEVENT, lst_method_set)
+
+	;open data files
+	xcall u_open(quote_head_chan, 'U:I', 'DEMODAT:quote_head.ism')
+	xcall u_open(quote_detail_chan, 'U:I', 'DEMODAT:quote_detail.ism')
+
+
+	;place the windows
+
+	xcall u_window(D_PLACE, tab_id, 2, 1)	;default location of object
+	xcall u_window(D_REMOVE, tab_id)
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+	
+return
+
+process,
+	
+	xcall m_signal('O_NEW')				;default to a new object
+	
+	repeat
+	  begin
+										;set default program state!
+		call def_state
+		
+		if .not.g_select
+			xcall m_process				;no m_signal to process
+
+		if g_select
+		  begin
+			using g_entnam select
+			('O_EXIT','O_QUITAPP'),
+			begin
+				exitloop
+			end
+			('O_NEW'),
+			begin
+				xcall l_restart(list_lid)
+				xcall ts_tabset(DTS_ACTIVE, tab_id, opsys_index)
+				current_object = tab_id
+				xcall who_details(program_data, quote_head)
+				if(g_entnam.eq.'O_QUITAPP')
+					exitloop				;decided to exit application
+		 		xcall u_window(D_PLACE, tab_id, 2, 1)
+											;default location of object
+				list_visible = FALSE
+				call process_object
+			end		
+			('O_OPEN'),
+			begin
+				if %quote_io(program_data, D_AS_OPEN, spc_line, quote_head)
+				begin
+					xcall ts_tabset(DTS_ACTIVE, tab_id, opsys_index)
+					list_visible = TRUE
+					current_object = list_lid
+					call process_object
+				end
+			end		
+			endusing
+	  	  end
+	  end
+	
+	return
+
+process_object,
+
+	xcall e_enter
+	call full_state
+	
+	xcall m_enable(D_ENTRY, mwind_mid, 'O_SEELIST')
+	xcall m_disable(D_ENTRY, mwind_mid, 'MV_LIST')
+	xcall place_with_backdrop(tab_id, list_lid, program_data)
+
+	repeat
+	begin
+		
+		if g_entnam.ne.'O_SEELIST'
+		begin
+            if current_object.eq.tab_id
+			then xcall ts_process(tab_id, spc_line, program_data, spc_wizard)
+			else xcall product_list(list_lid, spc_line, program_data)
+        end
+		
+;we can only return with a menu entry
+		
+		using g_entnam select
+;menu entries/tool bar buttons
+		('O_NEW'),
+		begin
+			if %check_exit(program_data, spc_line, quote_head)
+			begin
+				xcall m_signal('O_NEW')
+				clear quote_name
+				exitloop
+			end
+		end
+		('O_OPEN'),
+		begin
+			if %check_exit(program_data, spc_line, quote_head)
+			then
+            begin
+                xcall quote_io(program_data, D_AS_OPEN, spc_line, quote_head)
+                list_visible = FALSE
+                current_object = tab_id
+                clear g_select, g_entnam
+              	xcall place_with_backdrop(tab_id, list_lid, program_data)
+            end
+			else
+			begin
+				if %quote_io(program_data, D_AS_SAVEAS, spc_line, quote_head)
+                begin
+                    xcall quote_io(program_data, D_AS_OPEN, spc_line, quote_head)
+                    list_visible = FALSE
+                    current_object = tab_id
+                    clear g_select, g_entnam
+                	xcall place_with_backdrop(tab_id, list_lid, program_data)
+                end
+			end
+		end
+		('O_CLOSE'),
+		begin
+			if current_object.eq.list_lid
+			begin
+				xcall l_remove(list_lid)
+				xcall m_enable(D_ENTRY, mwind_mid, 'O_SEELIST')
+            	xcall m_disable(D_ENTRY, mwind_mid, 'MV_LIST')
+				clear g_select
+				nextloop
+			end
+			if %check_exit(program_data, spc_line, quote_head)
+			begin
+				clear g_select, quote_name
+				exitloop
+			end
+		end
+		('O_CLSLST'),
+		begin
+			xcall l_remove(list_lid)
+			xcall m_enable(D_ENTRY, mwind_mid, 'O_SEELIST')
+        	xcall m_disable(D_ENTRY, mwind_mid, 'MV_LIST')
+			clear g_select
+			current_object = tab_id
+			nextloop
+		end
+		('O_SAVE '),
+		begin
+			xcall quote_io(program_data, D_AS_SAVE, spc_line, quote_head)
+		end
+		('O_SAVEAS'),
+		begin
+			xcall quote_io(program_data, D_AS_SAVEAS, spc_line, quote_head)
+		end
+		('O_PRTPREV'),
+		begin
+			xcall print_quote(list_lid, list_tmp_iid, D_PRINT_PREVIEW)
+		end
+		('O_PRINT'),
+		begin
+			xcall print_quote(list_lid, list_tmp_iid)
+		end
+		('O_EXIT'),
+		begin
+			if %check_exit(program_data, spc_line, quote_head)
+			begin
+				xcall m_signal('O_EXIT')
+				exitloop				;terminate
+			end
+		end
+		('O_QUITAPP'),
+		begin
+			if %check_exit(program_data, spc_line, quote_head)
+			begin
+				xcall m_signal('O_QUITAPP')
+				exitloop				;terminate
+			end
+		end
+		('O_SENDMAIL'),
+		begin
+            mail_subject = 'Synergy Quote Details'
+			xcall send_mail(qh_name, qh_email, mail_subject, %compose_message(program_data, spc_line))
+		end
+		('O_WIZARD'),
+		begin
+			xcall wizard_setup(program_data, spc_line)
+			if quote_to_save
+				xcall m_signal('O_SEELIST')
+		end
+		('O_WEB'),
+ 		begin
+			xcall synergex_web_page(program_data)
+		end
+		('O_SEELIST'),
+		begin
+			list_visible = TRUE
+			xcall m_disable(D_ENTRY, mwind_mid, 'O_SEELIST')
+        	xcall m_enable(D_ENTRY, mwind_mid, 'MV_LIST')
+			xcall place_with_backdrop(tab_id, list_lid, program_data)
+            if g_entnam(10:1).eq.'1'
+                current_object = list_lid
+			clear g_entnam
+		end
+		
+;program generated signals
+		('WMOV'),	;window has been moved by the user
+		begin
+			menu_name = g_entnam
+			xcall u_window(D_PLACE, tab_id, row, col)
+			xcall place_with_backdrop(tab_id, list_lid, program_data)
+			clear g_entnam
+		end
+		('MV_LIST'),	;list has been clicked on, give it focus
+		begin
+			current_object = list_lid
+		end
+		('MV_TAB'),	;tab container window clicked on, give it focus
+		begin
+			current_object = tab_id
+		end
+		('MV_MVLIST'),	;user has tried to move the list
+		begin
+			xcall place_with_backdrop(tab_id, list_lid, program_data)
+		end
+		endusing
+	end
+
+	xcall e_exit
+	return
+
+shutdown,
+
+	xcall u_finish
+
+	return
+
+def_state,
+
+	;set the default program state
+	xcall m_disable(D_COLUMN, medit_mid, mtool_mid, mwind_mid)
+	xcall m_disable(D_LIST, mfile_mid, 'initial')
+
+	;disable required toolbar buttons.
+
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_SAVE')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_PRINT')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_PRTPREV')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_WIZARD')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_SENDMAIL')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_WEB')
+	xcall tb_button(tb_id, TBB_DISABLE, 'O_HELP')
+	
+	xcall u_window(D_REMOVE, D_ALL)
+	xcall l_remove(list_lid)
+
+	return
+
+
+full_state,
+
+	;set the default program state
+	xcall m_enable(D_COLUMN, medit_mid, mtool_mid, mwind_mid)
+	xcall m_enable(D_LIST, mfile_mid, 'initial')
+
+	;disable required toolbar buttons.
+
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_SAVE')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_PRINT')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_PRTPREV')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_WIZARD')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_SENDMAIL')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_WEB')
+	xcall tb_button(tb_id, TBB_ENABLE, 'O_HELP')
+
+return
+
+
+.end
+
+;
+;if close is selected, check we can close each object!
+;
+
+.function close_application, ^VAL
+a_noclr,		n
+a_cancel,		n
+a_type,			n
+
+.include 'WND:tools.def'
+
+.proc
+
+	if %passed(a_cancel)
+	begin
+		xcall m_signal('O_QUITAPP')
+		a_cancel=TRUE					;ok, close down the app
+	end
+	
+	freturn TRUE
+.end
+
+
+;place the other windows, and tab containers relative to the
+;backdrop window incase it is moved
+
+.subroutine place_with_backdrop
+a_tab_id,			n					;tab container id
+a_list_id,	   		n					;list window id
+.include 'demoprog.def'
+
+
+.include 'DBLDIR:windows.def'
+.include 'WND:tools.def'
+
+stack record
+	name,			a15					;returned window name
+	retvals 		,11d4
+		numrows 	,d4 @retvals
+		numcols 	,d4 @retvals + 4
+		placerow	,d4 @retvals + 8
+		placecol	,d4 @retvals + 12
+		flags		,d4 @retvals + 16
+		overid		,d4 @retvals + 20
+		titlelgth	,d4 @retvals + 24
+		numflds		,d4 @retvals + 28
+		curr_fld	,d4 @retvals + 32
+		curr_row	,d4 @retvals + 36
+		curr_col	,d4 @retvals + 40
+		
+.proc
+	
+	;find out where the backdrop window is!
+	xcall w_info(WI_WINDOW, a_tab_id, name, retvals)
+
+	placecol = 1						;keep it within the window
+	using placerow select
+	(.gt.5),	placerow = 5
+	(.lt.2),	placerow = 2
+	endusing
+
+	xcall u_window(D_REMOVE, a_tab_id, D_PLACE, a_tab_id, placerow, placecol)
+	
+	;now place the list
+	if list_visible
+		xcall l_place(a_list_id, placerow+10, placecol+1)
+	
+	xreturn
+
+.end
+			
+;registered for when the main window is moved,
+
+.function move_window, ^val
+a_res1,				a
+a_res2,				a
+^val(a_wndid),		i					;id of the window effected
+^val(a_event),		i					;what was the event? (move)
+^val(a_col),		i					;Position in x-direction (column in cells)
+^val(a_row),		i					;Position in y-direction (row in cells)
+
+.include 'WND:tools.def'
+
+stack record menu_name
+	ent,		a4
+	row,		d3
+	col,		d3
+	
+.proc
+	
+	if g_entnam.ne.'WMOV'
+	  begin
+		ent='WMOV'
+		row=a_row
+		col=a_col
+	
+	    xcall m_signal(menu_name)
+	  end
+	
+	freturn TRUE
+
+.end
+
+;registered for when the main window is moved,
+
+.function close_window, ^val
+a_res1,				a
+a_res2,				a
+^val(a_wndid),		i					;id of the window effected
+
+.include 'WND:tools.def'
+
+.proc
+
+	xcall m_signal('O_CLOSE')
+
+	freturn TRUE
+
+.end
+
+.function close_list, ^val
+a_res1,				a
+a_res2,				a
+^val(a_wndid),		i					;id of the window effected
+
+.include 'WND:tools.def'
+
+.proc
+
+	xcall m_signal('O_CLSLST')
+
+	freturn TRUE
+
+.end
+
+
+;
+;tab container methods.
+
+
+.subroutine product_input_method
+a_object_id,		n					;object id
+group spc_line,		a					;item line data
+	.include 'SPC_LINE' repository, norecord
+endgroup
+.include 'demoprog.def'
+group spc_wizard,	a					;wizard structure layout
+	.include 'SPC_WIZARD' repository, norecord
+endgroup
+
+; end of argument list
+
+.include 'WND:tools.def'
+.include 'WND:fldinf.def'
+
+.include 'SPC_LINE' repository, stack record='new_spc_line'
+
+.include 'SPC_WIZARD' repository, record='store_wizard'
+
+.align
+stack record
+	len,					i4			;length of return product list data	
+	count,					i4			;loop counter
+	got_something,			i4			;something entered flag
+	fld_number,				i4			;field number
+	fld_name,				a30			;field name
+	
+stack record returned_lines
+returned_line,				D_LINE_MAX a ^size(new_spc_line)
+
+external common
+	working_tab_set,		i4, 0
+
+
+.proc
+	
+	if a_object_id.eq.opsys_iid
+	begin
+		xcall b_disable(a_object_id, 'B_ADD')
+		xcall b_disable(a_object_id, 'B_RESET')
+		if .not.spc_wizard.sys_code .or. .not.spc_wizard.sys_code_for_screen
+		begin							;default values!
+			spc_wizard.sys_code_for_screen = D_DEF_SYS_NUM
+										;default to the Nth option on list
+			spc_wizard.sys_code = D_DEF_SYS_CODE
+										;default system code
+		end
+		xcall i_display(a_object_id, 'data', spc_wizard)
+	end
+	
+	if a_object_id.eq.sql_iid
+	begin
+		spc_wizard.sql_driver_for_screen = D_DEF_DATABASE
+										;default database
+		xcall i_display(a_object_id, 'data', spc_wizard, 'SQL_DRIVER_FOR_SCREEN')
+		xcall i_next(a_object_id, 'data', '*FRST*')
+	end
+	
+	xcall i_next(a_object_id, 'data', '*FRST*')
+
+	clear g_select
+	
+	working_tab_set = TRUE
+	repeat
+	begin
+		if .not.g_select
+			xcall i_input(a_object_id, 'data', spc_wizard, minput_mid, mselect_mid, , D_NOTERM,,, program_data)
+			
+		if g_select
+		then
+		begin
+			clear g_select
+			case g_entnam of
+			begincase
+			'B_ADD' :
+			begin
+				quote_to_save = TRUE
+				call add_item_to_line
+				call set_defaults
+			end
+			'B_RESET' :
+			begin
+				call set_defaults
+			end
+			endcase
+			else
+			begin
+				g_select = TRUE
+				exitloop
+			end
+		end
+		else
+		begin
+			quote_to_save = TRUE
+			call add_item_to_line
+			call set_defaults
+		end
+	end
+	working_tab_set = FALSE
+
+	if a_object_id.eq.opsys_iid
+	begin
+		xcall b_enable(a_object_id, 'B_ADD', TRUE)
+		xcall b_enable(a_object_id, 'B_RESET', TRUE)
+	end
+	
+
+xreturn
+
+set_defaults,
+	xcall i_init(a_object_id, 'data', spc_wizard)
+	xcall i_next(a_object_id, 'data', '*FRST*')
+	if a_object_id.eq.docs_iid
+		xcall i_enable_set(a_object_id, 'rest')
+	
+	if a_object_id.eq.opsys_iid
+	begin
+		spc_wizard.sys_code_for_screen=D_DEF_SYS_NUM
+											;default to Windows NT
+		xcall i_display(a_object_id, 'data', spc_wizard, 'SYS_CODE_FOR_SCREEN')
+    end
+	
+	if a_object_id.eq.sql_iid
+	begin
+		spc_wizard.sql_driver_for_screen=1	;default to the first
+		xcall i_display(a_object_id, 'data', spc_wizard, 'SQL_DRIVER_FOR_SCREEN')
+	end
+	xcall i_next(a_object_id, 'data', '*FRST*')
+
+	return
+
+add_item_to_line,
+
+	;copy the window details to the store wizard structure
+	
+	clear fld_number, fld_name, store_wizard, got_something
+	store_wizard.sys_code=spc_wizard.sys_code
+	repeat
+	begin
+		clear fld_name
+		fld_number += 1
+		xcall i_fldinf(a_object_id, fld_name, fld_number,, gs_inpfld)
+
+		if .not.fld_name exitloop   	;the end
+		
+		store_wizard(gs_pos:gs_siz) = spc_wizard(gs_pos: gs_siz)
+		if store_wizard(gs_pos:gs_siz) got_something = TRUE
+	
+        using store_wizard.num_dis_for_screen select
+        (1), store_wizard.num_disa = 1
+        (2), store_wizard.num_disb = 1
+        (3), store_wizard.num_disc = 1
+        (4), store_wizard.num_disd = 1
+        endusing
+    end
+
+	if .not.got_something return
+
+	;special windows code is here!
+	;firstly, set the required sql db field
+	if store_wizard.sql_driver_for_screen
+	begin
+		store_wizard.sys_code_db = store_wizard.sys_code
+		if store_wizard.sql_local_num
+		then store_wizard.db_local_overlay[store_wizard.sql_driver_for_screen] = store_wizard.sql_local_num
+		else store_wizard.db_remote_overlay[store_wizard.sql_driver_for_screen] = store_wizard.sql_remote_num
+	end
+	
+	store_wizard.sys_code_odbc = store_wizard.sys_code
+	store_wizard.sys_code_xfsv = store_wizard.sys_code
+
+	;add the selected window details to the list
+	store_wizard.env_type = 2
+	len = %convert_spc_wizard(store_wizard, returned_lines)
+	
+	if(len.lt.1) return
+	if(len.gt.D_LINE_MAX) len = D_LINE_MAX
+	
+	;make sure we are at the bottom of the list
+	xcall l_queue(list_lid, D_LBOTTOM)
+	
+	;for each returned product - load into the list
+	for count from 1 thru len
+	begin
+	
+		;get the new line data from the convertion routine return data
+		new_spc_line = returned_line(count)
+		xcall add_to_list(spc_line, new_spc_line, program_data)
+	end
+
+return
+
+.end
+
+
+
+.subroutine product_list
+a_objid,			n					;object id from the tab container
+
+group spc_line,		a					;product line details
+	.include 'SPC_LINE' repository, norecord
+endgroup
+
+.include 'demoprog.def'
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+.align
+stack record
+	req,			i4					;list request flag
+	
+.proc
+
+	;this routine allows the user to navigate around the list!
+
+	clear g_select
+
+	repeat
+	begin
+		if .not.g_select
+			xcall l_select(list_lid, req = D_LNOP, spc_line, , , , , , mlist_mid, , , , , , D_GLOBAL)
+			
+		if g_select exitloop
+		call process_user_input
+	end
+
+	xreturn
+
+process_user_input,
+
+	;allow the user to amend/change some of the fields within the
+	;list.
+	
+	xcall l_input(list_lid, 'input', spc_line, spc_line,  , , , D_NOTERM
+&	,,,, program_data)	
+	
+return
+
+.end
+
+;
+.subroutine load_lines
+
+a_listid,			n
+a_request,			n
+group spc_line,		a					;Optional
+	.include 'spc_line' repository, norecord
+endgroup
+a_inpid,			n
+a_disabled_flag,	n					;Optional
+a_itemindex,		n
+
+; end of argument list
+
+.include 'WND:tools.def'
+
+.proc
+
+	a_request = D_LEOF
+
+	xreturn
+.end
+
+.function check_exit, ^VAL	;return true if OK to exit
+
+.include 'demoprog.def'
+group spc_line,     a
+    .include 'SPC_LINE' repository, norecord
+endgroup
+group quote_head,     a
+    .include 'QUOTE_HEAD' repository, norecord
+endgroup
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+.align
+stack record
+	num_in_list,		i4
+
+.proc
+
+	if .not.quote_to_save freturn TRUE	;nothing processed!
+	
+	;ask user what to do
+	
+	using %u_msgbox("Modifications made, do you wish to save the quote ?",
+&					D_MYESNOCANCEL+D_MICONQUESTION+D_MDEFBUTTON1) select
+	(D_MIDYES), 						;save quote details away
+	begin
+		if %quote_io(program_data, D_AS_SAVEAS, spc_line, quote_head)
+		then freturn TRUE
+		else freturn FALSE				;no saved - cancel close!
+	end
+	(D_MIDNO),							;requested not to save - go ahead and cancel!
+	begin
+		freturn TRUE
+	end
+	(D_MIDCANCEL), 						;pressed the wrong key?
+	begin
+		freturn FALSE
+	end
+	endusing
+	
+.end	
+
+
+.function quote_io, ^VAL
+
+.include 'demoprog.def'
+a_as,				n					;if passed, then 'save as', 'save', 'open'
+group spc_line,		a					;item line data
+	.include 'SPC_LINE' repository, norecord
+endgroup
+group quote_head,		a				;item line data
+    .include 'QUOTE_HEAD' repository, norecord
+endgroup
+
+;end of argument list
+
+.include 'WND:tools.def'
+.include 'io.def'
+
+.include 'SPC_LINE' repository, record = 'local_spc_line'
+.include 'SPC_LINE' repository, record = 'new_spc_line'
+.include 'QUOTE_DETAIL' repository, record = 'quote_detail'
+
+.align
+stack record
+	name_iid,		i4					;save window id
+	tmp_lst_iid,	i4					;temp list window id
+	errflg,			i4					;error flag
+	req,			i4					;list request
+	line_number,	i4					;detail line number
+	return_state,	i4					;return state		
+	
+.proc
+
+	xcall disable_options(program_data)
+	
+	using a_as select
+	(D_AS_SAVE),
+	begin
+		xcall i_ldinp(name_iid, g_utlib, 'name')
+		xcall w_brdr(name_iid, WB_TITLE, 'Save')
+	end
+	(D_AS_SAVEAS),
+	begin
+		xcall i_ldinp(name_iid, g_utlib, 'name')
+		xcall w_brdr(name_iid, WB_TITLE, 'Save as')
+	end
+	(D_AS_OPEN),
+	begin
+		xcall i_ldinp(name_iid, g_utlib, 'load')
+		xcall w_brdr(name_iid, WB_TITLE, 'Open')
+	end
+	endusing
+
+    call set_wnd_detail
+	
+	xcall i_ldinp(tmp_lst_iid, g_utlib, 'tmp', D_NOPLC, , , 'lines')
+	
+	repeat
+	begin
+		if a_as.ne.D_AS_SAVE .or. .not.quote_name
+		    xcall i_input(name_iid, , quote_head, minput_mid, mselect_mid, , D_NOTERM,,, )
+		if g_select
+		begin
+			return_state = FALSE
+			exitloop
+		end
+		;save as required
+		using a_as select
+		(D_AS_SAVE),	call save_quote
+		(D_AS_SAVEAS),	call save_quote
+		(D_AS_OPEN),	call open_quote
+		endusing
+		if return_state exitloop
+		xcall i_next(name_iid,, '*FRST*')
+	end
+	
+	xcall reset_options(program_data)
+	clear g_select
+	freturn return_state
+
+set_wnd_detail,
+		
+    xcall i_display(name_iid,, quote_head)
+    xcall i_next(name_iid,, '*FRST*')
+    return
+
+save_quote,
+
+	if ((errflg = %access_quote_head(d_io_create, quote_head_chan, , , quote_head)).eq.D_IO_OK)
+	then
+	begin
+		clear line_number
+		req = D_LFIRST
+		repeat
+		begin
+			xcall l_data(list_lid, req, tmp_lst_iid, local_spc_line, , errflg)		
+			if errflg
+			begin
+				return_state = TRUE
+				exitloop
+			end
+			incr line_number
+			qd_name = qh_savename
+			qd_line_no = line_number
+			
+            qd_version = local_spc_line.product_code(1:1)
+            qd_sys_code = local_spc_line.sys_code
+            qd_prod_code = local_spc_line.product
+            qd_qty = local_spc_line.quantity_ordered
+            qd_unit = local_spc_line.units
+            qd_value = local_spc_line.line_value
+            qd_description = local_spc_line.product_description
+
+            if %access_quote_detail(D_IO_CREATE, quote_detail_chan, , , quote_detail).ne.D_IO_OK
+			begin
+				return_state = FALSE
+				return
+			end
+			req = D_LNEXT
+		end
+	end
+	else
+	begin
+		;should be checking errflg, but the only error expected could be duplicate key
+	    xcall u_message("Quote details already exist.")
+		return_state = FALSE
+	end
+
+	if return_state
+	begin
+		clear quote_to_save
+		quote_name = qh_savename
+	end
+
+return
+
+open_quote,
+
+	clear spc_line
+	
+	if %access_quote_head(D_IO_READ, quote_head_chan, qh_savename, D_PRIMKEY, quote_head).eq.D_IO_OK
+	then
+	begin
+		;load each item into the list...
+		errflg = %access_quote_detail(D_IO_READ, quote_detail_chan, qh_savename, D_PRIMKEY, quote_detail)				
+		while errflg.eq.D_IO_OK .and. qh_savename.eq.qd_name
+		begin
+            new_spc_line.product_code(1:1) = qd_version
+            new_spc_line.sys_code = qd_sys_code
+            new_spc_line.product = qd_prod_code
+            new_spc_line.quantity_ordered = qd_qty
+            new_spc_line.units = qd_unit
+            new_spc_line.line_value = qd_value
+            new_spc_line.product_description = qd_description
+
+			xcall add_to_list(spc_line, new_spc_line, program_data)
+			errflg = %access_quote_detail(D_IO_READ_NEXT, quote_detail_chan, , , quote_detail)
+		end
+		return_state = TRUE
+	end
+	else
+    begin
+		;shoule be checking errflg, but only expected errors is key not found / end of file
+		xcall u_message("Quote details can not be located")
+		return_state = FALSE
+	end
+
+	if return_state
+	begin
+		clear quote_to_save
+		quote_name = qh_savename
+        current_object = tab_id
+	end
+	
+return
+
+.end
+
+.subroutine disable_options
+	
+.include 'demoprog.def'
+
+.include 'WND:tools.def'
+
+.proc
+
+	xcall e_enter
+	xcall m_column(D_REMOVE, D_LOCAL)
+	xcall m_disable(D_LIST, mfile_mid, 'all')
+	xcall tb_toolbar(TB_DISABLE, tb_id)
+
+	xreturn
+
+.end
+
+.subroutine reset_options
+
+.include 'demoprog.def'
+
+.include 'WND:tools.def'
+
+.proc
+
+	xcall e_exit
+	xcall tb_toolbar(TB_ENABLE, tb_id)
+
+	xreturn
+
+.end
+
+.function compose_message
+.include 'demoprog.def'
+group spc_line
+	.include 'SPC_LINE' repository, norecord
+endgroup
+
+.include 'WND:tools.def'
+
+.align
+stack record
+	count,				i4				;counter
+	line_no,			i4 				;line number
+	flg,				i4				;list result flag
+	o_chan,				i4				;output channel
+	file_name,			a256			;attachment file name
+		
+stack record message_line
+	ml_code,			a10
+	ml_description,		a75
+	ml_qty,				a10
+	ml_unit,			a10
+	ml_cost,			a10
+	ml_crlf,			a2
+
+.proc
+	
+	file_name = 'DEMOTMP:quote_file.txt'
+	
+	xcall delet(file_name)
+	xcall u_open(o_chan, 'O', file_name)
+	
+	ml_crlf = %char(13)+%char(10)
+	
+	clear count, line_no
+	ml_code = 'Product'
+	ml_description = 'Description'
+	ml_qty = '  Quantity'
+	ml_unit = '     Units'
+	ml_cost = '      Cost'
+	call add_line
+
+	xcall l_data(list_lid, D_LFIRST, list_tmp_iid, spc_line,, flg)
+							;get first item from list
+	while(.not.flg)
+	begin
+
+		ml_code = product_code
+		ml_description = product_description
+		ml_qty = quantity_ordered
+		ml_unit = units
+		ml_cost = line_value,'$$$$$$X.XX'
+		call add_line
+			
+		xcall l_data(list_lid, D_LNEXT, list_tmp_iid, spc_line,, flg)
+							;get next item from list
+	end
+
+	xcall u_close(o_chan)
+
+	freturn %atrim(file_name)
+
+add_line,
+
+	writes(o_chan, message_line)
+	
+	return
+	
+.end
+
+
+.subroutine add_toolbar_button	,reentrant
+	a_tbid		,n	;ID of the toolbar
+	a_xoffset	,n	;Incoming/returned X offset
+	a_btnname	,a	;Name of the button
+	a_bitmap	,a	;Filename of the image bitmap
+	a_tooltip	,a	;Tooltip text
+	
+;
+; Notes:
+;
+;	The button will be placed at the incoming a_xoffset, and a_xoffset will be returned
+;	with the anticipated X coordinate of the next button.
+;
+.proc
+	xcall tb_button(a_tbid, TBB_LOAD, a_btnname, a_xoffset, D_TOOLBAR_INDENT,
+	&	D_TOOLBAR_BTNWIDTH, D_TOOLBAR_BTNHEIGHT, TBLOAD_TYPE_BMAP, a_bitmap,
+	&	a_tooltip,,, 'toolbar_method')
+	a_xoffset += D_TOOLBAR_DELTAX
+	xreturn
+.end
+
+.subroutine toolbar_method	,reentrant
+a_btnname	,a							;Name of the button
+;
+; Notes:
+;
+;	This routine merely resignals the name of the button as a menu entry
+;
+.proc
+	xcall m_signal(a_btnname)
+	xreturn
+.end
+
+
+.subroutine USR_ENTRST					;override default 'clear pending input'
+a_nodata	,n
+a_reset		,n
+
+.proc
+	if (.not. a_nodata)					;Anything pending?
+	  clear a_reset						;Validate it
+	xreturn
+.end
+
+.function click_tab, ^val
+a_reserved1		,a						;Reserved arguments
+a_reserved2		,a
+^val(a_wndid)	,i						;Window ID
+^val(a_event)	,i						;Event code
+;
+.include 'WND:tools.def'
+;
+
+global common
+	working_tab_set,		i4, 0
+
+.proc
+	if working_tab_set freturn TRUE
+
+	;do we move to the tab set, or the list?
+	
+	xcall m_signal('MV_TAB')
+
+	freturn TRUE
+
+.end
+
+
+
+.function click_lst, ^val
+a_reserved1		,a						;Reserved arguments
+a_reserved2		,a
+^val(a_wndid)	,i						;Window ID
+^val(a_event)	,i						;Event code
+;
+.include 'WND:tools.def'
+;
+
+.proc
+	
+	;do we move to the tab set, or the list?
+	
+	xcall m_signal('MV_LIST')
+	
+	freturn TRUE
+
+.end
+
+.function list_moved, ^val
+a_reserved1		,a						;Reserved arguments
+a_reserved2		,a
+^val(a_wndid)	,i						;Window ID
+^val(a_event)	,i						;Event code
+;
+.include 'WND:tools.def'
+;
+
+.proc
+	
+	xcall m_signal('MV_MVLIST')
+	
+	freturn TRUE
+
+.end
+
+.function Tabset_Callback	,^val
+;
+; Description:  Overloaded tab set notification routine
+;
+; Arguments:
+;
+	a_tabnum	,n	;Number of the tab being accessed
+	
+	a_tabid		,n	;ID of the tabset
+;
+; Notes:
+;
+;	This routine is necessary because the Toolkit will ignore a click on a
+;	tab if it is not in the current tab set.  This overloaded version will
+;	invoke the click method for the tab set container (which makes it the current
+;	tab set, and also selects the appropriate window.
+;	Assumes that the user clicks does not click on current tab, if the do, this routine
+;	is executed but does not change anything.
+	
+.proc
+    xcall click_tab(,, ^val(a_tabid), ^val(D_EVENT_LEFT_CLICK))
+    xcall ts_tabset(DTS_ACTIVE, a_tabid, a_tabnum)
+										;Select the right tab
+	xcall m_signal('MV_TAB')
+	
+	freturn TRUE
+.end
+
+;
+
+.function check_full,^val
+
+a_data_entered 		,n
+a_data_stored 		,n
+a_pending_status	,n
+.include 'WND:inpinf.def'
+group spc_wizard,	a					;wizard structure layout
+	.include 'SPC_WIZARD' repository, norecord
+endgroup
+.include 'demoprog.def'
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+.proc
+
+	if g_select freturn	D_OK ;menu entry signaled
+	
+	if a_data_entered
+	then
+	begin
+		xcall i_init(inp_wndid, 'rest', spc_wizard, )
+		xcall i_disable_set(inp_wndid, 'rest')
+	end
+	else xcall i_enable_set(inp_wndid, 'rest')
+
+	freturn D_OK
+
+.end
+
+.subroutine move_to_sys_field
+.include 'WND:inpinf.def'
+group a_inprec,		a
+	.include 'spc_wizard' repository, norecord
+endgroup
+a_methoddata1,		a
+
+;end of argument list
+
+.include 'WND:tools.def'
+
+.proc
+
+	if g_select xreturn
+	using sys_code_for_screen select
+	(1),	sys_code = 005
+	(2),	sys_code = 010
+	(3),	sys_code = 021
+	(4),	sys_code = 200
+	(5),	sys_code = 102
+	(6),	sys_code = 201
+	(7),	sys_code = 009
+	(8),	sys_code = 004
+	(9),	sys_code = 003
+	(10),	sys_code = 101
+	(11),	sys_code = 012
+	(12),	sys_code = 020
+	endusing
+
+	xreturn
+.end
+
+;the following is included to enable Visual SlickEdit to compile and link the demo program
+
+.include 'convert_spc_wizard.dbl'
+.include 'i_disable_set.dbl'
+.include 'i_enable_set.dbl'
+.include 'file_io.dbl'
+.include 'add_line.dbl'
+.include 'who_details.dbl'
+
+.ifdef D_GUI
+	
+	.include 'about.dbl'
+    .include 'sendmail.dbl'
+	.include 'wizard_setup.dbl'
+	.include 'print_quote.dbl'
+	.include 'progress.dbl'
+	.include 'webbrowser.dbl'
+	.include 'help_system.dbl'
+	
+.else
+
+.subroutine usr_utils
+.proc
+	xreturn
+.end
+
+.subroutine send_mail,varargs
+.proc
+	xreturn
+.end
+	
+.subroutine wizard_setup,varargs
+.proc
+	xreturn
+.end
+
+.subroutine print_quote,varargs
+.proc
+	xreturn
+.end
+	
+.subroutine synergex_web_page,varargs
+.proc
+	xreturn
+.end
+	
+.subroutine help_system,varargs
+.proc
+	xreturn
+.end
+
+.endc
+
