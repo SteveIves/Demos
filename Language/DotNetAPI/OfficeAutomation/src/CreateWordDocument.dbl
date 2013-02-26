@@ -1,0 +1,76 @@
+;******************************************************************************
+;
+; File:         CreateWordDocument.dbl
+;
+; Type:         Subroutine
+;
+; Description:  Creates a Microsoft Word document
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/13/2010
+;
+;*******************************************************************************
+;
+.include "SRC:OfficeAutomation.inc"
+
+subroutine CreateWordDocument
+
+	endparams
+
+	.include "WND:tools.def"
+	.include "WND:windows.def"
+
+	record
+		FileName	,a60
+		doc			,@WordDocument
+		sales		,[12]d8.2	,15245.23,18270,14187.55,12153.49,11200.66,17899.21,18487,19215.23,17148.87,20357.24,21141.49,16157.68
+		cost		,[12]d8.2	,12455,13656.99,11250,10269.50,10348.49,14536.54,15923.56,16423.55,14953.99,16532.12,15401.01,11586.49
+		tableId		,int
+		month		,int
+	endrecord
+
+proc
+
+	;============================================================
+	; Get Filename for Excel Sheet
+	;============================================================
+	FileName = "C:\SalesAnalysis.docx"
+	xcall u_dialog(FileName,,,,"Enter a file spec for the document to be created",
+	&			   "Example: C:\SalesAnalysis.docx",
+	&			   "(Existing files will be overwritten!)","")
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	doc = new WordDocument()
+
+	doc.AddHeading1("2009 Sales Analysis")
+	doc.NewParagraph()
+	
+	tableId = doc.AddTable(13,4)
+	doc.ReverseTableRow(tableId,1)
+
+	doc.SetTableCell(tableId,1,1,"Month")
+	doc.SetTableCell(tableId,1,2,"Sales")
+	doc.SetTableCell(tableId,1,3,"Cost")
+	doc.SetTableCell(tableId,1,4,"Margin")
+
+	for month from 1 thru 12
+	begin
+		doc.ShadeTableCell(tableId,month+1,1)
+		doc.SetTableCell(tableId,month+1,1,string(month))
+		doc.SetTableCell(tableId,month+1,2,string(sales[month],"$$$$,$$$.XX"))
+		doc.SetTableCell(tableId,month+1,3,string(cost[month],"$$$$,$$$.XX"))
+		doc.SetTableCell(tableId,month+1,4,string(sales[month]-cost[month],"$$$$,$$$.XX"))
+	end
+	
+	doc.SaveAs(atrim(FileName));
+
+	doc.Close()
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	xreturn
+
+endsubroutine
+

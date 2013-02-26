@@ -1,0 +1,32 @@
+;******************************************************************************
+;
+; File:         OfficeAutomationTest.dbl
+;
+; Type:         Program
+;
+; Description:  Test program for office automation wrappers
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/13/2010
+;
+;*******************************************************************************
+;
+main OfficeAutomationTest
+
+	.include "WND:tools.def"
+
+proc
+
+    u_start(,1,0)
+	xcall e_sect("Excel Automation Test Program", D_HEADER)
+	xcall e_state(D_ON,D_LOWER)
+
+	CreateSpreadsheet()
+	CreateWordDocument()
+	CreateMapPointMap()
+
+	u_finish()
+    stop
+
+endmain

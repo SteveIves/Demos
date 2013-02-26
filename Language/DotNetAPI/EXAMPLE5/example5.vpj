@@ -1,0 +1,228 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config
+		Name="Release"
+		OutputFile=""
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Generate .NET Wrappers"
+				MenuCaption="&amp;Generate .NET Wrappers"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="gennet -o SRC:NetWrappers.dbl System.Xml mscorlib"/>
+			</Target>
+			<Target
+				Name="Prototype .NET Wrappers"
+				MenuCaption="&amp;Prototype .NET Wrappers"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dblproto SRC:NetWrappers.dbl"/>
+			</Target>
+			<Target
+				Name="Compile .NET Wrappers"
+				MenuCaption="&amp;Compile .NET Wrappers"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dbl -qrelax:interop -W0 -o OBJ:NetWrappers.dbo SRC:NetWrappers.dbl"/>
+			</Target>
+			<Target
+				Name="Add .NET Wrappers to Object Library"
+				MenuCaption="&amp;Add .NET Wrappers to Object Library"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dblibr -ca LIB:NetWrappers.olb OBJ:NetWrappers.dbo"/>
+			</Target>
+			<Target
+				Name="Compile Test Program"
+				MenuCaption="&amp;Compile Test Program"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="dbl -W0 -o OBJ:XmlValidation.dbo SRC:XmlValidation.dbl"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dblink -do EXE:XmlValidation.dbr OBJ:XmlValidation.dbo LIB:NetWrappers.olb DBLDIR:synxml.elb"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:XmlValidation.dbr"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild Everything"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="build"/>
+			</Target>
+			<Target
+				Name="Clean Project"
+				MenuCaption="&amp;Clean Project"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="clean"/>
+			</Target>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompile"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d %n"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="1"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="1"/>
+			<SynSetting
+				Name="compile_single"
+				Value="0"/>
+			<SynSetting
+				Name="object_name"
+				Value=""/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o %n %n"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+		</SynSettings>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl;*.dbc">
+			<F N="src/XmlValidation.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh"/>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc"/>
+		<Folder
+			Name="Other Files"
+			Filters="">
+			<F N="build.bat"/>
+			<F N="clean.bat"/>
+			<F N="PurchaseOrder.xsd"/>
+			<F N="PurchaseOrderBad.xml"/>
+			<F N="PurchaseOrderGood.xml"/>
+		</Folder>
+	</Files>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%rw"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)src"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)obj"/>
+		<ExecMacro CmdLine="syn_set LIB=%(ROOT)lib"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)exe"/>
+		<ExecMacro CmdLine="syn_set SYNEXPDIR=%(ROOT)proto"/>
+		<ExecMacro CmdLine="syn_set SYNIMPDIR=%(ROOT)proto"/>
+	</Macro>
+</Project>

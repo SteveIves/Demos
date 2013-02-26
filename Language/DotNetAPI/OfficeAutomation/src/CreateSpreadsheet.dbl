@@ -1,0 +1,200 @@
+;******************************************************************************
+;
+; File:         CreateSpreadsheet.dbl
+;
+; Type:         Subroutine
+;
+; Description:  Creates an Excel spreadsheet
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/13/2010
+;
+;*******************************************************************************
+;
+.include "SRC:OfficeAutomation.inc"
+
+subroutine CreateSpreadsheet
+
+	endparams
+
+	.include "WND:tools.def"
+	.include "WND:windows.def"
+
+	record
+		FileName	,a60
+		wb			,@ExcelWorkbook
+		sales		,[12]d8.2	,15245.23,18270,14187.55,12153.49,11200.66,17899.21,18487,19215.23,17148.87,20357.24,21141.49,16157.68
+		cost		,[12]d8.2	,12455,13656.99,11250,10269.50,10348.49,14536.54,15923.56,16423.55,14953.99,16532.12,15401.01,11586.49
+		fsales		,[3]d8.2	,15245.23,18270,14187.55
+		fcost		,[3]d8.2	,12455,13656.99,11250
+	endrecord
+
+proc
+
+	;============================================================
+	; Get Filename for Excel Sheet
+	;============================================================
+	FileName = "C:\SalesAnalysis.xlsx"
+	xcall u_dialog(FileName,,,,"Enter a file spec for the spreadsheet to be created",
+	&			   "Example: C:\temp\test.xlsx",
+	&			   "(Existing files will be overwritten!)","")
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	wb = new ExcelWorkbook()
+
+	;====================================================
+	;Sales analysis worksheet
+	;====================================================
+	wb.Worksheet = 1;
+	wb.WorksheetName = "2010 Sales";
+	wb.SetData("A1","2010 Sales");
+	wb.SetFont("A1", "Arial", 24);
+	wb.SetBold("A1");
+
+	;Row headings
+	wb.SetData("A4", "Sales");
+	wb.SetData("A5", "Cost Of Sales");
+	wb.SetData("A6", "Gross Profit");
+	wb.SetBold("A4:A6");
+	wb.SetHorizontalAlignment("A4:A6", HAlign.Right);
+	wb.SetColumnWidth(1, 20);
+
+	;Column headings
+	wb.SetData("B3", "Jan 10");
+	wb.SetData("C3", "Feb 10");
+	wb.SetData("D3", "Mar 10");
+	wb.SetData("E3", "Apr 10");
+	wb.SetData("F3", "May 10");
+	wb.SetData("G3", "Jun 10");
+	wb.SetData("H3", "Jul 10");
+	wb.SetData("I3", "Aug 10");
+	wb.SetData("J3", "Sep 10");
+	wb.SetData("K3", "Oct 10");
+	wb.SetData("L3", "Nov 10");
+	wb.SetData("M3", "Dec 10");
+	wb.SetBold("B3:M3");
+	wb.SetHorizontalAlignment("B3:M3", HAlign.Right);
+	wb.SetColumnWidth("B:M", 13);
+
+	;Sales values
+	wb.SetData("B4", sales[1]);
+	wb.SetData("C4", sales[2]);
+	wb.SetData("D4", sales[3]);
+	wb.SetData("E4", sales[4]);
+	wb.SetData("F4", sales[5]);
+	wb.SetData("G4", sales[6]);
+	wb.SetData("H4", sales[7]);
+	wb.SetData("I4", sales[8]);
+	wb.SetData("J4", sales[9]);
+	wb.SetData("K4", sales[10]);
+	wb.SetData("L4", sales[11]);
+	wb.SetData("M4", sales[12]);
+
+	;Cost of sales values
+	wb.SetData("B5", cost[1]);
+	wb.SetData("C5", cost[2]);
+	wb.SetData("D5", cost[3]);
+	wb.SetData("E5", cost[4]);
+	wb.SetData("F5", cost[5]);
+	wb.SetData("G5", cost[6]);
+	wb.SetData("H5", cost[7]);
+	wb.SetData("I5", cost[8]);
+	wb.SetData("J5", cost[9]);
+	wb.SetData("K5", cost[10]);
+	wb.SetData("L5", cost[11]);
+	wb.SetData("M5", cost[12]);
+	wb.SetItalic("B5:M5");
+
+	;Gross profit calculations
+	wb.SetFormula("B6", "B4-B5");
+	wb.SetFormula("C6", "C4-C5");
+	wb.SetFormula("D6", "D4-D5");
+	wb.SetFormula("E6", "E4-E5");
+	wb.SetFormula("F6", "F4-F5");
+	wb.SetFormula("G6", "G4-G5");
+	wb.SetFormula("H6", "H4-H5");
+	wb.SetFormula("I6", "I4-I5");
+	wb.SetFormula("J6", "J4-J5");
+	wb.SetFormula("K6", "K4-K5");
+	wb.SetFormula("L6", "L4-L5");
+	wb.SetFormula("M6", "M4-M5");
+	wb.SetBold("B6:M6");
+	wb.SetFormat("B4:M6", "$#,##0.00_);[Red]($#,##0.00)");
+
+	;Draw borders around the data
+	wb.DrawBox("A4:M6", LineStyle.Continuous, LineWeight.Thick);
+	wb.DrawLine("A4:M6", Border.InsideHorizontal, LineStyle.Continuous, LineWeight.Thin);
+	wb.DrawLine("A4:M6", Border.InsideVertical, LineStyle.Continuous, LineWeight.Thin);
+	wb.DrawLine("A4:A6", Border.Right, LineStyle.Double, LineWeight.Thin);
+	wb.DrawLine("A5:M5", Border.Bottom, LineStyle.Double, LineWeight.Thin);
+
+	;====================================================
+	;Sales forecast worksheet
+	;====================================================
+
+	wb.Worksheet = 2;
+	wb.WorksheetName = "2011 Projection";
+	wb.SetData("A1","2011 Projection");
+	wb.SetFont("A1", "Arial", 24);
+	wb.SetBold("A1");
+
+	;Row headings
+	wb.SetData("A4","Sales");
+	wb.SetData("A5","Cost Of Sales");
+	wb.SetData("A6","Gross Profit");
+	wb.SetBold("A4:A6");
+	wb.SetHorizontalAlignment("A4:A6",HAlign.Right);
+	wb.SetColumnWidth(1,20);
+
+	;Column headings
+	wb.SetData("B3","Jan 11");
+	wb.SetData("C3","Feb 11");
+	wb.SetData("D3","Mar 11");
+	wb.SetBold("B3:D3");
+	wb.SetHorizontalAlignment("B3:D3",HAlign.Right);
+	wb.SetColumnWidth("B:D",13);
+
+	;Forecast sales values
+	wb.SetData("B4",fsales[1]);
+	wb.SetData("C4",fsales[2]);
+	wb.SetData("D4",fsales[3]);
+
+	;Forecast cost of sales values
+	wb.SetData("B5",fcost[1]);
+	wb.SetData("C5",fcost[2]);
+	wb.SetData("D5",fcost[3]);
+	wb.SetItalic("B5:D5");
+
+	;Forecast gross profit calculations
+	wb.SetFormula("B6","B4-B5");
+	wb.SetFormula("C6","C4-C5");
+	wb.SetFormula("D6","D4-D5");
+	wb.SetBold("B6:D6");
+	wb.SetFormat("B4:D6","$#,##0.00_);[Red]($#,##0.00)");
+
+	;====================================================
+	;Create charts
+	;====================================================
+
+	wb.Worksheet = 1;
+	wb.CreateChart(ChartType.Column3D, "A3:M6", "Col Chart", "Sales Analysis for 2010");
+	wb.CreateChart(ChartType.BarClustered3D, "A3:M6", "Bar Chart", "Sales Analysis for 2010");
+	wb.CreateChart(ChartType.Pie3D, "A3:M6", "Pie Chart", "Sales Analysis for 2010");
+
+	;====================================================
+	;Save the Book using Filename
+	;====================================================
+
+	wb.Worksheet = 1;
+	wb.SaveAs(atrim(FileName));
+
+	wb.Close()
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	xreturn
+
+endsubroutine
+

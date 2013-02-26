@@ -1,0 +1,1391 @@
+;******************************************************************************
+;
+;
+;
+.include "SRC:DotNetWrappers.inc"
+
+.main composite
+    
+    .define SYSTEM_INIT
+    .include "SRC:system.def"
+    
+    .include "CUSTOMER" repository, record="customer"
+    .include "CONTACT" repository, record="contact"
+    
+    .include "CUSTOMER" repository, stack record="tmpcustomer"
+    .include "CONTACT"  repository, stack record="tmpcontact"
+    
+    record
+        create      ,i4     ;Creating a customer
+        ok          ,i4     ;All is well
+        saved       ,i4     ;Record was saved
+        found       ,i4     ;Was a match found?
+        done        ,i4     ;All done
+        null        ,i4     ;List is empty
+        lpreq       ,i4     ;List processor request flag
+        graph       ,@MyNetClasses.Graph
+    endrecord
+
+.proc
+
+    ;Start toolkit
+    xcall u_start("EXE:composite.ism",1,0,,28,100)
+
+    ;Configure Toolkit
+    xcall u_wndfont(D_SETFONT,DF_CURRENT,"MS Sans Serif",8,"A")
+    xcall e_sect("UI Toolkit Composite Windows Example",D_CAPTION,D_CLEAR)
+    xcall e_state(D_ON, D_VALSTCHG,D_RETURNBTN)
+    xcall e_method(D_METH_ENTRST,"entrst",D_METH_UTILS,"utilities")
+
+    ;Create toolbar
+    xcall setlog("SYN_TRANSPARENT_COLOR","0xFF,0x00,0xFF",errnum)
+    toolbar=%tb_tkcreate(TBC_TOP,,32)
+    xcall tb_button(toolbar,TBB_LOAD,"ADDCUST",  3,3,24,24,TBLOAD_TYPE_BMAP,"ICO:addcust.bmp","Add Customer",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"DELCUST", 30,3,24,24,TBLOAD_TYPE_BMAP,"ICO:delcust.bmp","Delete Customer",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"ADDCONT", 67,3,24,24,TBLOAD_TYPE_BMAP,"ICO:addcont.bmp","Add Contact",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"DELCONT", 94,3,24,24,TBLOAD_TYPE_BMAP,"ICO:delcont.bmp","Delete Contact",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"E_CUT",  131,3,24,24,TBLOAD_TYPE_BMAP,"ICO:cut.bmp","Cut",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"E_COPY", 158,3,24,24,TBLOAD_TYPE_BMAP,"ICO:copy.bmp","Copy",,,"toolbar_click")
+    xcall tb_button(toolbar,TBB_LOAD,"E_PASTE",185,3,24,24,TBLOAD_TYPE_BMAP,"ICO:paste.bmp","Paste",,,"toolbar_click")
+    
+    ;Create a window events method set
+    msetclose=%u_wndevents(D_CREATE,,D_EVENT_CLOSE,"close_window")
+
+    ;Open data files
+    xcall u_open(ch_customer,"U:I","DAT:customer.ism")
+    xcall u_open(ch_contact,"U:I","DAT:contact.ism")
+    
+    ;Load menu columns
+    xcall m_ldcol(idc_file,,"FILE",,,,D_GLOBAL)
+    xcall m_ldcol(idc_edit,,"EDIT",,,,D_GLOBAL)
+    xcall m_ldcol(idc_options,,"OPTIONS",,,,D_GLOBAL)
+    xcall m_ldcol(idc_customer,,"CUSTOMER",,,,D_GLOBAL)
+
+    ;Set default options
+    g_entnam="U_DEFCONT"
+    xcall utilities
+    g_entnam="U_CDELCUST"
+    xcall utilities
+    g_entnam="U_CDELCONT"
+    xcall utilities
+    g_entnam="U_AUTOSAVE"
+    xcall utilities
+    
+    ;Get images directory
+    xcall getlog("IMG",imgdir,length)
+    if (imgdir(%trim(imgdir):1)!="\")
+        imgdir=%atrim(imgdir)+"\"
+
+    ;Load the customer maintenance window
+    xcall i_ldinp(idi_customer,,"ICUSTOMER",D_NOPLC)
+    xcall u_wndevents(D_ASSIGN,msetclose,idi_customer)
+
+    ;Create a composite window container
+    container=%c_container(DC_CREATE,"CONTAINER",21,90,"Customers and Contacts")
+    xcall u_wndevents(D_ASSIGN,msetclose,container)
+    xcall b_button(container,DSB_ADD,"O_ABANDON",DSB_TEXT,"Close")
+    xcall b_buttonset(container,,,DSB_END)
+
+    ;Create the customer list
+    xcall i_ldinp(idi_lcustomer,,"LCUSTOMER",D_NOPLC)
+    xcall l_class(lc_customer,"LCCUSTOMER",,,6,1,0,0,,,,"customer_load","ACTIVEX,NOHBAR",,"customer_arrive")
+    xcall l_create(idl_customer,idi_lcustomer,customer,,"LCCUSTOMER",,,D_NOPLC)
+    xcall l_sect(idl_customer,"Account|Company|City|State|",D_HEADER)
+    xcall l_button(idl_customer,DSB_ADD,"ADDCUST", DSB_TEXT,"Create")
+    xcall l_button(idl_customer,DSB_ADD,"EDTCUST", DSB_TEXT,"Edit")
+    xcall l_button(idl_customer,DSB_ADD,"DELCUST", DSB_TEXT,"Delete")
+    xcall l_buttonset(idl_customer,,,DSB_CENTER)
+    xcall l_status(idl_customer,D_LAXCTRL,idx_customer)
+    xcall ax_set(idx_customer,"RowMode",1)
+    
+    ;Add the customer list to the composite window container
+    xcall window_text(container,1,2,"Customer Accounts")
+    xcall c_container(DC_ADD,container,DC_LIST,idl_customer,2,2,1,"process_customer_list")
+
+    ;Create the contact list
+    xcall i_ldinp(idi_lcontact,,"LCONTACT",D_NOPLC)
+    xcall l_class(lc_contact,"LCCONTACT",,,6,1,0,0,,,,"contact_load","ACTIVEX,NOHBAR",,"contact_arrive")
+    xcall l_create(idl_contact,idi_lcontact,contact,,"LCCONTACT",,,D_NOPLC)
+    xcall l_sect(idl_contact,"First Name|Last Name|",D_HEADER)
+    xcall l_button(idl_contact,DSB_ADD,"ADDCONT",DSB_TEXT,"Create")
+    xcall l_button(idl_contact,DSB_ADD,"EDTCONT", DSB_TEXT,"Edit")
+    xcall l_button(idl_contact,DSB_ADD,"DELCONT",DSB_TEXT,"Delete")
+    xcall l_buttonset(idl_contact,,,DSB_CENTER)
+    xcall l_status(idl_contact,D_LAXCTRL,idx_contact)
+    xcall ax_set(idx_contact,"RowMode",1)
+
+    ;Add the contact list to the composite window container
+    xcall window_text(container,1,63,"Customer Contacts")
+    xcall c_container(DC_ADD,container,DC_LIST,idl_contact,2,63,2,"process_contact_list")
+    
+    ;Load the input windows for the contact details tabset
+    xcall i_ldinp(idi_contact1,,"ICONTACT1",D_NOPLC)
+    xcall i_ldinp(idi_contact2,,"ICONTACT2",D_NOPLC)
+    xcall i_ldinp(idi_contact3,,"ICONTACT3",D_NOPLC)
+
+    ;Load & configure the .NET graph control for the contact details tabset
+    graph = new MyNetClasses.Graph()
+    idw_graph=%dotnet_tkwin("NETGRAPH",9,59,graph)
+    graph.Width=%u_winmetrics(D_CHARWIDTH,idw_graph)*59
+    graph.Height=%u_winmetrics(D_ROWHEIGHT,idw_graph)*9
+    
+    xcall w_brdr(idw_graph,WB_TITLE,"Call Frequency")
+
+    ;Create the contact details tabset
+    tabset=%ts_tabset(DTS_CREATE,"TABSET",9,59)
+    xcall ts_tabset(DTS_WINDOW,tabset,idi_contact1,"contact_input")
+    xcall ts_tabset(DTS_WINDOW,tabset,idi_contact2,"contact_input")
+    xcall ts_tabset(DTS_WINDOW,tabset,idi_contact3,"contact_input")
+    xcall ts_tabset(DTS_WINDOW,tabset,idw_graph,"contact_graph")
+    xcall ts_tabset(DTS_BUTTON,tabset,"O_SAVE",DSB_TEXT,"OK")
+    xcall ts_tabset(DTS_BUTTON,tabset,"O_DISCARD",DSB_TEXT,"Cancel")
+    xcall ts_tabset(DTS_BUTTONSET,tabset,,,DSB_CENTER)
+    
+    ;Add the contact details tabset to the composite window container
+    xcall c_container(DC_ADD,container,DC_WINDOW,tabset,11,2,2,"process_contact_tabset")
+    
+    ;Ceate the contact image ActiveX control
+    idw_image=%ax_tksingle("AXIMAGE",10,25,"Composite.Image","EXE:Composite.ocx")
+    xcall ax_tkset(idw_image,"Stretch",1)
+
+    ;Add the ActiveX control to the composite window container
+    xcall c_container(DC_ADD,container,DC_WINDOW,idw_image,12,65,2)
+
+    ;Place the composite window container
+    xcall u_window(D_PLACE,container,3,6)
+    xcall i_frames(idi_contact1)
+
+    ;Set up the initial UI
+    xcall ui_control(D_OFF,D_OFF,D_OFF,D_OFF,D_OFF)
+    
+    ;Main processing loop
+    repeat
+    begin
+        xcall c_process(container,customer,contact)
+
+        using g_entnam select
+        ("DATASAVE"),
+            xcall save_data
+        ("DATARELOAD"),
+            xcall reload_data(customer,contact)
+        ("O_ABANDON"),
+            exitloop
+        ("O_EXIT"),
+            exitloop
+        ("ADDCUST"),
+            call add_customer
+        ("EDTCUST"),
+            call edit_customer
+        ("DELCUST"),
+            call delete_customer
+        ("EDTCONT"),
+            call edit_contact
+        ("ADDCONT"),
+            call create_contact
+        ("DELCONT"),
+            call delete_contact
+        endusing
+    end
+    
+    ;Close files
+    xcall u_close(ch_customer,ch_contact)
+    
+    ;All done
+    xcall u_finish()
+    stop
+
+;------------------------------------------------------------------------------
+;
+add_customer,
+
+    create=TRUE
+    
+edit_customer,
+
+    ok=TRUE
+
+    if (create) then
+    begin
+        ;Set window title
+        xcall w_brdr(idi_customer,WB_TITLE,"Create New Customer")
+        ;Create a new customer record
+        clear tmpcustomer
+        ;Make sure the window is clear of existing data
+        xcall i_init(idi_customer,"ALL")
+        xcall i_enable(D_SET,idi_customer,"ALL")
+        ;Record if we're creating the first customer
+        xcall l_status(idl_contact,D_LNULL,null)
+    end
+    else
+    begin
+        ;Set window title
+        xcall w_brdr(idi_customer,WB_TITLE,"Edit Customer Details")
+        ;Read and lock the customer record
+        read(ch_customer,customer,customer.account,KEYNUM:0) [ERR=norec]
+        xcall e_sect("Customer record locked",D_POSITION,1,1)
+        ;Put the customer record in the input window and setup for editing
+        xcall i_display(idi_customer,"ALL",tmpcustomer=customer)
+        xcall i_disable(D_SET,idi_customer,"KEY")
+        xcall i_next(idi_customer,"ALL","*FRST*")
+        exit
+norec,
+        xcall error_message("Failed to lock customer record")
+        clear ok
+    end
+
+    if (ok) 
+    begin
+        ;Place and process the customer details window
+
+        xcall u_window(D_PLACE,idi_customer,5,10)
+
+        repeat
+        begin
+            xcall i_input(idi_customer,"ALL",tmpcustomer,,,,D_NOTERM)
+            if (g_select) then
+            begin
+                using g_entnam select
+                ("O_ABANDON"),
+                begin
+                    if (!create)
+                    begin
+                        unlock ch_customer
+                        xcall e_sect("Customer record unlocked",D_POSITION,1,1)
+                    end
+                    exitloop
+                end
+                endusing
+            end
+            else
+            begin
+                call save_customer
+                if (saved) 
+                    exitloop
+            end
+        end
+        
+        xcall u_window(D_REMOVE,idi_customer)
+
+    end
+
+    clear create, g_select, g_entnam
+
+    return
+
+;------------------------------------------------------------------------------
+;
+save_customer,
+
+    ;Save a customer record to the customer file
+
+    clear saved
+    
+    begin
+        if (create) then
+            store(ch_customer,tmpcustomer) [$ERR_NODUPS=dups,ERR=nosave]
+        else
+        begin
+            write(ch_customer,tmpcustomer) [$ERR_NODUPS=dups,ERR=nosave]
+            xcall e_sect("Customer record updated and unlocked",D_POSITION,1,1)
+        end
+
+        saved=TRUE
+        exit
+
+dups,   xcall info_message("That account number is already in use!")
+        xcall i_init(idi_customer,,tmpcustomer,"ACCOUNT")
+        exit
+
+nosave, xcall error_message("Failed to save customer record!")
+
+    end
+
+    if (saved) 
+    begin
+        if (create)
+        begin
+            ;Insert a new customer into the customer list
+
+            ;Setup a search for the customer record higher than this one
+            xcall l_findspec(idl_customer,tmpcustomer.company,%i_fldstrpos(idi_lcustomer,"COMPANY"),%i_fldsize(idi_lcustomer,"COMPANY"),,D_LFND_NOCASE,D_LFND_GT,D_LFND_CURR)
+
+            ;Do the search
+            xcall l_queue(idl_customer,D_LTOP)
+            xcall l_process(idl_customer,lpreq=D_LFIND,customer,,customer,contact)
+
+            ;See if we found a match
+            xcall l_status(idl_customer,D_LFOUND,found)
+            if (found) then
+                lpreq = D_LINSERT                   ;Yes, insert new item
+            else
+            begin
+                xcall l_queue(idl_customer,D_LBOTTOM)   ;No, append new item
+                lpreq=D_LAPPEND
+            end
+
+            ;Add a new blank item to the customer list
+            xcall l_process(idl_customer,lpreq,customer,,customer,contact)
+
+            ;Did we just add the first customer record.  If so we need to
+            ;make some changes to the user interface.
+            if (null)
+            begin
+                xcall enable_contact_processing
+                xcall i_enable(D_SET,idi_contact1,"ALL")
+                xcall i_enable(D_SET,idi_contact2,"ALL")
+                xcall i_enable(D_SET,idi_contact3,"ALL")
+                xcall ui_control(D_ON,D_ON)
+            end
+        end
+        
+        ;Update the customer list with the new or updated customer record
+        xcall l_process(idl_customer,lpreq=D_LNOP,customer=tmpcustomer,,customer,contact)
+        xcall i_display(idi_lcustomer,,customer)
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+delete_customer,
+
+    ;Are there any contacts associated with this customer account? 
+    xcall l_status(idl_contact,D_LNULL,null)
+    if (null) then
+        xcall s_bld(tmpa,,"Delete %a ?",customer.company)
+    else
+        xcall s_bld(tmpa,,"Delete %a and all customer contacts ?",customer.company)
+
+    ;Confirm account deletion
+    if ((!confirm_delcust)||(%yesno(tmpa)))
+    begin
+
+        ;If there are any contacts for this customer then delete them
+        if (!null)
+        begin
+            repeat
+            begin
+                read(ch_contact,tmpcontact,customer.account,KEYNUM:0) [$ERR_KEYNOT=done1,$ERR_EOF=done1]
+                delete(ch_contact)
+            end
+        end
+
+done1,
+        ;Now delete the customer account
+        begin
+            read(ch_customer,tmpcustomer,customer.account,KEYNUM:0) [ERR=delfail1]
+            delete(ch_customer) [ERR=delfail1]
+            xcall l_process(idl_customer,lpreq=D_LDELITEM,customer,,customer,contact)
+            exit
+delfail1,   xcall error_message("Failed to lock or delete customer record.")
+        end
+        
+        ;Did we just delete the last customer? If so we need to make some
+        ;changes to the user interface
+        xcall l_status(idl_customer,D_LNULL,null)
+        if (null)
+        begin
+            ;Clear the customer record
+            clear customer
+            ;Clear the contact maintenance tabset and record
+            xcall contact_clear(contact)
+            xcall i_disable(D_SET,idi_contact1,"ALL")
+            xcall i_disable(D_SET,idi_contact2,"ALL")
+            xcall i_disable(D_SET,idi_contact3,"ALL")
+            ;Clear and disable the contacts list
+            xcall l_restart(idl_contact)
+            xcall l_process(idl_contact,lpreq=D_LNOP,contact,,customer,contact)
+            xcall disable_contact_processing
+            ;Setup the UI 
+            xcall ui_control(D_OFF,D_OFF,D_OFF,D_OFF,D_OFF)
+        end
+
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+create_contact,
+
+    create_mode=TRUE
+    
+edit_contact,
+
+    xcall i_next(idi_contact1,,"*FRST*")
+    xcall i_next(idi_contact2,,"*FRST*")
+    xcall i_next(idi_contact3,,"*FRST*")
+
+    xcall c_container(DC_CONTEXT,container,3)
+    done=TRUE
+
+    return
+
+;------------------------------------------------------------------------------
+;
+delete_contact,
+
+    xcall s_bld(tmpa,,"Delete %a %a from %a ?",contact.first_name,contact.last_name,customer.company)
+
+    ;Confirm contact deletion
+    if ((!confirm_delcont)||(%yesno(tmpa)))
+    begin
+        ;Delete the contact and remove from the contacts list
+        begin
+            read(ch_contact,tmpcontact,%keyval(ch_contact,contact,1),KEYNUM:1) [ERR=delfail2]
+            delete(ch_contact) [ERR=delfail2]
+            xcall l_process(idl_contact,lpreq=D_LDELITEM,contact,,customer,contact)
+            exit
+delfail2,   xcall error_message("Failed to lock or delete contact record.")
+        end
+
+    end
+    
+    ;Did we just delete the last contact?
+    xcall l_status(idl_contact,D_LNULL,null)
+    if (null) 
+    begin
+        ;Empty the contact details tabset
+        xcall contact_clear(contact)
+        ;Disable Edit and delete
+        xcall ui_control(,,D_OFF)
+    end
+    
+    return
+    
+.end
+
+;******************************************************************************
+;
+; Process the customers list
+;
+.subroutine process_customer_list
+    
+    in required         a_container_id  ,n
+    in required         a_type          ,n
+    in required         a_child_id      ,n
+    in required         a_reason        ,a
+    inout optional      a_record        ,a
+    .include "CUSTOMER" repository, group="a_customer"
+    .include "CONTACT"  repository, group="a_contact"
+    ;End of arguments
+    
+.include "SRC:system.def"
+
+stack record
+    lpreq               ,i4     ;List processor rquest flag
+    null                ,i4     ;Null list
+
+.proc
+
+    xcall l_select(idl_customer,lpreq=D_LNOP,a_customer,,,,,,,,,,,,,a_customer,a_contact)
+
+    ;Was an item selected?
+    if (!g_select)
+    begin
+        ;Is the customer list empty?
+        xcall l_status(idl_customer,D_LNULL,null)
+        if (null) then
+            xcall m_signal("ADDCUST")
+        else
+            xcall m_signal("EDTCUST")
+    end
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; List load method for customers list
+;
+.subroutine customer_load
+    a_listid            ,n  ; List id
+    a_req               ,n  ; Request flag
+    a_data              ,a  ; Item data
+    a_inpid             ,n  ; Input window id
+    a_disable           ,n  ; (Optional) Disable flag
+    a_index             ,n  ; Loading index
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;NOTE: a_data and a_customer are the same thing in this routine!
+    ;End of arguments
+
+.include "SRC:system.def"
+
+.proc
+
+    ;Position to first record in customer file
+    if (a_index==1)
+        find(ch_customer,,^FIRST,KEYNUM:1) [ERR=norec]
+
+    begin
+        ;Put the next customer in the list
+        reads(ch_customer,a_data,norec,LOCK:Q_NO_LOCK)
+        xcall i_display(a_inpid,,a_data)
+        exit
+norec,  a_req=D_LEOF
+
+    end
+
+    ;If the customer list is empty then disable the contacts list, otherwise
+    ;enable the edit and delete customer, and add contact options.
+    if ((a_index==1))
+    begin
+        if (a_req==D_LEOF) then
+        begin
+            xcall ui_control(D_OFF,D_OFF,D_OFF,D_OFF,D_OFF)
+            xcall disable_contact_processing
+            xcall i_disable(D_SET,idi_contact1,"ALL")
+            xcall i_disable(D_SET,idi_contact2,"ALL")
+            xcall i_disable(D_SET,idi_contact3,"ALL")
+        end
+        else
+        begin
+            xcall ui_control(D_ON,D_ON)
+            xcall enable_contact_processing
+            xcall i_enable(D_SET,idi_contact1,"ALL")
+            xcall i_enable(D_SET,idi_contact2,"ALL")
+            xcall i_enable(D_SET,idi_contact3,"ALL")
+        end
+    end
+        
+    xreturn
+    
+.end
+
+;******************************************************************************
+;
+; List arrive method for customer list
+;
+.subroutine customer_arrive ,reentrant
+    a_status            ,n  ; Return status
+    a_listid            ,n  ; List ID
+    a_winevt            ,n  ; Window Event
+    .include "CUSTOMER" repository, group="a_data"
+    a_inpid             ,n  ; Input window ID
+    a_disabled          ,n  ; Disabled
+    a_itemindx          ,n  ; Item's index
+    a_row               ,n  ; Item's visible row
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;NOTE: a_data and a_customer are the same thing in this routine!
+    ;End of arguments
+    
+.include "SRC:system.def"
+
+stack record
+    lpreq               ,i4
+
+.proc
+
+    ;The user selected a new customer in the customer list
+    
+    ;Clear out contacts list & make it load the contacts for the new customer
+    xcall l_restart(idl_contact)
+    xcall l_process(idl_contact,lpreq=D_LNOP,a_contact,,a_customer,a_contact)
+    
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; Process the contacts list
+;
+.subroutine process_contact_list
+
+    in required         a_container_id  ,n
+    in required         a_type          ,n
+    in required         a_child_id      ,n
+    in required         a_reason        ,a
+    inout optional      a_record        ,a
+    .include "CUSTOMER" repository, group="a_customer"
+    .include "CONTACT"  repository, group="a_contact"
+    ;End of arguments
+    
+.include "SRC:system.def"
+
+stack record
+    lpreq               ,i4     ;List processor rquest flag
+    null                ,i4     ;Null list
+
+.proc
+
+    xcall l_select(idl_contact,lpreq=D_LNOP,a_contact,,,,,,,,,,,,,a_customer,a_contact)
+
+    if (!g_select)
+    begin
+        xcall l_status(idl_contact,D_LNULL,null)
+        if (null) then
+            xcall m_signal("ADDCONT")
+        else
+            xcall m_signal("EDTCONT")
+    end
+    
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; List load method for contacts list
+;
+.subroutine contact_load
+    a_listid            ,n  ; List id
+    a_req               ,n  ; Request flag
+    a_data              ,a  ; Item data
+    a_inpid             ,n  ; Input window id
+    a_disable           ,n  ; (Optional) Disable flag
+    a_index             ,n  ; Loading index
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;NOTE: a_data and a_contact are the same thing in this routine!
+    ;End of arguments
+
+.include "SRC:system.def"
+.include "CONTACT" repository, stack record="tmp_contact"
+    
+stack record
+    row         ,i4
+
+.proc
+
+    ;Do we have a customer account to work with?
+    if (!a_customer.account) 
+    begin
+        a_req=D_LEOF
+        xreturn
+    end
+    
+    ;Position to the first contact for the customer     
+    if (a_index==1)
+        find(ch_contact,,%atrim(a_customer.account),KEYNUM:1) [$ERR_KEYNOT=norec,$ERR_EOF=norec]
+
+    ;Get the next contact
+    reads(ch_contact,tmp_contact,norec,LOCK:Q_NO_LOCK)
+
+    ;Are we still within the contacts for the curret customer?
+    if (tmp_contact.account==a_customer.account) then
+    begin
+        ;Yes, put the contact in the contacts list
+        a_data=tmp_contact
+        xcall i_display(a_inpid,,a_data)
+    end
+    else
+norec,  a_req=D_LEOF    
+
+    ;Is this the first item?
+    if (a_index==1)
+    begin
+        ;Did we find a contact
+        if (a_req!=D_LEOF) then
+        begin
+            ;Yes, enable edit and delete buttons
+            xcall ui_control(,,D_ON)
+        end
+        else
+        begin
+            ;No, disable edit and delete buttons
+            xcall ui_control(,,D_OFF)
+            ;Clear out the tab set windows
+            xcall i_init(idi_contact1)
+            xcall i_init(idi_contact2)
+            xcall i_init(idi_contact3)
+            ;Clear out the calls graph
+            begin
+                data graph, @MyNetClasses.Graph
+                data Labels, [#]string
+                data Values, [#]int
+                data ix, int
+                Labels = new string[12]
+                Values = new int[12]
+                for ix from 1 thru 12
+                begin
+                    Labels[ix]=" "
+                    Values[ix]=0
+                end
+                xcall dotnet_tkform(idw_graph,graph)
+                graph.SetChartData(Labels,Values)
+            end
+            
+            ;Set the image control to the default image
+            xcall ax_tkset(idw_image,"Picture",%atrim(imgdir)+"noimage.jpg")
+        end
+            
+    end
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; List arrive method for contact list
+;
+.subroutine contact_arrive ,reentrant
+    a_status            ,n  ; Return status
+    a_listid            ,n  ; List ID
+    a_winevt            ,n  ; Window Event
+    .include "CONTACT" repository, group="a_data"
+    a_inpid             ,n  ; Input window ID
+    a_disabled          ,n  ; Disabled
+    a_itemindx          ,n  ; Item's index
+    a_row               ,n  ; Item's visible row
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;NOTE: a_data and a_contact are the same thing in this routine!
+    ;End of arguments
+    
+.include "SRC:system.def"
+
+stack record ivars
+    row     ,i4
+    
+.proc
+
+    ;The user selected a new contact in the contact list
+
+    ;Display the newly selected contact in the tabset input windows
+    xcall contact_display(a_data)
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; Display a contacts data into the contact maintenance tabset
+;
+.subroutine contact_display ,reentrant
+
+    .include "CONTACT" repository, group="a_contact"
+    ;End of arguments
+
+.include "SRC:system.def"
+
+    stack record
+        graph   ,@MyNetClasses.Graph
+        Labels  ,[#]string
+        Values  ,[#]int
+        ix      ,int
+    endrecord
+.proc
+
+    ;Display the newly selected contact in the tabset input windows
+
+    xcall i_display(idi_contact1,,a_contact)
+    xcall i_display(idi_contact2,,a_contact)    
+    xcall i_display(idi_contact3,,a_contact)
+    
+    xcall i_next(idi_contact1,,"*FRST*")
+    xcall i_next(idi_contact2,,"*FRST*")
+    xcall i_next(idi_contact3,,"*FRST*")
+
+    ;Display the new photo
+    onerror imgerr
+    begin
+        if (a_contact.photo) then
+            xcall ax_tkset(idw_image,"Picture",%atrim(imgdir)+a_contact.photo)
+        else
+            xcall ax_tkset(idw_image,"Picture",%atrim(imgdir)+"noimage.jpg")
+        exit
+imgerr, xcall error_message("Failed to display image")
+    end
+    offerror
+
+    ;Load the call history into the graph
+;    for row from 1 thru 12
+;    begin
+;        xcall ax_tkset(idw_graph,"Row",row)
+;        xcall ax_tkset(idw_graph,"Data",a_contact.callcount[row])
+;   end
+    begin
+        xcall MonthNames(Labels)
+        Values = new int[12]
+        for ix from 1 thru 12
+            Values[ix]=a_contact.callcount[ix]
+        xcall dotnet_tkform(idw_graph,graph)
+        graph.SetChartData(Labels,Values)
+    end
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; Display a contacts data into the contact maintenance tabset
+;
+.subroutine contact_clear ,reentrant
+
+    .include "CONTACT" repository, group="a_contact"
+    ;End of arguments
+
+.include "SRC:system.def"
+
+stack record ivars
+    row     ,i4
+    
+.proc
+
+    ;Clear the current contact record
+    clear a_contact
+    
+    ;Display the newly selected contact in the tabset input windows
+
+    xcall i_init(idi_contact1)
+    xcall i_init(idi_contact2)  
+    xcall i_init(idi_contact3)  
+
+    ;Display the noimage photo
+    xcall ax_tkset(idw_image,"Picture",%atrim(imgdir)+"noimage.jpg")
+
+    ;Load the call history into the graph
+    for row from 1 thru 12
+    begin
+        xcall ax_tkset(idw_graph,"Row",row)
+        xcall ax_tkset(idw_graph,"Data",a_contact.callcount[row])
+    end
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; Process the contacts list
+;
+.subroutine process_contact_tabset
+
+    in required         container_id    ,n
+    in required         type            ,n
+    in required         child_id        ,n
+    in required         reason          ,a
+    inout optional      record          ,a
+    .include "CUSTOMER" repository, group="a_customer"
+    .include "CONTACT"  repository, group="a_contact"
+    ;End of arguments
+    
+.include "SRC:system.def"
+.include "CONTACT"  repository, stack record="tmpcontact"
+.include "CONTACT"  repository, stack record="savecontact"
+        
+stack record ivars
+    lpreq               ,i4     ;List processor rquest flag
+    ok                  ,i4     ;All is well
+    count               ,i4     ;Loop counter
+    saved               ,i4     ;Record was saved
+    found               ,i4     ;Found an item
+    first               ,i4     ;Creating first contact?
+    done                ,i4     ;All done?
+    nocustomers         ,i4     ;Customer list is empty         
+
+.proc
+
+    clear ^i(ivars)
+    ok=TRUE
+    
+    ;Check to see if the contact list is empty.  If it is then go into create
+    ;mode automatically.
+    
+    xcall l_status(idl_contact,D_LNULL,first)
+    if (first) 
+        create_mode=TRUE
+
+    ;Prepare for processing
+    if (create_mode) then
+    begin
+        ;Clear out input windows
+        xcall i_init(idi_contact1)
+        xcall i_init(idi_contact2)
+        xcall i_init(idi_contact3)
+        ;Initialize record for new data
+        clear tmpcontact
+        tmpcontact.account=a_customer.account
+        ;Fill new contact with defaults from customer record?
+        if (new_contact_default) 
+        begin
+            tmpcontact.phone=a_customer.phone
+            tmpcontact.fax=a_customer.fax
+            tmpcontact.address=a_customer.address
+            tmpcontact.city=a_customer.city
+            tmpcontact.state=a_customer.state
+            tmpcontact.zip=a_customer.zip
+            xcall i_display(idi_contact1,,tmpcontact)
+            xcall i_display(idi_contact2,,tmpcontact)
+            xcall i_next(idi_contact1,,"*FRST*")
+            xcall i_next(idi_contact2,,"*FRST*")
+        end
+        ;Clear out the calls graph
+        begin
+            data graph, @MyNetClasses.Graph
+            data Labels, [#]string
+            data Values, [#]int
+            data ix, int
+            Labels = new string[12]
+            Values = new int[12]
+            for ix from 1 thru 12
+            begin
+                Labels[ix]=" "
+                Values[ix]=0
+            end
+            xcall dotnet_tkform(idw_graph,graph)
+            graph.SetChartData(Labels,Values)
+        end
+    end
+    else
+    begin
+        ;Read the file to get anyone elses changes and lock the record
+        read(ch_contact,a_contact,%keyval(ch_contact,a_contact,1),KEYNUM:1) [ERR=nolock]
+        xcall e_sect("Contact record locked",D_POSITION,1,1)
+        ;Put most recent record in contact list
+        xcall i_display(idi_lcontact,,a_contact)
+        tmpcontact=a_contact
+        exit
+nolock, clear ok
+    end
+    
+    if (ok) 
+    begin
+
+        ;Save the initial data so we know if anything changed
+        savecontact=tmpcontact
+
+        ;Enable Save and discard buttons
+        xcall b_enable(tabset,"O_SAVE")
+        xcall b_enable(tabset,"O_DISCARD")
+
+        if (reason)
+            xcall ts_tabset(DTS_CTRCONTEXT,tabset,reason)
+
+        do
+        begin
+
+            xcall ts_process(tabset,a_customer,tmpcontact)
+
+            using g_entnam select
+            ("C_"),
+                call check_save
+            ("ADDCUST", "DELCUST", "EDTCUST"),
+            begin
+                call check_save
+                xcall c_container(DC_CONTEXT,container,1,"DOBUTTON")
+            end
+            ("ADDCONT", "DELCONT", "EDTCONT"),
+            begin
+                call check_save
+                xcall c_container(DC_CONTEXT,container,2,"DOBUTTON")
+            end
+            ("O_SAVE"),
+            begin
+                call save_contact
+                if (saved) 
+                begin
+                    xcall m_signal("C_PREV")
+                    exitloop
+                end
+            end
+            ("O_DISCARD"),
+            begin
+                call discard_changes
+                xcall m_signal("C_PREV")
+            end
+            ("O_ABANDON", "O_EXIT"),
+            begin
+                if (!create_mode) 
+                    unlock ch_contact
+                exitloop
+            end
+            (),
+                exitloop
+            endusing
+        end
+        until (done)
+        
+        xcall b_disable(tabset,"O_SAVE")
+        xcall b_disable(tabset,"O_DISCARD")
+
+    end
+    
+    clear create_mode
+    
+    xreturn
+
+;------------------------------------------------------------------------------
+;
+check_save,
+
+    ;Did any data change?
+    if (tmpcontact==savecontact) then
+        call discard_changes
+    else
+    begin
+        xcall s_bld(tmpa,,"Save changes to %a %a ?",tmpcontact.first_name,tmpcontact.last_name)
+        if (autosave||%yesno(tmpa)) then
+            call save_contact
+        else
+            call discard_changes
+    end
+    
+    done=TRUE
+    
+    return
+
+;------------------------------------------------------------------------------
+;
+save_contact,
+
+    clear saved
+
+    if (create_mode) then
+    begin
+        ;Make sure we have a first name and a last name
+        if ((!tmpcontact.first_name)||(!tmpcontact.last_name)) then
+        begin
+            xcall info_message("First name and last name are required")
+            xcall ts_tabset(DTS_ACTIVE,tabset,1)
+            if (!tmpcontact.first_name) then
+                xcall i_next(idi_contact1,,"FIRST_NAME")
+            else
+                xcall i_next(idi_contact1,,"LAST_NAME")
+        end
+        else
+        begin
+            ;Create the contact in the file
+            begin
+                store(ch_contact,tmpcontact)  [ERR=nostore]
+                saved=TRUE
+                exit
+nostore,        xcall error_message("Failed to create contact record!")
+            end
+
+            ;Add the contact to the contact list
+            if (saved) 
+            begin
+                ;Insert a new customer into the contact list
+
+                ;Setup a search for the contact record higher than this one
+                xcall l_findspec(idl_contact,tmpcontact.last_name+tmpcontact.first_name,%i_fldstrpos(idi_lcontact,"LAST_NAME"),%i_fldsize(idi_lcontact,"LAST_NAME")+%i_fldsize(idi_lcontact,"FIRST_NAME"),,D_LFND_NOCASE,D_LFND_GT,D_LFND_CURR)
+
+                ;Do the search
+                xcall l_queue(idl_contact,D_LTOP)
+                xcall l_process(idl_contact,lpreq=D_LFIND,a_contact,,a_customer,a_contact)
+
+                ;See if we found a match
+                xcall l_status(idl_contact,D_LFOUND,found)
+                if (found) then
+                    lpreq = D_LINSERT                   ;Yes, insert new item
+                else
+                begin
+                    xcall l_queue(idl_contact,D_LBOTTOM)    ;No, append new item
+                    lpreq=D_LAPPEND
+                end
+
+                ;Add a new blank item to the customer list
+                xcall l_process(idl_contact,lpreq,a_contact,,a_customer,a_contact)
+
+                ;Populate the new list item             
+                xcall l_process(idl_contact,lpreq,a_contact=tmpcontact,,a_customer,a_contact)
+                xcall i_display(idi_lcontact,,a_contact)
+
+                ;If we just created the first contact enable edit and delete
+                if (first) 
+                    xcall ui_control(,,D_ON)
+            end
+
+        end         
+    end
+    else
+    begin
+        ;Did the user change anything?
+        if (tmpcontact!=savecontact) then
+        begin
+            ;Yes, save the record to the file
+            write(ch_contact,tmpcontact) [ERR=nosave]
+            xcall e_sect("Contact record updated and unlocked",D_POSITION,1,1)
+            a_contact=tmpcontact
+            ;Save the record to the contacts list
+            xcall i_display(idi_lcontact,,a_contact)
+            end
+        else
+        begin
+            ;No, just unlock the record         
+            unlock ch_contact
+            xcall e_sect("Contact unlocked",D_POSITION,1,1)
+        end
+        saved=TRUE
+        exit
+nosave, xcall error_message("Failed to update contact record!")
+    end
+    
+    return
+
+;------------------------------------------------------------------------------
+;
+discard_changes,
+
+    ;If were editing a contact then unlock the record
+    if (!create_mode)
+    begin
+        unlock ch_contact
+        xcall e_sect("Contact record unlocked",D_POSITION,1,1)
+    end
+
+    ;Reset the tabset contents to the original values
+    xcall contact_display(a_contact)
+    
+    done=TRUE
+
+    return
+    
+.end
+    
+;******************************************************************************
+;
+; Input processing method for contact tab pages
+;
+.subroutine contact_input ,reentrant
+
+    a_inpid             ,n  ;Input window ID
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;End of arguments
+    
+.include "SRC:system.def"
+    
+.proc
+
+    ;Enable cut, copy and paste
+    xcall ui_control(,,,,D_ON)
+
+    ;Process the input window   
+    xcall i_input(a_inpid,,a_contact,,,,D_NOTERM,,,a_customer,a_contact)
+
+    ;Enable cut, copy and paste
+    xcall ui_control(,,,,D_OFF)
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; ActiveX processing method for contact tab pages
+;
+.subroutine contact_graph ,reentrant
+
+    a_netwinid           ,i  ;.NET container window ID
+   .include "CUSTOMER" repository, group="a_customer"
+   .include "CONTACT" repository, group="a_contact"
+    ;End of arguments
+    
+.include "SRC:system.def"
+    
+.proc
+
+    ;Process the graph .NET control
+    xcall dotnet_tkinput(a_netwinid)
+    
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+; Drill method for contact photo field
+;
+.subroutine drill_photo ,reentrant
+
+    .include "WND:inpinf.def"
+    .include "CONTACT" repository, group="a_data"
+    ;End of arguments
+
+.include "SRC:system.def"
+
+stack record local_data
+    pos                 ,i4
+    filespec            ,a256
+    filename            ,a50
+    extension           ,a10
+
+literal 
+    filter_desc         ,[3]a32 ,"JPEG files (*.jpg)"
+    &                           ,"GIF files (*.gif)"
+    &                           ,"All files (*.*)"
+    filters             ,[3]a5  ,"*.jpg","*.gif","*.*"
+
+.proc
+
+    ;Setup default name
+    xcall getlog("IMG",filespec,length)
+    if (filespec(%trim(filespec):1)!="\")
+        filespec=%atrim(filespec)+"\"
+    if (a_data.photo) 
+        filespec=%atrim(filespec)+a_data.photo
+    
+    if (%u_getfilename(filespec,"Select Contact Image",3,filter_desc,filters,filespec,,,,,,D_OFN_CENTER))
+    begin
+        xcall parse(filespec,,,,,filename,extension)
+        xcall i_putfld(inp_wndid,,a_data,"PHOTO",%atrim(filename)+extension)
+        xcall ax_tkset(idw_image,"Picture",%atrim(imgdir)+%atrim(filename)+extension)
+    end
+        
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+.subroutine ui_control
+
+    a_edit_delete_customer  ,n
+    a_add_contact           ,n
+    a_edit_delete_contact   ,n
+    a_save_contact          ,n
+    a_cut_copy_paste        ,n
+    ;End of arguments
+
+.include "SRC:system.def"
+
+.proc
+
+    if (^passed(a_edit_delete_customer))
+    begin
+        using a_edit_delete_customer select
+        (D_ON),
+        begin
+            xcall l_buttonstate(idl_customer,"EDTCUST",D_ENABLED)
+            xcall l_buttonstate(idl_customer,"DELCUST",D_ENABLED)
+            xcall m_enable(D_ENTRY,idc_customer,"EDTCUST")
+            xcall m_enable(D_ENTRY,idc_customer,"DELCUST")
+            xcall tb_button(toolbar,TBB_ENABLE,"DELCUST")
+        end
+        (D_OFF),
+        begin
+            xcall l_buttonstate(idl_customer,"EDTCUST",D_DISABLED)
+            xcall l_buttonstate(idl_customer,"DELCUST",D_DISABLED)
+            xcall m_disable(D_ENTRY,idc_customer,"EDTCUST")
+            xcall m_disable(D_ENTRY,idc_customer,"DELCUST")
+            xcall tb_button(toolbar,TBB_DISABLE,"DELCUST")
+        end
+        endusing
+    end
+
+    if (^passed(a_add_contact))
+    begin
+        using a_add_contact select
+        (D_ON),
+        begin
+            xcall l_buttonstate(idl_contact,"ADDCONT",D_ENABLED)
+            xcall m_enable(D_ENTRY,idc_customer,"ADDCONT")
+            xcall tb_button(toolbar,TBB_ENABLE,"ADDCONT")
+        end
+        (D_OFF),
+        begin
+            xcall l_buttonstate(idl_contact,"ADDCONT",D_DISABLED)
+            xcall m_disable(D_ENTRY,idc_customer,"ADDCONT")
+            xcall tb_button(toolbar,TBB_DISABLE,"ADDCONT")
+        end
+        endusing
+    end
+
+    if (^passed(a_edit_delete_contact))
+    begin
+        using a_edit_delete_contact select
+        (D_ON),
+        begin
+            xcall l_buttonstate(idl_contact,"EDTCONT",D_ENABLED)
+            xcall l_buttonstate(idl_contact,"DELCONT",D_ENABLED)
+            xcall m_enable(D_ENTRY,idc_customer,"EDTCONT")
+            xcall m_enable(D_ENTRY,idc_customer,"DELCONT")
+            xcall tb_button(toolbar,TBB_ENABLE,"DELCONT")
+        end
+        (D_OFF),
+        begin
+            xcall l_buttonstate(idl_contact,"EDTCONT",D_DISABLED)
+            xcall l_buttonstate(idl_contact,"DELCONT",D_DISABLED)
+            xcall m_disable(D_ENTRY,idc_customer,"EDTCONT")
+            xcall m_disable(D_ENTRY,idc_customer,"DELCONT")
+            xcall tb_button(toolbar,TBB_DISABLE,"DELCONT")
+        end
+        endusing
+    end
+
+    if (^passed(a_save_contact))
+    begin
+        using a_save_contact select
+        (D_ON),
+        begin
+            xcall b_enable(tabset,"O_SAVE")
+            xcall b_enable(tabset,"O_DISCARD")
+        end
+        (D_OFF),
+        begin
+            xcall b_disable(tabset,"O_SAVE")
+            xcall b_disable(tabset,"O_DISCARD")
+        end
+        endusing
+    end
+
+    if (^passed(a_cut_copy_paste))
+    begin
+        using a_cut_copy_paste select
+        (D_ON),
+        begin
+            xcall m_enable(D_LIST,idc_edit,"CCP")
+            xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+            xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+            xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+        end
+        (D_OFF),
+        begin
+            xcall m_disable(D_LIST,idc_edit,"CCP")
+            xcall tb_button(toolbar,TBB_DISABLE,"E_CUT")
+            xcall tb_button(toolbar,TBB_DISABLE,"E_COPY")
+            xcall tb_button(toolbar,TBB_DISABLE,"E_PASTE")
+        end
+        endusing
+    end
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+subroutine MonthNames
+    required out month  ,[#]string
+    ;End of arguments
+
+    record 
+        ix      ,int
+    endrecord
+
+proc
+
+    month = new string[12]
+    month[1]  = "Jan"
+    month[2]  = "Feb"
+    month[3]  = "Mar"
+    month[4]  = "Apr"
+    month[5]  = "May"
+    month[6]  = "Jun"
+    month[7]  = "Jul"
+    month[8]  = "Aug"
+    month[9]  = "Sep"
+    month[10] = "Oct"
+    month[11] = "Nov"
+    month[12] = "Dec"
+
+    xreturn
+
+.end
+
+;******************************************************************************
+;
+.include "SRC:menu_check.dbl"
+.include "SRC:utilities.dbl"
+;
+;******************************************************************************
+

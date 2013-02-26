@@ -1,0 +1,450 @@
+;******************************************************************************
+;
+; Title:        WinForm1.dbl
+;
+; Description:  An example of using the Synergy .NET Assembly API manually
+;               Builds and processes a simple Windows Form.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      28th March 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+; This enumeration corresponds to the System.Windows.Forms.DialogResult
+; enumeration in .NET
+;
+    public enum DialogResult
+        None        ,0
+        OK          ,1
+        Cancel      ,2
+        Abort       ,3
+        Retry       ,4
+        Ignore      ,5
+        Yes         ,6
+        No          ,7
+    endenum
+;
+; An application specific enumeration
+;
+    public enum enmReviewFrequency
+        Never       ,1
+        Monthly     ,2
+        Quarterly   ,3
+        Biannually  ,4
+        Annually    ,5
+    endenum
+;
+; A structure used for dates
+;
+    structure strDate
+        Year        ,d4
+        Month       ,d2
+        Day         ,d2
+    endstructure
+;
+; An application specific structure
+;
+    structure strEmployee
+        FirstName   ,a30
+        LastName    ,a30
+        PhotoFile   ,a20
+        HireDate    ,strDate
+        Reviewed    ,enmReviewFrequency
+    endstructure
+
+;------------------------------------------------------------------------------
+;
+main WinForm1
+
+    record
+		KeyPress        ,a1                 ;A pressed key
+		Employee        ,strEmployee		;Employee record
+		SaveEmployee    ,strEmployee		;Copy of employee record
+		;
+		; Synergy objects
+		;
+        Callbacks       ,@FormHandlers      ;Containins callback methods
+		;
+		; .NET Assemblies
+		;
+        asyWinForms     ,@DotNetAssembly    ;Assembly - System.Windows.Forms
+        asyDrawing      ,@DotNetAssembly    ;Assembly - System.Drawing
+        asyMscorlib     ,@DotNetAssembly    ;Assembly - mscorlib
+		;
+		; .NET Objects
+		;
+        MyForm          ,@DotNetObject      ;System.Windows.Forms.Form
+        Panel           ,@DotNetObject      ;System.Windows.Forms.FlowLayoutPanel
+        BtnOk           ,@DotNetObject      ;System.Windows.Forms.Button
+        BtnCancel       ,@DotNetObject      ;System.Windows.Forms.Button
+        PictureBox      ,@DotNetObject      ;System.Windows.Forms.PictureBox
+        Label           ,@DotNetObject      ;System.Windows.Forms.Label
+        TxtFirstName    ,@DotNetObject      ;System.Windows.Forms.TextBox
+        TxtLastName     ,@DotNetObject      ;System.Windows.Forms.TextBox
+        DtmHired        ,@DotNetObject      ;System.Windows.Forms.DateTimePicker
+        TrkReview       ,@DotNetObject      ;System.Windows.Forms.TrackBar
+        Image           ,@DotNetObject      ;System.Windows.Drawing.Image
+        TmpDate         ,@DotNetObject      ;System.DateTime
+        MyDelegate      ,@DotNetDelegate    ;System.EventHandler
+        Controls        ,@DotNetObject      ;System.Windows.Forms.Control.ControlCollection
+        FormStatus      ,@System.Object     ;Dialog return value
+
+    endrecord
+
+proc
+
+    ;Load some dummy data
+    Employee.FirstName = "Steve"
+    Employee.LastName = "Ives"
+    Employee.PhotoFile = "SteveIves.jpg"
+    Employee.HireDate.Year = 1997
+    Employee.HireDate.Month = 11
+    Employee.HireDate.Day = 01
+    Employee.Reviewed = enmReviewFrequency.Quarterly
+
+    open(1,o,'tt:')
+    flags(7004020,1)
+
+	writes(1,"Building and launching .NET WinForm...")
+
+    ;Create the Synergy object that contains callback routines
+    Callbacks = new FormHandlers()
+
+    ;Load the assemblies that we need to use
+    asyWinForms = new DotNetAssembly("System.Windows.Forms")
+    asyDrawing = new DotNetAssembly("System.Drawing")
+    asyMscorlib = new DotNetAssembly("mscorlib")
+
+    ;Create a new .NET WinForm
+    MyForm = new DotNetObject(asyWinForms, "System.Windows.Forms.Form")
+    MyForm.Call("SuspendLayout")
+    MyForm.SetProperty("Name","EmployeeForm")
+    MyForm.SetProperty("Text", "Employee Information")
+    MyForm.SetProperty("FormBorderStyle", integer(3))
+    MyForm.SetProperty("MaximizeBox", false)
+    MyForm.SetProperty("MinimizeBox", false)
+    MyForm.SetProperty("ClientSize",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",490,275))
+    MyForm.SetProperty("StartPosition",integer(0))
+    MyForm.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",140,200))
+
+    ;Create a panel to contain and layout buttons
+    Panel = new DotNetObject(asyWinForms,"System.Windows.Forms.FlowLayoutPanel")
+    Panel.SetProperty("Name","MyPanel")
+    Panel.SetProperty("Dock",integer(2))
+    Panel.SetProperty("FlowDirection",integer(2))
+    Panel.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",600,30))
+
+    ;Get a handle on the panels controls collection so we can add things to it
+    Controls = (DotNetObject)Panel.GetProperty("Controls")
+
+    ;Create a Cancel button, add it to the panel, and tell the form about it
+    BtnCancel = new DotNetObject(asyWinForms, "System.Windows.Forms.Button");
+    BtnCancel.SetProperty("Name", "BtnCancel")
+    BtnCancel.SetProperty("Text", "&Cancel")
+    Controls.Call("Add",BtnCancel)
+    MyForm.SetProperty("CancelButton",BtnCancel)
+
+    ;Create an OK button, add it to the panel, and tell the form about it
+    BtnOk = new DotNetObject(asyWinForms, "System.Windows.Forms.Button");
+    BtnOk.SetProperty("Name", "BtnOk")
+    BtnOk.SetProperty("Text", "&OK")
+    Controls.Call("Add",BtnOk)
+    MyForm.SetProperty("AcceptButton",BtnOk)
+
+    ;Bind a Synergy method to the OK buttons "Click" event
+    MyDelegate = new DotNetDelegate(asyMscorlib,
+	&		"System.EventHandler",Callbacks,"BtnOk_Click")
+    BtnOk.AddDelegateToEvent("Click", MyDelegate)
+
+    ;Now get a handle on the forms controls collection so we can add things to it
+    Controls = (DotNetObject)MyForm.GetProperty("Controls")
+
+    ;Add the panel to the form
+    Controls.Call("Add",Panel)
+
+    ;Create a PictureBox and add it to the form
+    PictureBox = new DotNetObject(asyWinForms,"System.Windows.Forms.PictureBox")
+    PictureBox.SetProperty("Name","PictureBox1")
+    PictureBox.SetProperty("BorderStyle",integer(1))
+    PictureBox.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",12, 12))
+    PictureBox.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",200,250))
+    PictureBox.SetProperty("SizeMode",integer(1))
+    PictureBox.SetProperty("TabStop",false)
+    Controls.Call("Add",PictureBox)
+
+    ;Add the first name prompt
+    Label = new DotNetObject(asyWinForms,"System.Windows.Forms.Label")
+    Label.SetProperty("Name","LblFirstName")
+    Label.SetProperty("AutoSize",true)
+    Label.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",220, 13))
+    Label.SetProperty("Text","First name")
+    Controls.Call("Add",Label)
+
+    ;Add the first name field
+    TxtFirstName = new  DotNetObject(asyWinForms,"System.Windows.Forms.TextBox")
+    TxtFirstName.SetProperty("Name","TxtFirstName")
+    TxtFirstName.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",280, 10))
+    TxtFirstName.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",200,20))
+    TxtFirstName.SetProperty("MaxLength",integer(30))
+    Controls.Call("Add",TxtFirstName)
+
+    ;Add the last name prompt
+    Label = new DotNetObject(asyWinForms,"System.Windows.Forms.Label")
+    Label.SetProperty("Name","LblLastName")
+    Label.SetProperty("AutoSize",true)
+    Label.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",220, 47))
+    Label.SetProperty("Text","Last name")
+    Controls.Call("Add",Label)
+
+    ;Add the last name field
+    TxtLastName = new  DotNetObject(asyWinForms,"System.Windows.Forms.TextBox")
+    TxtLastName.SetProperty("Name","TxtLastName")
+    TxtLastName.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",280, 44))
+    TxtLastName.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",200,20))
+    TxtLastName.SetProperty("MaxLength",integer(30))
+    Controls.Call("Add",TxtLastName)
+
+    ;Add the hired prompt
+    Label = new DotNetObject(asyWinForms,"System.Windows.Forms.Label")
+    Label.SetProperty("Name","LblHired")
+    Label.SetProperty("AutoSize",true)
+    Label.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",220, 80))
+    Label.SetProperty("Text","Hire Date")
+    Controls.Call("Add",Label)
+
+    ;Add the hired date field
+    DtmHired = new DotNetObject(asyWinForms,"System.Windows.Forms.DateTimePicker")
+    DtmHired.SetProperty("Name","DtmHired")
+    DtmHired.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",280, 77))
+    DtmHired.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",200,20))
+    Controls.Call("Add",DtmHired)
+
+    ;Add the review prompt
+    Label = new DotNetObject(asyWinForms,"System.Windows.Forms.Label")
+    Label.SetProperty("Name","LblReview")
+    Label.SetProperty("AutoSize",true)
+    Label.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",220, 110))
+    Label.SetProperty("Text","Review")
+    Controls.Call("Add",Label)
+
+    ;Add the review slider
+    TrkReview = new DotNetObject(asyWinForms,"System.Windows.Forms.TrackBar")
+    TrkReview.SetProperty("Name","TrkReview")
+    TrkReview.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",280, 107))
+    TrkReview.SetProperty("Size",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Size",125,45))
+    TrkReview.SetProperty("Minimum",integer(1))
+    TrkReview.SetProperty("Maximum",integer(5))
+    TrkReview.SetProperty("LargeChange",integer(1))
+    Controls.Call("Add",TrkReview)
+
+    ;Add the review display label
+    Label = new DotNetObject(asyWinForms,"System.Windows.Forms.Label")
+    Label.SetProperty("Name","LblReviewDisplay")
+    Label.SetProperty("AutoSize",true)
+    Label.SetProperty("Location",
+	&		new DotNetObject(asyDrawing,"System.Drawing.Point",410, 110))
+    Controls.Call("Add",Label)
+
+    ;Bind a Synergy method to the TrackBars "ValueChanged" event
+    MyDelegate = new DotNetDelegate(asyMscorlib,
+	&		"System.EventHandler",Callbacks,"TrkReview_ValueChanged")
+    TrkReview.AddDelegateToEvent("ValueChanged", MyDelegate)
+
+    ;Load a Jpeg image into a System.Drawing.Image object
+    Image = (DotNetObject)((DotNetObject)asyDrawing).Call
+	&		("System.Drawing.Image.FromFile",Employee.PhotoFile)
+
+    ;Load the example data into the form
+    PictureBox.SetProperty("Image",Image)
+    TxtFirstName.SetProperty("Text",atrim(Employee.FirstName))
+    TxtLastName.SetProperty("Text",atrim(Employee.LastName))
+    TmpDate = (DotNetObject)((DotNetObject)asyMscorlib).Call
+	&		("System.DateTime.Parse",FormatDate(Employee.HireDate))
+    DtmHired.SetProperty("Value",TmpDate)
+    TrkReview.SetProperty("Value",Employee.Reviewed)
+
+    ;Now that we're done adding things, allow the form to paint
+    MyForm.Call("ResumeLayout")
+    MyForm.Call("PerformLayout")
+
+    ;Process the form
+    FormStatus = MyForm.Call("ShowDialog")
+
+    ;Save the current data so we can compare it later
+    SaveEmployee = Employee
+
+    using ((DialogResult)FormStatus) select
+    (DialogResult.OK),
+    begin
+        writes(1,"Dialog status was: OK")
+        ;Extract the data from the dialog
+        Employee.FirstName = (string)TxtFirstName.GetProperty("Text")
+        Employee.LastName = (string)TxtLastName.GetProperty("Text")
+        TmpDate = (DotNetObject)DtmHired.GetProperty("Value")
+        Employee.HireDate.Year = (int)TmpDate.GetProperty("Year")
+        Employee.HireDate.Month = (int)TmpDate.GetProperty("Month")
+        Employee.HireDate.Day = (int)TmpDate.GetProperty("Day")
+        Employee.Reviewed = (enmReviewFrequency)TrkReview.GetProperty("Value")
+        ;Compare it to the original
+        if (Employee==SaveEmployee) then
+            writes(1,"The data did not change!")
+        else
+        begin
+            writes(1,"The data changed:")
+            writes(1,"  First name: " + atrim(Employee.FirstName))
+            writes(1,"  Last name : " + atrim(Employee.LastName))
+            writes(1,"  Hire date : " + FormatDate(Employee.HireDate))
+            display(1,"  Reviewed  : ")
+            using Employee.Reviewed select
+            (enmReviewFrequency.Never),
+                writes(1,"Never")
+            (enmReviewFrequency.Monthly),
+                writes(1,"Monthly")
+            (enmReviewFrequency.Quarterly),
+                writes(1,"Quarterly")
+            (enmReviewFrequency.Biannually),
+                writes(1,"Biannually")
+            (enmReviewFrequency.Annually),
+                writes(1,"Annually")
+            endusing
+        end
+    end
+    (DialogResult.Cancel),
+        writes(1,"Dialog status was: Cancel")
+    endusing
+
+    display(1,"Press a key: ")
+    accept(1,keypress)
+    stop
+
+    return
+
+endmain
+
+;------------------------------------------------------------------------------
+;
+function FormatDate;, a
+    required in NumDate ,strDate
+    endparams
+    record
+        RetDate, a10
+    endrecord
+proc
+    s_bld(RetDate,,"%d/%d/%d",NumDate.Month,NumDate.Day,NumDate.Year)
+    freturn RetDate
+endfunction
+
+;
+; This identifier is used so that the code below can work in both V9.1.3 (where
+; indexers are 1-based), and V9.1.5 (where indexers are 0-based).
+;
+.ifdef DBLV915
+.define D_OFFSET 0
+.else
+.define D_OFFSET 1
+.endc
+
+;******************************************************************************
+;
+namespace SynPsg.Examples.DotNetApi
+
+    ;--------------------------------------------------------------------------
+    ;
+    class FormHandlers
+
+        ;----------------------------------------------------------------------
+        ; This method is bound to the OK buttons "Click" event. The method sets
+        ; the forms "DialogResult" property to DialogResult.OK.  This becomes
+        ; the return value from the "ShowDialog" method call in the program,
+        ; which allows the program to detect that the form was closed because
+        ; of the OK button being pressed, so it can extract and save the data.
+        ;
+        public method BtnOk_Click, void
+            sender      ,@DotNetObject  ;Sender is the button
+            e           ,@DotNetObject  ;Additional button click information
+            endparams
+            record
+                panel   ,@DotNetObject
+                form    ,@DotNetObject
+            endrecord
+        proc
+            ;Get a handle on the form, via the button and the panel
+            form = (DotNetObject)((DotNetObject)sender.GetProperty("Parent")).GetProperty("Parent")
+            form.SetProperty("DialogResult",DialogResult.OK)
+            form.Call("Close")
+        endmethod
+
+        ;----------------------------------------------------------------------
+        ; This method is called each time the value of the TrackBar control
+        ; changes, and is responsible for displaying a description relating
+        ; to the selected value in the adjacent label "LblReviewDisplay"
+        ;
+        public method TrkReview_ValueChanged, void
+            Sender          ,@DotNetObject      ;This is the TrackBar object
+            EventArgs       ,@DotNetObject      ;Additional information
+            endparams
+            record
+                TheForm     ,@DotNetObject      ;The .NET form
+                Controls    ,@DotNetObject      ;Forms "Controls" collection
+                Index       ,int                ;Index of the label we want
+                TheLabel    ,@DotNetObject      ;The label to update
+            endrecord
+        proc
+            ;Get a handle on the form, via the TrackBar control
+            TheForm = (DotNetObject)sender.GetProperty("Parent")
+            ;Get a handle on the forms "Controls" collection
+            Controls = (DotNetObject)TheForm.GetProperty("Controls")
+            ;Determine the index of the label "LblReviewDisplay"
+            Index = (int)(Controls.Call("IndexOfKey","LblReviewDisplay")) + D_OFFSET
+            ;Get a handle on the label control
+            TheLabel = (DotNetObject)Controls[Index]
+            ;Update the labels Text property based on current TrackBar value
+            using ((int)sender.GetProperty("Value")) select
+            (enmReviewFrequency.Never),
+                TheLabel.SetProperty("Text","Never")
+            (enmReviewFrequency.Monthly),
+                TheLabel.SetProperty("Text","Monthly")
+            (enmReviewFrequency.Quarterly),
+                TheLabel.SetProperty("Text","Quarterly")
+            (enmReviewFrequency.Biannually),
+                TheLabel.SetProperty("Text","Biannually")
+            (enmReviewFrequency.Annually),
+                TheLabel.SetProperty("Text","Annually")
+            endusing
+        endmethod
+
+    endclass
+
+endnamespace
+

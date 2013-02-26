@@ -1,0 +1,29 @@
+
+.include "SRC:NetWrappers.inc"
+
+main SynergyHostApp
+
+    .include "WND:tools.def"
+
+    record
+        viewer  ,@ReportViewer
+        wnd     ,i4
+    endrecord
+
+proc
+
+    u_start(,1,0,,30,100)
+
+    viewer = new ReportViewer()
+    wnd = dotnet_tkwin("",25,95,viewer)
+    xcall u_window(D_PLACE,wnd,2,2)
+    xcall dotnet_tkinput(wnd)
+
+
+
+
+    u_finish()
+
+    clear viewer
+
+endmain

@@ -1,0 +1,51 @@
+;******************************************************************************
+;
+; Title:        WinForm2
+;
+; Description:  An example of using GENNET to generate Synergy Wrappers for the
+;               the Synergy .NET Assembly API
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      28th March 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+import SynPsg.Examples.WinApp
+.include "GENSRC:DotNetWrappers.inc"
+
+main WinForm2
+
+	record
+		myform, @frmEmployee
+	endrecord
+
+proc
+
+	open(1,i,"tt:")
+    flags(7000000,1)
+	writes(1,"Launching .NET form")
+
+    ;Create a new instance of our form
+    myform = new FrmEmployee()
+
+    ;And process it
+	myform.ShowDialog()
+
+	close 1
+	stop
+
+endmain

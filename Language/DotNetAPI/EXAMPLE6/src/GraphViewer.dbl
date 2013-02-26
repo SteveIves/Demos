@@ -1,0 +1,194 @@
+;******************************************************************************
+;
+; Title:        GraphViewer
+;
+; Description:  An example of using the Synergy .NET Assembly API and GENNET.
+;               Displays a graph using a DevExpress chart control.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      30th April 2009
+;
+; Requirements: This code will only work with Synergy/DE V9.1.5b or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 SP1 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+
+main GraphViewer
+
+    record 
+        GraphNumberA    ,a1
+        GraphNumber     ,d1
+        Labels          ,[#]string
+        Values          ,[#]int
+    endrecord
+    
+proc
+    open(1,i,"tt:")
+    flags(7004020,1)
+
+    display(1,$scr_pos(2,2),"1. Sales Targets")
+    display(1,$scr_pos(3,2),"2. Consultant Performance")
+
+    repeat
+    begin
+        GraphNumber=0
+        display(1,$scr_pos(23,2),$scr_clr(eol),"Graph # (enter to exit): ")
+        accept(1,GraphNumberA)
+        if (!GraphNumberA)||(GraphNumberA==char(13))
+            exitloop
+        try
+            GraphNumber = GraphNumberA
+        catch (ex)
+            nop
+        endtry
+        using GraphNumber select
+        (1),    call SalesTargets
+        (2),    call ConsultantPerformance
+        (),
+        begin
+            display(1,$scr_pos(23,2),$scr_clr(eol),"Invalid graph number!")
+            sleep 0.5
+        end
+
+        endusing
+    end
+
+    close 1
+    stop
+
+SalesTargets,
+    
+    Labels = new string[12]
+    Labels[1]  = "Jan"
+    Labels[2]  = "Feb"
+    Labels[3]  = "Mar"
+    Labels[4]  = "Apr"
+    Labels[5]  = "May"
+    Labels[6]  = "Jun"
+    Labels[7]  = "Jul"
+    Labels[8]  = "Aug"
+    Labels[9]  = "Sep"
+    Labels[10] = "Oct"
+    Labels[11] = "Nov"
+    Labels[12] = "Dec"
+
+    Values = new int[12]
+    Values[1] = 525
+    Values[2] = 530
+    Values[3] = 535
+    Values[4] = 550
+    Values[5] = 450
+    Values[6] = 475
+    Values[7] = 525
+    Values[8] = 400
+    Values[9] = 500
+    Values[10] = 550
+    Values[11] = 570
+    Values[12] = 600
+
+    if (!ViewGraph("Sales Targets for 2009","Net sales target ($1,000's)",Labels,Values))
+    begin
+        display(1,$scr_pos(23,1),$scr_clr(eol),"Graph failed!")
+        sleep 3
+    end
+
+    return
+    
+ConsultantPerformance,
+    
+    Labels = new string[4]
+    Labels[1]  = "Richard"
+    Labels[2]  = "Bill"
+    Labels[3]  = "Steve"
+    Labels[4]  = "Tod"
+
+    Values = new int[4]
+    Values[1] = 3
+    Values[2] = 3
+    Values[3] = 15
+    Values[4] = 3
+
+    if (!ViewGraph("Consultant Performance","",Labels,Values))
+    begin
+        display(1,$scr_pos(23,1),$scr_clr(eol),"Graph failed!")
+        sleep 3
+    end
+
+    return
+    
+endmain
+
+;******************************************************************************
+;
+; Title:        ViewGraph
+;
+; Description:  Displays a graph using a DevExpress chart control
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      30th April 2009
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+.include "SRC:DotNetWrappers.inc"
+
+function ViewGraph, boolean
+
+    required in aTitle  ,string
+    required in aLegend ,string
+    required in aLabels ,[#]string
+    required in aValues ,[#]int
+    endparams
+
+    stack record
+        status  ,boolean
+        graph   ,@MyNetClasses.BarChart
+    endrecord
+
+proc
+
+    status = true
+
+    try
+    begin
+
+        Graph = new MyNetClasses.BarChart()
+        Graph.Title = aTitle
+        Graph.LegendText = aLegend
+        Graph.SetChartData(aLabels,aValues)
+        Graph.ShowDialog()
+    end
+    catch (ex)
+        status = false
+    endtry
+
+    freturn status
+
+endfunction
+
+

@@ -1,0 +1,10666 @@
+namespace OfficeAutomation__ 
+	
+	
+	public class af_OfficeAutomation__
+		
+			private static InternalDetails__Data, @DotNetAssembly
+				public static property Property__, @DotNetAssembly
+				method get
+				proc
+				if(InternalDetails__Data == ^NULL)
+					InternalDetails__Data = new DotNetAssembly("EXE:OfficeAutomation.dll")
+				mreturn InternalDetails__Data
+				endmethod
+				endproperty
+				
+	
+	endclass
+
+endnamespace
+namespace Interop_VBIDE__ 
+	
+	
+	public class af_VBIDE__
+		
+			private static InternalDetails__Data, @DotNetAssembly
+				public static property Property__, @DotNetAssembly
+				method get
+				proc
+				if(InternalDetails__Data == ^NULL)
+					InternalDetails__Data = new DotNetAssembly("EXE:Interop.VBIDE.dll")
+				mreturn InternalDetails__Data
+				endmethod
+				endproperty
+				
+	
+	endclass
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum GeoSaveFormat
+		
+		geoFormatMap, 0
+		geoFormatTemplate, 1
+		geoFormatHTMLMap, 2
+		geoFormatHTMLDirections, 3
+		geoFormatHTMLMapAndDirections, 4
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public class WordDocument Extends DotNetObject
+		
+		public  method WordDocument
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("OfficeAutomation.WordDocument", OfficeAutomation__.af_OfficeAutomation__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method WordDocument
+		id, int
+		internal, @WordDocument
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property FontName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("FontName")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("FontName", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property FontSize, id
+			Method get
+			proc
+				begin
+				mreturn (id)parent.GetProperty("FontSize")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("FontSize", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Bold, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Bold",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Bold", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Italic, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Italic",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Italic", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Underline, OfficeAutomation.WordDocument.WdUnderline
+			Method get
+			proc
+				begin
+				data tmp, OfficeAutomation.WordDocument.WdUnderline
+				parent.GetProperty("Underline",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Underline", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Orientation, OfficeAutomation.WordDocument.WdOrientation
+			Method get
+			proc
+				begin
+				data tmp, OfficeAutomation.WordDocument.WdOrientation
+				parent.GetProperty("Orientation",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Orientation", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @OfficeAutomation.WordDocument
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @OfficeAutomation.WordDocument
+				mreturn new OfficeAutomation.WordDocument(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method SaveAs, void
+		p__file, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SaveAs",p__file)
+				
+			end
+		
+		endmethod
+		
+		public method Save, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Save")
+				
+			end
+		
+		endmethod
+		
+		public method Close, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Close")
+				
+			end
+		
+		endmethod
+		
+		public method AddText, void
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddText",p__text)
+				
+			end
+		
+		endmethod
+		
+		public method NewParagraph, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("NewParagraph")
+				
+			end
+		
+		endmethod
+		
+		public method AddHeading1, void
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddHeading1",p__text)
+				
+			end
+		
+		endmethod
+		
+		public method AddHeading2, void
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddHeading2",p__text)
+				
+			end
+		
+		endmethod
+		
+		public method AddHeading3, void
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddHeading3",p__text)
+				
+			end
+		
+		endmethod
+		
+		public method AddTable, int
+		p__rows, int
+		p__cols, int
+		
+		endparams
+		proc
+			begin
+				data ret, int
+				parent.CallV("AddTable",ret,p__rows,p__cols)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method TableAutoFormat, void
+		p__table, int
+		p__format, OfficeAutomation.WordDocument.WdTableFormat
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("TableAutoFormat",p__table,p__format)
+				
+			end
+		
+		endmethod
+		
+		public method SetTableCell, void
+		p__table, int
+		p__row, int
+		p__col, int
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetTableCell",p__table,p__row,p__col,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method SetTableCell, void
+		p__table, int
+		p__row, int
+		p__col, int
+		p__text, id
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetTableCell",p__table,p__row,p__col,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method ShadeTableCell, void
+		p__table, int
+		p__row, int
+		p__col, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ShadeTableCell",p__table,p__row,p__col)
+				
+			end
+		
+		endmethod
+		
+		public method ReverseTableRow, void
+		p__table, int
+		p__row, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ReverseTableRow",p__table,p__row)
+				
+			end
+		
+		endmethod
+		
+		public method ReverseTableColumn, void
+		p__table, int
+		p__col, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ReverseTableColumn",p__table,p__col)
+				
+			end
+		
+		endmethod
+		
+		public method SetMarginsInches, void
+		p__top, id
+		p__botton, id
+		p__left, id
+		p__right, id
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetMarginsInches",p__top,p__botton,p__left,p__right)
+				
+			end
+		
+		endmethod
+		
+		public method SetMarginsCentimeters, void
+		p__top, id
+		p__botton, id
+		p__left, id
+		p__right, id
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetMarginsCentimeters",p__top,p__botton,p__left,p__right)
+				
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+		
+		public enum WdUnderline
+			
+			wdUnderlineNone, 0
+			wdUnderlineSingle, 1
+			wdUnderlineWords, 2
+			wdUnderlineDouble, 3
+			wdUnderlineDotted, 4
+			wdUnderlineThick, 6
+			wdUnderlineDash, 7
+			wdUnderlineDotDash, 9
+			wdUnderlineDotDotDash, 10
+			wdUnderlineWavy, 11
+			wdUnderlineDottedHeavy, 20
+			wdUnderlineDashHeavy, 23
+			wdUnderlineDotDashHeavy, 25
+			wdUnderlineDotDotDashHeavy, 26
+			wdUnderlineWavyHeavy, 27
+			wdUnderlineDashLong, 39
+			wdUnderlineWavyDouble, 43
+			wdUnderlineDashLongHeavy, 55
+		endenum
+		
+		public enum WdOrientation
+			
+			wdOrientPortrait, 0
+			wdOrientLandscape, 1
+		endenum
+		
+		public enum WdTableFormat
+			
+			wdTableFormatNone, 0
+			wdTableFormatSimple1, 1
+			wdTableFormatSimple2, 2
+			wdTableFormatSimple3, 3
+			wdTableFormatClassic1, 4
+			wdTableFormatClassic2, 5
+			wdTableFormatClassic3, 6
+			wdTableFormatClassic4, 7
+			wdTableFormatColorful1, 8
+			wdTableFormatColorful2, 9
+			wdTableFormatColorful3, 10
+			wdTableFormatColumns1, 11
+			wdTableFormatColumns2, 12
+			wdTableFormatColumns3, 13
+			wdTableFormatColumns4, 14
+			wdTableFormatColumns5, 15
+			wdTableFormatGrid1, 16
+			wdTableFormatGrid2, 17
+			wdTableFormatGrid3, 18
+			wdTableFormatGrid4, 19
+			wdTableFormatGrid5, 20
+			wdTableFormatGrid6, 21
+			wdTableFormatGrid7, 22
+			wdTableFormatGrid8, 23
+			wdTableFormatList1, 24
+			wdTableFormatList2, 25
+			wdTableFormatList3, 26
+			wdTableFormatList4, 27
+			wdTableFormatList5, 28
+			wdTableFormatList6, 29
+			wdTableFormatList7, 30
+			wdTableFormatList8, 31
+			wdTableFormat3DEffects1, 32
+			wdTableFormat3DEffects2, 33
+			wdTableFormat3DEffects3, 34
+			wdTableFormatContemporary, 35
+			wdTableFormatElegant, 36
+			wdTableFormatProfessional, 37
+			wdTableFormatSubtle1, 38
+			wdTableFormatSubtle2, 39
+			wdTableFormatWeb1, 40
+			wdTableFormatWeb2, 41
+			wdTableFormatWeb3, 42
+		endenum
+	
+	endclass
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public class MapPointMap Extends DotNetObject
+		
+		public  method MapPointMap
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("OfficeAutomation.MapPointMap", OfficeAutomation__.af_OfficeAutomation__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method MapPointMap
+		id, int
+		internal, @MapPointMap
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public static method op_explicit, @OfficeAutomation.MapPointMap
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @OfficeAutomation.MapPointMap
+				mreturn new OfficeAutomation.MapPointMap(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Close, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Close")
+				
+			end
+		
+		endmethod
+		
+		public method SaveAs, void
+		p__fileName, @string
+		p__format, OfficeAutomation.GeoSaveFormat
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SaveAs",p__fileName,p__format)
+				
+			end
+		
+		endmethod
+		
+		public method Save, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Save")
+				
+			end
+		
+		endmethod
+		
+		public method GotoAddress, void
+		p__address, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("GotoAddress",p__address)
+				
+			end
+		
+		endmethod
+		
+		public method AddPushPin, void
+		p__address, @string
+		p__name, @string
+		p__note, @string
+		p__goThere, boolean
+		p__addWayPoint, boolean
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddPushPin",p__address,p__name,p__note,p__goThere,p__addWayPoint)
+				
+			end
+		
+		endmethod
+		
+		public method ZoomToRoute, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("ZoomToRoute")
+				
+			end
+		
+		endmethod
+		
+		public method ClearRoute, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("ClearRoute")
+				
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public class ExcelWorkbook Extends DotNetObject
+		
+		public  method ExcelWorkbook
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("OfficeAutomation.ExcelWorkbook", OfficeAutomation__.af_OfficeAutomation__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ExcelWorkbook
+		id, int
+		internal, @ExcelWorkbook
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Author, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Author")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Author", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Comments, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Comments")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Comments", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Keywords, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Keywords")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Keywords", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Subject, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Subject")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Subject", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Title, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Title")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Title", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property WorksheetCount, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("WorksheetCount",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Worksheet, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Worksheet",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Worksheet", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property WorksheetName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("WorksheetName")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("WorksheetName", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @OfficeAutomation.ExcelWorkbook
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @OfficeAutomation.ExcelWorkbook
+				mreturn new OfficeAutomation.ExcelWorkbook(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method CreateWorksheet, int
+		p__name, @string
+		
+		endparams
+		proc
+			begin
+				data ret, int
+				parent.CallV("CreateWorksheet",ret,p__name)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Close, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Close")
+				
+			end
+		
+		endmethod
+		
+		public method Save, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Save")
+				
+			end
+		
+		endmethod
+		
+		public method SaveAs, void
+		p__file, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SaveAs",p__file)
+				
+			end
+		
+		endmethod
+		
+		public method SetData, void
+		p__range, @string
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetData",p__range,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method SetData, void
+		p__range, @string
+		p__text, id
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetData",p__range,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method SetData, void
+		p__row, int
+		p__col, int
+		p__text, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetData",p__row,p__col,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method SetData, void
+		p__row, int
+		p__col, int
+		p__text, id
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetData",p__row,p__col,p__text)
+				
+			end
+		
+		endmethod
+		
+		public method SetFormula, void
+		p__range, @string
+		p__formula, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFormula",p__range,p__formula)
+				
+			end
+		
+		endmethod
+		
+		public method SetFormula, void
+		p__row, int
+		p__col, int
+		p__formula, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFormula",p__row,p__col,p__formula)
+				
+			end
+		
+		endmethod
+		
+		public method SetFormat, void
+		p__range, @string
+		p__format, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFormat",p__range,p__format)
+				
+			end
+		
+		endmethod
+		
+		public method SetFormat, void
+		p__row, int
+		p__col, int
+		p__format, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFormat",p__row,p__col,p__format)
+				
+			end
+		
+		endmethod
+		
+		public method SetHorizontalAlignment, void
+		p__range, @string
+		p__al, OfficeAutomation.HAlign
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetHorizontalAlignment",p__range,p__al)
+				
+			end
+		
+		endmethod
+		
+		public method SetHorizontalAlignment, void
+		p__row, int
+		p__col, int
+		p__al, OfficeAutomation.HAlign
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetHorizontalAlignment",p__row,p__col,p__al)
+				
+			end
+		
+		endmethod
+		
+		public method SetVerticalAlignment, void
+		p__range, @string
+		p__al, OfficeAutomation.VAlign
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetVerticalAlignment",p__range,p__al)
+				
+			end
+		
+		endmethod
+		
+		public method SetVerticalAlignment, void
+		p__row, int
+		p__col, int
+		p__al, OfficeAutomation.VAlign
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetVerticalAlignment",p__row,p__col,p__al)
+				
+			end
+		
+		endmethod
+		
+		public method SetBold, void
+		p__range, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetBold",p__range)
+				
+			end
+		
+		endmethod
+		
+		public method SetBold, void
+		p__row, int
+		p__col, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetBold",p__row,p__col)
+				
+			end
+		
+		endmethod
+		
+		public method SetItalic, void
+		p__range, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetItalic",p__range)
+				
+			end
+		
+		endmethod
+		
+		public method SetItalic, void
+		p__row, int
+		p__col, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetItalic",p__row,p__col)
+				
+			end
+		
+		endmethod
+		
+		public method SetFont, void
+		p__range, @string
+		p__fontName, @string
+		p__fontSize, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFont",p__range,p__fontName,p__fontSize)
+				
+			end
+		
+		endmethod
+		
+		public method SetFont, void
+		p__r, int
+		p__c, int
+		p__fontName, @string
+		p__fontSize, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFont",p__r,p__c,p__fontName,p__fontSize)
+				
+			end
+		
+		endmethod
+		
+		public method SetColumnWidth, void
+		p__col, int
+		p__width, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetColumnWidth",p__col,p__width)
+				
+			end
+		
+		endmethod
+		
+		public method SetColumnWidth, void
+		p__range, @string
+		p__width, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetColumnWidth",p__range,p__width)
+				
+			end
+		
+		endmethod
+		
+		public method SetRowHeight, void
+		p__row, int
+		p__height, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetRowHeight",p__row,p__height)
+				
+			end
+		
+		endmethod
+		
+		public method SetRowHeight, void
+		p__range, @string
+		p__height, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetRowHeight",p__range,p__height)
+				
+			end
+		
+		endmethod
+		
+		public method DrawBox, void
+		p__range, @string
+		p__ls, OfficeAutomation.LineStyle
+		p__lw, OfficeAutomation.LineWeight
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("DrawBox",p__range,p__ls,p__lw)
+				
+			end
+		
+		endmethod
+		
+		public method DrawLine, void
+		p__range, @string
+		p__bdr, OfficeAutomation.Border
+		p__ls, OfficeAutomation.LineStyle
+		p__lw, OfficeAutomation.LineWeight
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("DrawLine",p__range,p__bdr,p__ls,p__lw)
+				
+			end
+		
+		endmethod
+		
+		public method CreateChart, void
+		p__ct, OfficeAutomation.ChartType
+		p__dataRange, @string
+		p__sheetName, @string
+		p__chartTitle, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("CreateChart",p__ct,p__dataRange,p__sheetName,p__chartTitle)
+				
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum HAlign
+		
+		Left, 0
+		Center, 1
+		Right, 2
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum VAlign
+		
+		Top, 0
+		Middle, 1
+		Bottom, 2
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum Border
+		
+		Top, 0
+		Bottom, 1
+		Left, 2
+		Right, 3
+		InsideHorizontal, 4
+		InsideVertical, 5
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum LineStyle
+		
+		Continuous, 0
+		Dash, 1
+		DashDot, 2
+		DashDotDot, 3
+		Dot, 4
+		Double, 5
+		None, 6
+		SlantDashDot, 7
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum LineWeight
+		
+		Hairline, 0
+		Thin, 1
+		Medium, 2
+		Thick, 3
+	endenum
+
+endnamespace
+namespace OfficeAutomation 
+	
+	
+	public enum ChartType
+		
+		Column3D, 0
+		BarClustered3D, 1
+		Pie3D, 2
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Application Extends DotNetObject
+		
+		public  method Application
+		id, int
+		internal, @Application
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Version, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Version")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbextFileTypes
+		
+		vbextFileTypeForm, 0
+		vbextFileTypeModule, 1
+		vbextFileTypeClass, 2
+		vbextFileTypeProject, 3
+		vbextFileTypeExe, 4
+		vbextFileTypeFrx, 5
+		vbextFileTypeRes, 6
+		vbextFileTypeUserControl, 7
+		vbextFileTypePropertyPage, 8
+		vbextFileTypeDocObject, 9
+		vbextFileTypeBinary, 10
+		vbextFileTypeGroupProject, 11
+		vbextFileTypeDesigners, 12
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBE Extends DotNetObject
+		
+		public  method VBE
+		id, int
+		internal, @VBE
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Version, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Version")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBProjects, @VBIDE.VBProjects
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBProjects
+				parent.GetProperty("VBProjects",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBProjects(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CommandBars, @Microsoft.Office.Core.CommandBars
+			Method get
+			proc
+				begin
+				data tmp, @Microsoft.Office.Core.CommandBars
+				parent.GetProperty("CommandBars",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new Microsoft.Office.Core.CommandBars(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodePanes, @VBIDE.CodePanes
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePanes
+				parent.GetProperty("CodePanes",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePanes(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Windows, @VBIDE.Windows
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Windows
+				parent.GetProperty("Windows",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Windows(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Events, @VBIDE.Events
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Events
+				parent.GetProperty("Events",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Events(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ActiveVBProject, @VBIDE.VBProject
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBProject
+				parent.GetProperty("ActiveVBProject",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBProject(0, tmp)
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("ActiveVBProject", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property SelectedVBComponent, @VBIDE.VBComponent
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponent
+				parent.GetProperty("SelectedVBComponent",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponent(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property MainWindow, @VBIDE.Window
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Window
+				parent.GetProperty("MainWindow",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Window(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ActiveWindow, @VBIDE.Window
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Window
+				parent.GetProperty("ActiveWindow",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Window(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ActiveCodePane, @VBIDE.CodePane
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePane
+				parent.GetProperty("ActiveCodePane",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePane(0, tmp)
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("ActiveCodePane", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Addins, @VBIDE.Addins
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Addins
+				parent.GetProperty("Addins",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Addins(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_WindowType
+		
+		vbext_wt_CodeWindow, 0
+		vbext_wt_Designer, 1
+		vbext_wt_Browser, 2
+		vbext_wt_Watch, 3
+		vbext_wt_Locals, 4
+		vbext_wt_Immediate, 5
+		vbext_wt_ProjectWindow, 6
+		vbext_wt_PropertyWindow, 7
+		vbext_wt_Find, 8
+		vbext_wt_FindReplace, 9
+		vbext_wt_Toolbox, 10
+		vbext_wt_LinkedWindowFrame, 11
+		vbext_wt_MainWindow, 12
+		vbext_wt_ToolWindow, 15
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_WindowState
+		
+		vbext_ws_Normal, 0
+		vbext_ws_Minimize, 1
+		vbext_ws_Maximize, 2
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Window Extends DotNetObject
+		
+		public  method Window
+		id, int
+		internal, @Window
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.Windows
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Windows
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Windows(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Caption, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Caption")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Visible, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Visible",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Visible", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Left, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Left",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Left", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Top, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Top",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Top", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Width, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Width",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Width", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Height, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Height",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Height", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property WindowState, VBIDE.vbext_WindowState
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_WindowState
+				parent.GetProperty("WindowState",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("WindowState", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_WindowType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_WindowType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property LinkedWindows, @VBIDE.LinkedWindows
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.LinkedWindows
+				parent.GetProperty("LinkedWindows",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.LinkedWindows(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property LinkedWindowFrame, @VBIDE.Window
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Window
+				parent.GetProperty("LinkedWindowFrame",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Window(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HWnd, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("HWnd",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Close, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Close")
+				
+			end
+		
+		endmethod
+		
+		public method SetFocus, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetFocus")
+				
+			end
+		
+		endmethod
+		
+		public method SetKind, void
+		p__eKind, VBIDE.vbext_WindowType
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetKind",p__eKind)
+				
+			end
+		
+		endmethod
+		
+		public method Detach, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Detach")
+				
+			end
+		
+		endmethod
+		
+		public method Attach, void
+		p__lWindowHandle, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Attach",p__lWindowHandle)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_Windows_old Extends DotNetObject
+		
+		public  method m_Windows_old
+		id, int
+		internal, @m_Windows_old
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Window
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_Windows Extends DotNetObject
+		
+		public  method m_Windows
+		id, int
+		internal, @m_Windows
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Window
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateToolWindow, @VBIDE.Window
+		p__AddInInst, @VBIDE.AddIn
+		p__ProgId, @string
+		p__Caption, @string
+		p__GuidPosition, @string
+		req inout p__DocObj, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("CreateToolWindow",ret,p__AddInInst,p__ProgId,p__Caption,p__GuidPosition,p__DocObj)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class WindowsClass Extends DotNetObject
+		
+		public  method WindowsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.WindowsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method WindowsClass
+		id, int
+		internal, @WindowsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.WindowsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.WindowsClass
+				mreturn new VBIDE.WindowsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_Windows
+		convert, @VBIDE.WindowsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_Windows
+				mreturn new VBIDE.m_Windows(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_Windows_old
+		convert, @VBIDE.WindowsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_Windows_old
+				mreturn new VBIDE.m_Windows_old(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.Windows
+		convert, @VBIDE.WindowsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.Windows
+				mreturn new VBIDE.Windows(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.Window
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateToolWindow, @VBIDE.Window
+		p__AddInInst, @VBIDE.AddIn
+		p__ProgId, @string
+		p__Caption, @string
+		p__GuidPosition, @string
+		req inout p__DocObj, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("CreateToolWindow",ret,p__AddInInst,p__ProgId,p__Caption,p__GuidPosition,p__DocObj)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Windows Extends DotNetObject
+		
+		public  method Windows
+		id, int
+		internal, @Windows
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_LinkedWindows Extends DotNetObject
+		
+		public  method m_LinkedWindows
+		id, int
+		internal, @m_LinkedWindows
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Window
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Window, @VBIDE.Window
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Window)
+				
+			end
+		
+		endmethod
+		
+		public method Add, void
+		p__Window, @VBIDE.Window
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Add",p__Window)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class LinkedWindowsClass Extends DotNetObject
+		
+		public  method LinkedWindowsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.LinkedWindowsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method LinkedWindowsClass
+		id, int
+		internal, @LinkedWindowsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.LinkedWindowsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.LinkedWindowsClass
+				mreturn new VBIDE.LinkedWindowsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_LinkedWindows
+		convert, @VBIDE.LinkedWindowsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_LinkedWindows
+				mreturn new VBIDE.m_LinkedWindows(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.LinkedWindows
+		convert, @VBIDE.LinkedWindowsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.LinkedWindows
+				mreturn new VBIDE.LinkedWindows(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.Window
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Window, @VBIDE.Window
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Window)
+				
+			end
+		
+		endmethod
+		
+		public method Add, void
+		p__Window, @VBIDE.Window
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Add",p__Window)
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class LinkedWindows Extends DotNetObject
+		
+		public  method LinkedWindows
+		id, int
+		internal, @LinkedWindows
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Events Extends DotNetObject
+		
+		public  method Events
+		id, int
+		internal, @Events
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property ReferencesEvents, @VBIDE.ReferencesEvents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.ReferencesEvents
+				parent.GetProperty("ReferencesEvents",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.ReferencesEvents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CommandBarEvents, @VBIDE.CommandBarEvents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CommandBarEvents
+				parent.GetProperty("CommandBarEvents",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CommandBarEvents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBProjectsEvents Extends DotNetObject
+		
+		public  method m_VBProjectsEvents
+		id, int
+		internal, @m_VBProjectsEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispVBProjectsEvents Extends DotNetObject
+		
+		public  method m_dispVBProjectsEvents
+		id, int
+		internal, @m_dispVBProjectsEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method ItemAdded, void
+		p__VBProject, @VBIDE.VBProject
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemAdded",p__VBProject)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRemoved, void
+		p__VBProject, @VBIDE.VBProject
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRemoved",p__VBProject)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRenamed, void
+		p__VBProject, @VBIDE.VBProject
+		p__OldName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRenamed",p__VBProject,p__OldName)
+				
+			end
+		
+		endmethod
+		
+		public method ItemActivated, void
+		p__VBProject, @VBIDE.VBProject
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemActivated",p__VBProject)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBComponentsEvents Extends DotNetObject
+		
+		public  method m_VBComponentsEvents
+		id, int
+		internal, @m_VBComponentsEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispVBComponentsEvents Extends DotNetObject
+		
+		public  method m_dispVBComponentsEvents
+		id, int
+		internal, @m_dispVBComponentsEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method ItemAdded, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemAdded",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRemoved, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRemoved",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRenamed, void
+		p__VBComponent, @VBIDE.VBComponent
+		p__OldName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRenamed",p__VBComponent,p__OldName)
+				
+			end
+		
+		endmethod
+		
+		public method ItemSelected, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemSelected",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method ItemActivated, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemActivated",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method ItemReloaded, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemReloaded",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_ReferencesEvents Extends DotNetObject
+		
+		public  method m_ReferencesEvents
+		id, int
+		internal, @m_ReferencesEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispReferencesEvents Extends DotNetObject
+		
+		public  method m_dispReferencesEvents
+		id, int
+		internal, @m_dispReferencesEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method ItemAdded, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemAdded",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRemoved, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRemoved",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ReferencesEventsClass Extends DotNetObject
+		
+		public  method ReferencesEventsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.ReferencesEventsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ReferencesEventsClass
+		id, int
+		internal, @ReferencesEventsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.ReferencesEventsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ReferencesEventsClass
+				mreturn new VBIDE.ReferencesEventsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_ReferencesEvents
+		convert, @VBIDE.ReferencesEventsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_ReferencesEvents
+				mreturn new VBIDE.m_ReferencesEvents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.ReferencesEvents
+		convert, @VBIDE.ReferencesEventsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ReferencesEvents
+				mreturn new VBIDE.ReferencesEvents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_dispReferencesEvents_Event
+		convert, @VBIDE.ReferencesEventsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_dispReferencesEvents_Event
+				mreturn new VBIDE.m_dispReferencesEvents_Event(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispReferencesEvents_Event Extends DotNetObject
+		
+		public  method m_dispReferencesEvents_Event
+		id, int
+		internal, @m_dispReferencesEvents_Event
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ReferencesEvents Extends DotNetObject
+		
+		public  method ReferencesEvents
+		id, int
+		internal, @ReferencesEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_CommandBarControlEvents Extends DotNetObject
+		
+		public  method m_CommandBarControlEvents
+		id, int
+		internal, @m_CommandBarControlEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispCommandBarControlEvents Extends DotNetObject
+		
+		public  method m_dispCommandBarControlEvents
+		id, int
+		internal, @m_dispCommandBarControlEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method Click, void
+		p__CommandBarControl, @object
+		req inout p__handled, @boolean
+		req inout p__CancelDefault, @boolean
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Click",p__CommandBarControl,p__handled,p__CancelDefault)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CommandBarEventsClass Extends DotNetObject
+		
+		public  method CommandBarEventsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.CommandBarEventsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method CommandBarEventsClass
+		id, int
+		internal, @CommandBarEventsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.CommandBarEventsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CommandBarEventsClass
+				mreturn new VBIDE.CommandBarEventsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_CommandBarControlEvents
+		convert, @VBIDE.CommandBarEventsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_CommandBarControlEvents
+				mreturn new VBIDE.m_CommandBarControlEvents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.CommandBarEvents
+		convert, @VBIDE.CommandBarEventsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CommandBarEvents
+				mreturn new VBIDE.CommandBarEvents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CommandBarEvents Extends DotNetObject
+		
+		public  method CommandBarEvents
+		id, int
+		internal, @CommandBarEvents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_ProjectTemplate Extends DotNetObject
+		
+		public  method m_ProjectTemplate
+		id, int
+		internal, @m_ProjectTemplate
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ProjectTemplateClass Extends DotNetObject
+		
+		public  method ProjectTemplateClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.ProjectTemplateClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ProjectTemplateClass
+		id, int
+		internal, @ProjectTemplateClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.ProjectTemplateClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ProjectTemplateClass
+				mreturn new VBIDE.ProjectTemplateClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_ProjectTemplate
+		convert, @VBIDE.ProjectTemplateClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_ProjectTemplate
+				mreturn new VBIDE.m_ProjectTemplate(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.ProjectTemplate
+		convert, @VBIDE.ProjectTemplateClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ProjectTemplate
+				mreturn new VBIDE.ProjectTemplate(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ProjectTemplate Extends DotNetObject
+		
+		public  method ProjectTemplate
+		id, int
+		internal, @ProjectTemplate
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_ProjectType
+		
+		vbext_pt_HostProject, 100
+		vbext_pt_StandAlone, 101
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_ProjectProtection
+		
+		vbext_pp_none, 0
+		vbext_pp_locked, 1
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_VBAMode
+		
+		vbext_vm_Run, 0
+		vbext_vm_Break, 1
+		vbext_vm_Design, 2
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBProject_Old Extends DotNetObject
+		
+		public  method m_VBProject_Old
+		id, int
+		internal, @m_VBProject_Old
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpFile, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("HelpFile")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpFile", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpContextID, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("HelpContextID",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpContextID", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Description, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Description")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Description", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Mode, VBIDE.vbext_VBAMode
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_VBAMode
+				parent.GetProperty("Mode",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property References, @VBIDE.References
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.References
+				parent.GetProperty("References",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.References(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBProjects
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBProjects
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBProjects(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Protection, VBIDE.vbext_ProjectProtection
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ProjectProtection
+				parent.GetProperty("Protection",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBComponents, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("VBComponents",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBProject Extends DotNetObject
+		
+		public  method m_VBProject
+		id, int
+		internal, @m_VBProject
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpFile, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("HelpFile")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpFile", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpContextID, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("HelpContextID",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpContextID", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Description, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Description")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Description", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Mode, VBIDE.vbext_VBAMode
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_VBAMode
+				parent.GetProperty("Mode",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property References, @VBIDE.References
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.References
+				parent.GetProperty("References",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.References(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBProjects
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBProjects
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBProjects(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Protection, VBIDE.vbext_ProjectProtection
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ProjectProtection
+				parent.GetProperty("Protection",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBComponents, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("VBComponents",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_ProjectType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ProjectType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property FileName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("FileName")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property BuildFileName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("BuildFileName")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("BuildFileName", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method SaveAs, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SaveAs",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method MakeCompiledFile, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("MakeCompiledFile")
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBProjectClass Extends DotNetObject
+		
+		public  method VBProjectClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.VBProjectClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method VBProjectClass
+		id, int
+		internal, @VBProjectClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpFile, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("HelpFile")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpFile", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HelpContextID, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("HelpContextID",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("HelpContextID", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Description, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Description")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Description", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Mode, VBIDE.vbext_VBAMode
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_VBAMode
+				parent.GetProperty("Mode",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property References, @VBIDE.References
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.References
+				parent.GetProperty("References",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.References(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBProjects
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBProjects
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBProjects(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Protection, VBIDE.vbext_ProjectProtection
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ProjectProtection
+				parent.GetProperty("Protection",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBComponents, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("VBComponents",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_ProjectType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ProjectType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property FileName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("FileName")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property BuildFileName, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("BuildFileName")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("BuildFileName", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.VBProjectClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBProjectClass
+				mreturn new VBIDE.VBProjectClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBProject
+		convert, @VBIDE.VBProjectClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBProject
+				mreturn new VBIDE.m_VBProject(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBProject_Old
+		convert, @VBIDE.VBProjectClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBProject_Old
+				mreturn new VBIDE.m_VBProject_Old(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_ProjectTemplate
+		convert, @VBIDE.VBProjectClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_ProjectTemplate
+				mreturn new VBIDE.m_ProjectTemplate(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.VBProject
+		convert, @VBIDE.VBProjectClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBProject
+				mreturn new VBIDE.VBProject(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method SaveAs, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SaveAs",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method MakeCompiledFile, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("MakeCompiledFile")
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBProject Extends DotNetObject
+		
+		public  method VBProject
+		id, int
+		internal, @VBProject
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBProjects_Old Extends DotNetObject
+		
+		public  method m_VBProjects_Old
+		id, int
+		internal, @m_VBProjects_Old
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.VBProject
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBProjects Extends DotNetObject
+		
+		public  method m_VBProjects
+		id, int
+		internal, @m_VBProjects
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.VBProject
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.VBProject
+		p__Type, VBIDE.vbext_ProjectType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Add",ret,p__Type)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__lpc, @VBIDE.VBProject
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__lpc)
+				
+			end
+		
+		endmethod
+		
+		public method Open, @VBIDE.VBProject
+		p__bstrPath, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Open",ret,p__bstrPath)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBProjectsClass Extends DotNetObject
+		
+		public  method VBProjectsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.VBProjectsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method VBProjectsClass
+		id, int
+		internal, @VBProjectsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.VBProjectsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBProjectsClass
+				mreturn new VBIDE.VBProjectsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBProjects
+		convert, @VBIDE.VBProjectsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBProjects
+				mreturn new VBIDE.m_VBProjects(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBProjects_Old
+		convert, @VBIDE.VBProjectsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBProjects_Old
+				mreturn new VBIDE.m_VBProjects_Old(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.VBProjects
+		convert, @VBIDE.VBProjectsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBProjects
+				mreturn new VBIDE.VBProjects(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.VBProject
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.VBProject
+		p__Type, VBIDE.vbext_ProjectType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Add",ret,p__Type)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__lpc, @VBIDE.VBProject
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__lpc)
+				
+			end
+		
+		endmethod
+		
+		public method Open, @VBIDE.VBProject
+		p__bstrPath, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBProject
+				parent.CallV("Open",ret,p__bstrPath)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBProjects Extends DotNetObject
+		
+		public  method VBProjects
+		id, int
+		internal, @VBProjects
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class SelectedComponents Extends DotNetObject
+		
+		public  method SelectedComponents
+		id, int
+		internal, @SelectedComponents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Component
+		p__index, int
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_ComponentType
+		
+		vbext_ct_StdModule, 1
+		vbext_ct_ClassModule, 2
+		vbext_ct_MSForm, 3
+		vbext_ct_ActiveXDesigner, 11
+		vbext_ct_Document, 100
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_Components Extends DotNetObject
+		
+		public  method m_Components
+		id, int
+		internal, @m_Components
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Component
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Component, @VBIDE.Component
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Component)
+				
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.Component
+		p__ComponentType, VBIDE.vbext_ComponentType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Add",ret,p__ComponentType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Import, @VBIDE.Component
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Import",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ComponentsClass Extends DotNetObject
+		
+		public  method ComponentsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.ComponentsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ComponentsClass
+		id, int
+		internal, @ComponentsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.ComponentsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ComponentsClass
+				mreturn new VBIDE.ComponentsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_Components
+		convert, @VBIDE.ComponentsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_Components
+				mreturn new VBIDE.m_Components(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.Components
+		convert, @VBIDE.ComponentsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.Components
+				mreturn new VBIDE.Components(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.Component
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Component, @VBIDE.Component
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Component)
+				
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.Component
+		p__ComponentType, VBIDE.vbext_ComponentType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Add",ret,p__ComponentType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Import, @VBIDE.Component
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Component
+				parent.CallV("Import",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Components Extends DotNetObject
+		
+		public  method Components
+		id, int
+		internal, @Components
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBComponents_Old Extends DotNetObject
+		
+		public  method m_VBComponents_Old
+		id, int
+		internal, @m_VBComponents_Old
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.VBComponent
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.VBComponent
+		p__ComponentType, VBIDE.vbext_ComponentType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Add",ret,p__ComponentType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Import, @VBIDE.VBComponent
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Import",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBComponents Extends DotNetObject
+		
+		public  method m_VBComponents
+		id, int
+		internal, @m_VBComponents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.VBComponent
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.VBComponent
+		p__ComponentType, VBIDE.vbext_ComponentType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Add",ret,p__ComponentType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Import, @VBIDE.VBComponent
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Import",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddCustom, @VBIDE.VBComponent
+		p__ProgId, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("AddCustom",ret,p__ProgId)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddMTDesigner, @VBIDE.VBComponent
+		p__index, int
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("AddMTDesigner",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBComponentsClass Extends DotNetObject
+		
+		public  method VBComponentsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.VBComponentsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method VBComponentsClass
+		id, int
+		internal, @VBComponentsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.VBComponentsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBComponentsClass
+				mreturn new VBIDE.VBComponentsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBComponents
+		convert, @VBIDE.VBComponentsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBComponents
+				mreturn new VBIDE.m_VBComponents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBComponents_Old
+		convert, @VBIDE.VBComponentsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBComponents_Old
+				mreturn new VBIDE.m_VBComponents_Old(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.VBComponents
+		convert, @VBIDE.VBComponentsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBComponents
+				mreturn new VBIDE.VBComponents(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.VBComponent
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__VBComponent, @VBIDE.VBComponent
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__VBComponent)
+				
+			end
+		
+		endmethod
+		
+		public method Add, @VBIDE.VBComponent
+		p__ComponentType, VBIDE.vbext_ComponentType
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Add",ret,p__ComponentType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Import, @VBIDE.VBComponent
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("Import",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddCustom, @VBIDE.VBComponent
+		p__ProgId, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("AddCustom",ret,p__ProgId)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddMTDesigner, @VBIDE.VBComponent
+		p__index, int
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.VBComponent
+				parent.CallV("AddMTDesigner",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBComponents Extends DotNetObject
+		
+		public  method VBComponents
+		id, int
+		internal, @VBComponents
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_Component Extends DotNetObject
+		
+		public  method m_Component
+		id, int
+		internal, @m_Component
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property IsDirty, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("IsDirty",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("IsDirty", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ComponentClass Extends DotNetObject
+		
+		public  method ComponentClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.ComponentClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ComponentClass
+		id, int
+		internal, @ComponentClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property IsDirty, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("IsDirty",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("IsDirty", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.ComponentClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ComponentClass
+				mreturn new VBIDE.ComponentClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_Component
+		convert, @VBIDE.ComponentClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_Component
+				mreturn new VBIDE.m_Component(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.Component
+		convert, @VBIDE.ComponentClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.Component
+				mreturn new VBIDE.Component(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Component Extends DotNetObject
+		
+		public  method Component
+		id, int
+		internal, @Component
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBComponent_Old Extends DotNetObject
+		
+		public  method m_VBComponent_Old
+		id, int
+		internal, @m_VBComponent_Old
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Designer, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Designer")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodeModule, @VBIDE.CodeModule
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodeModule
+				parent.GetProperty("CodeModule",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodeModule(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_ComponentType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ComponentType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HasOpenDesigner, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("HasOpenDesigner",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Properties, @VBIDE.Properties
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Properties
+				parent.GetProperty("Properties",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Properties(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Export, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Export",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method DesignerWindow, @VBIDE.Window
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("DesignerWindow",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Activate, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Activate")
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_VBComponent Extends DotNetObject
+		
+		public  method m_VBComponent
+		id, int
+		internal, @m_VBComponent
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Designer, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Designer")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodeModule, @VBIDE.CodeModule
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodeModule
+				parent.GetProperty("CodeModule",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodeModule(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_ComponentType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ComponentType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HasOpenDesigner, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("HasOpenDesigner",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Properties, @VBIDE.Properties
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Properties
+				parent.GetProperty("Properties",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Properties(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property DesignerID, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("DesignerID")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Export, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Export",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method DesignerWindow, @VBIDE.Window
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("DesignerWindow",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Activate, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Activate")
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBComponentClass Extends DotNetObject
+		
+		public  method VBComponentClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.VBComponentClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method VBComponentClass
+		id, int
+		internal, @VBComponentClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Saved, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Saved",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Designer, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Designer")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodeModule, @VBIDE.CodeModule
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodeModule
+				parent.GetProperty("CodeModule",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodeModule(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_ComponentType
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_ComponentType
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.VBComponents
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBComponents
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBComponents(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property HasOpenDesigner, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("HasOpenDesigner",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Properties, @VBIDE.Properties
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Properties
+				parent.GetProperty("Properties",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Properties(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property DesignerID, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("DesignerID")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.VBComponentClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBComponentClass
+				mreturn new VBIDE.VBComponentClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBComponent
+		convert, @VBIDE.VBComponentClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBComponent
+				mreturn new VBIDE.m_VBComponent(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_VBComponent_Old
+		convert, @VBIDE.VBComponentClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_VBComponent_Old
+				mreturn new VBIDE.m_VBComponent_Old(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.VBComponent
+		convert, @VBIDE.VBComponentClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.VBComponent
+				mreturn new VBIDE.VBComponent(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Export, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Export",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method DesignerWindow, @VBIDE.Window
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Window
+				parent.CallV("DesignerWindow",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Activate, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Activate")
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class VBComponent Extends DotNetObject
+		
+		public  method VBComponent
+		id, int
+		internal, @VBComponent
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Property Extends DotNetObject
+		
+		public  method Property
+		id, int
+		internal, @Property
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Value, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Value")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Value", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property IndexedValue, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("IndexedValue")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("IndexedValue", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property NumIndices, short
+			Method get
+			proc
+				begin
+				data tmp, short
+				parent.GetProperty("NumIndices",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.Properties
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Properties
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Properties(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Object, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Object")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Object", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_Properties Extends DotNetObject
+		
+		public  method m_Properties
+		id, int
+		internal, @m_Properties
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Property
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Property
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class PropertiesClass Extends DotNetObject
+		
+		public  method PropertiesClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.PropertiesClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method PropertiesClass
+		id, int
+		internal, @PropertiesClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Application, @VBIDE.Application
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Application
+				parent.GetProperty("Application",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Application(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.PropertiesClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.PropertiesClass
+				mreturn new VBIDE.PropertiesClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_Properties
+		convert, @VBIDE.PropertiesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_Properties
+				mreturn new VBIDE.m_Properties(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.Properties
+		convert, @VBIDE.PropertiesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.Properties
+				mreturn new VBIDE.Properties(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.Property
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Property
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Properties Extends DotNetObject
+		
+		public  method Properties
+		id, int
+		internal, @Properties
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_AddIns Extends DotNetObject
+		
+		public  method m_AddIns
+		id, int
+		internal, @m_AddIns
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.AddIn
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.AddIn
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Update, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Update")
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class AddinsClass Extends DotNetObject
+		
+		public  method AddinsClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.AddinsClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method AddinsClass
+		id, int
+		internal, @AddinsClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.AddinsClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.AddinsClass
+				mreturn new VBIDE.AddinsClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_AddIns
+		convert, @VBIDE.AddinsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_AddIns
+				mreturn new VBIDE.m_AddIns(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.Addins
+		convert, @VBIDE.AddinsClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.Addins
+				mreturn new VBIDE.Addins(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.AddIn
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.AddIn
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Update, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Update")
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Addins Extends DotNetObject
+		
+		public  method Addins
+		id, int
+		internal, @Addins
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class AddIn Extends DotNetObject
+		
+		public  method AddIn
+		id, int
+		internal, @AddIn
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Description, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Description")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Description", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Collection, @VBIDE.Addins
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Addins
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Addins(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProgId, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("ProgId")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Guid, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Guid")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Connect, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("Connect",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Connect", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Object, @object
+			Method get
+			proc
+				begin
+				mreturn (@object)parent.GetProperty("Object")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Object", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_ProcKind
+		
+		vbext_pk_Proc, 0
+		vbext_pk_Let, 1
+		vbext_pk_Set, 2
+		vbext_pk_Get, 3
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_CodeModule Extends DotNetObject
+		
+		public  method m_CodeModule
+		id, int
+		internal, @m_CodeModule
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Lines, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Lines")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcStartLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcStartLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcCountLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcCountLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcBodyLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcBodyLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcOfLine, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("ProcOfLine")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfDeclarationLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfDeclarationLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodePane, @VBIDE.CodePane
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePane
+				parent.GetProperty("CodePane",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePane(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method AddFromString, void
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddFromString",p__String)
+				
+			end
+		
+		endmethod
+		
+		public method AddFromFile, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddFromFile",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method InsertLines, void
+		p__Line, int
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("InsertLines",p__Line,p__String)
+				
+			end
+		
+		endmethod
+		
+		public method DeleteLines, void
+		p__StartLine, int
+		p__Count, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("DeleteLines",p__StartLine,p__Count)
+				
+			end
+		
+		endmethod
+		
+		public method ReplaceLine, void
+		p__Line, int
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ReplaceLine",p__Line,p__String)
+				
+			end
+		
+		endmethod
+		
+		public method CreateEventProc, int
+		p__EventName, @string
+		p__ObjectName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, int
+				parent.CallV("CreateEventProc",ret,p__EventName,p__ObjectName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Find, boolean
+		p__Target, @string
+		req inout p__StartLine, @int
+		req inout p__StartColumn, @int
+		req inout p__EndLine, @int
+		req inout p__EndColumn, @int
+		p__WholeWord, boolean
+		p__MatchCase, boolean
+		p__PatternSearch, boolean
+		
+		endparams
+		proc
+			begin
+				data ret, boolean
+				parent.CallV("Find",ret,p__Target,p__StartLine,p__StartColumn,p__EndLine,p__EndColumn,p__WholeWord,p__MatchCase,p__PatternSearch)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodeModuleClass Extends DotNetObject
+		
+		public  method CodeModuleClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.CodeModuleClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method CodeModuleClass
+		id, int
+		internal, @CodeModuleClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Name", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Lines, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Lines")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcStartLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcStartLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcCountLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcCountLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcBodyLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("ProcBodyLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property ProcOfLine, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("ProcOfLine")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfDeclarationLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfDeclarationLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodePane, @VBIDE.CodePane
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePane
+				parent.GetProperty("CodePane",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePane(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.CodeModuleClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodeModuleClass
+				mreturn new VBIDE.CodeModuleClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_CodeModule
+		convert, @VBIDE.CodeModuleClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_CodeModule
+				mreturn new VBIDE.m_CodeModule(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.CodeModule
+		convert, @VBIDE.CodeModuleClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodeModule
+				mreturn new VBIDE.CodeModule(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method AddFromString, void
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddFromString",p__String)
+				
+			end
+		
+		endmethod
+		
+		public method AddFromFile, void
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("AddFromFile",p__FileName)
+				
+			end
+		
+		endmethod
+		
+		public method InsertLines, void
+		p__Line, int
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("InsertLines",p__Line,p__String)
+				
+			end
+		
+		endmethod
+		
+		public method DeleteLines, void
+		p__StartLine, int
+		p__Count, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("DeleteLines",p__StartLine,p__Count)
+				
+			end
+		
+		endmethod
+		
+		public method ReplaceLine, void
+		p__Line, int
+		p__String, @string
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ReplaceLine",p__Line,p__String)
+				
+			end
+		
+		endmethod
+		
+		public method CreateEventProc, int
+		p__EventName, @string
+		p__ObjectName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, int
+				parent.CallV("CreateEventProc",ret,p__EventName,p__ObjectName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Find, boolean
+		p__Target, @string
+		req inout p__StartLine, @int
+		req inout p__StartColumn, @int
+		req inout p__EndLine, @int
+		req inout p__EndColumn, @int
+		p__WholeWord, boolean
+		p__MatchCase, boolean
+		p__PatternSearch, boolean
+		
+		endparams
+		proc
+			begin
+				data ret, boolean
+				parent.CallV("Find",ret,p__Target,p__StartLine,p__StartColumn,p__EndLine,p__EndColumn,p__WholeWord,p__MatchCase,p__PatternSearch)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodeModule Extends DotNetObject
+		
+		public  method CodeModule
+		id, int
+		internal, @CodeModule
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_CodePanes Extends DotNetObject
+		
+		public  method m_CodePanes
+		id, int
+		internal, @m_CodePanes
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Current, @VBIDE.CodePane
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePane
+				parent.GetProperty("Current",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePane(0, tmp)
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Current", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.CodePane
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.CodePane
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodePanesClass Extends DotNetObject
+		
+		public  method CodePanesClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.CodePanesClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method CodePanesClass
+		id, int
+		internal, @CodePanesClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Current, @VBIDE.CodePane
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePane
+				parent.GetProperty("Current",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePane(0, tmp)
+				
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("Current", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.CodePanesClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodePanesClass
+				mreturn new VBIDE.CodePanesClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_CodePanes
+		convert, @VBIDE.CodePanesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_CodePanes
+				mreturn new VBIDE.m_CodePanes(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.CodePanes
+		convert, @VBIDE.CodePanesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodePanes
+				mreturn new VBIDE.CodePanes(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.CodePane
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.CodePane
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodePanes Extends DotNetObject
+		
+		public  method CodePanes
+		id, int
+		internal, @CodePanes
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_CodePaneview
+		
+		vbext_cv_ProcedureView, 0
+		vbext_cv_FullModuleView, 1
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_CodePane Extends DotNetObject
+		
+		public  method m_CodePane
+		id, int
+		internal, @m_CodePane
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Collection, @VBIDE.CodePanes
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePanes
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePanes(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Window, @VBIDE.Window
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Window
+				parent.GetProperty("Window",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Window(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property TopLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("TopLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("TopLine", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfVisibleLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfVisibleLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodeModule, @VBIDE.CodeModule
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodeModule
+				parent.GetProperty("CodeModule",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodeModule(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodePaneView, VBIDE.vbext_CodePaneview
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_CodePaneview
+				parent.GetProperty("CodePaneView",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method GetSelection, void
+		req inout p__StartLine, @int
+		req inout p__StartColumn, @int
+		req inout p__EndLine, @int
+		req inout p__EndColumn, @int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("GetSelection",p__StartLine,p__StartColumn,p__EndLine,p__EndColumn)
+				
+			end
+		
+		endmethod
+		
+		public method SetSelection, void
+		p__StartLine, int
+		p__StartColumn, int
+		p__EndLine, int
+		p__EndColumn, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetSelection",p__StartLine,p__StartColumn,p__EndLine,p__EndColumn)
+				
+			end
+		
+		endmethod
+		
+		public method Show, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Show")
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodePaneClass Extends DotNetObject
+		
+		public  method CodePaneClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.CodePaneClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method CodePaneClass
+		id, int
+		internal, @CodePaneClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Collection, @VBIDE.CodePanes
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodePanes
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodePanes(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Window, @VBIDE.Window
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.Window
+				parent.GetProperty("Window",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.Window(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property TopLine, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("TopLine",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+			Method set
+			proc
+				begin
+				parent.SetProperty("TopLine", value)
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CountOfVisibleLines, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("CountOfVisibleLines",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodeModule, @VBIDE.CodeModule
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.CodeModule
+				parent.GetProperty("CodeModule",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.CodeModule(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property CodePaneView, VBIDE.vbext_CodePaneview
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_CodePaneview
+				parent.GetProperty("CodePaneView",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.CodePaneClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodePaneClass
+				mreturn new VBIDE.CodePaneClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_CodePane
+		convert, @VBIDE.CodePaneClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_CodePane
+				mreturn new VBIDE.m_CodePane(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.CodePane
+		convert, @VBIDE.CodePaneClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.CodePane
+				mreturn new VBIDE.CodePane(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method GetSelection, void
+		req inout p__StartLine, @int
+		req inout p__StartColumn, @int
+		req inout p__EndLine, @int
+		req inout p__EndColumn, @int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("GetSelection",p__StartLine,p__StartColumn,p__EndLine,p__EndColumn)
+				
+			end
+		
+		endmethod
+		
+		public method SetSelection, void
+		p__StartLine, int
+		p__StartColumn, int
+		p__EndLine, int
+		p__EndColumn, int
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("SetSelection",p__StartLine,p__StartColumn,p__EndLine,p__EndColumn)
+				
+			end
+		
+		endmethod
+		
+		public method Show, void
+		endparams
+		proc
+			begin
+				(void)parent.Call("Show")
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class CodePane Extends DotNetObject
+		
+		public  method CodePane
+		id, int
+		internal, @CodePane
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_References Extends DotNetObject
+		
+		public  method m_References
+		id, int
+		internal, @m_References
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method Item, @VBIDE.Reference
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddFromGuid, @VBIDE.Reference
+		p__Guid, @string
+		p__Major, int
+		p__Minor, int
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("AddFromGuid",ret,p__Guid,p__Major,p__Minor)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddFromFile, @VBIDE.Reference
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("AddFromFile",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public enum vbext_RefKind
+		
+		vbext_rk_TypeLib, 0
+		vbext_rk_Project, 1
+	endenum
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class Reference Extends DotNetObject
+		
+		public  method Reference
+		id, int
+		internal, @Reference
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property Collection, @VBIDE.References
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.References
+				parent.GetProperty("Collection",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.References(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Name, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Name")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Guid, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Guid")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Major, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Major",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Minor, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Minor",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property FullPath, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("FullPath")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property BuiltIn, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("BuiltIn",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property IsBroken, boolean
+			Method get
+			proc
+				begin
+				data tmp, boolean
+				parent.GetProperty("IsBroken",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Type, VBIDE.vbext_RefKind
+			Method get
+			proc
+				begin
+				data tmp, VBIDE.vbext_RefKind
+				parent.GetProperty("Type",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Description, @string
+			Method get
+			proc
+				begin
+				mreturn (@string)parent.GetProperty("Description")
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispReferences_Events Extends DotNetObject
+		
+		public  method m_dispReferences_Events
+		id, int
+		internal, @m_dispReferences_Events
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method ItemAdded, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemAdded",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method ItemRemoved, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("ItemRemoved",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class ReferencesClass Extends DotNetObject
+		
+		public  method ReferencesClass
+		endparams 
+				parent(DotNetObject.Initialize__Internal__("VBIDE.ReferencesClass", Interop_VBIDE__.af_VBIDE__.Property__), 1)
+		proc
+			begin
+				gennet_init_internal_handles()
+				
+			end
+		
+		endmethod
+		
+		public  method ReferencesClass
+		id, int
+		internal, @ReferencesClass
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public  property VBE, @VBIDE.VBE
+			Method get
+			proc
+				begin
+				data tmp, @VBIDE.VBE
+				parent.GetProperty("VBE",tmp)
+				tmp.gennet_init_internal_handles()
+				mreturn tmp
+				tmp = new VBIDE.VBE(0, tmp)
+				
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public  property Count, int
+			Method get
+			proc
+				begin
+				data tmp, int
+				parent.GetProperty("Count",tmp)
+				mreturn tmp
+				end
+			
+			endmethod
+		
+		endproperty
+		
+		public static method op_explicit, @VBIDE.ReferencesClass
+		convert, @object
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.ReferencesClass
+				mreturn new VBIDE.ReferencesClass(((dotNetObject)convert).SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_References
+		convert, @VBIDE.ReferencesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_References
+				mreturn new VBIDE.m_References(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.References
+		convert, @VBIDE.ReferencesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.References
+				mreturn new VBIDE.References(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public static method op_explicit, @VBIDE.m_dispReferences_Events_Event
+		convert, @VBIDE.ReferencesClass
+		
+		endparams
+		proc
+			begin
+				data nul, @VBIDE.m_dispReferences_Events_Event
+				mreturn new VBIDE.m_dispReferences_Events_Event(convert.SYNNETInternalHandle, nul)
+			end
+		
+		endmethod
+		
+		public method Item, @VBIDE.Reference
+		p__index, @object
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("Item",ret,p__index)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetEnumerator, @System.Collections.IEnumerator
+		endparams
+		proc
+			begin
+				data ret, @System.Collections.IEnumerator
+				parent.CallV("GetEnumerator",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddFromGuid, @VBIDE.Reference
+		p__Guid, @string
+		p__Major, int
+		p__Minor, int
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("AddFromGuid",ret,p__Guid,p__Major,p__Minor)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method AddFromFile, @VBIDE.Reference
+		p__FileName, @string
+		
+		endparams
+		proc
+			begin
+				data ret, @VBIDE.Reference
+				parent.CallV("AddFromFile",ret,p__FileName)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method Remove, void
+		p__Reference, @VBIDE.Reference
+		
+		endparams
+		proc
+			begin
+				(void)parent.Call("Remove",p__Reference)
+				
+			end
+		
+		endmethod
+		
+		public method GetLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("GetLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method InitializeLifetimeService, @object
+		endparams
+		proc
+			begin
+				data ret, @object
+				parent.CallV("InitializeLifetimeService",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method CreateObjRef, @System.Runtime.Remoting.ObjRef
+		p__requestedType, @System.Type
+		
+		endparams
+		proc
+			begin
+				data ret, @System.Runtime.Remoting.ObjRef
+				parent.CallV("CreateObjRef",ret,p__requestedType)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public override method ToString, @string
+		endparams
+		proc
+			begin
+				data ret, @string
+				parent.CallV("ToString",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method GetType, @System.Type
+		endparams
+		proc
+			begin
+				data ret, @System.Type
+				parent.CallV("GetType",ret)
+				mreturn ret
+			end
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class m_dispReferences_Events_Event Extends DotNetObject
+		
+		public  method m_dispReferences_Events_Event
+		id, int
+		internal, @m_dispReferences_Events_Event
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace VBIDE 
+	
+	
+	public class References Extends DotNetObject
+		
+		public  method References
+		id, int
+		internal, @References
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace mscorlib__ 
+	
+	
+	public class af_mscorlib__
+		
+			private static InternalDetails__Data, @DotNetAssembly
+				public static property Property__, @DotNetAssembly
+				method get
+				proc
+				if(InternalDetails__Data == ^NULL)
+					InternalDetails__Data = new DotNetAssembly("mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
+				mreturn InternalDetails__Data
+				endmethod
+				endproperty
+				
+	
+	endclass
+
+endnamespace
+namespace System 
+	
+	
+	public class IFormatProvider Extends DotNetObject
+		
+		public  method IFormatProvider
+		id, int
+		internal, @IFormatProvider
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System 
+	
+	
+	public enum TypeCode
+		
+		Empty, 0
+		Object, 1
+		DBNull, 2
+		Boolean, 3
+		Char, 4
+		SByte, 5
+		Byte, 6
+		Int16, 7
+		UInt16, 8
+		Int32, 9
+		UInt32, 10
+		Int64, 11
+		UInt64, 12
+		Single, 13
+		Double, 14
+		Decimal, 15
+		DateTime, 16
+		String, 18
+	endenum
+
+endnamespace
+namespace System 
+	
+	
+	public class Type Extends DotNetObject
+		
+		public  method Type
+		id, int
+		internal, @Type
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace office__ 
+	
+	
+	public class af_office__
+		
+			private static InternalDetails__Data, @DotNetAssembly
+				public static property Property__, @DotNetAssembly
+				method get
+				proc
+				if(InternalDetails__Data == ^NULL)
+					InternalDetails__Data = new DotNetAssembly("office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c")
+				mreturn InternalDetails__Data
+				endmethod
+				endproperty
+				
+	
+	endclass
+
+endnamespace
+namespace Microsoft.Office.Core 
+	
+	
+	public class CommandBars Extends DotNetObject
+		
+		public  method CommandBars
+		id, int
+		internal, @CommandBars
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System.Collections 
+	
+	
+	public class IEnumerator Extends DotNetObject
+		
+		public  method IEnumerator
+		id, int
+		internal, @IEnumerator
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System.Runtime.Remoting 
+	
+	
+	public class ObjRef Extends DotNetObject
+		
+		public  method ObjRef
+		id, int
+		internal, @ObjRef
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System.Runtime.Serialization 
+	
+	
+	public class SerializationInfo Extends DotNetObject
+		
+		public  method SerializationInfo
+		id, int
+		internal, @SerializationInfo
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System.Runtime.Serialization 
+	
+	
+	public class StreamingContext Extends DotNetObject
+		
+		public  method StreamingContext
+		id, int
+		internal, @StreamingContext
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System 
+	
+	
+	public class Delegate Extends DotNetObject
+		
+		public  method Delegate
+		id, int
+		internal, @Delegate
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace
+namespace System.Reflection 
+	
+	
+	public class MethodInfo Extends DotNetObject
+		
+		public  method MethodInfo
+		id, int
+		internal, @MethodInfo
+		
+		endparams 
+				parent(id, 0)
+		proc
+		
+		endmethod
+		
+		public method gennet_init_internal_handles, void
+		endparams
+		proc
+			begin
+				
+			end
+		
+		endmethod
+	
+	endclass
+
+endnamespace

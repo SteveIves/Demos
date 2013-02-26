@@ -1,0 +1,6 @@
+<?xml version='1.0'?>
+<assemblies>
+    <assembly Name="net\bin\Debug\MyNetClasses.dll">
+        <class Name = "MyNetClasses.BarChart"/>
+    </assembly>
+</assemblies>

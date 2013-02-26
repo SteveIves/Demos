@@ -1,0 +1,415 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config
+		Name="Release"
+		OutputFile=""
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rp"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dbl -W0 -XTo OBJ:WinForm2.dbo SRC:WinForm2.dbl"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveNone"
+				RunFromDir="%rp"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dblink -o EXE:WinForm2.dbr OBJ:WinForm2.dbo OBJ:frmEmployee.dbo LIB:DotNetWrappers.olb"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rp"
+				ShowOnMenu="HideIfNoCmdLine"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="DotNetDemo3"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d EXE:WinForm2.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:WinForm2.dbr"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Prototypes"
+				MenuCaption="Generate Synergy Pro&amp;totypes..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGeneratePrototypes"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Edit Toolkit Window"
+				MenuCaption="&amp;Edit Toolkit Window"
+				RunFromDir="%rp">
+				<Exec CmdLine="dbr SYNBIN:composer.dbr windows.psc"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Form"
+				MenuCaption="&amp;Generate Synergy Form"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="codegen -t syn_winform -w windows#1 -r -n SynPsg.Examples.WinApp -v"/>
+			</Target>
+			<Target
+				Name="GenerateDotNetWrappers"
+				MenuCaption="&amp;Generate .NET Wrappers"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				RunFromDir="%rp">
+				<Exec CmdLine="BuildWrappers"/>
+			</Target>
+			<Target
+				Name="Clean Project"
+				MenuCaption="&amp;Clean Project"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="clean"/>
+			</Target>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="1"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="1"/>
+			<SynSetting
+				Name="compile_single"
+				Value="0"/>
+			<SynSetting
+				Name="object_name"
+				Value=""/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o %n %n"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+		</SynSettings>
+	</Config>
+	<Config
+		Name="Debug"
+		OutputFile=""
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rp"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dbl -W0 -dXTo OBJ:WinForm2.dbo SRC:WinForm2.dbl"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveNone"
+				RunFromDir="%rp"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="dblink -do EXE:WinForm2.dbr OBJ:WinForm2.dbo OBJ:frmEmployee.dbo LIB:DotNetWrappers.olb"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rp"
+				ShowOnMenu="HideIfNoCmdLine"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="DotNetDemo3"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d EXE:WinForm2.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:WinForm2.dbr"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Prototypes"
+				MenuCaption="Generate Synergy Pro&amp;totypes..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGeneratePrototypes"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Edit Toolkit Window"
+				MenuCaption="&amp;Edit Toolkit Window"
+				RunFromDir="%rp">
+				<Exec CmdLine="dbr SYNBIN:composer.dbr windows.psc"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Form"
+				MenuCaption="&amp;Generate Synergy Form"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="codegen -t syn_winform -w windows#1 -r -n SynPsg.Examples.WinApp -v"/>
+			</Target>
+			<Target
+				Name="GenerateDotNetWrappers"
+				MenuCaption="&amp;Generate .NET Wrappers"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				RunFromDir="%rp">
+				<Exec CmdLine="BuildWrappers"/>
+			</Target>
+			<Target
+				Name="Clean Project"
+				MenuCaption="&amp;Clean Project"
+				RunFromDir="%rp"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="clean"/>
+			</Target>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="1"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="1"/>
+			<SynSetting
+				Name="compile_single"
+				Value="0"/>
+			<SynSetting
+				Name="object_name"
+				Value=""/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o %n %n"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+		</SynSettings>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl;*.dbc">
+			<F N="SRC/frmEmployee.dbl"/>
+			<F N="SRC/WinForm2.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh"/>
+		<Folder
+			Name="Template Files"
+			Filters="*.tpl;*.inc">
+			<F N="TEMPLATES/syn_winform.tpl"/>
+			<F N="TEMPLATES/syn_header.inc"/>
+		</Folder>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc">
+			<F N="DotNetDemo3.wsc"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+			<F N="BuildForm.bat"/>
+			<F N="BuildWrappers.bat"/>
+			<F N="clean.bat"/>
+			<F N="run.bat"/>
+		</Folder>
+	</Files>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%rp"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
+		<ExecMacro CmdLine="syn_set GENSRC=%(ROOT)GENSRC"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
+		<ExecMacro CmdLine="syn_set LIB=%(ROOT)LIB"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set SYNEXPDIR=%(ROOT)PROTO"/>
+		<ExecMacro CmdLine="syn_set SYNIMPDIR=%(ROOT)PROTO"/>
+		<ExecMacro CmdLine="syn_set CODEGEN_OUTDIR=%(ROOT)SRC"/>
+		<ExecMacro CmdLine="syn_set CODEGEN_TPLDIR=%(ROOT)TEMPLATES"/>
+		<ExecMacro CmdLine="syn_set SYNNET_DEBUG=0"/>
+	</Macro>
+</Project>

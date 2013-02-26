@@ -1,0 +1,75 @@
+;******************************************************************************
+;
+; Title:        XslTransform
+;
+; Description:  An example of using GENNET to generate Synergy Wrappers for the
+;               the Synergy .NET Assembly API
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Credits:      Based on an example originally provided by Chip Camden
+;
+; Created:      28th March 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+.include "SRC:System.Xml.inc"   ;Generated classes for System.XML
+
+main XslTransform
+
+    record
+        Xsl         ,@XslCompiledTransform
+        XmlSettings ,@XmlWriterSettings
+        XmlWrite    ,@XmlWriter
+        KeyPress    ,a1
+    endrecord
+
+proc
+
+    open(1,i,"tt:")
+    flags(7004020,1)
+
+    xsl = new XslCompiledTransform()
+
+    try
+    begin
+;        Xsl.Load("SalesReportTemplate.xsl")
+;        XmlSettings = new XmlWriterSettings()
+;        XmlSettings.Indent = true
+;        XmlWrite = XmlWriter.Create("SalesReport.htm",XmlSettings)
+;        Xsl.Transform("SalesData.xml",XmlWrite)
+;        XmlWrite.Close()
+;        shell(0,"SalesReport.htm",D_NOWINDOW|D_NOWAIT)
+	Xsl.Load("Excel.xsl")
+	XmlSettings = new XmlWriterSettings()
+	XmlSettings.Indent = true
+	XmlWrite = XmlWriter.Create("Authors.xls",XmlSettings)
+	Xsl.Transform("Authors.xml",XmlWrite)
+	XmlWrite.Close()
+	shell(0,"Authors.xls",D_NOWINDOW|D_NOWAIT)
+    end
+    catch (ex, @DotNetException)
+    begin
+        writes(1,(string)ex.NativeException.GetProperty("Message"))
+        display(1,"Press a key: ")
+        accept(1,KeyPress)
+    end
+    endtry
+
+    close 1
+    stop
+
+endmain

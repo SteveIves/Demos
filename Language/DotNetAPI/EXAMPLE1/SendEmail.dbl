@@ -1,0 +1,148 @@
+;******************************************************************************
+;
+; Title:        SendEmail.dbl
+;
+; Description:  An example of using the Synergy .NET Assembly API manually
+;               Sends an e-mail message with an attached report file.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      8th May 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+main SendEmail
+
+	record
+		recipient	,a50
+	endrecord
+
+proc
+    open(1,o,"tt:")
+    flags(7004020,1)
+
+	display(1,"Recipient email: ")
+	reads(1,recipient)
+
+	if (recipient)
+	begin
+		data KeyPress, a1
+
+		if (SendReport("SalesPersonReport.pdf",recipient)) then
+			writes(1,"Report sent")
+		else
+			writes(1,"Report not sent")
+
+		display(1,"Press a key: ")
+		accept(1,KeyPress)
+	end
+
+    close 1
+    stop
+
+endmain
+
+;******************************************************************************
+;
+; Title:        SendReport
+;
+; Description:  Sends a report as an attachment to an email message
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      8th May 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+function SendReport
+
+    required in aReportFile, a
+    required in aRecipient, a
+    endparams
+
+    stack record
+        status      ,boolean
+        asm         ,@DotNetAssembly ;Assembly System.dll
+        Message     ,@DotNetObject   ;System.Net.Mail.MailMessage
+        Sender      ,@DotNetObject   ;System.Net.Mail.MailAddress
+        Recipients  ,@DotNetObject   ;System.Net.Mail.MailAddressCollection
+        Attachment  ,@DotNetObject   ;System.Net.Mail.Attachment
+        Attachments ,@DotNetObject   ;System.Net.Mail.AttachmentCollection
+        SmtpClient  ,@DotNetObject   ;System.Net.Mail.SmtpClient
+    endrecord
+
+    .define d_SmtpServer    "exch2007.synergex.loc"
+    .define d_SmptPort      25
+    .define d_SenderName    "Report Server"
+    .define d_Sender        "reports@synergex.com"
+    .define d_Subject       "Here's your report!"
+    .define d_BodyText      "The report that you requested is attached."
+
+proc
+
+    try
+    begin
+        status = true
+
+        ; Load the assembly containing the type we want to use (System.dll)
+        asm = new DotNetAssembly("System")
+
+        ; Create a new mail message and set basic info
+        Message = new DotNetObject(asm,"System.Net.Mail.MailMessage")
+        Message.SetProperty("Subject",d_Subject)
+        Message.SetProperty("Body",d_BodyText)
+
+        ; Create a sender and associate it with the message
+        Sender = new DotNetObject(asm,"System.Net.Mail.MailAddress",
+		&							d_Sender,d_SenderName)
+        Message.SetProperty("From",Sender)
+
+        ;Get the messages "To" (recipients) collection & add recipient address
+        Recipients = (DotNetObject)Message.GetProperty("To")
+        Recipients.Call("Add",aRecipient)
+
+        ;Get the messages "Attachments" collection and add an attachment
+        Attachments = (DotNetObject)Message.GetProperty("Attachments")
+        Attachment = new DotNetObject(asm,"System.Net.Mail.Attachment",
+		&							aReportFile)
+        Attachments.Call("Add",Attachment)
+
+        ;Create an SMTP client and send the message
+        SmtpClient = new DotNetObject(asm,"System.Net.Mail.SmtpClient",
+		&							d_SmtpServer,d_SmptPort)
+        SmtpClient.Call("Send",Message)
+
+    end
+    catch (ex)
+        status = false
+    endtry
+
+    freturn status
+
+endfunction

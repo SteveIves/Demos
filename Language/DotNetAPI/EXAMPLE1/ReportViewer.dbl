@@ -1,0 +1,248 @@
+;******************************************************************************
+;
+; Title:        ReportViewer
+;
+; Description:  An example of using the Synergy .NET Assembly API manually.
+;               Displays a report from a Microsoft SQL Server Reporting
+;				Services web server.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      8th May 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+
+main ReportViewer
+
+	record
+		ReportNumberA	,a1
+		ReportNumber	,d1
+	endrecord
+
+proc
+	open(1,i,"tt:")
+	flags(7004020,1)
+
+	display(1,$scr_pos(2,2),"1. Inventory By Category")
+	display(1,$scr_pos(3,2),"2. Sales person report")
+
+	repeat
+	begin
+		ReportNumber=0
+		display(1,$scr_pos(23,2),$scr_clr(eol),"Report # (enter to exit): ")
+		accept(1,ReportNumberA)
+		if (!ReportNumberA)||(ReportNumberA==char(13))
+			exitloop
+		try
+			ReportNumber = ReportNumberA
+		catch (ex)
+			nop
+		endtry
+		using ReportNumber select
+		(1),
+			if (!ViewReport("/AdventureWorksReports/InventoryByCategory"))
+				call ReportFailed
+		(2),
+			if (!ViewReport("/AdventureWorksReports/SalesPersonReport"))
+				call ReportFailed
+		(),
+		begin
+			display(1,$scr_pos(23,2),$scr_clr(eol),"Invalid report number!")
+			sleep 0.5
+		end
+
+		endusing
+	end
+
+	close 1
+    stop
+
+ReportFailed,
+
+	display(1,$scr_pos(23,1),$scr_clr(eol),"Report failed!")
+	sleep 1
+	return
+
+endmain
+
+;******************************************************************************
+;
+; Title:        ViewReport
+;
+; Description:  Displays a report from a Microsoft SQL Server Reporting
+;				Services web server.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Created:      8th May 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher on
+;               a Microsoft Windows System, and with the Microsoft .NET
+;               Framework V2.0 or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+function ViewReport, ^val
+
+    required in aReportPath, a ;Server report path
+    endparams
+
+	.define D_REPORT_SERVER "http://localhost/reportserver"
+
+	stack record
+		;
+		status      ,boolean
+		;
+		; Assemblies
+		;
+		asyWinForms ,@DotNetAssembly	;System.Windows.Forms
+		asyReport	,@DotNetAssembly	;Microsoft.ReportViewer.WinForms
+		asyDrawing  ,@DotNetAssembly    ;System.Drawing
+		asyMscorlib ,@DotNetAssembly    ;mscorlib
+		asySystem	,@DotNetAssembly	;System
+		;
+		; Objects
+		;
+		WinForm     ,@DotNetObject   	;System.Windows.Forms.Form
+		ReportViewer,@DotNetObject   	;Microsoft.Reporting.WinForms.ReportViewer
+		ServerReport,@DotNetObject		;Microsoft.Reporting.WinForms.ServerReport
+		ServerUri	,@DotNetObject		;System.Uri
+		Controls	,@DotNetObject		;System.Windows.Forms.Control.ControlCollection
+		FormStatus  ,@System.Object     ;Dialog return value
+		MyDelegate  ,@DotNetDelegate	;System.EventHandler
+		Callbacks   ,@FormHandlers      ;Synergy object with callbacks
+    endrecord
+
+proc
+
+    try
+    begin
+
+        status = true
+
+		;Load the assemblies that we need to use
+
+		asyWinForms = new DotNetAssembly("System.Windows.Forms")
+		asyReport = new DotNetAssembly("Microsoft.ReportViewer.WinForms")
+		asyDrawing = new DotNetAssembly("System.Drawing")
+		asyMscorlib = new DotNetAssembly("mscorlib")
+		asySystem = new DotNetAssembly("System")
+
+		;Create and configure a Windows form
+
+		WinForm = new DotNetObject(asyWinForms,"System.Windows.Forms.Form")
+		WinForm.Call("SuspendLayout")
+		WinForm.SetProperty("Text", "Report Viewer")
+		WinForm.SetProperty("ClientSize",
+		&		new DotNetObject(asyDrawing,"System.Drawing.Size",900,850))
+		WinForm.SetProperty("Location",
+		&		new DotNetObject(asyDrawing,"System.Drawing.Point",100,100))
+		WinForm.SetProperty("StartPosition",integer(0))
+		WinForm.SetProperty("ShowInTaskbar", false)
+
+		;Get a handle on the forms "Controls" property so we can add controls
+
+		Controls = (DotNetObject)WinForm.GetProperty("Controls")
+
+		;Create and configure a ReportViewer control
+
+		ReportViewer = new DotNetObject(asyReport,
+		&		"Microsoft.Reporting.WinForms.ReportViewer")
+		ReportViewer.SetProperty("Name","ReportViewer1")
+		ReportViewer.SetProperty("Dock",integer(5))				;Dock fill
+		ReportViewer.SetProperty("ProcessingMode",integer(1)) 	;Remote report
+
+		;Get a handle on the ReportViewers "ServerSettings" property
+
+		ServerReport = (DotNetObject)ReportViewer.GetProperty("ServerReport")
+
+		;Specify the report server and path
+		ServerUri = new DotNetObject(asySystem,
+		&		"System.Uri",D_REPORT_SERVER,integer(1))
+		ServerReport.SetProperty("ReportServerUrl",ServerUri)
+		ServerReport.SetProperty("ReportPath",aReportPath)
+
+		;Add the report viewer to the form
+		Controls.Call("Add",ReportViewer)
+
+		WinForm.Call("ResumeLayout",false)
+
+		;Bind a Synergy routine to the forms "Load" event so that we can
+		;tell the ReportViewer control to "refresh"
+		Callbacks = new FormHandlers()
+		MyDelegate = new DotNetDelegate(asyMscorlib,
+		&		"System.EventHandler",Callbacks,"FrmReportViewer_Load")
+		WinForm.AddDelegateToEvent("Load", MyDelegate)
+
+		;Process the form
+		FormStatus = WinForm.Call("ShowDialog")
+
+    end
+    catch (ex)
+        status = false
+    endtry
+
+    freturn status
+
+endfunction
+
+;
+; This identifier is used so that the code below can work in both V9.1.3 (where
+; indexers are 1-based), and V9.1.5 (where indexers are 0-based).
+;
+.ifdef DBLV915
+.define D_OFFSET 0
+.else
+.define D_OFFSET 1
+.endc
+
+
+;******************************************************************************
+;
+namespace SynPsg.Examples.DotNetApi
+
+    ;--------------------------------------------------------------------------
+    ;
+    class FormHandlers
+
+        public method FrmReportViewer_Load, void
+            sender      ,@DotNetObject  ;Sender is the button
+            e           ,@DotNetObject  ;Additional button click information
+            endparams
+            record
+				Controls		,@DotNetObject
+				ReportViewer  	,@DotNetObject
+            endrecord
+        proc
+			Controls = (DotNetObject)sender.GetProperty("Controls")
+			ReportViewer = (DotNetObject)Controls[0+D_OFFSET]
+			ReportViewer.Call("RefreshReport")
+        endmethod
+
+    endclass
+
+endnamespace
+

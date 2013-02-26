@@ -1,0 +1,4 @@
+.include SRC:MyClassLibrary1.dbl
+.include SRC:MyClassLibrary2.dbl
+.include SRC:MyClassLibrary3.dbl
+.include SRC:MyClassLibrary4.dbl

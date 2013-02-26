@@ -1,0 +1,49 @@
+!	Synergy ISAM XDL File created Wed Feb 21 10:16:47 2007
+FILE
+	NAME		"customer.ism"
+	ADDRESSING	32
+	KEYS		2
+
+RECORD
+	SIZE		200
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 4 byte record overhead
+	!Shared index cache allowed
+	!Creation version 9.0.1e 
+	!File created on Wed Feb 21 10:16:30 2007
+	!23 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!0 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1
+	LENGTH		8
+	TYPE		alpha
+	ORDER		ascending
+	NAME		"ACCOUNT"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 42
+
+KEY 1
+	!Alternate key #1
+	START		9
+	LENGTH		20
+	TYPE		nocase
+	ORDER		ascending
+	NAME		"COPMANY"
+	DUPLICATES	yes
+	DUPLICATE_ORDER	fifo
+	MODIFIABLE	yes
+	DENSITY		50
+
+	!Root 0xc00, index depth 1
+	!Qualifier offset 1
+	!Minimum keys per block 18

@@ -1,0 +1,70 @@
+;******************************************************************************
+;
+; File:         CreateMapPointMap.dbl
+;
+; Type:         Subroutine
+;
+; Description:  Creates a Microsoft MapPoint map containing pushpins for two
+;				addresses, and a calculated route between the them.
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/13/2010
+;
+;*******************************************************************************
+;
+.include "SRC:OfficeAutomation.inc"
+
+subroutine CreateMapPointMap
+
+	endparams
+
+	.include "WND:tools.def"
+	.include "WND:windows.def"
+
+	record
+		map			,@MapPointMap
+		FileName	,a60,	 "C:\SynergexToCitizenHotel.ptm"
+		fromName	,string
+		fromAddress	,string
+		fromNote	,string
+		toName		,string
+		toAddress	,string
+		toNote		,string
+	endrecord
+
+proc
+
+	;============================================================
+	; Get Filename for Excel Sheet
+	;============================================================
+	xcall u_dialog(FileName,,,,"Enter a file spec for the document to be created",
+	&			   "(Existing files will be overwritten!)","")
+
+	fromName = "Synergex"
+	fromAddress = "2330 Gold Meadow Way, Gold River, CA, 95670"
+	fromNote = "(916) 635-7300"
+
+	toName = "Citizen Hotel"
+	toAddress = "926 J Street, Sacramento, CA 95814"
+	toNote = "(916) 447-2700"
+
+	
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	map = new MapPointMap()
+
+	map.AddPushPin(fromAddress, fromName, fromNote, true, true)
+	map.AddPushPin(toAddress, toName, toNote, false, true)
+
+	map.ZoomToRoute();
+	
+	map.SaveAs(FileName,GeoSaveFormat.geoFormatMap)
+	map.Close()
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	xreturn
+
+endsubroutine
+

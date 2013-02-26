@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40" xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:user="urn:my-scripts">
+  <Worksheet ss:Name="authors">
+    <Table x:FullColumns="1" x:FullRows="1">
+      <Row>
+        <Cell>
+          <Data ss:Type="String">au_id</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">au_lname</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">au_fname</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">phone</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">address</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">city</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">state</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">zip</Data>
+        </Cell>
+        <Cell>
+          <Data ss:Type="String">contract</Data>
+        </Cell>
+      </Row>
+  <Row>
+    <Cell><Data ss:Type="String">172-32-1176</Data></Cell>
+    <Cell><Data ss:Type="String">White</Data></Cell>
+    <Cell><Data ss:Type="String">Johnson</Data></Cell>
+    <Cell><Data ss:Type="String">408 496-7223</Data></Cell>
+    <Cell><Data ss:Type="String">10932 Bigge Rd.</Data></Cell>
+    <Cell><Data ss:Type="String">Menlo Park</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94025</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">213-46-8915</Data></Cell>
+    <Cell><Data ss:Type="String">Green</Data></Cell>
+    <Cell><Data ss:Type="String">Marjorie</Data></Cell>
+    <Cell><Data ss:Type="String">415 986-7020</Data></Cell>
+    <Cell><Data ss:Type="String">309 63rd St. #411</Data></Cell>
+    <Cell><Data ss:Type="String">Oakland</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94618</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">238-95-7766</Data></Cell>
+    <Cell><Data ss:Type="String">Carson</Data></Cell>
+    <Cell><Data ss:Type="String">Cheryl</Data></Cell>
+    <Cell><Data ss:Type="String">415 548-7723</Data></Cell>
+    <Cell><Data ss:Type="String">589 Darwin Ln.</Data></Cell>
+    <Cell><Data ss:Type="String">Berkeley</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94705</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">267-41-2394</Data></Cell>
+    <Cell><Data ss:Type="String">O'Leary</Data></Cell>
+    <Cell><Data ss:Type="String">Michael</Data></Cell>
+    <Cell><Data ss:Type="String">408 286-2428</Data></Cell>
+    <Cell><Data ss:Type="String">22 Cleveland Av. #14</Data></Cell>
+    <Cell><Data ss:Type="String">San Jose</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">95128</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">274-80-9391</Data></Cell>
+    <Cell><Data ss:Type="String">Straight</Data></Cell>
+    <Cell><Data ss:Type="String">Dean</Data></Cell>
+    <Cell><Data ss:Type="String">415 834-2919</Data></Cell>
+    <Cell><Data ss:Type="String">5420 College Av.</Data></Cell>
+    <Cell><Data ss:Type="String">Oakland</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94609</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">341-22-1782</Data></Cell>
+    <Cell><Data ss:Type="String">Smith</Data></Cell>
+    <Cell><Data ss:Type="String">Meander</Data></Cell>
+    <Cell><Data ss:Type="String">913 843-0462</Data></Cell>
+    <Cell><Data ss:Type="String">10 Mississippi Dr.</Data></Cell>
+    <Cell><Data ss:Type="String">Lawrence</Data></Cell>
+    <Cell><Data ss:Type="String">KS</Data></Cell>
+    <Cell><Data ss:Type="String">66044</Data></Cell>
+    <Cell><Data ss:Type="String">false</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">409-56-7008</Data></Cell>
+    <Cell><Data ss:Type="String">Bennet</Data></Cell>
+    <Cell><Data ss:Type="String">Abraham</Data></Cell>
+    <Cell><Data ss:Type="String">415 658-9932</Data></Cell>
+    <Cell><Data ss:Type="String">6223 Bateman St.</Data></Cell>
+    <Cell><Data ss:Type="String">Berkeley</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94705</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">427-17-2319</Data></Cell>
+    <Cell><Data ss:Type="String">Dull</Data></Cell>
+    <Cell><Data ss:Type="String">Ann</Data></Cell>
+    <Cell><Data ss:Type="String">415 836-7128</Data></Cell>
+    <Cell><Data ss:Type="String">3410 Blonde St.</Data></Cell>
+    <Cell><Data ss:Type="String">Palo Alto</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94301</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">472-27-2349</Data></Cell>
+    <Cell><Data ss:Type="String">Gringlesby</Data></Cell>
+    <Cell><Data ss:Type="String">Burt</Data></Cell>
+    <Cell><Data ss:Type="String">707 938-6445</Data></Cell>
+    <Cell><Data ss:Type="String">PO Box 792</Data></Cell>
+    <Cell><Data ss:Type="String">Covelo</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">95428</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">486-29-1786</Data></Cell>
+    <Cell><Data ss:Type="String">Locksley</Data></Cell>
+    <Cell><Data ss:Type="String">Charlene</Data></Cell>
+    <Cell><Data ss:Type="String">415 585-4620</Data></Cell>
+    <Cell><Data ss:Type="String">18 Broadway Av.</Data></Cell>
+    <Cell><Data ss:Type="String">San Francisco</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94130</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">527-72-3246</Data></Cell>
+    <Cell><Data ss:Type="String">Greene</Data></Cell>
+    <Cell><Data ss:Type="String">Morningstar</Data></Cell>
+    <Cell><Data ss:Type="String">615 297-2723</Data></Cell>
+    <Cell><Data ss:Type="String">22 Graybar House Rd.</Data></Cell>
+    <Cell><Data ss:Type="String">Nashville</Data></Cell>
+    <Cell><Data ss:Type="String">TN</Data></Cell>
+    <Cell><Data ss:Type="String">37215</Data></Cell>
+    <Cell><Data ss:Type="String">false</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">648-92-1872</Data></Cell>
+    <Cell><Data ss:Type="String">Blotchet-Halls</Data></Cell>
+    <Cell><Data ss:Type="String">Reginald</Data></Cell>
+    <Cell><Data ss:Type="String">503 745-6402</Data></Cell>
+    <Cell><Data ss:Type="String">55 Hillsdale Bl.</Data></Cell>
+    <Cell><Data ss:Type="String">Corvallis</Data></Cell>
+    <Cell><Data ss:Type="String">OR</Data></Cell>
+    <Cell><Data ss:Type="String">97330</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">672-71-3249</Data></Cell>
+    <Cell><Data ss:Type="String">Yokomoto</Data></Cell>
+    <Cell><Data ss:Type="String">Akiko</Data></Cell>
+    <Cell><Data ss:Type="String">415 935-4228</Data></Cell>
+    <Cell><Data ss:Type="String">3 Silver Ct.</Data></Cell>
+    <Cell><Data ss:Type="String">Walnut Creek</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94595</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">712-45-1867</Data></Cell>
+    <Cell><Data ss:Type="String">del Castillo</Data></Cell>
+    <Cell><Data ss:Type="String">Innes</Data></Cell>
+    <Cell><Data ss:Type="String">615 996-8275</Data></Cell>
+    <Cell><Data ss:Type="String">2286 Cram Pl. #86</Data></Cell>
+    <Cell><Data ss:Type="String">Ann Arbor</Data></Cell>
+    <Cell><Data ss:Type="String">MI</Data></Cell>
+    <Cell><Data ss:Type="String">48105</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">722-51-5454</Data></Cell>
+    <Cell><Data ss:Type="String">DeFrance</Data></Cell>
+    <Cell><Data ss:Type="String">Michel</Data></Cell>
+    <Cell><Data ss:Type="String">219 547-9982</Data></Cell>
+    <Cell><Data ss:Type="String">3 Balding Pl.</Data></Cell>
+    <Cell><Data ss:Type="String">Gary</Data></Cell>
+    <Cell><Data ss:Type="String">IN</Data></Cell>
+    <Cell><Data ss:Type="String">46403</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">724-08-9931</Data></Cell>
+    <Cell><Data ss:Type="String">Stringer</Data></Cell>
+    <Cell><Data ss:Type="String">Dirk</Data></Cell>
+    <Cell><Data ss:Type="String">415 843-2991</Data></Cell>
+    <Cell><Data ss:Type="String">5420 Telegraph Av.</Data></Cell>
+    <Cell><Data ss:Type="String">Oakland</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94609</Data></Cell>
+    <Cell><Data ss:Type="String">false</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">724-80-9391</Data></Cell>
+    <Cell><Data ss:Type="String">MacFeather</Data></Cell>
+    <Cell><Data ss:Type="String">Stearns</Data></Cell>
+    <Cell><Data ss:Type="String">415 354-7128</Data></Cell>
+    <Cell><Data ss:Type="String">44 Upland Hts.</Data></Cell>
+    <Cell><Data ss:Type="String">Oakland</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94612</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">756-30-7391</Data></Cell>
+    <Cell><Data ss:Type="String">Karsen</Data></Cell>
+    <Cell><Data ss:Type="String">Livia</Data></Cell>
+    <Cell><Data ss:Type="String">415 534-9219</Data></Cell>
+    <Cell><Data ss:Type="String">5720 McAuley St.</Data></Cell>
+    <Cell><Data ss:Type="String">Oakland</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94609</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">807-91-6654</Data></Cell>
+    <Cell><Data ss:Type="String">Panteley</Data></Cell>
+    <Cell><Data ss:Type="String">Sylvia</Data></Cell>
+    <Cell><Data ss:Type="String">301 946-8853</Data></Cell>
+    <Cell><Data ss:Type="String">1956 Arlington Pl.</Data></Cell>
+    <Cell><Data ss:Type="String">Rockville</Data></Cell>
+    <Cell><Data ss:Type="String">MD</Data></Cell>
+    <Cell><Data ss:Type="String">20853</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">846-92-7186</Data></Cell>
+    <Cell><Data ss:Type="String">Hunter</Data></Cell>
+    <Cell><Data ss:Type="String">Sheryl</Data></Cell>
+    <Cell><Data ss:Type="String">415 836-7128</Data></Cell>
+    <Cell><Data ss:Type="String">3410 Blonde St.</Data></Cell>
+    <Cell><Data ss:Type="String">Palo Alto</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">94301</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">893-72-1158</Data></Cell>
+    <Cell><Data ss:Type="String">McBadden</Data></Cell>
+    <Cell><Data ss:Type="String">Heather</Data></Cell>
+    <Cell><Data ss:Type="String">707 448-4982</Data></Cell>
+    <Cell><Data ss:Type="String">301 Putnam</Data></Cell>
+    <Cell><Data ss:Type="String">Vacaville</Data></Cell>
+    <Cell><Data ss:Type="String">CA</Data></Cell>
+    <Cell><Data ss:Type="String">95688</Data></Cell>
+    <Cell><Data ss:Type="String">false</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">899-46-2035</Data></Cell>
+    <Cell><Data ss:Type="String">Ringer</Data></Cell>
+    <Cell><Data ss:Type="String">Anne</Data></Cell>
+    <Cell><Data ss:Type="String">801 826-0752</Data></Cell>
+    <Cell><Data ss:Type="String">67 Seventh Av.</Data></Cell>
+    <Cell><Data ss:Type="String">Salt Lake City</Data></Cell>
+    <Cell><Data ss:Type="String">UT</Data></Cell>
+    <Cell><Data ss:Type="String">84152</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+  <Row>
+    <Cell><Data ss:Type="String">998-72-3567</Data></Cell>
+    <Cell><Data ss:Type="String">Ringer</Data></Cell>
+    <Cell><Data ss:Type="String">Albert</Data></Cell>
+    <Cell><Data ss:Type="String">801 826-0752</Data></Cell>
+    <Cell><Data ss:Type="String">67 Seventh Av.</Data></Cell>
+    <Cell><Data ss:Type="String">Salt Lake City</Data></Cell>
+    <Cell><Data ss:Type="String">UT</Data></Cell>
+    <Cell><Data ss:Type="String">84152</Data></Cell>
+    <Cell><Data ss:Type="String">true</Data></Cell>
+  </Row>
+</Table>
+  </Worksheet>
+</Workbook>

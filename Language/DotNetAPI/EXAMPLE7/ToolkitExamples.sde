@@ -1,0 +1,9 @@
+[GLOBAL]
+syn_version=6
+Synergy=DBL
+
+[COMPILE SCRIPTS]
+Library_Name=\DEMO\TOOLKIT\COMPOSITE_WINDOWS\TEST\EXE\composite.ism
+Overwrite=1
+Files=<ALL>,\SPC2009\.NET Assembly API\ToolkitExamples\SRC\composite.wsc
+

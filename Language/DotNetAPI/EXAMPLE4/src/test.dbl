@@ -1,0 +1,82 @@
+
+.include "SRC:MyClassLibrary.inc"
+
+main test
+
+record 
+	tt				,int				;Terminal channel
+	KeyPress        ,a1                 ;A pressed key
+	Employee        ,@Employee			;Employee data object
+	Frm				,@EmployeeForm		;Employee form
+	FrmStatus		,@DialogResult		;Status from employee form
+endrecord
+	
+proc
+	open(tt=1,o,'tt:')
+	flags(7004020,1)
+
+	writes(tt,"Launching .NET form...")
+	
+    ;Load some dummy data
+	Employee = new Employee()
+    Employee.FirstName = "Steve"
+    Employee.LastName = "Ives"
+    Employee.HireDate = new DateTime(1997,11,1)
+    Employee.Reviewed = ReviewFrequency.Quarterly
+	Employee.TrackChanges()
+
+	Frm = new EmployeeForm(Employee)
+
+	FrmStatus = (@DialogResult)frm.ShowDialog()
+	
+	using ((DialogResult)FrmStatus) select
+	(DialogResult.OK),
+	begin
+		writes(tt,"Form return status was: OK")
+		if (!Employee.Changed) then
+			writes(tt,"The data did not change!")
+		else
+		begin
+			writes(tt,"The data changed:")
+			writes(tt,"  First name: " + atrim(Employee.FirstName))
+			writes(tt,"  Last name : " + atrim(Employee.LastName))
+			writes(tt,"  Hire date : " + FormatDate(Employee.HireDate))
+			display(1,"  Reviewed  : ")
+			using Employee.Reviewed select
+			(ReviewFrequency.Never),
+				writes(tt,"Never")
+			(ReviewFrequency.Monthly),
+				writes(tt,"Monthly")
+			(ReviewFrequency.Quarterly),
+				writes(tt,"Quarterly")
+			(ReviewFrequency.Biannually),
+				writes(tt,"Biannually")
+			(ReviewFrequency.Annually),
+				writes(tt,"Annually")
+			endusing
+		end
+	end
+	(DialogResult.Cancel),
+		writes(tt,"Form return status was: Cancel")
+	endusing
+
+	display(1,"Press a key: ")
+	accept(1,keypress)
+	stop
+	
+	
+endmain
+
+;------------------------------------------------------------------------------
+;
+function FormatDate;, a
+    required in TheDate ,@DateTime
+    endparams
+    record
+        RetDate, a10
+    endrecord
+proc
+    s_bld(RetDate,,"%d/%d/%d",TheDate.Month,TheDate.Day,TheDate.Year)
+    freturn RetDate
+endfunction
+

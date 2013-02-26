@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<assemblies>
+    <assembly Name="Microsoft.ReportViewer.WinForms">
+        <class Name = "Microsoft.Reporting.WinForms.ReportViewer"/>
+        <class Name = "Microsoft.Reporting.WinForms.ServerReport"/>
+    </assembly>
+    <assembly Name="mscorlib">
+        <class Name = "System.EventHandler"/>
+    </assembly>
+    <assembly Name="System">
+        <class Name = "System.Uri"/>
+    </assembly>
+    <assembly Name="System.Drawing">
+        <class Name = "System.Drawing.Size"/>
+        <class Name = "System.Drawing.Point"/>
+    </assembly>
+    <assembly Name="System.Windows.Forms">
+        <class Name = "System.Windows.Forms.Form"/>
+        <class Name = "System.Windows.Forms.Control"/>
+        <class Name = "System.Windows.Forms.Control+ControlCollection"/>
+        <class Name = "System.Windows.Forms.Button"/>
+    </assembly>
+</assemblies>
