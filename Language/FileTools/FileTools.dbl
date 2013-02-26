@@ -1,0 +1,451 @@
+;*******************************************************************************
+;
+; Title:        FileTools.dbl
+;
+; Description:  Returns information about files matching a file spec (like dir)
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date:         22nd August 2012
+;
+; Availability: Windows only
+;
+; Disclaimer:   This code is provided "as is" and without guarantee or warranty
+;               of any kind.  You may use the code freely, so long as this code
+;               header and disclaimer remains unchanged. In doing so you accept
+;               that neither the author or Synergex accept any responsibility
+;               for any damage or loss which may result from the use of the code
+;
+;*******************************************************************************
+
+namespace SynPsg.Demos
+
+    structure FILETIME
+        FileTimeLow         ,i4         ;; Low-order 32 bits of file time (UTC format)
+        FileTimeHigh        ,i4         ;;High-order 32 bits of file time (UTC format)
+    endstructure
+
+    structure WIN32_FIND_DATA
+        FileAttributes      ,i4         ;;File attribute bit flags
+        CreateTime          ,FILETIME   ;;File create time (UTC format)
+        LastAccessTime      ,FILETIME   ;;File last access time (UTC format)
+        LastWriteTime       ,FILETIME   ;;File last write time (UTC format)
+        FileSizeHigh        ,i4         ;;High-order 32 bits of file size (bytes)
+        FileSizeLow         ,i4         ;; Low-order 32 bits of file size (bytes)
+        Reserved0           ,i4         ;;
+        Reserved1           ,i4         ;;
+        FileName            ,a260       ;;Name of file (null-terminated string)
+        AlternateFileName   ,a14        ;;8.3 file name (null-terminated string)
+    endstructure
+
+    structure SYSTEMTIME
+        Year                ,i2
+        Month               ,i2
+        DayOfWeek           ,i2
+        Day                 ,i2
+        Hour                ,i2
+        Minute              ,i2
+        Second              ,i2
+        Millisecond         ,i2
+    endstructure
+
+    structure TIMESTAMP
+        Year                ,d4
+        Month               ,d2
+        Day                 ,d2
+        Hour                ,d2
+        Minute              ,d2
+        Second              ,d2
+        Millisecond         ,d6
+    endstructure
+
+    public class FileTools
+
+        public method GetFilesMatchingPattern, Boolean
+
+            required in  a_pattern  ,a          ;;Search pattern
+            required out a_files    ,@ArrayList ;;Matching files
+            endparams
+
+            stack record local_data
+                NULL                ,D_ADDR     ;;A NULL character
+                dll                 ,D_ADDR     ;;DLL Handle
+                ok                  ,Boolean
+                sh                  ,i4         ;;Search handle
+                mhs                 ,i4         ;;Current size of dynamic memory
+                len                 ,i4         ;;Length of file name
+                posn                ,i4         ;;Position in a string
+                pattern             ,a260       ;;Search pattern
+                fileData            ,WIN32_FIND_DATA
+                stime               ,SYSTEMTIME
+                file                ,@SynPsg.Demos.FileInfo
+            endrecord
+
+            .define INVALID_HANDLE_VALUE -1
+            .define FILE_ATTRIBUTE_READONLY     %x(1)
+            .define FILE_ATTRIBUTE_HIDDEN       %x(2)
+            .define FILE_ATTRIBUTE_SYSTEM       %x(4)
+            .define FILE_ATTRIBUTE_DIRECTORY    %x(10)
+            .define FILE_ATTRIBUTE_ARCHIVE      %x(20)
+            .define FILE_ATTRIBUTE_NORMAL       %x(80)
+            .define FILE_ATTRIBUTE_TEMPORARY    %x(100)
+            .define FILE_ATTRIBUTE_COMPRESSED   %x(800)
+            .define FILE_ATTRIBUTE_OFFLINE      %x(1000)
+
+            .define MAXDWORD                    4294967295
+
+        proc
+
+            init local_data
+
+            ;;Default to success and an empty results collection
+            ok = true
+            a_files = new ArrayList()
+
+            ;;Open the DLL containing the functions we need to call
+            dll = dll_open("kernel32.dll")
+
+            ;;Null terminate the search pattern
+            fill(%char(0),pattern)
+            pattern(1:%trim(a_pattern))=a_pattern
+
+            ;;Look for the first file
+            sh = dll_call(dll,DLL_TYPE_WINAPI,"FindFirstFileA",^addr(pattern),^addr(fileData))
+
+            if (sh==INVALID_HANDLE_VALUE) then
+            begin
+                ;;No files found matching pattern
+                ok = 0
+            end
+            else
+            begin
+                ;;Ignore directory files
+                if (!(fileData.FileAttributes.band.FILE_ATTRIBUTE_DIRECTORY))
+                    call AddFile
+
+                ;;Continue the search
+                repeat
+                begin
+                    if (dll_call(dll,DLL_TYPE_WINAPI,"FindNextFileA",sh,^addr(fileData))) then
+                    begin
+                        ;;Ignore directory files
+                        if (!(fileData.FileAttributes.band.FILE_ATTRIBUTE_DIRECTORY))
+                            call AddFile
+                    end
+                    else
+                        exitloop
+                end
+
+                ;;Close the search handle
+                dll_call(dll,DLL_TYPE_WINAPI,"FindClose",sh)
+
+            end
+
+            dll = dll_close(dll)
+
+            if (!ok)
+                clear a_files
+
+            mreturn ok
+
+        AddFile,
+
+            ;;Find end of file name in null-terminated string
+            len = instr(1,fileData.FileName,char(0)) - 1
+
+            ;;Create a new FileInfo object and add the file name
+            file = new SynPsg.Demos.FileInfo(fileData.FileName(1:len))
+
+            ;;Convert create time to a system time
+            if (dll_call(dll,DLL_TYPE_WINAPI,"FileTimeToSystemTime",^addr(fileData.CreateTime),^addr(stime)))
+            begin
+                data ltime, SYSTEMTIME
+                ;;Convert the create time to the local time zone
+                if (dll_call(dll,DLL_TYPE_WINAPI,"SystemTimeToTzSpecificLocalTime",NULL,^addr(stime),^addr(ltime)))
+                    file.CreateTime = SystemTimeToTimeStamp(ltime)
+            end
+
+            ;;Convert last access time to a system time
+            if (dll_call(dll,DLL_TYPE_WINAPI,"FileTimeToSystemTime",^addr(fileData.LastAccessTime),^addr(stime)))
+            begin
+                data ltime, SYSTEMTIME
+                ;;Convert the last access time to the local time zone
+                if (dll_call(dll,DLL_TYPE_WINAPI,"SystemTimeToTzSpecificLocalTime",NULL,^addr(stime),^addr(ltime)))
+                    file.LastAccessTime = SystemTimeToTimeStamp(ltime)
+            end
+
+            ;;Convert last write time to a system time
+            if (dll_call(dll,DLL_TYPE_WINAPI,"FileTimeToSystemTime",^addr(fileData.LastWriteTime),^addr(stime)))
+            begin
+                data ltime, SYSTEMTIME
+                ;;Convert last wtite time to the local time zone
+                if (dll_call(dll,DLL_TYPE_WINAPI,"SystemTimeToTzSpecificLocalTime",NULL,^addr(stime),^addr(ltime)))
+                    file.LastWriteTime = SystemTimeToTimeStamp(ltime)
+            end
+
+            ;;Add the file attributes
+            file.ReadOnly   = (fileData.FileAttributes.band.FILE_ATTRIBUTE_READONLY)
+            file.Hidden     = (fileData.FileAttributes.band.FILE_ATTRIBUTE_HIDDEN)
+            file.System     = (fileData.FileAttributes.band.FILE_ATTRIBUTE_SYSTEM)
+            file.Archive    = (fileData.FileAttributes.band.FILE_ATTRIBUTE_ARCHIVE)
+            file.Normal     = (fileData.FileAttributes.band.FILE_ATTRIBUTE_NORMAL)
+            file.Temporary  = (fileData.FileAttributes.band.FILE_ATTRIBUTE_TEMPORARY)
+            file.Compressed = (fileData.FileAttributes.band.FILE_ATTRIBUTE_COMPRESSED)
+            file.OffLine    = (fileData.FileAttributes.band.FILE_ATTRIBUTE_OFFLINE)
+
+            ;;Add the file size
+            if (!fileData.FileSizeHigh) then
+                file.Size = fileData.FileSizeLow
+            else
+            begin
+                data tmp, i8
+                tmp = (%unsigned(fileData.FileSizeHigh) * (MAXDWORD+1))
+                file.Size = tmp + %unsigned(fileData.FileSizeLow)
+            end
+
+            ;;Add the file to the returned collection
+            a_files.Add(file)
+
+            return
+
+        endmethod
+
+        private method SystemTimeToTimeStamp, TIMESTAMP
+            required in st, SYSTEMTIME
+            endparams
+            record
+                ts, TIMESTAMP
+            endrecord
+        proc
+            ts.Year         = st.Year
+            ts.Month        = st.Month
+            ts.Day          = st.Day
+            ts.Hour         = st.Hour
+            ts.Minute       = st.Minute
+            ts.Second       = st.Second
+            ts.Millisecond  = st.Millisecond
+            mreturn ts
+        endmethod
+
+    endclass
+
+    public class FileInfo
+
+        private mFileName       ,String
+        private mSize           ,i8
+        private mCreateTime     ,a20
+        private mLastAccessTime ,a20
+        private mLastWriteTime  ,a20
+        private mReadOnly       ,Boolean
+        private mHidden         ,Boolean
+        private mSystem         ,Boolean
+        private mArchive        ,Boolean
+        private mNormal         ,Boolean
+        private mTemporary      ,Boolean
+        private mCompressed     ,Boolean
+        private mOffLine        ,Boolean
+
+        ;;; <summary>
+        ;;; Default constructor
+        ;;; </summary>
+        public method FileInfo
+            endparams
+        proc
+        endmethod
+
+        ;;; <summary>
+        ;;; Alternate constructor
+        ;;; </summary>
+        public method FileInfo
+            required in aFileName, string
+            endparams
+        proc
+            mFileName = aFileName
+        endmethod
+
+        ;;; <summary>
+        ;;; The name of the file
+        ;;; </summary>
+        public property FileName, string
+            method get
+            proc
+                mreturn mFileName
+            endmethod
+            method set
+            proc
+                mFileName = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; The size of the file in bytes
+        ;;; </summary>
+        public property Size, i8
+            method get
+            proc
+                mreturn mSize
+            endmethod
+            method set
+            proc
+                mSize = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; The date and time that the file was created
+        ;;; </summary>
+        public property CreateTime, a20
+            method get
+            proc
+                mreturn mCreateTime
+            endmethod
+            method set
+            proc
+                mCreateTime = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; The date and time that the file was last accessed
+        ;;; </summary>
+        public property LastAccessTime, a20
+            method get
+            proc
+                mreturn mLastAccessTime
+            endmethod
+            method set
+            proc
+                mLastAccessTime = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; The date and time that the file was last updated
+        ;;; </summary>
+        public property LastWriteTime, a20
+            method get
+            proc
+                mreturn mLastWriteTime
+            endmethod
+            method set
+            proc
+                mLastWriteTime = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file read only?
+        ;;; </summary>
+        public property ReadOnly, Boolean
+            method get
+            proc
+                mreturn mReadOnly
+            endmethod
+            method set
+            proc
+                mReadOnly = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file hidden?
+        ;;; </summary>
+        public property Hidden, Boolean
+            method get
+            proc
+                mreturn mHidden
+            endmethod
+            method set
+            proc
+                mHidden = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file a system file?
+        ;;; </summary>
+        public property System, Boolean
+            method get
+            proc
+                mreturn mSystem
+            endmethod
+            method set
+            proc
+                mSystem = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the files archive bit set?
+        ;;; </summary>
+        public property Archive, Boolean
+            method get
+            proc
+                mreturn mArchive
+            endmethod
+            method set
+            proc
+                mArchive = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file a "normal" file (no other attributes set)
+        ;;; </summary>
+        public property Normal, Boolean
+            method get
+            proc
+                mreturn mNormal
+            endmethod
+            method set
+            proc
+                mNormal = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file a temporary file?
+        ;;; </summary>
+        public property Temporary, Boolean
+            method get
+            proc
+                mreturn mTemporary
+            endmethod
+            method set
+            proc
+                mTemporary = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file compressed?
+        ;;; </summary>
+        public property Compressed, Boolean
+            method get
+            proc
+                mreturn mCompressed
+            endmethod
+            method set
+            proc
+                mCompressed = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Is the file off-line?
+        ;;; </summary>
+        public property OffLine, Boolean
+            method get
+            proc
+                mreturn mOffLine
+            endmethod
+            method set
+            proc
+                mOffLine = value
+            endmethod
+        endproperty
+
+    endclass
+
+endnamespace
+

@@ -1,0 +1,63 @@
+;*******************************************************************************
+;
+; Title:        TestFileTools.dbl
+;
+; Description:  Test program for FileTools classes
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date:         22nd August 2012
+;
+; Availability: Windows only
+;
+; Disclaimer:   This code is provided "as is" and without guarantee or warranty
+;               of any kind.  You may use the code freely, so long as this code
+;               header and disclaimer remains unchanged. In doing so you accept
+;               that neither the author or Synergex accept any responsibility
+;               for any damage or loss which may result from the use of the code
+;
+;*******************************************************************************
+
+import system.Collections
+import SynPsg.Demos
+
+main DirectoryTest
+    record
+        ft      ,@FileTools
+        files   ,@ArrayList
+    endrecord
+proc
+    open(1,i,"tt:")
+
+    ;;Create an instance of the FileTools class
+    ft = new FileTools()
+
+    ;;Get a collection of files
+    if (ft.GetFilesMatchingPattern("C:\windows\*.*",files))
+    begin
+        ;;Display the results
+        data file, @FileInfo
+        foreach file in files
+        begin
+            writes(1,"File        : " + file.FileName)
+            writes(1,"Size        : " + %string(file.Size))
+            writes(1,"Created     : " + file.CreateTime)
+            writes(1,"Last access : " + file.LastAccessTime)
+            writes(1,"Last write  : " + file.LastWriteTime)
+            writes(1,"Normal      : " + %string(file.Normal))
+            writes(1,"System file : " + %string(file.System))
+            writes(1,"Read only   : " + %string(file.ReadOnly))
+            writes(1,"Hidden      : " + %string(file.Hidden))
+            writes(1,"Archive     : " + %string(file.Archive))
+            writes(1,"temporary   : " + %string(file.Temporary))
+            writes(1,"Compressed  : " + %string(file.Compressed))
+            writes(1,"Off Line    : " + %string(file.OffLine))
+            writes(1,"")
+        end
+    end
+    ;;Clean up
+    clear ft
+    close 1
+
+endmain
+
