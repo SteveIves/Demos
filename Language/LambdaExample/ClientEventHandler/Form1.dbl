@@ -1,0 +1,54 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+import ClientEventHandler.MyService
+
+namespace ClientEventHandler
+
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		private client, @Service1Client
+
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+			client = new Service1Client()
+			client.AddTwoNumbersCompleted 
+			& += new EventHandler<@AddTwoNumbersCompletedEventArgs>
+			& (addTwoNumbersCompleted)
+		endmethod
+		
+		private method add_Click, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			client.AddTwoNumbersAsync(
+			& double.Parse(number1.Text),
+			& double.Parse(number2.Text))
+		endmethod
+		
+		private method addTwoNumbersCompleted, void
+			required in sender, @Object
+			required in e, @AddTwoNumbersCompletedEventArgs
+			endparams
+		proc
+			total.Text = e.result.ToString()
+		endmethod
+		
+		private method Form1_FormClosing, void
+			sender, @object 
+			e, @System.Windows.Forms.FormClosingEventArgs 
+			endparams
+		proc
+			client.Close()
+			client = ^null
+		endmethod
+		
+	endclass
+endnamespace
+

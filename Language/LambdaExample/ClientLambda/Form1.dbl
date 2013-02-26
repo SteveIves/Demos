@@ -1,0 +1,38 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+import ClientLambda.MyService
+
+namespace ClientLambda
+
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		private client, @Service1Client
+		
+		public method Form1
+		proc
+			this.InitializeComponent()
+
+			lambda addTwoNumbersCompleted(sender, e)
+			begin
+				total.Text = e.result.ToString()
+			end
+			client = new Service1Client()
+			client.AddTwoNumbersCompleted += addTwoNumbersCompleted
+		endmethod
+		
+		private method add_Click, void
+			sender ,@object 
+			e      ,@EventArgs 
+		proc
+			client.AddTwoNumbersAsync(
+			&	double.Parse(number1.Text),
+			&	double.Parse(number2.Text))
+		endmethod
+
+	endclass
+endnamespace
+

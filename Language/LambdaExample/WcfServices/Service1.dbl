@@ -1,0 +1,23 @@
+import System
+import System.Collections.Generic
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Text
+
+namespace WcfServices
+	
+	public class Service1 implements IService1
+		
+		public method AddTwoNumbers, double
+			required in firstNumber, double
+			required in secondNumber, double
+			endparams
+		proc
+			mreturn firstNumber + secondNumber
+		endmethod
+		
+	endclass
+	
+endnamespace
+
+

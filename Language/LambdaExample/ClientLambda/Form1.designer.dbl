@@ -1,0 +1,83 @@
+namespace ClientLambda
+
+	public partial class Form1 extends System.Windows.Forms.Form
+
+		private number2, @System.Windows.Forms.TextBox
+		private total, @System.Windows.Forms.TextBox
+		private components, @System.ComponentModel.IContainer
+		private add, @System.Windows.Forms.Button
+		private label1, @System.Windows.Forms.Label
+		private number1, @System.Windows.Forms.TextBox
+
+		private method InitializeComponent, void
+			endparams
+		proc
+			this.number1 = new System.Windows.Forms.TextBox()
+			this.label1 = new System.Windows.Forms.Label()
+			this.number2 = new System.Windows.Forms.TextBox()
+			this.add = new System.Windows.Forms.Button()
+			this.total = new System.Windows.Forms.TextBox()
+			this.SuspendLayout()
+			;; 
+			;; number1
+			;; 
+			this.number1.Location = new System.Drawing.Point(24, 32)
+			this.number1.Name = "number1"
+			this.number1.Size = new System.Drawing.Size(62, 20)
+			this.number1.TabIndex = 0
+			this.number1.Text = "1.5"
+			;; 
+			;; label1
+			;; 
+			this.label1.AutoSize = true
+			this.label1.Location = new System.Drawing.Point(92, 35)
+			this.label1.Name = "label1"
+			this.label1.Size = new System.Drawing.Size(13, 13)
+			this.label1.TabIndex = 1
+			this.label1.Text = "+"
+			;; 
+			;; number2
+			;; 
+			this.number2.Location = new System.Drawing.Point(111, 32)
+			this.number2.Name = "number2"
+			this.number2.Size = new System.Drawing.Size(62, 20)
+			this.number2.TabIndex = 2
+			this.number2.Text = "2.0"
+			;; 
+			;; add
+			;; 
+			this.add.Location = new System.Drawing.Point(179, 30)
+			this.add.Name = "add"
+			this.add.Size = new System.Drawing.Size(31, 23)
+			this.add.TabIndex = 3
+			this.add.Text = "="
+			this.add.UseVisualStyleBackColor = true
+			addhandler(this.add.Click, new System.EventHandler(this.add_Click))
+			;; 
+			;; total
+			;; 
+			this.total.Location = new System.Drawing.Point(216, 32)
+			this.total.Name = "total"
+			this.total.Size = new System.Drawing.Size(62, 20)
+			this.total.TabIndex = 4
+			;; 
+			;; Form1
+			;; 
+			this.ClientSize = new System.Drawing.Size(305, 83)
+			this.Controls.Add(this.total)
+			this.Controls.Add(this.add)
+			this.Controls.Add(this.number2)
+			this.Controls.Add(this.label1)
+			this.Controls.Add(this.number1)
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+			this.MaximizeBox = false
+			this.MinimizeBox = false
+			this.Name = "Form1"
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+			this.Text = "Add Two NUmbers"
+			this.ResumeLayout(false)
+			this.PerformLayout()
+		endmethod
+	endclass
+endnamespace
+

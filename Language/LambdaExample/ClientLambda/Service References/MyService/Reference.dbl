@@ -1,0 +1,195 @@
+
+.array 0
+namespace ClientLambda.MyService
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = "MyService.IService1")}
+	public interface IService1
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IService1/AddTwoNumbers", ReplyAction = "http://tempuri.org/IService1/AddTwoNumbersResponse")}
+		method AddTwoNumbers, double
+			firstNumber, double 
+			secondNumber, double 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(AsyncPattern = true, Action = "http://tempuri.org/IService1/AddTwoNumbers", ReplyAction = "http://tempuri.org/IService1/AddTwoNumbersResponse")}
+		method BeginAddTwoNumbers, @System.IAsyncResult
+			firstNumber, double 
+			secondNumber, double 
+			callback, @System.AsyncCallback 
+			asyncState, @object 
+			endparams
+		endmethod
+
+		method EndAddTwoNumbers, double
+			result, @System.IAsyncResult 
+			endparams
+		endmethod
+	endinterface
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public interface IService1Channel extends ClientLambda.MyService.IService1, System.ServiceModel.IClientChannel
+	endinterface
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public partial class AddTwoNumbersCompletedEventArgs extends System.ComponentModel.AsyncCompletedEventArgs
+
+		public method AddTwoNumbersCompletedEventArgs
+			results, [#]@object 
+			exception, @System.Exception 
+			cancelled, System.Boolean 
+			userState, @object 
+			endparams
+			parent(exception, cancelled, userState)
+		proc
+			this.results = results
+		endmethod
+
+		public property Result, double
+			method get
+			proc
+				parent.RaiseExceptionIfNecessary()
+				mreturn (double)this.results[0]
+			endmethod
+		endproperty
+
+		private results, [#]@object
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public partial class Service1Client extends System.ServiceModel.ClientBase<ClientLambda.MyService.IService1> implements ClientLambda.MyService.IService1
+
+		public method Service1Client
+			endparams
+		proc
+
+		endmethod
+
+		public method Service1Client
+			endpointConfigurationName, string 
+			endparams
+			parent(endpointConfigurationName)
+		proc
+
+		endmethod
+
+		public method Service1Client
+			endpointConfigurationName, string 
+			remoteAddress, string 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method Service1Client
+			endpointConfigurationName, string 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method Service1Client
+			binding, @System.ServiceModel.Channels.Binding 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(binding, remoteAddress)
+		proc
+
+		endmethod
+
+		public method AddTwoNumbers, double
+			firstNumber, double 
+			secondNumber, double 
+			endparams
+		proc
+			mreturn parent.Channel.AddTwoNumbers(firstNumber, secondNumber)
+		endmethod
+
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method BeginAddTwoNumbers, @System.IAsyncResult
+			firstNumber, double 
+			secondNumber, double 
+			callback, @System.AsyncCallback 
+			asyncState, @object 
+			endparams
+		proc
+			mreturn parent.Channel.BeginAddTwoNumbers(firstNumber, secondNumber, callback, asyncState)
+		endmethod
+
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method EndAddTwoNumbers, double
+			result, @System.IAsyncResult 
+			endparams
+		proc
+			mreturn parent.Channel.EndAddTwoNumbers(result)
+		endmethod
+
+		public virtual event AddTwoNumbersCompleted, @System.EventHandler<AddTwoNumbersCompletedEventArgs>
+
+		private onBeginAddTwoNumbersDelegate, @BeginOperationDelegate
+
+		private method OnBeginAddTwoNumbers, @System.IAsyncResult
+			inValues, [#]@object 
+			callback, @System.AsyncCallback 
+			asyncState, @object 
+			endparams
+		proc
+			data firstNumber, double, (double)inValues[0]
+			data secondNumber, double, (double)inValues[1]
+			mreturn this.BeginAddTwoNumbers(firstNumber, secondNumber, callback, asyncState)
+		endmethod
+
+		private onEndAddTwoNumbersDelegate, @EndOperationDelegate
+
+		private method OnEndAddTwoNumbers, [#]@object
+			result, @System.IAsyncResult 
+			endparams
+		proc
+			data retVal, double, this.EndAddTwoNumbers(result)
+			mreturn new object[#] {retVal}
+		endmethod
+
+		private onAddTwoNumbersCompletedDelegate, @System.Threading.SendOrPostCallback
+
+		private method OnAddTwoNumbersCompleted, void
+			state, @object 
+			endparams
+		proc
+			if ((this.AddTwoNumbersCompleted != ^null))
+			begin
+				data e, @InvokeAsyncCompletedEventArgs, (@InvokeAsyncCompletedEventArgs)state
+				this.AddTwoNumbersCompleted(this, new AddTwoNumbersCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState))
+			end
+		endmethod
+
+		public method AddTwoNumbersAsync, void
+			firstNumber, double 
+			secondNumber, double 
+			endparams
+		proc
+			this.AddTwoNumbersAsync(firstNumber, secondNumber, ^null)
+		endmethod
+
+		public method AddTwoNumbersAsync, void
+			firstNumber, double 
+			secondNumber, double 
+			userState, @object 
+			endparams
+		proc
+			if ((this.onBeginAddTwoNumbersDelegate == ^null))
+				this.onBeginAddTwoNumbersDelegate = new BeginOperationDelegate(this.OnBeginAddTwoNumbers)
+			if ((this.onEndAddTwoNumbersDelegate == ^null))
+				this.onEndAddTwoNumbersDelegate = new EndOperationDelegate(this.OnEndAddTwoNumbers)
+			if ((this.onAddTwoNumbersCompletedDelegate == ^null))
+				this.onAddTwoNumbersCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnAddTwoNumbersCompleted)
+			parent.InvokeAsync(this.onBeginAddTwoNumbersDelegate, new object[#] {firstNumber, secondNumber}, this.onEndAddTwoNumbersDelegate, this.onAddTwoNumbersCompletedDelegate, userState)
+		endmethod
+	endclass
+endnamespace
+

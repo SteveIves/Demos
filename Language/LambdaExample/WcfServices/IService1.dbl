@@ -1,0 +1,23 @@
+
+import System
+import System.Collections.Generic
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Text
+
+namespace WcfServices
+
+	{ServiceContract}
+	public interface IService1
+		
+		{OperationContract}
+		method AddTwoNumbers, double
+			required in firstNumber, double
+			required in secondNumber, double
+		endmethod
+		
+	endinterface
+	
+endnamespace
+
+
