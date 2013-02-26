@@ -1,0 +1,212 @@
+
+namespace TurnKey.PDF
+
+    .include "PDF.DEF"
+
+    .region "Enumerations"
+
+    ;---------------------------------------
+
+    public enum PageOrientation
+        Portrait
+        Landscape
+    endenum
+
+    public enum Fonts
+        Courier
+        CourierBold
+        CourierBoldOblique
+        CourierOblique
+        Helvetica
+        HelveticaBold
+        HelveticaBoldOblique
+        HelveticaOblique
+        Symbol
+        TimesBold
+        TimesBoldItalic
+        TimesItalic
+        TimesRoman
+        ZapfDingbats
+    endenum
+
+    .endregion
+
+    ;---------------------------------------
+
+    public class PdfFile
+
+        .region "Private data"
+
+        private pdfChan                 ,i4         ,0
+        private mLeftMargin             ,decimal    ,0.5
+        private mRightMargin            ,decimal    ,0.5
+        private mTopMargin              ,decimal    ,0.5
+        private mBottomMargin           ,decimal    ,0.5
+
+        .endregion
+
+        .region "Constructors"
+
+        public method PdfFile
+            required in aFileName       ,a
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_OPEN,aFileName)
+            xcall pdf(pdfChan,PDF_INIT,90,PageOrientation.Portrait)
+        endmethod
+
+        ;---------------------------------------
+
+        public method PdfFile
+            required in aFileName       ,a
+            required in aPageWidth      ,n
+            required in aOrientation    ,PageOrientation
+            required in aTitle          ,a
+            required in aAuthor         ,a
+            required in aKeywords       ,a
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_OPEN,aFileName,aTitle,aAuthor,aKeywords)
+            xcall pdf(pdfChan,PDF_INIT,aPageWidth,aOrientation)
+        endmethod
+
+        .endregion
+
+        .region "Public methods"
+
+        ;---------------------------------------
+
+        public method Save, void
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_CLOSE)
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawText          ,void
+            required in aXpos           ,n
+            required in aYpos           ,n
+            required in aText           ,a
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_TPOS,aXpos,aYpos,%atrim(aText))
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawBoldText      ,void
+            required in aXpos           ,n
+            required in aYpos           ,n
+            required in aText           ,a
+            endparams
+        proc
+            DrawText(aXpos,aYpos,"<bold>"+%atrim(aText)+"<normal>")
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawImage, void
+            required in aFileName       ,a
+            required in aXpos           ,n
+            required in aYpos           ,n
+        proc
+            xcall pdf(pdfChan,PDF_IMAGE,aFileName,aXpos,aYpos)
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawLine, void
+            required in aFromXpos       ,n
+            required in aFromYpos       ,n
+            required in aToXpos         ,n
+            required in aToYpos         ,n
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_LINE,aFromXpos,aFromYpos,aToXpos,aToYpos)
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawBox           ,void
+            required in aFromXpos       ,n
+            required in aFromYpos       ,n
+            required in aWidth          ,n
+            required in aHeight         ,n
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_BOX,aFromXpos,aWidth,aHeight)
+        endmethod
+
+        ;---------------------------------------
+
+        public method DrawFilledBox     ,void
+            required in aFromXpos       ,n
+            required in aFromYpos       ,n
+            required in aWidth          ,n
+            required in aHeight         ,n
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_BOX,aFromXpos,aWidth,aHeight,true)
+        endmethod
+
+        ;---------------------------------------
+
+        public method NewPage, void
+            endparams
+        proc
+            ;Create the new page
+            xcall pdf(pdfChan,PDF_NEWPAGE,1)
+            ;Set the margins, in case the user has changed the defaults earlier
+            xcall pdf(pdfChan,PDF_MARGINS,aLeft,aRight,aTop,aBottom)
+        endmethod
+
+        ;---------------------------------------
+
+        public method SetLineColor      ,void
+            required in aRed            ,n
+            required in aGreen          ,n
+            required in aBlue           ,n
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_COLOR,(aRed/256.0),(aGreen/256.0),(aBlue/256.0))
+        endmethod
+
+        ;---------------------------------------
+
+        public method SetFillColor      ,void
+            required in aRed            ,n
+            required in aGreen          ,n
+            required in aBlue           ,n
+            endparams
+        proc
+            xcall pdf(pdfChan,PDF_COLOR,,,,(aRed/256.0),(aGreen/256.0),(aBlue/256.0))
+        endmethod
+
+        ;---------------------------------------
+
+        public method SetMargins, void
+            optional in aLeft           ,decimal
+            optional in aRight          ,decimal
+            optional in aTop            ,decimal
+            optional in aBottom         ,decimal
+            endparams
+        proc
+            ;Save the values so we can use them for subsequent new pages
+            if (^passed(aLeft))
+                mLeftMargin = aLeft
+            if (^passed(aRight))
+                mRightMargin = aRight
+            if (^passed(aTop))
+                mTopMargin = aTop
+            if (^passed(aBottom))
+                mBottomMargin = aBottom
+            ;Set the margins for the current page
+            xcall pdf(pdfChan,PDF_MARGINS,aLeft,aRight,aTop,aBottom)
+        endmethod
+
+        .endregion
+
+    endclass
+
+endnamespace

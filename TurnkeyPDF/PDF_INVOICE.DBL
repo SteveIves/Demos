@@ -1,0 +1,33 @@
+
+structure strPdfInvoice
+	invoice_number		,a8		;Invoice number
+	invoice_date		,a8		;Invoice date (MM/DD/YY)
+	customer_number		,a5		;Customer number
+	ship_number			,a6		;Ship number
+	po_number			,a20	;PO number
+	terms				,a19	;Terms
+	billing_address		,[5]a40	;Billing address
+	shipping_address	,[6]a40	;Shipping address
+	comments			,[3]a50	;Order comments
+	sales_total			,a14	;Sales total (goods)
+	freight_total		,a14	;Freight
+	misc_charges		,a14	;Misc charges
+	energy_surcharge	,a14	;Energy surcharge
+	tax					,a14	;Tax
+	invoice_total		,a14	;Invoice grand total
+	ordered_by			,a30	;Ordered by
+	is_reprint			,d1		;Is reprint
+endstructure
+
+structure strPdfInvoiceItem
+	quantity			,a12	;Quantity
+	stock_number		,a5		;Stock number (COM = comment)
+	item_number			,a5		;Item number
+	description			,a25	;Description
+	size				,a10	;Size
+	unit_price			,a12	;Unit price
+	total_price			,a12	;Total price
+	credit				,a2		;Credit (CR)
+	comment				,a50 @item_number ;Comment
+endstructure
+

@@ -1,0 +1,362 @@
+
+.include "INC:pdf_invoice.dbl"
+
+main PdfFileTest
+
+    record
+        ix              ,i4
+        item_count      ,d3
+        aitem_count     ,a3
+        invoice         ,strPdfInvoice
+        items           ,[#]strPdfInvoiceItem
+        inv_number      ,d8
+        ainv_number     ,a8
+        file_name       ,a50
+    endrecord
+
+proc
+
+    xcall flags(7004020,1)
+    open(1,i,"tt:")
+
+    display(1,"Invoice # (default 15234): ")
+    reads(1,ainv_number)
+    if (ainv_number) then
+        inv_number = ainv_number
+    else
+        inv_number = 15234
+
+    display(1," How many items (default 15): ")
+    reads(1,aitem_count,eof)
+    if (ainv_number) then
+        item_count = aitem_count
+    else
+        item_count = 15
+
+    invoice.invoice_number      = "XXXXXXXX"
+    invoice.invoice_date        = "XX/XX/XX"
+    invoice.customer_number     = "XXXXX"
+    invoice.ship_number         = "XXXXXX"
+    invoice.po_number           = "XXXXXXXXXXXXXXXXXXXX"
+    invoice.terms               = "XXXXXXXXXXXXXXXXXXX"
+    invoice.billing_address[1]  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.billing_address[2]  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.billing_address[3]  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.billing_address[4]  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.billing_address[5]  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[1] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[2] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[3] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[4] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[5] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.shipping_address[6] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.comments[1]         = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.comments[2]         = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.comments[3]         = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.sales_total         = "XXX,XXX,XXX.XX"
+    invoice.freight_total       = "XXX,XXX,XXX.XX"
+    invoice.misc_charges        = "XXX,XXX,XXX.XX"
+    invoice.energy_surcharge    = "XXX,XXX,XXX.XX"
+    invoice.tax                 = "XXX,XXX,XXX.XX"
+    invoice.invoice_total       = "XXX,XXX,XXX.XX"
+    invoice.ordered_by          = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    invoice.is_reprint          = 1
+
+    ;Items
+
+    items = new strPdfInvoiceItem[item_count]
+
+    for ix from 1 thru item_count
+    begin
+        items[ix].quantity      = %string(ix,"XX") + "XXXXXXXXXX"
+        items[ix].stock_number  = "XXXXX"
+        items[ix].item_number   = "XXXXX"
+        items[ix].description   = "XXXXXXXXXXXXXXXXXXXXXXXXX"
+        items[ix].size          = "XXXXXXXXXX"
+        items[ix].unit_price    = "X,XXX,XXX.XX"
+        items[ix].total_price   = "X,XXX,XXX.XX"
+        items[ix].credit        = "CR"
+    end
+
+    xcall pdf_invoice(inv_number,invoice,items,file_name)
+
+    writes(1,"Created file " + %atrim(file_name))
+
+eof,
+    close 1
+    stop
+
+endmain
+
+import TurnKey.PDF
+
+subroutine pdf_invoice
+
+    required in  aInvoiceNumber ,n
+    required in  aInvoice       ,strPdfInvoice
+    required in  aItems         ,[#]strPdfInvoiceItem
+    required out aFileName      ,a
+    endparams
+
+    .include "INC:pdf.def"
+
+    record
+        pdf                     ,@PdfFile
+        ix                      ,i4     ;Generic loop counter
+        ypos                    ,i4     ;Y position for this detail item
+        pages                   ,i4     ;Total number of pages
+        page                    ,i4     ;Current page number
+        pdf_file                ,a40    ;File name
+        pdf_title               ,a40    ;PDF file title
+    endrecord
+
+    .define PDF_AUTHOR          "GFS Chemicals"
+    .define PDF_KEYWORDS        "GFS CHEMICALS INVOICE"
+    .define ITEMS_PER_PAGE      32.0
+    .define FIRST_ITEM_Y        510
+
+.proc
+
+    ;------------------------------------------------
+    ;Figure out how many pages we need
+
+    pages = aItems.Length/ITEMS_PER_PAGE + ((aItems.Length/ITEMS_PER_PAGE)>pages)
+    page = 1
+
+    ;------------------------------------------------
+    ;Build the file name and meta-data
+
+    xcall s_bld(pdf_file,, "PDF_INVOICE:GFS_INVOICE_%d.PDF",aInvoiceNumber)
+    xcall s_bld(pdf_title,,"GFS Chemicals Invoice %d",aInvoiceNumber)
+    aFileName = pdf_file
+
+    ;------------------------------------------------
+    ;Create PDF file, set meta-data and page layout
+
+    pdf = new PdfFile(pdf_file,90,PageOrientation.Portrait,pdf_title,PDF_AUTHOR,PDF_KEYWORDS)
+
+    ;Draw the first page
+    call draw_page
+
+    ;Display items (new pages may be created along the way
+
+    ypos = FIRST_ITEM_Y
+    for ix from 1 thru aItems.Length
+    begin
+
+        ;Do we need a new page
+        if ((ix/ITEMS_PER_PAGE+((ix/ITEMS_PER_PAGE)>ix))>page)
+        begin
+            page += 1
+            ypos = FIRST_ITEM_Y
+            pdf.NewPage()
+            call draw_page
+        end
+
+        ;Re-position down 10 for the next line
+        ypos-=10
+
+        ;Is it a comment line?
+        if (aItems[ix].stock_number=="COM") then
+        begin
+            ;Yes, it's a comment
+            pdf.DrawText(95,ypos,aItems[ix].comment)
+        end
+        else
+        begin
+            ;No, it's an invoice item
+            pdf.DrawText( 25,ypos,aItems[ix].quantity)
+            pdf.DrawText(105,ypos,aItems[ix].stock_number)
+            pdf.DrawText(145,ypos,aItems[ix].item_number)
+            pdf.DrawText(180,ypos,aItems[ix].description)
+            pdf.DrawText(335,ypos,aItems[ix].size)
+            pdf.DrawText(405,ypos,aItems[ix].unit_price)
+            pdf.DrawText(490,ypos,aItems[ix].total_price)
+            pdf.DrawText(570,ypos,aItems[ix].credit)
+        end
+
+    end
+
+    ;All done, close the file
+
+    pdf.Save()
+
+    xreturn
+
+draw_page,
+
+    ;------------------------------------------------
+    ;Company logo
+
+    pdf.DrawImage("logo.jpg",7,10)
+
+    ;------------------------------------------------
+    ;Main heading
+
+    pdf.DrawBoldText(240,750,"<Size=18><red>INVOICE<black><Size=10>")
+
+    ;------------------------------------------------
+    ;Remittance info
+
+    pdf.DrawText(20,760,"<size=8>Please remit payment to:<size=10>")
+    pdf.DrawBoldText(20,750,"GFS Chemicals, Inc.")
+    pdf.DrawBoldText(20,740,"DEPT. L-1694")
+    pdf.DrawBoldText(20,730,"Columbus, OH, 43260-1694")
+
+    pdf.DrawText(20,715,"<size=8>Federal I.D. #31-4405875<size=10>")
+
+    pdf.DrawText(20,700,"<size=8>We accept VISA, MASTERCARD, AMERICAN")
+    pdf.DrawText(20,690,"EXPRESS, Checks or Wire Transfer.<size=10>")
+
+    pdf.DrawText(512,710,"<helvetica><size=8>ISO 9002 Certified")
+    pdf.DrawText(516,697,"A Fine Chemical")
+    pdf.DrawText(522,689,"Manufacturer")
+    pdf.DrawText(526,681,"Since 1928<courier><size=10>")
+
+    ;------------------------------------------------
+    ;Boxes for billing and shipping details
+
+    pdf.SetLineColor(128,128,128)
+    pdf.SetFillColor(128,128,128)
+    pdf.DrawFilledBox(20,655,570,20)                    ;X,Y (bottom), width, height
+    pdf.DrawBoldText(35,663,"<white>Sold To:")
+    pdf.DrawBoldText(320,663,"Shipped To:<black>")
+
+    pdf.DrawBox(20,590,570,65)                          ;X,Y (bottom), width, height
+
+    ;------------------------------------------------
+    ;Billing address
+
+    pdf.DrawText(35,645,aInvoice.billing_address[1])
+    pdf.DrawText(35,635,aInvoice.billing_address[2])
+    pdf.DrawText(35,625,aInvoice.billing_address[3])
+    pdf.DrawText(35,615,aInvoice.billing_address[4])
+    pdf.DrawText(35,605,aInvoice.billing_address[5])
+
+    ;------------------------------------------------
+    ;Shipping address
+
+    pdf.DrawText(320,645,aInvoice.shipping_address[1])
+    pdf.DrawText(320,635,aInvoice.shipping_address[2])
+    pdf.DrawText(320,625,aInvoice.shipping_address[3])
+    pdf.DrawText(320,615,aInvoice.shipping_address[4])
+    pdf.DrawText(320,605,aInvoice.shipping_address[5])
+    pdf.DrawText(320,595,aInvoice.shipping_address[6])
+
+    ;------------------------------------------------
+    ;Invoice header data box (black top half)
+    ;
+    ;Black box for column headings
+    pdf.SetLineColor(128,128,128)
+    pdf.SetFillColor(128,128,128)
+    pdf.DrawFilledBox(20,560,570,20)
+
+    ;Column headings
+    pdf.DrawBoldText( 25,568,"<white>Customer#")
+    pdf.DrawBoldText( 95,568,"SHIP#")
+    pdf.DrawBoldText(135,568,"P.O. Number")
+    pdf.DrawBoldText(280,568,"Terms")
+    pdf.DrawBoldText(465,568,"Inv. Date")
+    pdf.DrawBoldText(535,568,"Invoice#<black>")
+
+    ;Box for data
+    pdf.DrawBox(20,540,570,20)
+
+    ;Line separators for data
+    pdf.DrawLine( 85,540, 85,560)
+    pdf.DrawLine(130,540,130,560)
+    pdf.DrawLine(275,540,275,560)
+    pdf.DrawLine(460,540,460,560)
+    pdf.DrawLine(530,540,530,560)
+
+    ;------------------------------------------------
+    ;Invoice header data
+
+    pdf.DrawBoldText( 25,547,aInvoice.customer_number)
+    pdf.DrawBoldText( 92,547,aInvoice.ship_number)
+    pdf.DrawBoldText(135,547,aInvoice.po_number)
+    pdf.DrawBoldText(280,547,aInvoice.terms)
+    pdf.DrawBoldText(465,547,aInvoice.invoice_date)
+    pdf.DrawBoldText(535,547,aInvoice.invoice_number)
+
+    ;------------------------------------------------
+    ;Invoice items box
+
+    ;Black box for column headings
+    pdf.SetLineColor(128,128,128)
+    pdf.SetFillColor(128,128,128)
+    pdf.DrawFilledBox(20,510,570,20)
+
+    ;Column headings
+    pdf.DrawBoldText( 25,518,"<white>Qty")
+    pdf.DrawBoldText(105,518,"Stock#")
+    pdf.DrawBoldText(145,518,"Item#")
+    pdf.DrawBoldText(180,518,"Description")
+    pdf.DrawBoldText(335,518,"Size")
+    pdf.DrawBoldText(415,518,"Unit Price")
+    pdf.DrawBoldText(525,518,"Amount<black>")
+
+    ;Main box for items
+    pdf.DrawBox(20,180,570,330)
+
+    ;------------------------------------------------
+    ;Lower box
+
+    pdf.DrawBox(20,45,570,120)
+
+    pdf.DrawBoldText(25,152,"Comments:")
+    pdf.DrawText(35,132,aInvoice.comments[1])
+    pdf.DrawText(35,122,aInvoice.comments[2])
+    pdf.DrawText(35,112,aInvoice.comments[3])
+
+    pdf.DrawBoldText(25,52,"Ordered by:")
+    pdf.DrawText(95,52,aInvoice.ordered_by)
+
+    ;Totals info (on last page only)
+
+    if (page==pages)
+    begin
+        pdf.DrawLine(355,165,355,45)
+        pdf.DrawLine(475,165,475,45)
+
+        pdf.DrawBoldText(360,152,"Sales:")
+        pdf.DrawLine(355,145,590,145)
+        pdf.DrawBoldText(360,132,"Freight:")
+        pdf.DrawLine(355,125,590,125)
+        pdf.DrawBoldText(360,112,"Misc. Charges:")
+        pdf.DrawLine(355,105,590,105)
+        pdf.DrawBoldText(360,92,"Energy Surcharge:")
+        pdf.DrawLine(355,85,590,85)
+        pdf.DrawBoldText(360,72,"Tax:")
+        pdf.DrawLine(355,65,590,65)
+        pdf.DrawBoldText(360,52,"Total $")
+
+        ;Invoice totals
+
+        pdf.DrawText(495,152,aInvoice.sales_total)
+        pdf.DrawText(495,132,aInvoice.freight_total)
+        pdf.DrawText(495,112,aInvoice.misc_charges)
+        pdf.DrawText(495, 92,aInvoice.energy_surcharge)
+        pdf.DrawText(495, 72,aInvoice.tax)
+        pdf.DrawText(495, 52,aInvoice.invoice_total)
+    end
+
+    ;------------------------------------------------
+    ;Footer (contact info)
+
+    pdf.DrawText(130,30,"<size=8>Phone: 800-858-9682 (U.S. amd Canada) or +1 740-881-5501 (International)")
+    pdf.DrawText(110,20,"Fax: 740-881-5989  Email: gfschem@gfschemicals.com  Web: www.gfschemicals.com<size=10>")
+
+    ;------------------------------------------------
+    ;Page number (if multi-page)
+
+    if (pages>1)
+    begin
+        data tmpbuf, a40
+        xcall s_bld(tmpbuf,,"<size=8>Page %d of %d<size=10>",page,pages)
+        pdf.DrawText(535,20,%atrim(tmpbuf))
+    end
+
+    return
+
+.end

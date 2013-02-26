@@ -1,0 +1,55 @@
+;
+; The following definitions are used for the PDF subroutine
+;
+.ifndef PDF_DEFINES
+	.define PDF_DEFINES
+
+	.define PDF_TAB_MAX		,20	;Maximum number of tab settings
+	.define PIXELS_PER_INCH		,72	;PDF pixels/inch
+	.define CHARS_PER_INCH		,10	;Default characters/inch
+	.define LINES_PER_INCH		,6	;Default lines/inch
+	.define PDF_TOP_LINE		,63	;Default top line
+
+	; Commands for PDF subroutine
+
+	.define PDF_OPEN		,0	;Create new PDF file
+	.define PDF_INIT		,1	;Initialize new PDF document
+	.define PDF_FONT		,2	;Designate font (not available)
+	.define PDF_IMAGE		,3	;Load image
+	.define PDF_MARGINS		,4	;Set margins
+	.define PDF_OUTPUT		,5	;Output line (use PDF_WRITES
+						; normally)
+	.define PDF_NEWLINE		,6	;New line (use PDF_WRITES for 1
+						; line)
+	.define PDF_NEWPAGE		,7	;New page
+	.define PDF_CLOSE		,8	;Close PDF document
+	.define PDF_WRITE		,9	;Write text (not available)
+	.define PDF_COLOR		,10	;Set RGB colors
+	.define PDF_LINE		,11	;Draw line
+	.define PDF_BOX			,12	;Draw box
+	.define PDF_POSITION		,13	;Set text position including
+						; left margin
+	.define PDF_TPOS		,14	;Set text position, output text
+	.define PDF_TREL		,15	;Set text position relative to
+						; current position, output text
+	.define PDF_SETTABS		,16	;Set tab positions
+	.define PDF_TAB			,17	;Output fields to tab positions
+	.define PDF_WRITES		,18	;Print line
+
+	; No longer used
+
+	.define PDF_RGB			,PDF_COLOR
+	.define PDF_NEXTPAGE		,PDF_NEWPAGE
+	.define PDF_TABSET		,PDF_SETTABS
+
+	; Options for PDF_INIT command
+
+	.define P_PORTRAIT		,0	;Portrait
+	.define P_LANDSCAPE		,1	;Landscape
+
+	; Options for PDF_OUTPUT command
+
+	.define P_NONL			,1	;No newline
+.endc ;PDF_DEFINES
+
+

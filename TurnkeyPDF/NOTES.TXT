@@ -1,0 +1,181 @@
+;------------------------------------------------------------------------------;
+;
+;Create new PDF file
+;
+;     xcall pdf(channel,PDF_OPEN,file_name,[title],[author],[keywords])
+;
+;     o channel: channel to be used (or will be assigned if 0)
+;     o file_name: file to be created
+;     o title: document title
+;     o author: document author
+;     o keywords: any key words, separated by spaces
+;
+; Initialize PDF output
+;
+;     xcall pdf(channel,PDF_INIT,[page_width],[orientation])
+;
+;     o channel: already open to PDF document in stream output mode:
+;     o page_width: (optional) number of characters/line, generally 80 or 132,
+;       default is 80
+;     o orientation: (optional) P_PORTRAIT for portrait or P_LANDSCAPE for
+;       landscape , default adjusts to length of print lines
+;
+; Designate fonts (not used at this time, see PDF_WRITES)
+;
+;     xcall pdf(channel,PDF_FONT,base_font)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o base_font: name of base font to use
+;
+;       Type 1 standard base fonts automatically defined are:
+;
+;       Times-Roman      Helvetica             Courier             Symbol
+;       Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
+;       Times-Italic     Helvetica-Oblique     Courier-Oblique
+;       Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
+;
+; Designate images to use as background
+;
+;     xcall pdf(channel,PDF_IMAGE,file_name,[x_pos],[y_pos],[width],[height],[degrees])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o file_name: name of file with image, only JPEG files are supported at this time
+;     o x_pos & y_pos: (optional) position of lower left corner of image (inches), default is centered
+;     o width & height: (optional) width & height of image (units of 1/72"), default is image's size
+;     o degrees: (optional) degrees to rotate image counter clockwise
+;
+; Set margins on page (settings used for each new page)
+;
+;     xcall pdf(channel,PDF_MARGINS,[left],[right],[top],[bottom],[orientation])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o left, right, top, bottom: (optional) margins (inches), default is 1/2" for all four, these are reset for each page
+;     o orientation: (optional) P_PORTRAIT for portrait or P_LANDSCAPE for landscape , default adjusts to length of print lines
+;
+; Set tabs
+;
+;     xcall pdf(channel,PDF_SETTABS,tab_1,[tab_2],...)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o tab_1, tab_2, ...: tab stops for fields in PDF_WRITES function, first text field is always at left margin
+;
+; Set text position and left margin
+;
+;     xcall pdf(channel,PDF_POSITION,x_pos,y_pos[,degrees])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o x_pos & y_pos: set text position of next character to output (units of 1/72") and left margin for new line
+;     o degrees: (optional) degrees to rotate text counter clockwise
+;
+; Output text, advance to new line, set new text position
+;
+;     xcall pdf(channel,PDF_OUTPUT,print_line,[no_newline])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o print_line: text to output including color, font, style, & other settings listed below
+;     o no_newline: (optional) true for no CR/LF or false for CR/LF at end of line, default is CR/LF
+;
+;       Colors are set by text (not case dependent):
+;
+;         <Black>, <Blue>, <Green>, <Cyan>, <Red>, <Purple>, <Yellow>, <White>, <DkGreen>
+;
+;       Fonts are set by text (not case dependent):
+;
+;         <Times-Roman>, <Helvetica>, <Courier>, <Symbol>, <ZapfDingbats>
+;
+;       Styles are set by text (not case dependent):
+;
+;         <Normal>, <Bold>, <Italic>, <BoldItalic>
+;
+;       Other options set by text (not case dependent):
+;
+;         <CPI=##.###>, <LPI=##>, <Page>, <Size=##>, <CSpace=#>, <WSpace=#>
+;
+;  Set text position and left margin, and output text
+;
+;     xcall pdf(channel,PDF_TPOS,x_pos,y_pos,print_line)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o x_pos & y_pos: set text position of next character to output (units of 1/72") and left margin for new line
+;     o print_line: line to output including color, font, style, & other settings (see PDF_OUTPUT)
+;
+; Move text position relative to current text position and output text
+;
+;     xcall pdf(channel,PDF_TREL,x_offset,y_offset,print_line)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o x_offset & y_offset: offset to next character to output from current text position (units of 1/72"), left margin is not changed
+;     o print_line: line to output including color, font, style, & other settings (see PDF_OUTPUT)
+;
+; Advance to new line, set new text position
+;
+;     xcall pdf(channel,PDF_NEWLINE,[count])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o count: (optional) number of lines to advance, default is 1
+;
+; Advance to new page, set text position to upper left within margins
+;
+;     xcall pdf(channel,PDF_NEWPAGE,[count])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o count: (optional) number of pages to advance, default is 1
+;
+; Set RGB stroke & non-stroke colors (0.000 - 1.000), values can be determined with a Windows colors editor and dividing by 256
+;
+;     xcall pdf(channel,PDF_COLOR,[red1],[green1],[blue1],[red2],[green2],[blue2])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o red1, green1, blue1: (optional) RGB stroke colors (lines)
+;     o red2, green2, blue2: (optional) RGB non-stroke colors (filler)
+;
+; Draw lines
+;
+;     xcall pdf(channel,PDF_LINE,x_pos1,y_pos1,[x_pos2,y_pos2,]...)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o x_pos1 & y_pos1: Starting coordinate (units of 1/72")
+;     o x_pos2 & y_pos2: Ending coordinate (units of 1/72")
+;     o ...: repeat more points to connect more lines
+;
+; Draw box
+;
+;     xcall pdf(channel,PDF_BOX,x_pos,y_pos,width,height,[fill])
+;
+;     o channel: already open to PDF document in stream output mode
+;     o x_pos & y_pos: Lower left coordinate of box (units of 1/72")
+;     o width & height: Width & height of box (units of 1/72")
+;     o fill: (optional): fill box if true
+;
+; Close PDF document
+;
+;     xcall pdf(channel,PDF_CLOSE)
+;
+;     o channel: already open to PDF document in stream output mode
+;
+; Output text line
+;
+;     xcall pdf(channel,PDF_WRITES,[string_1],[string_2],...)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o string_1, string_2, ...: Output strings that will be separated by tabs
+;
+; Note: The "text position" is fixed until it is reset by PDF_POSITION,
+;	PDF_OUTPUT with new line, PDF_TPOS, PDF_NEWLINE, or PDF_NEWPAGE.
+;	It is not changed by PDF_TREL or output text. It also sets the left
+;	margin for new line.
+;
+; Functions no longer used, but still supported
+;
+; xx. Display line of field spaced by tabs from PDF_SETTABS function
+;
+;     xcall pdf(channel,PDF_TAB,field_1,[field_2,]...)
+;
+;     o channel: already open to PDF document in stream output mode
+;     o field_1, field_2, ...: fields to output including color, font,
+;	style, & other settings (see PDF_OUTPUT), first field is at left margin,
+;	null fields advance to next tab position with no output, each field and
+;	each call to function advances to next tab position until a new line or
+;	the current text position is changed
+;------------------------------------------------------------------------------
+;
