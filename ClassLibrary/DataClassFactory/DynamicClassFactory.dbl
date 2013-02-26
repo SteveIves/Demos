@@ -1,0 +1,389 @@
+import System
+import System.CodeDom
+import System.CodeDom.Compiler
+import System.ComponentModel
+import System.IO
+import System.Reflection
+import System.Text
+import Microsoft.CSharp
+
+namespace DataClassFactory
+	
+	;;; <summary>
+	;;; The CodeGenerationHelper class allows you to easily define and create dynamic class instances.
+	;;; The class is static and contains only two method members: GetCodeString, and InstantiateClass.
+	;;; To create a class first call the GetCodeString method with the appropriate arguments, then
+	;;; store the returned code string for re-use as it can be thought of as your dynamic class’s
+	;;; definition. When you want to create an instance of your dynamic class pass the generated
+	;;; code string into the InstantiateClass method, and a new instance of the class will be returned.
+	;;; This class is not intended to be used directly because it's functionality is wrapped by the 
+	;;; DynamicClassFactory class.
+	;;; </summary>
+	
+	public static class CodeGenerationHelper
+		
+		public static method GetCodeString, string
+			byval aNamespaceName	,@String
+			byval aClassName		,@String
+			byval aKeys				,[#]@String
+			byval aTypes			,[#]@Type
+			byval aInitFields		,Boolean
+			endparams
+			record
+				compileUnit			,@CodeCompileUnit
+				newNamespace		,@CodeNamespace
+				newClass			,@CodeTypeDeclaration
+				propertyChangedEvent,@CodeMemberEvent
+				raisePropertyChangedMethod, @CodeMemberMethod
+				ix					,int
+				sw					,@StringWriter
+				provider			,@CodeDomProvider
+				codeGen				,@ICodeGenerator
+			endrecord
+		proc
+			
+			;;Create namespace.
+			newNamespace = new CodeNamespace(aNamespaceName)
+			newNamespace.Imports.Add(new CodeNamespaceImport("System.ComponentModel"))
+			
+			;;Create class.
+			newClass = new CodeTypeDeclaration(aClassName)
+			newClass.IsClass = true
+			newClass.BaseTypes.Add(new CodeTypeReference("System.ComponentModel.INotifyPropertyChanged"))
+			
+			;;Create PropertyChanged event; implement INotifyPropertyChanged.
+			propertyChangedEvent = new CodeMemberEvent()
+			propertyChangedEvent.Name = "PropertyChanged"
+			propertyChangedEvent.Type = new CodeTypeReference("System.ComponentModel.PropertyChangedEventHandler")
+			propertyChangedEvent.Attributes = MemberAttributes.Public
+			newClass.Members.Add(propertyChangedEvent)
+			
+			;;Create RaisePropertyChanged method, and add to class.
+			raisePropertyChangedMethod = new CodeMemberMethod()
+			raisePropertyChangedMethod.Attributes = MemberAttributes.Family | MemberAttributes.Final
+			raisePropertyChangedMethod.Name = "RaisePropertyChanged"
+			raisePropertyChangedMethod.Parameters.Add(new CodeParameterDeclarationExpression("System.String", "propertyName"))
+			raisePropertyChangedMethod.Statements.Add(new CodeSnippetStatement("if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }"));
+			newClass.Members.Add(raisePropertyChangedMethod)
+			
+			for ix from 1 thru akeys.Length
+			begin
+
+				data fieldName		,@String
+				data propertyName	,@String
+				data newField		,@CodeMemberField
+				data newProperty	,@CodeMemberProperty
+				
+				;;Construct the property and field names
+				propertyName = aKeys[ix].ToString()
+				fieldName = String.Format("m{0}", propertyName)
+				
+				;;Create a new private field
+				newField = new CodeMemberField(aTypes[ix], fieldName)
+				if (aInitFields)
+					newField.InitExpression = new CodeDefaultValueExpression(new CodeTypeReference(aTypes[ix]))
+				newClass.Members.Add(newField)
+				
+				;;Create a new public property
+				newProperty = new CodeMemberProperty()
+				newProperty.Attributes = (MemberAttributes.Public | MemberAttributes.Final)
+				newProperty.Name = aKeys[ix].ToString()
+				newProperty.Type = new CodeTypeReference(aTypes[ix])
+				
+				;;Add a get method statement to return the content of the private field
+				newProperty.GetStatements.Add(
+				&	new CodeMethodReturnStatement(
+				&		new CodeFieldReferenceExpression(
+				&			new CodeThisReferenceExpression(),
+				&			fieldName
+				&		)
+				&	)
+				&)
+				
+				;;Add a set method statement to assign the value to the private field
+				newProperty.SetStatements.Add(
+				&	new CodeAssignStatement(
+				&		new CodeFieldReferenceExpression(
+				&			new CodeThisReferenceExpression(),
+				&			fieldName
+				&		),
+				&		new CodePropertySetValueReferenceExpression()
+				&	)
+				&)
+				
+				;;Add a set method statement to call the RaisePropertyChanged method
+				newProperty.SetStatements.Add(
+				&	new CodeMethodInvokeExpression(
+				&		new CodeThisReferenceExpression(),
+				&		"RaisePropertyChanged",
+				&		new CodeExpression[#] { new CodeSnippetExpression('"' + propertyName + '"') }
+				&	)
+				&)
+				
+				;;Add the new property to the new class
+				newClass.Members.Add(newProperty)
+			end
+			
+			;;Add the new class to the new namespace
+			newNamespace.Types.Add(newClass)
+			
+			;;Create a compile unit and add the namespace to it
+			compileUnit = new CodeCompileUnit()
+			compileUnit.Namespaces.Add(newNamespace)
+			
+			;;Generate C# code for the new class
+			;;Note: We have to use C# because although we could use the Synergy CodeDom to generate
+			;;Synergy code, the Synergy compiler doesn't currently support compiling code on the fly
+			provider = CodeDomProvider.CreateProvider("CSharp")
+			sw = new StringWriter()
+			provider.GenerateCodeFromCompileUnit(compileUnit, sw, new CodeGeneratorOptions())
+			sw.Close()
+			
+			;;Return the generated C# code
+			mreturn sw.ToString()
+			
+		endmethod
+		
+		public static method InstantiateClass, @Object
+			byval aCodeString		,@String		;;Code to be compiled
+			byval aFQTypeName		,@String		;;Fully qualified type name
+			endparams
+			record
+				compiler			,@CSharpCodeProvider
+				compilerParams		,@CompilerParameters
+				results				,@CompilerResults
+			endrecord
+		proc
+			compiler = new CSharpCodeProvider()
+			compilerParams = new CompilerParameters(new string[#] { "System.dll" })
+			compilerParams.GenerateInMemory = true
+			results = compiler.CompileAssemblyFromSource(compilerParams, new string[#] { aCodeString })
+			mreturn results.CompiledAssembly.CreateInstance(aFQTypeName)
+		endmethod
+
+		public static method InstantiateType, @Type
+			byval aCodeString		,@String		;;Code to be compiled
+			byval aFQTypeName		,@String		;;Fully qualified type name
+			endparams
+			record
+				compiler			,@CSharpCodeProvider
+				compilerParams		,@CompilerParameters
+				results				,@CompilerResults
+			endrecord
+		proc
+			compiler = new CSharpCodeProvider()
+			compilerParams = new CompilerParameters(new string[#] { "System.dll" })
+			compilerParams.GenerateInMemory = true
+			results = compiler.CompileAssemblyFromSource(compilerParams, new string[#] { aCodeString })
+			mreturn results.CompiledAssembly.GetType(aFQTypeName)
+		endmethod
+		
+	endclass
+	
+	;;; <summary>
+	;;; The DynamicClassFactory class wraps the functionality of the CodeGenerationHelper class, and
+	;;; provides methods for getting and setting properties, and registering / de-registering
+	;;; propertychanged event handlers.
+	;;; 
+	;;; NOTE: There is one minor issue that I have not yet resolved: Anytime a property needs to be get
+	;;; or set, an object instance must be passed in. The DynamicFactory then takes that object instance 
+	;;; and gets it’s type, then uses the type to get its properties as propertyinfos’. The property info 
+	;;; is then used to either get or set the property. My intention was to only do this once and save 
+	;;; the propertyinfos for re-use, however I end up with a type-mismatch error everytime I call 
+	;;; SetValue on them. Therefore, the propertyinfos are retrieved on every call to SetProperty and 
+	;;; GetProperty… keep that in mind.
+	;;; 
+	;;; The most important methods on this class are Create, GetProperty, SetProperty, and 
+	;;; AddPropertyChangedEventHandler. The constructor takes all the arguments you give it and passes 
+	;;; them along to the CodeGenerationHelper to get a code string for the dynamic class and stores 
+	;;; them for re-use. After you have an instance of the DynamicFactory you’ll be all set to start 
+	;;; creating instances of your dynamic class. This is achieved by calling the Create method, which 
+	;;; simply passes the stored code string generated during the constructor to the CodeGenerationHelper. 
+	;;; The Create method will return a new instance of your dynamic class. If you intended to be notified 
+	;;; of propertychange events you’ll want to make a call to the AddPropertyChangedEventHandler which 
+	;;; simply takes a PropertyChangedEventHandler. This handler will be called anytime a property on your 
+	;;; dynamic class is changed. The GetProperty and SetProperty methods get and set properties on your 
+	;;; dynamic class.
+	;;;  </summary>
+	
+	public class DynamicClassFactory
+		
+		.region "Private data"
+		
+		private mPropertyNames		,[#]@String
+		private mPropertyTypes		,[#]@Type
+		private mCodeString			,@String
+		
+		private mNamespaceName		,@String
+		private mClassName			,@String
+		private mFullyQualifiedName	,@String
+		
+		private mType				,@Type
+
+		.endregion
+		
+		.region "Constructors"
+		
+		public method DynamicClassFactory
+			aNamespaceName			,@String
+			aClassName				,@String
+			aPropertyNames			,[#]@String
+			aPropertyTypes			,[#]@Type
+			endparams
+		proc
+			NamespaceName = aNamespaceName
+			ClassName = aClassName
+			mPropertyNames = aPropertyNames
+			mPropertyTypes = aPropertyTypes
+			mCodeString = CodeGenerationHelper.GetCodeString(NamespaceName, ClassName, mPropertyNames, mPropertyTypes, False)
+			
+			mType = CodeGenerationHelper.InstantiateType(mCodeString,FullyQualifiedName)
+
+			begin
+				data sw, @StreamWriter, System.IO.File.CreateText("C:\steve.txt")
+				sw.Write(mcodeString)
+				sw.Close()
+			end
+
+		endmethod
+		
+		.endregion
+		
+		.region "Public methods"
+		
+		public method Create		,@Object
+			endparams
+		proc
+			mreturn mType.Assembly.CreateInstance(FullyQualifiedName)
+		endmethod
+		
+		public method GetPropertyNames, [#]@String
+			endparams
+		proc
+			mreturn ([#]@String)(mPropertyNames.Clone())
+		endmethod
+		
+		public method GetPropertyTypes, [#]@Type
+			endparams
+		proc
+			mreturn ([#]@Type)(mPropertyTypes.Clone())
+		endmethod
+		
+		public method FindPropertyInfo, @PropertyInfo
+			aObjectInstance			,@Object
+			aPropertyName			,@String
+			endparams
+			record
+				pi					,@PropertyInfo
+			endrecord
+		proc
+			foreach pi in aObjectInstance.GetType().GetProperties()
+			if (pi.Name == aPropertyName)
+				mreturn pi
+			mreturn ^null
+		endmethod
+		
+		public method GetProperty	,@Object
+			aObjectInstance			,@Object
+			aPropertyName			,@String
+			endparams
+			record
+				pi					,@PropertyInfo	
+			endrecord
+		proc
+			pi = FindPropertyInfo(aObjectInstance, aPropertyName)
+			if (pi == ^null)
+				throw new ArgumentException(string.Format("The property '{0}' does not exist.", aPropertyName))
+			mreturn pi.GetValue(aObjectInstance, ^null)
+		endmethod
+		
+		public method SetProperty	,void
+			aObjectInstance			,@Object
+			aPropertyName			,@String
+			aPropertyValue			,@Object
+			endparams
+			record
+				pi					,@PropertyInfo
+			endrecord
+		proc
+			pi = FindPropertyInfo(aObjectInstance, aPropertyName)
+			if (pi == ^null)
+				throw new ArgumentException(string.Format("The property '{0}' does not exist.", aPropertyName))		
+			pi.SetValue(aObjectInstance, aPropertyValue, ^null)
+		endmethod
+		
+		public method AddPropertyChangedEventHandler, void
+			aObjectInstance			,@Object
+			aHandler				,@PropertyChangedEventHandler
+			endparams
+			record
+				ei					,@EventInfo
+			endrecord
+		proc
+			foreach ei in aObjectInstance.GetType().GetEvents()
+			begin
+				if (ei.EventHandlerType == ^typeof(PropertyChangedEventHandler))
+				begin
+					ei.AddEventHandler(aObjectInstance, aHandler)
+					exitloop
+				end
+			end
+		endmethod
+		
+		public method RemovePropertyChangedEventHandler, void
+			aObjectInstance			,@Object
+			aHandler				,@PropertyChangedEventHandler
+			endparams
+			record
+				ei					,@EventInfo
+			endrecord
+		proc
+			foreach ei in aObjectInstance.GetType().GetEvents()
+			begin
+				if (ei.EventHandlerType == ^typeof(PropertyChangedEventHandler))
+				begin
+					ei.RemoveEventHandler(aObjectInstance, aHandler)
+					exitloop
+				end
+			end
+		endmethod
+		
+		.endregion
+		
+		.region "Public properties"
+		
+		public property NamespaceName, String
+			method get
+			proc
+				mreturn mNamespaceName
+			endmethod
+			private method set
+			proc
+				mNamespaceName = value
+			endmethod
+		endproperty
+		
+		public property ClassName, string
+			method get
+			proc
+				mreturn mClassName
+			endmethod
+			private method set
+			proc
+				mClassName = value
+			endmethod
+		endproperty
+		
+		public property FullyQualifiedName, String
+			method get
+			proc
+				mreturn string.Format("{0}.{1}", mNamespaceName, mClassName)
+			endmethod
+		endproperty
+		
+		.endregion
+		
+	endclass
+	
+endnamespace
+
