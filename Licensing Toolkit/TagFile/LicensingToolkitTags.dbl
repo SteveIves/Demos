@@ -1,0 +1,3 @@
+<subr>          lm_login(status, producer, application, token, lm_record, slot_num, [check], [seat])
+<subr>          lm_logout(status, producer, application, token, [seat])
+<subr>          lm_info(status, lm_site)
