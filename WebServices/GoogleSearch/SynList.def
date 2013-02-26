@@ -1,0 +1,125 @@
+.include 'DBLDIR:dbl.def'
+
+;
+;	A Structure to provide a view of a DBL descriptor
+;
+structure Descrip
+.if (D_ADDRSIZE .eq. 8)
+	len		,i4			; Length entry
+	ctl		,i4			; Control information
+.else
+	len		,i2			; Length entry
+	ctl		,i2			; Control information
+.endc
+	addr		,D_ADDR
+	dimct		,i4			; Number of dimensions
+	mult		,[10]i4			; Start of the multipliers (strides) between
+						; subarrays. Element 1 is the total array size
+
+;
+;	A Structure to provide a view of a linked list element
+;
+structure ListElement
+	prevElHnd		,D_ADDR
+	nextElHnd		,D_ADDR
+
+.if (D_ADDRSIZE .eq. 8)
+	len		,i4			; Length entry
+	ctl		,i4			; Control information
+.else
+	len		,i2			; Length entry
+	ctl		,i2			; Control information
+.endc
+	addr		,D_ADDR
+	dimct		,i4			; Number of dimensions
+	mult		,[10]i4			; Start of the multipliers (strides) between
+						; subarrays. Element 1 is the total array size
+
+structure b
+	a				,a65535
+
+structure ListHead
+	size			,i4
+	firstElHnd		,D_ADDR
+	curElHnd		,D_ADDR
+
+external function
+	DescripAddr		,^val
+	SynList			,d
+
+static record
+	baseDescrSize			,i4	,^size(Descrip.len) + ^size(Descrip.ctl) + ^size(Descrip.addr)
+	baseListElementSize		,i4	,^size(ListElement.prevElHnd) + ^size(ListElement.nextElHnd)
+
+
+.ifndef DSC_FP
+.if (D_ADDRSIZE .eq. 8)
+.define DSC_FP		^x("000FF")	; Fractional Precision in low 8 bits	*/
+.define DSC_TYPS	^x("0FF00")	; Data type flags:			*/
+.define DSC_A		^x("00100")	;   Alpha				*/
+.define DSC_I		^x("00200")	;   Integer				*/
+.define DSC_D		^x("00400")	;   Decimal				*/
+.define DSC_ID		^x("00800")	;   Implied Decimal			*/
+.define DSC_P		^x("01000")	;   Packed				*/
+.define DSC_IP		^x("02000")	;   Implied Packed			*/
+					; Miscellaneous flags:			*/
+.define DSC_DIM		^x("10000")	;   Dimensioned			*/
+.define DSC_TEMP	^x("20000")	;   Arithmetic temp			*/
+.define DSC_GBL		^x("40000")	;   Global data			*/
+.define DSC_LIT		^x("80000")	;   Literal data			*/
+.define DSC_OHND       	^x("100000")	;   Object handle			*/
+.else
+.define DSC_FP		^x("000F")	; Fractional Precision in low 4 bits	*/
+.define DSC_TYPS	^x("03F0")	; Data type flags:			*/
+.define DSC_A		^x("0010")	;   Alpha				*/
+.define DSC_I		^x("0020")	;   Integer				*/
+.define DSC_D		^x("0040")	;   Decimal				*/
+.define DSC_ID		^x("0080")	;   Implied Decimal			*/
+.define DSC_P		^x("0100")	;   Packed				*/
+.define DSC_IP		^x("0200")	;   Implied Packed			*/
+					; Miscellaneous flags:			*/
+.define DSC_DIM		^x("0400")	;   Dimensioned			*/
+.define DSC_TEMP	^x("0800")	;   Arithmetic temp			*/
+.define DSC_GBL		^x("1000")	;   Global data			*/
+.define DSC_LIT		^x("2000")	;   Literal data			*/
+.define DSC_OHND	^x("4000")	;   Object handle			*/
+.endc
+.define	DSC_NUMERIC	,(DSC_I|DSC_D|DSC_ID|DSC_P|DSC_IP)
+.define	DSC_IMPLIED 	,(DSC_ID|DSC_IP)
+
+.define	ctlDimensioned(descHnd)	(^m(Descrip.ctl, descHnd) & DSC_DIM)
+.define	ctlPrecision(descHnd)	(^m(Descrip.ctl, descHnd) & DSC_FP)
+.define	ctlNumeric(descHnd)		(^m(Descrip.ctl, descHnd) & DSC_NUMERIC)
+.define	ctlDecimal(descHnd)		(^m(Descrip.ctl, descHnd) & DSC_D)
+.define	ctlInteger(descHnd)		(^m(Descrip.ctl, descHnd) & DSC_I)
+.define	ctlImplied(descHnd)		(^m(Descrip.ctl, descHnd) & DSC_IMPLIED)
+.endc
+
+.ifndef LIST_CREATE
+.define	LIST_CREATE			0
+.define	LIST_ADD			1
+.define	LIST_SIZE			2
+.define	LIST_FIRST			3
+.define	LIST_NEXT			4
+.define	LIST_PREV			5
+.define	LIST_TRAVERSE		6
+.define	LIST_SERIALIZE		7
+.define LIST_DELETE			10
+.define	newList				SynList(LIST_CREATE)
+.define	listAdd(hnd, data)	SynList(LIST_ADD, hnd, data)
+.define listSize(hnd)		SynList(LIST_SIZE, hnd)
+.define listFirst(hnd)		SynList(LIST_FIRST, hnd)
+.define listNext(hnd)		SynList(LIST_NEXT, hnd)
+.define listSerialize(hnd, argName)	SynList(LIST_SERIALIZE, hnd, argName)
+.define listTraverse(hnd, rtn, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) SynList(LIST_TRAVERSE, hnd, rtn, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
+
+; Macros used internally by the List object. Not for general use.
+.define listCount			^m(listHead.size, listHnd)
+.define firstHnd			^m(listHead.firstElHnd, listHnd)
+.define	lastHnd				^m(ListElement.prevElHnd, firstHnd)
+.define nextHnd(hnd)		^m(ListElement.nextElHnd, hnd)
+.define prevHnd(hnd)		^m(ListElement.prevElHnd, hnd)
+.define	curHnd				^m(ListHead.curElHnd, listHnd)
+.define	elementDescr(hnd)	^addr(^m(ListElement.len, hnd))
+
+.endc

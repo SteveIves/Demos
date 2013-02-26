@@ -1,0 +1,223 @@
+.subroutine deserializeGoogleSearchResult
+	group GoogleSearchResult
+		documentFiltering ,i1
+		searchComments ,D_ADDR
+		estimatedTotalResultsCount ,i4
+		estimateIsExact ,i1
+		resultElements	,D_ADDR ; SynList of ResultElement elements
+		searchQuery ,D_ADDR
+		startIndex ,i4
+		endIndex ,i4
+		searchTips ,D_ADDR
+		directoryCategories	,D_ADDR ; SynList of DirectoryCategory elements
+		searchTime ,d18.8
+	endgroup ;GoogleSearchResult
+	mainArgList	,n
+	argName		,a
+
+external function
+	asp_wt_list		,i			; The defined method from the catalogue
+	getIntArg		,^val
+	getDecimalArg		,d.
+	getAlphaArg		,a
+	getIntArrayArg		,^val
+	getDecimalArrayArg	,^val
+	getAlphaArrayArg	,^val
+	getByteArrayArg		,^val
+	getListArg		,^val
+	getXMLStringArg		,^val
+
+record
+	arg		,i4
+	argList		,i4
+
+.proc
+	arg = %xml_elemlist_findtag(mainArgList, argName)
+	argList = %xml_elem_children(arg)
+	clear GoogleSearchResult
+	documentFiltering = %getBooleanArg(argList, "documentFiltering")
+	searchComments = %getXMLStringArg(argList, "searchComments")
+	estimatedTotalResultsCount = %getIntArg(argList, "estimatedTotalResultsCount")
+	estimateIsExact = %getBooleanArg(argList, "estimateIsExact")
+	resultElements = %getListArg(argList, "resultElements", "ResultElement")
+	searchQuery = %getXMLStringArg(argList, "searchQuery")
+	startIndex = %getIntArg(argList, "startIndex")
+	endIndex = %getIntArg(argList, "endIndex")
+	searchTips = %getXMLStringArg(argList, "searchTips")
+	directoryCategories = %getListArg(argList, "directoryCategories", "DirectoryCategory")
+	searchTime = %getDecimalArg(argList, "searchTime")
+	xreturn
+.end
+.subroutine serializeGoogleSearchResult
+	respHandle	,n		; Response XML string handle
+	argName	,a
+	group GoogleSearchResult
+		documentFiltering ,i1
+		searchComments ,D_ADDR
+		estimatedTotalResultsCount ,i4
+		estimateIsExact ,i1
+		resultElements	,D_ADDR
+		searchQuery ,D_ADDR
+		startIndex ,i4
+		endIndex ,i4
+		searchTips ,D_ADDR
+		directoryCategories	,D_ADDR
+		searchTime ,d18.8
+	endgroup ;GoogleSearchResult
+
+record
+	i		,i4
+
+.proc
+
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""fcl:GoogleSearchResult"">")
+	xcall addBooleanParam(respHandle, "documentFiltering", documentFiltering)
+	xcall addXMLStringParam(respHandle, "searchComments", searchComments)
+	xcall addParam(respHandle, "estimatedTotalResultsCount", estimatedTotalResultsCount)
+	xcall addBooleanParam(respHandle, "estimateIsExact", estimateIsExact)
+	xcall addListParam(respHandle, "resultElements", resultElements, "ResultElement")
+	xcall addXMLStringParam(respHandle, "searchQuery", searchQuery)
+	xcall addParam(respHandle, "startIndex", startIndex)
+	xcall addParam(respHandle, "endIndex", endIndex)
+	xcall addXMLStringParam(respHandle, "searchTips", searchTips)
+	xcall addListParam(respHandle, "directoryCategories", directoryCategories, "DirectoryCategory")
+	xcall addParam(respHandle, "searchTime", searchTime)
+	xcall xml_string_append(respHandle, "</" + argName + ">")
+	xreturn
+.end
+.subroutine deserializeResultElement
+	group ResultElement
+		summary ,D_ADDR
+		URL ,D_ADDR
+		snippet ,D_ADDR
+		title ,D_ADDR
+		cachedSize ,D_ADDR
+		relatedInformationPresent ,i1
+		hostName ,D_ADDR
+		group directoryCategory	,a
+			fullViewableName ,D_ADDR
+			specialEncoding ,D_ADDR
+		endgroup ;DirectoryCategory
+		directoryTitle ,D_ADDR
+	endgroup ;ResultElement
+	mainArgList	,n
+	argName		,a
+
+external function
+	asp_wt_list		,i			; The defined method from the catalogue
+	getIntArg		,^val
+	getDecimalArg		,d.
+	getAlphaArg		,a
+	getIntArrayArg		,^val
+	getDecimalArrayArg	,^val
+	getAlphaArrayArg	,^val
+	getByteArrayArg		,^val
+	getListArg		,^val
+	getXMLStringArg		,^val
+
+record
+	arg		,i4
+	argList		,i4
+
+.proc
+	arg = %xml_elemlist_findtag(mainArgList, argName)
+	argList = %xml_elem_children(arg)
+	clear ResultElement
+	summary = %getXMLStringArg(argList, "summary")
+	URL = %getXMLStringArg(argList, "URL")
+	snippet = %getXMLStringArg(argList, "snippet")
+	title = %getXMLStringArg(argList, "title")
+	cachedSize = %getXMLStringArg(argList, "cachedSize")
+	relatedInformationPresent = %getBooleanArg(argList, "relatedInformationPresent")
+	hostName = %getXMLStringArg(argList, "hostName")
+	xcall deserializeDirectoryCategory(directoryCategory, argList, "directoryCategory")
+	directoryTitle = %getXMLStringArg(argList, "directoryTitle")
+	xreturn
+.end
+.subroutine serializeResultElement
+	respHandle	,n		; Response XML string handle
+	argName	,a
+	group ResultElement
+		summary ,D_ADDR
+		URL ,D_ADDR
+		snippet ,D_ADDR
+		title ,D_ADDR
+		cachedSize ,D_ADDR
+		relatedInformationPresent ,i1
+		hostName ,D_ADDR
+		group directoryCategory	,a
+			fullViewableName ,D_ADDR
+			specialEncoding ,D_ADDR
+		endgroup ;DirectoryCategory
+		directoryTitle ,D_ADDR
+	endgroup ;ResultElement
+
+record
+	i		,i4
+
+.proc
+
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""fcl:ResultElement"">")
+	xcall addXMLStringParam(respHandle, "summary", summary)
+	xcall addXMLStringParam(respHandle, "URL", URL)
+	xcall addXMLStringParam(respHandle, "snippet", snippet)
+	xcall addXMLStringParam(respHandle, "title", title)
+	xcall addXMLStringParam(respHandle, "cachedSize", cachedSize)
+	xcall addBooleanParam(respHandle, "relatedInformationPresent", relatedInformationPresent)
+	xcall addXMLStringParam(respHandle, "hostName", hostName)
+	xcall serializeDirectoryCategory(respHandle, "directoryCategory", directoryCategory)
+	xcall addXMLStringParam(respHandle, "directoryTitle", directoryTitle)
+	xcall xml_string_append(respHandle, "</" + argName + ">")
+	xreturn
+.end
+.subroutine deserializeDirectoryCategory
+	group DirectoryCategory
+		fullViewableName ,D_ADDR
+		specialEncoding ,D_ADDR
+	endgroup ;DirectoryCategory
+	mainArgList	,n
+	argName		,a
+
+external function
+	asp_wt_list		,i			; The defined method from the catalogue
+	getIntArg		,^val
+	getDecimalArg		,d.
+	getAlphaArg		,a
+	getIntArrayArg		,^val
+	getDecimalArrayArg	,^val
+	getAlphaArrayArg	,^val
+	getByteArrayArg		,^val
+	getListArg		,^val
+	getXMLStringArg		,^val
+
+record
+	arg		,i4
+	argList		,i4
+
+.proc
+	arg = %xml_elemlist_findtag(mainArgList, argName)
+	argList = %xml_elem_children(arg)
+	clear DirectoryCategory
+	fullViewableName = %getXMLStringArg(argList, "fullViewableName")
+	specialEncoding = %getXMLStringArg(argList, "specialEncoding")
+	xreturn
+.end
+.subroutine serializeDirectoryCategory
+	respHandle	,n		; Response XML string handle
+	argName	,a
+	group DirectoryCategory
+		fullViewableName ,D_ADDR
+		specialEncoding ,D_ADDR
+	endgroup ;DirectoryCategory
+
+record
+	i		,i4
+
+.proc
+
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""fcl:DirectoryCategory"">")
+	xcall addXMLStringParam(respHandle, "fullViewableName", fullViewableName)
+	xcall addXMLStringParam(respHandle, "specialEncoding", specialEncoding)
+	xcall xml_string_append(respHandle, "</" + argName + ">")
+	xreturn
+.end

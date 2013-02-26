@@ -1,0 +1,220 @@
+.main GoogleSearch
+
+.include 'SynList.def'
+
+record
+	searchString	,a100
+	group GoogleSearchResult
+		documentFiltering ,i1
+		searchComments ,D_ADDR
+		estimatedTotalResultsCount ,i4
+		estimateIsExact ,i1
+		resultElements	,D_ADDR ; SynList of ResultElement elements
+		searchQuery ,D_ADDR
+		startIndex ,i4
+		endIndex ,i4
+		searchTips ,D_ADDR
+		directoryCategories	,D_ADDR ; SynList of DirectoryCategory elements
+		searchTime ,d18.8
+	endgroup ;GoogleSearchResult
+	group ResultElement
+		summary ,D_ADDR
+		URL ,D_ADDR
+		snippet ,D_ADDR
+		title ,D_ADDR
+		cachedSize ,D_ADDR
+		relatedInformationPresent ,i1
+		hostName ,D_ADDR
+		group directoryCategory	,a
+			fullViewableName ,D_ADDR
+			specialEncoding ,D_ADDR
+		endgroup ;DirectoryCategory
+		directoryTitle ,D_ADDR
+	endgroup ;ResultElement
+	i		,i4
+	resultCount	,i4
+
+external function
+	GoogleSearch		,a
+	xml_string_getvalue	,a
+
+.proc
+	xcall setlog("PROXY_HOST", "www-cache", i)
+	xcall setlog("PROXY_PORT", "3128", i)
+	xcall flags(7004020, 1)
+	open(1, o, 'tt:')
+	repeat
+		begin
+		display(1, "Search for: ")
+		reads(1, searchString)
+		if (!%trimz(searchString)) stop
+		GoogleSearchResult = %GoogleSearch(%atrim(searchString))
+		writes(1, %string(estimatedTotalResultsCount) + " results found in " + %string(searchTime) + " seconds")
+		resultCount = %listSize(resultElements)
+		if (resultCount)
+			begin
+			ResultElement = %listFirst(resultElements)
+			for i from 1 thru resultCount
+				begin
+				writes(1, %xml_string_getvalue(ResultElement.URL))
+				ResultElement = %listNext(resultElements)
+				end
+			end
+	end
+.end
+;
+;
+;
+.function GoogleSearch
+	searchString	,a
+
+.include 'DBLDIR:synxml.def'
+
+record
+	requestStr	,i4
+	status		,i4
+	responseStr	,i4
+	responseSize	,i4
+	responseXMLStr	,i4
+	parser		,i4
+	responseDoc	,i4
+	envelope	,i4
+	colon		,i4
+	body		,i4
+	response	,i4
+	returnElement	,i4
+	authLen		,i4
+	bodyName	,a100
+	buffer		,a50
+	errorMessage	,a132
+	headers		,[10]a300
+	authorization	,a100
+	group GoogleSearchResult
+		documentFiltering ,i1
+		searchComments ,D_ADDR
+		estimatedTotalResultsCount ,i4
+		estimateIsExact ,i1
+		resultElements	,D_ADDR ; SynList of ResultElement elements
+		searchQuery ,D_ADDR
+		startIndex ,i4
+		endIndex ,i4
+		searchTips ,D_ADDR
+		directoryCategories	,D_ADDR ; SynList of DirectoryCategory elements
+		searchTime ,d18.8
+	endgroup ;GoogleSearchResult
+	
+.define	BASE64_ENCODE		4
+
+;      <key xsi:type="xsd:string">ImMMg8ZQFHIMbEHKRzAFz0tGAow9psCg</key>
+;      <q xsi:type="xsd:string">shrdlu winograd maclisp teletype</q>
+;      <start xsi:type="xsd:int">0</start>
+;      <maxResults xsi:type="xsd:int">10</maxResults>
+;      <filter xsi:type="xsd:boolean">true</filter>
+;      <restrict xsi:type="xsd:string"></restrict>
+;      <safeSearch xsi:type="xsd:boolean">false</safeSearch>
+;      <lr xsi:type="xsd:string"></lr>
+;      <ie xsi:type="xsd:string">latin1</ie>
+;      <oe xsi:type="xsd:string">latin1</oe>
+
+
+.proc
+
+	requestStr = %xml_string_create()
+	xcall xml_string_append(requestStr,
+&		"<SOAP-ENV:Envelope xmlns:SOAP-ENV=""http://schemas.xmlsoap.org/soap/envelope/""" +
+&		" xmlns:xsi=""http://www.w3.org/1999/XMLSchema-instance""" +
+&		" xmlns:xsd=""http://www.w3.org/1999/XMLSchema"">" +
+&		"<SOAP-ENV:Body>" +
+&		"<ns1:doGoogleSearch xmlns:ns1=""urn:GoogleSearch""" +
+&         	" SOAP-ENV:encodingStyle=""http://schemas.xmlsoap.org/soap/encoding/"">")
+
+	xcall addParam(requestStr, "key", "ImMMg8ZQFHIMbEHKRzAFz0tGAow9psCg")
+	xcall addParam(requestStr, "q", searchString)
+	xcall addParam(requestStr, "start", 0)
+	xcall addParam(requestStr, "maxResults", 10)
+	xcall addBooleanParam(requestStr, "filter", 1)
+	xcall addParam(requestStr, "restrict", "")
+	xcall addBooleanParam(requestStr, "safeSearch", 0)
+	xcall addParam(requestStr, "lr", "")
+	xcall addParam(requestStr, "ie", "latin1")
+	xcall addParam(requestStr, "oe", "latin1")
+
+	xcall xml_string_append(requestStr, "</ns1:doGoogleSearch>" +
+&		"</SOAP-ENV:Body></SOAP-ENV:Envelope>")
+
+	xcall encode(BASE64_ENCODE, authorization, "nigelw:nigelw666", authLen)
+	headers[1] = "Proxy-Authorization: Basic " + authorization(1:authLen)
+	status = %http_client_post("http://api.google.com/search/beta2", ,%xml_string_gethandle(requestStr),
+&		%xml_string_getsize(requestStr), responseStr, responseSize,
+&		errorMessage, headers, "/dev/tty")
+	if (status)
+		begin
+		writes(1, errorMessage)
+		stop
+		end
+	responseXMLStr = %xml_string_create()
+	xcall xml_string_appendhandle(responseXMLStr, responseStr, responseSize)
+	parser = %getXMLParser()
+	responseDoc = %xml_parser_parsestring(parser, responseXMLStr)
+	xcall xml_string_delete(responseXMLStr)
+	envelope = %xml_doc_getroot(responseDoc)
+	xcall xml_elem_getname(envelope, bodyName)
+	colon = %instr(1, bodyName, ":")
+	bodyName(colon + 1, ^size(bodyName)) = "Body"
+	body = %xml_elemlist_findtag(%xml_elem_children(envelope), %atrim(bodyName))
+	response = %xml_elemlist_item(%xml_elem_children(body), 1)
+	xcall deserializeGoogleSearchResult(GoogleSearchResult, %xml_elem_children(response), "return")
+	freturn GoogleSearchResult
+.end
+;
+;	Return the text of an XML string
+;
+.function xml_string_getvalue
+	x	,i4	; XML string handle
+
+structure s
+	s1	,a65535
+.proc
+	freturn ^m(s.s1(1:%xml_string_getsize(x)), %xml_string_gethandle(x))
+.end
+;
+;
+;
+.function getXMLParser	,^val
+
+static record
+	parserHandle	,i4, 0
+
+.proc
+	if (!parserHandle)
+		parserHandle = %xml_parser_create()
+	freturn parserHandle
+.end
+;
+;
+;
+.function getUrl
+
+.include 'DBLDIR:synsock.def'
+
+static record
+	sessionPort	,i4	,0
+	url		,a100
+
+record
+	socket		,i4
+	hostAddr	,i4
+	stat		,i4
+	l		,i4
+	buffer		,a10
+
+.proc
+
+	stat = %ss_inet_addr("bigblue", hostAddr)
+	stat = %ss_socket(socket, SS_SOCK_STREAM)
+	stat = %ss_connect(socket, 8080, hostAddr)
+	stat = %ss_sendbuf(socket, "GetSessionPort" + %char(13))
+	stat = %ss_recv(socket, buffer, l)
+	stat = %ss_close(socket)
+	freturn "http://bigblue:" + %string(^d(buffer(1:l))) + "/"
+.end

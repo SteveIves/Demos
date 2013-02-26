@@ -1,0 +1,1185 @@
+;
+;	Soap utility functions.
+;
+;	Methods for encoding and decoding data to and from XML elements.
+;
+.if (D_ADDRSIZE .eq. 8)
+.define DSC_FP		^x("000FF")	; Fractional Precision in low 8 bits	*/
+.define DSC_TYPS	^x("0FF00")	; Data type flags:			*/
+.define DSC_A		^x("00100")	;   Alpha				*/
+.define DSC_I		^x("00200")	;   Integer				*/
+.define DSC_D		^x("00400")	;   Decimal				*/
+.define DSC_ID		^x("00800")	;   Implied Decimal			*/
+.define DSC_P		^x("01000")	;   Packed				*/
+.define DSC_IP		^x("02000")	;   Implied Packed			*/
+					; Miscellaneous flags:			*/
+.define DSC_DIM		^x("10000")	;   Dimensioned			*/
+.define DSC_TEMP	^x("20000")	;   Arithmetic temp			*/
+.define DSC_GBL		^x("40000")	;   Global data			*/
+.define DSC_LIT		^x("80000")	;   Literal data			*/
+.define DSC_OHND       	^x("100000")	;   Object handle			*/
+.else
+.define DSC_FP		^x("000F")	; Fractional Precision in low 4 bits	*/
+.define DSC_TYPS	^x("03F0")	; Data type flags:			*/
+.define DSC_A		^x("0010")	;   Alpha				*/
+.define DSC_I		^x("0020")	;   Integer				*/
+.define DSC_D		^x("0040")	;   Decimal				*/
+.define DSC_ID		^x("0080")	;   Implied Decimal			*/
+.define DSC_P		^x("0100")	;   Packed				*/
+.define DSC_IP		^x("0200")	;   Implied Packed			*/
+					; Miscellaneous flags:			*/
+.define DSC_DIM		^x("0400")	;   Dimensioned			*/
+.define DSC_TEMP	^x("0800")	;   Arithmetic temp			*/
+.define DSC_GBL		^x("1000")	;   Global data			*/
+.define DSC_LIT		^x("2000")	;   Literal data			*/
+.define DSC_OHND	^x("4000")	;   Object handle			*/
+.endc
+.define	DSC_NUMERIC	,(DSC_I|DSC_D|DSC_ID|DSC_P|DSC_IP)
+.define	DSC_IMPLIED 	,(DSC_ID|DSC_IP)
+
+.define	ctlDimensioned(arg)	(arg & DSC_DIM)
+.define	ctlPrecision(arg)	(arg & DSC_FP)
+.define	ctlNumeric(arg)		(arg & DSC_NUMERIC)
+.define	ctlDecimal(arg)		(arg & DSC_D)
+.define	ctlInteger(arg)		(arg & DSC_I)
+.define	ctlImplied(arg)		(arg & DSC_IMPLIED)
+
+.define log(priority, msg) xcall SoapLog(serverPort, priority, msg)
+.define LOG_TRACE		1
+.define LOG_DEBUG		2
+.define LOG_INFO		3
+.define LOG_WARN		4
+.define LOG_ERROR		5
+.define LOG_FATAL		10
+
+.define	ZLIB_DEFLATE		0
+.define	ZLIB_INFLATE		1
+.define	GZIP_COMPRESS		2
+.define	GZIP_UNCOMPRESS		3
+.define	BASE64_ENCODE		4
+.define	BASE64_DECODE		5
+
+.subroutine SoapLog, reentrant
+	port		,n
+	logLevel	,n
+	message		,a
+
+static record
+	curLogLevel	,i4, LOG_WARN
+	i		,i4
+	time		,d6
+	fmt_time	,a8
+.proc
+	if (port < 0)
+		begin
+		curLogLevel = logLevel
+		xcall SoapLog(0, LOG_DEBUG, "Setting log level to " + %string(curLogLevel))
+		xreturn
+		end
+
+	if (logLevel >= curLogLevel)
+		begin
+		xcall time(time)
+		fmt_time = time, 'XX:XX:XX'
+		i = %syn_freechn()
+		open(i, a, "SoapServer.log")
+		writes(i, %date + " " + fmt_time + " " + message)
+		close i
+		end
+	xreturn
+
+.end
+;
+;	Add a parameter to an element list
+;
+.subroutine addParam	,reentrant
+	respHandle	,n		; Response XML string handle
+	argName		,a
+	^ref(descrip)	,a24		; Data descriptor
+
+record
+	group elementDescr		; Descriptor for element access
+.if (D_ADDRSIZE .eq. 8)
+		len	,i4		; Length entry
+		ctl	,i4		; Control information
+.else
+		len	,i2		; Length entry
+		ctl	,i2		; Control information
+.endc
+		addr	,D_ADDR
+		dimct	,i4
+		scope	,i4
+	endgroup
+	
+.include 'DBLDIR:synxml.def'
+
+.proc
+
+	elementDescr = descrip(1:^size(elementDescr))
+
+;	If the data is dimensioned, call the array serializer
+	if (ctlDimensioned(elementDescr.ctl)) then
+		begin
+;		Except if it's a one-dimensional byte array: then use the scalar serializer
+		if ((elementDescr.ctl & DSC_I) && (elementDescr.dimct == 1) && (elementDescr.len == 1)) then
+			begin
+			elementDescr.len = elementDescr.scope
+			elementDescr.ctl &= ~DSC_DIM
+			xreturn %addScalarParam(respHandle, argName, ^ref(elementDescr), 1)
+			end
+		else
+			xreturn %addArrayParam(respHandle, argName, ^ref(descrip))
+		end
+	else
+		xreturn %addScalarParam(respHandle, argName, ^ref(descrip))
+
+.end
+;
+;	Add an xsd:date date format yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+;
+.subroutine addDateParam
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	group d8_date
+		y	,d4
+		m	,d2
+		d	,d2
+	endgroup
+
+static record fixedData
+	group fmt_date
+		y	,d4
+			,a1, "-"
+		m	,d2
+			,a1, "-"
+		d	,d2
+			,a*, "T00:00:00.000Z"
+	endgroup
+
+record
+	i		,i4
+
+.proc
+;	Handle blank
+	if (!^a(d8_date))
+		begin
+		xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:dateTime"" xsi:nil=""true""/>")
+		xreturn
+		end
+
+	fmt_date.y = d8_date.y
+	fmt_date.m = d8_date.m
+	fmt_date.d = d8_date.d
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:dateTime"">" +
+&		fmt_date + "</" + argName + ">")
+	xreturn
+.end
+;
+;	Add an xsd:time time format HH:mm:ss
+;
+.subroutine addTimeParam
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	group d6_time
+		h	,d2
+		m	,d2
+		s	,d2
+	endgroup
+
+static record
+	group fmt_time
+		h	,d2
+			,a1, ":"
+		m	,d2
+			,a1, ":"
+		s	,d2
+	endgroup
+
+record
+	i		,i4
+
+.proc
+	if (!^a(d6_time))
+		begin
+		xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:dateTime"" xsi:nil=""true""/>")
+		xreturn
+		end
+
+	fmt_time.h = d6_time.h
+	fmt_time.m = d6_time.m
+	if (^size(d6_time) == 6) then
+		fmt_time.s = d6_time.s
+	else
+		clear fmt_time.s
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:dateTime"">" +
+&		fmt_time + "</" + argName + ">")
+	xreturn
+.end
+;
+;	Add an xsd:boolean
+;
+.subroutine addBooleanParam
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	boolean		,n	; 0 = false
+
+.proc
+	if (boolean) then
+		xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:boolean"">true</" + argName + ">")
+	else
+		xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xsd:boolean"">false</" + argName + ">")
+	xreturn
+.end
+;
+;	Add an XML API string as a parameter
+;
+.subroutine addXMLStringParam
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	xmlStrHnd	,n	; XML String handle
+
+structure a
+	b		,a65535
+
+.proc
+	xcall addScalarParam(respHandle, argname, ^m(a.b(1:%xml_string_getsize()), %xml_string_gethandle(xmlStrHnd)))
+	xreturn
+.end
+;
+;	Add a scalar parameter to an element list
+;
+.subroutine addScalarParam	,reentrant
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	data		,a	; Data which the new element is to contain
+	byteArray	,n	; Passed if the data is a byte array
+
+stack record
+	i		,i4
+	h		,i4
+	datalen		,i4
+	encodedLen	,i4
+	datatype	,i4
+
+external function
+	binaryData	,^val
+	encodeHexString	,^val
+
+structure s
+	a1		,a65535
+
+.proc
+
+;	Get parameter's original data type
+	datatype = ^datatype(3)
+
+;	Get parameter's size
+	datalen = ^size(^arg(3))
+
+	xcall xml_string_append(respHandle, "<" + argName)
+
+	case datatype of begincase
+	D_TYPE_A:	; Alpha data
+		begin
+;		Pass string data thru XML encoding.
+;		Sad but necessary with the Synergy XML "API"!
+		if (datalen) then
+			begin
+;			Alpha buffers >= 800 are likely to be "data" buffers rather than
+;			Strings, so take the decision to encode them without having
+;			to peek inside for binary data.
+			if (datalen >= 800 || %binaryData(data)) then
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xse:hexBinary""")
+				h = %mem_proc(DM_ALLOC, datalen * 2)
+				encodedLen = %encodeHexString(^m(s.a1(1:datalen * 2), h), data)
+;				xcall xml_string_append(respHandle, " xsi:type=""xse:base64"">"
+;				h = %mem_proc(DM_ALLOC, (datalen + 3) / 3 * 4)
+;				xcall encode(BASE64_ENCODE, ^m(s.a1, h), data, encodedLen)
+				end
+			else
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:string""")
+				h = %mem_proc(DM_ALLOC, datalen * 2)
+				encodedLen = %encodeXMLString(^m(s.a1(1:datalen * 2), h), data)
+				end
+			end
+		else
+			begin
+			clear encodedLen
+			end
+		if (encodedLen) then
+			begin
+			xcall xml_string_append(respHandle, ">")
+			i = %xml_string_appendhandle(respHandle, h, encodedLen)
+			end
+		else
+			begin
+			xcall xml_string_append(respHandle, " xsi:type=""xsd:string"" xsi:nil=""true""/>")
+			xreturn
+			end
+		end
+
+	D_TYPE_I:	; Integer data
+		begin
+		if (^passed(byteArray)) then
+			begin 	; Byte arrays sent as ^i() chunks of binary data...
+			xcall xml_string_append(respHandle, " xsi:type=""xse:base64"">")
+			h = %mem_proc(DM_ALLOC, (datalen + 3) / 3 * 4)
+			xcall encode(BASE64_ENCODE, ^m(s.a1, h), data, encodedLen)
+			i = %xml_string_appendhandle(respHandle, h, encodedLen)
+			end
+		else
+			begin
+			case datalen of begincase
+			1:
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:byte"">")
+				end
+			2:
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:short"">")
+				end
+			4:
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:int"">")
+				end
+			8:
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:long"">")
+				end
+			endcase
+			else	; Non-standard length - base64 encode it
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xse:base64"">")
+				h = %mem_proc(DM_ALLOC, (datalen + 3) / 3 * 4)
+				xcall encode(BASE64_ENCODE, ^m(s.a1, h), data, encodedLen)
+				i = %xml_string_appendhandle(respHandle, h, encodedLen)
+				xcall xml_string_append(respHandle,  "</" + argName + ">")
+				xreturn
+				end
+			xcall xml_string_append(respHandle,  %string(^argn(3)))
+			end
+		end
+	endcase
+	else		; Numeric data
+		begin
+		if (datatype & D_TYPE_ID) then
+			begin
+			xcall xml_string_append(respHandle, " xsi:type=""xsd:float"">")
+			end
+		else
+			begin
+			using datalen select
+			(1),
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:byte"">")
+				end
+			(2),
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:short"">")
+				end
+			(3 thru 4),
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:int"">")
+				end
+			(> 4),
+				begin
+				xcall xml_string_append(respHandle, " xsi:type=""xsd:long"">")
+				end
+			endusing
+			end
+		xcall xml_string_append(respHandle,  %string(^argn(3)))
+		end
+
+	xcall xml_string_append(respHandle,  "</" + argName + ">")
+	xreturn
+
+.end
+;
+; Add an n-dimensional array.
+;
+.subroutine addArrayParam ,reentrant
+	respHandle	,n		; Response XML string handle
+	argName		,a		; Name of parameter element
+	^ref(descrip)	,a40		; Array descriptor
+
+stack record
+	i		,i4
+	element		,i4
+	arraySize	,i4
+	stride		,i4
+
+	group arrayDescr
+.if (D_ADDRSIZE .eq. 8)
+		len	,i4		; Length entry
+		ctl	,i4		; Control information
+.else
+		len	,i2		; Length entry
+		ctl	,i2		; Control information
+.endc
+		addr	,D_ADDR
+		dimct	,i4		; Number of dimensions
+		mult	,[10]i4		; Start of the multipliers (strides) between
+					; subarrays. Element 1 is the total array size
+		top	,a36@arrayDescr.mult	; 2 elements to allow array dims to
+		bottom	,a36@arrayDescr.mult+4	; be shifted up
+	endgroup
+
+structure arrayDescrStruct
+.if (D_ADDRSIZE .eq. 8)
+		len	,i4		; Length entry
+		ctl	,i4		; Control information
+.else
+		len	,i2		; Length entry
+		ctl	,i2		; Control information
+.endc
+		addr	,D_ADDR
+		dimct	,i4		; Number of dimensions
+		mult	,[1]i4		; Start of the multipliers (strides) between
+
+.proc
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xse:Array""")
+
+;	Make a copy of the array descriptor so that we can shift it
+;	as we step through the dimensions
+	arrayDescr = descrip(1:^size(arrayDescrStruct) + ^m(arrayDescrStruct.dimct, descrip) * 4)
+
+	stride = arrayDescr.mult[2]
+	arraySize = arrayDescr.mult[1] / stride
+
+;	Multi-dimensional array, this element will be an array of arrays, and recurse
+;	passing the next sub array
+	if (arrayDescr.dimct > 1) then
+		begin
+		xcall xml_string_append(respHandle, " xse:arrayType=""xse:Array[" + %string(arraySize) + "]""")
+
+;		Shift the array descriptor and decrement dim count to describe the next sub array
+		arrayDescr.top = arrayDescr.bottom
+		decr arrayDescr.dimct
+
+		for i from 1 thru arraySize
+			begin
+			xcall addArrayParam(element, "item", ^ref(arrayDescr))
+			arrayDescr.addr += stride
+			end
+
+		end
+	else
+		begin
+		if (ctlNumeric(arrayDescr.ctl)) then
+			begin
+			arraySize = %numericArraySize(^ref(arrayDescr))
+			if (ctlImplied(arrayDescr.ctl)) then
+				begin
+				xcall xml_string_append(respHandle, " xse:arrayType=""xsd:float[" + %string(arraySize) + "]"">")
+				end
+			else
+				using arrayDescr.len select
+				(1),
+					begin
+					xcall xml_string_append(respHandle, " xse:arrayType=""xsd:byte[" + %string(arraySize) + "]"">")
+					end
+				(2),
+					begin
+					xcall xml_string_append(respHandle, " xse:arrayType=""xsd:short[" + %string(arraySize) + "]"">")
+					end
+				(< 5),
+					begin
+					xcall xml_string_append(respHandle, " xse:arrayType=""xsd:int[" + %string(arraySize) + "]"">")
+					end
+				(> 4),
+					begin
+					xcall xml_string_append(respHandle, " xse:arrayType=""xsd:long[" + %string(arraySize) + "]"">")
+					end
+				endusing
+			end
+		else
+			begin
+			xcall xml_string_append(respHandle, " xse:arrayType=""xsd:string[" + %string(arraySize = %alphaArraySize(^ref(arrayDescr))) + "]"">")
+			end
+
+;		Make the descriptor that we will use to index into the array is non-dimensioned
+		arrayDescr.ctl &= ~DSC_DIM
+
+;		Call add param!
+		for i from 1 thru arraySize
+			begin
+			xcall addScalarParam(respHandle, "item", ^ref(arrayDescr))
+			arrayDescr.addr += stride
+			end
+		end
+
+	xcall xml_string_append(respHandle,  "</" + argName + ">")
+	xreturn
+
+.end
+;
+;	Add a SynList as an Array
+;
+.subroutine addListParam
+	respHandle	,n	; Response XML string handle
+	argName		,a	; Argument name - the name of the new element
+	listHnd		,n	; List handle
+	elementType	,a	; Element type name
+
+.include 'DBLDIR:rcbapi.def'
+.include 'SynList.def'
+
+external function
+	varCtl		,^val
+
+record
+	elementFlags	,i4
+	dataLen		,i4
+	callBlock	,i4
+	i		,i4
+	j		,i4
+
+.proc
+
+;	Read the descriptor control flags of the first element
+	elementFlags = %varCtl(%listFirst(listHnd))
+
+;	Get the length of the first element
+	dataLen = ^size(%listFirst(listHnd))
+
+;	Open the element tag
+	xcall xml_string_append(respHandle, "<" + argName + " xsi:type=""xse::Array""")
+
+;	Declare the arrayType
+	if (^passed(elementType)) then
+		xcall xml_string_append(respHandle, " xse:arrayTtype=""fcl:" + elementType)
+	else if (ctlInteger(elementFlags)) then
+		using dataLen select
+		(1),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:byte")
+		(2),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:short")
+		(4),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:int")
+		(8),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:long")
+		endusing
+	else if (ctlDecimal(elementFlags)) then
+		using dataLen select
+		(1),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:byte")
+		(2),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:short")
+		(3 thru 4),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:int")
+		(> 4),
+			xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:long")
+		endusing
+	else if (ctlImplied(elementFlags)) then
+		xcall xml_string_append(respHandle, " xse:arrayTtype=""xsd:float")
+	else
+		xcall xml_string_append(respHandle, " xse:arrayType=""xsd:string")
+	xcall xml_string_append(respHandle, "[" + %string(%listSize(listHnd)) + "]"">")
+
+	if (%listSize(listHnd))
+		begin
+;		Set up an call block for the routine
+		callBlock = %rcb_create(3)
+		if (^passed(elementType)) then
+			xcall rcb_setfnc(callBlock, "serialize" + %atrim(elementType))
+		else
+			xcall rcb_setfnc(callBlock, "addParam")
+		xcall rcb_setarg(callBlock, respHandle, 1)
+		xcall rcb_setarg(callBlock, "item", 2)
+
+;		Go thru the list calling the routine
+		xcall rcb_setarg(callBlock, %listFirst(listHnd), 3)
+		j = %rcb_call(callBlock)
+		for i from 1 thru %listSize(listHnd) - 1
+			begin
+			xcall rcb_setarg(callBlock, %listNext(listHnd), 3)
+			j = %rcb_call(callBlock)
+			end
+		xcall rcb_delete(callBlock)
+		end
+
+	xcall xml_string_append(respHandle, "</" + argName + ">")
+	xreturn
+
+.end
+;
+;	Work out the size of a numeric array trimming trailing zero valued elements
+;
+.function numericArraySize	,^val
+	array		,[*]n
+
+record
+	arraySize	,i4
+
+.proc
+;	Calculate arrayu size. Only send the filled elements
+	arraySize = ^size(array[]) / ^size(array[1])
+	while (arraySize && !array[arraySize])
+		decr arraySize
+	freturn arraySize
+.end
+;
+;	Work out the size of an alpha array trimming trailing blank elements
+;
+.function alphaArraySize	,^val
+	array		,[*]a
+
+record
+	arraySize	,i4
+
+.proc
+;	Calculate array size. Only send the filled elements
+	arraySize = ^size(array[]) / ^size(array[1])
+	while (arraySize && !array[arraySize])
+		decr arraySize
+	freturn arraySize
+.end
+;
+;	Return a named List from an element list
+;
+.function getListArg	,^val
+	argList		,n
+	argName		,a
+	p_elementType	,a
+
+.include 'DBLDIR:rcbapi.def'
+.include 'SynList.def'
+
+record
+	result		,i4
+	element		,i4
+	tempList	,i4
+	itemCount	,i4
+	items		,i4
+	item		,i4
+	listAttributes	,i4
+	attrCount	,i4
+	attr		,i4
+	i		,i4
+	j		,i4
+	k		,i4
+	l		,i4
+	colon		,i4
+	attrName	,a100
+	attrValue	,a100
+	elementType	,a100
+	itemName	,a100
+	argText		,D_ADDR
+
+structure s
+	a1		,a10000
+
+.proc
+	result = %newList()
+	element = %xml_elemlist_findtag(argList, argName)
+	listAttributes = %xml_elem_attributes(element)
+
+	if (^passed(p_elementType)) then
+		elementType = p_elementType
+	else
+		begin
+		attrCount = %xml_attrlist_count(listAttributes)
+		for j from 1 thru attrCount
+			begin
+			attr = %xml_attrlist_item(j)
+			k = %xml_attr_getname(attr, attrName)
+			l = %trimz(attrName)
+			if (attrName(l - 9:10) == ":arrayType")
+				begin
+				k = %xml_attr_getvalue(attr, elementType)
+				l = %trimz(elementType)
+				if (colon = %instr(1, elementType, ":"))
+					begin
+					elementType = elementType(colon + 1, l)
+					l -= colon
+					end
+				end
+			end
+		end
+
+	argText = %mem_proc(DM_ALLOC, 10000)
+	items = %xml_elem_children(element)
+	itemCount = %xml_elemlist_count(items)
+	for i from 1 thru itemCount
+		begin
+		item = %xml_elemlist_item(items, i)
+		if (^passed(p_elementType)) then
+			begin
+			j = %xml_elem_getname(item, itemName)
+			tempList = %xml_elemlist_create()
+			j = %xml_elemlist_add(tempList, item)
+			xcall xsubr("deserialize" + %atrim(elementType), ^m(s.a1, argText), tempList, %atrim(itemName))
+			l = %trimz(^m(s.a1, argText))
+			j = %listAdd(result, ^m(s.a1(1:l), argText))
+			j = %xml_elemlist_delete(tempList)
+			end
+		else
+			begin
+			j = %xml_elem_gettext(item, ^m(s.a1, argText))
+			l = %trimz(^m(s.a1, argText))
+			using elementType select
+			("string"),
+				j = %listAdd(result, ^m(s.a1(1:l), argText))
+			("byte", "short", "integer", "long"),
+				j = %listAdd(result, %integer(^m(s.a1(1:l), argText)))
+			("float", "double"),
+				j = %listAdd(result, %implied(^m(s.a1(1:l), argText)))
+			("boolean"),
+				if ((^m(s.a1(1:1), argText) == 'T') || (^m(s.a1(1:1), argText) == 't')) then
+					j = %listAdd(result, 1)
+				else
+					j = %listAdd(result, 0)
+			(),
+				j = %listAdd(result, ^m(s.a1(1:l), argText))
+			endusing
+			end
+		end
+	freturn result
+.end
+;
+;	Return a named boolean value from an element list
+;
+.function getBooleanArg	,^val
+	argList		,n
+	argName		,a
+
+record
+	i		,i4
+	argText		,a28
+	argTextStart	,a1 @argText
+
+.proc
+
+	i = %xml_elem_gettext(%xml_elemlist_findtag(argList, argName), argText)
+	upcase argTextStart
+	if (argTextStart == "T") then
+		freturn 1
+	else
+		freturn 0
+.end
+;
+;	Return a named integer value from an element list
+;
+.function getIntArg	,^val
+	argList		,n
+	argName		,a
+
+record
+	i		,i4
+	argText		,a28
+
+.proc
+
+	i = %xml_elem_gettext(%xml_elemlist_findtag(argList, argName), argText)
+	freturn %integer(%atrim(argText))
+.end
+;
+;	Return a named decimal value from an element list
+;
+.function getDecimalArg
+	argList		,n
+	argName		,a
+
+record
+	i		,i4
+	argText		,a38
+
+.proc
+
+	i = %xml_elem_gettext(%xml_elemlist_findtag(argList, argName), argText)
+	freturn %implied(%atrim(argText))
+.end
+;
+;	Return a named alpha value from an element list wrapped in an XML API String
+;
+.function getXMLStringArg	,^val
+	argList		,n
+	argName		,a
+
+record
+	handle		,D_ADDR
+	result		,i4
+
+structure s
+	s1		,a10000
+
+.proc
+	handle = %mem_proc(DM_ALLOC, 10000)
+	xcall xml_string_appendhandle(result = %xml_string_create(), handle, %getElementData(^m(s.s1, handle), %xml_elemlist_findtag(argList, argName)))
+	freturn result
+.end
+;
+;	Return a named alpha value from an element list
+;
+.function getAlphaArg	,^val
+	argText		,a
+	argList		,n
+	argName		,a
+
+.proc
+
+	freturn %getElementData(argText, %xml_elemlist_findtag(argList, argName))
+.end
+;
+;	Return an alpha value from an element
+;
+.function getElementData	,^val
+	argText		,a
+	element		,n
+
+record
+	type		,a20
+	i		,i4
+	j		,i4
+	handle		,i4
+
+structure s
+	s1		,a65535
+
+external function
+	decodeHexString	,^val
+
+.proc
+
+	i = %xml_elem_getattribute(element, "xsi:type", type)
+	j = %trimz(type)
+	if (j && (type(j - 6:7) == ":base64")) then
+		begin
+		handle = %mem_proc(DM_ALLOC, 10000)
+		i = %xml_elem_gettext(element, ^m(s.s1, handle))
+; DBL version:	i = %base64_decode(argText, ^m(s.s1, handle))
+		xcall encode(BASE64_DECODE, argText, ^m(s.s1, handle), i)
+		end
+	else if (j && (type(j - 8:9) == ":hexBinary")) then
+		begin
+		handle = %mem_proc(DM_ALLOC, 10000)
+		i = %xml_elem_gettext(element, ^m(s.s1, handle))
+		i = %decodeHexString(argText, %atrim(^m(s.s1, handle)))
+		end
+	else
+		begin
+		i = %xml_elem_gettext(element, argText)
+		i = %trimz(argText)
+		end
+	freturn i
+.end
+;
+;	Return a named byte array from an element list
+;	Returns the number of elements placed into the array.
+;
+.function getByteArrayArg	,^val
+	array		,[*]i1
+	argList		,n
+	argName		,a
+
+record
+	arraySize	,i4
+	element		,i4
+	type		,a20
+	items		,i4
+	i		,i4
+	handle		,i4
+
+structure s
+	s1		,a10000
+
+.proc
+
+	arraySize = ^size(array[])
+	element = %xml_elemlist_findtag(argList, argName)
+	i = %xml_elem_getattribute(element, "xsi:type", type)
+	if (type(%trimz(type) - 6:7) == ":base64") then
+		begin
+		handle = %mem_proc(DM_ALLOC, 10000)
+		i = %xml_elem_gettext(element, ^m(s.s1, handle))
+; DBL version:	i = %base64_decode(^a(array[]), ^m(s.s1, handle))
+		xcall encode(BASE64_DECODE, ^a(array[]), ^m(s.s1, handle), i)
+		end
+	else if (type(%trimz(type) - 6:7) == ":string") then
+		begin
+		i = %xml_elem_gettext(element, ^a(array[]))
+		i = %trimz(^a(array[]))
+		end
+	else
+		begin
+		i = %getIntArrayArg(array, argList, argName)
+		end
+	freturn i
+.end
+;
+;	Extract a named numeric array from an element list
+;	Returns the number of elements placed into the array.
+;
+.function getNumericArrayArg	,^val
+	array		,[*]n
+	argList		,n
+	argName		,a
+
+record
+	arraySize	,i4
+	items		,i4
+	i		,i4
+	j		,i4
+	tempstr		,a38
+
+.proc
+
+	arraySize = ^size(array[]) / ^size(array[1])
+	items = %xml_elem_children(%xml_elemlist_findtag(argList, argName))
+	for i from 1 thru %xml_elemlist_count(items)
+		begin
+		if (i > arraySize)
+			exitloop
+		j = %xml_elem_gettext(%xml_elemlist_item(i), tempstr)
+		if (^datatype(array[1]) == D_TYPE_I) then
+			array[i] = %integer(tempstr)
+		else
+			array[i] = %implied(tempstr)
+		end
+	freturn i - 1
+.end
+;
+;	Extract a named integer array from an element list
+;	Returns the number of elements placed into the array.
+;
+.function getIntArrayArg	,^val
+	array		,[*]i
+	argList		,n
+	argName		,a
+
+record
+	arraySize	,i4
+	i		,i4
+	j		,i4
+	items		,i4
+	tempstr		,a5
+
+.proc
+
+	arraySize = ^size(array[]) / ^size(array[1])
+	items = %xml_elem_children(%xml_elemlist_findtag(argList, argName))
+	for i from 1 thru %xml_elemlist_count(items)
+		begin
+		if (i > arraySize)
+			exitloop
+		j = %xml_elem_gettext(%xml_elemlist_item(i), tempstr)
+		array[i] = %integer(tempstr)
+		end
+	freturn i - 1
+.end
+;
+;	Extract a named decimal array from an element list
+;	Returns the number of elements placed into the array.
+;
+.function getDecimalArrayArg	,^val
+	array		,[*]d.
+	argList		,n
+	argName		,a
+
+record
+	arraySize	,i4
+	i		,i4
+	j		,i4
+	items		,i4
+	tempstr		,a5
+
+.proc
+
+	arraySize = ^size(array[]) / ^size(array[1])
+	items = %xml_elem_children(%xml_elemlist_findtag(argList, argName))
+	for i from 1 thru %xml_elemlist_count(items)
+		begin
+		if (i > arraySize)
+			exitloop
+		j = %xml_elem_gettext(%xml_elemlist_item(i), tempstr)
+		array[i] = %implied(tempstr)
+		end
+	freturn i - 1
+.end
+;
+;	Extract a named alpha array from an element list
+;	Returns the number of elements placed into the array.
+;
+.function getAlphaArrayArg	,^val
+	array		,[*]a
+	argList		,n
+	argName		,a
+
+record
+	arraySize	,i4
+	i		,i4
+	j		,i4
+	items		,i4
+
+.proc
+
+	arraySize = ^size(array[]) / ^size(array[1])
+	items = %xml_elem_children(%xml_elemlist_findtag(argList, argName))
+	for i from 1 thru %xml_elemlist_count(items)
+		begin
+		if (i > arraySize)
+			exitloop
+		j = %getElementData(array[i], %xml_elemlist_item(i))
+		end
+	freturn i - 1
+.end
+;
+;	Return true if there is binary data in a string
+;
+.function binaryData	,^val
+	data		,a
+
+record
+	i		,i4
+
+structure s
+	b		,[1]i1
+
+.proc
+
+	for i from 1 thru ^size(data)
+		if ((^m(s.b[i], data) & ^x("7F")) < 32)
+			freturn 1
+	freturn 0;
+.end
+;
+;	Encode a string into hex pairs
+;
+.function encodeHexString	,^val
+	result		,a
+	input		,a
+
+structure s
+	s1		,a10000
+	b		,[1]i1 @s1
+
+structure q
+	q1		,a10000
+	w		,[1]i2 @q1
+
+record
+	index		,i4
+	inchar		,i4
+	outchar		,i4
+
+.proc
+	for index from 1 thru ^size(input)
+		begin
+		inchar = ^m(s.b[index], input)
+		outchar = ((inchar & ^x("00F0", 4)) / 16) | ((inchar & ^x("000F", 4)) * 256)
+		if ((outchar & ^x("000F", 4)) > 9) then
+			outchar += ^x("0037", 4)
+		else
+			outchar |= ^x("0030", 4)
+		if ((outchar & ^x("0F00", 4)) > ^x("0900")) then
+			^m(q.w[index], result) = outchar + ^x("3700", 4)
+		else
+			^m(q.w[index], result) = outchar | ^x("3000", 4)
+		end
+	freturn ^size(input) * 2
+.end
+;
+;	Decode a string from hex pairs into an alpha variable
+;
+.function decodeHexString	,^val
+	result		,a
+	input		,a
+
+structure s
+	s1		,a10000
+	b		,[1]i1 @s1
+
+structure q
+	q1		,a10000
+	w		,[1]a2 @q1
+
+record
+	index		,i4
+	outlen		,i4
+
+.proc
+	outlen = ^size(input) / 2
+	for index from 1 thru outlen
+		^m(s.b[index], result) = ^x(^m(q.w[index], input), 1)
+	freturn outlen
+.end
+;
+;	Make a string that is safe for putting into an XML document
+;	"&" -> "&amp;"
+;	"<" -> "&lt;"
+;
+.function encodeXMLString	,^val
+	result		,a
+	input		,a
+
+structure s
+	s1		,a10000
+	b		,[1]i1 @s1
+
+record
+	inSize		,i4
+	inIndex		,i4
+	outIndex	,i4
+	inchar		,i4
+;	group entity	,a
+;			,a2, "&#"
+;		asc	,d3
+;			,a1, ";"
+;	endgroup
+
+
+.proc
+	inSize = %trim(input)
+	outIndex = 1;
+	for inIndex from 1 thru inSize
+		begin
+		case (inchar = ^m(s.b[inIndex], input)) of begincase
+;			0-31:	These are not valid entities in XML!
+;				begin
+;				asc = inchar
+;				result(outIndex:6) = entity
+;				outIndex += 6
+;				end
+		38:
+			begin
+			result(outIndex:5) = "&amp;"
+			outIndex += 5
+			end
+		60:
+			begin
+			result(outIndex:4) = "&lt;"
+			outIndex += 4
+			end
+		endcase
+		else
+			begin
+			^m(s.b[outIndex], result) = inchar
+			incr outIndex
+			end
+		end
+	freturn outIndex - 1
+.end
+;
+; Return the control flag of a variable
+;
+.function varCtl	,^val
+	^val(descr_addr),D_ADDR
+
+structure arrayDescr
+.if (D_ADDRSIZE .eq. 8)
+	len	,i4			; Length entry
+	ctl	,i4			; Control information
+.else
+	len	,i2			; Length entry
+	ctl	,i2			; Control information
+.endc
+	addr	,D_ADDR
+	dimct	,i4			; Number of dimensions
+	scope	,i4			; Total array size
+	mult	,[4]i4			; Start of the multipliers (strides)
+
+.proc
+	freturn ^m(arrayDescr.ctl, %mem_proc(DM_REG, ^size(arrayDescr), descr_addr))
+

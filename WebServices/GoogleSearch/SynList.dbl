@@ -1,0 +1,244 @@
+;
+;	Linked list object which can store and return ANY Synergy data type
+;
+.subroutine	SynList
+	^val(retvalPtr)	,i4
+	function	,n
+	listHnd		,n
+	^val(dataPtr)	,i4
+	arg1		,i4
+	arg2		,i4
+	arg3		,i4
+	arg4		,i4
+	arg5		,i4
+	arg6		,i4
+	arg7		,i4
+	arg8		,i4
+	arg9		,i4
+	arg10		,i4
+
+.include 'SynList.def'
+.include 'DBLDIR:rcbapi.def'
+.include 'DBLDIR:synxml.def'
+
+record
+	i		,i4
+	j		,i4
+	descrSize	,i4
+	dataSize	,i4
+	listHandle	,D_ADDR
+	dataHnd		,D_ADDR
+	newHnd		,D_ADDR
+	next		,D_ADDR
+	zero		,i4, 0
+	callBlock	,i4
+	xmlString	,i4
+
+.proc
+;	retvalPtr = %DescripAddr(zero)
+	xcall CopyDescrip(^val(retvalPtr), zero)
+	using function select
+	(LIST_CREATE),
+		begin
+		listHandle = %mem_proc(DM_ALLOC|DM_STATIC|DM_NULL, ^size(ListHead))
+		xcall CopyDescrip(^val(retvalPtr), listHandle)
+		end
+	(LIST_ADD),
+		begin
+;		Get a handle to the passed data descriptor
+		dataHnd = %mem_proc(DM_REG, ^size(Descrip), dataPtr)
+
+;		The size of the data descriptor is the base descriptor size plus
+;		The stride value longwords
+		descrSize = baseDescrSize
+		if (ctlDimensioned(dataHnd))
+			descrSize += ((^m(Descrip.dimct, dataHnd) + 2) * 4)
+
+;		The data size is either the descriptor's len field, or, if an array, the scope field
+		if (ctlDimensioned(dataHnd)) then
+			dataSize = ^m(Descrip.mult[0], dataHnd)
+		else
+			dataSize = ^m(Descrip.len, dataHnd)
+
+;		Allocate memory for the new list element, its copy of the data descrptor,
+;		and its data. Memory is initially set to binary zeroes.
+		newHnd = %mem_proc(DM_ALLOC|DM_STATIC|DM_NULL, baseListElementSize + descrSize + dataSize)
+
+;		Copy the passed data descriptor into our new list elemen. Unset unwanted flags
+		^m(b.a(baseListElementSize + 1:descrSize), newHnd) = ^m(b.a(1:descrSize), dataHnd)
+		^m(Descrip.ctl, newHnd) &= (.bnot. (DSC_TEMP|DSC_GBL|DSC_LIT))
+
+;		Data address within element points to temporary data area.
+		^m(ListElement.addr, newHnd) = ^addr(^m(Descrip.len, newHnd)) + baseListElementSize + descrSize
+
+;		Copy the data into the element's data area
+		^m(b.a(baseListElementSize + descrSize + 1:dataSize), newHnd) =
+&		^m(b.a(1:dataSize), %mem_proc(DM_REG, dataSize, ^m(Descrip.addr, dataHnd)))
+
+;		Link the new element in.
+;		The previous handle of the first element points to the last element
+		if (firstHnd) then
+			begin
+			prevHnd(newHnd) = lastHnd
+			nextHnd(lastHnd) = newHnd
+			lastHnd = newHnd
+			end
+		else
+			begin
+			prevHnd(newHnd) = newHnd
+			firstHnd = newHnd
+			end
+
+;		Point the next handle of the new element to the first element
+		nextHnd(newHnd) = firstHnd
+		incr listCount
+		end
+	(LIST_SIZE),
+		begin
+		xcall CopyDescrip(^val(retvalPtr), listCount)
+		end
+	(LIST_FIRST),
+		begin
+		curHnd = firstHnd
+		xcall CopyDescrip(^val(retvalPtr), ^val(elementDescr(curHnd)))
+		end
+	(LIST_NEXT),
+		begin
+		curHnd = nextHnd(curHnd)
+		xcall CopyDescrip(^val(retvalPtr), ^val(elementDescr(curHnd)))
+		end
+	(LIST_PREV),
+		begin
+		curHnd = prevHnd(curHnd)
+		xcall CopyDescrip(^val(retvalPtr), ^val(elementDescr(curHnd)))
+		end
+	(LIST_DELETE),
+		begin
+		curHnd = firstHnd
+		for i from 1 thru listCount
+			begin
+			next = nextHnd(curHnd)
+			j = %mem_proc(DM_FREE, curHnd)
+			curHnd = next
+			end
+		j = %mem_proc(DM_FREE, listHnd)
+		end
+
+;	Traverse the list calling the specified routine.
+;	The data is passed as the first arg, all other arguments passed
+;	are sent as subsequent args
+	(LIST_TRAVERSE),
+		begin
+
+;		Set up an call block for the routine
+		callBlock = %rcb_create(%numargs - 3)
+		xcall rcb_setfnc(callBlock, ^val(dataPtr))
+		j = 2
+		for i from 5 thru %numargs
+			begin
+			if (^datatype(i) == D_TYPE_A) then
+				xcall rcb_setarg(callBlock, ^arg(i), j)
+			else
+				xcall rcb_setarg(callBlock, ^argn(i), j)
+			incr j
+			end
+
+;		Go thru the list calling the routine
+		curHnd = firstHnd
+		for i from 1 thru listCount
+			begin
+			xcall rcb_setarg(callBlock, ^val(elementDescr(curHnd)), 1)
+			j = %rcb_call(callBlock)
+			curHnd = nextHnd(curHnd)
+			end
+		xcall rcb_delete(callBlock)
+		end
+
+.ifdef ENABLE_SERIALIZE
+	(LIST_SERIALIZE),
+		begin
+
+;		Create the XML string
+		xmlString = %xml_string_create()
+		xcall xml_string_append(xmlString, "<")
+		xcall xml_string_append(xmlString, ^val(dataPtr))
+		xcall xml_string_append(xmlString, " xsi:type=""xse::Array""")
+		if (ctlInteger(firstHnd)) then
+			using ^m(Descrip.len, firstHnd) select
+			(1),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:byte")
+			(2),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:short")
+			(4),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:int")
+			(8),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:long")
+			endusing
+		else if (ctlDecimal(firstHnd)) then
+			using ^m(Descrip.len, firstHnd) select
+			(1),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:byte")
+			(2),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:short")
+			(3 thru 4),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:int")
+			(> 4),
+				xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:long")
+			endusing
+		else if (ctlImplied(firstHnd)) then
+			xcall xml_string_append(xmlString, " xse:arrayTtype=""xsd:float")
+		else
+			xcall xml_string_append(xmlString, " xse:arrayType=""xsd:string")
+		xcall xml_string_append(xmlString, "[" + %string(listCount) + "]"">")
+
+;		Set up an call block for the routine
+		callBlock = %rcb_create(3)
+		xcall rcb_setfnc(callBlock, "addParam")
+		xcall rcb_setarg(callBlock, xmlString, 1)
+		xcall rcb_setarg(callBlock, "item", 2)
+
+;		Go thru the list calling the routine
+		curHnd = firstHnd
+		for i from 1 thru listCount
+			begin
+			xcall rcb_setarg(callBlock, ^val(elementDescr(curHnd)), 3)
+			j = %rcb_call(callBlock)
+			curHnd = nextHnd(curHnd)
+			end
+		xcall rcb_delete(callBlock)
+
+		xcall xml_string_append(xmlString, "</")
+		xcall xml_string_append(xmlString, ^val(dataPtr))
+		xcall xml_string_append(xmlString, ">")
+		xcall CopyDescrip(^val(retvalPtr), xmlString)
+		end
+.endc
+	endusing
+	xreturn
+.end
+;
+;	Copy the descriptor of the passed data into the passed descriptor
+;
+.subroutine CopyDescrip
+	^val(destPtr)	,D_ADDR
+	^val(sourcePtr)	,D_ADDR
+
+.include 'SynList.def'
+
+record
+	destHnd		,D_ADDR
+	sourceHnd	,D_ADDR
+	descrSize	,i4
+
+.proc
+	destHnd = %mem_proc(DM_REG, ^size(Descrip), destPtr)
+	sourceHnd = %mem_proc(DM_REG, ^size(Descrip), sourcePtr)
+	descrSize = baseDescrSize
+	if (ctlDimensioned(sourceHnd))
+		descrSize += ((^m(Descrip.dimct, destHnd) + 2) * 4)
+
+;	Create a copy of the passed data descriptor in our new temp descriptor
+	^m(b.a(1:descrSize), destHnd) = ^m(b.a(1:descrSize), sourceHnd)
+
+	xreturn ^addr(destPtr)
+.end

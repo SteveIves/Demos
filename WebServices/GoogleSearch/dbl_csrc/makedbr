@@ -1,0 +1,193 @@
+#!/bin/sh
+#
+# NOTE: This file will be removed in V9 of Synergy/DE. Use the DLL 
+# interface instead.
+#
+# MAKEDBR 
+#
+# Use this script to create a new Synergy DBL runtime that includes 
+# any or all of the following:
+#   1. your C subroutines.
+#   2. termcap (tclib.a) instead of the default terminfo (tilib.a).
+#   3. C-ISAM interface 
+#   4. no client/server support
+#   5. Small SDMS with no extended support
+#   6. No fsync() support
+#   7. C++ main line
+#
+# Requirements: 
+#   1. C compiler
+#   2. Root privilege
+#        (dbr must be owned by root with setuid for ulimit upgrade)
+#   3. TCP/IP libraries for Client/Server support 
+#	"makedbr" defaults to linking the Synergy runtime with the 
+#	TCP/IP development libraries on your system.  If your system
+#	does not have this support, makedbr will report errors when 
+#	it tries to link with them.  If you get these errors, set
+#	MAKEDBR_RPC=none and re-execute makedbr.
+#   4. Lean SDMS
+#	If you don't plan on using Client/Server, DISAM, CISAM
+#	you can re-build the Synergy runtime without the extended support.
+#	Set MAKEDBR_LEAN=y and execute makedbr.  The resulting runtime
+#	will be 10-50Kb smaller in size.
+#   5. fsync() support
+#	The runtime calls the fsync() system routine.  If this routine
+#	is not supported on your system, set MAKEDBR_NOFSYNC=y before
+#	running "makedbr".  We know that fsync() is not available on 
+#	some UNIX 386 and SCO systems.
+#
+# C Interface instructions:
+#   1. Remove the entry in rulib.xll and add entries for your C routines.
+#      Entries in the file have the form:
+#          "XCALL_ROUTINE_NAME,c_routine_name"
+#   2. Run rxcalls to create new rxrefs.c
+#          rxcalls -f rulib.xll
+#   3. Compile C programs
+#          cc -O -c cprog1.c
+#   4. Add your C program objects to the user library ulib.a
+#          ar rcv $DBLDIR/lib/ulib.a cprog1.o ...
+#   5. Compile rxrefs.c (which now contains your routine linkages)
+#          cc -O -c rxrefs.c
+#   6. Create new runtime using makedbr with your C programs and libraries 
+#          makedbr
+#   7. Install the new system.  (This replaces the old runtime, so you may
+#      want to save your current dbr and rxrefs.c.)
+#	   set DBLDIR to parent directory
+#	   cp dbr_new dbr  
+#          cp rxrefs.c $DBLDIR
+#
+# Termcap vs terminfo 
+#   The terminfo library is the default.  To link with the termcap library
+#   instead, set:
+#   	MAKEDBR_TLIB=termcap
+#   To relink with the terminfo library, set:
+#   	MAKEDBR_TLIB=terminfo
+#
+# C-ISAM interface 
+#   To link with the C-ISAM interface, assign the location of your 
+#   C-ISAM libraries to the XLIB variable below, and set: 
+#	MAKEDBR_CISAM=y
+#
+# D-ISAM interface 
+#   To link with the D-ISAM interface, assign the location of your 
+#   D-ISAM libraries to the XLIB variable below, and set: 
+#	MAKEDBR_DISAM=y
+#
+# No TCP/IP socket support
+#   To link without socket support, set:
+#   	MAKEDBR_RPC=none
+#
+# Lean SDMS
+#   To link with lean SDMS, set:
+#   	MAKEDBR_LEAN=y
+#
+# No fsync() 
+#   To link on a system that does not support the fsync() system routine,
+#   set:
+#   	MAKEDBR_NOFSYNC=y
+#
+# C++ main line.
+#   Add a call as follows to your C++ main line.
+#   Then change the MSRC variable below to the name of your main line object.
+#   On all systems except SFW:
+#
+#        void dbmain(int ac, char **av)
+#
+#        where ac and av are passed from main(ac, av)
+#
+#  On SFW:
+#
+#        void dbmain(HANDLE hInstance, HANDLE hPrevInstance, LPSTR 
+#                lpszCmdLine, int cmdShow)
+#
+#        where hInstance, hPrevInstance etc. are passed from WinMain().
+#
+
+. $DBLDIR/csrc/makesys
+BIN=dbr_new
+MSRC=dbrun.o			# Runtime mainline object
+
+if [ "$DBLLIB" = "" ]; then
+DBLLIB="$DBLDIR/lib"
+fi
+
+TCLIB="$DBLLIB/tclib.a"		# Termcap library
+TILIB="$DBLLIB/tilib.a" 		# Terminfo library
+RLIB="$DBLLIB/drnt.a"		# Runtime library
+RRLIB="$DBLLIB/drntr.a"		# Runtime library non dbs
+DLIB="$DBLLIB/dlib.a"		# Xcall library
+INORLIB="$DBLLIB/nordisam.a"	# ISAM library
+IRLIB="$DBLLIB/disam.a"		# ISAM library
+CSLIB="$DBLLIB/cslib.a"		# Client/Server library
+SSLIB="$DBLLIB/synsort.a $DBLLIB/ismutl.a"	#sort library
+WLIB="$DBLLIB/dwnd.a"		# Window library
+ULIB="$DBLLIB/ulib.a"		# User library
+UTLIB="$DBLLIB/dutil.a"		# Utility library
+STBLIB="$DBLLIB/stblib.a"		# Our stub library
+JLELIB=					# Japanese Character set library
+FSYNC=					# don't use fsync_stub.o
+SSOCK=					# don't use quickstub.o
+XLIB="-lisam"				# C-ISAM library
+DXLIB="-lisam"				# D-ISAM library
+CISAMO="$DBLLIB/cisam.o"		# C-ISAM support object
+DISAMO="$DBLLIB/disam.o"		# D-ISAM support object
+LIBZ="$DBLLIB/libz.a"			# libz compression library
+
+#SLIB				defined in makesys
+#LDFLAGS=			defined in makesys
+
+TLIB="$TILIB $XTILIB"			# Default to Terminfo library
+if [ "$MAKEDBR_TLIB" = "termcap" ]; then
+    TLIB=$TCLIB
+elif [ "$MAKEDBR_TLIB" != "terminfo" ]; then
+    echo "Warning: Defaulting to Terminfo library"
+fi
+
+ILIB="$IRLIB $SSLIB $IRLIB $CSLIB"		# Default to extended SDMS
+if [ "$MAKEDBR_RPC" = "none" ]; then
+    ILIB="$IRLIB $SSLIB $IRLIB"
+    SLIB=$NRSLIB
+    SSOCK="$DBLLIB/quickstmp.o"
+elif [ "$MAKEDBR_RPC" != "none" ]; then
+if [ "$MAKEDBR_LEAN" != "y" ]; then
+
+    echo "Warning: Defaulting to CLIENT/SERVER support"
+fi
+fi
+ 
+if [ "$MAKEDBR_LEAN" = "y" ]; then
+    echo "Building with lean SDMS"
+    ILIB="$SSLIB $INORLIB"
+    SLIB=$NRSLIB
+    SSOCK="$DBLLIB/quickstmp.o"
+fi
+
+XISM=				# Default to no C-ISAM library
+if [ "$MAKEDBR_CISAM" = "y" ]; then
+    XISM="$CISAMO $XLIB"
+fi
+    
+if [ "$MAKEDBR_DISAM" = "y" ]; then
+    XISM="$DISAMO $DXLIB"
+fi
+    
+if [ "$MAKEDBR_NOFSYNC" = "y" ]; then
+    FSYNC="$DBLLIB/fsync_stub.o"
+fi
+
+if [ ! -f rxrefs.o ]; then
+ar $ARFLAGS x $RLIB rxrefs.o		# Extract runtime linkage objects
+fi
+
+ar $ARFLAGS x $RLIB dbrun.o		# Extract runtime linkage objects
+
+if [ xx$CC = xx ]; then
+CC=cc
+fi
+
+LIBS="$ULIB $SSOCK $RLIB $RRLIB $DLIB $WLIB $TLIB $UTLIB $ILIB $JLELIB $XISM $FSYNC $STBLIB $UTLIB $SLIB $DLLLIBS $LIBZ"
+$CC $LDFLAGS -o $BIN $MSRC rxrefs.o $* $LIBS 
+strip $STFLAGS $BIN  
+if [ "$MCSCMD" != "" ]; then
+$MCSCMD $BIN
+fi
