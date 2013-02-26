@@ -1,0 +1,39 @@
+
+main EscapeHandle
+
+	.include "DBLDIR:synxml.def"
+
+	record
+		handle	,i4
+		len		,i4
+	endrecord
+
+proc
+
+	open(1,o,"tt:")
+	handle = mem_proc(DM_ALLOC+DM_STATIC,19)
+
+	^m(handle) = '$+, \"<>#%{}|\\^~[]'
+	len = trimz(^m(handle))
+	writes(1,^m(handle))
+
+	syn_escape_handle(handle,HTTP_RULES,len)
+	writes(1,^m(handle))
+
+	len = trimz(^m(handle))
+	syn_unescape_handle(handle,HTTP_RULES,len)
+	writes(1,^m(handle))
+
+	syn_escape_handle(handle,XML_RULES,len)
+	writes(1,^m(handle))
+
+	len=trimz(^m(handle))
+	syn_unescape_handle(handle,XML_RULES,len)
+	writes(1,^m(handle))
+
+	handle = mem_proc(DM_FREE,handle)
+
+	close 1
+	stop
+
+endmain
