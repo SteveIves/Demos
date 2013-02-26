@@ -1,0 +1,652 @@
+;*****************************************************************************
+;
+; Title:        UspsTrack
+;
+; Description:  An example of using the "USPS Track/Confirm" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; Versions:     Synergy/DE V8.1.3a and higher
+;
+; Platforms:    All platforms
+;
+;*****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;*****************************************************************************
+;
+; The following code provides an example of using the Synergy XML API and the
+; Synergy HTTP API to interact with the "USPS Track/Confirm" web service.
+;
+;   THIS CODE WILL NOT WORK UNTIL YOU HAVE TAKEN SEVERAL STEPS:
+;
+;   - Ensure you are running Synergy 8.3.1a or higher.  Communicating with the
+;     USPS web services requires a fix which was included in 8.1.3a.  This
+;     software is very unlikely to work with earlier Synergy versions.
+;
+;   - Sign up for a web services USERID at USPS.COM
+;
+;       Refer to http://www.usps.com/webtools/welcome.htm
+;
+;   - Set several environment variables to specify your USPS environment
+;           
+;       USPS_USERID     User ID obtained from USPS.COM
+;       USPS_TEST_URL   URL of test server (see USPS documentation)
+;       USPS_LIVE_URL   URL of live server (from USPS after testing)
+;
+;       At the time of writing the test URL is:
+;
+;       http://testing.shippingapis.com/ShippingAPITest.dll
+;
+;		DO NOT INCLUDE THE ?API= or the &XML= as these are added by the code
+;
+;   - If you need to go through a proxy server in order to access the internet
+;     then you will need to define the proxy server for the HTTP API. This is
+;     done with these environment variables:
+;
+;       HTTP_PROXY_HOST     Host name or IP address of proxy server
+;       HTTP_PROXY_PORT     Proxy server port number
+;       HTTP_PROXY_SUBNET   (may not be needed)
+;       HTTP_PROXY_LOCAL    (may not be needed)
+;
+;     Refer to the Synergy Language Reference manual for further information.
+;
+;   - Test your application against the test server
+;
+;   - Request that USPS move your account to the production server
+;
+;   Detailed documentation for all of the above is included in the developer
+;   information which is obtained from the USPS web site. Please DO NOT
+;   CONTACT SYNERGEX with questions relating to this, as we will be unable
+;   to provide any assistance in this area.
+;
+;*****************************************************************************
+.ifdef USPSTRACK_INCLUDE ;BEGINNING OF INCLUDE SECTION
+;*****************************************************************************
+.undefine USPSTRACK_INCLUDE
+
+.ifdef USPSTRACK_INTERNAL
+.undefine USPSTRACK_INTERNAL
+
+.define D_API_NAME			"TrackV2"				;USPS API function name
+.define D_HTTP_LOG_FILE 	"UspsTrack.log"         ;HTTP log file
+.define D_HTTP_TIMEOUT  	10                      ;HTTP request timeout
+
+.endc ;USPSTRACK_INTERNAL
+
+;-----------------------------------------------------------------------------
+
+.ifndef USPSTRACK_DEFINES
+.define USPSTRACK_DEFINES
+
+;Defines go here
+
+.endc
+
+structure track_data
+						,a128
+
+;*****************************************************************************
+.else ;USPSTRACK_INCLUDE ;END OF INCLUDE SECTION, BEGINNING OF PROGRAM CODE
+;*****************************************************************************
+
+;=============================================================================
+;
+; Title:        UspsTrackTest
+;
+; Description:  An example of using the "USPS Track/Confirm" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.main UspsTrackTest
+
+.define USPSTRACK_INCLUDE
+.include "UspsTrack.dbl"
+
+record ivars
+    ok              ,i4         ;OK to continue
+    tt              ,i4         ;Terminal channel
+    count           ,i4         ;Loop counter
+    trackdata       ,i4         ;Tracking data (from track routine)
+    len             ,i4         ;LEngth of a string
+
+record avars
+    userid          ,a20        ;USPS user id
+    url             ,a128       ;URL of server to use
+    test_url        ,a128       ;URL of test server
+    live_url        ,a128       ;URL of live server
+	trackid			,a20		;Tracking ID
+	error_number    ,a15        ;USPS error number
+    errtxt          ,a76        ;Error text
+    char            ,a1         ;A character
+    char1           ,a1         ;A character
+
+.proc
+
+    ok = 1
+    open(tt=%syn_freechn,i,"tt:")
+    xcall flags(7004020,1)
+    display(tt,$scr_pos(1,1),$scr_clr(SCREEN))
+
+    xcall getlog("USPS_USERID",userid,len)
+    if (!len) 
+    begin
+        writes(tt,"Environment variable USPS_USERID has not been defined!")
+        clear ok
+    end
+
+    xcall getlog("USPS_TEST_URL",test_url,len)
+    if (!len) 
+    begin
+        writes(tt,"Environment variable USPS_TEST_URL has not been defined!")
+        clear ok
+    end
+
+    xcall getlog("USPS_LIVE_URL",live_url,len)
+
+    if (!ok) then
+        sleep 5
+    else
+    begin
+        repeat
+        begin
+            display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+            &       "USPS Track/Confirm",
+            &       $scr_pos(3,1), "[T]est, [L]ive or [E]xit: ")
+
+            accept(tt,char)
+
+            repeat
+            begin
+                if (!%ttsts)
+                    exitloop
+                accept(tt,char1)
+            end
+
+            upcase char
+            using char select
+            ("T"),
+                call test
+            ("L"),
+                call live
+            ("E"),
+                exitloop
+            (),
+            begin
+                display(tt,$SCR_POS(3,30),"Invalid option")
+                sleep 0.5
+            end
+            endusing
+        end
+    end
+
+    close tt
+    stop
+
+;------------------------------------------------------------------------------
+;
+;
+test,
+
+    url = test_url
+
+    repeat
+    begin
+        display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+        &       "USPS Track/Confirm - TEST MODE",
+        &       $scr_pos(3,1), "Which test   (1,2 or E): ")
+
+        accept(tt,char)
+
+        repeat
+        begin
+            if (!%ttsts)
+                exitloop
+            accept(tt,char1)
+        end
+
+        upcase char
+        using char select
+        ("1"),
+		begin
+			trackid = "EJ958083578US"
+			call track_it
+		end
+        ("2"),
+		begin
+			trackid = "EJ958088694US"
+			call track_it
+		end
+        ("E"),
+            exitloop
+        (),
+        begin
+            display(tt,$SCR_POS(3,30),"Invalid option")
+            sleep 0.5
+        end
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+live,
+
+    display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+    &       "USPS Track/Confirm - LIVE MODE")
+
+    if (!(url=live_url))
+    begin
+        display(tt,
+        &   $scr_pos(3,1),"Can't be used live until you define the ",
+        &   "environment variable USPS_LIVE_URL.")
+        sleep 4
+        return
+    end
+
+	repeat
+	begin
+
+		display(tt,$scr_pos(3,1),$scr_clr(EOS),"Tracking ID (Enter to exit): ")
+		reads(tt,trackid)
+
+		if (!trackid) 
+			exitloop
+
+		call track_it
+
+	end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+track_it,
+
+    display(tt,$scr_pos(5,1),$scr_clr(EOS),"Contacting USPS...")
+
+    if (%UspsTrack(url,userid,trackid,trackdata,error_number,errtxt)) then
+        call display_it
+    else
+        call display_error
+
+    if (trackdata) 
+        trackdata = %mem_proc(DM_FREE,trackdata)
+
+    display(tt,$scr_pos(24,1),"Press a key: ")
+
+    accept(tt,char)
+
+    repeat
+    begin
+        if (!%ttsts)
+            exitloop
+        accept(tt,char1)
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+display_it,
+
+    display(tt,$scr_pos(5,1),$scr_clr(EOS),
+	&		"Tracking data for consignment ID ",trackid,
+	&		$scr_pos(7,1))
+
+    for count from 1 thru %mem_proc(DM_GETSIZE,trackdata) / ^size(track_data)
+        writes(tt,%atrim(^m(track_data[count],trackdata)))
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+display_error,
+
+    display(tt,
+    &       $scr_pos(22,1),"Error ",error_number,
+    &       $scr_pos(23,1),%atrim(errtxt))
+
+    return
+
+.end
+
+;=============================================================================
+;
+; Title:        UspsTrack
+;
+; Description:  Function to call the "USPS Track/Confirm" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.function UspsTrack, ^val
+
+    ;Input arguments
+    a_url               ,a      ;URL of USPS server to be used
+    a_userid            ,a      ;USPS user id to be used
+    a_trackid           ,a      ;Tracking ID
+
+    ;Output arguments
+    a_trackdata         ,i      ;Returned handle containing tracking data
+    a_error_number      ,a      ;Returned error number
+    a_error_text        ,a      ;Returned error text
+
+    ;End of arguments
+
+.include "DBLDIR:synxml.def"
+
+.define USPSTRACK_INCLUDE
+.define USPSTRACK_INTERNAL
+.include "UspsTrack.dbl"
+
+.align
+stack record ivars
+
+    ok              ,i4                 ;Function return value, 1=Success
+
+    doc             ,XML_DOC_TYPE       ;XML stuff for building & parsing
+    root            ,XML_ELEM_TYPE
+    xmlstr          ,XML_STRING_TYPE
+    parser          ,XML_PARSER_TYPE
+    children        ,XML_ELEMLIST_TYPE
+    children1       ,XML_ELEMLIST_TYPE
+    error_children  ,XML_ELEMLIST_TYPE
+    child           ,XML_ELEM_TYPE
+    child1          ,XML_ELEM_TYPE
+    error_child     ,XML_ELEM_TYPE
+
+    count           ,i4                 ;Loop counters
+    count1          ,i4
+
+    status          ,i4                 ;Status from HTTP call
+    sh              ,D_ADDR             ;Send data handle
+    sl              ,i4                 ;Send data length
+    rh              ,D_ADDR             ;Receive data handle
+    rl              ,i4                 ;Receive data length
+	tr	  		  	,i4                 ;Tracking records returned
+
+stack record avars
+
+    errtxt          ,a80                ;An error message
+    elem_name       ,a40                ;Name of an XML element
+    elem_text       ,a512               ;Text in an XML element
+	url				,a2048				;URL to use
+
+.proc
+
+    ;Initialize data to a known state
+    clear ^i(ivars), avars, a_error_number, a_error_text
+    ok = 1
+
+	if (a_trackdata) 
+		a_trackdata = %mem_proc(DM_FREE,a_trackdata)
+
+    ;Build the XML document for the request
+
+    doc = %xml_doc_create
+
+    xcall xml_option("ENCODE",SYNESCAPE_ESCAPE)
+
+    root = %xml_doc_getroot(doc)
+    xcall xml_elem_setname(root,"TrackRequest")
+    xcall xml_elem_setattribute(root,"USERID",%atrim(a_userid))
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"TrackID")
+    xcall xml_elem_setattribute(child,"ID",%atrim(a_trackid))
+    xcall xml_elem_addchild(root,child)
+
+    ;Extract the XML data to an XML string
+    xmlstr = %xml_doc_tostring(doc)
+    xcall xml_doc_delete(doc)
+
+    ;Allocate a memory handle for the XML data
+    sl = %xml_string_getsize(xmlstr)
+    sh = %mem_proc(DM_ALLOC+DM_BLANK,sl)
+
+    ;Extract the XML data to the memory handle
+    ^m(sh) = ^m(%xml_string_gethandle(xmlstr))
+    xcall xml_string_delete(xmlstr)
+
+    ;Delete the log file so we have a fresh one each time
+    xcall delet(D_HTTP_LOG_FILE)
+
+	;Build the URL for the HTTP GET
+	xcall s_bld(url,,"%a?API=%a&XML=%a",a_url,D_API_NAME,^m(sh))
+
+    ;Call the web service
+    status = %http_client_get(%atrim(url),D_HTTP_TIMEOUT,rh,rl,
+	&		errtxt,,D_HTTP_LOG_FILE)
+
+	;Did it work?
+    using status select
+    (0),        ;Success
+    begin
+        ;Yes, did we get any data back?
+        if (rh && rl) then
+            call parse_response
+        else
+        begin
+            clear ok
+            a_error_text = "USPS server returned a blank response"
+        end
+    end
+    (10060),    ;Timeout
+    begin
+        clear ok
+        a_error_number = %string(status)
+        a_error_text = "USPS server failed to respond within timeout period"
+    end
+    (),         ;Error
+    begin
+        clear ok
+        a_error_number = %string(status)
+        a_error_text = "HTTP connection failed: " + errtxt
+    end
+    endusing
+
+    ;Clean up
+    sh = %mem_proc(DM_FREE,sh)
+    if (rh)
+        rh = %mem_proc(DM_FREE,rh)
+
+    freturn ok
+
+;-----------------------------------------------------------------------------
+;The response data from the server is in the memory handle rh.  The length of
+;the response data is in rl.
+;
+parse_response,
+
+    xcall xml_option("ENCODE",SYNESCAPE_UNESCAPE)
+
+    ;Load the data into an XML string
+    xmlstr = %xml_string_create
+    xcall xml_string_appendhandle(xmlstr,rh,rl)
+
+    ;Parse the XML string to create an XML document
+    parser = %xml_parser_create
+    doc = %xml_parser_parsestring(parser,xmlstr)
+
+    ;Clean up the XML string and parser
+    xcall xml_string_delete(xmlstr)
+    xcall xml_parser_delete(parser)
+
+    ;Was the XML parsed?
+    if (doc) then
+    begin
+        ;Yes, work with the results
+        root = %xml_doc_getroot(doc)
+        xcall xml_elem_getname(root,elem_name)
+
+        using elem_name select
+        ("TrackResponse"),
+            call parse_track_response
+        ("Error"),
+            call parse_severe_error
+        (),
+        begin
+            xcall s_bld(a_error_text,,
+            &           "Unexpected root element <%a>",
+            &           elem_name)
+            clear ok
+        end
+        endusing
+
+        xcall xml_doc_delete(doc)
+    end
+    else
+    begin
+        ;No - invalid XML?
+        clear ok
+        xcall xml_parser_error(parser,errtxt)
+        a_error_text = "Failed to parse response XML: " + errtxt
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;<TrackResponse>
+;
+parse_track_response,
+
+    children = %xml_elem_children(root)
+
+    for count from 1 thru %xml_elemlist_count(children)
+    begin
+        child = %xml_elemlist_item(children,count)
+        xcall xml_elem_getname(child,elem_name)
+
+		using elem_name select
+        ("TrackInfo"),
+            call parse_track_info
+        ("Error"),
+            call parse_response_error
+        endusing
+
+	end
+
+    return
+
+parse_track_info,
+
+	children1 = %xml_elem_children(child)
+
+	for count1 from 1 thru %xml_elemlist_count(children1)
+	begin
+		child1 = %xml_elemlist_item(children1,count1)
+		xcall xml_elem_getname(child1,elem_name)
+
+		using elem_name select
+		("GuaranteedDeliveryDate"),
+			call add_item
+		("TrackSummary"),
+			call add_item
+		("TrackDetail"),
+			call add_item
+		("Error"),
+			call parse_track_error
+		endusing
+
+	end
+
+	return
+
+add_item,
+
+	if (!tr) then
+	    a_trackdata = %mem_proc(DM_ALLOC|DM_BLANK|DM_STATIC,
+	    &       ^size(track_data)*(tr=1))
+    else
+	    a_trackdata = %mem_proc(DM_RESIZ|DM_BLANK,
+	    &       ^size(track_data)*(tr+=1),a_trackdata)
+
+	xcall xml_elem_gettext(child1,elem_text)
+	^m(track_data[tr],a_trackdata) = elem_text
+
+	return
+
+;------------------------------------------------------------------------------
+;<Error>
+;
+parse_severe_error,
+
+    error_children = %xml_elem_children(root)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;<TrackResponse/Error>
+;
+parse_response_error,
+
+    error_children = %xml_elem_children(child)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;<TrackResponse/TrackInfo/Error>
+;
+parse_track_error,
+
+    error_children = %xml_elem_children(child1)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;Extract and return the error details
+;
+parse_error,
+
+    for count from 1 thru %xml_elemlist_count(error_children)
+    begin
+        error_child = %xml_elemlist_item(error_children,count)
+        xcall xml_elem_getname(error_child,elem_name)
+        xcall xml_elem_gettext(error_child,elem_text)
+        using elem_name select
+        ("Number"),
+            a_error_number = elem_text
+        ("Description"),
+            a_error_text = elem_text
+        endusing
+    end
+
+    clear ok
+
+    return
+
+.end
+
+;*****************************************************************************
+.endc ;USPSTRACK_INCLUDE - END OF PROGRAM CODE
+;*****************************************************************************
+

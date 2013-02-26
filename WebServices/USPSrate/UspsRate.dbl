@@ -1,0 +1,1140 @@
+;*****************************************************************************
+;
+; Title:        UspsRate
+;
+; Description:  An example of using the "USPS Rate Calculator" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; Versions:     Synergy/DE V8.1.3a and higher
+;
+; Platforms:    All platforms
+;
+;*****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;*****************************************************************************
+;
+; The following code provides an example of using the Synergy XML API and the
+; Synergy HTTP API to interact with the "USPS Rates Calculators" web service.
+;
+;   THIS CODE WILL NOT WORK UNTIL YOU HAVE TAKEN SEVERAL STEPS:
+;
+;   - Ensure you are running Synergy 8.3.1a or higher.  Communicating with the
+;     USPS web services requires a fix which was included in 8.1.3a.  This
+;     software is very unlikely to work with earlier Synergy versions.
+;
+;   - Sign up for a web services USERID at USPS.COM
+;
+;       Refer to http://www.usps.com/webtools/welcome.htm
+;
+;   - Set several environment variables to specify your USPS environment
+;           
+;       USPS_USERID     User ID obtained from USPS.COM
+;       USPS_TEST_URL   URL of test server (see USPS documentation)
+;       USPS_LIVE_URL   URL of live server (from USPS after testing)
+;
+;       At the time of writing the test URL is:
+;
+;       http://testing.shippingapis.com/ShippingAPITest.dll
+;
+;		DO NOT INCLUDE THE ?API= or the &XML= as these are added by the code
+;
+;   - If you need to go through a proxy server in order to access the internet
+;     then you will need to define the proxy server for the HTTP API. This is
+;     done with these environment variables:
+;
+;       HTTP_PROXY_HOST     Host name or IP address of proxy server
+;       HTTP_PROXY_PORT     Proxy server port number
+;       HTTP_PROXY_SUBNET   (may not be needed)
+;       HTTP_PROXY_LOCAL    (may not be needed)
+;
+;     Refer to the Synergy Language Reference manual for further information.
+;
+;   - Test your application against the test server
+;
+;   - Request that USPS move your account to the production server
+;
+;   Detailed documentation for all of the above is included in the developer
+;   information which is obtained from the USPS web site. Please DO NOT
+;   CONTACT SYNERGEX with questions relating to this, as we will be unable
+;   to provide any assistance in this area.
+;
+;*****************************************************************************
+.ifdef USPSRATE_INCLUDE ;BEGINNING OF INCLUDE SECTION
+;*****************************************************************************
+.undefine USPSRATE_INCLUDE
+
+.ifdef USPSRATE_INTERNAL
+.undefine USPSRATE_INTERNAL
+
+.define D_API_NAME			"RateV2"				;USPS API function name
+.define D_HTTP_LOG_FILE 	"UspsRate.log"          ;HTTP log file
+.define D_HTTP_TIMEOUT  	10                      ;HTTP request timeout
+
+.endc ;USPSRATE_INTERNAL
+
+;-----------------------------------------------------------------------------
+.ifndef USPSRATE_DEFINES
+.define USPSRATE_DEFINES
+
+.define D_SERVICE_EXPRESS   "Express"
+.define D_SERVICE_FIRST     "First Class"
+.define D_SERVICE_PRIORITY  "Priority"
+.define D_SERVICE_PARCEL    "Parcel"
+.define D_SERVICE_BPM       "Bound Printed Matter"
+.define D_SERVICE_LIBRARY   "Library"
+.define D_SERVICE_MEDIA     "Media"
+.define D_SERVICE_ALL       "All"
+
+.define D_CONTAINER_ENV     "Flat Rate Envelope"
+.define D_CONTAINER_BOX     "Flat Rate Box"
+
+.define D_SIZE_REGULAR      "Regular"
+.define D_SIZE_LARGE        "Large"
+.define D_SIZE_OVERSIZE     "Oversize"
+
+.define package(record,field) ^m(package_data.field,record)
+.define postage(handle,recnum,field) ^m(postage_data[recnum].field,handle)
+
+.endc
+
+external function
+    UspsPackageSize ,a
+
+structure package_data          ;Details of a package to be quoted
+    pa_service          ,a15    ;Mail service type (see D_SERVICE_*)
+    pa_zip_ogn          ,a5     ;Origin ZIP code
+    pa_zip_dst          ,a5     ;Destination ZIP code
+    pa_pounds           ,a2     ;Weight (pounds)
+    pa_ounces           ,a2     ;Weight (ounces)
+    pa_container        ,a18    ;Container type (see D_CONTAINER_*)
+    pa_size             ,a10    ;Size (see D_SIZE_*)
+    pa_machinable       ,a5     ;Package is "machinable"
+    pa_zone             ,a15    ;Postal zones between origin & destination
+
+structure postage_data          ;Returned quote details
+    po_service          ,a50    ;Mail service
+    po_rate             ,a10    ;Rate
+
+;*****************************************************************************
+.else ;USPSRATE_INCLUDE ;END OF INCLUDE SECTION, BEGINNING OF PROGRAM CODE
+;*****************************************************************************
+
+;=============================================================================
+;
+; Title:        UspsRateTest
+;
+; Description:  An example of using the "USPS Rates Calculators" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.main UspsRateTest
+
+.define USPSRATE_INCLUDE
+.include "UspsRate.dbl"
+
+record ivars
+    ok              ,i4         ;OK to continue
+    tt              ,i4         ;Terminal channel
+    count           ,i4         ;Loop counter
+    podata          ,i4         ;Quote data (from rate routine)
+    len             ,i4         ;LEngth of a string
+
+record avars
+    userid          ,a20        ;USPS user id
+    url             ,a128       ;URL of server to use
+    test_url        ,a128       ;URL of test server
+    live_url        ,a128       ;URL of live server
+    error_number    ,a15        ;USPS error number
+    errtxt          ,a76        ;Error text
+    char            ,a1         ;A character
+    char1           ,a1         ;A character
+
+    padata          ,a^size(package_data)   ;Package data (to rate routine)
+
+    length          ,d2
+    girth           ,d2
+    alength         ,a2
+    agirth          ,a2
+
+.proc
+
+    ok = 1
+    open(tt=%syn_freechn,i,"tt:")
+    xcall flags(7004020,1)
+    display(tt,$scr_pos(1,1),$scr_clr(SCREEN))
+
+    xcall getlog("USPS_USERID",userid,len)
+    if (!len) 
+    begin
+        writes(tt,"Environment variable USPS_USERID has not been defined!")
+        clear ok
+    end
+
+    xcall getlog("USPS_TEST_URL",test_url,len)
+    if (!len) 
+    begin
+        writes(tt,"Environment variable USPS_TEST_URL has not been defined!")
+        clear ok
+    end
+
+    xcall getlog("USPS_LIVE_URL",live_url,len)
+
+    if (!ok) then
+        sleep 5
+    else
+    begin
+        repeat
+        begin
+            display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+            &       "USPS Domestic Rates Calculator",
+            &       $scr_pos(3,1), "[T]est, [L]ive or [E]xit: ")
+
+            accept(tt,char)
+
+            repeat
+            begin
+                if (!%ttsts)
+                    exitloop
+                accept(tt,char1)
+            end
+
+            upcase char
+            using char select
+            ("T"),
+                call test
+            ("L"),
+                call live
+            ("E"),
+                exitloop
+            (),
+            begin
+                display(tt,$SCR_POS(3,30),"Invalid option")
+                sleep 0.5
+            end
+            endusing
+        end
+    end
+
+    close tt
+    stop
+
+;------------------------------------------------------------------------------
+;
+;
+test,
+
+    url = test_url
+
+    repeat
+    begin
+        display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+        &       "USPS Domestic Rates Calculator - TEST MODE",
+        &       $scr_pos(3,1), "Which test   (1,2 or E): ")
+
+        accept(tt,char)
+
+        repeat
+        begin
+            if (!%ttsts)
+                exitloop
+            accept(tt,char1)
+        end
+
+        upcase char
+        using char select
+        ("1"),
+            call test1
+        ("2"),
+            call test2
+        ("E"),
+            exitloop
+        (),
+        begin
+            display(tt,$SCR_POS(3,30),"Invalid option")
+            sleep 0.5
+        end
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+test1,
+
+    clear padata
+    package(padata,pa_service)          = D_SERVICE_PRIORITY
+    package(padata,pa_zip_ogn)       = "10022"
+    package(padata,pa_zip_dst)  = "20008"
+    package(padata,pa_pounds)           = "10"
+    package(padata,pa_ounces)           = "5"
+    package(padata,pa_container)        = D_CONTAINER_BOX
+    package(padata,pa_size)             = D_SIZE_REGULAR
+    package(padata,pa_machinable)       = ""
+
+    call quote_it
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+test2,
+
+    clear padata
+    package(padata,pa_service)          = D_SERVICE_ALL
+    package(padata,pa_zip_ogn)       = "10022"
+    package(padata,pa_zip_dst)  = "20008"
+    package(padata,pa_pounds)           = "10"
+    package(padata,pa_ounces)           = "5"
+    package(padata,pa_size)             = D_SIZE_LARGE
+    package(padata,pa_machinable)       = "TRUE"
+
+    call quote_it
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+live,
+
+    display(tt,$scr_pos(1,1),$scr_clr(SCREEN),
+    &       "USPS Domestic Rates Calculator - LIVE MODE")
+
+    if (!(url=live_url))
+    begin
+        display(tt,
+        &   $scr_pos(3,1),"Can't be used live until you define the ",
+        &   "environment variable USPS_LIVE_URL.")
+        sleep 4
+        return
+    end
+
+    repeat
+    begin
+        display(tt,$SCR_POS(3,1),$SCR_CLR(EOS),
+        &       $scr_pos(3,1), "Service Code (1-8 or E):",
+        &       $scr_pos(4,1), "Origin            (ZIP):",
+        &       $scr_pos(5,1), "Destination       (ZIP):",
+        &       $scr_pos(6,1), "Weight         (pounds):",
+        &       $scr_pos(7,1), "Weight         (ounces):",
+        &       $scr_pos(8,1), "Container              :",
+        &       $scr_pos(9,1), "Length         (inches):",
+        &       $scr_pos(10,1),"Girth          (inches):",
+        &       $scr_pos(3,30), "1 = ",D_SERVICE_EXPRESS,
+        &       $scr_pos(4,30), "2 = ",D_SERVICE_FIRST,
+        &       $scr_pos(5,30), "3 = ",D_SERVICE_PRIORITY,
+        &       $scr_pos(6,30), "4 = ",D_SERVICE_PARCEL,
+        &       $scr_pos(7,30), "5 = ",D_SERVICE_BPM,
+        &       $scr_pos(8,30), "6 = ",D_SERVICE_LIBRARY,
+        &       $scr_pos(9,30), "7 = ",D_SERVICE_MEDIA,
+        &       $scr_pos(10,30),"8 = ",D_SERVICE_ALL,
+        &       $scr_pos(3,26))
+
+        ;Get service code
+        accept(tt,char)
+
+        repeat
+        begin
+            if (!%ttsts)
+                exitloop
+            accept(tt,char1)
+        end
+
+        upcase char
+        using char select
+        ("1" thru "8"),
+            call get_package_data
+        ("E"),
+            exitloop
+        (),
+        begin
+            display(tt,$SCR_POS(3,30),"Invalid option")
+            sleep 0.5
+        end
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+get_package_data,
+
+    using char select
+    ("1"),  package(padata,pa_service) = D_SERVICE_EXPRESS
+    ("2"),  package(padata,pa_service) = D_SERVICE_FIRST
+    ("3"),  package(padata,pa_service) = D_SERVICE_PRIORITY
+    ("4"),  package(padata,pa_service) = D_SERVICE_PARCEL
+    ("5"),  package(padata,pa_service) = D_SERVICE_BPM
+    ("6"),  package(padata,pa_service) = D_SERVICE_LIBRARY
+    ("7"),  package(padata,pa_service) = D_SERVICE_MEDIA
+    ("8"),  package(padata,pa_service) = D_SERVICE_ALL
+    endusing
+
+    display(tt,
+    &      $scr_pos(3,30), $scr_clr(EOL),
+    &      $scr_pos(4,30), $scr_clr(EOL),
+    &      $scr_pos(5,30), $scr_clr(EOL),
+    &      $scr_pos(6,30), $scr_clr(EOL),
+    &      $scr_pos(7,30), $scr_clr(EOL),
+    &      $scr_pos(8,30), $scr_clr(EOL),
+    &      $scr_pos(9,30), $scr_clr(EOL),
+    &      $scr_pos(10,30),$scr_clr(EOL),
+    &      $scr_pos(3,26),package(padata,pa_service))
+
+    repeat
+    begin
+        clear package(padata,pa_zip_ogn)
+        display(tt,$scr_pos(4,26),package(padata,pa_zip_ogn),$scr_pos(4,26))
+        reads(tt,package(padata,pa_zip_ogn))
+        if ((package(padata,pa_zip_ogn)) 
+        &   && (%IsNumeric(package(padata,pa_zip_ogn))) 
+        &   && (%trim(package(padata,pa_zip_ogn))==5))
+            exitloop
+    end
+
+    repeat
+    begin
+        clear package(padata,pa_zip_dst)
+        display(tt,$scr_pos(5,26),package(padata,pa_zip_dst),$scr_pos(5,26))
+        reads(tt,package(padata,pa_zip_dst))
+        if ((package(padata,pa_zip_dst)) 
+        &   && (%IsNumeric(package(padata,pa_zip_dst))) 
+        &   && (%trim(package(padata,pa_zip_dst))==5))
+            exitloop
+    end
+
+    repeat
+    begin
+        clear package(padata,pa_pounds)
+        display(tt,$scr_pos(6,26),package(padata,pa_pounds),$scr_pos(6,26))
+        reads(tt,package(padata,pa_pounds))
+        if ((package(padata,pa_pounds)) 
+        &   && (%IsNumeric(package(padata,pa_pounds))))
+            exitloop
+    end
+
+    repeat
+    begin
+        clear package(padata,pa_ounces)
+        display(tt,$scr_pos(7,26),package(padata,pa_ounces),$scr_pos(7,26))
+        reads(tt,package(padata,pa_ounces))
+        if ((package(padata,pa_ounces))
+        &   && (%IsNumeric(package(padata,pa_ounces))))
+            exitloop
+    end
+
+    clear package(padata,pa_container)
+    using package(padata,pa_service) select
+    (D_SERVICE_EXPRESS),
+        package(padata,pa_container) = D_CONTAINER_ENV
+    (D_SERVICE_PRIORITY),
+    begin
+        repeat
+        begin
+            display(tt,
+            &      $scr_pos(8,30),"1 = ",D_CONTAINER_ENV,
+            &      $scr_pos(9,30),"2 = ",D_CONTAINER_BOX,
+            &      $scr_pos(8,26)," ",$scr_pos(8,26))
+
+            accept(tt,char)
+            repeat
+            begin
+                if (!%ttsts)
+                    exitloop
+                accept(tt,char1)
+            end
+
+            using char select
+            ("1"),
+            begin
+                package(padata,pa_container) = D_CONTAINER_ENV
+                exitloop
+            end
+            ("2"),
+            begin
+                package(padata,pa_container) = D_CONTAINER_BOX
+                exitloop
+            end
+            endusing
+        end
+        display(tt,$scr_pos(22,1),$scr_clr(EOS))
+    end
+    (),
+        display(tt,$scr_pos(8,26),"n/a")
+    endusing
+
+    if (package(padata,pa_container)) 
+    begin
+        display(tt,
+        &      $scr_pos(8,30),$scr_clr(EOL),
+        &      $scr_pos(9,30),$scr_clr(EOL),
+        &      $scr_pos(8,26),package(padata,pa_container))
+    end
+
+    repeat
+    begin
+        ;Length
+        repeat
+        begin
+            display(tt,$scr_pos(9,26))
+            reads(tt,alength)
+            if ((alength) && (%IsNumeric(alength)))
+            begin
+                length = alength
+                exitloop
+            end
+        end
+        display(tt,$scr_pos(9,26),alength)
+
+        ;Girth
+        repeat
+        begin
+            display(tt,$scr_pos(10,26))
+            reads(tt,agirth)
+            if ((agirth) && (%IsNumeric(agirth)))
+            begin
+                girth = agirth
+                exitloop
+            end
+        end
+        display(tt,$scr_pos(10,26),agirth)
+
+        package(padata,pa_size) = %UspsPackageSize(package(padata,pa_service),
+        &       length,girth)
+
+        if (package(padata,pa_size)!="ERROR") then
+            exitloop
+        else
+        begin
+            clear alength, agirth
+            display(tt,
+            &       $scr_pos(9,26),alength,
+            &       $scr_pos(10,26),agirth,
+            &       $scr_pos(11,26),"Package too big for selected service!")
+        end
+    end
+
+    using package(padata,pa_service) select
+    (D_SERVICE_PARCEL,D_SERVICE_ALL),
+    begin
+        if (((!package(padata,pa_pounds))&&(^d(package(padata,pa_ounces))<6))
+        &   ||((^d(package(padata,pa_pounds))==35)&&package(padata,pa_ounces))
+        &   ||(^d(package(padata,pa_pounds))>35)) then
+            package(padata,pa_machinable)="FALSE"
+        else
+            package(padata,pa_machinable)="TRUE"
+    end
+    (),
+        clear package(padata,pa_machinable)
+    endusing
+
+    call quote_it
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+quote_it,
+
+    display(tt,$scr_pos(3,1),$scr_clr(EOS),"Contacting USPS...")
+
+    if (%UspsRate(url,userid,padata,podata,error_number,errtxt)) then
+        call display_it
+    else
+        call display_error
+
+    if (podata) 
+        podata = %mem_proc(DM_FREE,podata)
+
+    display(tt,$scr_pos(24,1),"Press a key: ")
+
+    accept(tt,char)
+
+    repeat
+    begin
+        if (!%ttsts)
+            exitloop
+        accept(tt,char1)
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+display_it,
+
+    display(tt,$scr_pos(3,1),$scr_clr(EOS),
+    &       $scr_pos(3,1),  "Origin ZIP             : ",package(padata,pa_zip_ogn),
+    &       $scr_pos(4,1),  "Destination ZIP        : ",package(padata,pa_zip_dst),
+    &       $scr_pos(5,1),  "Weight - pounds        : ",package(padata,pa_pounds),
+    &       $scr_pos(6,1),  "Weight - ounces        : ",package(padata,pa_ounces),
+    &       $scr_pos(7,1),  "Container              : ",package(padata,pa_container),
+    &       $scr_pos(8,1),  "Size                   : ",package(padata,pa_size),
+    &       $scr_pos(9,1),  "Machinable             : ",package(padata,pa_machinable),
+    &       $scr_pos(10,1), "Zone                   : ",package(padata,pa_zone),
+    &       $scr_pos(12,1), "Service",
+    &       $scr_pos(12,52),"Cost",
+    &       $scr_pos(13,1), "--------------------------------------------------",
+    &       $scr_pos(13,52),"----------")
+
+    for count from 1 thru %mem_proc(DM_GETSIZE,podata) / ^size(postage_data)
+    begin
+        display(tt,
+        &       $scr_pos(13+count,1), postage(podata,count,po_service),
+        &       $scr_pos(13+count,52),postage(podata,count,po_rate))
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;
+;
+display_error,
+
+    display(tt,
+    &       $scr_pos(22,1),"Error ",error_number,
+    &       $scr_pos(23,1),%atrim(errtxt))
+
+    return
+
+.end
+
+;=============================================================================
+;
+; Title:        UspsRate
+;
+; Description:  Function to call the "USPS Rates Calculator" web service
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         12th October 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.function UspsRate, ^val
+
+    ;Input arguments
+    a_url               ,a      ;URL of USPS server to be used
+    a_userid            ,a      ;USPS user id to be used
+
+    ;Input/Output arguments
+    a_package           ,a      ;Package data record
+
+    ;Output arguments
+    a_postage           ,i      ;Returned handle containing postage records
+    a_error_number      ,a      ;Returned error number
+    a_error_text        ,a      ;Returned error text
+
+    ;End of arguments
+
+.include "DBLDIR:synxml.def"
+
+.define USPSRATE_INCLUDE
+.define USPSRATE_INTERNAL
+.include "UspsRate.dbl"
+
+.align
+stack record ivars
+
+    ok              ,i4                 ;Function return value, 1=Success
+
+    doc             ,XML_DOC_TYPE       ;XML stuff for building & parsing
+    root            ,XML_ELEM_TYPE
+    xmlstr          ,XML_STRING_TYPE
+    parser          ,XML_PARSER_TYPE
+    children        ,XML_ELEMLIST_TYPE
+    children1       ,XML_ELEMLIST_TYPE
+    children2       ,XML_ELEMLIST_TYPE
+    error_children  ,XML_ELEMLIST_TYPE
+    child           ,XML_ELEM_TYPE
+    child1          ,XML_ELEM_TYPE
+    child2          ,XML_ELEM_TYPE
+    error_child     ,XML_ELEM_TYPE
+
+    count           ,i4                 ;Loop counters
+    count1          ,i4
+    count2          ,i4
+
+    status          ,i4                 ;Status from HTTP call
+    sh              ,D_ADDR             ;Send data handle
+    sl              ,i4                 ;Send data length
+    rh              ,D_ADDR             ;Receive data handle
+    rl              ,i4                 ;Receive data length
+    pr              ,i4                 ;Postage records returned
+
+stack record avars
+
+    errtxt          ,a80                ;An error message
+    elem_name       ,a40                ;Name of an XML element
+    elem_text       ,a512               ;Text in an XML element
+	url				,a2048				;URL to call
+
+.proc
+
+    ;Initialize data to a known state
+    clear ^i(ivars), avars, a_postage, a_error_number, a_error_text
+    ok = 1
+
+    ;Build the XML document for the request
+
+    doc = %xml_doc_create
+
+    xcall xml_option("ENCODE",SYNESCAPE_ESCAPE)
+
+    root = %xml_doc_getroot(doc)
+    xcall xml_elem_setname(root,"RateV2Request")
+    xcall xml_elem_setattribute(root,"USERID",%atrim(a_userid))
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Package")
+    xcall xml_elem_setattribute(child,"ID","0")
+    xcall xml_elem_addchild(root,child)
+
+    root = child
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Service")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_service)))
+    xcall xml_elem_addchild(root,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"ZipOrigination")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_zip_ogn)))
+    xcall xml_elem_addchild(root,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"ZipDestination")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_zip_dst)))
+    xcall xml_elem_addchild(root,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Pounds")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_pounds)))
+    xcall xml_elem_addchild(root,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Ounces")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_ounces)))
+    xcall xml_elem_addchild(root,child)
+
+    if (package(a_package,pa_container)) 
+    begin
+        child = %xml_elem_create
+        xcall xml_elem_setname(child,"Container")
+        xcall xml_elem_settext(child,%atrim(package(a_package,pa_container)))
+        xcall xml_elem_addchild(root,child)
+    end
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Size")
+    xcall xml_elem_settext(child,%atrim(package(a_package,pa_size)))
+    xcall xml_elem_addchild(root,child)
+
+    if (package(a_package,pa_machinable)) 
+    begin
+        child = %xml_elem_create
+        xcall xml_elem_setname(child,"Machinable")
+        xcall xml_elem_settext(child,%atrim(package(a_package,pa_machinable)))
+        xcall xml_elem_addchild(root,child)
+    end
+
+    ;Extract the XML data to an XML string
+    xmlstr = %xml_doc_tostring(doc)
+    xcall xml_doc_delete(doc)
+
+    ;Allocate a memory handle for the XML data
+    sl = %xml_string_getsize(xmlstr)
+    sh = %mem_proc(DM_ALLOC+DM_BLANK,sl)
+
+    ;Extract the XML data to the memory handle
+    ^m(sh) = ^m(%xml_string_gethandle(xmlstr))
+    xcall xml_string_delete(xmlstr)
+
+    ;Delete the log file so we have a fresh one each time
+    xcall delet(D_HTTP_LOG_FILE)
+
+	;Build the URL for the HTTP GET
+	xcall s_bld(url,,"%a?API=%a&XML=%a",a_url,D_API_NAME,^m(sh))
+
+	;Call the web service
+    status = %http_client_get(%atrim(url),D_HTTP_TIMEOUT,rh,rl,
+	&		errtxt,,D_HTTP_LOG_FILE)
+
+	;Did it work?
+    using status select
+    (0),        ;Success
+    begin
+        ;Yes, did we get any data back?
+        if (rh && rl) then
+            call parse_response
+        else
+        begin
+            clear ok
+            a_error_text = "USPS server returned a blank response"
+        end
+    end
+    (10060),    ;Timeout
+    begin
+        clear ok
+        a_error_number = %string(status)
+        a_error_text = "USPS server failed to respond within timeout period"
+    end
+    (),         ;Error
+    begin
+        clear ok
+        a_error_number = %string(status)
+        a_error_text = "HTTP connection failed: " + errtxt
+    end
+    endusing
+
+    ;Clean up
+    sh = %mem_proc(DM_FREE,sh)
+    if (rh)
+        rh = %mem_proc(DM_FREE,rh)
+
+    freturn ok
+
+;-----------------------------------------------------------------------------
+;The response data from the server is in the memory handle rh.  The length of
+;the response data is in rl.
+;
+parse_response,
+
+    xcall xml_option("ENCODE",SYNESCAPE_UNESCAPE)
+
+    ;Load the data into an XML string
+    xmlstr = %xml_string_create
+    xcall xml_string_appendhandle(xmlstr,rh,rl)
+
+    ;Parse the XML string to create an XML document
+    parser = %xml_parser_create
+    doc = %xml_parser_parsestring(parser,xmlstr)
+
+    ;Clean up the XML string and parser
+    xcall xml_string_delete(xmlstr)
+    xcall xml_parser_delete(parser)
+
+    ;Was the XML parsed?
+    if (doc) then
+    begin
+        ;Yes, work with the results
+        root = %xml_doc_getroot(doc)
+        xcall xml_elem_getname(root,elem_name)
+
+        using elem_name select
+        ("RateV2Response"),
+            call parse_rate_response
+        ("Error"),
+            call parse_severe_error
+        (),
+        begin
+            xcall s_bld(a_error_text,,
+            &           "Unexpected root element <%a>",
+            &           elem_name)
+            clear ok
+        end
+        endusing
+
+        xcall xml_doc_delete(doc)
+    end
+    else
+    begin
+        ;No - invalid XML?
+        clear ok
+        xcall xml_parser_error(parser,errtxt)
+        a_error_text = "Failed to parse response XML: " + errtxt
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;<RateV2Response>
+;
+parse_rate_response,
+
+    children = %xml_elem_children(root)
+
+    for count from 1 thru %xml_elemlist_count(children)
+    begin
+        child = %xml_elemlist_item(children,count)
+        xcall xml_elem_getname(child,elem_name)
+        using elem_name select
+        ("Package"),
+            call parse_package
+        ("Error"),
+            call parse_response_error
+        (),
+        begin
+            xcall s_bld(a_error_text,,
+            &           "Unexpected element <RateV2Response/%a>",
+            &           elem_name)
+            clear ok
+        end
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;<RateV2Response/Package>
+;
+parse_package,
+
+    clear a_package
+
+    ;Our root is "child" which is <Package>
+    children1 = %xml_elem_children(child)
+
+    for count1 from 1 thru %xml_elemlist_count(children1)
+    begin
+        child1 = %xml_elemlist_item(children1,count1)
+        xcall xml_elem_getname(child1,elem_name)
+        xcall xml_elem_gettext(child1,elem_text)
+        using elem_name select
+        ("ZipOrigination"),
+            package(a_package,pa_zip_ogn) = elem_text
+        ("ZipDestination"),
+            package(a_package,pa_zip_dst) = elem_text
+        ("Pounds"),
+            package(a_package,pa_pounds) = elem_text
+        ("Ounces"),
+            package(a_package,pa_ounces) = elem_text
+        ("Container"),
+            package(a_package,pa_container) = elem_text
+        ("Size"),
+            package(a_package,pa_size) = elem_text
+        ("Machinable"),
+            package(a_package,pa_machinable) = elem_text
+        ("Zone"),
+            package(a_package,pa_zone) = elem_text
+        ("Postage"),
+            call parse_postage
+        ("Error"),
+            call parse_package_error
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;<RateV2Response/Package/Postage>
+;
+parse_postage,
+
+    ;Make room for this postage record in the returned memory handle
+    if (!pr) then
+        a_postage = %mem_proc(DM_ALLOC|DM_BLANK|DM_STATIC,
+        &       ^size(postage_data)*(pr=1))
+    else
+        a_postage = %mem_proc(DM_RESIZ|DM_BLANK,
+        &       ^size(postage_data)*(pr+=1),a_postage)
+
+    ;Our root is "child1" which is <Postage>
+    children2 = %xml_elem_children(child1)
+
+    for count2 from 1 thru %xml_elemlist_count(children2)
+    begin
+        child2 = %xml_elemlist_item(children2,count2)
+        xcall xml_elem_getname(child2,elem_name)
+        xcall xml_elem_gettext(child2,elem_text)
+        using elem_name select
+        ("MailService"),
+            postage(a_postage,pr,po_service) = elem_text
+        ("Rate"),
+            postage(a_postage,pr,po_rate) = elem_text
+        endusing
+    end
+
+    return
+
+;------------------------------------------------------------------------------
+;<Error>
+;
+parse_severe_error,
+
+    error_children = %xml_elem_children(root)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;<RateV2Response/Error>
+;
+parse_response_error,
+
+    error_children = %xml_elem_children(child)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;<RateV2Response/Package/Error>
+;
+parse_package_error,
+
+    error_children = %xml_elem_children(child1)
+    call parse_error
+
+    return
+
+;------------------------------------------------------------------------------
+;Extract and return the error details
+;
+parse_error,
+
+    for count from 1 thru %xml_elemlist_count(error_children)
+    begin
+        error_child = %xml_elemlist_item(error_children,count)
+        xcall xml_elem_getname(error_child,elem_name)
+        xcall xml_elem_gettext(error_child,elem_text)
+        using elem_name select
+        ("Number"),
+            a_error_number = elem_text
+        ("Description"),
+            a_error_text = elem_text
+        endusing
+    end
+
+    clear ok
+
+    return
+
+.end
+
+;=============================================================================
+;
+; Title:        UspsPackageSize
+;
+; Description:  Function to determine the USPS "size" of a package
+;               Possible return values are "Regular", "Large", "Oversize",
+;               or "ERROR" (indicating that the package is not allowed on the
+;               specified service.
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         13th October 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.function UspsPackageSize ;,a
+
+    a_service   ,a  ;Posal service
+    a_length    ,n  ;Length of package - longest dimension (inches)
+    a_girth     ,n  ;Girth of package (inches)
+
+.define USPSRATE_INCLUDE
+.include "UspsRate.dbl"
+
+stack record avars
+    size        ,a8
+
+.proc
+
+    clear avars
+
+    using (a_length + a_girth) select
+    (<=84),
+        size = D_SIZE_REGULAR
+    (85 thru 107),
+        size = D_SIZE_LARGE
+    (108 thru 130),
+        size = D_SIZE_OVERSIZE
+    (>130),
+        size = "ERROR"
+    endusing
+
+    using (size) select
+    (D_SIZE_LARGE),
+    begin
+        ;Large is only valid for parcel post and priority mail
+        if (   (a_service!=D_SERVICE_PARCEL)
+        &   && (a_service!=D_SERVICE_PRIORITY)
+            && (a_service!=D_SERVICE_ALL))
+            size = "ERROR"
+    end
+    (D_SIZE_OVERSIZE),
+    begin
+        ;Oversize is only valid for parcel post
+        if ((a_service!=D_SERVICE_PARCEL)&&(a_service)!=D_SERVICE_ALL)
+            size = "ERROR"
+    end
+    endusing
+
+    freturn size
+
+.end
+
+;=============================================================================
+;
+; Title:        IsNumeric
+;
+; Description:  Validates a numeric value
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         28th September 2005
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;=============================================================================
+;
+.function IsNumeric, ^val
+
+    a_number        ,a
+
+stack record
+    ok              ,i4         ;Return value
+    number          ,d28.10     ;Max size decimal
+
+.proc
+
+    ok = 1
+
+    onerror ($ERR_DIGIT) bad
+
+    number = a_number
+    if (0) 
+bad,    clear ok
+
+    offerror
+
+    freturn ok
+
+.end
+
+;*****************************************************************************
+.endc ;USPSRATE_INCLUDE - END OF PROGRAM CODE
+;*****************************************************************************
+
