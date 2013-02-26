@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Synergex.PSG.Examples" elementFormDefault="qualified" targetNamespace="http://Synergex.PSG.Examples" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Add">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="AddResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Subtract">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SubtractResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SubtractResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexAdd">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexAddResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ComplexAddResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexSubtract">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexSubtractResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ComplexSubtractResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexMultiply">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexMultiplyResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ComplexMultiplyResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexDivide">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="val1" type="xs:double" />
+        <xs:element minOccurs="0" name="val2" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ComplexDivideResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ComplexDivideResult" type="xs:double" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

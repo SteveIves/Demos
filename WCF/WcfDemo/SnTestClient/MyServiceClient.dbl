@@ -1,0 +1,173 @@
+﻿import System.Runtime.Serialization
+
+namespace MyService
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.Runtime.Serialization"), ((string)"4.0.0.0"))}
+	{System.Runtime.Serialization.DataContractAttribute(Name = ((string)"Person"), Namespace = ((string)"http://schemas.datacontract.org/2004/07/WcfServiceLibrary"))}
+	public partial class Person extends object implements System.Runtime.Serialization.IExtensibleDataObject
+		
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+		
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				begin
+					mreturn this.extensionDataField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.extensionDataField = value
+				end
+			endmethod
+		endproperty
+		
+		private FirstNameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property FirstName, string
+			method get
+			proc
+				begin
+					mreturn this.FirstNameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.FirstNameField = value
+				end
+			endmethod
+		endproperty
+		
+		private LastNameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property LastName, string
+			method get
+			proc
+				begin
+					mreturn this.LastNameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.LastNameField = value
+				end
+			endmethod
+		endproperty
+		
+		private PersonIdField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property PersonId, int
+			method get
+			proc
+				begin
+					mreturn this.PersonIdField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.PersonIdField = value
+				end
+			endmethod
+		endproperty
+	endclass
+	
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = ((string)"MyService.IMyService"))}
+	public interface IMyService
+		
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/IMyService/AddTwoNumbers"), ReplyAction = ((string)"http://tempuri.org/IMyService/AddTwoNumbersResponse"))}
+		method AddTwoNumbers, int
+			firstNumber, int 
+			secondNumber, int 
+			endparams
+		endmethod
+		
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/IMyService/GetPerson"), ReplyAction = ((string)"http://tempuri.org/IMyService/GetPersonResponse"))}
+		method GetPerson, @MyService.Person
+			aPersonId, int 
+			endparams
+		endmethod
+	endinterface
+	
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	public interface IMyServiceChannel extends MyService.IMyService, System.ServiceModel.IClientChannel
+	endinterface
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	public partial class MyServiceClient extends System.ServiceModel.ClientBase<MyService.IMyService> implements MyService.IMyService
+		
+		public method MyServiceClient
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method MyServiceClient
+			endpointConfigurationName, string 
+			endparams
+			parent(endpointConfigurationName)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method MyServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, string 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method MyServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method MyServiceClient
+			binding, @System.ServiceModel.Channels.Binding 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(binding, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method AddTwoNumbers, int
+			firstNumber, int 
+			secondNumber, int 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.AddTwoNumbers(firstNumber, secondNumber)
+			end
+		endmethod
+		
+		public method GetPerson, @MyService.Person
+			aPersonId, int 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.GetPerson(aPersonId)
+			end
+		endmethod
+	endclass
+endnamespace

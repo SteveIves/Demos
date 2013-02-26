@@ -1,0 +1,28 @@
+
+import System
+import System.Collections.ObjectModel
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Text
+
+namespace WcfServices
+
+	{ServiceContract}
+	public interface IService1
+		
+		{OperationContract}
+		method GetPerson			,Boolean
+			required in  aPersonId	,int
+			required out aPerson	,@Person
+		endmethod
+		
+		{OperationContract}
+		method GetAllPeople			,Boolean
+			required out aPeople	,@ObservableCollection<Person>
+		endmethod
+		
+	endinterface
+
+endnamespace
+
+

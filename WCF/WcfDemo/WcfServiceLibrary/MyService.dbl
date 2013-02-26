@@ -1,0 +1,66 @@
+import System
+import System.Collections.Generic
+import System.IO
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.ServiceModel.Web
+import System.Text
+
+namespace WcfServiceLibrary
+	
+	public class MyService implements IMyService, IPolicyRetriever
+		
+		public method AddTwoNumbers, int        ;;IPolicyRetriever members
+			req in firstNumber, int
+			req in secondNumber, int
+			endparams
+		proc
+			mreturn firstNumber + secondNumber
+		endmethod
+		
+		public method GetPerson, @Person
+			req in aPersonId, int
+			endparams
+		proc
+			mreturn new Person(aPersonId,"Donald", "Duck")
+		endmethod
+		
+		;;IPolicyRetriever members
+		
+		public method GetSilverlightPolicy, @Stream
+			endparams
+			record
+				policyXml, @String
+			endrecord
+		proc
+			;;This is a somewhat open policy and you wouldnt want to deploy something like this
+			policyXml = '<?xml version="1.0" encoding="utf-8"?>'
+&			'<access-policy>'
+&			'<cross-domain-access>'
+&			'<policy>'
+&			'<allow-from http-request-headers="*">'
+&			'<domain uri="*"/>'
+&			'</allow-from>'
+&			'<grant-to>'
+&			'<resource path="/" include-subpaths="true"/>'
+&			'</grant-to>'
+&			'</policy>'
+&			'</cross-domain-access>'
+&			'</access-policy>'
+			mreturn StringToStream(policyXml)
+		endmethod
+		
+		private method StringToStream, @Stream
+			result, @String
+			endparams
+		proc
+			WebOperationContext.Current.OutgoingResponse.ContentType = "application/xml"
+			mreturn new MemoryStream(Encoding.UTF8.GetBytes(result))
+		endmethod
+		
+
+	endclass
+	
+endnamespace
+
+

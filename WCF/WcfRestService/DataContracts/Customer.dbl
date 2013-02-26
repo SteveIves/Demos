@@ -1,0 +1,53 @@
+import System
+import System.Runtime.Serialization
+
+namespace DataContracts
+	
+	{DataContract}
+	public class Customer
+		
+		private mCustomerId				,int
+		private mCompanyName			,string
+		
+		public method Customer
+			endparams
+		proc
+		endmethod
+
+		public method Customer
+			required in aCustomerId		,int
+			required in aCompanyName	,string
+			endparams
+		proc
+			mCustomerId = aCustomerId
+			mCompanyName = aCompanyName
+		endmethod
+
+		{DataMember(Name="CustomerId", Order=0)}
+		public property CustomerId, int
+			method get
+			proc
+				mreturn mCustomerId
+			endmethod
+			method set
+			proc
+				mCustomerId = value
+			endmethod
+		endproperty
+		
+		{DataMember(Name="CompanyName",Order=1)}
+		public property CompanyName, string
+			method get
+			proc
+				mreturn mCompanyName
+			endmethod
+			method set
+			proc
+				mCompanyName = atrim(value)
+			endmethod
+		endproperty
+		
+	endclass
+
+endnamespace
+

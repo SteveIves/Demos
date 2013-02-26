@@ -1,0 +1,41 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Web
+import System.ServiceModel.Description
+import System.ServiceModel.Web
+
+.array 0
+
+namespace WcfRestDynamicResponse
+	
+	class DynamicResponseWebServiceHost extends WebServiceHost
+		
+		public method DynamicResponseWebServiceHost
+			serviceType, @Type 
+			in baseAddresses, [#]@Uri 
+			endparams
+			parent(serviceType, baseAddresses)
+		proc
+			
+		endmethod
+		
+		protected override method OnOpening, void
+			endparams
+		proc
+			parent.OnOpening()
+			data ep, @ServiceEndpoint
+			foreach ep in this.Description.Endpoints
+			begin
+				if (ep.Behaviors.Find<WebHttpBehavior>() != ^null)
+				begin
+					ep.Behaviors.Remove<WebHttpBehavior>()
+					ep.Behaviors.Add(new DynamicResponseWebHttpBehavior())
+				end
+			end
+		endmethod
+
+	endclass
+
+endnamespace
+

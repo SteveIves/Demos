@@ -1,0 +1,55 @@
+
+import System
+import System.ComponentModel
+import System.Configuration.Install
+import System.ServiceProcess
+
+namespace MyServiceHostNS
+
+	{RunInstaller(true)}
+	public partial class ServiceInstaller extends Installer
+
+		private serviceProcessInstaller1, @System.ServiceProcess.ServiceProcessInstaller
+		private serviceInstaller1, @System.ServiceProcess.ServiceInstaller
+		
+		public method ServiceInstaller
+			endparams
+		proc
+			InitializeComponent()
+		endmethod
+		
+		;;;<summary>
+		;;;Required method for Designer support - do not modify
+		;;;the contents of this method with the code editor.
+		;;;</summary>
+		private method InitializeComponent, void
+			endparams
+		proc
+			this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller()
+			this.serviceInstaller1 = new System.ServiceProcess.ServiceInstaller()
+			;; 
+			;; serviceProcessInstaller1
+			;; 
+			this.serviceProcessInstaller1.Account = ServiceAccount.LocalSystem
+			this.serviceProcessInstaller1.Username = ^null
+			this.serviceProcessInstaller1.Password = ^null
+			;; 
+			;; serviceInstaller1
+			;; 
+			this.serviceInstaller1.ServiceName = "MyServiceHost"
+			;;TODO: Specify the name of the service to display in the service manager application
+			this.serviceInstaller1.DisplayName = "MyServiceHost"
+			;;TODO: Specify the description of the service to display in the service manager application
+			this.serviceInstaller1.Description = "MyServiceHost"
+			this.serviceInstaller1.StartType = ServiceStartMode.Automatic
+			;; 
+			;; ProjectInstaller
+			;; 
+			this.Installers.AddRange(new System.Configuration.Install.Installer[#] { this.serviceProcessInstaller1, this.serviceInstaller1})
+		endmethod
+
+	endclass
+
+endnamespace
+
+

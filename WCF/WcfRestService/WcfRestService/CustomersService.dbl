@@ -1,0 +1,197 @@
+import System
+import System.Collections.Generic
+import System.ServiceModel
+import System.ServiceModel.Activation
+import System.ServiceModel.Web
+
+import Synergex.SynergyDE.Select
+import DataContracts
+import WcfRestDynamicResponse
+
+namespace WcfRestService
+
+	;; Start the service and browse to http://<machine_name>:<port>/Customers/help to view
+	;; the service's generated help page.
+	;;
+	;; NOTE: By default, a new instance of the service is created for each call; change the
+	;; InstanceContextMode to Single if you want a single instance of the service to process
+	;; all calls.	
+	
+	{ServiceContract()}
+	{AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)}
+	{ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)}
+	public class CustomersService
+ 
+		;; Note: In order to return JSON data you need to set the following in Web.config
+		;; <standardEndpoint automaticFormatSelectionEnabled="false"/>
+
+		;; GET ALL CUSTOMERS
+
+		{WebGet(UriTemplate = "")}
+		{DynamicResponseType}
+		public method GetCustomers, @List<Customer>
+			endparams
+		proc
+			data cust, StrCustomer
+			data c, @List<Customer>, new List<Customer>()
+			foreach cust in new Select(new From("DAT:customer.ism",cust),
+			&							OrderBy.AscendingKey(1))
+				c.Add(new Customer(cust.CUSTOMER_ID,cust.NAME))
+			mreturn c
+		endmethod
+		
+		;; GET A SINGLE CUSTOMER
+		
+		{WebGet(UriTemplate = "{customerId}")}
+		{DynamicResponseType}
+		public method GetCustomer, @Customer
+			required in customerId, string 
+			endparams
+		proc
+			data cid, int
+			if (!(int.TryParse(customerId, cid))) then
+			begin
+				throw new ArgumentException("Invalid parameter value", "customerId")
+			end
+			else
+			begin
+				data cust, StrCustomer
+				data c, @Customer
+				foreach cust in new Select(new From("DAT:customer.ism",cust),
+				&					(Where)cust.customer_id==integer(customerId))
+					c = new Customer(cust.CUSTOMER_ID,cust.NAME)
+				mreturn c
+			end
+		endmethod
+		
+		;; CREATE A NEW CUSTOMER
+		
+		{WebInvoke(UriTemplate = "", Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)}
+		public method CreateCustomer, Boolean
+			required in customer, @Customer 
+			endparams
+		proc
+			;TODO: Implement code to Create a new customer
+			mreturn true
+		endmethod
+		
+		;; UPDATE AN EXISTING CUSTOMER
+		
+		{WebInvoke(UriTemplate = "{customerId}", Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)}
+		public method UpdateCustomer, Boolean
+			required in customerId, string 
+			required in customer, @Customer
+			endparams
+		proc
+			;TODO: Implement code to update an existing customer
+			mreturn true
+		endmethod
+		
+		;; DELETE A CUSTOMER
+		
+		{WebInvoke(UriTemplate = "{customerId}", Method = "DELETE")}
+		public method DeleteCustomer, Boolean
+			required in customerId, string
+			endparams
+		proc
+			;TODO: Implement code to delete a customer
+			mreturn true
+		endmethod
+		
+		;; GET ALL CONTACTS FOR A CUSTOMER
+		
+		{WebGet(UriTemplate = "{customerId}/Contacts")}
+		{DynamicResponseType}
+		public method GetCustomerContacts, @List<Contact>
+			required in customerId, string 
+			endparams
+		proc
+			data cid, int
+			if (int.TryParse(customerId, cid)) then
+			begin
+				data c, StrContact
+				data cts, @List<Contact>, new List<Contact>()
+				foreach c in new Select(
+					&	new From("DAT:contact.ism",c),
+					&				(Where)c.customer_id==cid)
+				begin
+					locase c.email
+					cts.Add(new Contact(cid,c.CONTACT_ID,c.FIRST_NAME,c.LAST_NAME,c.SALUTATION,c.TITLE,c.DEPARTMENT))
+				end
+				mreturn cts
+			end
+			else
+				throw new ArgumentException("Invalid parameter value", "customerId")
+		endmethod
+		
+		;; GET A SINGLE CUSTOMER CONTACT
+		
+		{WebGet(UriTemplate = "{customerId}/Contacts/{contactId}")}
+		{DynamicResponseType}
+		public method GetContact, @Contact
+			required in customerId, string 
+			required in contactId, string 
+			endparams
+		proc
+
+			data cid, int
+			if (!int.TryParse(customerId, cid))
+				throw new ArgumentException("Invalid parameter value", "customerId")
+
+			data ctid, int
+			if (!int.TryParse(contactId, ctid))
+				throw new ArgumentException("Invalid parameter value", "contactId")
+
+			data c, StrContact
+			data contact, @Contact
+
+			foreach c in new Select(
+			&				new From("DAT:contact.ism",c),
+			&				(Where)c.customer_id==cid&&(Where)c.contact_id==ctid)
+			begin
+				locase c.email
+				contact = new Contact(c.CUSTOMER_ID,c.CONTACT_ID,c.FIRST_NAME,c.LAST_NAME,c.SALUTATION,c.TITLE,c.DEPARTMENT)
+			end
+			mreturn contact 
+		endmethod
+		
+		;; CREATE A NEW CUSTOMER CONTACT
+		
+		{WebInvoke(UriTemplate = "{customerId}/Contacts", Method = "POST")}
+		public method CreateContact, Boolean
+			required in customerId, string 
+			required in contact, @Contact 
+			endparams
+		proc
+			;TODO: Implement code to return a single customer contact
+			mreturn true
+		endmethod
+		
+		;; UPDATE AN EXISTING CUSTOMER CONTACT
+		
+		{WebInvoke(UriTemplate = "{customerId}/Contacts/{contactId}", Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)}
+		public method UpdateContact, Boolean
+			required in customerId, string 
+			required in contactId, string 
+			required in contact, @Contact
+			endparams
+		proc
+			;TODO: Implement code to update a customer contact
+			mreturn true
+		endmethod
+		
+		;; DELETE A CUSTOMER CONTACT
+		
+		{WebInvoke(UriTemplate = "{customerId}/Contacts/{contactId}", Method = "DELETE")}
+		public method DeleteContact, Boolean
+			required in customerId, string 
+			required in contactId, string 
+			endparams
+		proc
+			;TODO: Implement code to delete a customer contact
+			mreturn true
+		endmethod
+	
+	endclass
+
+endnamespace

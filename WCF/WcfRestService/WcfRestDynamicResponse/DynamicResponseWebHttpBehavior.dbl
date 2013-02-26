@@ -1,0 +1,48 @@
+
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Web
+import System.ServiceModel.Description
+import System.ServiceModel.Web
+import System.ServiceModel.Dispatcher
+import System.ServiceModel.Channels
+import System.ServiceModel
+import System.Net
+
+.array 0
+
+namespace WcfRestDynamicResponse
+	
+	class DynamicResponseWebHttpBehavior extends WebHttpBehavior
+		
+		protected override method GetReplyDispatchFormatter, @IDispatchMessageFormatter
+			operationDescription, @OperationDescription 
+			endpoint, @ServiceEndpoint 
+			endparams
+		proc
+			data webGetAttribute, @WebGetAttribute, operationDescription.Behaviors.Find<WebGetAttribute>()
+			data mapAcceptedContentTypeToResponseEncodingAttribute, @DynamicResponseTypeAttribute, operationDescription.Behaviors.Find<DynamicResponseTypeAttribute>()
+			if ((webGetAttribute != ^null) && (mapAcceptedContentTypeToResponseEncodingAttribute != ^null))
+			begin
+				;;  We need two formatters, since we don't know what type we will need until runtime
+
+				webGetAttribute.ResponseFormat = WebMessageFormat.Json
+				data jsonDispatchMessageFormatter, @IDispatchMessageFormatter, parent.GetReplyDispatchFormatter(operationDescription, endpoint)
+
+				webGetAttribute.ResponseFormat = WebMessageFormat.Xml
+				data xmlDispatchMessageFormatter, @IDispatchMessageFormatter, parent.GetReplyDispatchFormatter(operationDescription, endpoint)
+				
+				data formatter, @DynamicFormatter, new DynamicFormatter()
+				formatter.jsonDispatchMessageFormatter = jsonDispatchMessageFormatter
+				formatter.xmlDispatchMessageFormatter = xmlDispatchMessageFormatter
+
+				mreturn formatter
+			end
+			mreturn parent.GetReplyDispatchFormatter(operationDescription, endpoint)
+		endmethod
+
+	endclass
+
+endnamespace
+

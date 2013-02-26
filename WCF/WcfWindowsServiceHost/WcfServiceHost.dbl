@@ -1,0 +1,52 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Diagnostics
+import System.ServiceModel
+import System.ServiceProcess
+import System.Text
+
+namespace WcfWindowsServiceHost
+
+	public partial class WcfServiceHost extends ServiceBase
+		
+		private host, @ServiceHost
+
+		public method WcfServiceHost
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+		protected override method OnStart, void
+			args, [#]string 
+			endparams
+		proc
+			
+			if (host!=^null)
+				host.Close()
+			
+			;;Create a ServiceHost for the CalculatorService type and specify the base address
+			host = new ServiceHost(^typeof(CalculatorService),new System.Uri("http://localhost:8080"))
+			
+			;;Open the ServiceHostBase to create listeners and start listening for messages
+			;;Note that the service configuration data is located in the App.config file, and
+			;;can be edited with the WCF Service Configuration Editor utility.
+			host.Open()
+
+		endmethod
+		
+		protected override method OnStop, void
+			endparams
+		proc
+			if (host!=^null)
+			begin
+				host.Close()
+				host = ^null
+			end
+		endmethod
+
+	endclass
+endnamespace
+

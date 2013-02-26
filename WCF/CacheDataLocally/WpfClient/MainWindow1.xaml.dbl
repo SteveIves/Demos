@@ -1,0 +1,226 @@
+import System
+import System.Collections
+import System.Collections.ObjectModel
+import System.Diagnostics
+import System.IO
+import System.Text
+import System.Windows
+import System.Windows.Controls
+import System.Windows.Data
+import System.Windows.Documents
+import System.Windows.Input
+import System.Windows.Shapes
+import System.Windows.Media
+import System.Windows.Media.Imaging
+import System.Windows.Navigation
+import WcfServices
+
+.Array 0
+namespace WpfClient
+
+	.include "PERSON" repository, structure="strPerson", end
+
+	public partial class MainWindow1 extends Window
+		
+		.region "Local data"
+
+		private chPeople			,i4
+		private localDataFolder		,@String
+		private localPeopleFile		,@String
+		
+		.endregion
+
+		.region "Constructors"
+
+		public method MainWindow1
+				endparams
+		proc
+			this.InitializeComponent()
+
+			;;Figure out the local folder and file names
+			begin
+				data di, @DirectoryInfo
+				
+				;;Make sure the local data folder exists
+				di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))
+				localDataFolder = String.Format("{0}\BusinessCraftDemo\",di.FullName)
+				localPeopleFile = String.Format("{0}people.ism",localDataFolder)
+				
+				;;Check that the local data folder exists
+				if (!Directory.Exists(localDataFolder))
+					Directory.CreateDirectory(localDataFolder)
+
+				;;Check that the local people file exists
+				if (!File.Exists(localPeopleFile))
+					xcall isamc(localPeopleFile+",STATIC_RFA",118,3,"ST=1,LE=8,NAME=PERSON_ID","ST=34,LE=25,NAME=LAST_NAME,TYPE=NOCASE,DUPS,ATEND,MODIFY,ASCEND,DENSITY=50","ST=59,LE=60,NAME=EMAIL,TYPE=NOCASE,MODIFY,ASCEND,DENSITY=50")
+			
+				;;Open local files
+				open(chPeople,u:i,localPeopleFile)
+			
+			end
+
+		endmethod
+		
+		.endregion
+
+		.region "Button click handlers"
+
+
+		private method BtnLoadRemote_Click, void
+			byval sender, @object
+			byval e, @System.Windows.RoutedEventArgs
+			endparams
+		proc
+			this.Cursor = Cursors.Wait
+			grid.ItemsSource = getRemotePeople()
+			this.Cursor = Cursors.Arrow
+		endmethod
+		
+
+		private method BtnLoadLocal_Click, void
+			byval sender, @object
+			byval e, @System.Windows.RoutedEventArgs
+			endparams
+		proc
+			this.Cursor = Cursors.Wait
+			grid.ItemsSource = getLocalPeople()
+			this.Cursor = Cursors.Arrow
+		endmethod
+		
+		private method BtnDeleteLocal_Click, void
+			byval sender, @object
+			byval e, @System.Windows.RoutedEventArgs
+			endparams
+		proc
+			deleteLocalCache()
+		endmethod
+		
+
+		private method BtnClearGrid_Click, void
+			byval sender, @object
+			byval e, @System.Windows.RoutedEventArgs
+			endparams
+		proc
+			grid.ItemsSource = ^null
+			StatusText.Content = (string)"Grid was cleared, local cache was unaffected."
+		endmethod
+		
+
+		.endregion
+
+		.region "Helper routines"
+
+        private method getRemotePeople, @ObservableCollection<Person>
+			endparams
+			record
+				svc		,@Service1Client
+                people	,@ObservableCollection<Person>
+			endrecord
+		proc
+			try
+			begin
+				svc = new Service1Client()
+				if (svc.GetAllPeople(people)) then
+					cacheDataLocally(people)
+				else
+				begin
+					MessageBox.Show("Method GetAppPeople() returned an error!")
+                    people = new ObservableCollection<Person>()
+				end
+			end
+			catch (ex, @Exception)
+			begin
+				MessageBox.Show("WCF service call failed: " + ex.Message)
+                people = new ObservableCollection<Person>()
+			end
+			endtry
+			StatusText.Content = string.Format("Displaying {0} records from server, data now cached locally.",people.Count)
+			mreturn people
+		endmethod
+
+		private method cacheDataLocally, void
+            required in aPeople	,@ObservableCollection<Person>
+			endparams
+			record
+				p	,@Person
+				sts	,i4
+			endrecord
+		proc
+			close chPeople
+			xcall isclr(localPeopleFile,sts)
+			open(chPeople,u:i,localPeopleFile)
+			foreach p in aPeople
+				store(chPeople,p.Record)
+		endmethod
+
+		
+		private method deleteLocalCache, void
+			endparams
+			record
+				sts	,i4
+			endrecord
+		proc
+			close chPeople
+			xcall isclr(localPeopleFile,sts)
+			open(chPeople,u:i,localPeopleFile)
+			grid.ItemsSource = ^null
+			StatusText.Content = (string)"Local data cache was cleared."
+		endmethod
+		
+
+        private method getLocalPeople, @ObservableCollection<Person>
+			endparams
+			record
+                people	,@ObservableCollection<Person>
+				ps		,strPerson
+				po		,@Person
+			endrecord
+		proc
+            people = new ObservableCollection<Person>()
+			try
+			begin
+				find(chPeople,^FIRST)
+				repeat
+				begin
+					reads(chPeople,ps)
+					po = new Person()
+					po.PersonId = (int)ps.person_id
+					po.FirstName = ps.first_name
+					po.LastName = ps.last_name
+					po.Email = ps.email
+					people.Add(po)
+				end
+			end
+			catch (ex, @EndOfFileException)
+			begin
+				nop
+			end
+			endtry
+			StatusText.Content = string.Format("Displaying {0} records from local cache.",people.Count)
+			mreturn people
+		endmethod
+		
+				
+		.endregion
+	
+		.region "Window events"
+		
+
+		private method Window_Closed, void
+			byval sender, @object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			if (chPeople && %chopen(chPeople))
+			begin
+				close chPeople
+			end
+		endmethod
+		
+
+		.endregion
+		
+	endclass
+
+endnamespace
+

@@ -1,0 +1,118 @@
+namespace ClientApp
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.ServiceContractAttribute(Namespace = "http://synergex.psg.wcf.examples", ConfigurationName = "ICalculatorService")}
+	public interface ICalculatorService
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://synergex.psg.wcf.examples/ICalculatorService/Add", ReplyAction = "http://synergex.psg.wcf.examples/ICalculatorService/AddResponse")}
+		method Add, double
+			n1, double 
+			n2, double 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://synergex.psg.wcf.examples/ICalculatorService/Subtract", ReplyAction = "http://synergex.psg.wcf.examples/ICalculatorService/SubtractResponse")}
+		method Subtract, double
+			n1, double 
+			n2, double 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://synergex.psg.wcf.examples/ICalculatorService/Multiply", ReplyAction = "http://synergex.psg.wcf.examples/ICalculatorService/MultiplyResponse")}
+		method Multiply, double
+			n1, double 
+			n2, double 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://synergex.psg.wcf.examples/ICalculatorService/Divide", ReplyAction = "http://synergex.psg.wcf.examples/ICalculatorService/DivideResponse")}
+		method Divide, double
+			n1, double 
+			n2, double 
+			endparams
+		endmethod
+	endinterface
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public interface ICalculatorServiceChannel extends ClientApp.ICalculatorService, System.ServiceModel.IClientChannel
+	endinterface
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public partial class CalculatorServiceClient extends System.ServiceModel.ClientBase<ClientApp.ICalculatorService> implements ClientApp.ICalculatorService
+
+		public method CalculatorServiceClient
+			endparams
+		proc
+
+		endmethod
+
+		public method CalculatorServiceClient
+			endpointConfigurationName, string 
+			endparams
+			parent(endpointConfigurationName)
+		proc
+
+		endmethod
+
+		public method CalculatorServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, string 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method CalculatorServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method CalculatorServiceClient
+			binding, @System.ServiceModel.Channels.Binding 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(binding, remoteAddress)
+		proc
+
+		endmethod
+
+		public method Add, double
+			n1, double 
+			n2, double 
+			endparams
+		proc
+			mreturn parent.Channel.Add(n1, n2)
+		endmethod
+
+		public method Subtract, double
+			n1, double 
+			n2, double 
+			endparams
+		proc
+			mreturn parent.Channel.Subtract(n1, n2)
+		endmethod
+
+		public method Multiply, double
+			n1, double 
+			n2, double 
+			endparams
+		proc
+			mreturn parent.Channel.Multiply(n1, n2)
+		endmethod
+
+		public method Divide, double
+			n1, double 
+			n2, double 
+			endparams
+		proc
+			mreturn parent.Channel.Divide(n1, n2)
+		endmethod
+	endclass
+endnamespace
+

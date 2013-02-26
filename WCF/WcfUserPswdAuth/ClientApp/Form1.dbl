@@ -1,0 +1,80 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+
+namespace ClientApp
+
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+		private method btnCalculate_Click, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			data proxy = new CalculatorServiceClient()
+			proxy.ClientCredentials.UserName.UserName = txtUsername.Text
+			proxy.ClientCredentials.UserName.Password = txtPassword.Text
+			
+			data value1, double
+			data value2, double
+			
+			if (!double.TryParse(txtFirstNumber.Text,value1))
+			begin
+				MessageBox.Show("Specify a numeric value for first number")
+				txtFirstNumber.SelectAll()
+				txtFirstNumber.Focus()
+				mreturn
+			end
+
+			if (!double.TryParse(txtSecondNumber.Text,value2))
+			begin
+				MessageBox.Show("Specify a numeric value for second number")
+				txtSecondNumber.SelectAll()
+				txtSecondNumber.Focus()
+				mreturn
+			end
+			
+			try
+			begin
+				data result, double
+				if (rbAdd.Checked) then
+					result = proxy.Add(value1,value2)
+				else if (rbSubtract.Checked) then
+					result = proxy.Subtract(value1,value2)
+				else if (rbMultiply.Checked) then
+					result = proxy.Multiply(value1,value2)
+				else if (rbDivide.Checked)
+					result = proxy.Divide(value1,value2)
+				MessageBox.Show(String.Format("The answer is {0}",result))
+			end
+			catch (ex, @TimeoutException)
+			begin
+				MessageBox.Show(string.Format("Call timed out : {0}", ex.Message))
+				proxy.Abort()
+			end
+			catch (ex, @Exception)
+			begin
+				data msg = "Call failed:"
+				while (ex != ^null)
+				begin
+					msg += String.Format("{0}{1}", char(13),ex.Message)
+					ex = ex.InnerException
+				end
+				MessageBox.Show(msg)
+				proxy.Abort()
+			end
+			endtry
+		endmethod
+		
+	endclass
+endnamespace
+
