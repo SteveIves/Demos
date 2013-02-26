@@ -1,0 +1,7 @@
+.define D_UPS_USERID		"steveives"				;UPS.COM username
+.define D_UPS_PASSWORD		"beth5173"				;UPS.COM password
+.define D_UPS_ACCESS_CODE	"3C179263C06233F0"		;UPS XML Access Code
+
+
+Developers key: BBDB4D903C2C0B58
+XML Access Key:	3C179263C06233F0
