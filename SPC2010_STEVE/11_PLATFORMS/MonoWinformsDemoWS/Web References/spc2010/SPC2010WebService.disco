@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://localhost/spc2010/SPC2010WebService.asmx?wsdl" docRef="http://localhost/spc2010/SPC2010WebService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://localhost/spc2010/SPC2010WebService.asmx" xmlns:q1="http://psg.synergex.com/" binding="q1:SPC2010WebServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://localhost/spc2010/SPC2010WebService.asmx" xmlns:q2="http://psg.synergex.com/" binding="q2:SPC2010WebServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

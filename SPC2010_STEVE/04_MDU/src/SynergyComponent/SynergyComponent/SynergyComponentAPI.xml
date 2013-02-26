@@ -1,0 +1,703 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SynergyComponent</name>
+    </assembly>
+    <members>
+        <member name="T:spc2010.Address">
+            <summary>
+            Structural Interface Class SynergyComponent
+            </summary>
+        </member>
+        <member name="F:spc2010.Address.fieldAttributes">
+            <summary>
+            Attributes for fields
+            </summary>
+        </member>
+        <member name="M:spc2010.Address.Clone">
+            <summary>
+            structure clone
+            </summary>
+        </member>
+        <member name="M:spc2010.Address.Equals(spc2010.Address)">
+            <summary>
+            structure equals
+            </summary>
+        </member>
+        <member name="M:spc2010.Address.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:spc2010.Address.structToWire">
+            <summary>
+            serialize structure
+            </summary>
+        </member>
+        <member name="M:spc2010.Address.wireToStruct(Synergex.xfnlnet.SynMessage)">
+            <summary>
+            deserialize structure
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Address_id">
+            <summary>
+            Address ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Customer_id">
+            <summary>
+            Customer ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Address_type">
+            <summary>
+            Type of address
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Address1">
+            <summary>
+            Address Line 1 - Number, Building
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Address2">
+            <summary>
+            Address Line 2 - Number, street
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Address3">
+            <summary>
+            Address Line 3 - Area, locality
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.City">
+            <summary>
+            City
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Postal_code">
+            <summary>
+            Zip or Postal code
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.State">
+            <summary>
+            State, Province or Country
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Country">
+            <summary>
+            Country
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Mailing_address">
+            <summary>
+            This is a mailing address
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Billing_address">
+            <summary>
+            This is a billing address
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Main_address">
+            <summary>
+            This is the main office address
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Satellite_office">
+            <summary>
+            This is a satellite office address
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Active_date">
+            <summary>
+            Date address became active
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Replication_key">
+            <summary>
+            SQL Replication Timestamp
+            </summary>
+        </member>
+        <member name="P:spc2010.Address.Changed">
+            <summary>
+            Structure Changed 
+            </summary>
+            <returns>true if structure has been changed</returns>
+        </member>
+        <member name="T:spc2010.Contact">
+            <summary>
+            Structural Interface Class SynergyComponent
+            </summary>
+        </member>
+        <member name="F:spc2010.Contact.fieldAttributes">
+            <summary>
+            Attributes for fields
+            </summary>
+        </member>
+        <member name="M:spc2010.Contact.Clone">
+            <summary>
+            structure clone
+            </summary>
+        </member>
+        <member name="M:spc2010.Contact.Equals(spc2010.Contact)">
+            <summary>
+            structure equals
+            </summary>
+        </member>
+        <member name="M:spc2010.Contact.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:spc2010.Contact.structToWire">
+            <summary>
+            serialize structure
+            </summary>
+        </member>
+        <member name="M:spc2010.Contact.wireToStruct(Synergex.xfnlnet.SynMessage)">
+            <summary>
+            deserialize structure
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Contact_id">
+            <summary>
+            Contact ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Customer_id">
+            <summary>
+            Customer ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Address_id">
+            <summary>
+            Address ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Salutation">
+            <summary>
+            Contact salutation
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.First_name">
+            <summary>
+            Contact first name
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Last_name">
+            <summary>
+            Contact last name
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Friendly_name">
+            <summary>
+            Contact friendly/printable name
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Title">
+            <summary>
+            Contact title
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Department">
+            <summary>
+            Department name
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Work_phone">
+            <summary>
+            Work phone
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Work_extension">
+            <summary>
+            Work phone extension
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Mobile_phone">
+            <summary>
+            Mobile phone
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Home_phone">
+            <summary>
+            Home phone
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Fax">
+            <summary>
+            Fax number
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Web_site">
+            <summary>
+            Web site
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Email">
+            <summary>
+            Email address
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Picture_file">
+            <summary>
+            Path to contact image file
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Management_contact">
+            <summary>
+            Contact has a management role
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Technical_contact">
+            <summary>
+            Contact has technical role
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Sales_contact">
+            <summary>
+            Contact has a role in sales
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Billing_contact">
+            <summary>
+            Contact for billing purposes
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.General_contact">
+            <summary>
+            This is a general contact
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Replication_key">
+            <summary>
+            SQL Replication Timestamp
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Noname_001">
+            <summary>
+            Filler
+            </summary>
+        </member>
+        <member name="P:spc2010.Contact.Changed">
+            <summary>
+            Structure Changed 
+            </summary>
+            <returns>true if structure has been changed</returns>
+        </member>
+        <member name="T:spc2010.Customer">
+            <summary>
+            Structural Interface Class SynergyComponent
+            </summary>
+        </member>
+        <member name="F:spc2010.Customer.fieldAttributes">
+            <summary>
+            Attributes for fields
+            </summary>
+        </member>
+        <member name="M:spc2010.Customer.Clone">
+            <summary>
+            structure clone
+            </summary>
+        </member>
+        <member name="M:spc2010.Customer.Equals(spc2010.Customer)">
+            <summary>
+            structure equals
+            </summary>
+        </member>
+        <member name="M:spc2010.Customer.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:spc2010.Customer.structToWire">
+            <summary>
+            serialize structure
+            </summary>
+        </member>
+        <member name="M:spc2010.Customer.wireToStruct(Synergex.xfnlnet.SynMessage)">
+            <summary>
+            deserialize structure
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Customer_id">
+            <summary>
+            Customer ID
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Name">
+            <summary>
+            Customer name
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Date_created">
+            <summary>
+            Date customer was created
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Date_modified">
+            <summary>
+            Last modification date
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Status">
+            <summary>
+            Company status
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Replication_key">
+            <summary>
+            SQL Replication Timestamp
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Noname_001">
+            <summary>
+            Filler record
+            </summary>
+        </member>
+        <member name="P:spc2010.Customer.Changed">
+            <summary>
+            Structure Changed 
+            </summary>
+            <returns>true if structure has been changed</returns>
+        </member>
+        <member name="T:spc2010.Address_type">
+            <summary>
+            Enumeration SynergyComponent
+            </summary>
+        </member>
+        <member name="F:spc2010.Address_type.Business">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="F:spc2010.Address_type.Home">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="F:spc2010.Address_type.Other">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="T:spc2010.Method_status">
+            <summary>
+            Enumeration SynergyComponent
+            </summary>
+        </member>
+        <member name="F:spc2010.Method_status.Success">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="F:spc2010.Method_status.Info_error">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="F:spc2010.Method_status.Fatal_error">
+            <summary>
+            Enumerator 
+            </summary>
+        </member>
+        <member name="T:spc2010.ISynergyServer">
+            <summary>
+            Interface SynergyComponent
+            </summary>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetAddressForUpdate(System.Int32,System.Int32,spc2010.Address@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns an address record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="AddressID">Passed address ID</param>
+            <param name="Address">Returned address structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetAllCustomers(System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of all customers
+            </summary>
+            <param name="Customers">Returned ArrayList of boxed customer structures</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetContactForUpdate(System.Int32,System.Int32,spc2010.Contact@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns a contact record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="ContactID">Passed contact ID</param>
+            <param name="Contact">Returned contact structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetCustomerAddresses(System.Int32,System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of addresses for a customer
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Addresses">Returned ArrayList of boxed address structures</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetCustomerContacts(System.Int32,System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of contacts for a customer
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Contacts">Returned ArrayList of boxed contact structures</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.GetCustomerForUpdate(System.Int32,spc2010.Customer@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns a customer record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Customer">Returned customer structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.UpdateContact(spc2010.Contact@,System.Byte[]@,System.String@)">
+            <summary>
+            Updated a contact record
+            </summary>
+            <param name="Contact">Contact structure</param>
+            <param name="GRFA">Previous GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.UpdateCustomer(spc2010.Customer@,System.Byte[]@,System.String@)">
+            <summary>
+            Updated a customer record
+            </summary>
+            <param name="Customer">Customer structure</param>
+            <param name="GRFA">Previous GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.connect">
+            <summary>
+            connect to xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.ISynergyServer.connect(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            xfServerPlus four parameter connect
+            </summary>
+            <param name="hostIP">IP address</param>
+            <param name="hostPort">port number</param>
+            <param name="minPort">minport number</param>
+            <param name="maxPort">maxport number</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.connect(System.String,System.Int32)">
+            <summary>
+            xfServerPlus host and port connect
+            </summary>
+            <param name="hostIP">IP address</param>
+            <param name="hostPort">port number</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.disconnect">
+            <summary>
+            disconnect from xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.ISynergyServer.debugInit(System.String@,System.Int32@)">
+            <summary>
+            initialize a debug session
+            </summary>
+            <param name="hexip">IP address</param>
+            <param name="port">port number</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.debugStart">
+            <summary>
+            start a debug session of xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.ISynergyServer.getConnect">
+            <summary>
+            get the object's xfServerPlus connection
+            </summary>
+            <returns>xfServerPlus connection</returns>
+        </member>
+        <member name="M:spc2010.ISynergyServer.shareConnect(System.Object)">
+            <summary>
+            share the provided connection
+            </summary>
+            <param name="connect">connection to share</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.setCallTimeout(System.Int32)">
+            <summary>
+            set the call timeout in seconds
+            </summary>
+            <param name="seconds">timeout in seconds</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.setUserString(System.String)">
+            <summary>
+            set the user string
+            </summary>
+            <param name="userString">The user string</param>
+        </member>
+        <member name="M:spc2010.ISynergyServer.getUserString">
+            <summary>
+            get the user string 
+            </summary>
+            <returns>User String</returns>
+        </member>
+        <member name="T:spc2010.SynergyServer">
+            <summary>
+            Procedural Interface Class SynergyComponent
+            </summary>
+        </member>
+        <member name="M:spc2010.SynergyServer.#ctor">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetAddressForUpdate(System.Int32,System.Int32,spc2010.Address@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns an address record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="AddressID">Passed address ID</param>
+            <param name="Address">Returned address structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetAllCustomers(System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of all customers
+            </summary>
+            <param name="Customers">Returned ArrayList of boxed customer structures</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetContactForUpdate(System.Int32,System.Int32,spc2010.Contact@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns a contact record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="ContactID">Passed contact ID</param>
+            <param name="Contact">Returned contact structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetCustomerAddresses(System.Int32,System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of addresses for a customer
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Addresses">Returned ArrayList of boxed address structures</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetCustomerContacts(System.Int32,System.Collections.ArrayList@)">
+            <summary>
+            Returns a collection of contacts for a customer
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Contacts">Returned ArrayList of boxed contact structures</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.GetCustomerForUpdate(System.Int32,spc2010.Customer@,System.Byte[]@,System.String@)">
+            <summary>
+            Returns a customer record and current GRFA
+            </summary>
+            <param name="CustomerID">Passed customer ID</param>
+            <param name="Customer">Returned customer structure</param>
+            <param name="GRFA">Returned current GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.UpdateContact(spc2010.Contact@,System.Byte[]@,System.String@)">
+            <summary>
+            Updated a contact record
+            </summary>
+            <param name="Contact">Contact structure</param>
+            <param name="GRFA">Previous GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.UpdateCustomer(spc2010.Customer@,System.Byte[]@,System.String@)">
+            <summary>
+            Updated a customer record
+            </summary>
+            <param name="Customer">Customer structure</param>
+            <param name="GRFA">Previous GRFA</param>
+            <param name="Message">Returned message text for non success status</param>
+            <returns>Return value defined by METHOD_STATUS enumeration</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.connect">
+            <summary>
+            connect to xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.SynergyServer.connect(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            xfServerPlus four parameter connect
+            </summary>
+            <param name="hostIP">IP address</param>
+            <param name="hostPort">port number</param>
+            <param name="minPort">minport number</param>
+            <param name="maxPort">maxport number</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.connect(System.String,System.Int32)">
+            <summary>
+            xfServerPlus host and port connect
+            </summary>
+            <param name="hostIP">IP address</param>
+            <param name="hostPort">port number</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.disconnect">
+            <summary>
+            disconnect from xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.SynergyServer.debugInit(System.String@,System.Int32@)">
+            <summary>
+            initialize a debug session
+            </summary>
+            <param name="hexip">IP address</param>
+            <param name="port">port number</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.debugStart">
+            <summary>
+            start a debug session of xfServerPlus
+            </summary>
+        </member>
+        <member name="M:spc2010.SynergyServer.getConnect">
+            <summary>
+            get the object's xfServerPlus connection
+            </summary>
+            <returns>xfServerPlus connection</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.shareConnect(System.Object)">
+            <summary>
+            share the provided connection
+            </summary>
+            <param name="connect">connection to share</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.setCallTimeout(System.Int32)">
+            <summary>
+            set the call timeout in seconds
+            </summary>
+            <param name="seconds">timeout in seconds</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.setUserString(System.String)">
+            <summary>
+            set the user string
+            </summary>
+            <param name="userString">The user string</param>
+        </member>
+        <member name="M:spc2010.SynergyServer.getUserString">
+            <summary>
+            get the user string 
+            </summary>
+            <returns>User String</returns>
+        </member>
+        <member name="M:spc2010.SynergyServer.CanBePooled">
+            <summary>
+            indicate if an object can be put back into the pool
+            </summary>
+            <returns>true if object can be returned to pool</returns>
+        </member>
+    </members>
+</doc>

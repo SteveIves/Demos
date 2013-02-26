@@ -1,0 +1,24 @@
+﻿<configuration>
+    <system.serviceModel>
+        <bindings>
+            <basicHttpBinding>
+                <binding name="BasicHttpBinding_ISPC2010WcfService" maxBufferSize="2147483647"
+                    maxReceivedMessageSize="2147483647">
+                    <security mode="None" />
+                </binding>
+                <binding name="BasicHttpBinding_ISPC2010WcfService1" maxBufferSize="2147483647"
+                    maxReceivedMessageSize="2147483647">
+                    <security mode="None" />
+                </binding>
+            </basicHttpBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://localhost:55635/SPC2010WcfService.svc"
+                binding="basicHttpBinding" bindingConfiguration="BasicHttpBinding_ISPC2010WcfService"
+                contract="SPC2010WcfService.ISPC2010WcfService" name="BasicHttpBinding_ISPC2010WcfService" />
+            <endpoint address="http://localhost:55635/SPC2010WcfService.svc"
+                binding="basicHttpBinding" bindingConfiguration="BasicHttpBinding_ISPC2010WcfService1"
+                contract="SPC2010Server.ISPC2010WcfService" name="BasicHttpBinding_ISPC2010WcfService1" />
+        </client>
+    </system.serviceModel>
+</configuration>

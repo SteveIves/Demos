@@ -1,0 +1,7 @@
+<OutOfBrowserSettings ShortName="SPC2010 Silverlight Demo" EnableGPUAcceleration="True" ShowInstallMenuItem="True">
+  <OutOfBrowserSettings.Blurb>A Silverlight demo application prepared for SPC2010.</OutOfBrowserSettings.Blurb>
+  <OutOfBrowserSettings.WindowSettings>
+    <WindowSettings Title="SPC2010 Silverlight Demo" Height="700" Width="1000" />
+  </OutOfBrowserSettings.WindowSettings>
+  <OutOfBrowserSettings.Icons />
+</OutOfBrowserSettings>
