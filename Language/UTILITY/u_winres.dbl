@@ -1,0 +1,34 @@
+;-------------------------------------------------------------------------------
+; Title:	u_winres.dbl
+; Author:	Steve Ives (Synergex)
+; Date:		11th January 1999
+; Use:		Return Windows screen resolution, e.g.
+;
+;				640 x 400
+;				640 x 480
+;				800 x 600
+;				1024 x 768
+;
+;$Log:   S:/Source/Synergy/psg/archive/u_winres.dbv  $
+;
+;   Rev 1.0   Jun 10 1999 22:45:04   Administrator
+;Original version
+
+.function u_winres	;,a
+
+.include "DBLDIR:apmisc.def"
+
+record
+	retval		,a10
+
+.proc
+
+	.ifdef D_GUI
+	xcall s_bld(retval,,"%d x %d",%ap_misc(MSC_SCREEN_X),%ap_misc(MSC_SCREEN_Y))
+	.endc
+
+	freturn retval
+
+.end
+
+

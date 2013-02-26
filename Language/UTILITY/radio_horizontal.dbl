@@ -1,0 +1,137 @@
+
+.subroutine radio_horizontal
+;
+; Description:  Convert a radio button field to horizontal
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_fldname	,a	;Name of the field
+;
+.include "DBLDIR:windows.def"
+.include "DBLDIR:apmisc.def"
+.include "WND:fldinf.def"
+;
+; This routine manipulates some undocumented structures in order to achieve
+; the correct size and position for the controls.  Note that this could
+; in theory be broken by future Synergy versions.
+
+.define M_PTINRECT(r,p) ((p.x .ge. r.left) .and. (p.x .le. r.right) .and.
+&			 (p.y .ge. r.top) .and. (p.y .le. r.bottom))
+
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	hwnd		,i4	;Handle of the input window
+	hchild		,i4	;Handle to a child window
+	hradio		,i4	;Handle to a radio button
+	selid		,i4	;ID of associated selection window
+	nfields		,i4	;Number of fields in selection window
+	pctls		,i4	;Pointer to button control structure
+	hctls		,i4	;Memory handle for control structure reference
+	pbtn		,i4	;Pointer to button structure
+	phead		,i4	;Pointer to head of linked list
+	hbtn		,i4	;Memory handle for button structure reference
+	group point	,a	;Point where we expect to find the field
+	  x		,i4
+	  y		,i4
+	endgroup
+	group rect	,a	;Rectangle of the button control
+	  left		,i4
+	  top		,i4
+	  right		,i4
+	  bottom	,i4
+	endgroup
+	charwidth	,i4	;Width of a character
+	fldwidth	,i4	;Width of a radio button
+	fldheight	,i4	;Height of a radio button
+	buf		,a10	;Dummy buffer for s_selinf because args 2-3 aren't optional
+
+structure st_btnctls		;Button control structure (undocumented)
+	type		,i4	;ButtonControl type: radio/checkbox
+	flags		,i4	;Leaded/unleaded
+	index		,i4	;Number of buttons + 1
+	group button_head,a	;List of contained buttons
+	  next		,i4	;Next button
+	  prev		,i4	;Previous button
+	endgroup
+
+structure st_btn		;Data for each button entry in the linked list
+	group llst	,a	;Linked list controls
+	  next		,i4	;Next button
+	  prev		,i4	;Previous button
+	endgroup
+	type		,i4     ;Type:  radio/checkbox
+	hwnd_btn	,i4	;Hwnd of button
+	x		,i4	;Positon in cells, 1 based
+	y		,i4
+
+
+.proc
+	;Get the information about the input field
+	xcall i_fldinf(a_inpid, a_fldname,,, gs_inpfld, selid)
+	xcall s_selinf(selid, 1, buf, nfields)
+	;X is computed as the X origin of the usable area plus,
+	;	the width of a character times
+	;	  the origin column of the field (adjusted for any display area)
+	point.x = %ap_misc(MSC_XORIGIN, a_inpid) +
+	&	((charwidth = %ap_misc(MSC_CHARWIDTH, a_inpid)) *
+	&	  (gs_fcol - %w_info(WIF_DCOL, a_inpid)))
+	;Likewise for Y
+	point.y = %ap_misc(MSC_YORIGIN, a_inpid) +
+	&	(%ap_misc(MSC_ROWHEIGHT, a_inpid) *
+	&	  (gs_frow - %w_info(WIF_DROW, a_inpid)))
+	hwnd = %w_info(WIF_HWND, a_inpid)	;Get the handle of the input window
+	user32 = %dll_open("user32")		;Open user32.dll
+	hchild = 0				;Start at the top
+	while (hchild = %dll_call(user32,DLL_TYPE_WINAPI,"FindWindowExA", hwnd, hchild,
+	&      "ButtonControl", %integer(0)))	;While we have a radio button
+	  begin
+	    xcall dll_call(user32,DLL_TYPE_WINAPI,"GetWindowRect", hchild, ^addr(rect))
+				    		;Get its bounding rectangle
+				    		; and convert to client coordinates
+	    xcall dll_call(user32,DLL_TYPE_WINAPI,"ScreenToClient", hwnd, ^addr(rect.left))
+	    xcall dll_call(user32,DLL_TYPE_WINAPI,"ScreenToClient", hwnd, ^addr(rect.right))
+	    if (M_PTINRECT(rect, point))	;Is the point in the rectangle?
+	      begin				;The field lies within it
+		fldwidth = rect.right - rect.left + charwidth	;Add a character for spacing
+		fldheight = (rect.bottom - rect.top) / nfields
+		xcall dll_call(user32,DLL_TYPE_WINAPI,"MoveWindow", hchild,  ;Resize the control window
+		&	       rect.left, rect.top,
+		&	       fldwidth * nfields,
+		&	       fldheight,
+		&	       %integer(FALSE))
+		;Now for the undocumented part.  Synergy radio buttons have a
+		; linked list of button information, in which is stored the x
+		; and y coordinates for the buttons in cells.  Each button is
+		; repositioned according to this data whenever I_INPUT is
+		; entered.
+		;
+		;First, get a pointer to the control structure
+		if (pctls = %dll_call(user32,DLL_TYPE_WINAPI,"GetWindowLongA", hchild, %integer(0)))
+		  begin
+		    ;Now, convert it to a Synergy handle
+		    hctls = %mem_proc(DM_REG, ^size(st_btnctls), pctls)
+		    ;Save the address of the head of the linked list
+		    phead = ^addr(^m(st_btnctls.button_head,hctls))
+		    ;Get a pointer to the first button's control structure
+		    pbtn = ^m(st_btnctls.button_head.next,hctls)
+		    point.x = point.y = 1		;Cell-oriented, 1-based
+		    fldwidth /= charwidth		;Convert to cells
+		    while (pbtn .ne. phead)		;Process the linked list
+		      begin
+			;Convert the button data pointer to a handle
+			hbtn = %mem_proc(DM_REG, ^size(st_btn), pbtn)
+			^m(st_btn.x,hbtn) = point.x	;Store the new positions
+			^m(st_btn.y,hbtn) = point.y
+			pbtn = ^m(st_btn.llst.next,hbtn);Get the next button
+			point.x += fldwidth		;Increment our position
+		      end
+		  end
+		exitloop	;Found our button set, get out
+	      end
+	  end
+	xcall dll_close(user32)	;Close user32.dll
+	xreturn
+.end

@@ -1,0 +1,56 @@
+.main test_guid
+
+external function
+	guid_create		,a
+	guid_decode		,a
+	guid_encode		,a
+
+
+record
+	c				,i1
+	dll				,i4
+
+	guid			,a16
+	aguid			,a36
+	
+	newguid			,a16
+	newaguid		,a36
+
+	tempa			,a128
+	addr			,D_ADDR
+
+.proc
+
+
+	open(1,o,'tt:')
+	xcall flags(7004020,1)
+
+	;Create a GUID
+	guid = %guid_create
+
+	;Get and display a string version of our GUID
+	aguid=%guid_decode(guid)
+	writes(1,aguid)
+
+	;Encode the string version back to binary
+	newguid=%guid_encode(aguid)
+
+	;Decode it again to display it
+	newaguid = %guid_decode(newguid)
+	writes(1,newaguid)
+
+	;And compare original to new
+	if (guid==newguid) then
+		writes(1,"Same")
+	else
+		writes(1,"Different")
+
+	accept(1,c)
+
+	close 1
+
+	stop
+
+.end
+
+

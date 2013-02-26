@@ -1,0 +1,61 @@
+
+;test program for buttons anywhere
+.main test_button_anywhere
+
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+
+
+record ivar
+    inpBuild        ,i4
+    wndid           ,i4
+    button_id       ,4i4
+
+record avar
+    idata           ,a90
+
+.proc
+    clear ^i(ivar), avar
+    xcall u_start
+
+    ;create input window
+    clear inpBuild
+    xcall ib_input(inpbuild, '', 15, 60)
+    xcall ib_field(inpbuild, 'emp_name', D_FLD_SIZE, 50, D_FLD_TYPE, D_ALPHA,
+    &              D_FLD_POS, 13, 2)
+    xcall ib_field(inpbuild, 'emp_email', D_FLD_SIZE, 40, D_FLD_TYPE, D_ALPHA,
+    &              D_FLD_POS, 15, 2)
+    xcall ib_buttonset(inpbuild, DSB_BOTTOM, 1, DSB_END)
+    xcall ib_button(inpbuild, 'O_EXIT', DSB_TEXT, 'OK')
+    xcall ib_end(inpbuild, wndid)
+    xcall w_brdr(wndid, WB_TITLE, "Test Buttons AnyWhere")
+
+    ;add more buttons anywhere on input window
+    xcall button_anywhere(button_id(1), wndid, 5,10, 'M_BUTTON1', DSB_TEXT, "Button1",,, "1")
+    xcall button_anywhere(button_id(2), wndid, 6,12, 'M_BUTTON2', DSB_TEXT, "Button2",,, "2")
+    xcall button_anywhere(button_id(3), wndid, 9,20, 'M_BUTTON3', DSB_TEXT, "Button3",,, "3")
+    xcall button_anywhere(button_id(4), wndid, 11,15, 'M_BUTTON4', DSB_TEXT, "Button4",,, "4")
+
+    xcall i_next(wndid,, '*FRST*')
+    xcall u_window(D_PLACE, wndid, 5, 5)
+
+    repeat
+        begin
+        xcall i_input(wndid,, idata,,,, D_NOTERM)
+
+        if (g_select)
+            begin
+            using g_entnam select
+            ('O_EXIT'),
+                exitloop
+            (),
+                xcall u_message('g_entnam='+g_entnam)
+            endusing
+            clear g_select, g_entnam
+            end
+        end
+
+    xcall u_finish
+.end
+
+

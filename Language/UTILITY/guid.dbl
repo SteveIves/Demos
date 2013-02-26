@@ -1,0 +1,151 @@
+.ifdef D_GUI
+;****************************************************************************
+;
+; Title:        guid_create.dbl
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         3rd March 2005
+;
+; Description:  This routine calls a Windows API function to generate a GUID,
+;               A GUID is a unique 128-bit bianry number, which in Synergy
+;               should be stored in an A16 variable.
+;
+; Platforms:    32-bit Windows only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+
+.function guid_create   ;,a
+
+stack record ivars
+    dll             ,i4
+    sts             ,i4
+    guid            ,a16
+
+;Possible return values from UuidCreate
+.define RPC_S_OK                0           ;Success
+.define RPC_S_UUID_LOCAL_ONLY   1824        ;The UUID is guaranteed to be unique
+                                            ;to this computer only.
+.define RPC_S_UUID_NO_ADDRESS   1739        ;Cannot get Ethernet or token-ring
+                                            ;hardware address for this computer.
+.proc
+
+    clear ^i(ivars)
+
+    onerror err
+    dll = %dll_open("rpcrt4.dll")
+    sts = %dll_call(dll,DLL_TYPE_WINAPI,"UuidCreate",guid)
+
+    if (sts!=RPC_S_OK)
+err,    clear ^i(guid)
+
+    onerror ignore
+    dll = %dll_close(dll)
+
+ignore,
+
+    freturn guid
+
+.end
+
+;****************************************************************************
+;
+; Title:        guid_decode.dbl
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         3rd March 2005
+;
+; Description:  This routine accepts a single parameter which MUST be an a16
+;               containing a GUID and returns an A36 text representation of that
+;               GUID. This text representation is often referred to as a GUID
+;               in "Registry format".  The format will be:
+;
+;                   XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+;
+; Platforms:    All platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+
+.function guid_decode   ;,a
+
+    group guid      ,a  ;16     Passed GUID in binary format
+        byte        ,[16]i1
+    endgroup
+
+stack record
+    c               ,i4
+    tmpi2           ,i2
+    tmpguid         ,a32
+       tmpguid_byte ,[16]a2 @tmpguid
+    aguid           ,a36
+
+.proc
+
+    for c from 1 thru 16
+        tmpguid_byte[c] = %hex(%unsigned(byte[c]),1)
+
+    aguid = tmpguid(1:8)
+    &       + "-" + tmpguid(9:4)
+    &       + "-" + tmpguid(13:4)
+    &       + "-" + tmpguid(17:4)
+    &       + "-" + tmpguid(21:12)
+
+    freturn aguid
+
+.end
+
+;****************************************************************************
+;
+; Title:        guid_encode.dbl
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         3rd March 2005
+;
+; Description:  This routine accepts a GUID in registry format (A36) and
+;               converts it to and returns the GUID in binary format (A16)
+;
+; Platforms:    All platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+
+.function guid_encode   ;,a
+
+    aguid           ,a  ;36     Passed GUID in registry format (with hyphens)
+
+stack record
+    c               ,i4
+    tmpguid         ,a32        ;GUID in string format (no hyphens)
+    guid            ,a16        ;Returned GUID in binary format
+
+.proc
+
+    tmpguid = aguid - "-" - "-" - "-" - "-"
+
+    for c from 1 thru 16
+        guid(c:1) = %char(^x(tmpguid((C*2)-1:2)))
+
+    freturn guid
+
+.end
+
+.endc

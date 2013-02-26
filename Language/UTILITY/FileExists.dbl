@@ -1,0 +1,35 @@
+;------------------------------------------------------------------------------
+;Routine:		FileExists
+;Description:	Validates that a file exists
+;Author:		Steve Ives
+;
+.function FileExists, ^VAL, stack
+
+	a_file		,a
+
+record ivars
+	status		,i4
+	chn			,i4
+	
+.ifndef DBLV75
+.include "DBLDIR:apmisc.def"
+.endc
+
+.proc
+
+	clear ^i(ivars)
+
+	.ifdef DBLV75
+	open(chn=%syn_freechn,i,a_file) [ERR=fnf]
+	.else
+	open(chn=%ap_misc(MSC_GETCHN),i,a_file) [ERR=fnf]
+	.endc
+	
+	close chn
+	status=1
+
+fnf,
+	freturn status
+
+.end
+

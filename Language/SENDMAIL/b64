@@ -1,0 +1,28 @@
+# --------------------------
+# Shell script to build a custom shared object (myso.so)
+# for various platforms.
+#
+# Operating systems include: AIX, Digital Unix, HP-UX, Linux, SCO,
+# Solaris, and Unixware7. See makeusr.bat for the Windows build script.
+# ---------------------------
+#
+. $DBLDIR/csrc/makesys
+
+echo Compiling b64.c
+
+$CC $COPTS -c b64.c
+if [ $? -eq 0 ]; then
+
+    echo Linking b64.so
+    $LD -o b64.so b64.o $LDPIC $LDOPTS $NRSLIB
+    if [ $? -ne 0 ]; then
+        echo Failure during linkage
+    else
+        echo Successfully built b64.so
+    fi
+else
+    echo Failure during compilation of b64.c
+fi
+
+rm b64.o
+

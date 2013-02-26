@@ -1,0 +1,18 @@
+.main nosize
+;
+; Example of how to make the Synergy container window unsizeable
+;
+record
+	chr		,a1
+
+.proc
+
+	xcall u_start
+	
+	xcall app_nosize
+
+	xcall u_chr(chr)
+	
+	xcall u_finish
+
+.end

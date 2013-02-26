@@ -1,0 +1,29 @@
+.subroutine i_readwrite_set
+
+	a_winid,        n       ;passed window id
+	
+	a_set_name,     a       ;set name to process
+
+.include 'WND:tools.def'
+.include 'WND:system.def'
+.include 'WND:setinf.def'
+
+.align
+stack record
+	set_number		,i4
+	count			,i4		;loop counter
+	fld_name		,a30	;name of input field
+
+.proc
+
+	xcall i_setinf(a_winid, a_set_name,set_number,, gs_fldset)
+
+	for count from 1 thru gs_setcnt
+	begin
+		xcall i_fldinf(a_winid, fld_name, gs_setfldi(count))
+		xcall i_fldmod(a_winid,fld_name,,,D_OFF,D_FLD_READONLY)
+	end
+
+	xreturn
+
+.end

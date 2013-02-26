@@ -1,0 +1,123 @@
+;*******************************************************************************
+;
+;Routine:		SoapResponse
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	Synergy/DE V8.1 or higher
+;
+;Revisions:		Version	Date			Comment
+;				1.0		27 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine accepts as input a dynamic memory handle containing a SOAP
+;response, and strips off the outer SOAP data, returning only the actual
+;response data from the web service.
+;
+;DEALLOCATION OF THE STATIC DYNAMIC MEMORY ALLOCATED IN AND RETURNED FROM THIS
+;ROUTINE IS THE RESPONSIBILITY OF THE CALLING ROUTINE.
+;
+.function SoapResponse, ^VAL
+
+	a_soapdata		,n					;Memory handle containing SOAP response
+	a_soaplength	,n					;Optional length of the SOAP response
+	a_retlen		,n					;Optional length of return data
+
+.include "DBLDIR:synxml.def"
+
+.align
+stack record
+
+	group xml
+	  length		,i4
+	  string		,XML_STRING_TYPE
+	  parser		,XML_PARSER_TYPE
+	  doc			,[2]XML_DOC_TYPE
+	  children		,[2]XML_ELEMLIST_TYPE
+	  stringhandle	,i4
+	endgroup
+
+	group soap
+	  envelope		,XML_ELEM_TYPE		;XML element for SOAP envelope
+	  body			,XML_ELEM_TYPE		;XML element for SOAP body
+	  response		,XML_ELEM_TYPE		;XML element for SOAP response
+	  response_copy	,XML_ELEM_TYPE		;Copy of SOAP response element
+	endgroup
+
+	mh				,i4					;Returned memory handle	
+
+.proc
+
+	;If passed a length then use it, other wise figure it out
+
+	if ^passed(a_soaplength) then
+		xml.length = a_soaplength
+	else
+		xml.length = %trim(^m(a_soapdata))
+
+	;Load the inbound XML data into an XML string
+	
+	xml.string = %xml_string_create
+	xcall xml_string_appendhandle(xml.string,a_soapdata,xml.length)
+
+	;Create an XML parser and parse the XML string
+	
+	xml.parser = %xml_parser_create
+	xml.doc[1]=%xml_parser_parsestring(xml.parser,xml.string)
+	xcall xml_parser_delete(xml.parser)
+	xcall xml_string_delete(xml.string)
+
+	;Get the root element <the SOAP Envelope>
+	
+	soap.envelope = %xml_doc_getRoot(xml.doc[1])
+
+	;Get the SOAP Body clild element
+	
+	xml.children[1] = %xml_elem_getelementsbyname(soap.envelope,"soap:Body")
+	soap.body = %xml_elemlist_item(xml.children[1],1)
+
+	;Get the first element in the SOAP body children.  This element is the
+	;start of the actual response data from the web service
+
+	xml.children[2] = %xml_elem_children(soap.body)
+	soap.response = %xml_elemlist_item(xml.children[2],1)
+
+	;Create the XML document to hold the data to be returned to the caller
+	;and add the response data to the new XML document
+
+	xml.doc[2] = %xml_doc_create
+	soap.response_copy = %xml_doc_getroot(xml.doc[2])
+	xcall xml_elem_copy(soap.response_copy,soap.response)
+
+	;Extract the SOAP response to an XML string, then get it's memory handle
+	;and the length of that memory handle
+	
+	xml.string = %xml_doc_toString(xml.doc[2])
+	xml.stringhandle = %xml_string_getHandle(xml.string)
+	xml.length = %xml_string_getSize(xml.string)
+	
+	;Allocate new dynamic memory to return to caller and copy the XML data to it
+	
+	mh = %mem_proc(DM_ALLOC+DM_STATIC,xml.length)
+	^m(mh) = ^m(xml.stringhandle)
+	
+	if ^passed(a_retlen)
+		a_retlen = xml.length
+
+	;Clean up
+	
+	xcall xml_string_delete(xml.string)
+	xcall xml_doc_delete(xml.doc[1])
+	xcall xml_doc_delete(xml.doc[2])
+
+	freturn mh
+
+.end
+

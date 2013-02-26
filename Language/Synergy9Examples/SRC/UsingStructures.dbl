@@ -1,0 +1,174 @@
+;==============================================================================
+;
+; Title:		UsingStructures.dbl
+;
+; Description:	This program demonstrates several of the new things that you
+;				can do using structures in Synergy/DE V9, including using
+;				global structures, structure fields and structure arguments.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+; The following structures are "global" structures because they are not defined
+; within the data division of a program, subroutine or function, and they are
+; not part of a namespace or class.  Global structures do not need to be
+; declared BEFORE they are used, Synergy V9 has a multi-pass compiler so global
+; structured can be defined anywhere in the source file.  Also notice that the
+; "endstructure" statement is required when defining global structures.
+;
+structure strPersonName
+	First			,a20
+	Middle			,a1
+	Last			,a20
+endstructure
+
+structure strAddress
+	Street			,a30
+	City			,a25
+	State			,a2
+	Zip				,d5
+endstructure
+
+structure strPhoneNumber
+	Area			,a3
+	Number			,a7
+endstructure
+
+structure strPerson
+	Name			,strPersonName
+	Address			,strAddress
+	HomePhone		,strPhoneNumber
+	CellPhone		,strPhoneNumber
+endstructure
+
+;==============================================================================
+;
+main UsingStructures
+
+	record 
+		Contact	,strPerson			;This is a structure field
+		Status	,boolean
+	endrecord
+
+	external function 
+		DialPhoneNumber, boolean
+	endexternal
+	
+proc
+	
+	;Here we load some data into the Contact structure field
+
+	Contact.Name.First			= "John"
+	Contact.Name.Last			= "Doe"
+	Contact.Address.Street		= "2330 Gold Meadow Way"
+	Contact.Address.City		= "Gold River"
+	Contact.Address.State		= "CA"
+	Contact.Address.Zip 		= 95670
+	Contact.HomePhone.Area		= "916"
+	Contact.HomePhone.Number	= "5551111"
+	Contact.Cellphone			= "9165552222"
+	
+	;Here we are passing the Contact.Address structure field to a subroutine
+	;which declares a structure argument.  Notice that in Synergy V9 the xcall
+	;keyword is no longer required to call an external subroutine.
+
+	ShowAddressOnMap(Contact.Address)
+	
+	;Here we are passing the Contact.CellPhone structure field to a function
+	;which declares a structure agrument. Notice that the % operator is no
+	;longer required to call an external function.
+	
+	Status = DialPhoneNumber(Contact.CellPhone)
+	
+	stop
+	
+endmain
+
+;==============================================================================
+;
+subroutine ShowAddressOnMap
+	required in Address, strAddress				;This is a structure parameter
+	endparams
+proc
+
+	;Code in this routine can use Address.Street, Address.City etc.
+	;The fact that the Address parameter is defined as a structure parameter
+	;means that ONLY a strAddress structure field can be passed to the
+	;parameter, which means that this routine knows it will receive data in the
+	;correct format.
+	
+	xreturn
+
+endsubroutine
+
+;==============================================================================
+;
+function DialPhoneNumber
+	required in Phone, strPhoneNumber			;This is a structure parameter
+	endparams
+	external function 
+		OurAreaCode			,a
+		OutsideLinePrefix	,a
+		PhoneDial			,boolean
+	endexternal
+	record 
+		Status				,boolean
+	endrecord
+proc
+
+	if (Phone.Area==OurAreaCode()) then
+		Status = PhoneDial(OutsideLinePrefix()+Phone.Number)
+	else
+		Status = PhoneDial(OutSideLinePrefix()+LongDistancePrefix()+Phone)
+	
+	freturn Status
+
+endfunction
+
+;==============================================================================
+;
+function PhoneDial ;,boolean
+	NumberToDial	,a
+	endparams
+proc
+
+	;With the widespread use of Voice Over IP (VOIP) telephone systems it can
+	;be relatively easy to integrate software applications with telephone
+	;systems, saving time and increasing accuracy, because application users
+	;no longer need to lookup and manually dial telephone numbers.
+	
+	freturn true
+
+endfunction
+
+;==============================================================================
+;This function returns the prefix required to make an external call.  It would
+;probably obtain the value from some application configuration setting.
+;
+function OutsideLinePrefix
+	endparams
+proc
+	freturn "9"
+endfunction
+
+;==============================================================================
+;This function returns the prefix required to make a long distancecall.  It
+;would probably obtain the value from some application configuration setting.
+;
+function LongDistancePrefix
+	endparams
+proc
+	freturn "1"
+endfunction
+
+;==============================================================================
+;This function returns the local area code. It would probably obtain the value
+;from some application configuration setting.
+;
+function OurAreaCode
+	endparams
+proc
+	freturn "916"
+endfunction
+

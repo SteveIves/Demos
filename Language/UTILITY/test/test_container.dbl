@@ -1,0 +1,131 @@
+.main test_container
+;
+; Sample program for using container/child routines.
+;
+.include "WND:tools.def"
+.include "UT:container.def"
+
+.align
+stack record
+	colid		,i4	;ID of the general column
+	ctrid		,i4	;ID of the container
+	inpid		,i4	;Input window ID
+	linpid		,i4	;ID of list's input window
+	lstid		,i4	;List ID
+	input		,a10	;Input window data
+	ldata		,a62	;List data record
+
+.proc
+	xcall u_start("test_container.ism", 1)
+	xcall e_sect("Container window example", D_HEADER)
+	xcall m_ldcol(colid,, "c_general")
+	clear input, ldata
+	ctrid = %container_create("", 17, 70, "Container")
+	xcall i_ldinp(inpid,, "i_header", D_NOPLC)
+	xcall container_add(ctrid, D_CHILD_WINDOW, inpid, "input_method", 1, 1)
+	xcall i_ldinp(linpid,, "i_list", D_NOPLC)
+	xcall l_create(lstid, linpid, ldata, g_utlib, "l_list",,, D_NOPLC,, 1, 100)
+	xcall container_add(ctrid, D_CHILD_LIST, lstid, "list_method", 3, 1)
+	xcall b_button(ctrid, "O_OK", DSB_TEXT, "OK",,, "o")
+	xcall b_button(ctrid, "O_CLOSE", DSB_TEXT, "Close",,, "c")
+	xcall u_window(D_PLACE, ctrid, 2, 2)
+	repeat
+	  begin
+    	    xcall container_process(ctrid, input, ldata, lstid)
+	    if (g_select)
+	      begin
+		using g_entnam select
+("O_OK "),	  begin
+		    xcall i_init(inpid, "*CURR*", input)
+		    xcall l_restart(lstid)
+		    xcall container_context(ctrid, 1)	;Back to empty first window
+		  end
+("O_CLOSE "),	    exitloop
+("L_SELECTED "),  begin
+		    xcall container_context(ctrid, 1)	;Back to first window
+		    xcall i_next(inpid,, "*DONE*")	;But focus the container buttons
+		  end
+(),		    xcall u_message(%atrim(g_entnam) + " signaled")
+		endusing
+	      end
+	  end
+	xcall u_finish
+	stop
+.end
+
+.subroutine input_method
+	a_ctrid	,n
+	a_type	,n
+	a_inpid	,n
+	a_input	,a
+	a_ldata	,a
+	a_lstid	,n
+
+.include "WND:tools.def"
+
+.proc
+	repeat
+	  begin
+	    xcall i_input(a_inpid,, a_input)
+	    if (g_select)
+	      exitloop
+	    if (g_setsts) then
+	      begin
+		using g_fldnam select
+("CUSTOMER "),	    begin
+		      xcall i_dspfld(a_inpid, "name", "Customer " + %atrim(a_input) + " entered")
+		      xcall l_restart(a_lstid)
+		      xcall m_signal("C_NEXT")
+		      exitloop
+		    end
+		endusing
+	      end
+	    else	;Input complete
+	      begin
+		xcall m_signal("C_NEXT")
+		exitloop
+	      end
+	  end
+	xreturn
+.end
+
+.subroutine list_method
+	a_ctrid	,n
+	a_type	,n
+	a_lstid	,n
+	a_input	,a
+	a_ldata	,a
+
+.include "WND:tools.def"
+
+.align
+stack record
+	req	,i4
+.proc
+	if (.not. a_input)	;Nothing input in the first window?
+	  begin
+	    xcall m_signal("C_PREV")	;Go back
+	    xreturn
+	  end
+	xcall l_select(a_lstid, req=D_LNOP, a_ldata,,,,,,,,,,,,, a_input)
+	if (.not. g_select)
+	  xcall m_signal("L_SELECTED")
+	xreturn
+.end
+
+.subroutine list_load
+	a_lstid	,n
+	a_req	,n
+	a_data	,a
+	a_inpid	,n
+	a_dsa	,n
+	a_ndx	,n
+	a_input	,a
+.proc
+	if (a_ndx .le. 100) then
+	  xcall i_display(a_inpid,, a_data = "This is item # " +%string(a_ndx) +
+	  &		  " for customer " + a_input)
+	else
+	  a_req = D_LEOF
+	xreturn
+.end

@@ -1,0 +1,42 @@
+;******************************************************************************
+;
+; File:         GetConsultantProjects.dbl
+;
+; Type:         External subroutine
+;
+; Description:  Get the projects for a consultant
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/4/2010
+;
+;*******************************************************************************
+;
+import System.Collections
+import Synergex.SynergyDE.Select
+
+subroutine GetConsultantProjects
+
+	required in  consultantId	,a15
+	required out projects		,@ArrayList
+    endparams
+
+	record 
+		ch		,int
+		project	,strProject
+	endrecord
+
+proc
+
+	open(ch=syn_freechn,i:i,"DAT:project.ism")
+	
+	projects = new ArrayList()
+	
+	foreach project in new Select(new From(ch,project),(Where)project.lead_consultant==consultantId)
+		projects.Add((@strProject)project)
+	
+	close ch
+	
+	xreturn
+
+endsubroutine

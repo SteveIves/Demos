@@ -1,0 +1,24 @@
+.function yesnocancel, ^VAL
+
+	a_message		,a
+
+	a_default		,n
+
+.include "WND:tools.def"
+
+.align
+stack record
+	default			,i4
+
+.proc
+
+	if (^passed(a_default)) then
+		default = a_default
+	else
+		default = D_MDEFBUTTON1
+
+	freturn %u_msgbox(%atrim(a_message),
+	&		D_MYESNOCANCEL+D_MICONQUESTION+default,
+	&		"Confirmation Required")
+
+.end

@@ -1,0 +1,52 @@
+;******************************************************************************
+;
+; File:         SelectClassDemos.dbl
+;
+; Type:         Program
+;
+; Description:  Select Class Demos
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/4/2010
+;
+;*******************************************************************************
+;
+import System.Collections
+
+.include "PROJECT" repository, structure="strProject", end
+.include "PROJECT_STATUS" repository, enum
+
+main SelectClassDemos
+
+	record
+		tt			,i4
+		tmp			,a1
+		projects	,@ArrayList
+		p			,@strProject
+		project		,strProject
+	endrecord
+	
+proc
+
+    xcall flags(7004020,1)
+    open(tt=%syn_freechn,i,"tt:")
+
+
+	GetConsultantProjects("STEVEI",projects)
+	
+	foreach p in projects
+	begin
+		project = (strProject)p
+		writes(tt,project.project_id + " " + string(project.start_date,"XXXX/XX/XX"))
+	end
+
+	writes(tt,string(projects.Count) + " projects found")
+
+	display(tt,"Press a key: ")
+	accept(tt,tmp)
+
+    close tt
+    stop
+
+endmain

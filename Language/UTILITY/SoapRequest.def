@@ -1,0 +1,19 @@
+
+.ifndef SOAP_PARAM_ALPHA
+
+	.define SOAP_PARAM_ALPHA	1			;Alpha string
+	.define SOAP_PARAM_DECIMAL	2			;Decimal value
+	.define SOAP_PARAM_INTEGER	3			;Integer value
+	.define SOAP_PARAM_HANDLE	4			;Dynamic memory handle
+	.define SOAP_PARAM_XMLDOC	5			;XML document (XML_DOC_TYPE)
+	.define SOAP_PARAM_XMLELEM	6			;XML element (XML_ELEM_TYPE)
+
+	.ifdef SOAP_REQUEST_INTERNAL
+		.undefine SOAP_REQUEST_INTERNAL
+	.else
+		external function
+			soap_request			,^VAL
+	.endc
+
+.endc
+

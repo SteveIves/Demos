@@ -1,0 +1,32 @@
+.subroutine DisplayA
+
+	a_row		,n	;Optional, screen row (only used if a_row AND a_col passed)
+	a_col		,n	;Optional, screen col (only used if a_row AND a_col passed)
+	a_prompt	,a	;Optional, prompt to display first
+	a_text		,a	;TExt to display
+	a_drow		,n	;Optional, display row (only used if a_drow AND a_dcol passed)
+	a_dcol		,n	;Optional, display col (only used if a_drow AND a_dcol passed)
+
+external common
+	tt			,i4
+
+.proc
+
+	;Position to main position
+	if (^passed(a_row)&&a_row&&^passed(a_col)&&a_col)
+		display(tt,$scr_pos(a_row,a_col))
+
+	;Display prompt
+	if (^passed(a_prompt)&&a_prompt)
+		display(tt,a_prompt)
+
+	;Optional reposition for data
+	if (^passed(a_drow)&&a_drow&&^passed(a_dcol)&&a_dcol)
+		display(tt,$scr_pos(a_drow,a_dcol))
+
+	;Display data
+	display(tt,a_text)
+
+	xreturn
+
+.end

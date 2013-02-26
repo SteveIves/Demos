@@ -1,0 +1,32 @@
+.main test_rpsxml
+
+.include "WND:tools.def"
+
+record
+	status			,i4
+	filename		,a30	;Name of RPS file def (entered by user)
+	errormsg		,a80
+
+.proc
+
+	xcall u_start(,1,1)
+
+	xcall e_sect("ISAM -> XML test program",D_HEADER)
+
+	xcall u_dialog(filename,,,,'RPS FILE DEFINITION ')
+
+	xcall setlog("SDF","C:\CONSULTING\ASA\data",status)
+	xcall setlog("RPSMFIL","C:\CONSULTING\ASA\rps\rpsmain.ism",status)
+	xcall setlog("RPSTFIL","C:\CONSULTING\ASA\rps\rpstext.ism",status)
+
+	if (%rpsxml(filename,errormsg)) then
+		xcall u_message(errormsg)
+	else
+		xcall u_message("Created DTD and XML files")
+	
+	xcall setlog("DAT",,status)
+
+	xcall u_finish
+
+.end
+

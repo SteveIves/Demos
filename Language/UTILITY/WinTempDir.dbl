@@ -1,0 +1,71 @@
+;****************************************************************************
+;
+; Title:	WinTempDir.dbl
+;
+; Author:	Steve Ives (Synergex Professional Services Group)
+;
+; Date:		8th June 1999
+;
+; Description:	Return path of folder designated to hold temporary files
+;
+;		On Windows 9x the function gets the temporary file
+;		path as follows: 
+;
+;		* The path specified by the TMP environment variable.
+;		* The path specified by the TEMP environment variable,
+;		  if TMP is not defined or if TMP specifies a directory
+;		  that does not exist. 
+;		* The current directory, if both TMP and TEMP are not
+;		  defined or specify nonexistent directories.
+;
+;		On Windows NT the function does not verify that the
+;		directory specified by the TMP or TEMP environment variables
+;		exists. The function gets the temporary file path as follows:
+;
+;		* The path specified by the TMP environment variable.
+;		* The path specified by the TEMP environment variable, if TMP
+;		  is not defined.
+;		* The Windows directory, if both TMP and TEMP are not defined.
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinTempDir
+
+;Argument list
+
+;End of argument list
+
+.align
+stack record
+	dll_handle		,i4
+	len				,i4
+	rtnlen			,i4
+	path			,a256
+	rtnpath			,a255
+
+.proc
+
+	onerror error
+
+	dll_handle = %dll_open("kernel32.dll")
+	len=256
+	rtnlen = %dll_call(dll_handle,DLL_TYPE_WINAPI,"GetTempPathA",len,path)
+	if (rtnlen)
+		rtnpath = path(1:rtnlen)
+	dll_handle = %dll_close(dll_handle)
+
+Error,
+
+	freturn %atrim(rtnpath)
+
+.end
+

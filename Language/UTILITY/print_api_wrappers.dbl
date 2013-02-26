@@ -1,0 +1,486 @@
+;-------------------------------------------------------------------
+;                              Print API
+;                            Version 1.0
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       PrintApi.dbl
+;
+; Description:  Print API warpper routines
+;
+; Contents:     To ease the migration for cell based
+;               printing to GUI(metafile) printing
+;
+; Author:       Paul Fenton
+;
+; Created:      September, 1999
+;
+;-------------------------------------------------------------------
+
+;-------------------------------------------------------------------
+;   Set controling parameters
+;
+;   GUI -  set controling parameter
+;
+;   CHAR - set controling parameter
+;
+;   Usage:
+;       status = %prtapi_control(control, option, value)
+;
+;-------------------------------------------------------------------
+
+.function prtapi_control, ^val, reentrant, stack
+        
+	.include 'UT:print_api_wrappers.def'				;Contorl data
+    a_option1       ,n
+    a_value1        ,a
+
+    ;option values
+    ;   0 = reset to defaults
+    ;   1 = Specify the required number of columns for the report (PRT_NUMCOLS)
+    ;   2 = Specify the required number of rows for the report (PRT_NUMROWS)
+    ;   3 = Supress print preview (PRT_NOPREVIEW)
+    ;   4 = Supress printer/paper selection (PRT_NOPRTSEL)
+    ;   5 = Override default font name (PRT_FONTNAME)
+    ;   6 = Title to display on print preview (PRT_TITLE)
+
+.include 'WND:tools.def'
+
+record
+        status      ,i4
+
+.proc
+        status = TRUE
+        using (a_option1) select
+        (0),
+        begin
+            prt_numcols = 132
+            clear prt_numrows, prt_nopreview, prt_noprtsel, prt_fontname, prt_title, prt_ratio
+        end
+        (1),
+            prt_numcols = ^d(a_value1)
+        (2),
+            prt_numrows = ^d(a_value1)
+        (3),
+            prt_nopreview = ^d(a_value1)
+        (4),
+            prt_noprtsel = ^d(a_value1)
+        (5),
+            prt_fontname = a_value1
+        (6),
+            prt_title = a_value1
+        (),
+            status = FALSE
+
+        endusing
+
+        freturn (status)
+.end
+
+;-------------------------------------------------------------------
+;   Create print file
+;
+;   GUI -  allows printer selection and creates metafile
+;
+;   CHAR - opens print file mode O:P
+;
+;   Usage:
+;       status = %prtapi_open(control[,filename])
+;
+;-------------------------------------------------------------------
+
+.function prtapi_open, ^val, reentrant, stack
+        
+	.include 'UT:print_api_wrappers.def'				;Contorl data
+    a_filename          ,a      ;(optional on GUI)          ;filename
+
+.include 'WND:tools.def'
+.include 'DBLDIR:winprint.def'
+
+record
+        status          ,i4                                         ;Return status
+        specHandle      ,i4
+        psize           ,i4
+        char_space      ,i4                                         ;pixels between character
+        tmp             ,d4
+.proc
+        status = FALSE
+        clear prt_rpthandle
+
+.ifdef D_GUI
+        if (prt_rpthandle = %wpr_info(status, DWP_GETPRINTER))      ;Get report handle
+            begin
+            if (.not. prt_noprtsel)                                 ;allow printer/paper selection
+                if (.not.%wpr_info(prt_rpthandle, DWP_PRINTDLG))    ;Popup printer selection dialog
+                    exit ;begin/end block                           ;cancel selected
+
+            xcall wpr_print(prt_rpthandle, DWP_BEGINJOB, a_filename) ;Create metafile
+
+            specHandle = %mem_proc(DM_ALLOC+DM_STATIC, ^size(print_specs))  ;get page height and width
+            status = %wpr_getdevice(prt_rpthandle, DWP_SPECS, ^m(print_specs, specHandle))
+            prt_page_height = ^m(print_specs.physicalheight, specHandle)    ;pixelheight
+            prt_page_width = ^m(print_specs.physicalwidth, specHandle)      ;pixelwidth
+                                                                    ;get mm to pixel conversion
+            prt_ratio = prt_page_width / (^m(print_specs.paper_width, specHandle) / 10)
+
+            using ^m(print_specs.orientation, specHandle) select
+            (DWPO_LANDSCAPE),
+                char_space = 1
+            (DWPO_PORTRAIT),
+                char_space = 2
+            endusing
+
+            specHandle = %mem_proc(DM_FREE, specHandle)
+
+            prt_fontHandle = %mem_proc(DM_ALLOC+DM_STATIC, ^size(font_specs))   ;get font infomation
+            xcall wpr_getdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle))
+
+            if (prt_fontname)
+            then
+                ^m(font_specs.facename, prt_fontHandle) = prt_fontname
+            else
+                ^m(font_specs.facename, prt_fontHandle) = "Courier New"
+            psize = ^m(font_specs.pointsize, prt_fontHandle)        ;get font point size
+
+            if (prt_numcols)
+                begin
+                prt_pix_width = (prt_page_width/prt_numcols) - char_space   ;required width
+
+                repeat
+                    begin                                           ;reduce font to fit
+                    if (%wpr_info(prt_rpthandle, DWP_TEXTWIDTH) .gt. prt_pix_width)
+                        begin
+                        decr psize
+
+                        ^m(font_specs.pointsize, prt_fontHandle) = psize
+
+                        if (%wpr_setdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle)))
+                            nextloop
+
+                        incr psize
+                        xcall wpr_setdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle))
+                        end
+
+                    exitloop
+                    end
+
+                end
+
+            if (prt_numrows)
+                begin
+                prt_pix_height = prt_page_height/prt_numrows        ;required height
+
+                repeat
+                    begin                                           ;reduce font to fit
+                    if (%wpr_info(prt_rpthandle, DWP_TEXTHEIGHT) .gt. prt_pix_height)
+                        begin
+                        decr psize
+
+                        ^m(font_specs.pointsize, prt_fontHandle) = psize
+
+                        if (%wpr_setdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle)))
+                            nextloop
+
+                        incr psize
+                        xcall wpr_setdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle))
+                        end
+
+                    exitloop
+                    end
+
+                end
+
+            prt_pix_height = %wpr_info(prt_rpthandle, DWP_TEXTHEIGHT)       ;get height of character
+            prt_pix_width = char_space + %wpr_info(prt_rpthandle, DWP_TEXTWIDTH)    ;get width of character
+
+            prt_numrows = prt_page_height/prt_pix_height            ;calc number of lines/page
+            if (prt_numcols.gt.prt_page_width/prt_pix_width)        ;
+                    prt_numcols = prt_page_width/prt_pix_width
+
+            clear prt_x,prt_y, prt_ratio
+            status = %wpr_print(prt_rpthandle, DWP_BEGINPAGE)       ;Start new page
+            end
+.else
+        if (g_terminal)                                             ;toolkit running
+        then
+            xcall u_getchn (prt_rpthandle)                          ;get channel number from toolkit
+        else
+            for prt_rpthandle from 254 thru 1 by - 1                ;find unused channel number
+                if (.not.%chopen(prt_rpthandle))
+                    exitloop
+
+        open(prt_rpthandle, 'O:P', a_filename) [ERR = openerr]      ;open print file
+.endc
+        freturn(status)
+
+openerr,
+        clear prt_rpthandle
+        freturn(FALSE)
+.end
+
+
+;-------------------------------------------------------------------
+;   append text to print file
+;
+;   GUI - append text to metafile
+;
+;   CHAR - append text to print file
+;
+;   usage:
+;       status = %prtapi_writes(control, text[, style][, newline])
+;
+;-------------------------------------------------------------------
+
+.function prtapi_writes, ^val, reentrant, stack
+        
+	.include 'UT:print_api_wrappers.def'				;Contorl data
+    a_text          ,a                                  ;Text to output
+    a_style         ,n      ;(Optional)                 ;Style (Bold, underline etc)
+    a_col           ,n      ;(optional)                 ;Column position in mm
+    a_justify       ,n      ;(optional)                 ;Justification (0-left,1=right,2=center)
+    a_new           ,n      ;(Optional)                 ;After outputing line do not
+                                                            ;move to the begining of next line
+.include 'DBLDIR:winprint.def'
+
+record
+        status          ,i4                                         ;Return status
+        style           ,i4
+.proc
+
+.ifdef D_GUI                                                        ;if GUI environment
+        xcall wpr_getdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle))
+        if (%passed(a_style) .and. a_style)
+        then
+            begin
+            style = a_style
+
+            if (%bit_is_set(0, a_style))                            ;PRT_BOLD
+                ^m(font_specs.weight, prt_fontHandle) = 700
+            if (%bit_is_set(1, a_style))                            ;PRT_ITALIC
+                ^m(font_specs.italic, prt_fontHandle) = 1
+            if (%bit_is_set(2, a_style))                            ;PRT_UNDERLINE
+                ^m(font_specs.underline, prt_fontHandle) = 1
+            end
+        else
+            begin
+            ^m(font_specs.weight, prt_fontHandle) = 400
+            ^m(font_specs.italic, prt_fontHandle) = 0
+            ^m(font_specs.underline, prt_fontHandle) = 0
+            ^m(font_specs.strikeout, prt_fontHandle) = 0
+            ^m(font_specs.fixed, prt_fontHandle) = 0
+            end
+        xcall wpr_setdevice(prt_rpthandle, DWP_FONT, ^m(font_specs, prt_fontHandle))
+
+        using (a_text) select
+        ('----------'),                                             ;Draw line
+            begin
+            if (.not. prt_penhandle)                                ;Get drawing pen
+                prt_penhandle = %wpr_info(prt_rpthandle, DWP_GETPEN)
+
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y+(prt_pix_height/2), prt_page_width, prt_y+(prt_pix_height/2))
+            end
+        ('=========='),
+            begin
+            if (.not. prt_penhandle)                                ;Get drawing pen
+                prt_penhandle = %wpr_info(prt_rpthandle, DWP_GETPEN)
+
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y, prt_page_width, prt_y)
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y+(prt_pix_height/2), prt_page_width, prt_y+(prt_pix_height/2))
+            end
+        ('**********'),
+            begin
+            if (.not. prt_penhandle)                                ;Get drawing pen
+                prt_penhandle = %wpr_info(prt_rpthandle, DWP_GETPEN)
+
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y, prt_page_width, prt_y)
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y+(prt_pix_height/2), prt_page_width, prt_y+(prt_pix_height/2))
+            status = %wpr_print(prt_rpthandle, DWP_LINE, prt_penhandle,
+            &                   0, prt_y+(prt_pix_height/2), prt_page_width, prt_y+prt_pix_height-1)
+            end
+        (),
+            begin                                                   ;Output text line
+            if (%passed(a_col) .and. a_col)                         ;convert mm to pixels
+                prt_x = %mm_to_pixels(a_col, prt_ratio, prt_rpthandle)
+
+            if (%passed(a_justify) .and. a_justify)
+                using (a_justify) select
+                (1),                                                ;right
+                    prt_x -= %wpr_info(prt_rpthandle, DWP_TEXTWIDTH, a_text)
+                (2),                                                ;center
+                    prt_x -= (%wpr_info(prt_rpthandle, DWP_TEXTWIDTH, a_text) / 2)
+                endusing
+
+            status = %wpr_print(prt_rpthandle, DWP_WRITEOUT, prt_x, prt_y, a_text)
+            prt_x = status
+            end
+        endusing
+
+        if (.not.%passed(a_new) .or. %passed(a_new) .and. a_new)    ;Line feed
+            begin                                                   ;Start new line
+            clear prt_x
+            prt_y += prt_pix_height
+            end
+
+.else
+        if (%passed(a_new) .and. .not. a_new)                       ;No line feed
+        then
+            display(prt_rpthandle, a_text)
+        else
+            writes(prt_rpthandle, %atrim(a_text))
+        status = TRUE
+
+.endc
+        freturn(status)
+.end
+
+;-------------------------------------------------------------------
+;   Append Form/line feed
+;
+;   GUI - advances to the next page or line in metafile
+;
+;   CHAR - appends a form feed char or line feed char to print file
+;
+;   Usage:
+;       status = %prtapi_form(control [,x])
+;
+;   x = 0 for form feed 1+ for number of line feeds
+;
+;-------------------------------------------------------------------
+
+.function prtapi_forms, ^val, reentrant, stack
+        
+	.include 'UT:print_api_wrappers.def'				;Contorl data
+    a_num           ,n      ;(Optional)                     ;Form feed value
+
+.include 'DBLDIR:winprint.def'
+
+record
+        status          ,i4                                         ;Return status
+
+.proc
+        status = FALSE
+
+.ifdef D_GUI                                                        ;if GUI environment
+
+        if (%passed(a_num) .and. a_num)                             ;Line feeds
+        then
+            begin
+            clear prt_x
+            prt_y += (prt_pix_height*a_num)
+            status = TRUE
+            end
+        else
+            begin                                                   ;Form feed
+            clear prt_x,prt_y
+            xcall wpr_print(prt_rpthandle, DWP_ENDPAGE)             ;End current page
+            status = %wpr_print(prt_rpthandle, DWP_BEGINPAGE)       ;Start new page
+            end
+
+.else
+        if (%passed(a_num) .and. a_num)
+        then
+            forms(prt_rpthandle, a_num)                             ;Line feed
+        else
+            forms(prt_rpthandle, 0)                                 ;Form feed
+        status = TRUE
+
+.endc
+        freturn(status)
+.end
+
+
+;-------------------------------------------------------------------
+;   Spool print file
+;
+;   GUI - allows print preview on printing of metafile
+;
+;   CHAR - spools print file
+;
+;   Usage:
+;       status = %prtapi_lpque(control [, filename][,printer][,delete][,reprint])
+;
+;-------------------------------------------------------------------
+
+.function prtapi_lpque, ^val, reentrant, stack
+        
+	.include 'UT:print_api_wrappers.def' ;Contorl data
+    a_filename		,a	;optional (on GUI) filename
+    a_lpnum			,a	;optional printer/queue name
+    a_ndelete		,n	;optional don't delete spool file(default)
+    a_reprnt		,n	;optional reprint given filename
+
+.include 'DBLDIR:winprint.def'
+
+record
+        status          ,i4                                         ;Return status
+        delflg          ,d1
+
+.proc
+
+.ifdef D_GUI                                                        ;if GUI environment
+        if (%passed(a_reprnt) .and. a_reprnt)                       ;reprint file
+        then
+            begin
+            status = FALSE
+            if (prt_rpthandle = %wpr_info(status, DWP_GETPRINTER))  ;Get report handle
+                begin
+                if (.not. prt_noprtsel)                             ;Allow printer/paper selection
+                    xcall wpr_info(prt_rpthandle, DWP_PRINTDLG)     ;Popup printer selection dialog
+
+                if (prt_nopreview)                                  ;Suppress print preview
+                then                                                ;Spool job
+                    xcall wpr_execute(prt_rpthandle, DWP_PRINT, a_filename, a_ndelete)
+                else
+                    if (%wpr_execute(prt_rpthandle, DWP_PREVIEW, a_filename,
+                    &   %atrim(prt_title), TRUE) .eq. DWP_PREVIEW_PRINT)
+                        xcall wpr_execute(prt_rpthandle, DWP_PRINT, a_filename, a_ndelete)
+
+                status = %wpr_info(prt_rpthandle, DWP_DELPRINTER)   ;Release the printer
+                end
+            end
+        else
+            begin
+            xcall wpr_print(prt_rpthandle, DWP_ENDPAGE)             ;End page
+            xcall wpr_print(prt_rpthandle, DWP_ENDJOB)              ;End print job
+
+            if (prt_nopreview)                                      ;Suppress print preview
+            then
+                xcall wpr_execute(prt_rpthandle, DWP_PRINT,, a_ndelete)     ;Spool job
+            else
+                if (%wpr_execute(prt_rpthandle, DWP_PREVIEW,,
+                &   %atrim(prt_title), TRUE) .eq. DWP_PREVIEW_PRINT)
+                    xcall wpr_execute(prt_rpthandle, DWP_PRINT,, a_ndelete)  ;Spool job
+
+            if (prt_penhandle)
+                xcall wpr_info(prt_rpthandle,DWP_DELPEN, prt_penhandle)     ;Release drawing pen
+            if (prt_fontHandle)
+                prt_fontHandle = %mem_proc(DM_FREE, prt_fontHandle) ;free memory
+
+            status = %wpr_info(prt_rpthandle, DWP_DELPRINTER)       ;Release the printer
+            end
+.else
+        close (prt_rpthandle)                                       ;close print channel
+        
+        if (%passed(a_ndelete))
+        then
+            delflg = a_ndelete
+        else
+            clear delflg                                            ;Delete spool file
+
+        if (%passed(a_lpnum) .and. a_lpnum)
+        then
+            lpque(a_filename, LPNUM:a_lpnum, DELETE:delflg)
+        else
+            lpque(a_filename, ,DELETE:delflg)
+
+        status = TRUE
+
+.endc
+        freturn(status)
+.end
+

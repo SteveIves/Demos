@@ -1,0 +1,64 @@
+;*******************************************************************************
+;
+;Routine:		XmlDocFromRecord
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	Synergy/DE V8.1 or higher
+;
+;Revisions:		Version	Date			Comment
+;				1.0		24 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine accepts a Synergy record and the name of a Repository structure
+;and returns an XML document representing the record.
+;
+;DEALLOCATION OF THE STATIC DYNAMIC MEMORY ALLOCATED IN AND RETURNED FROM THIS
+;ROUTINE IS THE RESPONSIBILITY OF THE CALLING ROUTINE.
+;
+.function XmlDocFromRecord, ^VAL
+
+	a_record		,a
+
+	a_structure		,a
+
+.include "DBLDIR:synxml.def"
+
+.align
+stack record
+	doc				,XML_DOC_TYPE
+	root			,XML_ELEM_TYPE
+	elemlist		,XML_ELEMLIST_TYPE
+	count			,i4
+
+.proc
+
+	doc = 0
+
+	if (elemlist = %XmlElemlistFromRecord(a_record, a_structure))
+	begin
+
+		doc = %xml_doc_create
+		
+		root = %xml_doc_getroot(doc)
+		xcall xml_elem_setname(root,%atrim(a_structure))
+
+		for count from 1 thru %xml_elemlist_count(elemlist)
+			xcall xml_elem_addchild(root,%xml_elemlist_item(elemlist,count))
+
+		xcall xml_elemlist_delete(elemlist)
+
+	end
+
+	freturn doc
+
+.end
+
+

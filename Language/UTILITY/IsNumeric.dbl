@@ -1,0 +1,35 @@
+;=============================================================================
+;
+; Title:        IsNumeric
+;
+; Description:  Validates a numeric value
+;
+; Author:       Steve Ives (Synergex Professional Services Group)
+;
+; Date:         28th September 2005
+;
+;=============================================================================
+;
+.function IsNumeric, ^val
+
+    a_number        ,a
+
+stack record
+    retval          ,i4
+    number          ,d28.10
+
+.proc
+
+    retval = 1
+
+    onerror ($ERR_DIGIT) bad
+
+    number = a_number
+    if (0)
+bad,    clear retval
+
+    offerror
+
+    freturn retval
+
+.end

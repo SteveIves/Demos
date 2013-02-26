@@ -1,0 +1,25 @@
+main TestKeys
+record 
+	char,	d3
+	achar,	a6
+endrecord
+proc
+	flags(50000,1)
+	open(1,i,"tt:")
+	repeat
+	begin
+		accept(1,char)
+		using char select
+		(0),	achar = "<NULL>"
+		(8),	achar = "<BS>"
+		(9),	achar = "<TAB>"
+		(10),	achar = "<LF>"
+		(13),	achar = "<CR>"
+		(27),	achar = "<ESC>"
+		(),	xcall ascii(char,achar)
+		endusing
+		
+		writes(1,%string(char,"XXX")+" "+atrim(achar))
+	end
+	close 1
+endmain

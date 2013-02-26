@@ -1,0 +1,72 @@
+;-------------------------------------------------------------------------------
+;
+; container.def			Include for container support
+;
+; Camden Software Consulting	June, 2001
+;
+;-------------------------------------------------------------------------------
+;
+.ifndef D_CONTAINER_DEFINED
+.define D_CONTAINER_DEFINED
+
+.define D_CONTAINER_UDS		,"CSC_CONTAINER"	;User data set name for container
+.define D_CHILD_UDS		,"CSC_CHILD"		;User data set name for child
+
+				;Child types:
+.define D_CHILD_WINDOW		,1	;A window (input, general, activeX, etc.)
+.define D_CHILD_LIST		,2	;A list
+
+; Macros:
+
+.define M_CONT(h,e)	^m(st_container.e,h)	;Access an element of st_container
+.define M_CHILD(h,e)	^m(st_child.e,h)	;Access an element of st_child
+
+.ifdef DBLV73
+.define M_DLLCALL(h,r,a1,a2,a3,a4,a5,a6) dll_call(h,DLL_TYPE_WINAPI,r,a1,a2,a3,a4,a5,a6)
+.else						;Pre-7.3, use dll_subr
+.define M_DLLCALL	,dll_subr
+.endc
+
+.endc
+
+external function
+	;Public routines
+	container_create	,^val	;Create a container window
+	container_add		,^val	;Add a child window to the container
+	container_context	,^val	;Get/Set the index of the focused child
+	container_indexof	,^val	;Get the index of a specified child
+	;Private routines
+	containeru_getctls	,^val	;Get a handle to the container UDS
+	childu_getctls		,^val	;Get a handle to the child window UDS
+
+;Structure of the user data set
+
+structure st_container
+	first_child	,i4	;Handle to UDS for first child window
+	last_child	,i4	;Handle to UDS for last child window
+	current_child	,i4	;Handle to child currently in focus
+	num_children	,i4	;Number of children
+
+;Structure of the memory block for each child window
+
+structure st_child
+	prev		,i4	;Handle to previous sibling
+	next		,i4	;Handle to next sibling
+	container	,i4	;ID of container window
+	type		,i4	;Type of window (D_CHILD_WINDOW / D_CHILD_LIST)
+	id		,i4	;WIndow or list ID
+	method		,a30	;Name of the method for processing
+
+; Global data section for event method sets
+
+.ifdef D_INIT_CONTAINER
+.undefine D_INIT_CONTAINER
+global data section gcsc_container, init
+.else
+global data section gcsc_container
+.endc
+record
+	g_event_wnd	,i4	;Method set ID for windows
+	g_event_list	,i4	;Method set ID for lists
+endglobal
+

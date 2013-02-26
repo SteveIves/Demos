@@ -1,0 +1,29 @@
+.main test_radio_horizontal
+.include "WND:tools.def"
+.align
+stack record
+	bldid	,i4
+	inpid	,i4
+	selid	,i4	
+	data	,i4
+
+.align
+literal
+	array	,[4]a11, "Entry one", "Entry two", "Entry three", "Entry four"
+.proc
+	xcall u_start
+	xcall s_selbld(selid, "s_radio", 4, 4, array)
+	xcall ib_input(bldid, "", 10, 60)
+	xcall ib_field(bldid, "radio", D_FLD_TYPE, D_INTEGER, D_FLD_SIZE, 4,
+	&	       D_FLD_ENUM, 11, 1, 1, D_FLD_SELWND, 0, 0, "s_radio",
+	&	       D_FLD_RADIO, D_FLD_POS, 2, 2)
+	xcall ib_button(bldid, "OK")
+	xcall ib_end(bldid, inpid)
+	xcall u_window(D_PLACE, inpid, 2, 2)
+	xcall i_frames(inpid)
+	xcall u_message("Before changing radio buttons")
+	xcall radio_horizontal(inpid, "radio")
+	xcall i_input(inpid,, data)
+	xcall u_finish
+.end
+

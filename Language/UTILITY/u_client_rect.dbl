@@ -1,0 +1,77 @@
+;***************************************************************************
+;
+;	Title:			u_client_rect.dbl
+;
+;	Author:			Steve Ives (Synergex)
+;
+;	Date:			12th April 1999
+;
+;	Description:	
+;
+;
+;***************************************************************************
+;
+;The code herein is supplied as seen.  Although every attempt will be made
+;to correct any problems with the code, the author, nor the company can
+;accept any responsability for corruption, or loss of data caused by using
+;the routines included within this source code.
+;
+;***************************************************************************
+;
+;$Log:   S:/Source/Synergy/psg/archive/u_client_rect.dbv  $
+;
+;   Rev 1.0   Jun 10 1999 22:44:26   Administrator
+;Original version
+
+.function u_client_rect, ^VAL
+
+	a_winid			,n		;ID of a Synergy window
+	a_width			,n		;(Returned) Width of client area in pixels
+	a_height		,n		;(Returned) Height of client area in pixels
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+
+.align LONG
+record
+	handle			,i4		;DLL handle
+	status			,i4		;DLL call status (TRUE = OK)
+	hwnd			,i4		;HWND of the Synergy window
+    group rectangle	,i
+	  left			,i4
+	  top			,i4
+	  right			,i4
+	  bottom		,i4
+	endgroup
+
+.proc
+
+	;Default to success
+	status = 1
+
+	xcall e_enter
+
+	;If the window is not placed, place it at 1,1.  The GetClientRect routine only returns
+	;accurate information about placed windows.
+	
+	if (.not.%w_info(WIF_PLCFLG,a_winid))
+		xcall u_window(D_PLACE,a_winid,1,1)
+
+	;Get the window handle of the Synergy window
+	hwnd=%w_info(WIF_HWND,a_winid)
+
+	;Get the synergy windows client area dimensions
+	handle=%dll_open("user32.dll")
+	status=%dll_call(handle,DLL_TYPE_WINAPI,"GetClientRect",hwnd,^addr(rectangle))
+	xcall dll_close(handle)
+
+	;Return size of client area (pixels)
+	a_width = right
+	a_height = bottom
+
+	xcall e_exit
+
+	freturn status
+
+.end
+

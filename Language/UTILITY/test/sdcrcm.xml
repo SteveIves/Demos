@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE SDCRCM_LIST SYSTEM "sdcrcm.dtd">
+
+<SDCRCM_LIST>
+
+  <SDCRCM>
+    <NONAME_001>A</NONAME_001>
+    <CRCCRC>US</CRCCRC>
+    <CRCKY0>US</CRCKY0>
+    <CRCNAM>United States</CRCNAM>
+    <NONAME_002></NONAME_002>
+  </SDCRCM>
+
+</SDCRCM_LIST>
+

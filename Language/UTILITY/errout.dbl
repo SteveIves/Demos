@@ -1,0 +1,59 @@
+;======================================================================
+;              Copyright 2000 by Synergex, International
+;
+;   Synergex provides this software under a license and may only be
+;     used in accordance with the terms and conditions of such
+;    license and with the inclusion of the above Copyright notice.
+;======================================================================
+; Module:	ERROUT
+;
+; Facility:	Logs errors to an audit file
+;
+; Description:  Routine to log errors to an audit file
+;
+; $Revision:   1.0.1  $
+;
+;
+; $Date:  May 03 2000 18:00:00  $
+;
+;
+; Assumptions:
+;
+; Default error log filename is "C:\errors.log"
+;
+;
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.subroutine errout
+
+		a_error		,n				;error number to log
+									; -1 = delete log file
+		a_ermsg		,a				;error message to log
+		a_logfile	,a				;[optional] error log filename
+
+.include 'DBLDIR:apmisc.def'
+
+.align
+record
+		chan		,i4
+		filename	,a255	,'c:\errors.log'
+
+.proc
+
+		if(%passed(a_logfile)) filename = a_logfile
+
+		if(a_error.eq.-1)
+			begin
+			xcall delet(filename)
+			xreturn
+			end
+
+		chan = %ap_misc(MSC_GETCHN)
+
+		open(chan, A, filename)
+		writes(chan, %a(a_error)+" "+%atrim(a_ermsg))
+		close chan
+		xreturn
+.end
+
+

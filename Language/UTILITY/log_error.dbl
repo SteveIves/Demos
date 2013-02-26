@@ -1,0 +1,46 @@
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;
+.subroutine log_error
+;
+; This routine writes errors to a log file.
+;
+; Change History
+;
+; 03-May-2000 William Hawkins	Initial version
+;
+; Arguments
+;
+		a_error		,n				;error number to log
+									; -1 = delete log file
+		a_ermsg		,a				;error message to log
+		a_logfile	,a				;[optional] error log filename
+
+.align
+record
+		chan		,i4
+		e1			,i4
+		filename	,a255	,'errors.log'
+
+.proc
+
+		if(%passed(a_logfile).and.a_logfile)
+			filename = a_logfile
+
+		if(a_error.eq.-1)
+			begin
+			xcall delet(filename)
+			xreturn
+			end
+
+		xcall u_open(chan, 'A', filename,,, e1)
+		if(e1) xcall u_open(chan, 'O', filename,,, e1)
+		if(.not.e1)
+			begin
+			writes(chan, %datetime+":"+%string(a_error)+":"+%atrim(a_ermsg))
+			xcall u_close(chan)
+			end
+		xreturn
+.end
+
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

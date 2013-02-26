@@ -1,0 +1,113 @@
+;=============================================================================
+;
+; Title:		FormatTime
+;
+; Description:	Formats a numeric time to a string
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function FormatTime ;,a
+
+	a_time		,n		;Input time (HHMMSS or HHMM)
+
+	a_ampm		,n		;Output AM/PM format
+
+	a_noseconds	,n		;For D8 dates, don't include seconds
+
+stack record avars
+	retval		,a11
+	ampm		,d1
+	pm			,d1
+	d6time		,d6
+	d4time		,d4
+
+.proc
+
+	clear avars
+
+	using ^size(a_time) select
+	(4), call format4
+	(6), call format6
+	endusing
+
+	freturn %atrim(retval)
+
+format4,
+
+	d4time = a_time
+
+	if (^passed(a_ampm) && a_ampm)
+	begin
+		ampm = 1
+		using (d4time(1:2)) select
+		(0),
+			d4time(1:2) += 12
+		(1 thru 11),
+			nop
+		(12),
+			pm = 1
+		(13 thru 23),
+		begin
+			d4time(1:2) -= 12
+			pm = 1
+		end
+		endusing
+	end
+
+	if (ampm) then
+		if (pm) then
+			retval = d4time, "ZX:XX PM" [LEFT]
+		else
+			retval = d4time, "ZX:XX AM" [LEFT]
+	else
+		retval = d4time, "XX:XX" [LEFT]
+
+	return
+
+format6,
+
+	d6time = a_time
+
+	if (^passed(a_ampm) && a_ampm)
+	begin
+		ampm = 1
+		using (d6time(1:2)) select
+		(0),
+			d6time(1:2) += 12
+		(1 thru 11),
+			nop
+		(12),
+			pm = 1
+		(13 thru 23),
+		begin
+			d6time(1:2) -= 12
+			pm = 1
+		end
+		endusing
+	end
+
+	if (ampm) then
+		if (pm) then
+			if (^passed(a_noseconds) && a_noseconds) then
+				retval = d6time(1:4), "ZX:XX PM" [LEFT]
+			else
+				retval = d6time, "ZX:XX:XX PM" [LEFT]
+		else
+			if (^passed(a_noseconds)&& a_noseconds) then
+				retval = d6time(1:4), "ZX:XX AM" [LEFT]
+			else
+				retval = d6time, "ZX:XX:XX AM" [LEFT]
+	else
+		if (^passed(a_noseconds)&& a_noseconds) then
+			retval = d6time(1:4), "XX:XX" [LEFT]
+		else
+			retval = d6time, "XX:XX:XX" [LEFT]
+
+	return
+
+.end
+

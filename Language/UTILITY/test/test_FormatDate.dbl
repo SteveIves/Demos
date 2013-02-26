@@ -1,0 +1,42 @@
+.main test_FormatDate
+
+.include "UT:utility.def"
+
+record
+	d8date		,d8,	19640719
+	d6date		,d6,	640719
+	d4date		,d4,	6407
+
+.proc
+
+	xcall ttopen
+	xcall DisplayA(1,1,,"Test program for routine DisplayDate and FormatDate")
+
+	;D8 dates
+
+	xcall DisplayA(   03,1,"D8 date                : ",^a(d8date))
+	xcall DisplayDate(04,1,"Normal                 : ",d8date)
+	xcall DisplayDate(05,1,"Custom seperator       : ",d8date,"-")
+	xcall DisplayDate(06,1,"European formatting    : ",d8date,,1)
+	xcall DisplayDate(07,1,"European & custom sep. : ",d8date,",",1)
+
+	;D6 dates
+
+	xcall DisplayA(   09,1,"D6 date                : ",^a(d6date))
+	xcall DisplayDate(10,1,"Normal                 : ",d6date)
+	xcall DisplayDate(11,1,"Custom seperator       : ",d6date,"-")
+	xcall DisplayDate(12,1,"European               : ",d6date,,1)
+	xcall DisplayDate(13,1,"European, custom sep.  : ",d6date,",",1)
+
+	;D4 dates
+
+	xcall DisplayA(   15,1,"D4 date                : ",^a(d4date))
+	xcall DisplayDate(16,1,"Normal                 : ",d4date)
+	xcall DisplayDate(17,1,"Custom seperator       : ",d4date,"-")
+
+	xcall WaitKey(24,1,"Press a key: ")
+
+	xcall ttclose
+	stop
+
+.end

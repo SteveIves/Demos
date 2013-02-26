@@ -1,0 +1,74 @@
+;
+;This routine is used to position an object central to the application window.
+;
+;
+.subroutine position_window
+    a_object_id,        n   ;id of passed object
+    a_list_object,      n   ;TRUE if it's a list
+    a_relative,         n   ;if TRUE, then relative to another object
+    a_rel_id,           n   ;relatinve object ID
+    a_rel_row,          n   ;plus how many rows
+    a_rel_col,          n   ;plus how many cols
+
+.include 'WND:tools.def'
+.include 'WND:windows.def'
+
+.align
+stack record
+    wndid,          i4
+    row,            i4
+    col,            i4
+
+.proc
+
+        ;put the tab container in the middle of the application window.
+
+    if (%passed(a_relative))
+    then
+    begin
+        row = %w_info(WIF_ACTPROW, a_rel_id)
+        if (%passed(a_rel_row))
+        then
+            row = row + a_rel_row
+        else
+            row = row + 1
+        ;
+        col = %w_info(WIF_ACTPCOL, a_rel_id)
+        if (%passed(a_rel_col))
+        then
+            col = col + a_rel_col
+        else
+            col = col + 1
+        ;
+    end
+    else
+    begin
+        if (%passed(a_list_object) .and. a_list_object)
+        then
+        begin
+            xcall l_status(a_object_id, D_LINPID, wndid)        ;get input window associated
+            row = (%w_info(WIF_SROWS)-%w_info(WIF_ROWS, a_object_id))/2
+            col = (%w_info(WIF_SCOLS)-%w_info(WIF_DCOLSIZ, wndid))/2
+        end
+        else
+        begin
+            row = (%w_info(WIF_SROWS) - %w_info(WIF_DROWSIZ, a_object_id))/2
+            col = (%w_info(WIF_SCOLS) - %w_info(WIF_DCOLSIZ, a_object_id))/2
+        end
+    end
+
+    if (%passed(a_list_object) .and. a_list_object)
+    then
+    begin
+        xcall l_remove(a_object_id)
+        xcall l_place(a_object_id, row, col)
+    end
+    else
+    begin
+        xcall u_window(D_REMOVE, a_object_id)
+        xcall u_window(D_PLACE, a_object_id, row, col)
+    end
+
+    xreturn
+.end
+

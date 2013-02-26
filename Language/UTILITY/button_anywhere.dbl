@@ -1,0 +1,88 @@
+;----------------------------------------------------------------------
+;                        Buttons Anywhere API
+;                            Version 1.0
+;
+;         Copyright (c) 2001, Synergex International Corporation
+;
+; Source:       button_anywhere.dbl
+;
+; Description:  Allow buttons to be placed anywhere on an input window
+;
+; Limitation:   The button activation character is not supported
+;               The button is not in the tabbing order
+;
+;
+; Author:       Paul Fenton
+;
+; Created:      May, 2001
+;----------------------------------------------------------------------
+
+.function button_anywhere, ^val, reentrant, stack
+    
+	a_button_id     ,n              ;(Returned) Button id for disable/enable functions
+    a_wndid         ,n              ;Input window id to place buttons on
+    a_row           ,n              ;Placement row relative to input window
+    a_col           ,n              ;Placement col relative to input window
+    a_button_name   ,a              ;Name of button (returned as g_entnam)
+    a_button_type   ,n              ;(Optional) Button Type (Text or bitmap)
+    a_button_data   ,a              ;(optional) Text or bitmap to display on button
+    a_button_method ,a              ;(Optional) Button method
+    a_button_elb    ,a              ;(optional) Button method elb
+ 
+.include 'WND:tools.def'
+.include 'DBLDIR:windows.def'
+ 
+record ivar
+    user32          ,i4
+    hparent         ,i4
+    hchild          ,i4
+    hbutton         ,i4
+ 
+.proc
+    
+	clear ^i(ivar)
+    onerror exit_with_error
+    ;create window
+    if (.not.a_button_id)                                           ;not already created
+        xcall w_proc(WP_CREATE, a_button_id, '', 1, 1)              ;create general window
+ 
+    xcall w_brdr(a_button_id, WB_OFF)                               ;turn off its border
+    xcall u_logwnd(a_button_id)                                     ;log it with the toolkit
+ 
+    ;add standard button
+    xcall b_button(a_button_id, a_button_name, a_button_type, a_button_data,
+    &              a_button_method, a_button_elb)
+    xcall b_enable(a_button_id, a_button_name, FALSE)
+ 
+    ;resize windows
+    xcall w_proc(WP_SIZE, a_button_id, 70, 23)                      ;resize window as small as possible
+    xcall w_area(a_button_id, WA_ATTR, ATTR_SET+ATTR_RVRS)          ;SHow us if the window is too big
+ 
+    ;place window
+    user32 = %dll_open("user32")                                    ;slave window with button
+    hparent = %w_info(WIF_HWND, a_wndid)                            ;to input window
+    hchild = %w_info(WIF_HWND, a_button_id)
+    xcall dll_call(user32, DLL_TYPE_WINAPI, "SetParent", hchild, hparent)
+ 
+    ;place button
+    xcall u_window(D_PLACE, a_button_id, a_row, a_col)              ;place button relative to input
+                                                                    ;window
+ 
+    xcall w_updt                                                    ;Force real placement
+    
+	hbutton = %dll_call(user32, DLL_TYPE_WINAPI, "FindWindowExA", hchild, %integer(0), "BUTTON", %integer(0))
+    xcall dll_call(user32, DLL_TYPE_WINAPI, "MoveWindow", hbutton, %integer(0), %integer(0),
+    &           %integer(70), %integer(23), %integer(0))
+    xcall dll_close(user32)
+ 
+    offerror
+    
+	freturn(TRUE)
+ 
+exit_with_error,
+    offerror
+    
+	freturn(FALSE)
+
+.end
+

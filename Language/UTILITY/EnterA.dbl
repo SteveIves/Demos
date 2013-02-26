@@ -1,0 +1,69 @@
+.subroutine EnterA
+
+	;Required parameters
+
+	a_row		,n		;Prompt row
+	a_col		,n
+	a_prompt	,a
+	a_data		,a
+
+	;Optional parameters
+
+	a_inprow	,n
+	a_inpcol	,n
+	a_required	,n
+	a_uppercase	,n
+
+external common
+	tt			,i4
+
+.align
+stack record ivars
+	irow		,i4
+	icol		,i4
+	chr			,i4
+
+.proc
+
+	clear ^i(ivars)
+
+	;Position cursor and display prompt
+	display(tt,$scr_pos(a_row,a_col),a_prompt)
+
+	;Reposition for input if necessary
+	irow = a_row
+	icol = a_col + ^size(a_prompt)
+
+	if (^passed(a_inprow)&&a_inprow)
+		irow = a_inprow
+
+	if (^passed(a_inpcol)&&a_inpcol)
+		icol = a_inpcol
+
+	if ((irow!=a_row) || (icol!=a_col))
+        display(tt,$scr_pos(irow,icol))
+
+	;Do the input
+	repeat
+	begin
+		reads(tt,a_data)
+
+		chr = %rterm
+		if ((chr!=13)&&(chr!=10)) 
+			nextloop
+
+		if ((a_data) || (!^passed(a_required)) || (!a_required))
+			exitloop
+		display(tt,$scr_pos(irow,icol))
+	end
+
+	;Uppercase the input if necessary
+	if ((a_data)&&(^passed(a_uppercase)&&a_uppercase))
+	begin
+		upcase a_data
+		display(tt,$scr_pos(irow,icol),%atrim(a_data))
+	end
+
+	xreturn
+
+.end

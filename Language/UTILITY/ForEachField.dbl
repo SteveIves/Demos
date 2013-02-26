@@ -1,0 +1,194 @@
+.function ForEachField	,^val, reentrant
+;
+; Description:  Iterator for fields in an input set
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_set		,n	;(Optional) set number or name
+
+	a_start		,n	;(Optional) starting index or field name
+
+	a_end		,n	;(Optional) ending index or field name
+
+	a_routine	,a	;Name of the routine to call
+
+	a_args		,n	;(Optional) arguments to the routine (any number)
+;
+; Notes:
+;
+;	This subroutine iterates through the fields in the designated set,
+;	calling the routine for each and passing the arguments beginning at
+;	a_args.
+;
+;	If the set name is not passed, the first set is assumed (as with
+;	most Toolkit routines).  You may not pass "*CURR*", as this is not
+;	yet supported by I_SETINF.  You may, however, pass a set index instead
+;	of the set name.
+;
+;	If a_start or a_end is not passed, the first and last fields in the
+;	set are assumed, respectively.  For either of these, you may pass
+;	either the field name or its index in the set (not necessarily the
+;	same as the field number!).  If a name is passed and the field does
+;	not exist in the designated set, no fields will be processed, and this
+;	function returns FALSE.
+;
+;	The arguments beginning with a_args will be passed to the designated
+;	routine.  All arguments are simply passed through without conversion
+;	of any kind, with the following special value exception:  if an
+;	argument is alpha and contains one of the following values, the
+;	argument is translated as follows:
+;
+;	Argument value		Argument passed to a_routine
+;	--------------		----------------------------
+;	*FLD_NAME*		Name of the current field
+;	*FLD_NUMBER*		Number of the current field (field ID)
+;	*FLD_INDEX*		Index of the current field within the set
+;	*FLD_INFO*		The gs_inpfld structure associated with the field
+;	*FLD_EMPTY*		The empty flag for the current field
+;	*FLD_SELID*		The ID of any associated selection window (0 = none)
+;	*FLD_ENABLED*		The enabled flag for the current field
+;	*SET_NAME*		The name of the set
+;	*SET_NUMBER*		The number of the set
+;	*SET_NMFLDS*		The number of fields in the set
+;	*SET_NEXTFLD*		The current input set context
+;	*SET_STATE*		The processing state for the field (D_MODE_xxx in tools.def)
+;	*SET_INFO*		The gs_fldset structure associated with the set
+;
+;	The routine will be invoked as a ^val function (which also works for
+;	subroutines).  If the function returns -1, the for loop will be exited.
+;	In that case, %for_each_field returns FALSE.  If all of the requested
+;	fields are processed, %for_each_field returns TRUE.
+;
+.include "DBLDIR:rcbapi.def"
+.include "WND:system.def"
+.include "WND:tools.def"
+.include "WND:setinf.def"
+.include "WND:fldinf.def"
+
+.align
+stack record
+	routine		,D_ADDR	;Address of routine to call
+	rcb		,i4	;RCB handle
+	setnm		,i4	;Set number
+	nxtfld		,i4	;Current input set context
+	state		,i4	;Processing state of the set
+	first		,i4	;First field index
+	last		,i4	;Last field index
+	fldnm		,i4	;Number of a field
+	empty		,i4	;Empty flag for current field
+	selid		,i4	;ID of an associated selection window
+	enabled		,i4	;Enabled flag for a field
+	argnm		,i4	;Argument number
+	ix		,i4	;Index into RCB arguments
+	setndx		,i4	;Index into the input set
+	setnam		,a30	;Name of the set
+	fldnam		,a30	;Name of a field
+
+; Macros to evaluate TRUE if an argument is alpha
+.define M_ISALPHA_N(argn) (^datatype(argn) .eq. D_TYPE_A)
+.define M_ISALPHA(arg)	  (M_ISALPHA_N(%argnum(arg)))
+
+.proc
+	clear setnm, setnam
+	if (^passed(a_set)) then	;Get any designated set
+	  begin
+	    if (M_ISALPHA(a_set)) then
+	      setnam = ^a(a_set)	;Alpha set name passed
+	    else
+	      setnm = a_set		;Numeric set number passed
+	  end
+    	else
+	  setnm = 1			;Default to first set
+
+					;Get the set information
+	xcall i_setinf(a_inpid, setnam, setnm, nxtfld, gs_fldset, state)
+
+    	if (^passed(a_start)) then	;First field specified?
+	  begin
+	    if (M_ISALPHA(a_start)) then
+	      begin
+		clear fldnm
+		fldnam = ^a(a_start)	;Alpha field name, get its number
+		xcall i_fldinf(a_inpid, fldnam, fldnm)
+					;Now look it up in the set
+		first = %instr(1, ^a(gs_setfld(1:gs_setcnt)), %char(fldnm))
+		if (.not. first)
+		  freturn FALSE		;Field not in input set
+	      end
+	    else
+	      first = a_start		;Numeric set index passed
+	  end
+	else
+	  first = 1			;Default to first field in set
+
+	if (^passed(a_end)) then	;Last field specified?
+	  begin
+	    if (M_ISALPHA(a_end)) then
+	      begin
+	        clear fldnm
+	        fldnam = ^a(a_end)    	;Alpha field name, get its number
+	        xcall i_fldinf(a_inpid, fldnam, fldnm)
+					;Now look it up in the set
+	        last = %instr(1, ^a(gs_setfld(1:gs_setcnt)), %char(fldnm))
+	        if (.not. last)
+	          freturn FALSE		;Field not in input set
+	      end
+	    else
+	      last = a_end		;Numeric set index passed
+	  end
+	else
+	  last = gs_setcnt		;Default to last field in set
+
+					;Create an RCB for calling the routine,
+					; with the number of arguments matching
+					; the arguments passed to this routine
+				    	; after the routine name.
+	rcb = %rcb_create(%numargs - %argnum(a_args) + 1)
+
+	xcall rcb_setfnc(rcb, a_routine);Set the function name to the one passed
+
+	clear ix			;Argument index for RCB
+	for argnm from %argnum(a_args) thru %numargs	;Loop through the arguments
+	  begin
+	    incr ix			
+	    if (^passed(^arg(argnm)))
+	      begin
+		if (M_ISALPHA_N(argnm)) then
+		  begin
+		    using ^arga(argnm) select	;Process special case arguments
+("*FLD_NAME*    "),	xcall rcb_setarg(rcb, fldnam, ix)
+("*FLD_NUMBER*  "),	xcall rcb_setarg(rcb, fldnm, ix)
+("*FLD_INDEX*   "),    	xcall rcb_setarg(rcb, setndx, ix)
+("*FLD_INFO*    "),	xcall rcb_setarg(rcb, gs_inpfld, ix)
+("*FLD_EMPTY*   "),	xcall rcb_setarg(rcb, empty, ix)
+("*FLD_SELID*   "),	xcall rcb_setarg(rcb, selid, ix)
+("*FLD_ENABLED* "),	xcall rcb_setarg(rcb, enabled, ix)
+("*SET_NAME*    "),	xcall rcb_setarg(rcb, setnam, ix)
+("*SET_NUMBER*  "),	xcall rcb_setarg(rcb, setnm, ix)
+("*SET_NMFLDS*  "),	xcall rcb_setarg(rcb, gs_setcnt, ix)
+("*SET_NEXTFLD* "),	xcall rcb_setarg(rcb, nxtfld, ix)
+("*SET_STATE*   "),	xcall rcb_setarg(rcb, state, ix)
+("*SET_INFO*    "),	xcall rcb_setarg(rcb, gs_fldset, ix)
+			;Not one of the above, pass on through as passed
+(),			xcall rcb_setarg(rcb, ^arg(argnm), ix, ^datatype(argnm))
+		    endusing
+		  end
+		else		;Not alpha, pass on through as passed
+		  xcall rcb_setarg(rcb, ^arg(argnm), ix, ^datatype(argnm))
+	      end
+	  end
+
+	for setndx from first thru last	;Process all of the specified fields
+	  begin
+	    ;First, load the field information
+	    xcall i_fldinf(a_inpid, fldnam=" ", fldnm=%decml(gs_setfld(setndx)),
+	    &		   empty, gs_inpfld, selid, enabled)
+	    ;Then call the routine
+	    if (%rcb_call(rcb) .eq. -1)
+	      freturn FALSE	  	;Function returned -1 = quit
+	  end
+
+	freturn TRUE			;Success
+.end

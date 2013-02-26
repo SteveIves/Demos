@@ -1,0 +1,57 @@
+.main test_menu_check
+;
+; Demonstration main-line program for menu checks
+;
+; Camden Software Consulting	January, 2001
+;
+.include "WND:tools.def"
+.include "WND:inpctl.def"
+.align
+stack record
+	colid	,i4
+	ctls	,a8192
+
+external function
+	utm_toggle	,^val
+	utm_check	,^val
+
+.proc
+	xcall u_start
+	;
+	; Create the sample menus
+	;
+	xcall mb_column(ctls, "o_sub2", "Entry 2",, D_NOPLC)
+	xcall mb_entry(ctls, "o_sub21", "Entry 1")
+	xcall mb_entry(ctls, "o_sub22", "Entry 2 again")
+	xcall mb_end(ctls, colid)
+	xcall mb_column(ctls, "o_sub", "Sub entry",, D_NOPLC)
+	xcall mb_entry(ctls, "o_sub1", "Entry 1")
+	xcall mb_entry(ctls, "o_sub2", "Entry 2", D_SUBMENU)
+	xcall mb_end(ctls, colid)
+	xcall mb_column(ctls, "c_general", "General")
+	xcall mb_entry(ctls, "o_help", "Help", F1_KEY)
+	xcall mb_line(ctls)
+	xcall mb_entry(ctls, "o_main", "Main entry", F3_KEY)
+	xcall mb_entry(ctls, "o_sub", "Sub entry", D_SUBMENU)
+	xcall mb_entry(ctls, "o_exit", "Exit", F4_KEY)
+	xcall mb_end(ctls, colid)
+
+	repeat
+	  begin
+	    xcall m_process	;Process the menu
+	    if (g_select)
+	      begin
+		;Toggle the check on whatever they selected
+		using g_entnam select
+("O_MAIN "),	    xcall utm_toggle("General/Main entry")
+("O_SUB1 "),	    xcall utm_toggle("General/Sub entry/Entry 1")
+("O_SUB21 "),	    xcall utm_toggle("General/Sub entry/Entry 2/Entry 1")
+("O_SUB22 "),	    xcall utm_toggle("General/Sub entry/Entry 2/Entry 2 again")
+("O_EXIT "),	    exitloop
+		endusing
+	      end
+	  end
+
+	xcall u_finish
+.end
+

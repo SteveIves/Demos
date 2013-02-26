@@ -1,0 +1,43 @@
+;=============================================================================
+;
+; Title:		CanadianProvince
+;
+; Description:	Converts a 2-digit Canadian province code to a province name
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function CanadianProvince ;,a
+
+	a_province_code	,a
+
+stack record
+	retval			,a21
+
+.proc
+
+	clear retval
+
+	using a_province_code select
+	("AB"), retval = "Alberta"
+	("BC"), retval = "British Columbia"
+	("MB"), retval = "Manitoba"
+	("NB"), retval = "New Brunswick"
+	("NF"), retval = "Newfoundland"
+	("NT"), retval = "Northwest Territories"
+	("NS"), retval = "Nova Scotia"
+	("NU"), retval = "Nunavut"
+	("ON"), retval = "Ontario"
+	("PE"), retval = "Prince Edward Island"
+	("QC"), retval = "Quebec"
+	("SK"), retval = "Saskatchewan"
+	("YT"), retval = "Yukon"
+	endusing
+
+	freturn %atrim(retval)
+
+.end
+

@@ -1,0 +1,81 @@
+;=============================================================================
+;
+; Title:		UsState
+;
+; Description:	Converts a 2-digit US state code to a state name
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function UsState ;,a
+
+	a_state_code	,a
+
+stack record
+	retval			,a20
+
+.proc
+
+	clear retval
+
+	using a_state_code select
+	("AL"), retval = "Alabama"
+	("AK"), retval = "Alaska"
+	("AZ"), retval = "Arizona"
+	("AR"), retval = "Arkansas"
+	("CA"), retval = "California"
+	("CO"), retval = "Colorado"
+	("CT"), retval = "Connecticut"
+	("DE"), retval = "Delaware"
+	("DC"), retval = "District of Columbia"
+	("FL"), retval = "Florida"
+	("GA"), retval = "Georgia"
+	("HI"), retval = "Hawaii"
+	("ID"), retval = "Idaho"
+	("IL"), retval = "Illinois"
+	("IN"), retval = "Indiana"
+	("IA"), retval = "Iowa"
+	("KS"), retval = "Kansas"
+	("KY"), retval = "Kentucky"
+	("LA"), retval = "Louisiana"
+	("ME"), retval = "Maine"
+	("MD"), retval = "Maryland"
+	("MA"), retval = "Massachusetts"
+	("MI"), retval = "Michigan"
+	("MN"), retval = "Minnesota"
+	("MS"), retval = "Mississippi"
+	("MO"), retval = "Missouri"
+	("MT"), retval = "Montana"
+	("NE"), retval = "Nebraska"
+	("NV"), retval = "Nevada"
+	("NH"), retval = "New Hampshire"
+	("NJ"), retval = "New Jersey"
+	("NM"), retval = "New Mexico"
+	("NY"), retval = "New York"
+	("NC"), retval = "North Carolina"
+	("ND"), retval = "North Dakota"
+	("OH"), retval = "Ohio"
+	("OK"), retval = "Oklahoma"
+	("OR"), retval = "Oregon"
+	("PA"), retval = "Pennsylvania"
+	("RI"), retval = "Rhode Island"
+	("SC"), retval = "South Carolina"
+	("SD"), retval = "South Dakota"
+	("TN"), retval = "Tennessee"
+	("TX"), retval = "Texas"
+	("UT"), retval = "Utah"
+	("VT"), retval = "Vermont"
+	("VA"), retval = "Virginia"
+	("WA"), retval = "Washington"
+	("WV"), retval = "West Virginia"
+	("WI"), retval = "Wisconsin"
+	("WY"), retval = "Wyoming"
+	endusing
+
+	freturn %atrim(retval)
+
+.end
+

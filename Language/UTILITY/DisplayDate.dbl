@@ -1,0 +1,37 @@
+;=============================================================================
+;
+; Title:		DisplayDate
+;
+; Description:	Formats and displays a numeric date
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.subroutine DisplayDate
+
+	optional in a_row		,n	;Screen row (only used if a_row AND a_col passed)
+	optional in a_col		,n	;Screen col (only used if a_row AND a_col passed)
+	optional in a_prompt	,a	;Prompt to display first
+	required in a_date		,n	;Date to format (YYYYMMDD, YYMMDD or YYPP)
+	optional in a_seperator	,a	;Seperator character (default /)
+	optional in a_european	,n	;European formatting (DD/DD/YYYY or DD/MM/YY)
+	optional in a_drow		,n	;Display row (only used if a_drow AND a_dcol passed)
+	optional in a_dcol		,n	;Display col (only used if a_drow AND a_dcol passed)
+
+external function
+	FormatDate	,a
+
+.proc
+
+	xcall DisplayA(a_row,a_col,a_prompt,
+	&			   %FormatDate(a_date,a_seperator,a_european),
+	&			   a_drow,a_dcol)
+
+	xreturn
+
+.end
+
+

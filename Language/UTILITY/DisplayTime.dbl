@@ -1,0 +1,37 @@
+;=============================================================================
+;
+; Title:		DisplayTime
+;
+; Description:	Formats and displays a numeric Time
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.subroutine DisplayTime
+
+	a_row		,n	;Optional, screen row (only used if a_row AND a_col passed)
+	a_col		,n	;Optional, screen col (only used if a_row AND a_col passed)
+	a_prompt	,a	;Optional, prompt to display first
+	a_time		,n	;Time to format (HHMMSS or HHMM)
+	a_ampm		,n	;Optional, AM/PM formatting
+	a_noseconds	,n	;Optional, don't display seconds (for HHMMSS)
+	a_drow		,n	;Optional, display row (only used if a_drow AND a_dcol passed)
+	a_dcol		,n	;Optional, display col (only used if a_drow AND a_dcol passed)
+
+external function
+	FormatTime	,a
+
+.proc
+
+	xcall DisplayA(a_row,a_col,a_prompt,
+	&			   %FormatTime(a_time,a_ampm,a_noseconds),
+	&			   a_drow,a_dcol)
+
+	xreturn
+
+.end
+
+

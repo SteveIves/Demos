@@ -1,0 +1,69 @@
+
+.main test_ftp
+
+.include "UT:ftp.def"
+
+record
+	tt				,i4
+	ok				,i4
+	connected		,i4
+	intStatus		,i4
+	intConnectionID	,i4
+	strReturnedText	,a80
+
+
+.proc
+
+	ok=1
+
+	open(tt=%syn_freechn,i,'tt:')
+	xcall flags(7004020,1)
+
+	writes(tt,"Connecting to FTP server")
+	intStatus = %ftpOpen(intConnectionID, 'localhost', , strReturnedText)
+	if (intStatus<300) then
+		connected=1
+	else
+	begin
+		writes(tt,"Failed to connect to FTP server")
+		clear ok
+	end
+
+	if (ok)
+	begin
+		writes(tt,"Logging in")
+		intStatus = %ftpLogin(intConnectionID, 'anonymous','steve.ives@synergex.com', strReturnedText)
+		if (intStatus>=300)
+		begin
+			writes(tt,"Login failed!")
+			clear ok
+			;Good - loged in - anything < 300 is OK
+			;300'd are informational
+			;400's are temporary issue
+			;500's are errors
+		end
+	end
+
+	if (ok)
+	begin
+		writes(tt,"Sending file")
+		intStatus = %ftpStoreFile(intConnectionID,"test_ftp.dbl","test_ftp.dbl",'ASCII',strReturnedText)
+		if (intStatus>=300)
+		begin
+			writes(tt,"Send failed")
+			clear ok
+		end
+	end
+
+	if (connected)
+	begin
+		writes(tt,"Disconnecting")
+		intStatus = %ftpClose(intConnectionID, strReturnedText)
+	end
+
+	close tt
+	sleep 2
+	stop
+
+.end
+

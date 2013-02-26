@@ -1,0 +1,108 @@
+;****************************************************************************
+;
+; Title:		test_registry.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			9th June 1999
+;
+; Description:	Test program for registry routines
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+; Warning:		The operation and reliability of a Windows system depends on
+;				the integrity of the Registry.  Inappropriate use of this
+;				routine could result in serious damage to the registry.
+;				Please exercise extreme caution when using this	routine.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+
+.main test_registry
+
+.include "WND:tools.def"
+.include "UT:registry.def"
+
+.align
+record
+	reg			,i4		;Registry handle
+	hive		,i4		;Registry hive
+	key			,a80	;Registry key
+
+	ival		,i4		;An integer value
+	status		,i4		;Status
+	val			,a255	;A string value
+
+.proc
+
+	xcall u_start
+
+	hive = HKEY_CURRENT_USER
+	key = "SOFTWARE\XYZ Software"
+
+	;Open a registry session
+
+	if (status=%RegStartSession(reg)) then
+		xcall u_message("Failed to start registry session")
+	else
+	begin
+
+		;A "key" is like a "directory".  Create a key called "XYZ Software"
+
+		if (status=%RegCreateKey(reg,hive,key,REG_FLUSH))
+		then
+			xcall u_message("Failed to create key "  + %atrim(key))
+		else
+			xcall u_message("Created key "  + %atrim(key))
+
+		;Keys contain "values", which are essentially a name/value pair.  There are
+		;three types of values, String values, dword (numeric) values, and binary values.
+		;Here we'll create a String value called "VERSION" and set it to "3.2"
+
+		if (status=%RegSetDword(reg,hive,key,"MYVALUE",ival=1001))
+		then
+			xcall u_message("Failed to set value MYVALUE=" + %string(ival) + ", status=" + %string(status))
+		else
+			xcall u_message("Set value MYVALUE=" + %string(ival))
+
+		;Now we'll read the value back again.
+
+		clear ival
+		if (status=%RegGetDword(reg,hive,key,"MYVALUE",ival))
+		then
+			xcall u_message("Failed to read MYVALUE, status=" + %string(status))
+		else
+			xcall u_message("Read MYVALUE as " + %string(ival))
+
+		;Now we'll delete the value.
+
+		if (status=%RegDeleteValue(reg,hive,key,"MYVALUE"))
+		then
+			xcall u_message("Failed to delete value MYVALUE, status=" + %string(status))
+		else
+			xcall u_message("Deleted value MYVALUE")
+
+		;And delete the key
+
+		if (status=%RegDeleteKey(reg,hive,key))
+		then
+			xcall u_message("Failed to delete key " + %atrim(key) + ", status=" + %string(status))
+		else
+			xcall u_message("Deleted key " + %atrim(key))
+
+		;And finally, end the registry session
+
+		xcall RegEndSession(reg)
+
+	end
+
+	xcall u_finish
+
+	stop
+
+.end

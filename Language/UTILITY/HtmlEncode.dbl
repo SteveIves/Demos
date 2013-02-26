@@ -1,0 +1,96 @@
+;*******************************************************************************
+;
+;Routine:       HtmlEncode
+;
+;Author:        Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:     All Synergy-supported platforms
+;
+;Requirements:  Synergy/DE V8.1 or higher
+;
+;
+.function HtmlEncode ;,a
+
+    a_instr         ,a
+
+.align
+stack record
+
+    mh              ,i4         ;Memory handle
+    mc              ,i4         ;Memory content pointer
+    count           ,i4         ;Loop counter
+
+    achr            ,a1         ;
+
+structure chr
+                    ,a1
+
+.proc
+
+    clear mc
+
+    if (a_instr) then
+    begin
+        ;Allocate dynamic memory for return string
+        mh = %mem_proc(DM_ALLOC+DM_BLANK, %trim(a_instr)*8 )
+
+        for count from 1 thru %trim(a_instr)
+        begin
+
+            achr = a_instr(count:1)
+
+            using achr select
+
+            ("&"),
+            begin
+                ^m(chr[mc+=1](1:5),mh) = "&amp;"
+                mc+=4
+            end
+
+            ('"'),
+            begin
+                ^m(chr[mc+=1](1:6),mh) = "&quot;"
+                mc+=5
+            end
+
+            ("<"),
+            begin
+                ^m(chr[mc+=1](1:6),mh) = "&lt;"
+                mc+=3
+            end
+
+            (">"),
+            begin
+                ^m(chr[mc+=1](1:6),mh) = "&gt;"
+                mc+=3
+            end
+
+;           (" "),
+;           begin
+;               ^m(chr[mc+=1](1:6),mh) = "&nbsp;"
+;               mc+=5
+;           end
+
+            ;Leave other characters unchanged
+            (),
+                ^m(chr[mc+=1],mh)=a_instr(count:1)
+            endusing
+
+        end
+
+        ;Trim memory
+        mh = %mem_proc(DM_RESIZ,mc,mh)
+
+        ;Note: The memory handle "mh" can not be explicitly released as it is
+        ;required to provide the return value of the function.  However, the
+        ;handle is NOT defined as static, so it will be explicitly released
+        ;during the FRETURN processing.
+
+        freturn ^m(mh)
+
+    end
+    else
+        freturn a_instr
+
+.end
+

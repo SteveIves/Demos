@@ -1,0 +1,209 @@
+;*******************************************************************************
+;
+;Routine:		SoapRequest
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	Synergy/DE V8.1 or higher
+;
+;Revisions:		Version	Date			Comment
+;				1.0		24 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine accepts various parameters which provide the information required
+;to build a SOAP request which can subsequently be used in conjunction with the
+;HTTP[S] API in order to make a call to an XML Web Service.
+;
+;The routine returns a static dynamic memory handle which can be passed to the
+;"send_handle" parameter of %HTTP_CLIENT_POST.  In addition, the routine
+;optionally returns the length of the returned memory handle in the a_length
+;parameter.  This value can be directly passed to the "send_length" parameter
+;of %HTTP_CLIENT_POST.
+;
+;DEALLOCATION OF THE STATIC DYNAMIC MEMORY ALLOCATED IN AND RETURNED FROM THIS
+;ROUTINE IS THE RESPONSIBILITY OF THE CALLING ROUTINE.
+;
+.function SoapRequest, ^VAL
+
+	a_namespace		,a					;Web service namespace
+	a_method		,a					;Name of method to call
+	a_params		,n					;Number of parameters
+	a_paramname		,[*]a				;Array of parameter names
+	a_paramtype		,[*]n				;Array of parameter types
+	a_paramdata		,[*]a				;Array of parameter values
+	a_header		,[*]a				;Array for HTTP headers. Must have at
+										;least 3 elements
+	a_length		,n					;(Optional) returned length
+
+.include "DBLDIR:synxml.def"
+
+.define SOAPREQUEST_INTERNAL
+.include "UT:SoapRequest.def"
+
+external function
+	Strip			,a
+
+.align
+stack record
+
+	group xml
+	  doc			,XML_DOC_TYPE		;XML document
+	  string		,XML_STRING_TYPE	;XML string
+	  stringhandle	,i4					;Memory handle of XML string
+	  length		,i4					;Length of SOAP request
+	endgroup
+
+	group soap
+	  envelope		,XML_ELEM_TYPE		;XML element for SOAP envelope
+	  body			,XML_ELEM_TYPE		;XML element for SOAP body
+	  methodcall	,XML_ELEM_TYPE		;XML element for SOAP method call
+	endgroup
+
+	group temp
+		handle		,i4					;Temporary memory handle
+		element		,XML_ELEM_TYPE		;Temporary XML element
+		document	,XML_DOC_TYPE		;Temporary XML document
+	endgroup
+
+	ph				,i4					;Memory handle for parameter elements
+	mh				,i4					;Returned memory handle
+	count			,i4					;Loop counter
+
+structure parameter
+	element			,XML_ELEM_TYPE
+
+.define param(x) ^m(parameter[x].element,ph)
+
+.proc
+
+	;Create an XML document to hold the SOAP request
+
+	xml.doc = %xml_doc_create
+	xcall xml_doc_setdeclaration(xml.doc,'<?xml version="1.0" encoding="utf-8"?>')
+
+	;Add the SOAP envelope
+
+	soap.envelope = %xml_doc_getroot(xml.doc)
+	xcall xml_elem_setName(soap.envelope,"soap:Envelope")
+	xcall xml_elem_setattribute(soap.envelope,"xmlns:xsi",
+	&							"http://www.w3.org/2001/XMLSchema-instance")
+	xcall xml_elem_setattribute(soap.envelope,"xmlns:xsd",
+	&							"http://www.w3.org/2001/XMLSchema")
+	xcall xml_elem_setattribute(soap.envelope,"xmlns:soap",
+	&							"http://schemas.xmlsoap.org/soap/envelope/")
+
+	;Add the SOAP body
+
+	soap.body = %xml_elem_create
+	xcall xml_elem_setName(soap.body,"soap:Body")
+	xcall xml_elem_addChild(soap.envelope,soap.body)
+
+	;Add the SOAP method call
+
+	soap.methodcall = %xml_elem_create
+	xcall xml_elem_setName(soap.methodcall,%atrim(a_method))
+	xcall xml_elem_setattribute(soap.methodcall,"xmlns", %atrim(a_namespace))
+	xcall xml_elem_addChild(soap.body,soap.methodcall)
+
+	;Add the parameters to the SOAP method call
+
+	ph = %mem_proc(DM_ALLOC,^size(parameter) * a_params)
+
+	for count from 1 thru a_params
+	begin
+
+		param(count) = %xml_elem_create
+		xcall xml_elem_setName(param(count),%atrim(a_paramname[count]))
+
+		using a_paramtype[count] select
+
+		(SOAP_PARAM_ALPHA),
+		begin
+			xcall xml_elem_settext(param(count),%atrim(a_paramdata[count]))
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+		end
+
+		(SOAP_PARAM_DECIMAL),
+		begin
+			xcall xml_elem_settext(param(count),^a(^d(%strip(a_paramdata[count]))))
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+		end
+
+		(SOAP_PARAM_INTEGER),
+		begin
+			xcall xml_elem_settext(param(count),%strip(a_paramdata[count]))
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+		end
+
+		(SOAP_PARAM_HANDLE),
+		begin
+			temp.handle = %strip(a_paramdata[count])
+			xcall xml_elem_settext(param(count),^m(temp.handle))
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+		end
+
+		(SOAP_PARAM_XMLDOC),
+		begin
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+			temp.document = %strip(a_paramdata[count])
+			temp.element = %xml_doc_getroot(temp.document)
+			xcall xml_elem_addChild(param(count),temp.element)
+		end
+
+		(SOAP_PARAM_XMLELEM),
+		begin
+			xcall xml_elem_addChild(soap.methodcall,param(count))
+			temp.element = %strip(a_paramdata[count])
+			xcall xml_elem_addChild(param(count),temp.element)
+		end
+
+		endusing
+
+	end
+
+	;Extract the SOAP request to an XML string
+
+	xml.string = %xml_doc_toString(xml.doc)
+	xml.stringhandle = %xml_string_getHandle(xml.string)
+
+	;Get the length of the XML string
+
+	xml.length = %xml_string_getSize(xml.string)
+
+	;Allocate new dynamic memory to return to caller
+
+	mh = %mem_proc(DM_ALLOC+DM_STATIC,xml.length)
+
+	;Copy the XML data to new handle
+
+	^m(mh) = ^m(xml.stringhandle)
+
+	;Set the appropriate HTTP headers
+	a_header[1] = 'Content-Type: text/xml; charset=utf-8'
+	a_header[2] = 'Content-Length: ' + %string(xml.length)
+	a_header[3] = 'SOAPAction: "' + %atrim(a_namespace)+'/'+%atrim(a_method)+'"'
+
+	;If required, return length of XML data
+
+	if ^passed(a_length)
+		a_length = xml.length
+
+	;Clean up
+
+	xcall xml_string_delete(xml.string)
+	xcall xml_doc_delete(xml.doc)
+	ph = %mem_proc(DM_FREE,ph)
+
+	;Return the XML data to the calling routine
+
+	freturn mh
+
+.end
+

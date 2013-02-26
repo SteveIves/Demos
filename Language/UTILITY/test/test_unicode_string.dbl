@@ -1,0 +1,17 @@
+.main test_uinicode_string
+
+record
+	string			,a80, "abcdefg"
+
+external function
+	dbl_to_unicode      ,a
+	unicode_to_dbl       ,a
+
+.proc
+        string = %dbl_to_unicode(%atrim(string))
+        string = %unicode_to_dbl(string)
+
+		stop
+
+.end
+

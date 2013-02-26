@@ -1,0 +1,400 @@
+;**************************************************************************
+;
+;	This is the mainline program to demonstrate the use of the
+;	sendmail subroutine.
+;
+; 12/3/2002: Added support for the domain.
+;
+;**************************************************************************
+
+.main test_mailit
+
+;.define DEBUGGING
+
+.define DEFAULT_SERVER,	"exchange2k"	;Change to your default mail server
+
+.define DEFAULT_DOMAIN,	"synergex.com"	;Change to your default domain
+
+record
+	status,		i4
+	num_lines,	i4
+	i,		i4
+	j,		i4
+	done,		i4
+	is_set,		i4
+
+.define CMD_LEN,	160
+.define BUF_LEN,	128
+
+record
+	cmdln,		a CMD_LEN
+	cmdln1,		[CMD_LEN]a1 @cmdln
+	tokenbuf,	a BUF_LEN
+
+record
+	reply,		a BUF_LEN
+	sender,		a BUF_LEN
+	from,		a BUF_LEN
+	server,		a BUF_LEN
+	recipient,	a BUF_LEN
+	cc,		a BUF_LEN
+	file,		a BUF_LEN
+	subject,	a BUF_LEN
+	textline,	a BUF_LEN
+	attachfile,	a BUF_LEN
+	domain,		a BUF_LEN
+
+.include "UT:smtpmail.def"
+
+.define TAB,	"	"
+.define SPACE,	" "
+.define SQUOTE,	"'"
+.define DQUOTE,	'"'
+
+.ifdef D_GUI
+.define QUOTE	SQUOTE
+.else
+.define QUOTE	DQUOTE
+.endc
+
+.proc
+.ifdef D_GUI
+	xcall flags(0001010, 1)
+.else
+	xcall flags(1001010, 1)
+.endc
+	open(1, o, "TT:")
+
+	clear from, server, recipient, cc, file, subject, textline
+	clear cmdln
+	xcall cmdln(cmdln)
+	i = 1
+.ifndef OS_VMS
+	while (((cmdln1[i] .eq. SPACE) .or. (cmdln1[i] .eq. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip white space
+	while (((cmdln1[i] .ne. SPACE) .and. (cmdln1[i] .ne. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip dbr
+.ifdef DEBUGGING
+	while (((cmdln1[i] .eq. SPACE) .or. (cmdln1[i] .eq. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip white space
+	while (((cmdln1[i] .ne. SPACE) .and. (cmdln1[i] .ne. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip the -d
+.endc
+	while (((cmdln1[i] .eq. SPACE) .or. (cmdln1[i] .eq. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip white space
+	while (((cmdln1[i] .ne. SPACE) .and. (cmdln1[i] .ne. TAB))
+	&	.and. (i .lt. CMD_LEN)) do
+	    incr i			;Skip program name
+.endc
+	xcall getlog("MAILIT_TO", cc, status)
+	xcall getlog("MAILIT_FROM", from, status)
+	xcall getlog("MAILIT_SENDER", sender, status)
+	xcall getlog("MAILIT_SERVER", server, status)
+	xcall getlog("MAILIT_REPLY", reply, status)
+
+	call get_cmdln_token		;Parse subject
+	subject = tokenbuf
+	if ((%trim(subject) .eq. 1) .and. (subject(1:1) .eq. " "))
+	    xcall prompt(is_set, subject, "Subject: ")
+
+	call get_cmdln_token		;Parse textline/filename
+	textline = tokenbuf
+	if ((%trim(textline) .eq. 1) .and. (textline(1:1) .eq. " "))
+	    xcall prompt(is_set, textline, "Text line or file name: ")
+
+	call get_cmdln_token		;Parse recipient (TO)
+	recipient = tokenbuf
+	if ((%trim(recipient) .eq. 1) .and. (recipient(1:1) .eq. " "))
+	    xcall prompt(is_set, recipient, "Mail recipient (To): ")
+
+	call get_cmdln_token		;Parse from
+	if ((%trim(from) .eq. 1) .and. (from(1:1) .eq. " "))
+	    from = tokenbuf		;Set if not overridden by MAILIT_FROM
+	if ((%trim(from) .eq. 1) .and. (from(1:1) .eq. " "))
+	    xcall prompt(is_set, from, "Mailed from: ")
+
+	call get_cmdln_token		;Parse reply
+	if ((%trim(reply) .eq. 1) .and. (reply(1:1) .eq. " "))
+	    reply = tokenbuf		;Set if not overridden by MAILIT_REPLY
+	if ((%trim(reply) .eq. 1) .and. (reply(1:1) .eq. " "))
+	    xcall prompt(is_set, reply, "Reply to: ")
+	if ((is_set .eq. 0) .and. (%trim(reply) .eq. 1) .and. (reply(1:1) .eq. " "))
+	    reply = from		;Set to from if not specified
+
+	call get_cmdln_token		;Parse sender
+	if ((%trim(sender) .eq. 1) .and. (sender(1:1) .eq. " "))
+	    sender = tokenbuf		;Set if not overridden by MAILIT_SENDER
+	if ((%trim(sender) .eq. 1) .and. (sender(1:1) .eq. " "))
+	    xcall prompt(is_set, sender, "Sender: ")
+	if ((is_set .eq. 0) .and. (%trim(sender) .eq. 1) .and. (sender(1:1) .eq. " "))
+	    sender = from		;Set to from if not specified
+
+	call get_cmdln_token		;Parse server
+	if ((%trim(server) .eq. 1) .and. (server(1:1) .eq. " "))
+	    server = tokenbuf		;Set if not overridden by MAILIT_SERVER
+	if ((%trim(server) .eq. 1) .and. (server(1:1) .eq. " "))
+	    xcall prompt(is_set, server, "Server: ")
+	if ((is_set .eq. 0) .and. (%trim(server) .eq. 1) .and. (server(1:1) .eq. " "))
+	    server = DEFAULT_SERVER	;Set to default if not specified
+
+	call get_cmdln_token		;Parse cc
+	if ((%trim(cc) .eq. 1) .and. (cc(1:1) .eq. " "))
+	    cc = tokenbuf		;Set if not overridden by MAILIT_CC
+	if ((%trim(cc) .eq. 1) .and. (cc(1:1) .eq. " "))
+	    xcall prompt(is_set, cc, "CC: ")
+
+	call get_cmdln_token		;Parse attach file
+	attachfile = tokenbuf
+	if ((%trim(attachfile) .eq. 1) .and. (attachfile(1:1) .eq. " "))
+	    xcall prompt(is_set, attachfile, "Attach: ")
+
+	call get_cmdln_token		;Parse attach file
+	domain = tokenbuf
+	if ((%trim(domain) .eq. 1) .and. (domain(1:1) .eq. " "))
+	    xcall prompt(is_set, domain, "Domain: ")
+	if ((is_set .eq. 0) .and. (%trim(domain) .eq. 1) .and. (domain(1:1) .eq. " "))
+	    domain = DEFAULT_DOMAIN	;Set to default if not specified
+
+				;Check for required command line arguments
+	if ((%trim(subject) .eq. 1) .and. (subject(1:1) .eq. " "))
+	  begin
+	    writes(1, "No subject or text or recipient or from")
+	    call usage
+	    goto done
+	  end
+	if ((%trim(textline) .eq. 1) .and. (textline(1:1) .eq. " "))
+	  begin
+	    writes(1, "No text or recipient or from")
+	    call usage
+	    goto done
+	  end
+	if ((%trim(recipient) .eq. 1) .and. (recipient(1:1) .eq. " "))
+	  begin
+	    writes(1, "No recipient or from")
+	    call usage
+	    goto done
+	  end
+	if ((%trim(from) .eq. 1) .and. (from(1:1) .eq. " "))
+	  begin
+	    writes(1, "No from")
+	    call usage
+	    goto done
+	  end
+
+.ifdef DEBUGGING
+	writes(1, "")
+	writes(1, "processing as: ")
+	writes(1, "subject: {" + %atrim(subject) + "}")
+	writes(1, "textline: {" + %atrim(textline) + "}")
+	writes(1, "Number of lines: " + %string(num_lines))
+	writes(1, "server: {" + %atrim(server) + "}")
+	writes(1, "from: {" + %atrim(from) + "}")
+	writes(1, "sender: {" + %atrim(sender) + "}")
+	writes(1, "reply to: {" + %atrim(reply) + "}")
+	writes(1, "cc: {" + %atrim(cc) + "}")
+	writes(1, "recipient (send to): {" + %atrim(recipient) + "}")
+	writes(1, "attach: {" + %atrim(attachfile) + "}")
+	writes(1, "domain: {" + %atrim(domain) + "}")
+	goto done
+.endc
+
+	clear status
+	if (textline(1:1) .eq. '@') then
+	  begin
+	    file = textline(2,^size(textline))
+	    if (attachfile) then
+	      begin
+		status = %smtpmail(
+		&	%atrim(server),		;SMTP server name
+		&	%atrim(sender),		;Sender name
+		&	%atrim(recipient),	;Recipient list, comma delimited
+		&	%atrim(cc),		;CC list comma delimited
+		&	%atrim(from),		;from
+		&	%atrim(reply),		;Reply email address
+		&	%atrim(subject),	;Subject line
+		&	%atrim(file),		;File name to send
+		&	,			;Number of Single lines to send
+		&	,			;Single Line to send
+		&	attachfile,		;Attach file
+		&	domain)			;Sender domain
+	      end
+	    else
+	      begin
+		status = %smtpmail(
+		&	%atrim(server),		;SMTP server name
+		&	%atrim(sender),		;Sender name
+		&	%atrim(recipient),	;Recipient list, comma delimited
+		&	%atrim(cc),		;CC list comma delimited
+		&	%atrim(from),		;from
+		&	%atrim(reply),		;Reply email address
+		&	%atrim(subject),	;Subject line
+		&	%atrim(file),		;File name to send
+		&	,			;Number of Single lines to send
+		&	,			;Single Line to send
+		&	,			;Attach file
+		&	domain)			;Sender domain
+	      end
+	  end
+	else
+	  begin
+	    num_lines = 1
+	    if (attachfile) then
+	      begin
+		status = %smtpmail(
+		&	%atrim(server),		;SMTP server name
+		&	%atrim(sender),		;Sender name
+		&	%atrim(recipient),	;Recipient list, comma delimited
+		&	%atrim(cc),		;CC list comma delimited
+		&	%atrim(from),		;from
+		&	%atrim(reply),		;Reply email address
+		&	%atrim(subject),	;Subject line
+		&	,			;File name to send
+		&	num_lines,		;Number of Single lines to send
+		&	textline,		;Single Line to send
+		&	attachfile,		;Attach file
+		&	domain)			;Sender domain
+	      end
+	    else
+	      begin
+		status = %smtpmail(
+		&	%atrim(server),		;SMTP server name
+		&	%atrim(sender),		;Sender name
+		&	%atrim(recipient),	;Recipient list, comma delimited
+		&	%atrim(cc),		;CC list comma delimited
+		&	%atrim(from),		;from
+		&	%atrim(reply),		;Reply email address
+		&	%atrim(subject),	;Subject line
+		&	,			;File name to send
+		&	num_lines,		;Number of Single lines to send
+		&	textline,		;Single Line to send
+		&	,			;Attach file
+		&	domain)			;Sender domain
+	      end
+	  end
+
+	if (status .ne. SMERR_SUCCESS)
+	  begin
+	    case status of
+	      begincase
+SMERR_BADSERVER:
+		writes(1, "Mail send error: Bad Server")
+SMERR_NETCONFIG:
+		writes(1, "Mail send error: Network Configuation")
+SMERR_NETPROB:
+		writes(1, "Mail send error: Network Problem")
+SMERR_TOLIST:
+		writes(1, "Mail send error: To List")
+SMERR_CCLIST:
+		writes(1, "Mail send error: CC List")
+SMERR_BODYFILE:
+		writes(1, "Mail send error: Body File")
+SMERR_SENDADDR:
+		writes(1, "Mail send error: Send Address")
+SMERR_BADLIST:
+		writes(1, "Mail send error: Bad List")
+SMERR_ATTACHFILE:
+		writes(1, "Mail send error: Attach File")
+	      endcase
+	    else
+		writes(1, "Mail send error status = " + %hex(status) + ", " +
+		&					%string(status))
+	  end
+done,
+	close 1
+	stop
+usage,
+	writes(1, "Usage:	mailit subject text recipient from")
+	writes(1, "	To imbed spaces quote the argument")
+.ifdef OS_VMS
+	writes(1, "	Use the double quote on VMS systems")
+.endc
+.ifdef D_GUI
+	writes(1, "	Use the single quote on PC systems")
+.endc
+	writes(1, "	Use the environment variable MAILIT_TO to specify cc list")
+	writes(1, "	Use the environment variable MAILIT_FROM to specify sender")
+	writes(1, "	Use the environment variable MAILIT_SERVER to specify SMTP server")
+	return
+
+get_cmdln_token,
+	clear tokenbuf
+					;Skip white space
+	while (((cmdln1[i] .eq. SPACE) .or. (cmdln1[i] .eq. TAB)) .and.
+	&      (i .lt. CMD_LEN)) do
+	    incr i
+
+	if (i .lt. CMD_LEN)
+	  begin
+	    j = 1		;Start parsing token
+.ifdef DEBUGGING
+	    writes(1, %string(i) + "-" + %string(^size(%atrim(cmdln))-i) +
+	    &		": {" + %atrim(cmdln) + "}")
+.endc
+	    if (cmdln1[i] .eq. QUOTE) then
+	      begin
+		if (cmdln1[i+1] .eq. QUOTE)
+		  begin
+		    tokenbuf(j:1) = QUOTE	;Copy imbeded quote
+		    incr i
+		    incr j
+		  end
+		incr i				;Bypass quote
+		done = 0
+		do
+		  begin
+		    if (cmdln1[i] .eq. QUOTE) then
+		      begin
+			if (cmdln1[i+1] .eq. QUOTE) then
+			  begin
+			    tokenbuf(j:1) = QUOTE	;Copy imbeded quote
+			    incr i
+			    incr j
+			  end
+			else
+			  begin
+			   incr i		;Bypass final quote
+			   incr done
+			  end
+		      end
+		    else
+		      begin
+			tokenbuf(j:1) = cmdln1[i]
+			incr i
+			incr j
+		      end
+		  end
+		until (done)		;Copy entire token
+	      end
+	    else
+	      begin
+		j = i
+		while (((cmdln1[i] .ne. SPACE) .and. (cmdln1[i] .ne. TAB))
+		&	.and. (i .lt. CMD_LEN)) do
+		    incr i
+		tokenbuf = cmdln(j,i)	;Copy single token into tokenbuf
+	      end
+	  end
+	return
+.end
+.subroutine prompt
+a_arg_set,	n
+a_buffer,	a
+a_prompt,	a
+static record
+	eof,	i4, 0
+.proc
+	if (eof) goto eof
+	display(1, a_prompt)
+	reads(1, a_buffer, eof)
+	a_arg_set = %rdlen
+	return
+eof,
+	eof = 1
+	a_arg_set = 0
+	return
+.end

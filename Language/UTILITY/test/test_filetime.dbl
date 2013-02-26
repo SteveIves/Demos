@@ -1,0 +1,31 @@
+.main test_filetime
+
+.define D_TAB	,%char(9)
+
+.include "WND:tools.def"
+
+external function
+	get_filetime	,^val
+
+.align
+stack record
+	filnam		,a78
+	create		,d17
+	access		,d17
+	modified	,d17
+
+.proc
+	xcall u_start
+	while (%u_getfilename(filnam, "Choose a file"))
+	  begin
+    	    if (%get_filetime(filnam, create, access, modified)) then
+	      xcall u_message("File = " + %atrim(filnam) +
+	      &		    "\nCreated" + D_TAB + %string(create, "XXXX/XX/XX ZX:XX:XX.XXX") +
+	      &		    "\nAccessed" + D_TAB + %string(access, "XXXX/XX/XX ZX:XX:XX.XXX") +
+	      &		    "\nModified" + D_TAB + %string(modified, "XXXX/XX/XX ZX:XX:XX.XXX"))
+	    else
+	      xcall u_msgbox("Could not open file " + %atrim(filnam), D_MICONEXCLAM)
+	  end
+	xcall u_finish
+.end
+

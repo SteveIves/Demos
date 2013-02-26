@@ -1,0 +1,16 @@
+.subroutine ttopen
+
+global common
+	tt		,i4		;Terminal channel
+
+.proc
+
+	open(tt=%syn_freechn,i,"tt:")
+
+	xcall flags(7004020,1)
+
+	display(tt,$scr_pos(1,1),$scr_clr(SCREEN))
+
+	xreturn
+
+.end

@@ -1,0 +1,117 @@
+.subroutine display_local_fields, REENTRANT
+
+	;Argument list
+
+	a_wndid,	n	;window id
+	a_data,		a	;window data area
+	methdat1,	a
+	methdat2,	a
+	methdat3,	a
+	methdat4,	a
+	methdat5,	a
+	methdat6,	a
+
+	;End of argument list
+
+.include 'WND:system.def'
+.include 'WND:tools.def'
+.include 'WND:setinf.def'
+.include 'WND:fldinf.def'
+
+.align
+stack record
+	count,			i4	;field counter
+	return_status,	i4	;return status of the function
+	temp,			i4	;temp variable
+
+.align
+stack record
+	set_number,		i4		;ordinal set number
+	fld_number,		i4		;field number
+	mem_pnt,		i4		;dynamic memory pointer
+	fld_name,		a30		;name of input field
+	setname,		a15		;working set name
+
+structure str_store
+	,a1
+
+stack record
+.include 'WND:inpinf.def'
+
+
+;	group inputinfo	,a
+;	  inp_wndid			,i4	;Input window ID
+;	  inp_setnum		,i4	;Set number
+;	  inp_setndx		,i4	;Set index (field number within set)
+;	  inp_fldnum		,i4	;Field number within input window
+;	  inp_nulinp		,i4	;Performing null input? (TRUE/FALSE)
+;	  inp_fldtype		,i4	;Field type:
+;	  						;  D_ALPHA, D_DECIMAL, D_FIXED, D_TEXT,
+;	  						;  D_INTEGER, D_USERTYPE
+;	  inp_empty			,i4	;Is the field empty?
+;	  inp_setnam		,i4	;Pointer to name of current input set
+;	  inp_fldnam		,i4	;Pointer to name of current input field
+;	  inp_usertype		,i4	;Pointer to user-defined data type
+;	  inp_usertext		,i4	;Pointer to user text string
+;	  inp_prc_atr		,i4	;Input processing attributes
+;	  inp_prc_clr		,i4	;Input processing color
+;	  inp_dsp_atr		,i4	;Field display attributes
+;	  inp_dsp_clr		,i4	;Field display color
+;	  inp_clr_atr		,i4	;Field clear attributes
+;	  inp_clr_clr		,i4	;Field clear color
+;	  inp_entered		,i4	;Data modified?
+;	  inp_return		,i4	;RETURN key pressed?
+;	endgroup
+
+.proc
+	
+	;first, store off the data
+	mem_pnt = %mem_proc(DM_ALLOC, ^size(a_data))
+	^m(str_store(1:^size(a_data)), mem_pnt) = a_data
+
+	clear return_status
+
+	clear set_number, ^i(inputinfo)
+
+	setname = 'ALL'
+
+	xcall i_setinf(a_wndid, setname, set_number,, gs_fldset)
+
+	for count from 1 thru gs_setcnt
+	begin
+		clear fld_name
+		;get the actual field name
+		xcall i_fldinf(a_wndid, fld_name, gs_setfldi(count), , gs_inpfld, , )
+		;if the field has a change method - call it!
+		if gs_change.ne.'    ' .and. gs_change.ne.'C_NOCHANGE'
+		begin
+			xcall i_fldmod(a_wndid, fld_name, , , D_OFF, D_FLD_CHANGE)
+			onerror no_routine
+			temp = D_OK
+				
+			;build up the inputinfo block
+			inp_wndid = a_wndid
+			inp_setnum = -99
+			
+			xcall xsubr(gs_change,
+				&			a_data(gs_pos:gs_siz), 						;data entered
+				&			a_data(gs_pos:gs_siz),						;data stored
+				&			temp,										;pending status
+				&			inputinfo,									;input info block
+				&			^m(str_store(1:^size(a_data)), mem_pnt),	;data area
+				&			methdat1, methdat2, methdat3, methdat4, methdat5, methdat6)
+			if FALSE
+			begin
+no_routine,		offerror
+			end
+			xcall i_fldmod(a_wndid, fld_name, , , D_FLD_CHANGE, gs_change)
+			offerror
+		end
+	end
+
+	xcall i_display(a_wndid, setname, ^m(str_store(1:^size(a_data)), mem_pnt))
+
+	xreturn
+
+.end
+

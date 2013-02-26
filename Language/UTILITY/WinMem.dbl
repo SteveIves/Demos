@@ -1,0 +1,100 @@
+;****************************************************************************
+;
+; Title:		WinMem.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			19th February 1999
+;
+; Description:	Retrieve information about Windows memory utilization.
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinMem, ^VAL
+
+	;Argument list			;All arguments are optional
+							;When used, pass i4 variables 
+
+    a_memoryload	,n		;% memory used
+    a_totalphys		,n		;Tolal physical memory (bytes)
+    a_availphys		,n		;Physical memory free (bytes)
+    a_totalpagefile	,n		;Total page file (bytes)
+    a_availpagefile	,n		;Page file free (bytes)
+    a_totalvirtual	,n		;Total virtual memory (bytes)
+    a_availvirtual	,n		;Virtual memory free (bytes)
+
+	;End of argument list
+
+	;Return status
+	;
+	;	1	Success
+	;	0	Failure
+	;
+
+.align
+stack record
+	handle			,i4
+	status 			,i4
+
+stack record memorystatus
+    length    		,i4
+    memoryload    	,i4
+    totalphys    	,i4
+    availphys   	,i4
+    totalpagefile   ,i4
+    availpagefile   ,i4
+    totalvirtual    ,i4
+    availvirtual    ,i4
+
+.proc
+
+	.ifndef D_GUI
+	freturn 0
+	.endc
+
+	onerror Error
+
+	status = 1
+	length = 32
+	
+	handle = %dll_open("kernel32.dll")
+	xcall dll_call(handle,DLL_TYPE_WINAPI,"GlobalMemoryStatus", ^addr(memorystatus))
+	xcall dll_close(handle)
+
+	if (^passed(a_memoryload))
+		a_memoryload = memoryload
+
+	if (^passed(a_totalphys))
+		a_totalphys = totalphys
+
+	if (^passed(a_availphys))
+		a_availphys = availphys
+
+	if (^passed(a_totalpagefile))
+		a_totalpagefile = totalpagefile
+
+	if (^passed(a_availpagefile))
+		a_availpagefile = availpagefile
+
+	if (^passed(a_totalvirtual))
+		a_totalvirtual = totalvirtual
+
+	if (^passed(a_availvirtual))
+		a_availvirtual = availvirtual
+
+	if (0)
+Error,  clear status
+
+	freturn status
+
+.end
+

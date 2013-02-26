@@ -1,0 +1,33 @@
+.main test_rpsfile
+
+.include "WND:tools.def"
+
+record
+	status			,i4
+	filename		,a30	;Name of RPS file def (entered by user)
+	errormsg		,a80
+	crefil			,a80
+
+.proc
+
+	xcall u_start(,1,1)
+
+	xcall e_sect("RPS File Creation Test Program",D_HEADER)
+
+	xcall u_dialog(filename,,,,'RPS FILE DEFINITION ')
+
+	xcall setlog("DAT","c:\temp",status)
+	xcall setlog("RPSMFIL","c:\webdemo\rps\rpsmain.ism",status)
+	xcall setlog("RPSTFIL","c:\webdemo\rps\rpstext.ism",status)
+	
+	if (%rpsfile(filename,,errormsg,crefil)) then
+		xcall u_message(errormsg)
+	else
+		xcall u_message("Created data file " + %atrim(crefil))
+	
+	xcall setlog("DAT",,status)
+
+	xcall u_finish
+
+.end
+

@@ -1,0 +1,224 @@
+.main parse
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "DBLDIR:synxml.def"
+
+.include "weather_report" repository, record="weather_report"
+
+record
+    ok              ,i4
+    count           ,i4
+    count1          ,i4
+    inpwnd          ,i4
+
+    parser          ,XML_PARSER_TYPE
+    doc             ,XML_DOC_TYPE
+    root            ,XML_ELEM_TYPE
+    rootchildren    ,XML_ELEMLIST_TYPE
+    rootchild       ,XML_ELEM_TYPE
+    windchildren    ,XML_ELEMLIST_TYPE
+    windchild       ,XML_ELEM_TYPE
+    xmlstring       ,XML_STRING_TYPE
+    xmldata         ,D_ADDR
+
+    tagname         ,a30
+    temp            ,a10
+
+.define XML_FILE    "weather_report.xml"
+
+.proc
+
+    xcall u_start("parse.ism")
+    xcall u_wndfont(D_SETFONT,DF_DEFAULT,"MS Sans Serif",8,"A")
+    xcall e_sect("Parsing XML Example (SPC2003)",D_HEADER)
+
+    ok=TRUE
+
+    parser = %xml_parser_create
+
+    if (.not.(doc=%xml_parser_parsefile(parser,XML_FILE))) then
+        xcall u_message("Failed to parse XML file!")
+    else
+    begin
+
+        call display_xml
+
+        call parse_xml
+
+        if (ok) then
+            call display_report
+        else
+            xcall u_message("Invalid XML received")
+
+        xcall xml_doc_delete(doc)
+
+    end
+
+    xcall xml_parser_delete(parser)
+
+    xcall u_finish
+
+    stop
+
+display_xml,
+
+    ;Display received XML data
+
+    xmlstring = %xml_doc_tostring(doc,1)            ;Get an XML string
+    xmldata = %xml_string_gethandle(xmlstring)      ;Get handle of XML data
+    xcall u_msgbox(^m(xmldata),,"Received XML")     ;Display it
+    xcall xml_string_delete(xmlstring)              ;Delete the XML string
+
+    return
+
+parse_xml,
+
+    ;Get root element and make sure it's a WeatherReport
+    root = %xml_doc_getroot(doc)
+    xcall xml_elem_getname(root,tagname)
+    if (tagname.ne."WeatherReport")
+        clear ok
+
+    if (ok)
+    begin
+        ;Get weather report timestamp details
+        xcall xml_elem_getattribute(root,"date",^a(date))
+        xcall xml_elem_getattribute(root,"time",^a(time))
+        xcall xml_elem_getattribute(root,"zone",zone)
+
+        if (.not.date).or.(.not.time).or.(.not.zone)
+            clear ok
+    end
+
+    if (ok)
+        call parse_body
+
+    return
+
+
+parse_body,
+
+    rootchildren = %xml_elem_children(root)
+
+    for count from 1 thru %xml_elemlist_count(rootchildren)
+    begin
+
+        rootchild = %xml_elemlist_item(rootchildren,count)
+        xcall xml_elem_getname(rootchild,tagname)
+
+        using tagname select
+        ("Location"),
+            call parse_location
+        ("Temperature"),
+            call parse_temp
+        ("Humidity"),
+            call parse_humidity
+        ("Wind"),
+            call parse_wind
+        (),
+            clear ok
+        endusing
+
+        if (.not.ok)
+            exitloop
+    end
+
+    return
+
+parse_location,
+
+    xcall xml_elem_gettext(rootchild,location)
+    if (.not.location)
+        clear ok
+    return
+
+parse_temp,
+
+    xcall xml_elem_getattribute(rootchild,"unit",tempscale)
+    if (.not.tempscale) then
+        clear ok
+    else
+    begin
+        xcall xml_elem_gettext(rootchild,temp)
+        if (temp) then
+            temperature = %atrim(temp)
+        else
+            clear ok
+    end
+
+    return
+
+parse_humidity,
+
+    xcall xml_elem_getattribute(rootchild,"unit",humscale)
+    if (.not.humscale) then
+        clear ok
+    else
+    begin
+        xcall xml_elem_gettext(rootchild,temp)
+        if (temp) then
+            humidity = %atrim(temp)
+        else
+            clear ok
+    end
+
+    return
+
+parse_wind,
+
+    windchildren = %xml_elem_children(rootchild)
+
+    for count1 from 1 thru %xml_elemlist_count(windchildren)
+    begin
+
+        windchild = %xml_elemlist_item(windchildren,count1)
+        xcall xml_elem_getname(windchild,tagname)
+
+        using tagname select
+        ("Speed"),
+            call parse_speed
+        ("Direction"),
+            call parse_direction
+        (),
+            clear ok
+        endusing
+    end
+
+    return
+
+parse_speed,
+
+    xcall xml_elem_getattribute(windchild,"unit",windscale)
+    if (.not.windscale) then
+        clear ok
+    else
+    begin
+        xcall xml_elem_gettext(windchild,temp)
+        if (temp) then
+            windspeed = %atrim(temp)
+        else
+            clear ok
+    end
+
+    return
+
+parse_direction,
+
+    xcall xml_elem_gettext(windchild,winddir)
+    if (.not.winddir)
+        clear ok
+
+    return
+
+display_report,
+
+    xcall i_ldinp(inpwnd,,"WEATHER_REPORT")
+    xcall w_brdr(inpwnd,WB_TITLE,"Weather Report Received")
+    xcall i_display(inpwnd,,weather_report)
+    xcall i_input(inpwnd,,weather_report)
+    xcall u_window(D_DELETE,inpwnd)
+
+    return
+
+.end

@@ -1,0 +1,51 @@
+.main tfldinset
+;
+; Description:  Simple self-referential demo routine for is_fldinset below
+;
+.include "WND:tools.def"
+
+external function
+	is_fldinset	,^val
+.align
+stack record
+	bldid		,i4
+	inpid		,i4
+	group data	,a
+	  set		,a30
+	  field		,a30
+	  index		,i4
+	endgroup
+
+literal
+	flds		,3a30, "set", "field", "index"
+.proc
+	xcall u_start
+	xcall u_rend(D_LOAD, D_RND_INP_DSP, A_NONE, 3)
+	xcall ib_input(bldid, "i_test", 10, 50)
+	xcall ib_field(bldid, "set", D_FLD_SIZE, 30, D_FLD_PROMPT, "Set name",
+	&	       D_FLD_REQUIRED, D_FLD_FPOS, 1, 12)
+	xcall ib_field(bldid, "field", D_FLD_SIZE, 30, D_FLD_PROMPT,
+	&	       "Field name", D_FLD_REQUIRED, D_FLD_POS, 2, 1,
+	&	       D_FLD_FPOS, 2, 12)
+	xcall ib_field(bldid, "index", D_FLD_TYPE, D_INTEGER, D_FLD_SIZE, 4,
+	&	       D_FLD_POS, 4, 1, D_FLD_PROMPT, "Set index",
+	&	       D_FLD_FPOS, 4, 12, D_FLD_NEG, D_FLD_JUST, D_JST_LEFT)
+	xcall ib_structure(bldid, "i_test", 3, flds)
+	xcall ib_set(bldid, "input", "i_test", 2, flds)	;Just the first two
+	xcall ib_set(bldid, "display", "i_test", 1, "index")
+	xcall ib_button(bldid, "I_OK", DSB_TEXT, "Get index")
+	xcall ib_button(bldid, "O_EXIT", DSB_TEXT, "Close")
+	xcall ib_end(bldid, inpid)
+	xcall u_window(D_PLACE, inpid, 5, 21)
+	repeat
+	  begin
+    	    xcall i_input(inpid, "input", data)
+	    if (g_select)
+	      exitloop
+	    index = %field_in_set(inpid, set, field)
+	    xcall i_dspfld(inpid, "index", index)
+	    xcall i_next(inpid, "input", "*FRST*")
+	  end
+	xcall u_finish
+.end
+

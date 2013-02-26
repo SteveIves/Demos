@@ -1,0 +1,469 @@
+.function rpsfile, ^VAL
+
+	;Argument list
+
+	a_rpsfile	,a		;Repository file definition name (required, passed)
+
+	a_overwrite	,n		;Overwrite existing file? (optional, passed)
+
+	a_errmsg	,a		;Returned status message (optional, returned)
+
+	a_filename	,a		;Created file name (optional, returned)
+
+	;End of argument list
+
+	;Return status values
+	;
+	;	0	Success
+	;	1	Failed to open Repository
+	;	2	Failed to retrieve specified file information
+	;	3	Requested file is not an ISAM file
+	;	4	No keys are defined in Repository
+	;	5	Failed to retrieve information for files Repository structure
+	;	6	Target file already exists and a_overwrite not passed
+	;	7	XCALL ISAMC failed. The most likely reason foe this error is
+	;		some illegal combination of file or key options which RPS allows
+	;		you to define and I have failed to forecast - sorry!
+
+	;Known restrictions
+	;
+	;	1	This routine creates the file based on the key definitions for
+	;		the first structure that is assigned to the file. No reference
+	;		is made to additional structures which may be assigned.
+	;
+	;	2	This routine assumes that all key segments are of type "FIELD".
+	;
+	;	3	This routine can only create ISAM files with up to 99 keys.  This
+	;		is due to a restriction in Repository, where only 99 ACCESS keys
+	;		can be defined.
+	;
+	;	4	This routine assumes that all ACCESS keys are defined before any
+	;		FOREIGN keys, and are defined in the correct sequence as they
+	;		should be defined in the file.  The "Explicit key of reference"
+	;		field is NOT used, as Repository does not require this field to
+	;		be used and does not validate the data entered in any way.
+	;
+
+.include "RPSLIB:ddinfo.def"
+
+.align
+stack record intvars
+	fail		,i4			;Return status code (0=success)
+	rpsopen		,i4			;Is Repository currently open
+	c			,i4			;Local loop counter
+	c1			,i4			;Local loop counter
+	exists		,i4			;File already exists
+	mh1			,i4			;Dynamic memory array of key names
+	mh2			,i4			;Dynamic memory array of k_info records
+
+stack record nonintvars
+	filespec	,a500		;ISAMC filespec argument
+	ks			,[8]a700	;ISAMC keyspec arguments
+	nullval		,a255		;Null key value
+	pispec		,a120		;Portable integer specification
+							
+							;Array of k_info records from repository
+	kd			,[8]a^size(k_info)
+
+structure keyname
+				,a30
+
+structure keydata
+				,a^size(k_info)
+
+.proc
+
+	clear ^i(intvars), nonintvars
+
+	;Connect to Repository
+	xcall dd_init(dcs)
+	if (dcs.error) then
+	begin
+		call DcsError
+		fail=1
+	end
+	else
+		rpsopen=1
+
+	;Get RPS info for specified file definition
+	if (.not.fail)
+	begin
+		xcall dd_filespec(dcs,a_rpsfile,,fls_info,kd)
+		if (dcs.error)
+		begin
+			call DcsError
+			fail=2
+		end
+	end
+		
+	;Check that the requested file is an ISAM file
+	if (.not.fail)
+	begin
+		if (flsi_filtyp.ne."DBL ISAM")
+		begin
+			fail=3
+			if (^passed(a_errmsg))
+				a_errmsg="Requested file is not an ISAM file"
+		end
+	end
+
+	;Make sure the RPS has keys defined
+	if (.not.fail)
+	begin
+		if (.not.flsi_nmkeys)
+		begin
+			fail=4
+			if (^passed(a_errmsg))
+				a_errmsg="No keys are defined in Repository"
+		end
+	end
+
+	;Set current structure to this file's first structure
+	if (.not.fail)
+	begin
+		xcall dd_struct(dcs,DDS_INFO,flsi_sname,s_info)
+		if (dcs.error)
+		begin
+			call DcsError
+			fail=5
+		end
+	end
+
+	;Make sure the file does not already exist, if appropriate
+	if (.not.fail)
+	begin
+		if (.not.^passed(a_overwrite)).or.(^passed(a_overwrite).and..not.a_overwrite)
+		begin
+			for c from 255 thru 1 by -1
+				if (.not.%chopen(c))
+					exitloop
+			open(c,i:i,flsi_name) [ERR=fnf]
+			close c
+			exists=1
+Fnf,		if (exists)
+			begin
+				fail=6
+				if (^passed(a_errmsg))
+                    a_errmsg = "File " + %atrim(flsi_name) + " already exists"
+			end
+		end
+	end
+		
+	;Build up the filespec argument for XCALL ISAMC
+	if (.not.fail)
+	begin
+		;Base file spec
+		filespec=flsi_name
+
+		;Record type
+		using flsi_rectyp select
+		(FLI_FIXED),
+			nop ;default value
+		(FLI_VAR),
+			filespec=%atrim(filespec)+",VARIABLE"
+		(FLI_MULT),
+			filespec=%atrim(filespec)+",MULTIPLE"
+		endusing
+
+		;Data compression
+		if (flsi_compress)
+			filespec=%atrim(filespec)+",COMPRESS"
+
+		;File density
+		if (flsi_density)
+			filespec=%atrim(filespec)+",DENSITY=" + ^a(flsi_density)
+
+		.ifndef D_VMS ; These options not valid on OpenVMS
+
+		;Static RFS's
+		if (flsi_staticrfa)
+			filespec=%atrim(filespec)+",STATIC_RFA"
+
+		;Page size
+		using flsi_pagesize select
+			(FLI_PS512),
+				filespec=%atrim(filespec)+",PAGE=512"
+			(FLI_PS1024),
+				nop ;default value
+			(FLI_PS2048),
+				filespec=%atrim(filespec)+",PAGE=2048"
+			(FLI_PS4096),
+				filespec=%atrim(filespec)+",PAGE=4096"
+			(FLI_PS8192),
+				filespec=%atrim(filespec)+",PAGE=8192"
+		endusing
+
+		;Addressing mode
+		if (flsi_addressing.eq.FLI_40BIT)
+			filespec=%atrim(filespec)+",TBYTE"
+
+		;Non-key portable integers
+		if (flsi_portable)
+		begin
+			if (flsi_portable(1:1).ne.",")
+				filespec=%atrim(filespec)+","
+			filespec=%atrim(filespec)+flsi_portable
+		end
+		.endc
+	
+	end
+
+    ;Build up keyspec arguments for XCALL ISAMC
+	if (.not.fail)
+	begin
+		
+		;We have to assume that in RPS, access keys are defined first, and
+		;in the correct sequence.  However, there is no way to retrieve a list
+		;of key names in the sequence defined in RPS, they are always returned
+		;in alphabetic order of key name.  Here, we retrieve a list of key
+		;names into one dynamic memory segment, then work through that list of
+		;names, getting full key data for each, and storing that full key data
+		;into a second synamic memory segment, using the keys sequence number
+		;as the key to the array.
+		mh1=%mem_proc(DM_ALLOC,^size(keyname)*flsi_nmkeys)
+		mh2=%mem_proc(DM_ALLOC,^size(keydata)*flsi_nmkeys)
+		xcall dd_key(dcs,DDK_LIST,flsi_nmkeys,^m(keyname[1],mh1))
+		for c from 1 thru flsi_nmkeys
+		begin
+			xcall dd_key(dcs,DDK_INFO,^m(keyname[c],mh1),k_info)
+			^m(keydata[ki_seqnm],mh2)=k_info
+		end
+		mh1=%mem_proc(DM_FREE,mh1)
+
+		for c from 1 thru flsi_nmkeys
+		begin
+
+			k_info=^m(keydata[c],mh2)
+			xcall dd_key(dcs,DDK_INFO,ki_name,k_info) ; To set current key
+
+			if (ki_ktype.eq.KI_ACC)
+			begin
+
+				;Key name (Non-vms systems must be <= 15 characters)
+				ks[c]="NAME=" + %atrim(ki_name)
+
+				;Segment starting positions
+				ks[c]=%atrim(ks[c]) + ",START="
+				for c1 from 1 thru ki_nmseg
+				begin
+					ks[c]=%atrim(ks[c]) + ^a(ki_segpos(c1))
+					if (c1.ne.ki_nmseg)
+						ks[c]=%atrim(ks[c]) + ":"
+				end
+
+				;Segment lengths(d3:d3...)
+				ks[c]=%atrim(ks[c]) + ",LENGTH="
+				for c1 from 1 thru ki_nmseg
+				begin
+					ks[c]=%atrim(ks[c]) + ^a(ki_seglen(c1))
+					if (c1.ne.ki_nmseg)
+						ks[c]=%atrim(ks[c]) + ":"
+				end
+
+				;Segment data types
+				;FOR THE TIME BEING I'M ASSUMING ALL KEY SEGMENTS
+				;ARE OF TYPE FIELD!!!!!!!!!!!!!!!!!!!!!!!!
+				ks[c]=%atrim(ks[c]) + ",TYPE="
+				for c1 from 1 thru ki_nmseg
+				begin
+					using ki_segdtyp(c1) select
+					(0), ; Not specified, lookup field data type
+					begin
+						xcall dd_field(dcs,DDF_INFO,ki_fldnam(c),f_info)
+						using fi_type select
+						(T_ALP),
+							ks[c]=%atrim(ks[c]) + "ALPHA"
+						(T_DEC),
+							ks[c]=%atrim(ks[c]) + "DECIMAL"
+						(T_INT),
+							ks[c]=%atrim(ks[c]) + "INTEGER"
+						(T_USR),
+							ks[c]=%atrim(ks[c]) + "ALPHA"
+						endusing
+					end
+					(KI_SG_ALP),
+						ks[c]=%atrim(ks[c]) + "ALPHA"
+					(KI_SG_NOC),
+						ks[c]=%atrim(ks[c]) + "NOCASE"
+					(KI_SG_DEC),
+						ks[c]=%atrim(ks[c]) + "DECIMAL"
+					(KI_SG_INT),
+						ks[c]=%atrim(ks[c]) + "INTEGER"
+					(KI_SG_UNS),
+						ks[c]=%atrim(ks[c]) + "UNSIGNED"
+					endusing
+					if (c1.ne.ki_nmseg)
+						ks[c]=%atrim(ks[c]) + ":"
+				end
+
+				;Segment orders
+				ks[c]=%atrim(ks[c]) + ",ORDER="
+				for c1 from 1 thru ki_nmseg
+				begin
+					using ki_segord(c1) select
+					(0),	;Not specified, use key order in ki_order
+					begin
+						using ki_order select
+						(KI_ASC),
+							ks[c]=%atrim(ks[c]) + "ASCENDING"
+						(KI_DES),
+							ks[c]=%atrim(ks[c]) + "DESCENDING"
+						endusing
+					end
+					(KI_SG_ASC),
+						ks[c]=%atrim(ks[c]) + "ASCENDING"
+					(KI_SG_DES),	
+						ks[c]=%atrim(ks[c]) + "DESCENDING"
+					endusing
+					if (c1.ne.ki_nmseg)
+						ks[c]=%atrim(ks[c]) + ":"
+				end
+
+				;Key density
+				if (ki_density)
+					ks[c]=%atrim(ks[c]) + ",DENSITY=" + ^a(ki_density)
+
+				;Duplicates
+				using ki_dups select
+				(KI_NDPS),
+					ks[c]=%atrim(ks[c]) + ",NODUPS"
+				(KI_DPS),	
+					ks[c]=%atrim(ks[c]) + ",DUPS"
+				endusing
+
+				;Duplicates at end
+				.ifndef D_VMS
+				using ki_insert select
+				(KI_FRT),	
+					ks[c]=%atrim(ks[c]) + ",NOATEND"
+				(KI_END),	
+					ks[c]=%atrim(ks[c]) + ",ATEND"
+				endusing
+				.endc
+
+				;Changes
+				using ki_mod select
+				(KI_NMDF),	
+					ks[c]=%atrim(ks[c]) + ",NOMODIFY"
+				(KI_MDF),	
+					ks[c]=%atrim(ks[c]) + ",MODIFY"
+				endusing
+
+				;Key order
+				using ki_order select
+				(KI_SG_ASC),	
+					ks[c]=%atrim(ks[c]) + ",ASCEND"
+				(KI_SG_DES),	
+					ks[c]=%atrim(ks[c]) + ",NOASCEND"
+				endusing
+
+				;Key compression
+				.ifdef D_VMS
+				if (ki_cmpidx.or.ki_cmpkey.or.ki_cmprec)
+				begin
+					if (ki_cmpidx.and.ki_cmpkey.and.ki_cmprec) then
+						ks[c]=%atrim(ks[c]) + ",COMPRESS=ALL"
+					else
+					begin
+						ks[c]=%atrim(ks[c]) + ",COMPRESS="
+						using (ki_cmpidx) select
+						(0), ks[c]=%atrim(ks[c]) + "NOINDEX|"
+						(1), ks[c]=%atrim(ks[c]) + "INDEX|"
+						endusing
+						using (ki_cmpkey) select
+						(0), ks[c]=%atrim(ks[c]) + "NOKEY|"
+						(1), ks[c]=%atrim(ks[c]) + "KEY|"
+						endusing
+						using (ki_cmprec) select
+						(0), ks[c]=%atrim(ks[c]) + "NORECORD"
+						(1), ks[c]=%atrim(ks[c]) + "RECORD"
+						endusing
+					end
+				end
+				.endc
+
+				if (c)	;Null keys not valid for primary key
+				begin
+					if (ki_null)
+					begin
+						.ifdef D_VMS
+						;REALLY NEED TO CHECK THAT THE KEY TYPE IS
+						;ALPHA.  I'M ASSUMING THIS IS DEDUCED FROM
+						;THE FACT THAT ALL KEY SEGMENTS NEED TO BE
+						;ALPHA.  THERE IS NO OVERALL KEY TYPE
+						;SPECIFIED ANYWHERE
+						ks[c]=%atrim(ks[c]) + ",NULL"
+						.else
+						using ki_null select
+						(KI_REP),
+							ks[c]=%atrim(ks[c]) + ",NULL=REPLICATE"
+						(KI_NONREP),	
+							ks[c]=%atrim(ks[c]) + ",NULL=NOREPLICATE"
+						(KI_SHORT),
+							ks[c]=%atrim(ks[c]) + ",NULL=SHORT"
+						endusing
+						.endc
+
+						;Null key value
+						if (ki_nullval)
+						begin
+							xcall dd_key(dcs,DDK_TEXT,ki_nullval,nullval)
+							ks[c]=%atrim(ks[c]) + ",VALUE_NULL=" + %atrim(nullval)
+						end
+
+					end
+				end
+			end
+		end
+		mh2=%mem_proc(DM_FREE,mh2)
+	end
+
+	;Create the file
+	if (.not.fail)
+	begin
+		onerror Fail
+		xcall isamc(filespec,flsi_recsz,flsi_nmkeys, ks)
+		offerror
+		if (0)
+		begin
+Fail,		fail=7
+			if (^passed(a_errmsg))
+				a_errmsg="Error when attempting to create " + %atrim(flsi_name)
+		end
+	end
+
+	if (.not.fail)
+	begin
+		if (^passed(a_filename))
+			a_filename=flsi_name
+	end
+
+	;Close Repository
+	if (rpsopen)
+		xcall dd_exit(dcs)
+
+	freturn fail
+
+DcsError,
+
+	if (^passed(a_errmsg))
+	begin
+		using (dcs.error) select
+		(E_NOFIND),
+			a_errmsg="Repository Error: Record not found"
+		(E_OPNERR),
+			a_errmsg="Repository Error: Cannot open file"
+		(E_INVFNC),
+			a_errmsg="Repository Error: Invalid function"
+		(E_OPNERRM),
+			a_errmsg="Repository Error: Cannot open main file"
+		(E_OPNERRT),
+			a_errmsg="Repository Error: Cannot open text file"
+		(E_BADVERS),
+			a_errmsg="Repository Error: Incompatible repository version"
+		endusing
+	end
+
+	return
+
+.end

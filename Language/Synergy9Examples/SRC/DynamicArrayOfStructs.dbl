@@ -1,0 +1,71 @@
+;==============================================================================
+;
+; Title:		DynamicArrayOfStructs.dbl
+;
+; Description:	This program demonstrates the use of dynamic arrays of
+;               structure fields.  A dynamic array is an array whose number
+; 				of elements can be declared at runtime.  Dynamic arrays were
+;				a new feature in Synergy/DE V9.1.1.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+;Dynamic arrays require global structures
+
+structure strErrorMessage			;This structure matches the record layout
+	Facility	,a3					;of DBLDIR:syntxt.ism
+	Number		,d5
+	Code		,a10
+	Severity	,a1
+	Message		,a199
+endstructure
+
+main DynamicArrayOfStructs
+
+structure strMsgOut					;Format for output to screen
+	Fac			,a3
+				,a1
+	Nbr			,a5
+				,a1
+	Cd			,a10
+				,a1
+	Msg			,a30
+
+record 
+	ErrorDetail	,[#]strErrorMessage		;Declare a dynamic array
+	MsgOut		,strMsgOut				;Structure field for formatted output
+	ChanTt		,i4		,1				;Terminal channel
+	ChanFile	,i4		,2				;File channel
+	idx			,i4						;Loop counter
+endrecord
+
+
+proc
+
+	;Here we specify that we want the dynamic array to hold 15 elements
+	ErrorDetail = new strErrorMessage[15]
+	
+	open(ChanTt,i,"tt:")
+	open(ChanFile,i:i,"DBLDIR:syntxt.ism")
+
+	;Read 15 records into the array
+	for idx from 1 thru 15
+		reads(ChanFile,ErrorDetail[idx])
+
+	;Then pull them out of the array and display them.
+	for idx from 1 thru 15
+	begin
+		MsgOut.Fac		= ErrorDetail[idx].Facility
+		MsgOut.Nbr		= ErrorDetail[idx].Number
+		MsgOut.Cd		= ErrorDetail[idx].Code
+		MsgOut.Msg		= ErrorDetail[idx].Message
+		writes(ChanTt,MsgOut)
+	end
+	
+	close ChanFile
+	close ChanTt
+	
+	stop
+
+endmain

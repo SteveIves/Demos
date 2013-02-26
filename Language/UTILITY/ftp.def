@@ -1,0 +1,72 @@
+;==============================================================================
+;
+; Title:		ftp.def
+;
+; Author:		Chris Blundell (UNFI)
+;
+; Description:
+;
+; This file contains function and macro definitions for the FTP API used in DBL
+; applications. Also 2 record structures are contained for directory listing
+; purposes they are FileList and LongFileList used with ftpNLSTDirectory and
+; ftpLISTDirectory respectivly.
+;
+;==============================================================================
+;
+; Macro definitions
+;
+.ifndef ftpInit
+.define ftpInit 1
+;
+.define ftpChangeDirectory(socket, Directory, ReturnedText)	ftpCommand(socket, 'CWD '+Directory, ReturnedText)
+.define ftpGetCurrentDirectory(socket, ReturnedText)		ftpCommand(socket, 'PWD', ReturnedText)
+.define ftpGoUpOneLevel(socket, ReturnedText)			ftpCommand(socket, 'CDUP', ReturnedText)
+.define ftpClose(socket, ReturnedText)				ftpCommand(socket, 'QUIT', ReturnedText)
+.define ftpMakeDirectory(Socket, ReturnedText)			ftpCommand(socket, 'MKD '+Directory, ReturnedText)
+.define ftpRemoveDirectory(socket, ReturnedText)		ftpCommand(socket, 'RMD '+Directory, ReturnedText)
+.define ftpDeleteFile(socket, ReturnedText)			ftpCommand(socket, 'DELE '+Directory, ReturnedText)
+.define ftpStoreFile(socket, LocalName, RemoteName, Mode, ReturnedText) ftpSendFileAs(socket, LocalName, RemoteName, Mode, ReturnedText, 'STOR')
+.define ftpStoreUniqueFile(socket, LocalName, RemoteName, Mode, ReturnedText) ftpSendFileAs(socket, LocalName, RemoteName, Mode, ReturnedText, 'STOU')
+.define ftpLISTDirectory(socket, ptrID, ReturnedText, Directory) ftpDirectoryList(socket, ptrID, ReturnedText, 'LIST ', Directory)
+.define ftpNLSTDirectory(socket, ptrID, ReturnedText, Directory) ftpDirectoryList(socket, ptrID, ReturnedText, 'NLST ', Directory)
+;
+.endc
+;
+; Function definitions
+;
+external function
+	ftpOpen				,^VAL
+	ftpLogin			,^VAL
+	ftpCommand			,^VAL
+	ftpDirectoryList	,^VAL
+	ftpGetFileAs		,^VAL
+	ftpSendFileAs		,^VAL
+	ftprename			,^VAL
+;
+; Record definitions
+;
+; Short
+record FileList
+	Files				,a132
+
+; And Long
+record LongFileList
+   	strDirectory		,a1	; 'd' in this position indicates a directory
+	strPermissions		,a9
+						,a1
+						,a3
+						,a1
+	strOwner			,a5
+						,a4
+	strGroup			,a5
+						,a1
+	strSize				,a15
+						,a1
+	strMonth			,a3
+						,a1
+	strDay				,a2
+						,a1
+	strTime				,a5
+						,a1
+	strFileName			,a64
+

@@ -1,0 +1,41 @@
+;-------------------------------------------------------------------------------
+;
+; UT:set_color.def		Defines the color codes for the Windows system colors
+;
+; (cloned and modified from winuser.h)
+;
+;-------------------------------------------------------------------------------
+
+.ifndef D_COLORS_DEFINED
+.define D_COLORS_DEFINED
+
+.define D_COLOR_SCROLLBAR         		,0
+.define D_COLOR_BACKGROUND        		,1
+.define D_COLOR_ACTIVECAPTION     		,2
+.define D_COLOR_INACTIVECAPTION   		,3
+.define D_COLOR_MENU              		,4
+.define D_COLOR_WINDOW            		,5
+.define D_COLOR_WINDOWFRAME       		,6
+.define D_COLOR_MENUTEXT          		,7
+.define D_COLOR_WINDOWTEXT        		,8
+.define D_COLOR_CAPTIONTEXT       		,9
+.define D_COLOR_ACTIVEBORDER      		,10
+.define D_COLOR_INACTIVEBORDER    		,11
+.define D_COLOR_APPWORKSPACE      		,12
+.define D_COLOR_HIGHLIGHT         		,13
+.define D_COLOR_HIGHLIGHTTEXT     		,14
+.define D_COLOR_3DFACE            		,15
+.define D_COLOR_3DSHADOW          		,16
+.define D_COLOR_GRAYTEXT          		,17
+.define D_COLOR_3DTEXT            		,18
+.define D_COLOR_INACTIVECAPTIONTEXT 	,19
+.define D_COLOR_3DHIGHLIGHT       		,20
+.define D_COLOR_3DDKSHADOW        		,21
+.define D_COLOR_3DLIGHT           		,22
+.define D_COLOR_INFOTEXT          		,23
+.define D_COLOR_INFOBK            		,24
+.define D_COLOR_HOTLIGHT                ,26
+.define D_COLOR_GRADIENTACTIVECAPTION   ,27
+.define D_COLOR_GRADIENTINACTIVECAPTN   ,28
+
+.endc

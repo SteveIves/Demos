@@ -1,0 +1,46 @@
+.main test_set_syscolor
+;
+; Description:  Sample program for setting a Synergy color based on a Windows color
+;
+; Camden Software Consulting		June, 2001
+;
+.include "WND:tools.def"
+.include "UT:set_syscolor.def"
+;
+.align
+stack record
+	bldid	,i4
+	inpid	,i4
+	data	,a10
+.proc
+	
+	xcall u_start
+	;
+	; First, let's change the Synergy color 127 to be "3D Objects face",
+	;	 and 128 to be "3D Objects text"
+	;
+	xcall set_syscolor(127, D_COLOR_3DFACE, 128, D_COLOR_3DTEXT)
+	;
+	; Second, assign these colors to the Synergy palette entries used
+	;	  for input windows (1 = background, 3 = display fields,
+	;	  by default)
+	;
+	xcall u_rend(D_LOAD, D_PALETTE, 1, 127, 128)
+	xcall u_rend(D_LOAD, D_PALETTE, 3, 127, 128)
+	;
+	; Now let's try it out by creating and processing an input window
+	;
+	xcall ib_input(bldid, "", 10, 40)
+	xcall ib_field(bldid, "f1", D_FLD_SIZE, 10, D_FLD_POS, 2, 2,
+	&	       D_FLD_PROMPT, "Here is a field ")
+	xcall ib_field(bldid, "f2", D_FLD_SIZE, 10, D_FLD_POS, 4, 2,
+	&	       D_FLD_PROMPT, "A Display field ")
+	xcall ib_structure(bldid, "struct", 1, "f1")
+	xcall ib_set(bldid, "set", "struct")
+	xcall ib_button(bldid, "OK")
+	xcall ib_end(bldid, inpid)
+	xcall i_dspfld(inpid, "f2", "ABCDEFGHIJ")
+	xcall u_window(D_PLACE, inpid, 5, 21)
+	xcall i_input(inpid,, data)
+	xcall u_finish
+.end

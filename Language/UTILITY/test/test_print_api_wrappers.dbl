@@ -1,0 +1,532 @@
+;-------------------------------------------------------------------
+;                  Print API Demo for SPC 2000 Workshop
+;                            Version 1.0
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       test_print_api_wrappers.dbl
+;
+; Description:  Print API demo to advertise SPC 2000 Workshop
+;
+;
+; Author:       Paul Fenton
+;
+; Created:      May, 2000
+;
+;---------------------------------------------------------------------
+
+.main test_print_api_wrappers
+
+.include 'DBLDIR:winprint.def'                              ;must be included to use Print API
+
+.define M$FONT_SPEC(field)  ^m(font_specs.field, font_hdl)
+.define M$PEN_SPEC(field)   ^m(pen_specs.field, pen_hdl)
+.define M$PRT_SPEC(field)   ^m(print_specs.field, spec_hdl)
+
+.define SPC_LOGO_BMP        ,'spc_logo.bmp'
+.define SYN_LOGO_BMP        ,'syn_logo.bmp'
+.define TRUE                ,1
+
+record ivar
+        rpt_hdl             ,i4                             ;report handle
+        spec_hdl            ,i4                             ;memory handle
+        font_hdl            ,i4                             ;memory handle
+        pen_hdl             ,i4                             ;memory handle
+        pen_border_hdl      ,i4
+        result              ,i4
+        scale_x             ,i4                             ;bitmap scaling factors
+        scale_y             ,i4
+        pix_x               ,i4                             ;pixel based positioning
+        pix_y               ,i4
+        high                ,i4
+        wide                ,i4
+        idx                 ,i4
+        mm_to_pix           ,i4
+
+.proc
+        xcall flags(7000000,1)
+	
+		call p_start
+        call print_page1
+        call print_page2
+        call print_page3
+        call p_finish
+        stop
+
+p_start,
+        clear ^i(ivar)
+        spec_hdl = %mem_proc(DM_ALLOC+DM_STATIC, ^size(print_specs))
+        font_hdl = %mem_proc(DM_ALLOC+DM_STATIC, ^size(font_specs))
+        pen_hdl = %mem_proc(DM_ALLOC+DM_STATIC, ^size(pen_specs))
+
+        rpt_hdl = %wpr_info(result, DWP_GETPRINTER)         ;Get the report handle
+        
+        xcall wpr_print(rpt_hdl, DWP_BEGINJOB,, TRUE)       ;Create the metafile ,enhanced preview
+
+        ;get printer capabilities
+        result = %wpr_getdevice(rpt_hdl, DWP_SPECS, ^m(print_specs, spec_hdl))
+        return
+
+p_finish,
+        xcall wpr_print(rpt_hdl, DWP_ENDJOB)                ;Close the metafile
+
+        xcall wpr_execute(rpt_hdl, DWP_PREVIEW)             ;Preview/print
+        xcall wpr_info(rpt_hdl, DWP_DELPRINTER)             ;Release the printer
+
+        spec_hdl = %mem_proc(DM_FREE, spec_hdl)             ;release memory
+        pen_hdl = %mem_proc(DM_FREE, pen_hdl)               ;release memory
+        font_hdl = %mem_proc(DM_FREE, font_hdl)             ;release memory
+        return
+
+print_page1,
+        xcall wpr_print(rpt_hdl, DWP_BEGINPAGE)             ;New page
+
+        call draw_page_box                                  ;draw box around window
+
+        ;print bitmap image
+        scale_x = M$PRT_SPEC(pixelwidth) * 0.75
+        scale_y = M$PRT_SPEC(pixelheight) * 0.40
+        pix_x = (M$PRT_SPEC(pixelwidth) - scale_x)/2
+        pix_y = 50
+        result = %wpr_print(rpt_hdl, DWP_BITMAP, SPC_LOGO_BMP,
+        &                   pix_x, pix_y, scale_x, scale_y, TRUE)
+
+        ;select font
+        M$FONT_SPEC(facename) = 'TIMES NEW ROMAN'
+        M$FONT_SPEC(pointsize) = 24
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(255, 0, 0))   ;red
+
+        ;print text
+        pix_y += scale_y                                                    ;move to bottom of image
+
+        pix_x = (M$PRT_SPEC(pixelwidth) -
+        &        %wpr_info(rpt_hdl, DWP_TEXTWIDTH, "JUNE 4 - 9, 2000"))/2   ;center text
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "JUNE 4 - 9, 2000")
+
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 0))     ;black
+
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)                         ;move to next line
+        pix_x = (M$PRT_SPEC(pixelwidth) -
+        &        %wpr_info(rpt_hdl, DWP_TEXTWIDTH, "ORLANDO, FLORIDA"))/2
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "ORLANDO, FLORIDA")
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 14
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(255, 0, 0))       ;red
+
+        pix_y += 2* %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = (M$PRT_SPEC(pixelwidth) -
+        &        %wpr_info(rpt_hdl, DWP_TEXTWIDTH, "www.spc2000.com"))/2
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y, "www.spc2000.com")
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 24
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 1
+        M$FONT_SPEC(underline) = 1
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        pix_x = (M$PRT_SPEC(pixelwidth) -
+        &        %wpr_info(rpt_hdl, DWP_TEXTWIDTH, "Conference WorkShops"))/2
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Conference WorkShops")
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 18
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 0))         ;black
+        pix_x = 175
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Attending the SPC 2000 Conference ?")
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Have you signed up for the post-conference")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "workShop on using the Print API ?")
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)          ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "This full day class will work through all")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "phases of Windows Printing API using the")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Synergy Language Windows printing API to")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "create true Windows style printouts. You'll")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "create printouts from sample UI Toolkit and")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)             ;move to next line
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "non-UI Toolkit code.")
+
+        call print_synergex_logo
+
+        xcall wpr_print(rpt_hdl, DWP_ENDPAGE)
+        return
+
+print_page2,
+        xcall wpr_print(rpt_hdl, DWP_BEGINPAGE)             ;New page
+
+        call draw_page_box                                      ;draw box around page
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'ARIAL BLACK'
+        M$FONT_SPEC(pointsize) = 18
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 1
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 0))         ;black
+
+        pix_y = 100
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Print API session outline for SPC 2000  (1 Day)")
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 16
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+        pix_x = 200
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "(The Workshop is to be held on Friday, June 9th)")
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 16
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 1
+        M$FONT_SPEC(underline) = 1
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+        pix_x = 100
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Session contents")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        ;select new font
+        M$FONT_SPEC(facename) = 'COURIER NEW'
+        M$FONT_SPEC(pointsize) = 14
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "9:00-10:30 - PowerPoint - 1½ hours")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    Basic command syntax and how all the bits and pieces")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    relate to each other.")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "10:30-10:45 - Break")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "10:45-12:30 - Code Walk Through - 1½ hours")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    Take a step by step walk through the code used to")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    generate this form. (Using none-Toolkit code)")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "12:30-1:30 - Lunch")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   " 1:30-3:00 - Exercise - 1½ hours")
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    a) Simple text output - using the basic Print API")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "       command. (printer selection, print preview, etc.)")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    b) Add in the use of fonts and lines and color.")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    c) Add in graphics / images")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "3:14-5:00 - Wrappers - 1½ hours")
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    Show how to wrap the Print API routines - to make")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    them easier to implement. This section will show")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    with the use of example code, the wrapping of the")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)         ;move down two lines
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "    basic Print API functions.")
+
+        call print_synergex_logo
+
+        xcall wpr_print(rpt_hdl, DWP_ENDPAGE)
+        return
+
+print_page3,
+        xcall wpr_print(rpt_hdl, DWP_BEGINPAGE)             ;New page
+
+        call draw_page_box                                  ;draw box around page
+
+        ;select font
+        M$FONT_SPEC(facename) = "ARIAL BLACK"
+        M$FONT_SPEC(pointsize) = 18
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 1
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 0))     ;black
+
+        ;print text
+        pix_y = 100
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y, 'Registration')
+
+        ;select font
+        M$FONT_SPEC(facename) = "TIMES NEW ROMAN"
+        M$FONT_SPEC(pointsize) = 16
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        ;print text
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "If you are not already signed up for the post-conference workshop on using")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "the Print API and you would like to, then please fill in your details below.")
+
+        ;setup drawing Pen
+        M$PEN_SPEC(pen_style) = DWP_GEOMETRIC
+        M$PEN_SPEC(line_style) = DWP_SOLID
+        M$PEN_SPEC(line_width) = 10
+        M$PEN_SPEC(brush_color) = M_RGB(0, 0, 0)
+        M$PEN_SPEC(brush_style) = DWP_BS_SOLID
+        M$PEN_SPEC(hatch_style) = 0
+        pen_border_hdl = %wpr_info(rpt_hdl, DWP_GETPEN, ^m(pen_specs, pen_hdl))
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Name")
+        pix_x = M$PRT_SPEC(pixelwidth)/3
+        call draw_field_box
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Company")
+        pix_x = M$PRT_SPEC(pixelwidth)/3
+        call draw_field_box
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Address")
+        pix_x = M$PRT_SPEC(pixelwidth)/3
+        call draw_field_box
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        call draw_field_box
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        call draw_field_box
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Telephone")
+        pix_x = M$PRT_SPEC(pixelwidth)/3
+        call draw_field_box
+
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        pix_x = 100
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "E-Mail Address")
+        pix_x = M$PRT_SPEC(pixelwidth)/3
+        call draw_field_box
+
+        pix_x = (M$PRT_SPEC(pixelwidth) - %wpr_info(rpt_hdl, DWP_TEXTWIDTH,
+        &       "Please send your details to Susan Riswold via:"))/2
+        pix_y += 2 * %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Please send your details to Susan Riswold via:")
+
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Fax:       (916) 635-6549")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "E-Mail:  susan.riswold@synergex.com")
+
+        ;select font
+        M$FONT_SPEC(facename) = "Monotype Corsiva"
+        M$FONT_SPEC(pointsize) = 20
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 0
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 255))     ;blue
+        pix_y = M$PRT_SPEC(pixelheight) - scale_y - 600
+        pix_x = (M$PRT_SPEC(pixelwidth) - %wpr_info(rpt_hdl, DWP_TEXTWIDTH,
+        &       "This document was produced usring the Print API."))/2
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "This document was produced usring the Print API.")
+        pix_y += %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y,
+        &                   "Come to the Workshop and see how it was done!")
+
+
+        call print_synergex_logo
+
+        result = %wpr_info(rpt_hdl, DWP_DELPEN,pen_border_hdl)
+        xcall wpr_print(rpt_hdl, DWP_ENDPAGE)
+        return
+
+draw_field_box,
+        high = %wpr_info(rpt_hdl, DWP_TEXTHEIGHT)+10
+        wide = M$PRT_SPEC(pixelwidth)/2                                     ;box is half the width
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, pix_x, pix_y,
+        &                   pix_x, pix_y+high)
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, pix_x, pix_y,
+        &                   pix_x+wide, pix_y)
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, pix_x+wide, pix_y,
+        &                   pix_x+wide, pix_y+high)
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, pix_x, pix_y+high,
+        &                   pix_x+wide, pix_y+high)
+
+        return
+
+draw_page_box,
+        ;setup drawing Pen
+        M$PEN_SPEC(pen_style) = DWP_GEOMETRIC
+        M$PEN_SPEC(line_style) = DWP_SOLID
+        M$PEN_SPEC(line_width) = 10
+        M$PEN_SPEC(brush_color) = M_RGB(255, 0, 0)
+        M$PEN_SPEC(brush_style) = DWP_BS_SOLID
+        M$PEN_SPEC(hatch_style) = 0
+        pen_border_hdl = %wpr_info(rpt_hdl, DWP_GETPEN, ^m(pen_specs, pen_hdl))
+
+        ;place a box around the page!
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, 1, 1,
+        &                   1, M$PRT_SPEC(pixelheight))
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, 1, 1,
+        &                   M$PRT_SPEC(pixelwidth), 1)
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, M$PRT_SPEC(pixelwidth), 1,
+        &                   M$PRT_SPEC(pixelwidth), M$PRT_SPEC(pixelheight))
+        result = %wpr_print(rpt_hdl, DWP_LINE, pen_border_hdl, 1, M$PRT_SPEC(pixelheight),
+        &                   M$PRT_SPEC(pixelwidth), M$PRT_SPEC(pixelheight))
+        result = %wpr_info(rpt_hdl, DWP_DELPEN,pen_border_hdl)
+        return
+
+        ;print synergex logo
+print_synergex_logo,
+        scale_x = M$PRT_SPEC(pixelwidth) * 0.2
+        scale_y = M$PRT_SPEC(pixelheight) * 0.05
+        pix_x = M$PRT_SPEC(pixelwidth) - scale_x - 175
+        pix_y = M$PRT_SPEC(pixelheight) - scale_y - 150
+        result = %wpr_print(rpt_hdl, DWP_BITMAP, SYN_LOGO_BMP,
+        &                   pix_x, pix_y, scale_x, scale_y, TRUE)
+
+        ;select font
+        M$FONT_SPEC(facename) = "COURIER NEW"
+        M$FONT_SPEC(pointsize) = 14
+        M$FONT_SPEC(weight) = 400
+        M$FONT_SPEC(italic) = 1
+        M$FONT_SPEC(underline) = 0
+        M$FONT_SPEC(strikeout) = 0
+        M$FONT_SPEC(fixed) = 0
+        result = %wpr_setdevice(rpt_hdl, DWP_FONT, ^m(font_specs, font_hdl))
+
+        ;select colour
+        result = %wpr_setdevice(rpt_hdl, DWP_TEXTCOLOR, M_RGB(0, 0, 0))     ;black
+
+        ;print text
+        pix_y += scale_y
+        result = %wpr_print(rpt_hdl, DWP_WRITEOUT, pix_x, pix_y, 'www.synergex.com')
+        return
+.end

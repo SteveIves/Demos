@@ -1,0 +1,22 @@
+.main test_get_precision
+.align
+local record
+        val1    ,d15.6
+	val2    ,d12.3
+	val3    ,d10.2
+.proc
+	xcall u_start
+	xcall fmt_num(val1)
+	xcall fmt_num(val2)
+	xcall fmt_num(val3)
+	xcall u_finish
+.end
+
+.subroutine fmt_num
+	num	,n.
+external function
+	get_precision,^val
+.proc
+	xcall u_message("Precision = " + %string(%get_precision(num)))
+	xreturn
+.end

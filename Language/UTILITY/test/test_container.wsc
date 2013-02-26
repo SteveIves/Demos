@@ -1,0 +1,26 @@
+.script
+.date_generated "06/05/2001, 17:51"
+.version "7.1.5"
+
+.column c_general, "General"
+.entry o_ok, "OK"
+.entry o_close, "Close"
+.line
+.entry c_n1, "Header info", key(f1)
+.entry c_n2, "Detail list", key(f2)
+.end
+
+.input i_header, 1, 62
+.placement 15, 32
+.border on, dragbar(on)
+.field customer, a10, pos(1, 4), prompt("Customer"), fpos(1, 14), break
+.field name, a31, fpos(1, 28)
+.set i_header, i_header, customer
+.end
+
+.input i_list, 1, 62
+.field f1, a62
+.end
+
+.listclass l_list, items(12), load_method("list_load")
+.end

@@ -1,0 +1,20 @@
+.subroutine play_sound
+
+	a_filename			,a
+
+.define NULL			%integer(0)
+.define SND_FILENAME	^x(20000)
+
+.align
+stack record
+	dll		,i4
+
+.proc
+	
+	dll = %dll_open("winmm")
+    xcall dll_call(dll,DLL_TYPE_WINAPI,"PlaySoundA", %atrim(a_filename), NULL, SND_FILENAME)
+	xcall dll_close(dll)
+
+	xreturn
+
+.end

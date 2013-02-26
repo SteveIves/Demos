@@ -1,0 +1,76 @@
+;*******************************************************************************
+;
+; Make the Synergy container window unsizeable
+;
+.subroutine AppNoSize
+
+.ifdef D_GUI
+
+.include "DBLDIR:windows.def"
+
+; The following definitions are taken from winuser.h
+;
+.define GWL_STYLE		,%integer(-16)
+.define GWL_EXSTYLE		,%integer(-20)
+.define WS_MAXIMIZEBOX		,^x(00010000)
+.define WS_MINIMIZEBOX		,^x(00020000)
+.define WS_THICKFRAME		,^x(00040000)
+.define WS_EX_DLGMODALFRAME	,^x(00000001)
+.define SC_SIZE			,^x(F000)
+.define SC_MINIMIZE		,^x(F020)
+.define SC_MAXIMIZE		,^x(F030)
+.define SC_RESTORE		,^x(F120)
+.define MF_GRAYED		,^x(00000001)
+
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	hwnd		,i4	;Handle to application window container
+	hmenu		,i4	;Handle to the system menu
+
+.endc
+
+.proc
+	
+	.ifdef D_GUI
+	;
+	;The following code removes the minimize/maximize buttons, changes the
+	;frame to disallow sizing, and enables the corresponding menu entries
+	;on the system menu.
+	;
+    user32 = %dll_open("user32")
+	
+	hwnd = %w_info(WIF_HWND, WID_CONTAINER)		;Handle to container window
+	
+	xcall dll_call(user32,DLL_TYPE_WINAPI ,"SetWindowLongA", hwnd, GWL_STYLE,
+	&	       %dll_call(user32, DLL_TYPE_WINAPI,"GetWindowLongA", hwnd, GWL_STYLE)
+	&	       .band. (.bnot. (WS_MAXIMIZEBOX .bor. WS_MINIMIZEBOX .bor.
+	&	       		WS_THICKFRAME)))	;Alter window style
+	
+	xcall dll_call(user32, DLL_TYPE_WINAPI, "SetWindowLongA", hwnd, GWL_EXSTYLE,
+	&	       %dll_call(user32, DLL_TYPE_WINAPI, "GetWindowLongA", hwnd, GWL_EXSTYLE)
+	&	       .bor. WS_EX_DLGMODALFRAME)	;Set thick frame, not sizeable
+	
+	;Do we have a system menu?
+	
+	hmenu = %dll_call(user32, DLL_TYPE_WINAPI, "GetSystemMenu", hwnd, %integer(0))
+	
+	if (hmenu)
+	begin				;Yes, disable the appropriate items
+	    xcall dll_call(user32, DLL_TYPE_WINAPI, "EnableMenuItem", hmenu, SC_MAXIMIZE, MF_GRAYED)
+	    xcall dll_call(user32, DLL_TYPE_WINAPI, "EnableMenuItem", hmenu, SC_MINIMIZE, MF_GRAYED)
+	    xcall dll_call(user32, DLL_TYPE_WINAPI, "EnableMenuItem", hmenu, SC_RESTORE, MF_GRAYED)
+	    xcall dll_call(user32, DLL_TYPE_WINAPI, "EnableMenuItem", hmenu, SC_SIZE, MF_GRAYED)
+	end
+	
+	xcall dll_close(user32)
+
+	.endc
+
+	xreturn
+
+.end
+
+
+
+

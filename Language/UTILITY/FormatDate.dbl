@@ -1,0 +1,73 @@
+;=============================================================================
+;
+; Title:		FormatDate
+;
+; Description:	Formats a numeric date and returns a string
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			28th September 2005
+;
+;=============================================================================
+;
+.function FormatDate ;,a
+
+	optional in a_date		,n		;Date to format
+									;	YYYYMMDD	->	MM/DD/YYYY
+									;	YYMMDD		->	MM/DD/YY
+									;	YYPP		->  PP/YY
+
+	optional in a_seperator	,a		;Seperator character (default /)
+
+	optional in a_european	,n		;European formatting (DD/DD/YYYY or DD/MM/YY)
+
+stack record
+	retval		,a10
+	sepchr		,a1
+
+.proc
+
+	clear retval
+
+	sepchr = "/"
+	if (^passed(a_seperator).and.a_seperator)
+		sepchr = a_seperator
+
+	if (a_date)
+	begin
+		using ^size(a_date) select
+		(4), call format4
+		(6), call format6
+		(8), call format8
+		endusing
+	end
+
+	freturn %atrim(retval)
+
+format4,
+
+	retval=^a(a_date(3:2))+sepchr+^a(a_date(1:2))
+
+	return
+
+format6,
+
+	if (^passed(a_european)&&(a_european)) then
+		retval=^a(a_date(5:2))+sepchr+^a(a_date(3:2))+sepchr+^a(a_date(1:2))
+	else
+		retval=^a(a_date(3:2))+sepchr+^a(a_date(5:2))+sepchr+^a(a_date(1:2))
+
+	return
+
+format8,
+
+	if (^passed(a_european)&&(a_european)) then
+		retval=^a(a_date(7:2))+sepchr+^a(a_date(5:2))+sepchr+^a(a_date(1:4))
+	else
+		retval=^a(a_date(5:2))+sepchr+^a(a_date(7:2))+sepchr+^a(a_date(1:4))
+
+	return
+
+.end
+
+

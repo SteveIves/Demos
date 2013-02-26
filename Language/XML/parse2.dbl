@@ -1,0 +1,147 @@
+.main parse2
+
+.include "DBLDIR:synxml.def"
+
+record
+    parser      ,XML_PARSER_TYPE
+    doc         ,XML_DOC_TYPE
+    root        ,XML_ELEM_TYPE
+	tmpa		,a1
+
+global common
+    tt          ,i4
+    indent      ,i4
+
+.proc
+
+    xcall flags(7004020,1)
+    open(tt=%syn_freechn,i,"tt:")
+
+    parser = %xml_parser_create
+    doc=%xml_parser_parsefile(parser,"weather_report.xml")
+    xcall xml_parser_delete(parser)
+
+    root=%xml_doc_getroot(doc)
+
+    xcall parse_element(root)
+
+    xcall xml_doc_delete(doc)
+
+    writes(tt,"")
+	display(tt,"Press a key: ")
+	accept(tt,tmpa)
+
+    close tt
+    stop
+
+.end
+
+.subroutine parse_element, reentrant
+
+    a_elem      ,i
+
+.include "DBLDIR:synxml.def"
+
+external common
+    tt          ,i4
+    indent      ,i4
+
+stack record ivars
+    children    ,XML_ELEMLIST_TYPE
+    child_count ,i4
+    len         ,i4
+
+stack record avars
+    tmpa80      ,a32
+
+
+.proc
+
+    clear ^i(ivars), avars
+
+    xcall xml_elem_getname(a_elem,tmpa80)
+    writes(tt,%string(indent)+": NAME="+%atrim(tmpa80))
+
+    xcall xml_elem_gettext(a_elem,tmpa80,len)
+    if (len)
+        writes(tt,%string(indent)+": VALUE="+tmpa80(1:len))
+
+    xcall parse_attributes(a_elem)
+
+    xcall parse_children(a_elem)
+
+    xreturn
+
+.end
+
+.subroutine parse_attributes, reentrant
+
+    a_elem      ,i
+
+.include "DBLDIR:synxml.def"
+
+external common
+    tt          ,i4
+    indent      ,i4
+
+stack record ivars
+    attrs       ,XML_ATTRLIST_TYPE
+    attr        ,XML_ATTR_TYPE
+    count       ,i4
+    len         ,i4
+
+stack record avars
+    tmpa80      ,a32
+
+.proc
+
+    clear ^i(ivars), avars
+
+    attrs = %xml_elem_attributes(a_elem)
+    for count from 1 thru %xml_attrlist_count(attrs)
+    begin
+        attr = %xml_attrlist_item(attrs,count)
+
+        xcall xml_attr_getname(attr,tmpa80)
+        writes(tt,%string(indent)+": ATTRNAME="+%atrim(tmpa80))
+
+        xcall xml_attr_getvalue(attr,tmpa80,len)
+        if (len)
+            writes(tt,%string(indent)+": ATTRVALUE="+tmpa80(1:len))
+    end
+
+    xreturn
+
+.end
+
+.subroutine parse_children, reentrant
+
+    a_elem      ,i
+
+.include "DBLDIR:synxml.def"
+
+external common
+    tt          ,i4
+    indent      ,i4
+
+stack record ivars
+    elems       ,XML_ELEMLIST_TYPE
+    count       ,i4
+
+.proc
+
+    clear ^i(ivars)
+
+    elems = %xml_elem_children(a_elem)
+
+    for count from 1 thru %xml_elemlist_count(elems)
+    begin
+        indent+=1
+        xcall parse_element(%xml_elemlist_item(elems,count))
+        indent-=1
+    end
+
+    xreturn
+
+.end
+

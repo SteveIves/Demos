@@ -1,0 +1,29 @@
+.subroutine WaitKey
+
+	a_row		,n	;Optional, screen row (only used if a_row AND a_col passed)
+	a_col		,n	;Optional, screen col (only used if a_row AND a_col passed)
+	a_prompt	,a	;Optional, prompt to display
+	a_char		,a	;Optional, returned with character pressed.
+
+stack record
+	char		,a1
+
+external common
+	tt			,i4
+
+.proc
+
+	if (^passed(a_row)&&a_row&&^passed(a_col)&&a_col)
+		display(tt,$scr_pos(a_row,a_col))
+
+	if (^passed(a_prompt)&&a_prompt) 
+		display(tt,a_prompt)
+
+	accept(tt,char)
+
+	if (^passed(a_char)) 
+		a_char = char
+
+	xreturn
+
+.end

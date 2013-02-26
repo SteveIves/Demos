@@ -1,0 +1,99 @@
+;******************************************************************************
+;
+; File:         WebSitePing.dbl
+;
+; Type:         Program
+;
+; Description:  Periodically pings a web site to keep the application alive
+;
+; Author:       Steve Ives (Steve Ives)
+;
+; Created:      5/25/2010
+;
+;*******************************************************************************
+;
+
+import System.Collections
+
+namespace SynPSG.WebSitePing
+
+	main WebSitePing
+	
+		record 
+			content		,i4
+			length		,i4
+			errnum		,i4
+			errtxt		,a256
+			WebSites	,@ArrayList
+		endrecord
+		
+		global common
+			DoExit	,boolean, false
+		endcommon
+		
+		.define D_URI1		"http://store.bethsbeads.com"
+		.define D_URI2		"http://store.bethsbeads.com/Administration"
+		.define D_INTERVAL	600
+	
+	proc
+	
+		errnum = syn_atexit(xaddr("WebSitePingExit"))
+		
+		WebSites = new ArrayList()
+		websites.Add(new WebSite("http://www.bethsbeads.com","BethsBeads Blog Site"))
+		websites.Add(new WebSite("http://store.bethsbeads.com","BethsBeads Store"))
+		websites.Add(new WebSite("http://store.bethsbeads.com/Administration","BethsBeads Store Admin"))
+				
+		syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WebSitePing started with a ping interval of " + string(D_INTERVAL) + " seconds.")
+		
+		repeat
+		begin
+			data WebSite, @WebSite
+			data HadAnError, boolean, false
+			foreach WebSite in WebSites
+			begin
+				errnum = http_client_get(WebSite.Url,120,content,length,errtxt)
+				if (errnum)
+					syn_reportevent(D_EVENTLOG_ERROR_TYPE,"WebSitePing encountered an error for " + WebSite.Description  + ": " + atrim(errtxt))
+			end
+			sleep D_INTERVAL
+		end
+		
+		syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WebSitePing is shutting down.")
+		stop
+	
+	endmain
+	
+	subroutine WebSitePingExit
+		endparams
+	
+		external common
+			DoExit	,boolean
+		endcommon
+	
+	proc
+	
+		syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WebSitePing received a shutdown message.")
+		DoExit = true
+		xreturn
+		
+	endsubroutine
+	
+	class WebSite
+		
+		public method WebSite
+			required in aUrl, string
+			required in aDescription, string
+		proc
+			Url = aUrl
+			Description = aDescription
+		endmethod
+		
+		public Url, string
+		
+		public Description, string
+		
+	endclass
+	
+endnamespace
+

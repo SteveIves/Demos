@@ -1,0 +1,28 @@
+.main splash
+
+.include "WND:tools.def"
+
+record
+	dll_hndl		,i4		;DLL handle
+
+.proc
+
+	xcall u_start(,1,0)
+	xcall u_update
+
+	if (dll_hndl=%dll_open('splshscr.dll'))
+	begin
+		xcall dll_call(dll_hndl, DLL_TYPE_WINAPI, "ShowSplash", 'example.bmp')
+		
+		sleep 5
+		
+		xcall dll_call(dll_hndl, DLL_TYPE_WINAPI, "CloseSplash")
+		dll_hndl=%dll_close(dll_hndl)
+	end
+
+	xcall u_finish
+	stop
+
+.end
+
+

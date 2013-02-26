@@ -1,0 +1,17 @@
+.subroutine ttclose
+
+	a_noclear	,n
+
+external common
+	tt			,i4
+
+.proc
+
+	if ((!^passed(a_noclear)) || (!a_noclear) )
+		display(tt,$scr_pos(1,1),$scr_clr(SCREEN))
+
+	close tt
+
+	xreturn
+
+.end

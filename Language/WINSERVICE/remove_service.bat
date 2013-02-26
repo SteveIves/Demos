@@ -1,0 +1,1 @@
+@dbssvc -c MyService -x

@@ -1,0 +1,164 @@
+;-------------------------------------------------------------------
+;                  Print API - millimeter to Pixels conversion
+;                            Version 1.0
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       mm_to_pixels.dbl
+;
+; Description:  Print API - convert a number millimeters to a number of whole Pixels
+;
+;
+; Author:       Paul Fenton
+;
+; Created:      June, 2000
+;
+;---------------------------------------------------------------------
+
+.function mm_to_pixels, ^val, stack
+        
+		a_num_of_mm     ,n      ;no of mm to convert
+        a_ratio         ,n      ;ratio of mm to pixels
+                                ;or
+        a_rpt_hdl       ,n      ;current report handle
+		;end of argument list
+
+        ;returns the number of pixels
+
+.include 'DBLDIR:winprint.def'
+
+record
+        result              ,i4
+        mm_to_pix           ,i4
+        num_of_mm           ,i4
+        paperwidth_mm       ,i4
+        physicalwidth_pix   ,i4
+		mhdl				,i4
+
+.proc
+        if (%passed(a_ratio) .and. a_ratio)                 ;ratio passed and none-zero
+        then
+            mm_to_pix = a_ratio
+        else
+        begin                                           ;calculate ratio
+            mhdl = %mem_proc(DM_ALLOC, ^size(print_specs))
+			result = %wpr_getdevice(a_rpt_hdl, DWP_SPECS, ^m(print_specs, mhdl))
+			;result = %wpr_getdevice(a_rpt_hdl, DWP_PAPERWIDTH, paperwidth_mm)
+            ;result = %wpr_getdevice(a_rpt_hdl, DWP_PHYSICALWIDTH, physicalwidth_pix)
+
+			physicalwidth_pix = ^m(print_specs.physicalwidth, mhdl)
+			paperwidth_mm = ^m(print_specs.paper_width, mhdl)
+
+            mm_to_pix = physicalwidth_pix / (paperwidth_mm / 10)
+            if (%passed(a_ratio))
+                a_ratio = mm_to_pix                         ;return ratio
+        end
+
+        num_of_mm = a_num_of_mm
+        freturn (num_of_mm * mm_to_pix)                     ;return number of pixels
+.end
+
+;-------------------------------------------------------------------
+;                  Print API - millimeter to Pixels conversion
+;                            Version 1.0
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       pixels_to_mm.dbl
+;
+; Description:  Print API - whole Pixels to millimeters
+;
+; Author:       Paul Fenton
+;
+; Created:      June, 2000
+;
+;---------------------------------------------------------------------
+
+.function pixels_to_mm, ^val, stack
+        a_num_of_pixels ,n      ;no of pixels to convert
+        a_ratio         ,n      ;ratio of mm to pixels
+                                ;or
+        a_rpt_hdl       ,n      ;current report handle
+
+        ;returns the number of mm
+
+.include 'DBLDIR:winprint.def'
+
+record
+        result              ,i4
+        mm_to_pix           ,i4
+        num_of_pixels       ,i4
+        paperwidth_mm       ,i4
+        physicalwidth_pix   ,i4
+
+.proc
+        if (%passed(a_ratio) .and. a_ratio)                 ;ratio passed and none-zero
+        then
+            mm_to_pix = a_ratio
+        else
+            begin                                           ;calculate ratio
+            result = %wpr_getdevice(a_rpt_hdl, DWP_PAPERWIDTH, paperwidth_mm)
+            result = %wpr_getdevice(a_rpt_hdl, DWP_PHYSICALWIDTH, physicalwidth_pix)
+
+            mm_to_pix = physicalwidth_pix / (paperwidth_mm / 10)
+            if (%passed(a_ratio))
+                a_ratio = mm_to_pix                         ;return ratio
+            end
+
+        num_of_pixels = a_num_of_pixels
+        freturn (num_of_pixels / mm_to_pix)                 ;return number of mm
+.end
+
+;---------------------------------------------------------------------
+;           Print API - center, right and left justify text output
+;                            Version 1.0
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       mm_to_pixels.dbl
+;
+; Description:  Print API - center, right and left justify text output
+;
+;
+; Author:       Paul Fenton
+;
+; Created:      June, 2000
+;
+;---------------------------------------------------------------------
+
+;center, right and left justify text
+
+.function justify_text, ^val, stack
+        a_rpt_hdl       ,n          ;current report handle
+        a_col           ,n          ;column position in mm
+        a_row           ,n          ;row postion in mm
+        a_text          ,a          ;text string to output
+        a_justify       ,n          ;justifcation (0 = left, 1 = right ,2 = center)
+        a_ratio         ,n          ;mm to pixel ratio
+
+record
+        result          ,i4
+        pix_x           ,i4
+        pix_y           ,i4
+
+.proc
+        pix_x = %mm_to_pixels(a_col, a_ratio)
+        pix_y = %mm_to_pixels(a_row, a_ratio)
+
+        using (a_justify) select
+        (0),                        ;left
+            nop
+        (1),                        ;right
+            pix_x -= %wpr_info(a_rpt_hdl, DWP_TEXTWIDTH, a_text)
+        (2),                        ;center
+            pix_x -= (%wpr_info(a_rpt_hdl, DWP_TEXTWIDTH, a_text) / 2)
+        endusing
+
+        result = %wpr_print(a_rpt_hdl, DWP_WRITEOUT, pix_x, pix_y, a_text)
+
+        freturn(result)
+.end
+
+
+
+

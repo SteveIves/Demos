@@ -1,0 +1,71 @@
+.main test_windir
+
+.include "UT:utility.def"
+
+record
+	status		,i4
+	results		,i4
+	rescount	,i4
+	tt			,i4
+	count		,i4
+	char		,a1
+	filespec	,a40
+
+record output
+	name		,a40
+				,a1
+	size		,a20
+				,a2
+	ar			,a1
+	ro			,a1
+	hi			,a1
+	sy			,a1
+
+.proc
+
+	open(tt=1,o,"tt:")
+	xcall flags(7004020,1)
+
+	display(tt,"File spec: ")
+	reads(tt,filespec)
+
+	if (filespec) 
+	begin
+		if (%WinDir(filespec,results,rescount,WINDIR_LOWERCASE,WINDIR_SORT_SIZE)) then
+		begin
+			if (rescount) then
+			begin
+
+				for count from 1 thru rescount
+				begin
+					output.name = WINDIR$FILENAME(results,count)
+					output.size = %string(WINDIR$FILESIZE(results,count)) [RIGHT]
+					if (WINDIR$ARCHIVE(results,count)) 
+						output.ar = "A"
+					if (WINDIR$READONLY(results,count)) 
+						output.ar = "R"
+					if (WINDIR$HIDDEN(results,count)) 
+						output.ar = "H"
+					if (WINDIR$SYSTEM(results,count)) 
+						output.ar = "S"
+					writes(tt,output)					
+				end
+				writes(tt,"")
+				writes(tt,%string(rescount) + " files found!")
+				results = %mem_proc(DM_FREE,results)
+			end
+			else
+				writes(tt,"No files found!")
+		end
+		else
+			writes(tt,"No files found!")
+
+		display(tt,13,10,"Press a key: ")
+		accept(tt,char)
+	end
+
+	close tt
+	stop
+
+.end
+

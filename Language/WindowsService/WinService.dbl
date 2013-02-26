@@ -1,0 +1,27 @@
+main WinService
+
+proc
+
+	xcall syn_atexit(%xaddr("WinServiceShutdown"))
+	
+	xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService started.")
+
+	repeat
+	begin
+		sleep 5
+		xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService is processing.")
+	end
+
+	stop
+
+endmain
+
+subroutine WinServiceShutdown
+	
+proc
+
+	xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService is closing down.")
+
+	xreturn
+
+endsubroutine

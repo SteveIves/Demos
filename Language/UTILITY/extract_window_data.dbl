@@ -1,0 +1,38 @@
+
+.subroutine extract_window_data
+	
+	a_winid,			n	;window id to extract from!
+	a_prtblock,			a	;return the text in here
+	a_numline,			n	;return the number of lines in the window
+	a_numcol,			n	;return the number of columns in the window
+
+;end of argument list
+
+.include 'DBLDIR:windows.def'
+
+stack record dvar
+	win_area,		8d3
+	num_row,		d3@win_area + 6
+	num_col,		d3@win_area + 9
+
+.proc
+
+	clear dvar
+
+	xcall w_info(WI_AREAS, a_winid, win_area)
+
+	xcall w_area(a_winid, WA_SET, 1, 1, num_row, num_col)
+
+	xcall w_info(WI_XFR, a_winid, WIX_DGET, a_prtblock)
+
+	if (%passed(a_numline))
+		a_numline = num_row
+
+	if (%passed(a_numcol))
+		a_numcol = num_col
+	
+	xreturn
+
+.end
+
+

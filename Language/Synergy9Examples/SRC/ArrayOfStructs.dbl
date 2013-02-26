@@ -1,0 +1,63 @@
+;==============================================================================
+;
+; Title:		ArrayOfStructs.dbl
+;
+; Description:	This program demonstrates the use of a fixed-size array of
+;				structure fields.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+main ArrayOfStructs
+
+structure strErrorMessage			;This structure matches the record layout
+	Facility	,a3					;of DBLDIR:syntxt.ism
+	Number		,d5
+	Code		,a10
+	Severity	,a1
+	Message		,a199
+
+structure strMsgOut					;Format for output to screen
+	Fac			,a3
+				,a1
+	Nbr			,a5
+				,a1
+	Cd			,a10
+				,a1
+	Msg			,a30
+
+record 
+	ErrorDetail	,[10]strErrorMessage	;Array of structure fields
+	MsgOut		,strMsgOut				;Structure field for formatted output
+	ChanTt		,i4		,1				;Terminal channel
+	ChanFile	,i4		,2				;File channel
+	idx			,i4						;Loop counter
+endrecord
+
+
+proc
+
+	open(ChanTt,i,"tt:")
+	open(ChanFile,i:i,"DBLDIR:syntxt.ism")
+
+	;Load 10 records into out fixed array of structure fields
+	for idx from 1 thru 10
+		reads(ChanFile,ErrorDetail[idx])
+
+	;And then display them
+	for idx from 1 thru 10
+	begin
+		MsgOut.Fac		= ErrorDetail[idx].Facility
+		MsgOut.Nbr		= ErrorDetail[idx].Number
+		MsgOut.Cd		= ErrorDetail[idx].Code
+		MsgOut.Msg		= ErrorDetail[idx].Message
+		writes(ChanTt,MsgOut)
+	end
+	
+	close ChanFile
+	close ChanTt
+	
+	stop
+
+endmain

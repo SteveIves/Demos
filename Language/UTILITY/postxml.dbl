@@ -1,0 +1,106 @@
+;------------------------------------------------------------------------------
+.function postxml, ^VAL
+
+	;Required arguments
+	a_sendrec		,a		;Record to send
+	a_sendstr		,a		;Structure defining record to send
+	a_url			,a		;URL to post to
+	a_error			,n		;Returned error code
+	
+	;Optional arguments
+	a_recvrec		,a		;Record to receive
+	a_recvstr		,a		;Structure defining record to receive
+	a_rpsmfil		,a		;Repository main file
+	a_rpstfil		,a		;Repository text file
+
+.include "RPSLIB:ddinfo.def"
+
+.align
+stack record intvars
+	sts				,i4
+	err				,i4
+	mh1				,i4
+	cnt				,i4
+	chn				,i4
+
+stack record vars
+	rpsmfil			,a64
+	rpstfil			,a64
+	str				,a30
+
+structure field_name
+					,a30
+
+.define field(x) ^m(field_name[x],mh1)
+
+.proc
+
+	clear ^i(intvars), vars
+
+	str=a_sendstr
+	locase str
+
+	;Open the Repository
+	if (^passed(a_rpsmfil))
+		rpsmfil=a_rpsmfil
+	if (^passed(a_rpstfil))
+		rpstfil=a_rpstfil
+	xcall dd_init(dcs,rpsmfil,rpstfil)
+	if (dcs.error)
+		err=1
+
+	;Get structure details
+	if (.not.err)
+	begin
+		xcall dd_struct(dcs,DDS_INFO,str,s_info)
+		if (dcs.error)
+			err=2
+	end
+	
+	;Get array of structure field names
+	if (.not.err)
+	begin
+		mh1=%mem_proc(DM_ALLOC,^size(field_name)*si_nmflds)
+		xcall dd_field(dcs,DDF_SLIST,si_nmflds,field(1))
+	end
+
+	;Open output file
+	xcall u_open(chn,"o:s",%atrim(str)+".xml")
+	writes(chn,"<" + %atrim(str) + ">")
+
+	;Get field data and process fields
+	if (.not.err)
+	begin
+		for cnt from 1 thru si_nmflds
+		begin
+			;Get field details
+			locase field(cnt)
+			xcall dd_field(dcs,DDF_INFO,field(cnt),f_info)
+			;Skip overlays
+			if (fi_ovrfld)
+				nextloop
+			;Skip fields not available to language
+			if (fi_dblvw)
+				nextloop
+			;Output field
+			writes(chn,"	<" + %atrim(field(cnt)) + ">" + %atrim(a_sendrec(fi_pos:fi_size)) + "</" + %atrim(field(cnt)) + ">")
+		end
+	end
+
+	writes(chn,"</" + %atrim(str) + ">")
+	xcall u_close(chn)
+
+	;Deallocate dynamic memory
+	if (mh1)
+		mh1=%mem_proc(DM_FREE,mh1)
+
+	;Close Repository
+	if (err.ne.1)
+		xcall dd_exit(dcs)
+
+	if (.not.err)
+		sts=1		;Return success
+
+	freturn sts
+
+.end

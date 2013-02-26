@@ -1,0 +1,72 @@
+.main tfor
+.include "WND:tools.def"
+
+external function
+	for_each_field	,^val
+
+.define D_WHITE_ON_BLUE	,15	;Use color 15 for white/blue
+
+.align
+stack record
+	bldid		,i4
+	inpid		,i4
+	colid		,i4
+	data		,a100
+	ctls		,a8192
+.proc
+	xcall u_start
+	xcall u_rend(D_LOAD, D_PALETTE, 15, 1, 7)	;Make 15 = white/blue
+	xcall mb_column(ctls, "c_general", "General")
+	xcall mb_entry(ctls, "o_bluereq", "Make Required fields blue",,, "b")
+	xcall mb_entry(ctls, "o_chgtyp", "Make fields 4 thru 8 decimal",,, "d")
+	xcall mb_entry(ctls, "o_exit", "Exit",,, "x")
+	xcall mb_end(ctls, colid)
+	xcall ib_input(bldid, "", 10, 40)
+	xcall ib_field(bldid, "f1", D_FLD_SIZE, 10, D_FLD_REQUIRED)
+	xcall ib_field(bldid, "f2", D_FLD_SIZE, 10, D_FLD_POS, 2, 1)
+	xcall ib_field(bldid, "f3", D_FLD_SIZE, 10, D_FLD_POS, 3, 1)
+	xcall ib_field(bldid, "f4", D_FLD_SIZE, 10, D_FLD_POS, 4, 1)
+	xcall ib_field(bldid, "f5", D_FLD_SIZE, 10, D_FLD_POS, 5, 1)
+	xcall ib_field(bldid, "f6", D_FLD_SIZE, 10, D_FLD_POS, 6, 1)
+	xcall ib_field(bldid, "f7", D_FLD_SIZE, 10, D_FLD_POS, 7, 1, D_FLD_REQUIRED)
+	xcall ib_field(bldid, "f8", D_FLD_SIZE, 10, D_FLD_POS, 8, 1)
+	xcall ib_field(bldid, "f9", D_FLD_SIZE, 10, D_FLD_POS, 9, 1, D_FLD_REQUIRED)
+	xcall ib_field(bldid, "f10", D_FLD_SIZE, 10, D_FLD_POS, 10, 1)
+	xcall ib_button(bldid, "o_exit", DSB_TEXT, "Close")
+	xcall ib_end(bldid, inpid)
+	xcall u_window(D_PLACE, inpid, 5, 21)
+
+	repeat
+	  begin
+	    xcall i_input(inpid,, data)
+	    if (g_select) then
+	      begin
+		using g_entnam select
+("O_BLUEREQ "),	    xcall for_each_field(inpid,,,, "blue_req", inpid, "*FLD_NAME*", "*FLD_INFO*")
+("O_CHGTYP "),	    xcall for_each_field(inpid,,4,8,"i_fldmod", inpid, "*FLD_NAME*",,, D_FLD_TYPE, D_DECIMAL)
+(),		    exitloop
+		endusing
+	      end
+	    else
+	      exitloop
+	  end
+	xcall u_finish
+	stop
+.end
+
+.subroutine blue_req
+;
+; Description:	Change a field to white on blue if required
+;
+	a_inpid		,n	;ID of the input window
+	a_fldname	,a	;Name of the field
+	a_fldinf	,a	;gs_inpfld structure for the field
+
+.include "WND:fldinf.def"
+
+.proc
+	gs_inpfld = a_fldinf
+	if (gs_req)
+	  xcall i_fldmod(a_inpid, a_fldname,,, D_FLD_COLOR, D_WHITE_ON_BLUE)
+	xreturn
+.end

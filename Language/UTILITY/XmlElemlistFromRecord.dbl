@@ -1,0 +1,128 @@
+;*******************************************************************************
+;
+;Routine:		XmlElemlistFromRecord
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	Synergy/DE V8.1 or higher
+;
+;Revisions:		Version	Date			Comment
+;				1.0		24 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine accepts a Synergy record and the name of a Repository structure
+;and returns an XML element list representing the record.
+;
+;DEALLOCATION OF THE STATIC DYNAMIC MEMORY ALLOCATED IN AND RETURNED FROM THIS
+;ROUTINE IS THE RESPONSIBILITY OF THE CALLING ROUTINE.
+;
+.function XmlElemlistFromRecord, ^VAL
+
+	a_record		,a
+
+	a_structure		,a
+
+.include "DBLDIR:synxml.def"
+.include "RPSLIB:ddinfo.def"
+
+.align
+stack record
+	elemlist		,XML_ELEMLIST_TYPE
+	mh1				,i4
+	mh2				,i4
+	mh3				,i4
+	count			,i4
+
+
+structure field
+					,a30
+	
+structure finfo
+					,a^size(f_info)
+
+structure element
+	handle			,XML_ELEM_TYPE
+
+.proc
+	
+	;*** UNFINISHED
+
+	elemlist = 0
+
+	xcall dd_init(dcs)
+		
+	if (.not.dcs.error)
+		xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+	
+	if ((.not.dcs.error).and.(si_nmflds))
+	begin
+		;Allocate dynamic memory for field names
+		mh1 = %mem_proc(DM_ALLOC,^size(field)*si_nmflds)
+
+		;Get field names
+		xcall dd_field(dcs,DDF_SLIST,si_nmflds,^m(field[1],mh1))
+	end
+		
+	if ((.not.dcs.error).and.(si_nmflds))
+	begin
+
+		;Allocate dynamic memory for field details
+		mh2 = %mem_proc(DM_ALLOC,^size(finfo)*si_nmflds)
+
+		;Get field details
+		for count from 1 thru si_nmflds
+		begin
+			
+			xcall dd_field(dcs,DDF_INFO,^m(field[count],mh1),f_info)
+			
+			if (dcs.error)
+				exitloop
+
+			^m(finfo[count],mh2) = f_info
+
+		end
+
+	end
+
+	if ((.not.dcs.error).and.(si_nmflds))
+	begin
+
+		elemlist = %xml_elemlist_create
+
+		;Allocate dynamic memory for element handles
+		mh3 = %mem_proc(DM_ALLOC,^size(element)*si_nmflds)
+
+		;Create elements for fields
+		for count from 1 thru si_nmflds
+		begin
+
+			f_info = ^m(finfo[count],mh2)
+
+			^m(element[count].handle,mh3) = %xml_elem_create
+			xcall xml_elem_setname(^m(element[count].handle,mh3),^m(field[count],mh1))
+			xcall xml_elem_settext(^m(element[count].handle,mh3),a_record(fi_pos:fi_size))
+
+			xcall xml_elemlist_add(elemlist,^m(element[count].handle,mh3))
+
+		end
+
+
+	end
+
+	;Clean up
+	mh1 = %mem_proc(DM_FREE,mh1)
+	mh2 = %mem_proc(DM_FREE,mh2)
+	mh3 = %mem_proc(DM_FREE,mh3)
+	xcall dd_exit(dcs)
+
+	freturn elemlist
+
+.end
+

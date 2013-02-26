@@ -1,0 +1,44 @@
+;------------------------------------------------------------------------------
+;
+; color.dbl			Color management functions
+;
+; Camden Software Consulting	June, 2001
+;
+;------------------------------------------------------------------------------
+;
+.subroutine set_syscolor
+;
+; Description:  Set Synergy colors based on Windows system colors
+;
+; Arguments:
+;
+	a_color		,n	;Synergy color number to assign (0-255)
+
+	a_syscolor	,n	;Windows system color to use (see UT:set_syscolor.def)
+
+				;(Repeat arguments any number of times)
+
+.include "DBLDIR:apmisc.def"
+
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	argnm		,i4	;Argument index
+
+.define M_GETSYSCOLOR(n) dll_call(user32, DLL_TYPE_WINAPI, "GetSysColor", %integer(n))
+	
+.proc
+	user32 = %dll_open("user32")	;Open user32.dll
+
+	for argnm from 1 thru %numargs by 2
+	  begin
+    	    xcall ap_misc(MSC_SETCOLOR, ^argn(argnm),
+	    &		  %M_GETSYSCOLOR(^argn(argnm + 1)))
+	  end
+
+	
+	xcall dll_close(user32)
+	
+	xreturn
+
+.end

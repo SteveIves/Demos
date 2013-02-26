@@ -1,0 +1,78 @@
+;==============================================================================
+;
+; Title:		Emumeration.dbl
+;
+; Description:	This program demonstrates the use of enumerations, which were
+;				added to Synergy/DE as a new feature in V9.1.3.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+enum FileOpenMode		;Declare an enumeration
+	ReadOnly	,1
+	ReadWrite	,2
+endenum
+
+main Emumeration
+
+external function 
+	OpenIndexedFile	,boolean
+endexternal
+	
+record 
+	ChanTt			,int	,1
+	ChanFile		,int
+endrecord
+	
+proc
+
+	open(ChanTt,i,"tt:")
+	
+	;Here we use the enumeration to specify an option to an external routine
+	
+	if (OpenIndexedFile(ChanFile,FileOpenMode.ReadOnly,"DBLDIR:syntxt.ism")) then 
+	begin
+		writes(ChanTt,"File was opened")
+		close ChanFile
+	end
+	else
+		writes(ChanTt,"File was NOT opened")
+	
+	stop
+	
+endmain
+
+function OpenIndexedFile ;,boolean
+	required out Channel, int
+	required in OpenMode, FileOpenMode		;This is an enumerated parameter
+	required in FileName, a
+	endparams
+
+	stack record
+		retval	,boolean
+	endrecord
+	
+proc
+
+	try 
+	begin
+		;Refer to the enumerated parameter
+		using OpenMode select
+		(FileOpenMode.ReadOnly),			;Possible option in enumeration
+			open(Channel=syn_freechn,i:i,FileName)
+		(FileOpenMode.ReadWrite),			;Possible option in enumeration
+			open(Channel=syn_freechn,u:i,FileName)
+		endusing
+		retval = true
+	end
+	catch (ex, @Exception)
+	begin
+		clear Channel
+		retval = false
+	end
+	endtry
+	
+	freturn retval
+
+endfunction

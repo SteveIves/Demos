@@ -1,0 +1,985 @@
+;------------------------------------------------------------------------------
+;
+; container.dbl			Routines for Synergy containers
+;
+; Camden Software Consulting	June, 2001
+;
+;------------------------------------------------------------------------------
+;
+.include "DBLDIR:windows.def"
+.include "DBLDIR:rcbapi.def"
+.include "WND:system.def"
+
+;------------------------------------------------------------------------------
+;
+; General notes:
+;
+; These routines are designed to enable container/child support within
+; Synergy/DE applications.  I have included conditionals to support non-WIndows
+; platforms as well, but I have only tested the routines on Windows 2000.
+;
+; See sample.dbl for an example of usage.  The container_create function below
+; is used to create a container window, then container_add is used to add each
+; child in the sequence intended for processing.  container_process can then
+; be used to process the entire window set, passing the necessary data as
+; arguments that are in turn passed to processing routines for each child.
+; These routines are supplied by the client program, much along the same model
+; as used for tab containers in the Synergy/DE Toolkit.  Like that model,
+; reserved menu entries are used to automatically navigate between the children
+; (see notes at container_process below).  You can also use container_context
+; to programmatically designate what child will be processed next.
+;
+; There are a few issues that remain somewhat unresolved with this model:
+;
+; 1.  While normal input completion can move to the next child, the tab key
+;     cannot if the current child is an input window.  This is because tab and
+;     shift-tab are handled by the internal message loop within I_INPUT.  In
+;     fact, any buttons on the container are also included in the tabbing order,
+;     but not other child windows. In the present set of routines, we have
+;     elected instead to use Ctrl-Tab and Ctrl-Shift-Tab to navigate between
+;     children.  This will cause a usage conflict if one of the children is a
+;     tab set container.  In that case, once the tab set is focused,
+;     Ctrl-Tab and Ctrl-Shift-Tab will navigate the tabs, and other methods
+;     must be used to navigate the siblings of the tab set.  You could make tab
+;     and shift-tab work, but you would need to install a keyboard message hook
+;     (best written in C/C++) to capture the keystrokes and emit the desired
+;     menu entry.  Because I have already engineered something like this for
+;     a paying customer, I cannot share it here.
+;
+; 2.  Activation.  You may notice that we reactivate the container right
+;     before entering the processing method for the child.  This is because
+;     Toolkit activation causes the container to become deactivated at times.
+;     Even so, it is poossible in this model to cause the container to become
+;     deactivated, by tabbing between a child input window and the buttons on
+;     a container.  The tab container routines manage this by installing a
+;     subclass proceedure (again written in C) on the child windows that
+;     reflects the activation messages to the container.  You could do the
+;     same thing here, but it would require a custom DLL routine.
+;
+; 3.  Clicking between child windows.  There are click methods installed on
+;     each child window that do a pretty good job of taking you where you
+;     would expect to go.  In an input window, the closest field is found.
+;     On a list, the item clicked.  The latter is limited to what we can get
+;     to in 18 list processing requests (otherwise we fill up the request
+;     queue).  Also, if an ActiveX list is used, it appears that the first
+;     click is ignored.  We suspect this to be a bug in the Synergy/DE Toolkit,
+;     but have not verified.  Because we are using click methods, the client
+;     program cannot install a method set of its own on the child windows.
+;     This should be worked around if needed by creating a generic method set
+;     that allows individual methods to be plugged in and overloaded at runtime.
+;     That project is beyond the scope of this one.
+;
+; 4.  If the container window is deleted before any of the child windows,
+;     a nasty fatal error will result when that child is finally deleted.
+;     This is because the Microsoft Windows window of the child was deleted
+;     when the container was deleted, but the Toolkit did not know that.
+;     To prevent this type of problem, either make sure that all of the
+;     children are deleted first, or disassociate them from the container
+;     using childu_setparent with 0 as the parent ID for each of the children.
+;
+; 5.  These routines use several undocumented features, which you will see
+;     commented upon below.  We hope that at some point Synergy/DE will add
+;     features to the Toolkit that allow for better management of container/
+;     child relationships, and that in that implementation the need to use
+;     these features, as well as the other problems discussed above, will
+;     vanish.
+;
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+;
+; Public routines
+;
+;------------------------------------------------------------------------------
+
+.function container_create	,^val
+;
+; Description:  Create a container window, and return its ID
+;
+; Arguments:
+;
+	a_name		,a	;Name of the window, or ""
+
+	a_rows		,n	;Number of rows
+
+	a_cols		,n	;Number of columns
+
+	a_title		,a	;(Optional) title
+;
+; Return value:	ID of the created window
+;
+.include "WND:tools.def"
+.define D_INIT_CONTAINER
+.include "container.def"
+
+.align
+stack record
+	wndid		,i4	;ID of the created window
+	hndl		,i4	;Handle to UDS
+.proc
+	xcall w_proc(WP_CREATE, wndid, a_name, a_rows, a_cols)	;Create it
+	xcall u_logwnd(wndid)					;Log with Toolkit
+	xcall w_flds(wndid, WF_USER, D_CONTAINER_UDS, 1, ^size(st_container))
+	if (hndl = %containeru_getctls(wndid))	;Get a handle to the UDS
+	  begin
+	    clear ^i(^m(hndl))	;Zero the controls
+	  end
+	if (^passed(a_title))
+	  xcall w_brdr(wndid, WB_TITLE, a_title);Set the title
+	freturn wndid		;Return the window ID
+.end
+
+.function container_add		,^val
+;
+; Description:  Add a child window to the container
+;
+; Arguments:
+;
+	a_container	,n	;ID of the container window
+
+	a_type		,n	;Type of window (D_CHILD_WINDOW / D_CHILD_LIST)
+
+	a_id		,n	;ID of the child window/list
+
+	a_method	,a	;Name of the method for processing
+
+	a_row		,n	;(Optional) placement row and column for placement
+	a_col		,n	;  within the container
+
+;
+; Return value:  Index of new child, or 0 if unsuccessful
+;
+.include "WND:lstprv.def"	;List processing private controls
+.include "container.def"
+
+.align
+stack record
+	cntr		,i4	;Handle to container UDS
+	chld		,i4	;Handle to child UDS
+	wndid		,i4	;ID of the window containing the UDS
+	user32		,i4	;Handle to user32.dll
+
+.proc
+	if (cntr = %containeru_getctls(a_container))
+	  begin
+	    if (a_type .eq. D_CHILD_LIST) then
+	      begin
+.ifdef DBLV73
+		xcall l_border(a_id, D_OFF) ;Use documented approach if we have it
+.else
+		xcall lp_setup(a_id)	    ;Otherwise try the undocumented route
+		xcall w_brdr(glst_scrid, WB_OFF);NOTE: doesn't work on non-ActiveX
+.endc
+		wndid = glst_scrid  	;Undocumented access to list container
+		if (.not. g_event_list)	;Create only one method set for lists
+		  g_event_list = %u_wndevents(D_CREATE,, D_EVENT_LEFT_CLICK,
+		  &				"childu_click_list")
+		xcall l_method(a_id, D_LWNDEVENT, g_event_list)
+	      end
+	    else			;Child is a window of some sort.
+	      begin
+		wndid = a_id
+		xcall w_brdr(wndid, WB_OFF)	;Turn off the border by default
+		if (.not. g_event_wnd)		;Create only one method set for windows
+		  g_event_wnd = %u_wndevents(D_CREATE,, D_EVENT_LEFT_CLICK,
+		  &				"childu_click_window")
+		xcall u_wndevents(D_ASSIGN, g_event_wnd, wndid)
+	      end
+	    ;Create a named user data set on the child window
+	    xcall w_flds(wndid, WF_USER, D_CHILD_UDS, 1, ^size(st_child))
+	    ; and get a handle to the memory it uses
+	    if (chld = %childu_getctls(D_CHILD_WINDOW, wndid, TRUE))
+	      begin
+		;Set each element of the structure
+		M_CHILD(chld,container) = a_container
+		M_CHILD(chld,type) = a_type
+		M_CHILD(chld,id) = a_id
+		M_CHILD(chld,method) = a_method
+		;Some simple linked list programming here.
+		if (M_CONT(cntr,last_child)) then	;The list isn't empty
+		  begin
+		    ;Link this entry onto the end of the linked list
+		    M_CHILD(M_CONT(cntr,last_child),next) = chld
+		    M_CHILD(M_CONT(cntr,first_child),prev) = chld
+		    M_CHILD(chld,prev) = M_CONT(cntr,last_child)
+		    M_CHILD(chld,next) = M_CONT(cntr,first_child)
+		    M_CONT(cntr,last_child) = chld
+		  end
+		else		;First child added
+		  begin
+		    M_CHILD(chld,prev) = M_CHILD(chld,next) = chld
+		    M_CONT(cntr,first_child) = M_CONT(cntr,last_child) = chld
+		  end
+		incr M_CONT(cntr,num_children)	;Keep a count of children
+		; Make the window a child of the parent
+		xcall childu_setparent(a_id, a_type, a_container)
+		if (^passed(a_row) .and. ^passed(a_col)) ;Place if requested
+		  begin
+		    if (a_type .eq. D_CHILD_LIST) then
+		      xcall l_place(a_id, a_row, a_col)
+		    else
+		      xcall u_window(D_PLACE, a_id, a_row, a_col)
+		  end
+		freturn M_CONT(cntr,num_children)	;Index of new child
+	      end
+	  end
+	freturn 0		;Unsuccessful
+.end
+
+.function container_context	,^val
+;
+; Description:  Get/Set the context of the focused child
+;
+; Arguments:
+;
+	a_container	,n	;ID of the container window
+
+	a_newindex	,n	;(Optional) new index to focus
+;
+; Return value:	Index of previously focused child, or 0 if an error occurred,
+;			or there are no children in the container.
+;
+; Note:
+;
+;	If a_newindex is passed, it is automatically limited to the valid
+;	range for the children in the container.  Thus, you can always access
+;	the last child by passing a huge index (e.g., ^x(7FFFFFFF)).
+;
+.include "container.def"
+
+.align
+stack record
+	cntr		,i4	;Handle to container UDS
+	chld		,i4	;Handle to child UDS
+	ndx		,i4	;Index of current child
+	new		,i4	;New desired index
+	df		,i4	;Delta from first to desired
+	dl		,i4	;Delta from last to desired
+	dc		,i4	;Delta from current to desired
+	delta		,i4	;Delta remaining
+
+.proc
+	if ((cntr = %containeru_getctls(a_container)) .and. M_CONT(cntr,num_children))
+	  begin
+    	    ndx = 1		;Find the index of the currently focused child
+	    if (chld = M_CONT(cntr,current_child))
+	      begin
+		while (chld .ne. M_CONT(cntr,first_child))
+		  begin
+		    chld = M_CHILD(chld,prev)	;Walk backwards
+		    incr ndx			;Counting the previous siblings
+		  end
+	      end
+	    if (^passed(a_newindex))		;New context requested?
+	      begin
+		new = a_newindex
+		if (new .lt. 1) then		;Limit to valid range
+		  new = 1
+		else if (new .gt. M_CONT(cntr,num_children))
+		  new = M_CONT(cntr, num_children)
+		df = new-1				;Distance from first item
+		dl = M_CONT(cntr,num_children)-new	;Distance from last
+		dc = %abs(new-ndx)		  	;Distance from current
+		if (df .lt. dl) then		;Closer to front than back
+		  begin
+		    delta = df			;Start at the front
+		    chld = M_CONT(cntr,first_child)
+		  end
+		else				;Closer to back than front
+		  begin
+		    delta = -dl			;Back up from the end
+		    chld = M_CONT(cntr,last_child)
+		  end
+		if (M_CONT(cntr,current_child) .and. (dc .lt. delta))
+		  begin				;Closer to current than either
+		    delta = dc			;Start where we are
+		    chld = M_CONT(cntr,current_child)
+		  end
+		if (delta)			;Not already there?
+		  begin
+	    	    if (delta .gt. 0) then	;Going forward?
+		      begin
+			while (delta)
+			  begin
+			    chld = M_CHILD(chld,next)
+			    decr delta		;Next sibling
+			  end
+		      end
+		    else			;Going backward
+		      begin
+			while (delta)
+			  begin
+			    chld = M_CHILD(chld,prev)
+			    incr delta		;Previous sibling
+			  end
+		      end
+		  end
+		M_CONT(cntr,current_child) = chld	;Store new current
+	      end
+	    freturn ndx		;Return the old index
+	  end
+
+	freturn 0
+.end
+
+.function container_indexof	,^val
+;
+; Description:  Return the index of a specified child
+;
+; Arguments:
+;
+	a_container	,n	;ID of the container window
+
+	a_type		,n	;Type of the child
+
+	a_id		,n	;ID of the child
+;
+; Return value:	Index (base 1) of the child in the container, or 0 if not
+;		in the container.
+;
+.include "container.def"
+
+.align
+stack record
+	cntr		,i4	;Handle to container's UDS
+	chld		,i4	;Handle to child's UDS
+	ndx		,i4	;Returned index
+
+.proc
+	if ((cntr = %containeru_getctls(a_container)) .and.
+	&   (chld = %childu_getctls(a_type, a_id)))
+	  begin
+	    if (M_CHILD(chld,container) .eq. a_container) then
+	      begin		;Make sure they passed valid ID's
+		ndx = 1
+		while (chld .ne. M_CONT(cntr,first_child))
+		  begin
+		    chld = M_CHILD(chld,prev)
+		    incr ndx	;Count from first to the one we're after
+		  end
+		freturn ndx
+	      end
+	    else
+	      xcall u_msgbox("Child type " + %string(a_type) +
+	      &		     " ID " + %string(a_id) + 
+	      &		     " is not a child of container ID " +
+	      &		     %string(a_container), D_MOK .bor. D_MICONSTOP)
+	  end
+
+	freturn 0
+.end
+
+.subroutine container_process	,reentrant
+;
+; Description:  Process input on the container
+;
+; Arguments:
+;
+	a_container	,n	;ID of the container window
+
+	a_mdata1	,n	;Any number of method data arguments
+;
+; Notes:
+;
+;	When processing a given child window, the method for that window is
+;	invoked.  It is passed the following arguments:
+;
+;	1.  Container ID
+;	2.  Type of child window (D_CHILD_WINDOW / D_CHILD_LIST)
+;	3.  ID of child window
+;	4-n. All of the optional method data arguments passed to this routine.
+;
+;	The method may change the context by calling container_context, and/or
+;	by signaling a menu entry beginning with "C_".  The recognized entries
+;	are:
+;
+;	C_FIRST		Go to first child
+;	C_LAST		Go to last child
+;	C_NEXT		Go to next child
+;	C_PREV		Go to previous child
+;	C_Nxxxx		Go to the xxxxth child
+;	C_Wxxxx		Go to the window whose ID is xxxx
+;	C_Lxxxx		Go to the list whose ID is xxxx
+;
+;	If both container_context is called and one of these menu entries is
+;	signaled, then the context established by containeru_context shall
+;	occur first, and the menu entry shall be applied to that context.
+;
+;	Any other menu entry that is signaled out of the method shall be returned
+;	to the calling routine for processing.
+;
+
+.include "WND:tools.def"
+.include "WND:tkctl.def"
+.include "container.def"
+
+.align
+stack record
+	cntr		,i4	;Handle to container UDS
+	chld		,i4	;Handle to child window UDS
+	rcb		,i4	;Handle to argument call block
+	ltype		,i4	;Type of current child
+	lid		,i4	;ID of current child
+	ndx		,i4	;Desired index
+	svctab		,a ^size(g_entnamctab)	;Save Ctrl-tab
+	svcstab		,a ^size(g_entnamcstab)	; and Ctrl-Shift-Tab entries
+.proc
+	svctab = g_entnamctab
+	svcstab = g_entnamcstab
+	g_entnamctab = "C_NEXT"	;Override control-tab
+	g_entnamcstab = "C_PREV"; and control-shift-tab
+	if (cntr = %containeru_getctls(a_container))
+	  begin
+    	    ;Use the RCB interface to call the method passing similar arguments
+	    rcb = %rcb_create(%numargs, DRCB_REPLICATE)
+	    xcall rcb_insarg(rcb, 2, ltype)	;Insert the type argument
+	    xcall rcb_insarg(rcb, 3, lid)	; and the ID
+	    call get_context	;Get initial context
+	    while (chld)	;While we have a context available
+	      begin
+		xcall containeru_activate(a_container, TRUE)	;Activate container
+				;(We do this here instead of above the loop,
+				; because the Toolkit activation mechanisms
+				; keep deactivating the container).
+		xcall rcb_call(rcb)	;Call the designated method
+		call get_context	;Pick up any context change
+		if (g_select)	;Was a menu entry signaled out of the method?
+		  begin
+		    using g_entnam select
+("C_"),			call process_entry	;Reserved menu entries
+(),			exitloop		;Return anything else
+		    endusing
+		  end
+	      end
+	  end
+	xcall containeru_activate(a_container, FALSE)	;Deactivate container
+	g_entnamctab = svctab	;Restore control-tab
+	g_entnamcstab = svcstab	; and control-shift-tab
+	xreturn
+
+get_context,			;Load the controls for the current child window
+	chld = M_CONT(cntr,current_child)
+	if (.not. chld)		;No previous context, use first child
+	  chld = M_CONT(cntr,current_child) = M_CONT(cntr,first_child)
+	if (.not. chld)		;No first child available!
+	  begin
+	    xcall u_msgbox("Container ID " + %string(a_container) +
+	    &		   " has no child windows to process",
+	    &		   D_MOK .bor. D_MICONSTOP)
+	    return
+	  end
+	ltype = M_CHILD(chld,type)	;Load the local variables for type
+	lid = M_CHILD(chld,id)		; and ID
+	xcall rcb_setfnc(rcb, M_CHILD(chld,method)) ;Load the method to call
+	return
+
+process_entry,			;Process reserved menu entries
+	if (.not. chld)		;If we have a context (just in case)
+	  return
+	using g_entnam select
+("C_FIRST "), M_CONT(cntr,current_child) = M_CONT(cntr,first_child)
+("C_LAST "),  M_CONT(cntr,current_child) = M_CONT(cntr,last_child)
+("C_NEXT "),  M_CONT(cntr,current_child) = M_CHILD(chld,next)
+("C_PREV "),  M_CONT(cntr,current_child) = M_CHILD(chld,prev)
+("C_N"),      begin		;Go to the Nth child
+		call getndx
+		if (ndx)	;Did we get a number?
+		  xcall container_context(a_container, ndx)
+	      end
+("C_W"),      begin		;Go to the window whose ID is...
+		call getndx
+		if (ndx)	;Did we get a number?
+		  begin
+		    ndx = %container_indexof(a_container, D_CHILD_WINDOW, ndx)
+		    if (ndx)	;Is it a child window of this container?
+		      xcall container_context(a_container, ndx)
+		  end
+	      end
+("C_L"),      begin		;Go to the list whose ID is...
+		call getndx
+		if (ndx)	;Did we get a number?
+		  begin
+		    ndx = %container_indexof(a_container, D_CHILD_LIST, ndx)
+		    if (ndx)	;Is it a child list of this container?
+		      xcall container_context(a_container, ndx)
+		  end
+	      end
+	endusing
+	call get_context	;Reload the current context after our changes
+	return
+;
+getndx,				;Get a number from the end of a menu entry
+	onerror nonum		;Trap errors (just in case)
+	ndx = g_entnam(4,^size(g_entnam))
+	offerror
+	return
+
+nonum,
+	offerror
+	clear ndx		;Not a number, return 0 so we know
+	return
+.end
+
+.subroutine focus_closest_field
+;
+; Description:  Focus the field closest to a given row/column
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_row		,n	;Row number
+
+	a_col		,n	;Column number
+;
+; Notes:
+;
+;	This routine presumes that the first set in the window contains the
+;	active input fields.  It will call I_NEXT to set focus to the field
+;	that lies the closest to the row and column passed.  Row has priority.
+;	That is, closest row wins before closest column.  The closer of the
+;	field or prompt is considered the location of the field relative to
+;	the coordinates.
+;
+;	It would be nice if I_SETINF supported a set name of "*CURR*".  Then
+;	we could assume current set instead of first set.
+;
+.include "WND:setinf.def"
+.include "WND:fldinf.def"
+
+.align
+stack record
+	closest		,i4	;Index of closest field (so far)
+	row_delta	,i4	;Row delta for closest
+	col_delta	,i4	;Column delta for closest
+	rd		,i4	;Row delta for current field
+	cd		,i4	;Column delta for current field
+	rdp		,i4	;Row delta for current field's prompt
+	cdp		,i4	;Column delta for current field's prompt
+	ndx		,i4	;Index into field set
+	row		,i4	;Row of field
+	col		,i4	;Column of field
+	len		,i4	;Length of field
+	dim		,i4	;Number of rows for field
+	wrk		,i4	;Working value
+
+.proc
+	xcall i_setinf(a_inpid,, 1,, gs_fldset)
+	row_delta = ^x(7FFFFFFF)	;Force first field to be closest
+	for ndx from 1 thru gs_setcnt	;Walk through the fields in the set
+	  begin
+	    xcall i_fldinf(a_inpid,, %decml(gs_setfld(ndx)),, gs_inpfld)
+	    if (gs_promptfld) then	;Does this one have a prompt?
+	      begin
+		xcall w_flds(a_inpid, WF_PARAM, gs_promptfld, row, col, len)
+		dim = 1			;Prompts are only one row in size
+		call getdeltas		;Figure out how far away it is
+		rdp = rd		;And save these off
+		cdp = cd
+	      end
+	    else			;No prompt
+	      rdp = cdp = ^x(7FFFFFFF)	;Don't try to use the prompt values
+	    xcall w_flds(a_inpid, WF_PARAM, gs_dspfld, row, col, len)
+	    dim = gs_dim		;Now the field
+	    call getdeltas		;How far away is it?
+	    if ((rdp .lt. rd) .or.	;Is the prompt closer?
+	    &	((rdp .eq. rd) .and. (cdp .lt. cd)))
+	      begin
+		rd = rdp		;Use the prompt values instead
+		cd = cdp
+	      end
+	    if ((rd .lt. row_delta) .or.	;Is this field closer?
+	    &	((rd .eq. row_delta) .and. (cd .lt. col_delta)))
+	      begin
+		closest = ndx		;This is now the closest known field
+		row_delta = rd
+		col_delta = cd
+	      end
+	  end
+	;Set the input set context to the closest one we found
+	xcall i_next(a_inpid,, "*NMBR*", closest)
+	xreturn
+
+getdeltas, 			;Compute row/column deltas from field bounds
+	if ((a_row .ge. row) .and. (a_row .lt. (row + dim))) then
+    	  rd = 0		;Field contains row a_row
+	else if (a_row .lt. row) then
+	  rd = row - a_row	;a_row is above field
+	else
+	  rd = a_row - (row + dim - 1)	;a_row is below field
+	if ((a_col .ge. col) .and. (a_col .lt. (col + len))) then
+	  cd = 0		;Field contains column a_col
+	else if (a_col .lt. col) then
+	  cd = col - a_col	;a_col is before field
+	else
+	  cd = a_col - (col + len - 1)	;a_col is after field
+	return
+.end
+
+.subroutine list_goto_item
+;
+; Description:	Go to a specific item in a list
+;
+; Arguments:
+;
+	a_listid	,n	;ID of the list
+
+	a_item		,n	;Item number desired
+
+	a_data		,a	;(Optional) Item data record
+
+	a_noprocess	,n	;(Optional) TRUE to avoid calling L_PROCESS
+;
+; Some credits are due to Paul Fenton of Synergex, who thought up the idea
+; for this routine.  This version is significantly different than his,
+; mostly because of the limitations we face in using it within a click method.
+;
+.align
+stack record
+	df		,i4	;Distance from first item
+	dc		,i4	;Distance from current item
+	delta		,i4	;Chosen delta
+	last		,i4	;Last item
+	curr		,i4	;Current item
+	req		,i4	;Request code
+	cnt		,i4	;Count of requests
+	canproc		,i4	;Can we call l_process?
+
+.proc
+	;Can we call L_PROCESS?
+	canproc = (.not. (^passed(a_noprocess) .and. a_noprocess))
+	;Get the last item loaded and the current item
+	xcall l_status(a_listid, D_LLASTITM, last, D_LCURITM, curr)
+	if (last .le. 0)
+	  xreturn		;List is empty
+	df = a_item - 1		;Distance from first
+	dc = a_item - curr	;DIstance from current
+	clear cnt		;We haven't queued any requests yet
+    	if (df .lt. %abs(dc)) then	;Closer to the front than the current item?
+	  begin
+	    delta = df		;Start at the top
+	    xcall l_queue(a_listid, D_LTOP)
+	    incr cnt		;One request queued
+	  end
+	else	    		;Closer to the current item
+	  delta = dc
+
+	;Note:  we don't check how close we are to the end, because the end
+	;	might not yet be loaded.  Queueing a D_LBOTTOM could then
+	;	potentially mess up our expected delta to the desired item.
+	;
+	while (delta)		;Are we there yet?
+	  begin
+    	    if (delta .gt. 0) then	;Going forward?
+	      begin
+		xcall l_queue(a_listid, D_LDOWN)	;That means down
+		decr delta		;One less to go
+	      end
+	    else			;Backing up?
+	      begin
+		xcall l_queue(a_listid, D_LUP)	;Yes, up
+		incr delta		;One less fewer, (to not avoid a double negative)
+	      end
+	    incr cnt			;We queued another request
+	    if (cnt .ge. (D_LQSIZE - 2));Don't overflow the request queue
+	      begin			; (l_process may need up to 2 for itself)
+	        if (.not. canproc)
+		  exitloop		;That's as close as we can get it
+					;We can process, so we can get closer
+		xcall l_process(a_listid, req=D_LNOP, a_data)
+		clear cnt		;Queue emptied, start again
+	      end
+	  end
+	xreturn
+.end
+
+;------------------------------------------------------------------------------
+;
+; Private routines
+;
+;------------------------------------------------------------------------------
+
+.function containeru_getctls	,^val
+;
+; Description:  Get a handle to the container's UDS
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the container window
+;
+; Return value:  Handle to the UDS
+;
+; Notes:
+;
+;	This is a neat trick.  A UDS (user data set) will automatically be
+;	deleted when the window is deleted, so we can have persistent memory
+;	associated with a window and not have to worry about freeing any
+;	handles.  The WIF_USRMEM function lets us treat it as a memory handle,
+;	though, so we can directly access it without those pesky WF_UGET and
+;	WF_UPUT into local buffers.  Since we always create the user data set
+;	at runtime, we don't need to worry about changes we might make in the
+;	future.  That would be a different story if the data was saved with
+;	the window and expected to be accessed later.  In that case, we would
+;	likely add a version number to the control structure, so we could
+;	either convert it on the fly or issue an appropriate error.
+;
+.proc
+	if (%w_info(WIF_USERID, a_wndid, D_CONTAINER_UDS))
+	  freturn %w_info(WIF_USRMEM, a_wndid, D_CONTAINER_UDS)
+
+	xcall u_msgbox("Window ID " + %string(a_wndid) +
+	&	       " is not the ID of a container created by %container_create",
+	&	       D_MOK .bor. D_MICONSTOP)
+	freturn 0
+.end
+
+.function childu_getctls	,^val
+;
+; Description:  Get a handle to the child window's UDS
+;
+; Arguments:
+;
+	a_type		,n	;Type of window (D_CHILD_WINDOW / D_CHILD_LIST)
+
+	a_id		,n	;ID of the child
+
+	a_nocheck	,n	;(Optional) don't verify type
+;
+; Return value:  Handle to the UDS
+;
+; See notes above under containeru_getctls.
+;
+.include "WND:lstprv.def"
+.include "container.def"
+
+.align
+stack record
+	wndid		,i4	;Window containing the UDS
+	hndl		,i4	;Handle to the UDS
+
+.proc
+        if (a_type .eq. D_CHILD_LIST) then	;Is the child a list?
+      	  begin
+	    xcall lp_setup(a_id)	;Undocumented access to list container
+	    wndid = glst_scrid		;Here is it's ID
+	  end
+	else				;A window of some sort
+	  wndid = a_id			;Use the ID directly
+	if (%w_info(WIF_USERID, wndid, D_CHILD_UDS))
+	  begin				;Did we find the UDS?
+	    hndl = %w_info(WIF_USRMEM, wndid, D_CHILD_UDS)
+	    if ((.not. (^passed(a_nocheck) .and. a_nocheck)) .and.
+	    &	(M_CHILD(hndl,type) .ne. a_type)) ;Do we check the type member?
+	      begin
+		xcall u_msgbox("Internal error: type mismatch on child ID " +
+		&	       %string(a_id) + ":\nType expected: " + %string(a_type) +
+		&	       "\nType encountered: " + %string(M_CHILD(hndl,type)),
+		&	       D_MOK .bor. D_MICONSTOP)
+		freturn 0
+	      end
+	    freturn hndl		;Return the handle
+	  end
+
+	xcall u_msgbox("ID " + %string(a_id) +
+	&	       " is not a child window attached by %container_add",
+	&	       D_MOK .bor. D_MICONSTOP)
+	freturn 0			;Oops.
+.end
+
+.subroutine childu_setparent
+;
+; Description:  Wrapper for SetParent WinAPI call
+;
+; Arguments:
+;
+	a_childid	,n	;ID of the proposed child window
+
+	a_type		,n	;Type (D_CHILD_WINDOW / D_CHILD_LIST)
+
+	a_parent	,n	;ID of the propsed parent, or 0 for the app window
+;
+; Notes:
+;
+;	On Windows, we use the Windows API function SetParent instead of the
+;	Synergy w_proc subfunction WP_CHILD.  This is because the WP_CHILD
+;	subfunction does not create a true container/child relationship on
+;	Windows.  The main reason it doesn't is because the WP_CHILD child is
+;	not clipped by its container.  Furthermore, placement in the Toolkit
+;	occurs on a w_updt (or u_update), while the SetParent relationship
+;	updates placement immediately upon change in the parent's physical
+;	placement.  One could argue that the WP_CHILD subfunction should,
+;	at least optionally, establish the SetParent relationship.  But, it
+;	doesn't yet, and this works.
+;
+.include "WND:lstprv.def"
+
+.align
+stack record
+	wndid		,i4	;ID of the actual child window
+	user32		,i4	;Handle to user32.dll
+	hparent		,i4	;Handle of proposed parent window
+
+.proc
+	if (a_type .eq. D_CHILD_LIST) then  ;Is this child a list?
+	  begin
+	    xcall lp_setup(a_childid)	;Undocumented access to list container
+	    wndid = glst_scrid		;  see lstprv.def
+	  end
+	else		   	;Not a list
+	  wndid = a_childid	;Use the passed ID directly
+.ifdef D_GUI			;On Windows platforms
+	user32 = %dll_open("user32")	;Open user32.dll (required for Windows)
+	if (a_parent) then		;Are we establishing a parent?
+	  hparent = %w_info(WIF_HWND, a_parent)	;Use its handle
+	else				;No parent really means use the app window
+	  hparent = %w_info(WIF_HWND, WID_APP)
+			    	;See this macro in container.def
+	xcall M_DLLCALL(user32, "SetParent", %w_info(WIF_HWND, wndid), hparent)
+	xcall dll_close(user32)	;Deaccess user32.dll
+.else				;Non-windows
+	xcall w_proc(WP_CHILD, wndid, a_parent)	;Use WP_CHILD
+.endc
+	xreturn
+.end
+
+.subroutine containeru_activate
+;
+; Description:  Activate a container window
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the window
+
+	a_active	,n	;Activate? (True/False)
+;
+; Notes:
+;
+;	This routine is necessary because the Toolkit does not have a robust
+;	mechanism for controlling activation, and it assumes that whatever
+;	window is being processed by the Toolkit should be activated, to the
+;	exclusion of all others.  Thus, we use the Windows API directly to
+;	activate the container.
+;
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+
+.define WM_NCACTIVATE	,^x(86)	;From winuser.h.  See Platform SDK documentation
+
+.proc
+	xcall bu_enable(a_wndid, a_active)	;Undocumented way to enable buttons on input
+						;This also adds the select characters
+						; to the Toolkit's button-processing map.
+.ifdef D_GUI
+	user32 = %dll_open("user32")		;Open user32.dll
+	xcall M_DLLCALL(user32, "SendMessageA",
+	&		%w_info(WIF_HWND, a_wndid),
+	&		WM_NCACTIVATE,
+	&		%integer(a_active),
+	&		%integer(0))
+	xcall dll_close(user32)			;Close user32.dll
+.endc
+	xreturn
+.end
+
+.function childu_click_list	,^val, reentrant
+;
+; Description:  Click event for a child list
+;
+; Arguments:
+;
+	a_resv1		,a	;Reserved
+	a_resv2		,a
+
+	^val(a_id)	,i4	;List id
+
+	^val(a_event)	,i4	;Event code
+
+	^val(a_col)	,i4	;Column of click
+
+	^val(a_row)	,i4	;Row of click
+
+	^val(a_x)	,i4	;X position in pixels
+
+	^val(a_y)	,i4	;Y position in pixels
+
+	^val(a_flags)	,i4	;Flags
+;
+; Return value:  TRUE to pass the click on, FALSE not to
+;
+.include "container.def"
+
+.align
+stack record
+	chld		,i4	;Handle to child UDS
+	cntr		,i4	;Handle to container's UDS
+	activex		,i4	;Is this an ActiveX list?
+	curr		,i4	;Current item in window
+	row		,i4	;Current row in window
+.proc
+	if ((chld = %childu_getctls(D_CHILD_LIST, a_id)) .and.
+    	&   (cntr = %containeru_getctls(M_CHILD(chld,container))) .and.
+	&   (M_CONT(cntr,current_child) .ne. chld))     ;Not the currently focused child?
+	  begin
+    	    xcall m_signal("C_L" + %string(a_id))	;Go to this list
+	    if (a_row .gt. 0)				;Not on a header or footer
+	      begin
+		xcall l_status(a_id, D_LACTIVEX, activex, D_LROW, row, D_LCURITM, curr)
+		if (activex) then		;ActiveX list gives true item number
+		  row = a_row
+		else				;Synergy list gives relative to top
+		  row = a_row + (curr - row)	;Convert to actual item number
+		xcall list_goto_item(a_id, row,, TRUE)	;Try to get to that item
+	      end
+	    freturn FALSE				;Ignore the click
+	  end
+	freturn TRUE				;Current child, allow the click
+.end
+
+.function childu_click_window	,^val, reentrant
+;
+; Description:  Click event for a child window
+;
+; Arguments:
+;
+	a_resv1		,a	;Reserved
+	a_resv2		,a
+
+	^val(a_id)	,i4	;Window ID
+
+	^val(a_event)	,i4	;Event code
+
+	^val(a_col)	,i4	;Column of click
+
+	^val(a_row)	,i4	;Row of click
+
+	^val(a_x)	,i4	;X position in pixels
+
+	^val(a_y)	,i4	;Y position in pixels
+
+	^val(a_flags)	,i4	;Flags
+;
+; Return value:  TRUE to pass the click on, FALSE not to
+;
+.include "container.def"
+
+.align
+stack record
+	chld		,i4	;Handle to child UDS
+	cntr		,i4	;Handle to container's UDS
+.proc
+	if ((chld = %childu_getctls(D_CHILD_WINDOW, a_id)) .and.
+    	&   (cntr = %containeru_getctls(M_CHILD(chld,container))) .and.
+	&   (M_CONT(cntr,current_child) .ne. chld) .and.    	;Not the currently focused child?
+	&   (a_col .le. %w_info(WIF_COLS, a_id)) .and.		;Within the window (not a button)?
+	&   (a_row .le. %w_info(WIF_ROWS, a_id)))
+	  begin
+    	    xcall m_signal("C_W" + %string(a_id))	;Go to this window
+	    if (%e_info(D_WINDOW_TYPE, a_id) .eq. D_WTYPE_INPUT)
+	      begin					;Input window
+		xcall focus_closest_field(a_id, a_row, a_col) ;Focus the closest field
+	      end
+	    freturn FALSE				;Ignore the click
+	  end
+	freturn TRUE					;Allow the click
+.end

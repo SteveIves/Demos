@@ -1,0 +1,45 @@
+;****************************************************************************
+;
+; Title:		WinNode.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			19th February 1999
+;
+; Description:	Retrieve the network node name of the PC
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinNode
+
+;Argument list
+
+;End of argument list
+
+.define MAXLENGTH ,31
+
+.align
+stack record
+	dll     ,i4
+	len     ,i4
+	name    ,a MAXLENGTH + 1
+
+.proc
+	
+	len = ^size(name)
+	dll = %dll_open("kernel32")
+	xcall dll_call(dll,DLL_TYPE_WINAPI,"GetComputerNameA", ^addr(name), ^addr(len))
+	xcall dll_close(dll)
+
+	freturn name(1:len)
+
+.end

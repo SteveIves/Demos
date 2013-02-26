@@ -1,0 +1,311 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Macro>
+		<ExecMacro CmdLine="syn_set UTL=%rp"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(UTL)\obj"/>
+	</Macro>
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="dbl -dXTo OBJ:%n UTL:%n"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='dblink "%n" WND:tklib.elb'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				ClearProcessBuffer="1"
+				ShowOnMenu="HideIfNoCmdLine"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="build"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				ShowOnMenu="HideIfNoCmdLine"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='dbr -d "%n"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				ShowOnMenu="HideIfNoCmdLine"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='dbr "%n"'/>
+			</Target>
+			<Target
+				Name="User 1"
+				MenuCaption="User 1"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer">
+				<Exec CmdLine="dblibr -r OBJ:utility.olb OBJ:%n"/>
+			</Target>
+			<Target
+				Name="User 2"
+				MenuCaption="User 2"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer">
+				<Exec CmdLine="dblink -ld UTL:utility.elb OBJ:utility.olb"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Prototypes"
+				MenuCaption="Generate Synergy Pro&amp;totypes..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGeneratePrototypes"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="1"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="1"/>
+			<SynSetting
+				Name="compile_single"
+				Value="0"/>
+			<SynSetting
+				Name="object_name"
+				Value=""/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o %n %n"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+		</SynSettings>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl;*.dbc">
+			<F N="AppNoCaption.dbl"/>
+			<F N="AppNoSize.dbl"/>
+			<F N="AppOneInstance.dbl"/>
+			<F N="button_anywhere.dbl"/>
+			<F N="calc_wk_no.dbl"/>
+			<F N="CanadianProvince.dbl"/>
+			<F N="clipboard.dbl"/>
+			<F N="container.dbl"/>
+			<F N="dd_createfile.dbl"/>
+			<F N="dd_createxdl.dbl"/>
+			<F N="display_local_fields.dbl"/>
+			<F N="DisplayA.dbl"/>
+			<F N="DisplayDate.dbl"/>
+			<F N="DisplayTime.dbl"/>
+			<F N="EnDeCrypt.dbl"/>
+			<F N="EnterA.dbl"/>
+			<F N="errout.dbl"/>
+			<F N="ExpandLogical.dbl"/>
+			<F N="extract_window_data.dbl"/>
+			<F N="field_in_set.dbl"/>
+			<F N="FileExists.dbl"/>
+			<F N="FileTime.dbl"/>
+			<F N="ForEachField.dbl"/>
+			<F N="FormatDate.dbl"/>
+			<F N="FormatTime.dbl"/>
+			<F N="ftp.dbl"/>
+			<F N="get_precision.dbl"/>
+			<F N="gethandle.dbl"/>
+			<F N="guid.dbl"/>
+			<F N="HandleUtils.dbl"/>
+			<F N="HtmlEncode.dbl"/>
+			<F N="HttpQueryString.dbl"/>
+			<F N="i_checkdata.dbl"/>
+			<F N="i_readonly_set.dbl"/>
+			<F N="i_readwrite_set.dbl"/>
+			<F N="info.dbl"/>
+			<F N="insumeric.dbl"/>
+			<F N="ismkey.dbl"/>
+			<F N="IsNumeric.dbl"/>
+			<F N="IsoCountry.dbl"/>
+			<F N="ll_accept.dbl"/>
+			<F N="log_error.dbl"/>
+			<F N="makname.dbl"/>
+			<F N="menu_check.dbl"/>
+			<F N="mm_to_pixels.dbl"/>
+			<F N="play_sound.dbl"/>
+			<F N="position_window.dbl"/>
+			<F N="postxml.dbl"/>
+			<F N="print_api_wrappers.dbl"/>
+			<F N="print_window.dbl"/>
+			<F N="prt_routines.dbl"/>
+			<F N="radio_horizontal.dbl"/>
+			<F N="registry.dbl"/>
+			<F N="resize_button.dbl"/>
+			<F N="rpschk.dbl"/>
+			<F N="rpsfile.dbl"/>
+			<F N="rpsxdl.dbl"/>
+			<F N="rpsxml.dbl"/>
+			<F N="set_syscolor.dbl"/>
+			<F N="size_list_cols.dbl"/>
+			<F N="SmtpMail.dbl"/>
+			<F N="SoapRequest.dbl"/>
+			<F N="SoapResponse.dbl"/>
+			<F N="string.dbl"/>
+			<F N="temp_file.dbl"/>
+			<F N="ttclose.dbl"/>
+			<F N="ttopen.dbl"/>
+			<F N="u_autofont.dbl"/>
+			<F N="u_client_rect.dbl"/>
+			<F N="u_winres.dbl"/>
+			<F N="UrlEncode.dbl"/>
+			<F N="UsState.dbl"/>
+			<F N="ut_axload.dbl"/>
+			<F N="view_report.dbl"/>
+			<F N="WaitKey.dbl"/>
+			<F N="warning.dbl"/>
+			<F N="WebService.dbl"/>
+			<F N="WinBeep.dbl"/>
+			<F N="WinDir.dbl"/>
+			<F N="WinFileCopy.dbl"/>
+			<F N="WinLogout.dbl"/>
+			<F N="WinMem.dbl"/>
+			<F N="WinNode.dbl"/>
+			<F N="WinPath.dbl"/>
+			<F N="WinSetTime.dbl"/>
+			<F N="WinSound.dbl"/>
+			<F N="WinSysPath.dbl"/>
+			<F N="WinTempDir.dbl"/>
+			<F N="WinTempFile.dbl"/>
+			<F N="xceed_ftp.dbl"/>
+			<F N="XmlDocFromHandle.dbl"/>
+			<F N="XmlDocFromRecord.dbl"/>
+			<F N="XmlElemlistFromRecord.dbl"/>
+			<F N="YesNo.dbl"/>
+			<F N="yesnocancel.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh">
+			<F N="container.def"/>
+			<F N="ftp.def"/>
+			<F N="ismkey.def"/>
+			<F N="keydef.def"/>
+			<F N="print_api_wrappers.def"/>
+			<F N="prt_control.def"/>
+			<F N="registry.def"/>
+			<F N="set_syscolor.def"/>
+			<F N="smtpmail.def"/>
+			<F N="SoapRequest.def"/>
+			<F N="utility.def"/>
+			<F N="WinError.def"/>
+			<F N="xceed_ftp.def"/>
+		</Folder>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc"/>
+		<Folder
+			Name="Other Files"
+			Filters="">
+			<F N="bld.bat"/>
+			<F N="build.bat"/>
+		</Folder>
+	</Files>
+</Project>

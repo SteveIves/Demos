@@ -1,0 +1,92 @@
+;*******************************************************************************
+;
+;Routine:		XmlDocFromHandle
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	Synergy/DE V8.1 or higher
+;
+;Revisions:		Version	Date			Comment
+;				1.0		27 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine 
+;
+;This routine accepts a dynamic memory handle which contains XML data, and
+;returns an XML document representing that XML data.  The routine can also
+;optionally return the root element of the XML document, as well as an element
+;list of the root elements child elements.
+;
+;DEALLOCATION OF THE XML DOCUMENT, ROOT ELEMENT AND ELEMENT LIST ALLOCATED IN
+;AND RETURNED FROM THIS ROUTINE IS THE RESPONSIBILITY OF THE CALLING ROUTINE.
+;
+.function XmlDocFromHandle, ^VAL
+
+	;Required parameters
+
+	a_handle		,n					;Memory handle containing XML data
+
+	a_xmldoc		,n					;Returned XML document
+
+	;Optional parameters
+
+	a_root			,n					;(Optional) returned root element
+
+	a_children		,n					;(Optional) returned children
+
+	a_childcount	,n					;(Optional) returned child count
+
+	;End of parameter list
+
+.include "DBLDIR:synxml.def"
+
+.align
+stack record
+	status			,i4
+
+	group xml
+	  string		,XML_STRING_TYPE
+	  parser		,XML_PARSER_TYPE
+	endgroup
+
+
+.proc
+
+	status = XML_SUCCESS
+
+	;Load the inbound data into an XML string
+	xml.string = %xml_string_create
+	xcall xml_string_appendhandle(xml.string,a_handle,%trim(^m(a_handle)))
+
+	;Parse the XML string to get an XML document
+	xml.parser = %xml_parser_create
+	a_xmldoc = %xml_parser_parsestring(xml.parser,xml.string)
+	xcall xml_parser_delete(xml.parser)
+	xcall xml_string_delete(xml.string)
+
+	;Get and return the root element of the XML document
+	if ^passed(a_root)
+		a_root = %xml_doc_getRoot(a_xmldoc)
+
+	;Get and return the root elements children and child count
+	if ^passed(a_children)
+	begin
+		a_children = %xml_elem_children(a_root)
+
+		if ^passed(a_childcount)
+			a_childcount = %xml_elemlist_count(a_children)
+
+	end
+
+	freturn status
+
+.end
+
+

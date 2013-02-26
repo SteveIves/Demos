@@ -1,0 +1,919 @@
+;
+;A collection of routines which use the Xceed FTP ActiveX control
+;
+;Only compile on Windows systems
+;
+.ifdef D_GUI
+
+;----------------------------------------------------------------------
+;Routine:	FtpStart
+;Description:	Start an FTP session
+;Author:	Steve Ives
+;
+.function FtpStart, ^VAL, stack
+
+;Argument list
+    
+	a_errtxt	,a	;Returned error text (optional)
+    
+;End of argument list
+
+.include "DBLDIR:activex.def"
+.include "WND:windows.def"
+
+global data section xceed_ftp, init
+.align
+record globals
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+    status		,i4
+
+.define D_CTL_NAME "XceedSoftware.XceedFtp"
+
+.proc
+
+	clear ^i(globals), status
+
+	onerror ctrlerr
+	
+	container=%ax_create
+	control=%ax_load(container,D_CTL_NAME)
+
+	status = 1
+
+	;Bind event handlers
+	xcall ax_bind(control, "FileTransferStatus", "FtpTransferStatus")
+	xcall ax_bind(control, "ListingFolderItem",  "FtpListingFolderItem")
+
+	;Create file transfer progress window
+	xcall w_proc(WP_CREATE,stswnd,"FTP_STSWND",5,50)
+	xcall w_brdr(stswnd,WB_TITLE,"FTP File Transfer")
+	xcall w_disp(stswnd,
+	&	     WD_POS,2,2,"  Current File: ",
+	&            WD_POS,3,2,"      Progress: ",
+	&            WD_POS,4,2," Transfer rate: ")
+
+	if (^passed(a_errtxt))
+		a_errtxt="FTP session started"
+
+	if (0)
+	begin
+ctrlerr,	xcall ax_delete(container)
+		if (^passed(a_errtxt))
+                        a_errtxt="Failed to load " + D_CTL_NAME + " ActiveX control " 
+	end
+	
+	offerror
+        
+	freturn (status)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:		FtpEnd
+;Description:	End an FTP session
+;Author:		Steve Ives
+;
+.function FtpEnd, ^VAL, stack
+
+;Argument list
+    
+	a_errtxt	,a	;Returned error text (optional)
+    
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1			,i4
+	ms1			,i4
+	mc1			,i4
+endglobal
+
+.proc
+
+	if (connected)
+	begin
+		xcall ax_call(control,"Disconnect")
+		clear connected
+	end
+
+	xcall ax_delete(container)
+
+	if (^passed(a_errtxt))
+		a_errtxt="FTP session ended"
+
+	freturn (1)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpConnect
+;Description:	Connect to an FTP server
+;Author:	Steve Ives
+;
+.function FtpConnect, ^VAL, stack
+
+;Argument list
+
+	a_server	,a	;Name or IP address of FTP server
+
+	a_user		,a	;Remote username
+
+	a_password	,a	;Remote password
+
+	a_errtxt	,a	;Returned status text (Optional)
+
+	a_port		,n	;FTP server IP port (Optional, default=21)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+	status		,i4
+
+.proc
+
+	;Default to success
+	status = 1
+
+	;Validate required arguments
+	
+	if ((.not.^passed(a_server)).or.(.not.a_server))
+	begin
+		clear status
+		if (^passed(a_errtxt))
+			a_errtxt="FTP server name or IP address is required"
+	end
+
+	if (status)
+	begin
+		if ((.not.^passed(a_user)).or.(.not.a_user))
+		begin
+			clear status
+			if (^passed(a_errtxt))
+				a_errtxt="Remote username is required"
+		end
+	end
+
+	if (status)
+	begin
+		;If already connected to a server, then disconnect
+		if (connected)
+		begin
+			xcall ax_call(control,"Disconnect")
+			clear connected
+		end
+	end
+
+	if (status)
+	begin
+	
+		;Set properties to identify and authenticate on remote system
+       	xcall ax_set(control,"ServerAddress",%atrim(a_server))
+		xcall ax_set(control,"Username",%atrim(a_user))
+		
+		if (^passed(a_password).and.a_password)
+			xcall ax_set(control,"Password",%atrim(a_password))
+
+		;Set non-standard IP port number
+		if ((^passed(a_port)).and.(a_port).and.(a_port.ne.21))
+			xcall ax_set(control,"ServerPort",a_port)
+	end
+
+	if (status)
+	begin
+		;Connect to the remote system
+		onerror conerr
+		
+		xcall ax_call(control,"Connect")
+		
+		connected = 1
+		
+		if (^passed(a_errtxt))
+			a_errtxt="Connected to FTP server"
+		
+		if (0)
+		begin
+conerr,			if (^passed(a_errtxt))
+				a_errtxt="Failed to connect or login to FTP server"
+			clear status
+		end
+		offerror
+	end
+
+	freturn (status)
+
+.end
+
+
+;----------------------------------------------------------------------
+;Routine:	FtpDisconnect
+;Description:	Disconnect from an FTP server
+;Author:	Steve Ives
+;
+.function FtpDisconnect, ^VAL, stack
+
+;Argument list
+    
+	a_errtxt	,a	;Returned status text (Optional)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+	status		,i4
+
+.proc
+
+	;Default to success
+	status = 1
+
+	if (connected) then
+	begin
+		xcall ax_call(control,"Disconnect")
+		clear connected
+		if (^passed(a_errtxt))
+			a_errtxt="Disconnected from FTP server"
+	end
+	else
+	begin
+		if (^passed(a_errtxt))
+			a_errtxt="No remote session was connected"
+		clear status
+	end
+
+	freturn (status)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpSendFile
+;Description:	Send a single file
+;Author:	Steve Ives
+;
+.function FtpSendFile, ^VAL, stack
+
+	;Required parameters
+	
+	a_localfile	,a	;Name of local file to send
+	
+	a_remotefile	,a	;Name of target file on remote system
+					;    (absolute or relative path)
+	;Optional parameters
+	
+	a_errtxt	,a	;Error description  (Returned)
+	
+	a_binary	,n	;Transfer in binary mode?
+	
+	a_progress	,n	;Show progress window?
+
+
+.include "DBLDIR:activex.def"
+.include "WND:windows.def"
+.include "UT:utility.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+record ivars
+	chn		,i4	;File channel
+	status		,i4	;Return status (1=Success, 0=Failure)
+	pos		,i4	;Position in string
+	len		,i4	;Length of string
+	ok		,i4	;OK to continue?
+
+record vars
+	errtxt		,a80	;Error text
+
+.proc
+
+	clear ^i(ivars), vars
+
+	status = 1
+
+	;Validate presence of local file
+	if (.not.(%FileExists(a_localfile)))
+	begin
+		errtxt="File " + %atrim(a_localfile) + " not found"
+		clear status
+	end
+
+	if (status)
+	begin
+		;Switch to ASCII mode if required (default is binary mode)
+		if (^passed(a_binary).and.a_binary) then
+			xcall ax_set(control,"RepresentationType",0)
+		else
+			xcall ax_set(control,"RepresentationType",1)
+	end
+		
+	;Place the status window
+	if ((status).and.(^passed(a_progress).and.a_progress))
+	begin
+		xcall w_proc(WP_PLACE,stswnd,8,15)
+		xcall w_disp(stswnd,WD_POS,2,18,a_localfile)
+		xcall w_updt
+	end
+
+	;Send the file
+	if (status)
+	begin
+		onerror snderr
+		xcall ax_call(control,"SendFile",a_localfile,0,a_remotefile,0)
+		errtxt="File " + %atrim(a_localfile) + " was sent successfully"
+		if (0)
+snderr,			errtxt="Failed to send " +
+			&		%atrim(a_localfile) +
+			&		" to remote server"
+		offerror
+	end
+
+	;Return error information if required
+	if (^passed(a_errtxt))
+		a_errtxt=errtxt
+
+	if (stswnd)
+		xcall w_proc(WP_REMOVE,stswnd)
+
+	freturn status
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpReceiveFile
+;Description:	Receive a single file
+;Author:	Steve Ives
+;
+.function FtpReceiveFile, ^VAL, stack
+
+	;Required parameters
+	
+	a_remotefile	,a	;Name of source file on remote system
+					;    (absolute or relative path)
+	
+	a_localfile	,a	;Name of local file to receive
+	
+	;Optional parameters
+	
+	a_errtxt	,a	;Error description  (Returned)
+	
+	a_binary	,n	;Transfer in binary mode?
+	
+	a_progress	,n	;Show progress window?
+
+
+.include "DBLDIR:activex.def"
+.include "WND:windows.def"
+.include "UT:utility.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+record ivars
+	chn		,i4	;File channel
+	status		,i4	;Return status (1=Success, 0=Failure)
+	pos		,i4	;Position in string
+	len		,i4	;Length of string
+	ok		,i4	;OK to continue?
+
+record vars
+	errtxt		,a80	;Error text
+	localfile	,a128	;Local file name
+
+.proc
+
+	clear ^i(ivars), vars
+
+	status = 1
+
+	;Expand and validate logical names in local file spec
+	localfile = a_localfile
+	if (.not.(%ExpandLogical(localfile)))
+	begin
+		errtxt="Failed to expand logical in " + %atrim(a_localfile)
+		clear status
+	end
+
+	;Prevent logical names in remote file spec
+	if (status)
+	begin
+		if (pos=%instr(1,a_remotefile,":"))
+		begin
+			errtxt="Illegal logical in remote file spefication."
+			clear status
+		end
+	end
+
+	if (status)
+	begin
+		;Switch to ASCII mode if required (default is binary mode)
+		if (^passed(a_binary).and.a_binary) then
+			xcall ax_set(control,"RepresentationType",0)
+		else
+			xcall ax_set(control,"RepresentationType",1)
+	end
+		
+	;Create the status window
+	if ((status).and.(^passed(a_progress).and.a_progress))
+	begin
+		xcall w_proc(WP_PLACE,stswnd,8,15)
+		xcall w_disp(stswnd,WD_POS,2,18,a_localfile)
+		xcall w_updt
+	end
+
+	;Receive the file
+	if (status)
+	begin
+		onerror rcverr
+		xcall ax_call(control,"ReceiveFile",a_remotefile,0,localfile)
+		errtxt="File " + %atrim(a_localfile) + " was received successfully"
+		if (0)
+rcverr,			errtxt="Failed to receive " +
+			&		%atrim(a_localfile) +
+			&		" from FTP server"
+		offerror
+	end
+
+	;Return error information if required
+	if (^passed(a_errtxt))
+		a_errtxt=errtxt
+
+	if (stswnd)
+		xcall w_proc(WP_REMOVE,stswnd)
+
+	freturn status
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpChangeCurrentFolder
+;Description:	Change the current folder on the FTP server
+;Author:	Steve Ives
+;
+.function FtpChangeCurrentFolder, ^VAL, stack
+
+;Argument list
+
+	a_folder	,a	;New folder (absolute or relative path)
+
+	a_errtxt	,a	;Returned status text (Optional)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+	status		,i4
+	folder		,a80
+
+.proc
+
+	;Default to success
+	status = 1
+
+	if (.not.connected)
+	begin
+		clear status
+		if (^passed(a_errtxt))
+			a_errtxt="Not connected to an FTP server"
+	end
+
+	if (status)
+	begin
+		onerror err
+		xcall ax_call(control,"ChangeCurrentFolder",a_folder)
+
+		xcall ax_get(control,"CurrentFolder",folder)
+
+		if (^passed(a_errtxt))
+			a_errtxt="Remote folder changed to '" + %atrim(folder) + "'"
+		
+		if (0)
+		begin
+err, 			clear status
+			if (^passed(a_errtxt))
+				a_errtxt="Failed to change remote folder to '" + %atrim(a_folder) + "'"
+		end
+
+		offerror
+	end
+
+	freturn (status)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpChangeToParentFolder
+;Description:	Change to the parent folder on the FTP server
+;Author:	Steve Ives
+;
+.function FtpChangeToParentFolder, ^VAL, stack
+
+;Argument list
+
+	a_errtxt	,a	;Returned status text (Optional)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+	status		,i4
+	folder		,a80
+
+.proc
+
+	;Default to success
+	status = 1
+
+	if (.not.connected)
+	begin
+		clear status
+		if (^passed(a_errtxt))
+			a_errtxt="Not connected to an FTP server"
+	end
+
+	if (status)
+	begin
+		onerror err
+		xcall ax_call(control,"ChangeToParentFolder")
+
+		xcall ax_get(control,"CurrentFolder",folder)
+
+		if (^passed(a_errtxt))
+			a_errtxt="Remote folder changed to '" + %atrim(folder) + "'"
+		
+		if (0)
+		begin
+err, 			clear status
+			if (^passed(a_errtxt))
+				a_errtxt="Failed to change to parent folder"
+		end
+
+		offerror
+	end
+
+	freturn (status)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpCreateFolder
+;Description:	Create a new folder on the FTP server
+;Author:	Steve Ives
+;
+.function FtpCreateFolder, ^VAL, stack
+
+;Argument list
+
+	a_folder	,a	;New folder (absolute or relative path)
+
+	a_errtxt	,a	;Returned status text (Optional)
+
+;End of argument list
+
+.include "DBLDIR:activex.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record
+	status		,i4
+
+.proc
+
+	;Default to success
+	status = 1
+
+	if (.not.connected)
+	begin
+		clear status
+		if (^passed(a_errtxt))
+			a_errtxt="Not connected to an FTP server"
+	end
+
+	if (status)
+	begin
+		onerror err
+		xcall ax_call(control,"CreateFolder",a_folder)
+		
+		if (^passed(a_errtxt))
+			a_errtxt="Created remote folder '" + %atrim(a_folder) + "'"
+		
+		if (0)
+		begin
+err, 			clear status
+			if (^passed(a_errtxt))
+				a_errtxt="Failed to create remote folder '" + %atrim(a_folder) + "'"
+		end
+
+		offerror
+	end
+
+	freturn (status)
+
+.end
+
+;----------------------------------------------------------------------
+;Routine:	FtpListFolderContents
+;Description:	List the contents of a remote folder
+;Author:	Steve Ives
+;
+.function FtpListFolderContents, ^VAL, stack
+
+;Argument list
+
+	a_memhandle	,n	;Returned dynamic memory handle
+
+	a_memsize	,n	;Returned size of dynamic array
+
+	a_foldermask	,a	;Folder mask (Optional)
+
+	a_errtxt	,a	;Returned error text (optional)
+    
+;End of argument list
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+.align
+record ivars
+	status		,i4
+
+record vars
+	FolderMask	,a40
+
+structure str1
+	name		,a80
+	date		,a20
+	size		,i4
+	type		,i2
+
+.proc
+
+	clear ^i(ivars), vars, mh1, ms1
+
+	;Use mask if we were passed oneerrtxt
+	if (^passed(a_foldermask))
+		FolderMask = a_foldermask
+
+	;Call method in control.  This will cause the FtpListingFolderItem
+	;event handler to be called once for each remote item which matches
+	;the specified criteria.  The event handler places the results in a
+	;dynamic memory section, the handle to which we will return to the
+	;calling routine.
+
+	xcall ax_call(control,"ListFolderContents", FolderMask)
+
+	;Resize the dynamic memory to the exact size to match the number
+	;of returned items
+	if (ms1.ne.mc1)
+		mh1 = %mem_proc(DM_RESIZ,^size(str1)*mc1,mh1)
+
+	;Return results to caller
+	a_memhandle = mh1
+	a_memsize = ms1
+
+	clear mh1, ms1, mc1
+
+	freturn status
+
+.end
+
+;------------------------------------------------------------------------------
+;Routine:	FtpTransferStatus
+;Description:	ActiveX callback to display transfer status in Toolkit apps
+;Author:	Steve Ives
+;
+.subroutine FtpTransferStatus, stack
+
+	a_control		,n
+	
+	a_LocalFilename		,a
+	a_RemoteFilename	,a
+	a_FileSize		,n
+	a_BytesTransferred	,n
+	a_BytesPercent		,n
+	a_TotalSize		,n
+	a_TotalBytesTransferred	,n
+	a_TotalBytesPercent	,n
+	a_TotalFiles		,n
+	a_TotalFilesTransferred	,n
+	a_TotalFilesPercent	,n
+	a_BytesPerSecond	,n
+	a_TotalBytesPerSecond	,n
+
+.include "WND:windows.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+record
+	tmpbuf		,a80
+	Size		,d18
+	Transferred	,d18
+	Percent		,d3
+	PerSecond	,d5
+
+.proc
+
+	;Display transfer status in the status window - if it is placed
+	if %w_info(WIF_PLCFLG,stswnd)
+	begin
+		Size = (a_FileSize/1024)
+		Transferred = (a_BytesTransferred/1024)
+		Percent = a_BytesPercent
+		PerSecond = (a_BytesPerSecond/1024)
+
+		if (Size) then
+			xcall s_bld(tmpbuf,,"%d K of %d K bytes (%d%)",Transferred,Size,Percent)
+		else
+			xcall s_bld(tmpbuf,,"%d K bytes",Transferred)
+		xcall w_disp(stswnd,WD_POS,3,18,tmpbuf)
+
+		xcall s_bld(tmpbuf,,"%d K bytes/second",PerSecond)
+		xcall w_disp(stswnd,WD_POS,4,18,tmpbuf)
+
+		xcall w_updt
+	end
+
+	xreturn
+
+.end
+
+;------------------------------------------------------------------------------
+;Routine:		FtpListingFolderItem
+;Description:	ActiveX callback to handle server directory listings
+;Author:		Steve Ives
+;
+.subroutine FtpListingFolderItem, stack
+
+	a_control	,n
+	
+	a_name		,a	;Name of file, folder or link
+	
+	a_date		,a	;File date
+	
+	a_size		,n	;File size
+	
+	a_type		,n	;Item type
+				;  File   = 0
+				;  Folder = 1
+				;  Link   = 2
+
+	a_userdata	,a	;
+
+.include "WND:windows.def"
+
+global data section xceed_ftp
+record
+	container	,i4
+	control		,i4
+	connected	,i4
+	stswnd		,i4
+	mh1		,i4
+	ms1		,i4
+	mc1		,i4
+endglobal
+
+structure str1
+	name		,a80
+	date		,a20
+	size		,i4
+	type		,i2
+
+.proc
+
+	if (.not.mh1) then
+	begin
+		ms1 = 10
+		mc1 = 0
+		mh1 = %mem_proc(DM_ALLOC+DM_STATIC,(^size(str1)*ms1))
+	end
+	else
+	begin
+		if (mc1.eq.ms1)
+		begin
+			ms1 += 10
+			mh1 = %mem_proc(DM_RESIZ,(^size(str1)*ms1),mh1)
+		end
+	end
+
+	mc1 += 1
+
+	^m(str1[mc1].name,mh1) = a_name
+	^m(str1[mc1].date,mh1) = a_date
+	^m(str1[mc1].size,mh1) = a_size
+	^m(str1[mc1].type,mh1) = a_type
+
+	xreturn
+
+.end
+
+.endc

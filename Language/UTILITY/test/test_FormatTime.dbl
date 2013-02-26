@@ -1,0 +1,35 @@
+.main test_FormatTime
+
+.include "UT:utility.def"
+
+record
+	d6time		,d6,	073456
+	d4time		,d4,	0734
+
+.proc
+
+	xcall ttopen
+	xcall DisplayA(1,1,,"Test program for routine FormatTime")
+
+	;D6 times
+
+	xcall DisplayA(   03,1,"D6 input time             : ",^a(d6time))
+	xcall DisplayTime(04,1,"24 hour clock             : ",d6time)
+	xcall DisplayTime(05,1,"24 hour clock, no seconds : ",d6time,,1)
+	xcall DisplayTime(06,1,"12 hour clock             : ",d6time,1)
+	xcall DisplayTime(07,1,"12 hour clock, no seconds : ",d6time,1,1)
+
+	;D4 times
+
+	xcall DisplayA(   09,1,"D4 input time             : ",^a(d4time))
+	xcall DisplayTime(10,1,"24 hour clock             : ",d4time)
+	xcall DisplayTime(11,1,"12 hour clock             : ",d4time,1)
+
+	;Done
+
+	xcall WaitKey(24,1,"Press a key: ")
+
+	xcall ttclose
+	stop
+
+.end

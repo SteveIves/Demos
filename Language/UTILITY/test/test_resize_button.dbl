@@ -1,0 +1,30 @@
+.main test_resize_button
+
+.include "WND:tools.def"
+.include "DBLDIR:windows.def"
+.include "DBLDIR:apmisc.def"
+.align
+stack record
+        bid     ,i4
+        id      ,i4
+	rowheight,i4
+	charwidth,i4
+        data    ,a10
+.proc
+        xcall u_start
+        xcall ib_input(bid, "", 10, 40)
+        xcall ib_field(bid, "f1", D_FLD_SIZE, 10)
+        xcall ib_button(bid, "O_COOL", DSB_TEXT, "Click me!")
+        xcall ib_end(bid, id)
+        xcall u_window(D_PLACE, id, 5, 21)
+	xcall i_input(id,, data)
+	rowheight = %ap_misc(MSC_ROWHEIGHT, id)
+	charwidth = %ap_misc(MSC_CHARWIDTH, id)
+	xcall resize_button(id, "Click me!", (charwidth * 10),
+	&		    (rowheight * 4), (charwidth * 20), (rowheight * 2),
+	&		    "Click me, you fool!")
+        xcall i_input(id,, data)
+        xcall u_finish
+.end
+
+

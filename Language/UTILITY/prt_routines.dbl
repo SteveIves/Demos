@@ -1,0 +1,746 @@
+.define FALSE,0
+.define TRUE,1
+;
+;The code in this file is used to print fields/windows and data to the Windows print API
+;
+;prt_init		Sets it all up, and should be called first
+;prt_start		Should be called first, to establich a report handle.
+;prt_choice		Sets up how the user wishes to print - fax/email/print
+;prt_string 	Positions text within a page
+;prt_hline		Draw a horizontal line
+;prt_vline		Draw a vertical line
+;prt_newpage	Ends the current page and starts a new page.
+;prt_finish		Ends the printing session, and print and/or preview it.
+;
+;
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_start, ^val, reentrant, stack
+	
+	.include 'UT:prt_control.def'	;Control data
+	a_orientation,		n		; 0=any,1=force portrait, 2=force landscape
+	a_noprtsel,			n		;don't allow printer selection
+	a_prtname,			a		;printer name (default if not passed!)
+	a_filename,			a		;filename
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+record
+	status			,i4													;Return status
+	specHandle		,i4
+	psize			,i4
+	char_space		,i4													;pixels between character
+	idf_userdata	,i4
+	tmp				,d4
+
+.proc
+
+	status = 0
+	clear ^i(prt_control_i), prt_control_a
+
+	tmp = %mem_proc(DM_ALLOC, ^size(print_specs))
+
+	status = %wpr_info(prt_handle, DWP_GETPRINTER)      ;Get report handle
+
+	if (status)
+   	begin
+   		
+		status = %wpr_getdevice(prt_handle, DWP_SPECS, ^m(print_specs, tmp))
+
+   		if (.not. %passed(a_noprtsel))                                 ;allow printer/paper selection
+		begin
+			if (.not.%wpr_info(prt_handle, DWP_PRINTDLG))    ;Popup printer selection dialog
+   			begin
+   				status = %wpr_info(prt_handle, DWP_DELPRINTER) ;Release the printer
+				clear prt_handle
+				freturn(0)
+   			end
+		end
+
+		if (a_orientation.eq.1)
+   		begin
+   			status = %wpr_setdevice(prt_handle, DWP_ORIENTATION, DWPO_PORTRAIT)
+   			; force to portrait mode
+   		end
+   		if (a_orientation.eq.2)
+   		begin
+   			status = %wpr_setdevice(prt_handle, DWP_ORIENTATION, DWPO_LANDSCAPE)
+   			; force to landscape mode
+   		end
+
+		if ((^passed(a_filename)).and.(a_filename)) then
+			print_file_name = a_filename
+		else
+            xcall temp_file_name(print_file_name, 'wmf')
+   		
+		xcall wpr_print(prt_handle, DWP_BEGINJOB, print_file_name)		;Create metafile
+   		xcall wpr_print(prt_handle, DWP_BEGINPAGE)				
+
+		clear mm_ratio
+
+		status = %mm_to_pixels(10, mm_ratio, prt_handle)
+
+		prt_penhdl = %wpr_info(prt_handle, DWP_GETPEN)
+
+		prt_fontHdl = %mem_proc(DM_ALLOC+DM_STATIC, ^size(font_specs))
+
+	end
+	
+	freturn(status)
+
+openerr,
+		clear prt_handle
+		freturn(0)
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_string, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_col           ,n          ;column position in chars
+	a_row           ,n          ;row postion in chars
+	a_text          ,a          ;text string to output
+	a_in_mm			,n			;details passed in mm
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+static record
+	store_font_info	,a^size(font_specs)
+
+.align
+record
+    result,			i4
+    pix_x,			i4
+    pix_y,			i4
+	len,			i4
+	
+.proc
+
+    ^m(font_specs.facename, prt_fontHdl) = ptxt_font		 ;Name of typeface
+	^m(font_specs.pointsize, prt_fontHdl) = ptxt_pitch		;Point size
+
+	;Font weight (DWPFW_DONTCARE,
+	; DWPFW_THIN, DWPFW_EXTRALIGHT,
+	; DWPFW_LIGHT, DWPFW_NORMAL,
+	; DWPFW_MEDIUM, DWPFW_SEMIBOLD,
+	; DWPFW_BOLD, DWPFW_EXTRABOLD,
+	; DWPFW_HEAVY)
+	if (ptxt_bold)
+	then
+		^m(font_specs.weight, prt_fontHdl) = DWPFW_BOLD
+	else
+		^m(font_specs.weight, prt_fontHdl) = DWPFW_DONTCARE
+	
+	if (ptxt_italic)
+	then
+		^m(font_specs.italic, prt_fontHdl) = TRUE		;True if italic
+	else
+		^m(font_specs.italic, prt_fontHdl) = FALSE		;True if italic
+	;
+	if (ptxt_underline)
+	then
+		^m(font_specs.underline, prt_fontHdl) = TRUE	;True if underline
+	else
+		^m(font_specs.underline, prt_fontHdl) = FALSE	;True if underline
+	
+	^m(font_specs.strikeout, prt_fontHdl) = FALSE	;True if strikeout
+	^m(font_specs.fixed, prt_fontHdl) = FALSE 		;True if fixed-pitch
+
+	if (%passed(a_in_mm))
+	then
+	begin
+		pix_x = %mm_to_pixels(a_col , mm_ratio)
+		pix_y = %mm_to_pixels(a_row , mm_ratio)
+	end
+	else
+	begin
+		pix_x = %mm_to_pixels(a_col * D_CHAR_WIDTH, mm_ratio)
+		pix_y = %mm_to_pixels(a_row * D_LINE_HEIGHT, mm_ratio)
+	end
+
+	len = %mm_to_pixels(^size(a_text) * D_CHAR_WIDTH, mm_ratio)
+
+	if (store_font_info.ne.^m(font_specs, prt_fontHdl))
+	begin
+		;need to appy the font stuff
+		result = %wpr_setdevice(prt_handle, DWP_FONT, ^m(font_specs, prt_fontHdl))
+		store_font_info = ^m(font_specs, prt_fontHdl)
+	end
+
+    ;do we need to change the justification...
+
+	using (ptxt_justify) select
+(0,1),						;left
+	nop
+(2),                        ;right
+	begin
+		pix_x = pix_x + len - %wpr_info(prt_handle, DWP_TEXTWIDTH, a_text)
+	end
+(3),                        ;center
+	pix_x = pix_x + len - (%wpr_info(prt_handle, DWP_TEXTWIDTH, a_text) / 2)
+	endusing
+	
+	result = %wpr_print(prt_handle, DWP_WRITEOUT, pix_x, pix_y, %atrim(a_text))
+
+	clear text_details
+
+    freturn(result)
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_img, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_image,		a
+	a_row,			n
+	a_col,			n
+	a_width,		n
+	a_height,		n
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+stack record
+	start_x,	i4
+	start_y,	i4
+	img_height,	i4
+	img_width,	i4
+	result,		i4
+
+.proc
+
+	start_y = %mm_to_pixels((a_row * D_LINE_HEIGHT) ,mm_ratio)
+	start_x = %mm_to_pixels(a_col * D_CHAR_WIDTH, mm_ratio)
+	img_height = %mm_to_pixels((a_height * D_LINE_HEIGHT) ,mm_ratio)
+	img_width = %mm_to_pixels((a_width * D_CHAR_WIDTH),mm_ratio)
+
+	
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_BITMAP, a_image,
+	&		start_x, start_y,
+	&		img_width, img_height, 1)
+	
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_imgmm, %val, stack
+	
+	.include 'UT:prt_control.def'
+	a_image,		a
+	a_ypos_mm,		n
+	a_xpos_mm,		n
+	a_heightmm,		n
+	a_widthmm,		n
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+stack record
+	start_x,	i4
+	start_y,	i4
+	img_height,	i4
+	img_width,	i4
+	result,		i4
+
+.proc
+
+	start_y = %mm_to_pixels(a_ypos_mm ,mm_ratio)
+	start_x = %mm_to_pixels(a_xpos_mm, mm_ratio)
+	img_height = %mm_to_pixels(a_heightmm ,mm_ratio)
+	img_width = %mm_to_pixels(a_widthmm,mm_ratio)
+
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_BITMAP, a_image,
+	&		start_x, start_y,
+	&		img_width, img_height, 1)
+	
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_hline, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_row,			n		;which line to print on
+	a_startcol,		n		;starting column
+	a_endcol,		n		;ending column
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	start_y = %mm_to_pixels((a_row * D_LINE_HEIGHT) + (D_LINE_HEIGHT/2),mm_ratio)
+	start_x = %mm_to_pixels((a_startcol * D_CHAR_WIDTH) + (D_CHAR_WIDTH/2), mm_ratio)
+	end_y = start_y
+	end_x = %mm_to_pixels((a_endcol * D_CHAR_WIDTH) + (D_CHAR_WIDTH/2), mm_ratio)
+
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_hlinemm, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_start_xpos_mm,	n		;starting x position in mm
+	a_end_xpos_mm,		n		;ending x position in mm
+	a_ypos_mm,			n		;y position in mm to put the line on
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	start_y = %mm_to_pixels(a_ypos_mm, mm_ratio)
+	start_x = %mm_to_pixels(a_start_xpos_mm, mm_ratio)
+	end_y = start_y
+	end_x = %mm_to_pixels(a_end_xpos_mm, mm_ratio)
+
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_vline, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_startrow,		n		;top of line
+	a_endrow,		n		;bottom of line
+	a_col,			n		;column it's in
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	start_y = %mm_to_pixels((a_startrow * D_LINE_HEIGHT) + (D_LINE_HEIGHT/2),mm_ratio)
+	start_x = %mm_to_pixels((a_col * D_CHAR_WIDTH) + (D_CHAR_WIDTH/2), mm_ratio)
+	end_y = %mm_to_pixels((a_endrow * D_LINE_HEIGHT) - (D_LINE_HEIGHT/2),mm_ratio)
+	end_x = start_x
+
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_vlinemm, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_xpos_mm,			n		;start x position in mm of the line
+	a_start_ypos_mm,	n		;start y position in mm of the top of the line
+	a_end_ypos_mm,		n		;end y position in mm of the bottom of the line
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	start_y = %mm_to_pixels(a_start_ypos_mm, mm_ratio)
+	start_x = %mm_to_pixels(a_xpos_mm, mm_ratio)
+	end_y = %mm_to_pixels(a_end_ypos_mm, mm_ratio)
+	end_x = start_x
+
+	;draw the line
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_box, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_startrow,		n		;row starting pos
+	a_startcol,		n		;col stating pos
+	a_depth,		n		;depth
+	a_width,		n		;width of box
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	;top horizontal
+	
+	start_y = %mm_to_pixels((a_startrow * D_LINE_HEIGHT) + (D_LINE_HEIGHT/2),mm_ratio)
+	start_x = %mm_to_pixels((a_startcol * D_CHAR_WIDTH) + (D_CHAR_WIDTH/2), mm_ratio)
+	end_x = %mm_to_pixels(((a_startcol + a_width) * D_CHAR_WIDTH) - (D_CHAR_WIDTH/2), mm_ratio)
+	end_y = start_y
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	;bottom horizontal
+	
+	start_y = %mm_to_pixels(((a_startrow+a_depth) * D_LINE_HEIGHT) - (D_LINE_HEIGHT/2),mm_ratio)
+	end_y = start_y
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	;left vertical
+
+	start_y = %mm_to_pixels((a_startrow * D_LINE_HEIGHT) + (D_LINE_HEIGHT/2),mm_ratio)
+	start_x = %mm_to_pixels((a_startcol * D_CHAR_WIDTH) + (D_CHAR_WIDTH/2), mm_ratio)
+	end_x = start_x
+	end_y = %mm_to_pixels(((a_startrow+a_depth) * D_LINE_HEIGHT) - (D_LINE_HEIGHT/2), mm_ratio)
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	
+	;right vertical
+	start_x = %mm_to_pixels(((a_startcol+a_width) * D_CHAR_WIDTH) - (D_CHAR_WIDTH/2), mm_ratio)
+	end_x = start_x
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_boxmm, %val, stack
+
+	.include 'UT:prt_control.def'
+	a_start_xpos_mm,	n		;starting x position in mm
+	a_start_ypos_mm,	n		;starting y position in mm
+	a_end_xpos_mm,		n		;ending x position in mm
+	a_end_ypos_mm,		n		;ending y position in mm
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+
+.align
+stack record
+	result,		i4
+
+	start_x, 	i4
+	start_y,	i4
+	end_x,		i4
+	end_y,		i4
+
+.proc
+
+	;top horizontal
+	
+	start_y = %mm_to_pixels(a_start_ypos_mm, mm_ratio)
+	start_x = %mm_to_pixels(a_start_xpos_mm, mm_ratio)
+
+	end_x = %mm_to_pixels(a_end_xpos_mm, mm_ratio)
+	end_y = start_y
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	;bottom horizontal
+	
+	start_y = %mm_to_pixels(a_end_ypos_mm, mm_ratio)
+	end_y = start_y
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	;left vertical
+
+	start_y = %mm_to_pixels(a_start_ypos_mm, mm_ratio)
+	start_x = %mm_to_pixels(a_start_xpos_mm, mm_ratio)
+	end_x = start_x
+	end_y = %mm_to_pixels(a_end_ypos_mm, mm_ratio)
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	
+	;right vertical
+	start_x = %mm_to_pixels(a_end_xpos_mm, mm_ratio)
+	end_x = start_x
+
+	result = %wpr_print(prt_handle, DWP_LINE, prt_penhdl, start_x, start_y, end_x, end_y)
+
+	freturn TRUE
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_newpage, ^val, stack
+	
+	.include 'UT:prt_control.def'	;Contorl data
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+		
+.proc
+
+	xcall wpr_print(prt_handle, DWP_ENDPAGE)		;End page
+	xcall wpr_print(prt_handle, DWP_BEGINPAGE)		;begin new page
+
+	freturn 1
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_text, ^VAL, stack
+	
+	.include 'UT:prt_control.def'	;Contorl data
+	a_text          ,a          ;text string to output
+	a_xpos_mm       ,n          ;column position in mm
+	a_ypos_mm       ,n          ;row postion in mm
+	a_font_name		,a			;name of required font
+	a_font_pitch	,n			;size/pitch of the font
+	a_attr			,n			;attributes
+	;end of argument list
+
+record
+	result,		i4
+
+.proc
+
+	;set the print control block
+
+	set ptxt_bold, ptxt_italic, ptxt_underline = 0
+	set ptxt_justify = 1
+
+	if (%passed(a_attr))
+	begin
+		if (a_attr.band.pd_bold)
+		begin
+			ptxt_bold = 1
+		end
+
+		if (a_attr.band.pd_italic)
+		begin
+			ptxt_italic = 1
+		end
+
+		if (a_attr.band.pd_underline)
+		begin
+			ptxt_underline = 1
+		end
+
+		if (a_attr.band.pd_justify_left)
+		begin
+			ptxt_justify = 1
+		end
+
+		if (a_attr.band.pd_justify_center)
+		begin
+			ptxt_justify = 3
+		end
+
+		if (a_attr.band.pd_justify_right)
+		begin
+			ptxt_justify = 2
+		end
+
+	end
+
+	ptxt_font = a_font_name
+	
+	ptxt_pitch = a_font_pitch
+	
+	;print the actual text
+
+	result = %prt_string(prt_control, a_xpos_mm, a_ypos_mm, a_text, 1)	
+
+	set ptxt_bold, ptxt_italic, ptxt_underline = 0
+	set ptxt_justify = 1
+
+	freturn result
+
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_finish, ^val, stack
+	
+	.include 'UT:prt_control.def'	;Contorl data
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+		
+record
+	status,			i4													;Return status
+	keep_file,		i4
+	prt_ok,			d1
+
+		
+stack record printer_info
+	lpp,			i4 ;Lines per page
+	cpl,			i4 ;Characters per line
+	flags,			i4 ;Miscellaneous flags
+	unused,			a20 ;Reserved space
+	printerid,		a80 ;Printer name and port(s)
+	driver,			a32 ;Printer driver name
+
+
+.proc
+
+	xcall wpr_print(prt_handle, DWP_ENDPAGE)						;End page
+	xcall wpr_print(prt_handle, DWP_ENDJOB)						;End print job
+
+	prt_ok = FALSE		; catch all set to did NOT print
+
+	if (prt_nopreview)	;Suppress print preview
+	then
+	begin
+		call print_it
+	end
+	else
+	begin
+		prt_ok = FALSE
+		if (%wpr_execute(prt_handle, DWP_PREVIEW,,
+		&	%atrim(prt_title), TRUE) .eq. DWP_PREVIEW_PRINT)	   ; user didnt cancel the print
+		begin
+			call print_it
+		end
+
+	end
+
+	if (prt_penhdl)
+		xcall wpr_info(prt_handle,DWP_DELPEN, prt_penhdl)		;Release drawing pen
+	
+	if (prt_fonthdl)
+		prt_fonthdl = %mem_proc(DM_FREE, prt_fonthdl)			;free memory
+
+	status = %wpr_info(prt_handle, DWP_DELPRINTER) 				;Release the printer
+
+	status = 0
+	if (prt_ok.eq.FALSE) status = 1
+
+	;clear down for the next time!
+	clear ^i(prt_control_i), prt_control_a
+
+	freturn(status)
+
+print_it,
+	
+	prt_ok = %wpr_execute(prt_handle, DWP_PRINT, ,1)
+
+	return
+
+.end
+
+;-------------------------------------------------------------------------------
+;
+;
+.function prt_cancel, ^val, stack
+	
+	.include 'UT:prt_control.def'	;Contorl data
+	;end of argument list
+
+.include 'DBLDIR:winprint.def'
+		
+record
+	status,			i4													;Return status
+	keep_file,		i4
+	prt_ok,			d1
+
+.proc
+
+	xcall wpr_print(prt_handle, DWP_ENDPAGE)						;End page
+	xcall wpr_print(prt_handle, DWP_ENDJOB)						;End print job
+
+	if (prt_penhdl)
+		xcall wpr_info(prt_handle,DWP_DELPEN, prt_penhdl)		;Release drawing pen
+	
+	if (prt_fonthdl)
+		prt_fonthdl = %mem_proc(DM_FREE, prt_fonthdl)			;free memory
+
+	status = %wpr_info(prt_handle, DWP_DELPRINTER) 				;Release the printer
+
+	;clear down for the next time!
+	clear ^i(prt_control_i), prt_control_a
+
+	freturn(TRUE)
+
+.end
+

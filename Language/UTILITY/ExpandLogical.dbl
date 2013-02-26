@@ -1,0 +1,40 @@
+;------------------------------------------------------------------------------
+;Routine:		ExpandLogical
+;Description:	Checks file spec for logical names and expands them
+;Author:		Steve Ives
+;
+.function ExpandLogical, ^VAL, stack
+
+	a_file		,a
+
+record ivars
+	status		,i4
+	pos		,i4
+	len		,i4
+
+record
+	file		,a128
+
+.proc
+
+	clear ^i(ivars)
+
+	if (.not.(pos=%instr(1,a_file,":"))) then
+		status=1			;No logical, all done!
+	else
+	begin					;File spec includes a logical
+		xcall getlog(a_file(1:pos-1),file,len)
+		if (len)
+		begin				;Logical found and translated
+			if (file(%trim(file):1).ne."\")
+				file=%atrim(file)+"\"
+			a_file=%atrim(file)+a_file(pos+1,%trim(a_file))
+			status=1
+		end
+	end
+	
+	freturn status
+
+.end
+
+

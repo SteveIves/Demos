@@ -1,0 +1,38 @@
+;==============================================================================
+;
+; Title:		DataStatement.dbl
+;
+; Description:	This program demonstrates the use of local data declarations,
+;				which was a new feature of Synergy/DE in V9.1.1.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+main DataStatement
+
+	record 
+		ChnTt	,int
+		ChnFile	,int
+	endrecord
+	
+proc
+	
+	open(ChnTt=syn_freechn,i,"tt:")
+	open(ChnFile=syn_freechn,i:i,"DBLDIR:syntxt.ism")
+	
+	repeat
+	begin
+		data RecordCount, int	;Local data, only vald in this BEGIN/END block.
+		data Buffer, a218		;Local data, only vald in this BEGIN/END block.
+		reads(ChnFile,Buffer,eof)
+		writes(ChnTt,"Read "+string(RecordCount+=1)+" records.")
+	end
+eof,
+
+	close ChnFile
+	close ChnTt
+	
+	stop
+
+endmain

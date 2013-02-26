@@ -1,0 +1,38 @@
+
+.main test_postxml
+
+.include "WND:tools.def"
+
+.include "ATTENDEE" repository, record="attendee"
+
+.align
+stack record
+	error		,i4
+	chn			,i4
+
+.proc
+
+	xcall u_start
+
+	xcall u_open(chn,"i:i","C:\spc2001\data\profile.ism")
+
+	read(chn,attendee,"2")
+
+	if (.not.%postxml(
+	&		attendee,
+	&		"ATTENDEE",
+	&		"http://localhost/testpost.asp",
+	&		error,
+	&		,
+	&		,
+	&		"c:\spc2001\repository\rpsmain.ism",
+	&		"c:\spc2001\repository\rpstext.ism"))
+			xcall u_message("postxml failed")
+
+	xcall u_close(chn)
+
+	xcall u_finish
+	stop
+
+.end
+

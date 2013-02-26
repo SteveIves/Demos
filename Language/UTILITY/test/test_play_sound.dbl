@@ -1,0 +1,22 @@
+.main test_play_sound
+
+.include "WND:tools.def"
+
+.align
+stack record
+	file	,a256
+
+.align
+literal
+	fdesc	,[2]a, 'Waveform files (*.wav)', 'All files (*.*)'
+	filter	,[2]a, '*.wav', '*.*'
+
+.proc
+	
+	xcall u_start
+	
+	while (%u_getfilename(file, "Select a sound file", 2, fdesc, filter))
+    	    xcall play_sound(%atrim(file))
+	
+	xcall u_finish
+.end

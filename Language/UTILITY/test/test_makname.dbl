@@ -1,0 +1,24 @@
+.main test_makename
+;
+; Demonstration main-line for %makename
+;
+; Camden Software Consulting	June, 2001
+;
+external function
+	makename	,a
+.align
+stack record
+	filename	,a256
+.proc
+	xcall flags(01001010,1)
+	open(1,o,"TT:")
+	repeat
+	  begin
+	    display(1,13,10,"Filename: ")
+	    reads(1,filename,eof)
+	    writes(1,%makename(filename))
+	  end
+eof,	stop
+.end
+
+

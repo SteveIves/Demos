@@ -1,0 +1,29 @@
+;Generate a temp file name
+
+.function temp_file ;,a
+	
+	a_extension			,a	;Optional file extension
+
+stack record
+	extension			,a10
+	filename			,a40
+
+.proc
+
+	if ^passed(a_extension) then
+		extension = a_extension
+	else
+		extension = "tmp"
+
+	xcall s_bld(filename,
+	&			,
+	&			"%a%d_%d.%a",
+	&			'TEMP:',
+	&			%jbno,
+	&			%datetime,
+	&			extension)
+
+	freturn filename
+
+.end
+

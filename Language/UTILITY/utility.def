@@ -1,0 +1,160 @@
+
+
+;Main include file for Steves subroutine library
+
+external function
+	button_anywhere				,^val
+	Btrim						,a
+	calc_wk_no					,^val
+	CanadianProvince			,a
+
+	;Container routines are in container.def
+	
+	DblToUnicode				,a
+	dd_createfile				,^val
+	dd_createxdl				,^val
+	EnDeCrypt					,a			;RC4 encryption / decryption
+	ExpandLogical				,^val
+	field_in_set				,^val
+	FileExists					,^val
+	FileTime					,^val
+	find_window_at				,^val
+	ForEachField				,^val
+	FormatDate					,a
+	FormatTime					,a
+
+	;Ftp* is in xceed_ftp.def
+
+	get_button_handle			,^val
+	get_cliptext				,a
+	get_field_control_handle	,^val
+	get_field_display_handle	,^val
+	get_field_drill_handle		,^val
+	get_field_entry_handle		,^val
+	get_field_hyperlink_handle	,^val
+	get_field_info				,^val
+	get_field_prompt_handle		,^val
+	get_list_handle				,^val
+	get_list_wndid				,^val
+	get_precision				,^val
+	get_window_handle			,^val
+
+.ifdef D_GUI
+	guid_create					,a
+.endc
+	guid_encode					,a
+	guid_decode					,a
+	
+	HexToRfa					,a
+	HtmlEncode					,a
+	HttpQueryString				,^val
+	i_checkdata					,^val
+	IsNumeric					,^val
+	IsoCountry					,a
+	justify_text				,^val
+	ll_accept 					,^val
+	makename					,a
+	mm_to_pixels				,^val
+	pixels_to_mm				,^val
+	postxml						,^val
+	
+	prt_box						,^val
+	prt_boxmm					,^val
+	prt_cancel					,^val
+	prt_finish					,^val
+	prt_hline					,^val
+	prt_hlinemm					,^val
+	prt_img						,^val
+	prt_imgnm					,^val
+	prt_newpage					,^val
+	prt_start					,^val
+	prt_string					,^val
+	prt_text					,^val
+	prt_vline					,^val
+	prt_vlinemm					,^val
+	
+	prtapi_control				,^val
+	prtapi_forms				,^val
+	prtapi_lpque				,^val
+	prtapi_open					,^val
+	prtapi_writes				,^val
+	
+	put_cliptext				,^val
+	
+	;Registry routines are in UT:registry.def
+	
+	remove_leading				,a
+	resize_button				,^val
+	RfaToHex					,a
+	rpschk 						,^val
+	rpsfile						,^val
+	rpsxdl						,^val
+	rpsxml						,^val
+	
+	;SmtpMail is in SmtpMail.def
+	
+	SoapRequest					,^val
+	SoapResponse				,^val
+	Strip						,a
+	temp_file					,a
+	u_client_rect				,^val
+	w_winres					,a
+	UnicodeToDbl				,a
+	UrlEncode					,a
+	UsState						,a
+	ut_axload     				,^val
+	utm_check					,^val
+	utm_toggle					,^val
+	utm_getitem					,^val
+	view_report 				,^val
+	WebService					,^val
+	WinDir						,^val
+	WinFileCopy					,^val
+	WinLogout					,^val
+	WinMem						,^val
+	WinNode						,a
+	WinPath						,a
+	WinSetTime					,^val
+	WinSound					,^val
+	WinSysPath					,a
+	WinTempDir					,a
+	WinTempFile					,a
+	;WinUser					,a			;Replaced by %syn_uname
+	
+	XmlDocFromHandle			,^val
+	XmlDocFromRecord			,^val
+	XmlElemlistFromRecord		,^val
+
+	YesNo						,^val
+
+;WinDir----------------------------------------------------------------------
+
+structure WINDIR$DATA
+	wd_filename					,a259	;File name
+	wd_filesize					,i8		;File size (bytes on disk)
+	wd_archive					,d1		;Archive attribute is set
+	wd_hidden					,d1		;Hidden file
+	wd_readonly					,d1		;Read only file
+	wd_system					,d1		;System file
+
+.ifndef UTILS_SETUP
+.define UTILS_SETUP
+
+.define WINDIR$FILEDATA(x,y)		^m(WINDIR$DATA[y],x)
+.define WINDIR$FILENAME(x,y)	^m(WINDIR$DATA[y].wd_filename,x)
+.define WINDIR$FILESIZE(x,y)	^m(WINDIR$DATA[y].wd_filesize,x)
+.define WINDIR$ARCHIVE(x,y)		^m(WINDIR$DATA[y].wd_archive,x)
+.define WINDIR$HIDDEN(x,y)		^m(WINDIR$DATA[y].wd_hidden,x)
+.define WINDIR$READONLY(x,y)	^m(WINDIR$DATA[y].wd_readonly,x)
+.define WINDIR$SYSTEM(x,y)		^m(WINDIR$DATA[y].wd_system,x)
+	
+.define WINDIR_UPPERCASE		1
+.define WINDIR_LOWERCASE		2
+
+.define WINDIR_SORT_NAME		1
+.define WINDIR_SORT_NAMEDESC	2
+.define WINDIR_SORT_SIZE		3
+.define WINDIR_SORT_SIZEDESC	4
+
+.endc ;UTILS_SETUP
+

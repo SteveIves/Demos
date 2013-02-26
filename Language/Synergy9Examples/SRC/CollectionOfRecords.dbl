@@ -1,0 +1,88 @@
+;==============================================================================
+;
+; Title:		CollectionOfRecords.dbl
+;
+; Description:	This program demonstrates how boxing and unboxing of a record
+;				can be used to allow a collection of records to be manipulated.
+;				Boxing, unboxing and collections were new features introduced
+;				in Synergy/DE V9.1.1.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+.ifdef DBLV915
+import Synergex.SynergyDE.Collections	;New in V9.1.5, 1-based
+.else
+import System.Collections				;1-based prior to V9.1.5, now 0-based
+.endc
+
+main CollectionOfRecords
+
+record ErrorMessage					;This record matches the record layout
+	Facility	,a3					;of DBLDIR:syntxt.ism
+	Number		,d5
+	Code		,a10
+	Severity	,a1
+	Message		,a199
+endrecord
+
+record MsgOut						;Format for output to screen
+	Fac			,a3
+				,a1
+	Nbr			,a5
+				,a1
+	Cd			,a10
+				,a1
+	Msg			,a30
+
+record 
+	CompilerMessages	,@ArrayList
+	ChanTt		,i4		,1				;Terminal channel
+	ChanFile	,i4		,2				;File channel
+	idx			,i4						;Loop counter
+endrecord
+
+
+proc
+
+	open(ChanTt,i,"tt:")
+	open(ChanFile,i:i,"DBLDIR:syntxt.ism")
+
+	CompilerMessages = new ArrayList()
+
+	;Position to the first compiler message
+	find(ChanFile,,"CMP")
+	
+	;Load the compiler messages into the collection
+	repeat
+	begin
+		reads(ChanFile,ErrorMessage,eof)
+		if (ErrorMessage.Facility!="CMP")
+			exitloop
+		;Box the record and add it to the collection
+		CompilerMessages.Add((@a)ErrorMessage)
+	end
+eof,
+	
+	;Now lets run through the collection, and unbox and display each item
+	for idx from 1 thru CompilerMessages.Count
+	begin
+		ErrorMessage = (a)CompilerMessages[idx]
+		MsgOut.Fac		= ErrorMessage.Facility
+		MsgOut.Nbr		= ErrorMessage.Number
+		MsgOut.Cd		= ErrorMessage.Code
+		MsgOut.Msg		= ErrorMessage.Message
+		writes(ChanTt,MsgOut)
+	end
+	
+	;Display how many records we found
+	writes(ChanTt,string(CompilerMessages.Count)+" compiler messages found")
+
+	
+	close ChanFile
+	close ChanTt
+	
+	stop
+
+endmain

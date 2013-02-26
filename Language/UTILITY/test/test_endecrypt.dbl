@@ -1,0 +1,56 @@
+
+.main test_endecrypt
+
+.define M_MOD(val,mod)	((val) - (((val) / (mod)) * (mod)))
+
+external function
+	EnDeCrypt	,a
+
+.align
+stack record
+	len		,D_NATINT
+	plen	,D_NATINT
+	ix		,D_NATINT
+	buf		,a80
+	passwd	,a80
+
+.proc
+	
+	xcall flags(7004020,1)
+	open(1,o,"TT:")
+	
+	repeat
+	begin
+		
+		display(1, 13,10, "String to encrypt: ")
+		reads(1, buf, eof)
+		
+		if (!(len=%rdlen))
+			exitloop
+		
+		display(1, 13,10, "Password: ")
+		reads(1, passwd, eof)
+		
+		if (!(plen=%rdlen))
+			exitloop
+		
+		buf = %EnDeCrypt(buf(1:len), passwd(1:plen))
+		
+		writes(1, "Encrypted output:")
+		for ix from 1 thru len
+		begin
+			if (!M_MOD(ix, 20))
+				display(1,13,10)
+			display(1,%hex(%decml(buf(ix:1)),1) + ' ')
+		end
+		
+		buf = %EnDeCrypt(buf(1:len), passwd(1:plen))
+
+		display(1,13,10, "Decrypted text: " + buf(1:len))
+	
+	end
+
+eof,
+	stop
+
+.end

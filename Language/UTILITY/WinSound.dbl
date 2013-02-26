@@ -1,0 +1,47 @@
+;****************************************************************************
+;
+; Title:		WinSound.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			9th June 1999
+;
+; Description:	Determine if the PC supports sound output
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinSound, ^val
+
+;Argument list
+
+;End of argument list
+
+.align
+stack record
+	dll_handle		,i4		;DLL handle
+	numdevs			,i4		;Return status from DLL call
+
+.proc
+
+	onerror Error
+
+	dll_handle = %dll_open("winmm.dll")
+
+	numdevs = %dll_call(dll_handle,DLL_TYPE_WINAPI,"waveOutGetNumDevs")
+
+	dll_handle = %dll_close(dll_handle)
+
+Error,
+	
+	freturn numdevs
+
+.end

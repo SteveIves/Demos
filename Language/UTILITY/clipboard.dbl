@@ -1,0 +1,134 @@
+.function put_cliptext	,^val
+;
+; Subroutine to put text on the Windows clipboard
+;
+; Arguments:
+;
+	a_text	,a	;Text to add
+;
+; Return value:  TRUE if successful
+;
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+
+.align
+stack record
+	user32	,i4	;Handle to user32.dll
+	kernel32,i4	;Handle to kernel32.dll
+	size	,i4	;Size of memory to allocate
+	hmem	,i4	;Handle to global memory for clipboard
+	ptr	,i4	;Pointer to data allocated
+	hndl	,i4	;Registered handle to data
+	rval	,i4	;Return value
+
+.define GMEM_MOVEABLE	^x(0002)	;Moveable memory block
+.define GMEM_DDESHARE	^x(2000)	;DDE shareable memory
+
+.define CF_TEXT		%integer(1)	;Text format
+
+.proc
+	rval = FALSE
+	if (kernel32 = %dll_open("kernel32.dll"))
+	  begin
+			    		;Allocate a moveable memory block
+			    		; that is DDE shareable, for the size
+			    		; of the text plus a termainating NULL
+	    if (hmem = %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalAlloc",
+	    &	(GMEM_MOVEABLE .bor. GMEM_DDESHARE),
+	    &	size = ^size(a_text) + 1))
+	      begin
+					;Get a pointer to the memory
+		if (ptr = %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalLock", hmem))
+		  begin		
+					;Register a Synergy memory handle
+		    if (hndl = %mem_proc(DM_REG, size, ptr))
+		      begin
+					;Copy the data, null-terminated
+			^m(hndl) = a_text + %char(0)
+			xcall mem_proc(DM_FREE, hndl)
+		      end
+		    xcall dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalUnlock", hmem)
+
+		    if (user32 = %dll_open("user32.dll"))
+		      begin		;Open the clipboard, with us as owner
+			if (%dll_call(user32,DLL_TYPE_WINAPI,"OpenClipboard",
+			&	%w_info(WIF_HWND, WID_CONTAINER)))
+			  begin
+    					;Empty the clipboard and set our data
+			    if (%dll_call(user32,DLL_TYPE_WINAPI,"EmptyClipboard") .and.
+			    &   %dll_call(user32,DLL_TYPE_WINAPI,"SetClipboardData", CF_TEXT, hMem))
+			      rval = TRUE	;Success!
+			    xcall dll_call(user32,DLL_TYPE_WINAPI,"CloseClipboard")
+			  end
+			xcall dll_close(user32)
+		      end
+		  end
+		if (.not. rval)		;Only release handle if not successful!
+		  xcall dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalFree", hmem)
+	      end
+	    xcall dll_close(kernel32)
+	  end
+	freturn rval
+.end
+
+.function get_cliptext	;,a
+;
+; Description:  Get text from the clipboard
+;
+; Arguments:	None.
+;
+; Return value: Text on the clipboard, or "" if none exists.
+;
+.align
+stack record
+	user32	,i4	;Handle to user32.dll
+	kernel32,i4	;Handle to kernel32.dll
+	size	,i4	;Size of returned string
+	hmem	,i4	;Handle to global memory for clipboard
+	ptr	,i4	;Pointer to data allocated
+	hndl	,i4	;Registered handle to data
+	rval	,a65535	;Returned string
+
+structure st_mem	;Structure for ranging into returned data
+	alpha	,a65535	;Largest possible structure in Synergy
+
+.proc
+	clear size	;Start by assuming failure
+	if (user32 = %dll_open("user32"))	;Open user32.dll
+	  begin
+	    if (%dll_call(user32,DLL_TYPE_WINAPI,"OpenClipboard",	;Open the clipboard
+	    &	%w_info(WIF_HWND, WID_CONTAINER)))
+	      begin
+						;Get the handle to text data
+		if (hmem = %dll_call(user32,DLL_TYPE_WINAPI,"GetClipboardData", CF_TEXT))
+		  begin
+		    if (kernel32 = %dll_open("kernel32"));Open kernel32.dll
+		      begin			;Convert the handle to a pointer
+			if (ptr = %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalLock", hmem))
+			  begin			;And then to a Synergy handle
+			    if (hndl = %mem_proc(DM_REG, ^size(st_mem), ptr))
+			      begin
+				size = %instr(1, ^m(hndl), %char(0))
+				if (size)	;Find the terminating null
+				  decr size	;Eliminate trailing null
+				if (size)	;Any text?  Copy it
+				  rval = ^m(st_mem.alpha(1:size),hndl)
+				xcall mem_proc(DM_FREE, hndl)	;Free Synergy handle
+			      end
+		    				;Unlock the global handle
+			    xcall dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalUnlock", hmem)
+			  end
+			xcall dll_close(kernel32)	;Close kernel32.dll
+		      end
+		  end
+		xcall dll_call(user32,DLL_TYPE_WINAPI,"CloseClipboard");Close the clipboard
+	      end
+	    xcall dll_close(user32)		;Close user32.dll
+	  end
+
+	if (size)				;Did we get any text?
+	  freturn rval(1:size)			;Return it, to exact length
+	
+	freturn ""	;A failure occurred somewhere, or the returned data was zero-length
+.end

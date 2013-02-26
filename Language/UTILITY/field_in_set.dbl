@@ -1,0 +1,57 @@
+
+.function field_in_set	,^val
+;
+; Description:	Determine whether or not a field is in an input set
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_set		,n	;Name or number of the input set
+
+	a_field		,n	;Name or number of the input field
+;
+; Return value:	>0 = index of the field within the input set
+;		 0 = field is not in the set
+;		-1 = set not defined in the window
+;		-2 = field not defined in the window
+;
+; Notes:
+;
+;	You may pass either the name or the number for either the field
+;	or the set.
+;
+.include "WND:system.def"
+.include "WND:tools.def"
+.include "WND:setinf.def"
+.include "WND:fldinf.def"
+
+.align
+stack record
+	setnm		,i4	;Number of the set
+	fldnm		,i4	;Field number
+
+; Macros to evaluate TRUE if an argument is alpha
+.define M_ISALPHA_N(argn) (^datatype(argn) .eq. D_TYPE_A)
+.define M_ISALPHA(arg)	  (M_ISALPHA_N(%argnum(arg)))
+
+.proc
+	if (M_ISALPHA(a_set)) then	;Set name passed
+	  xcall i_setinf(a_inpid, ^a(a_set), setnm,, gs_fldset)
+	else				;Set number passed
+	  xcall i_setinf(a_inpid,, setnm = a_set,, gs_fldset)
+	if (.not. setnm)
+	  freturn -1			;Set not defined
+
+	if (M_ISALPHA(a_field)) then	;Field name passed, convert to number
+	  xcall i_fldinf(a_inpid, ^a(a_field), fldnm=0)
+	else				;Field number passed
+	  fldnm = a_field
+	if (.not. fldnm)
+	  freturn -2			;Field not defined
+
+	;Index of field number within set, or 0 if not found
+	freturn %instr(1, gs_setfld(1:gs_setcnt), %char(fldnm))
+
+.end
+

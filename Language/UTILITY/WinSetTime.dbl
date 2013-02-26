@@ -1,0 +1,63 @@
+;****************************************************************************
+;
+; Title:		WinSetTime.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			11th June 1999
+;
+; Description:	Set the Windows (system) date and time
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinSetTime, ^VAL
+
+	;Argument list
+	a_datetime	,a		;New system time (YYYYMMDDHHMMSS)
+	;End of argument list
+
+.align
+stack record
+	status		,i4		;Return status
+	dll			,i4		;DLL handle
+
+stack record SYSTEMTIME
+    Year		,i2
+	Month		,i2
+				,i2
+	Day			,i2
+    Hour		,i2
+	Minute		,i2
+	Second		,i2
+				,i2
+
+.proc
+
+	clear status, ^i(SYSTEMTIME)
+
+	Year = a_datetime(1:4)
+	Month = a_datetime(5:2)
+	Day = a_datetime(7:2)
+	Hour = a_datetime(9:2)
+	Minute = a_datetime(11:2)
+	Second = a_datetime(13:2)
+	
+	dll=%dll_open("kernel32.dll")
+
+	if (.not.%dll_call(dll,DLL_TYPE_WINAPI,"SetSystemTime",SYSTEMTIME))
+		status = 1
+
+	dll = %dll_close(dll)
+
+	freturn status
+
+.end

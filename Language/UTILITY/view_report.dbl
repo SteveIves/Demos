@@ -1,0 +1,67 @@
+;----------------------------------------------------------------------
+;Function:		view_report
+;Description:	View a report using the Windows Print API
+;Author:		Steve Ives
+;Date:			6/3/1999 (1:04pm)
+;
+;$Log:   S:/Source/Synergy/psg/archive/view_report.dbv  $
+;
+;   Rev 1.0   Jun 10 1999 22:45:56   Administrator
+;Original version
+
+.function view_report ,^val
+
+	a_file		,a		;Spool file name
+
+.include "WND:tools.def"
+.include "DBLDIR:winprint.def"
+
+.align
+stack record ivars
+	status	,i4		;Return status
+	rh		,i4		;Report handle
+
+.proc
+
+	clear ^i(ivars)
+
+	rh = %wpr_info(rh, DWP_GETPRINTER)							;Get a report handle
+	if (.not.rh) then
+		status = 1												;Failed to get report handle
+	else
+	begin
+		if (.not.%wpr_print(rh, DWP_BEGINJOB)) then				;Create a metafile
+			status = 2											;Failed to create metafile
+		else
+		begin
+			if (.not.%wpr_print(rh, DWP_ADDFILE, a_file)) then	;Specify the file to print
+				status = 3										;Zero pages added!
+			else
+			begin
+				if (.not.%wpr_print(rh, DWP_ENDJOB)) then		;Close the metafile
+					status = 5									;Failed to close metafile
+				else
+				begin
+					case (%wpr_execute(rh, DWP_PREVIEW,,"Title")) of	;Print preview
+					begincase
+					DWP_PREVIEW_PRINT:
+					begin
+						if (.not.%wpr_execute(rh, DWP_PRINT)) 	;Begin printing
+							status = 6							;Print failed
+					end
+					DWP_PREVIEW_CANCEL:
+						nop										;User selected cancel
+					endcase
+
+				end
+			end
+		end
+
+		if (.not.%wpr_info(rh, DWP_DELPRINTER))					;Release the report handle
+			status = 7											;Failed to release report handle
+	end
+
+	freturn (status)
+
+.end
+

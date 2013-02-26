@@ -1,0 +1,9 @@
+
+LIBRARY      b64
+
+EXPORTS
+             b64
+
+SECTIONS
+    .bss     READ WRITE
+    .data    READ WRITE

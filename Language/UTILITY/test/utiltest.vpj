@@ -1,0 +1,198 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+    Version="10.0"
+    VendorName="SlickEdit"
+    WorkingDir=".">
+    <Macro>
+        <ExecMacro CmdLine="syn_set UT=D:\Dev\Demos\Language\utility"/>
+        <ExecMacro CmdLine="syn_set TST=%(UT)\test"/>
+    </Macro>
+    <Config Name="Debug">
+        <Menu>
+            <Target
+                Name="Compile"
+                MenuCaption="&amp;Compile"
+                ClearProcessBuffer="1"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll">
+                <Exec CmdLine="dbl -dXTo TST:%n TST:%n"/>
+            </Target>
+            <Target
+                Name="Build"
+                MenuCaption="&amp;Build"
+                ClearProcessBuffer="1"
+                CaptureOutputWith="ProcessBuffer">
+                <Exec CmdLine="dblink -do TST:%n TST:%n WND:tklib.elb DBLDIR:axlib.elb UT:utility.elb RPSLIB:ddlib.elb"/>
+            </Target>
+            <Target
+                Name="Rebuild"
+                MenuCaption="&amp;Rebuild"
+                ClearProcessBuffer="1"
+                ShowOnMenu="HideIfNoCmdLine"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll"
+                RunFromDir="%rw">
+                <Exec CmdLine=""/>
+            </Target>
+            <Target
+                Name="Debug"
+                MenuCaption="&amp;Debug">
+                <Exec CmdLine="dbr -d TST:%n"/>
+            </Target>
+            <Target
+                Name="Execute"
+                MenuCaption="E&amp;xecute">
+                <Exec CmdLine="dbr TST:%n"/>
+            </Target>
+            <Target
+                Name="Compile Scripts"
+                MenuCaption="Co&amp;mpile Scripts"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynCompileScripts"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Compile Scripts Setup"
+                MenuCaption="Compile Scripts Set&amp;up..."
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynSetupCompileScripts"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Generate Synergy Test Skeletons"
+                MenuCaption="Generate Synergy Test S&amp;keletons..."
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveCurrent"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynStartSkeletonGen"
+                    Type="Slick-C"/>
+            </Target>
+        </Menu>
+    </Config>
+    <Config Name="Release">
+        <Menu>
+            <Target
+                Name="Compile"
+                MenuCaption="&amp;Compile"
+                RunFromDir="%rw"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveCurrent">
+                <Exec CmdLine='%(DBLDIR)\bin\dbl %(SYN_DBG) -XT "%p%n%e"'/>
+            </Target>
+            <Target
+                Name="Build"
+                MenuCaption="&amp;Build"
+                RunFromDir="%rw"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveCurrent">
+                <Exec CmdLine="%(DBLDIR)\bin\dblink %n WND:tklib.elb DBLDIR:axlib.elb"/>
+            </Target>
+            <Target
+                Name="Rebuild"
+                MenuCaption="&amp;Rebuild"
+                ShowOnMenu="HideIfNoCmdLine"
+                RunFromDir="%rw">
+                <Exec CmdLine=""/>
+            </Target>
+            <Target
+                Name="Debug"
+                MenuCaption="&amp;Debug"
+                RunFromDir="%rw"
+                SaveOption="SaveCurrent">
+                <Exec CmdLine="%(DBLDIR)\bin\dbr -d %n"/>
+            </Target>
+            <Target
+                Name="Execute"
+                MenuCaption="E&amp;xecute"
+                RunFromDir="%rw"
+                SaveOption="SaveCurrent">
+                <Exec CmdLine="%(DBLDIR)\bin\dbr %n"/>
+            </Target>
+            <Target
+                Name="Compile Scripts"
+                MenuCaption="Co&amp;mpile Scripts"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynCompileScripts"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Compile Scripts Setup"
+                MenuCaption="Compile Scripts Set&amp;up..."
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveAll"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynSetupCompileScripts"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Generate Synergy Test Skeletons"
+                MenuCaption="Generate Synergy Test S&amp;keletons..."
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveCurrent"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynStartSkeletonGen"
+                    Type="Slick-C"/>
+            </Target>
+        </Menu>
+    </Config>
+    <Files>
+        <Folder
+            Name="Source Files"
+            Filters="*.dbl;*.tpl">
+            <F N="test_app_nosize.dbl"/>
+            <F N="test_button_anywhere.dbl"/>
+            <F N="test_clipboard.dbl"/>
+            <F N="test_container.dbl"/>
+            <F N="test_endecrypt.dbl"/>
+            <F N="test_field_in_set.dbl"/>
+            <F N="test_filetime.dbl"/>
+            <F N="test_for_each_field.dbl"/>
+            <F N="test_FormatDate.dbl"/>
+            <F N="test_FormatTime.dbl"/>
+            <F N="test_ftp.dbl"/>
+            <F N="test_get_precision.dbl"/>
+            <F N="test_gethandle.dbl"/>
+            <F N="test_guid.dbl"/>
+            <F N="test_mailit.dbl"/>
+            <F N="test_makname.dbl"/>
+            <F N="test_menu_check.dbl"/>
+            <F N="test_one_instance.dbl"/>
+            <F N="test_play_sound.dbl"/>
+            <F N="test_postxml.dbl"/>
+            <F N="test_print_api_wrappers.dbl"/>
+            <F N="test_print_window.dbl"/>
+            <F N="test_radio_horizontal.dbl"/>
+            <F N="test_registry.dbl"/>
+            <F N="test_resize_button.dbl"/>
+            <F N="test_rpsfile.dbl"/>
+            <F N="test_rpsxml.dbl"/>
+            <F N="test_set_syscolor.dbl"/>
+            <F N="test_unicode_string.dbl"/>
+            <F N="test_windir.dbl"/>
+            <F N="test_xceed_ftp.dbl"/>
+        </Folder>
+        <Folder
+            Name="Header Files"
+            Filters="*.def"/>
+        <Folder
+            Name="Toolkit Script Files"
+            Filters="*.wsc">
+            <F N="test_container.wsc"/>
+        </Folder>
+        <Folder
+            Name="Other Files"
+            Filters=""/>
+    </Files>
+</Project>

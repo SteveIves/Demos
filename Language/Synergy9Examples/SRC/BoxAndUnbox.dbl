@@ -1,0 +1,64 @@
+;==============================================================================
+;
+; Title:		BoxAndUnbox.dbl
+;
+; Description:	This program demonstrates how "value types" such as fields or
+;				records can be "boxed" into an object, and "unboxed" from the
+;				object to the original value type.  Boxing and unboxing of
+;				value types is a strategy which allows those types to be used
+;				with other features which only work with objects.  This example
+;				is only intended to show the fundamental techniques of boxing
+;				and unboxing.  For higher level examples of what you can do
+;				with boxed value types refer to CollectionOfRecords.dbl and
+;				CollectionOfStructs.dbl.
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+;==============================================================================
+;
+main BoxAndUnbox
+
+	record order_item		;This is just a regular record
+		product	,a10
+		qty		,d6
+		price	,d6.2
+	endrecord
+
+	record
+		boxed_item	,@a		;This field can reference a "boxed" alpha
+		ChanTt		,int	;Terminal channel
+	endrecord
+
+proc
+
+	open(ChanTt=syn_freechn(),i,"tt:")
+	
+	;Fill the record with some data
+	order_item.product = "CHEESE"
+	order_item.qty = 5
+	order_item.price = 5.99
+
+	;Display it
+	writes(ChanTt,"Before boxing:  " + order_item)
+
+	;Box the item into an object
+	boxed_item = (@a)order_item
+
+	;Display the data IN the boxed item.  Just to show that if you have a boxed
+	;object you don't HAVE to unbox it to a variable in order to access the
+	;boxed data.
+	writes(ChanTt,"While boxed:    " + (a)boxed_item)
+
+	;Clear the record to prove the data came from the boxed object
+	clear order_item
+	
+	;Get the data back from the boxed object
+	order_item = (a)boxed_item
+	
+	;And display it
+	writes(ChanTt,"After unboxing: " + order_item)
+	
+	close ChanTt
+	stop
+
+endmain

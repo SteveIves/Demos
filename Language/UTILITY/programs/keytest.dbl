@@ -1,0 +1,40 @@
+.main keytest
+
+record
+	chr		,d3
+	more	,d1
+	done	,d1
+	history	,a4
+
+.proc
+
+	open(1,i,'tt:')
+
+	xcall flags(87050020,1)
+
+	display(1,13,10,"Type EXIT when done",10)
+
+	do
+	begin
+		
+		display(1,13,10,'Press a key: ')
+
+		do
+		begin
+			accept(1,chr)
+			display(1,'<',^a(chr),'>')
+		
+			history(1:3) = history(2:3)
+			history(4:1) = %char(chr)
+			locase history
+			if (history.eq.'exit')
+				done=1
+		end
+		until (.not.%ttsts .or. done)
+
+	end
+	until (done)
+
+	stop
+
+.end

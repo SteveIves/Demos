@@ -1,0 +1,100 @@
+.function resize_button	,^val, reentrant
+;
+; Description:  Function to move and/or resize a button, and/or change caption
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the containing window
+
+	a_caption	,a	;Present caption (must be exact!)
+
+	a_x		,n	;(Optional) New left position in pixels
+	a_y		,n	;	and new top position in pixels
+
+	a_cx		,n	;(Optional) New width in pixels
+	a_cy		,n	;	and new height in pixels
+
+	a_newcaption	,a	;(Optional) New caption
+;
+; Return value:  TRUE if successful, FALSE if the button was not found
+;
+; Warning:	Because this function makes some presumptions about buttons
+;		in a Synergy window, it cannot be guaranteed to work in
+;		future versions.  Specifically, we presume that the class of
+;		the window is "BUTTON", and that the caption (window text)
+;		reflects the caption displayed.
+;
+;		Furthermore, we cannot guarantee that after you move or size
+;		the window that Synergy will not move it back, especially when
+;		resizing the containing window (or changing the font).  Thus,
+;		if the window is resizable by the user, you may need to move
+;		the button again in response to the window's size event.
+;
+; Note:		Coordinates are specified in pixels.  See the %ap_misc
+;		subfunctions MSC_ROWHEIGHT and MSC_CHARWIDTH for conversions
+;		from rows/columns to pixels.  Be warned, however, that changes
+;		to the containing window's font will affect these metrics.
+;
+
+.include "DBLDIR:windows.def"
+.include "DBLDIR:apmisc.def"
+
+.define TRUE			1
+.define FALSE			0
+
+.define SWP_NOSIZE	  	1	;From winuser.h
+.define SWP_NOMOVE	  	2
+.define SWP_NOZORDER	4
+;
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	hwnd		,i4	;Handle to the window of the button
+	flags		,i4	;Flags for SetWindowPos
+	x		,i4	;X position
+	y		,i4	;Y position
+	cx		,i4	;Width
+	cy		,i4	;Height
+	rv		,i4	;Return value
+
+.proc
+	rv = FALSE		;Assume guilty until proven innocent
+	user32 = %dll_open("user32")	;Open user32.dll
+				;Find the first window of class "BUTTON"
+				; in the containing window
+	if (hwnd = %dll_call(user32,DLL_TYPE_WINAPI,"FindWindowExA",
+	&   %w_info(WIF_HWND, a_wndid), %integer(0), "BUTTON", a_caption))
+	  begin
+	    flags = SWP_NOZORDER	;Don't change Z-order
+	    if (^passed(a_x) .and. ^passed(a_y)) then	
+	      begin
+		x = a_x		;Change position
+		y = a_y
+	      end
+	    else
+	      begin
+		clear x, y	;Don't change position
+		flags = flags .bor. SWP_NOMOVE
+	      end
+	    if (^passed(a_cx) .and. ^passed(a_cy)) then
+	      begin
+		cx = a_cx	;Change size
+		cy = a_cy
+	      end
+	    else
+	      begin
+		clear cx, cy	;Don't change size
+		flags = flags .bor. SWP_NOSIZE
+	      end
+		    		;Set the new position/size of the window
+	    xcall dll_call(user32,DLL_TYPE_WINAPI,"SetWindowPos", hwnd, %integer(0),
+	    &		   x, y, cx, cy, flags)
+	    if (^passed(a_newcaption))	;Set any new caption
+	      xcall dll_call(user32,DLL_TYPE_WINAPI,"SetWindowTextA", hwnd, a_newcaption)
+	    rv = TRUE		;Success!
+	  end
+
+	xcall dll_close(user32)	;Dereference the DLL
+
+	freturn rv
+.end

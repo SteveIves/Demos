@@ -1,0 +1,57 @@
+.function get_precision, ^val
+;
+; Description:  Return the precision of an argument
+;
+; Arguments:
+;
+	^val(dscaddr)	,i	; Address of the descriptor of the value
+;
+; Return value:  The number of decimal places (precision) of the value
+;
+; Notes:
+;
+;	Simply pass an argument to this routine using the normal calling
+;	convention (by descriptor).  Because we declare the argument here
+;	as ^val, we actually address the descriptor rather than the data.
+;	Since the descriptor format is published (for the Synergy C interface),
+;	we can know how to interpret this information.
+;
+.align
+stack record
+	hnd			,i4			;Handle registered to descriptor address
+
+.ifdef OS_VMS						;VMS has a native descriptor format
+structure s_descr
+	len		,i2				;Length of the field
+	dtype		,i1				;data type of the field
+	class		,i1				;data type class of the field
+	addr		,D_ADDR				;address of data
+	scale		,i1				;scaling factor (negative number of decimals)
+	digits		,i1				;fractional precision
+	flags		,i1				;flags
+	dimct		,i1				;number of dimensions
+.else
+structure s_descr					;Synergy descriptor format
+	len		,i (D_ADDRSIZE / 2) 		;length of the field
+	ctl		,i (D_ADDRSIZE / 2) 		;control flags
+	addr		,D_ADDR				;address of the data
+
+.if D_ADDRSIZE .eq. 8					;64 bit systems
+.define D_PRECMASK	^x(FF)				;use lower 8 bits of ctl
+.else							;otherwise
+.define D_PRECMASK  	^x(0F)				;use lower 4 bits of ctl
+.endc
+
+.endc
+
+.proc
+	; Transform descriptor address into a handle (will be released on exit)
+	hnd = %mem_proc(DM_REG,^size(s_descr),dscaddr)
+.ifdef OS_VMS
+	; return negative scale
+	freturn (- ^m(s_descr.scale,hnd))
+.else
+	; return lower bits of ctl
+	freturn (^m(s_descr.ctl,hnd) .band. D_PRECMASK)
+.endc
+.end

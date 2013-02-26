@@ -1,0 +1,99 @@
+.function EnDeCrypt	,reentrant ;,a
+   ;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   ;:::  This routine does all the work. Call it both to ENcrypt    :::
+   ;:::  and to DEcrypt your data.                                  :::
+   ;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	;
+	; Arguments:
+	;
+	a_plaintxt	,a	;{In, req} text to encrypt/decrypt
+
+	a_psw		,a	;{In, req} password
+	;
+	; Return value:	Encrypted or Decrypted text
+	;
+.ifndef M_MOD
+;MOD function (not provided by Synergy/DE)
+.define M_MOD(val,mod)	((val) - (((val) / (mod)) * (mod)))
+.endc
+
+;Type definition for a temporary string buffer
+.define D_TEMPSTRING	,D_ADDR
+;Macro to allocate a temporary string that will be released on exit
+.define M_TEMPSTRING(len) %mem_proc(DM_ALLOC, len)
+;Macro to access a character within a temporary string
+.define M_CHAR(str,ndx) ^m(s[ndx].alph,str)
+
+.align
+stack record
+	cipher		,D_TEMPSTRING		;Temporary output buffer
+	a			,D_NATINT			;Ambiguously named counters
+	b			,D_NATINT			; and indices
+	i			,D_NATINT
+	j			,D_NATINT
+	k			,D_NATINT
+	ndx			,D_NATINT
+	ndx2		,D_NATINT
+	ilen		,D_NATINT			;Length of the string/password
+	sbox		,[256] D_NATINT		;Encryption array
+	key			,[256] D_NATINT		;Numeric key values
+	tempSwap	,D_NATINT			;A temporary place to swap a number
+	cipherby	,D_NATINT			;Numeric value of an converted byte
+
+structure s
+	alph		,a1
+
+.proc
+	
+	clear i, j						;These must start at 0
+
+	call RC4Initialize				;Setup the key and sbox arrays
+
+	ilen = ^size(a_plaintxt)		;Length of incoming text
+	cipher = M_TEMPSTRING(ilen)		;Allocate temporary buffer
+
+	for a from 1 thru ilen			;For each incoming character
+	begin
+	    i = M_MOD((i + 1), 256)		;Here's the magic part
+	    ndx = i + 1					;Synergy/DE arrays start at element 1
+	    j = M_MOD((j + sbox[ndx]), 256)
+	    ndx2 = j + 1
+	    tempSwap = sbox[ndx]
+	    sbox[ndx] = sbox[ndx2]
+	    sbox[ndx2] = tempSwap
+
+		k = sbox[M_MOD(sbox[ndx] + sbox[ndx2], 256) + 1]
+									;All to get to an XOR mask
+	    cipherby = %decml(a_plaintxt(a:1)) .bxor. k
+	    M_CHAR(cipher,a) = %char(cipherby)	;Store the output character
+	end
+
+	freturn ^m(cipher)
+
+;Initialize the sbox and key arrays.
+RC4Initialize,
+	ilen = ^size(a_psw)
+	clear ndx
+	;Store the key as a numeric array, repeating as needed to 256 elements
+	for a from 0 thru 255
+	begin
+	    incr ndx
+	    key[ndx] = %decml(a_psw(M_MOD(a, ilen) + 1:1))
+	    sbox[ndx] = a
+	end
+
+	;More magic
+	clear b
+	for a from 1 thru 256
+	begin
+	    b = M_MOD((b + sbox[a] + key[a]), 256)
+	    tempSwap = sbox[a]
+	    ndx = b + 1
+	    sbox[a] = sbox[ndx]
+	    sbox[ndx] = tempswap
+	end
+	
+	return
+
+.end
+

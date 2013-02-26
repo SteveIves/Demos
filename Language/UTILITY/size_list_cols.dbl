@@ -1,0 +1,165 @@
+.subroutine size_list_cols  ;routine to proportionally size columns within a list
+    a_listid,       n   ;passed list id
+    a_wid,          n   ;optional window width
+    a_set,          a   ;optional set name
+    group a_columns,    a;optional list fixed sizes
+        col_width,      [50]i4
+    endgroup
+
+.include 'WND:system.def'
+.include 'DBLDIR:activex.def'
+.include 'WND:windows.def'
+.include 'WND:tools.def'
+.include 'WND:lstprv.def'
+.include 'DBLDIR:apmisc.def'
+.include 'WND:setinf.def'
+.include 'WND:fldinf.def'
+
+
+
+.align
+stack record ivar
+    container_id,   i4  ;id of the container window
+    window_width,   i4  ;width of window in pixcels
+    char_width,     i4  ;average character width in pixcels
+    vbar_width,     i4
+
+    num_flds,       i4  ;number of fields
+    col_size,       i4  ;size_of the column
+    done_width,     i4  ;width so far done
+    loop,           i4  ;loop counter
+    total,          i4  ;total character width of list fields
+
+    set_num,        i4  ;required set name
+
+    fld_widths,     [253]i4 ;field widths
+
+    group rectangle
+        left  ,i4
+        top   ,i4
+        right ,i4
+        bottom,i4
+    endgroup
+
+stack record
+    fld_name,   a30
+    set_name,   a30
+
+
+.proc
+
+    clear ^i(ivar)
+    ;first get the width of the container window
+
+    xcall lp_setup(a_listid)
+    if glst_axcolsiz xreturn    ;not allowed when user has changed the column width
+
+    if (%passed(a_columns))
+    begin
+        if col_width[1]
+        begin
+            call fixed_col_size
+            xreturn
+        end
+    end
+
+    if (%w_info(WIF_COLS, glst_inpid).gt.%w_info(WIF_DCOLSIZ, glst_inpid))
+    begin
+        ;display area being used - no column resize
+        xreturn
+    end
+
+
+    if %passed(a_wid)
+    then
+    begin
+        left=0
+        right=a_wid
+    end
+    else
+        window_width = %ap_misc(MSC_WINDOW_RECT, %w_info(WIF_HWND, glst_inpid), rectangle)
+
+    ;work out number of columns, and size of each column
+
+    right -=2
+
+    if ^passed(a_set)                           ; if set name passed
+    then
+    begin
+        set_name = a_set                        ; use it
+        clear set_num                       ; and make set number zero
+        xcall i_setinf(glst_inpid, set_name, set_num,, gs_fldset)
+    end
+    else
+    begin
+        clear set_name                          ; otherwise, find all fields
+        gs_setcnt = 999                         ; MAX it!
+    end
+
+
+    for loop from 1 thru gs_setcnt
+    begin
+        ;get the size of each field!
+        clear fld_name
+        xcall i_fldinf(glst_inpid, fld_name, loop,, gs_inpfld)
+        if fld_name.eq.'   ' exitloop   ;done them all
+
+        fld_widths[loop] = gs_maxsiz
+
+        if gs_fmtlen.gt.gs_maxsiz
+            fld_widths[loop] = gs_fmtlen
+
+        if gs_selid ;we have a selection window!
+        begin
+            ;test the size of the window
+            if %w_info(WIF_COLS, gs_selid).gt.fld_widths[loop]
+                fld_widths[loop] = %w_info(WIF_COLS, gs_selid)
+        end
+
+        total += fld_widths[loop]
+
+    end
+
+    gs_setcnt = loop-1  ;only process the number of fields we have!
+
+    if glst_last.gt.glst_nmln
+    then
+        vbar_width = %ap_misc(MSC_VSCROLL_X)
+    else
+        vbar_width = %ap_misc(MSC_VSCROLL_X);2
+
+    ;number of pixcels for each character
+    char_width = ((right - left - vbar_width) / total)
+
+    ;now resize each list column
+
+    for loop from 1 thru gs_setcnt
+    begin
+        col_size = fld_widths[loop] * char_width
+
+        if col_size.lt.(4 * char_width) col_size = 4 * char_width
+
+        if loop.eq.gs_setcnt
+        begin
+            ;last field, so we may need to add a couple of pixs!
+            col_size = ((right - left - vbar_width) - done_width )
+        end
+        xcall ax_call(glst_axctrl, 'SetColumnWidth', loop, col_size)
+        done_width += col_size
+
+    end
+
+    xreturn
+
+fixed_col_size,
+
+    for loop from 1 thru 50
+    begin
+        if .not.col_width[loop] exitloop
+        xcall ax_call(glst_axctrl, 'SetColumnWidth', loop, col_width[loop])
+    end
+
+    return
+
+.end
+

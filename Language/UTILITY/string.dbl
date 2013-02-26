@@ -1,0 +1,249 @@
+;*******************************************************************************
+;  Copyright 1995 by Synergex International Corporation                 ;
+;									;
+;	Synergex provides this software under a license and may only be	;
+;	used in accordance with the terms and conditions of such	;
+;	license and with the inclusion of the above Copyright notice.	;
+;=======================================================================;
+;
+; Source:	dte_btrim.dbl
+;
+; Function:	Strip beginning spaces from a string
+;
+; Environment:	Synergy Development Environment, v5.7+
+;
+; $Author:   johnr  $
+;
+; $Date:   16 Jan 1997 13:52:12  $  $Revision:   1.0  $
+;      
+
+.function Btrim ;,a
+
+; arguement
+	a_string	,a
+
+; Notes:
+;	This function will take an alpha string and strip all leading
+;	blanks from it and return that string.
+
+.align
+record	
+	string_len 	,i4
+	result		,a256
+
+.proc
+	result = ""
+	if ( ^passed(a_string) )
+	   begin
+	      result = a_string
+	      repeat
+		 begin
+		    string_len = %trim(result)
+		    if (result(1:1) .ne. ' ') 
+		       exitloop
+		    result(1:string_len) = result(2:string_len - 1)
+		    result(string_len:1) = ' '
+		 end
+	   end
+	
+	freturn(result)
+
+.end
+
+;*******************************************************************************
+;
+;Routine:		strip
+;
+;Author:		Steve Ives (Synergex Professional Services Group)
+;
+;Platforms:		All Synergy-supported platforms
+;
+;Requirements:	No version restrictions
+;
+;Revisions:		Version	Date			Comment
+;				1.0		24 Jan 2003		Original version
+;
+;Disclaimer:	This code is supplied as seen and without warranty or support.
+;				You may use and redistribute this code as you wish, but doing
+;				so is entirely your own risk. Neither the author or Synergex
+;				accept responsability for any loss or damage which may result
+;				from the use of this code.
+;
+;This routine strips leading and trailing spaces from a string
+;
+.function Strip ;,a
+
+	a_string	,a
+
+.align
+stack record	
+	left		,i4
+	right		,i4
+
+.proc
+
+	if a_string then
+	begin
+		
+		right = %trim(a_string)
+		for left from 1 thru right
+			if a_string(left:1).ne." "
+				exitloop
+		freturn a_string(left,right)
+	
+	end
+	else
+		freturn ""
+
+.end
+
+;*******************************************************************************
+;
+;Converts a DBL string to a null-terminated unicode string
+;
+.function DblToUnicode    ;,a     
+
+	a_dblstr	,a		;Incoming DBL string
+
+.align
+stack record
+	ix			,i4
+	dbllen		,i4
+	unilen		,i4
+	unicode		,i4		;Handle to memory for unicode string
+
+structure st_unicode	;Structure for a unicode character
+	char		,i2		;16-bit
+
+.proc
+	
+	dbllen = ^size(a_dblstr)
+	unilen = (dbllen * 2) + 2	;Allow for double null-termination
+	unicode = %mem_proc(DM_ALLOC, unilen)
+	
+	for ix from 1 thru dbllen	;Copy the character values
+		^m(st_unicode[ix].char,unicode) = %decml(a_dblstr(ix:1))
+	
+	clear ^m(st_unicode[ix].char,unicode)	;Null-terminate
+
+	freturn ^m(unicode)
+
+.end
+
+;*******************************************************************************
+;
+;Converts a UNICODE string to a DBL string
+;
+.function UnicodeToDbl     ;,a     
+
+	a_unicode_string	,a      ;Incoming null-terminated unicode-string
+
+.align
+stack record
+	ix			,i4
+	dbllen		,i4
+	dbl			,i4
+
+structure st_unicode			;Structure for a unicode character
+	char		,i2				;16-bit
+
+structure st_dbl		;Structure for dbl string
+	char		,i1
+
+.proc
+	;Use a for loop here instead of %instr for %char(0)+%char(0), because
+	; %instr will not insure that the double-null is 16-bit aligned.
+	; In other words, the nulls could each be from halves of a single
+	; unicode character.
+	;
+	for dbllen from 1 thru (^size(a_unicode_string) / 2)
+	  if (.not. ^m(st_unicode[dbllen].char,a_unicode_string))
+	    exitloop		;Look for double-null termination
+
+	decr dbllen		;Exclude terminator
+	if (dbllen .lt. 1)	;Null-length string?
+	  freturn ""
+
+	dbl = %mem_proc(DM_ALLOC, dbllen)
+	for ix from 1 thru dbllen	;Copy each character, truncating high order bits
+	  ^m(st_dbl[ix].char,dbl) = (^m(st_unicode[ix].char,a_unicode_string) .band. ^x(FF))
+        freturn ^m(dbl)
+.end
+
+;*******************************************************************************
+;
+;Converts an A6 RFA to an A12 hex string
+;
+.function RfaToHex ;,a
+
+	a_rfa		,a		; incoming RFA
+
+.align
+record rfa
+	rfa_i		,[6]i1		; rfa
+.align
+record hex
+	pr		,[6]a2		; hex pairs
+.align
+record
+	ctr		,i4
+	dval		,d3
+.proc
+	rfa = a_rfa
+	for ctr from 1 thru 6
+		hex.pr[ctr] = %hex(^i(rfa_i[ctr]), 1)
+	freturn hex
+.end
+
+;*******************************************************************************
+;
+;Converts an A12 hex string to an A6 RFA
+;
+.function HexToRfa ;,a
+	
+	a_hex		,a		; incoming hex
+
+.align
+record rfa
+	rfa_i		,[6]i1		; rfa
+.align
+record hex
+	pr		,[6]a2		; hex pairs
+.align
+record
+	ctr		,i4
+	dval		,d3
+.proc
+	hex = a_hex
+	for ctr from 1 thru 6
+		^i(rfa_i[ctr]) = ^x(hex.pr[ctr])
+	freturn rfa
+.end
+
+;*******************************************************************************
+;
+; Remove leading zeros or spaces
+;
+.function remove_leading, stack ;,a
+    
+	a_string            ,a
+
+.align
+record
+    idx         ,i4
+    string      ,a1024
+
+.proc
+    string = a_string
+    for idx from 1 thru ^size(a_string)-1                 ;leave at least one zero
+        begin
+        if (string(1:1) .eq. '0' .or. string(1:1) .eq. ' ')
+        then
+            string = string(2:^size(a_string))
+        else
+            exitloop
+        end
+    freturn (%atrim(string))
+.end
+
+

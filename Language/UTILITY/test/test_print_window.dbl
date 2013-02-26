@@ -1,0 +1,35 @@
+.main test_print_window
+
+.include "WND:windows.def"
+
+record
+	winid		,i4
+	rows		,i4		,22
+	cols		,i4		,78
+	count		,i4
+	text		,a80	,"12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+
+.proc
+
+	open(1,i,'tt:')
+	xcall w_init(1,1,1)
+
+	xcall w_proc(WP_CREATE,winid,"WND1",rows,cols,WP_PLACE,winid,1,1)
+;	xcall w_brdr(winid,WB_OFF)
+	xcall w_brdr(winid,WB_TITLE,"This is my window")
+	for count from 1 thru rows
+		xcall w_disp(winid,WD_POS,count,1,text(1:cols))
+	xcall w_updt
+	sleep 2
+
+	xcall print_window(winid,1,1)
+
+	xcall w_proc(WP_DELETE,winid)
+
+	xcall w_exit
+	close 1
+	stop
+
+.end
+
+

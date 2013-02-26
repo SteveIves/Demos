@@ -1,0 +1,61 @@
+;****************************************************************************
+;
+; Title:		WinBeep.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			12th January 1999
+;
+; Description:	Beep!
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.subroutine WinBeep
+
+;Argument list
+
+	a_duration		,n
+	a_frequency		,n
+
+;End of argument list
+
+.align LONG
+stack record
+	handle			,i4
+	return_val 		,i4
+	duration 		,i4		;Duration in milliseconds
+	frequency 		,i4		;Frequency in Hertz
+
+.proc
+
+	if ^passed(a_duration) then
+		duration = a_duration
+	else
+		duration = 10
+
+	if ^passed(a_frequency) then
+		frequency = a_frequency
+	else
+		frequency = 1000
+
+	onerror ($ERR_DLLOPNERR) NotFound
+	
+	handle = %dll_open("kernel32.dll")
+	return_val = %dll_call(handle,DLL_TYPE_WINAPI,"Beep", frequency, duration)
+	xcall dll_close(handle)
+
+NotFound,
+	
+	xreturn
+
+.end
+

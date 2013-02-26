@@ -1,0 +1,496 @@
+.main xceed_ftp_test
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+
+.align
+record
+	lstid		,i4
+	inpid		,i4
+	clsid		,i4
+	bldid		,i4
+	conid		,i4
+	xfrid		,i4
+	req			,i4
+	wndevt		,i4
+	connected	,i4
+	mh1			,i4
+	ms1			,i4
+	count		,i4
+	msg			,a74
+	ldata		,a74
+	mask		,a40
+	chr			,a1
+
+record	server
+	address		,a40 ,"LOCALHOST"
+	username	,a20 ,"anonymous"
+	password	,a20
+
+record	transfer
+	localfile	,a40
+	remotefile	,a40
+
+.define FTP_FILE1	"testfile.exe"
+.define FTP_FILE2	"testfile1.exe"
+	
+structure str1
+	name		,a80
+	date		,a20
+	size		,i4
+	type		,i2
+
+
+.proc
+
+	call startup
+
+	req=D_LNOP
+	repeat
+	begin
+		xcall l_select(lstid,req,ldata)
+		if (g_select)
+		begin
+			using g_entnam select
+			("CONNECT"),
+				call connect
+			("DISCONNECT"),	
+				call disconnect
+			("LIST"),
+				call list
+			("SEND"),
+				call send
+			("RECEIVE"),
+				call receive
+			("CLEAR"),
+				xcall l_restart(lstid)
+			("CANCEL"),
+			begin
+				if (connected)
+				begin
+                                        call disconnect
+					xcall l_buttonstate(lstid,"CONNECT",D_DISABLED)
+					xcall u_update
+					sleep 2
+				end
+				exitloop
+			end
+			endusing
+		end
+	end
+
+	call shutdown
+	
+	stop
+
+;------------------------------------------------------------------------------
+;
+connect,
+
+	xcall i_init(conid)
+	xcall u_window(D_PLACE,conid,4,10)
+
+	xcall i_display(conid,,server)
+	xcall i_next(conid,,"*FRST*")
+	xcall i_init(conid,,,"PASSWORD")
+
+	repeat
+	begin
+		xcall i_input(conid,,server,,,,D_NOTERM)
+
+		if (g_setsts) then
+		begin
+			using g_entnam select
+			("CANCEL"),
+				exitloop
+			endusing
+		end
+		else
+		begin
+			call do_connect
+			exitloop
+		end
+	end
+
+	xcall u_window(D_REMOVE,conid)
+	
+	return
+
+do_connect,
+	
+	xcall u_window(D_REMOVE,conid)
+	xcall u_update
+
+	msg="Starting FTP session"
+	call log_action
+
+	if %FtpStart(msg) then
+	begin
+		call log_response
+
+		xcall s_bld(msg,,"Connecting to %a as %a",
+		&	    server.address,server.username)
+		call log_action
+
+		if %FtpConnect(server.address,server.username,server.password,msg) then
+		begin
+			call log_response
+			connected=TRUE
+			xcall l_buttonstate(lstid,"CONNECT",D_DISABLED)
+			xcall l_buttonstate(lstid,"LIST",D_ENABLED)
+			xcall l_buttonstate(lstid,"DISCONNECT",D_ENABLED)
+			xcall l_buttonstate(lstid,"SEND",D_ENABLED)
+			xcall l_buttonstate(lstid,"RECEIVE",D_ENABLED)
+			xcall e_sect("Server: " + %atrim(server.address) + " |Username: " + %atrim(server.username) + "|",D_INFO,D_LEFT,D_CLEAR)
+		end
+		else
+		begin
+			call log_response
+			
+			msg="Ending FTP session"
+			call log_action
+			
+			xcall FtpEnd(msg)
+			call log_response
+		end
+	end
+	else
+		call log_response
+
+	return
+
+;------------------------------------------------------------------------------
+;
+disconnect,
+
+	msg="Disconnecting from FTP server"
+	call log_action
+	
+	xcall FtpDisconnect(msg)
+	call log_response
+	
+	connected=FALSE
+
+	msg="Ending FTP session"
+	call log_action
+	
+	xcall FtpEnd(msg)
+	call log_response
+
+	xcall l_buttonstate(lstid,"CONNECT",D_ENABLED)
+	xcall l_buttonstate(lstid,"DISCONNECT",D_DISABLED)
+	xcall l_buttonstate(lstid,"LIST",D_DISABLED)
+	xcall l_buttonstate(lstid,"SEND",D_DISABLED)
+	xcall l_buttonstate(lstid,"RECEIVE",D_DISABLED)
+
+	xcall e_sect("Server: <none> |Username: <none> |",D_INFO,D_LEFT,D_CLEAR)
+	
+	return
+
+;------------------------------------------------------------------------------
+;
+send,
+
+	xcall e_enter
+
+	xcall i_init(xfrid,,transfer)
+	xcall u_window(D_PLACE,xfrid,7,10)
+
+	repeat
+	begin
+		xcall i_input(xfrid,,transfer,,,,D_NOTERM)
+
+		if (g_setsts) then
+		begin
+			using g_entnam select
+			("CANCEL"),
+				exitloop
+			endusing
+		end
+		else
+		begin
+			xcall u_window(D_REMOVE,xfrid)
+			msg="Sending file " + %atrim(localfile)
+			call log_action
+
+			xcall FtpSendFile(localfile,remotefile,msg,1,1)
+			call log_response
+
+			exitloop
+		end
+	end
+
+	xcall e_exit
+
+	return
+
+;------------------------------------------------------------------------------
+;
+receive,
+
+
+	msg="Receiving file"
+	call log_action
+	
+	xcall FtpReceiveFile(FTP_FILE1,FTP_FILE2,msg,1,1)
+	call log_response
+	
+	return
+
+;------------------------------------------------------------------------------
+;
+list,
+
+	msg="Requesting directory listing"
+	call log_action
+
+	if %FtpListFolderContents(mh1,ms1,mask="*.*",msg) then
+	begin
+		if (mh1)
+		begin
+			if (ms1) then
+			begin
+				for count from 1 thru ms1
+					xcall u_message(^m(str1[count],mh1))
+			end
+			else
+				mh1=%mem_proc(DM_FREE, mh1)
+		end
+	end
+	else
+		call log_response
+
+	return
+
+;------------------------------------------------------------------------------
+;
+log_action,
+	
+	xcall l_process(lstid,req=D_LAPPEND,ldata)
+	ldata="  Action: " + msg
+	xcall l_process(lstid,req=D_LNOP,ldata)
+	xcall i_display(inpid,,ldata)
+
+	return
+	
+;------------------------------------------------------------------------------
+;
+log_response,
+	xcall l_process(lstid,req=D_LAPPEND,ldata)
+	ldata="Response: " + msg
+	xcall l_process(lstid,req=D_LNOP,ldata)
+	xcall i_display(inpid,,ldata)
+
+	return
+
+;------------------------------------------------------------------------------
+;
+startup,
+
+	xcall u_start
+
+	xcall e_state(D_OFF,D_INTR,D_RETURNBTN)
+	xcall e_sect("Xceed FTP API Test Program",D_HEADER)
+	xcall e_sect("Server: <none> |Username: <none> |",D_INFO,D_LEFT,D_CLEAR)
+	
+	wndevt=%u_wndevents(D_CREATE,,D_EVENT_CLOSE,"CloseBox")
+
+	;Build input window for connection parameters
+	xcall ib_input(bldid,"CONWND",7,60)
+	xcall ib_field(bldid,"ADDRESS",
+	&	       	D_FLD_TYPE,	D_ALPHA,
+	&	       	D_FLD_SIZE,	40,
+	&			D_FLD_POS,	2,2,
+	&	       	D_FLD_FPOS,	2,12,
+	&			D_FLD_PROMPT,	"Server",
+	&			D_FLD_REQUIRED)
+	xcall ib_field(bldid,"USERNAME",
+	&	       	D_FLD_TYPE,	D_ALPHA,
+	&	       	D_FLD_SIZE,	20,
+	&	       	D_FLD_POS,	4,2,
+	&			D_FLD_FPOS,	4,12,
+	&			D_FLD_PROMPT,	"Username",
+	&			D_FLD_REQUIRED)
+	xcall ib_field(bldid,"PASSWORD",
+	&	       	D_FLD_TYPE,	D_ALPHA,
+	&	       	D_FLD_SIZE,	20,
+	&	       	D_FLD_POS,	6,2,
+	&			D_FLD_FPOS,	6,12,
+	&			D_FLD_PROMPT,	"Password",
+	&			D_FLD_NOECHO,
+	&			D_FLD_NOECHR,	"*")
+	xcall ib_button(bldid,"I_OK",DSB_TEXT,"OK",,,"O")
+	xcall ib_button(bldid,"CANCEL",DSB_TEXT,"Cancel",,,"C")
+	xcall ib_buttonset(bldid,DSB_BOTTOM,,DSB_END)
+	xcall ib_end(bldid,conid)
+	xcall u_wndevents(D_ASSIGN,wndevt,conid)
+	xcall w_brdr(conid,WB_TITLE,"Connect to FTP Server")
+
+	;Build input window for file transfer
+	xcall ib_input(bldid,"XFRWND",5,60)
+	xcall ib_field(bldid,"LOCALFILE",
+	&	       	D_FLD_TYPE,	D_ALPHA,
+	&	       	D_FLD_SIZE,	40,
+	&               D_FLD_POS,	2,2,
+	&	       	D_FLD_FPOS,	2,14,
+	&               D_FLD_PROMPT,	"Local File",
+	&               D_FLD_REQUIRED,
+	&               D_FLD_DRILL,	"DrillFile",
+	&               D_FLD_CHANGE,	"ChangeLocalFile")
+	xcall ib_field(bldid,"REMOTEFILE",
+	&	       	D_FLD_TYPE,	D_ALPHA,
+	&	       	D_FLD_SIZE,	40,
+	&	       	D_FLD_POS,	4,2,
+	&               D_FLD_FPOS,	4,14,
+	&               D_FLD_PROMPT,	"Remote File",
+	&               D_FLD_REQUIRED)
+	xcall ib_button(bldid,"I_OK",DSB_TEXT,"OK",,,"O")
+	xcall ib_button(bldid,"CANCEL",DSB_TEXT,"Cancel",,,"C")
+	xcall ib_buttonset(bldid,DSB_BOTTOM,,DSB_END)
+	xcall ib_end(bldid,xfrid)
+	xcall u_wndevents(D_ASSIGN,wndevt,xfrid)
+	xcall w_brdr(xfrid,WB_TITLE,"File Transfer")
+
+	;Build input window for the log list
+	xcall ib_input(bldid,"LOGWND",1,76)
+	xcall ib_field(bldid,"MSG",D_FLD_TYPE,D_ALPHA,D_FLD_SIZE,74,D_FLD_FPOS,1,2)
+	xcall ib_end(bldid,inpid)
+
+	;Build log list
+	xcall l_class(clsid,"CLASS1",1,1,21,,,,,,,"LoadMethod")
+	xcall l_create(lstid,inpid,ldata,,"CLASS1")
+	xcall l_method(lstid,D_LWNDEVENT,wndevt)
+
+	xcall l_sect(lstid,"Activity Log",D_TITLE)
+
+	xcall l_button(lstid,"CONNECT",DSB_TEXT,"Connect",,,"C")
+	xcall l_button(lstid,"DISCONNECT",DSB_TEXT,"Discon.",,,"D")
+	xcall l_button(lstid,"LIST",DSB_TEXT,"List",,,"T")
+	xcall l_button(lstid,"SEND",DSB_TEXT,"Send",,,"S")
+	xcall l_button(lstid,"RECEIVE",DSB_TEXT,"Receive",,,"R")
+	xcall l_button(lstid,"CLEAR",DSB_TEXT,"Clr Log",,,"L")
+	xcall l_button(lstid,"CANCEL",DSB_TEXT,"Exit",,,"X")
+	xcall l_buttonset(lstid,DSB_BOTTOM,,DSB_END)
+	
+	xcall l_buttonstate(lstid,"DISCONNECT",D_DISABLED)
+	xcall l_buttonstate(lstid,"SEND",D_DISABLED)
+	xcall l_buttonstate(lstid,"RECEIVE",D_DISABLED)
+
+	return
+
+;------------------------------------------------------------------------------
+;
+shutdown,
+
+	xcall l_delete(lstid)
+	xcall u_finish
+
+	return
+
+.end
+
+;------------------------------------------------------------------------------
+;
+.subroutine LoadMethod
+
+    ;Argument list
+    a_listid		,n
+    a_request		,n
+    a_data		,a
+    a_inpid		,n
+    a_disabled		,n
+    a_itemindex		,n
+
+;end of argument list
+
+.include "WND:tools.def"
+
+.proc
+	a_request=D_LEOF
+	xreturn
+.end
+
+;------------------------------------------------------------------------------
+;
+.subroutine CloseBox
+.proc
+	xcall m_signal("CANCEL")
+	xreturn
+.end
+
+;------------------------------------------------------------------------------
+
+.subroutine DrillFile
+
+    ;Argument list
+    .include "WND:inpinf.def"
+    a_inprec		,a
+    ;End of argument list
+
+.include "WND:tools.def"
+
+stack record
+	filename	,a40
+
+.proc
+
+	if (%u_getfilename(filename,"Select File"))
+		xcall i_force(filename)
+
+	xreturn
+
+.end
+
+;------------------------------------------------------------------------------
+
+.function ChangeLocalFile ,^VAL
+
+    ;Argument list
+    a_data_entered	,a
+    a_data_stored	,a
+    a_pending_status	,n
+    .include "WND:inpinf.def"
+    group a_inprec	,a
+	localfile	,a40
+	remotefile	,a40
+    endgroup
+    ;End of argument list
+
+.include "WND:tools.def"
+
+.align
+stack record
+	idf_temp	,i4
+	error		,i4
+	status		,i4
+	pos		,i4
+	len		,i4
+
+.proc
+
+	xcall u_open(idf_temp,"i:s",a_data_entered,,,error)
+
+	if (error) then
+	begin
+		xcall u_message("File not found!")
+		status=D_EMITTEDERR
+	end
+	else
+	begin
+		xcall u_close(idf_temp)
+		status=D_OK
+
+		;Provide a default name for the remote file
+		len=%trim(a_data_entered)
+		pos=%rvstr(1,a_data_entered,"\")
+		if (pos)
+		begin
+			remotefile=a_data_entered(pos+1,len)
+			xcall i_display(inp_wndid,,a_inprec,"REMOTEFILE")
+		end
+	end
+
+	freturn status
+
+.end
+

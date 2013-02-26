@@ -1,0 +1,100 @@
+;****************************************************************************
+;
+; Title:	WinTempFile.dbl
+;
+; Author:	Steve Ives (Synergex Professional Services Group)
+;
+; Date:		8th June 1999
+;
+; Description:	Creates and returns the name of a temporary file.
+;
+;		The filename will be of the form:
+;
+;			path\preuuuu.TMP
+;
+;		The following table describes the filename syntax:
+;
+;		Component	Meaning
+;		---------	------- 
+;		path		Path specified by the a_path argument, or
+;				current directory if a_path is not passed.
+;
+;		pre		First three letters of the a_prefix argument,
+;				or TMP if a_prefix is not passed
+;
+;		uuuu		A hexadecimal value derived from the system
+;				time, and incremented until a unique file
+;				name is generated.
+;
+; Platforms:	32-bit Microsoft Windows platforms only.
+;
+;****************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;****************************************************************************
+;
+
+.function WinTempFile
+
+;Argument list
+
+	a_path			,a		;(Optional) Path for temporary file
+	a_prefix		,a		;(Optional) file name prefix for temporary file
+
+;End of argument list
+
+.align
+stack record
+	dll_handle		,i4		;Handle of kernel32.dll
+	unique			,i4
+	status			,i4
+	path			,a256
+	prefix			,a3
+	file			,a256	
+
+.proc
+
+	onerror error
+
+	
+	;Open kernel32.dll
+	dll_handle = %dll_open("kernel32.dll")
+
+	;Setup argument 1 - path (null terminated string)
+	xcall fill(%char(0),path)
+	if (^passed(a_path) .and. a_path) then
+		path(1:%trim(a_path)) = a_path
+	else
+		path(1:1)="."
+	
+	;Setup argument 2 - file prefix (null terminated string)
+	xcall fill(%char(0),prefix)
+	if (^passed(a_prefix) .and. a_prefix) then
+		prefix(1:%trim(a_prefix)) = a_prefix
+	else
+		prefix(1:4)="TMP"
+
+	;Setup argument 3 - unique number
+	unique=0
+	
+	;Setup argument 4 - returned file name (null terminated string)
+	xcall fill(%char(0),file)
+
+	;Make the call
+	status = %dll_call(dll_handle,DLL_TYPE_WINAPI,"GetTempFileNameA",path,prefix,unique,file)
+
+	;If the call failed, clear out the return data
+	if (.not.status)
+		clear file
+
+	;Close the DLL
+	dll_handle = %dll_close(dll_handle)
+
+Error,
+
+	freturn %atrim(file)
+
+.end

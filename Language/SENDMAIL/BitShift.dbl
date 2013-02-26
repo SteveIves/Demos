@@ -1,0 +1,121 @@
+.main BitShiftTest
+
+record
+    i1      ,i1
+    i2      ,i2
+    i4      ,i4
+    i8      ,i8
+
+.proc
+
+    open(1,i,"tt:")
+
+    xcall BitShiftTest1(i1=1)
+
+    close 1
+
+    stop
+
+.end
+
+.subroutine BitShiftTest1
+
+    a_ival      ,i
+
+stack record
+    bytes   ,i1
+    bits    ,i1
+    cnt     ,i4
+
+.proc
+
+    bits=(bytes=^size(a_ival))*8
+
+    writes(1,%bin(a_ival,bytes)+"="+%string(%unsigned(a_ival)))
+
+    for cnt from 1 thru bits-1
+    begin
+        a_ival = %BitShift1(a_ival,-1)
+        writes(1,%bin(a_ival,bytes)+"="+%string(%unsigned(a_ival)))
+    end
+
+    sleep 5
+
+    for cnt from 1 thru bits-1
+    begin
+        a_ival = %BitShift1(a_ival,1)
+        writes(1,%bin(a_ival,bytes)+"="+%string(%unsigned(a_ival)))
+    end
+
+    xreturn
+
+.end
+
+.function BitShift ,^val
+
+    a_inval     ,i      ;Value to bit shift
+    a_bits      ,n      ;Number of bits to shift (-ve=left, +ve = right)
+
+                        ;*** THIS ROUTINE DOES NOT WORK IF THIS ARGUMENT IS
+                        ;    DEFINED AS ,I !!!  THIS HAS TO BE A BUG??? ***
+.align
+stack record ivars
+    cnt         ,i4
+    tmpi8       ,i8
+
+.proc
+
+    tmpi8 = %unsigned(a_inval)
+
+    using (a_bits) select
+    (<0),
+        for cnt from -1 thru a_bits by -1
+            tmpi8 = %unsigned(tmpi8)*2
+    (>0),
+        for cnt from 1 thru a_bits
+            tmpi8 = %unsigned(tmpi8)/2
+    (0),
+        nop
+    endusing
+
+    freturn tmpi8
+
+.end
+
+.function BitShift1 ,^val
+
+    a_inval     ,i      ;Value to bit shift
+    a_bits      ,n      ;Number of bits to shift (-ve=left, +ve = right)
+
+                        ;*** THIS ROUTINE DOES NOT WORK IF THIS ARGUMENT IS
+                        ;    DEFINED AS ,I !!!  THIS HAS TO BE A BUG??? ***
+.align
+stack record ivars
+    cnt         ,i4
+    tmpi8       ,i8
+
+stack record avars
+    tmpa64      ,a64
+
+.proc
+
+    tmpa64 = %bin(a_inval,8)
+    writes(1,tmpa64)
+
+    tmpi8 = %unsigned(a_inval)
+
+    using (a_bits) select
+    (<0),
+        for cnt from -1 thru a_bits by -1
+            tmpi8 = %unsigned(tmpi8)*2
+    (>0),
+        for cnt from 1 thru a_bits
+            tmpi8 = %unsigned(tmpi8)/2
+    (0),
+        nop
+    endusing
+
+    freturn tmpi8
+
+.end
+

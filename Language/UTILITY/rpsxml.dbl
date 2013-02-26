@@ -1,0 +1,271 @@
+.function rpsxml, ^VAL
+
+	;Argument list
+
+	a_rpsfile		,a		;Repository file definition (a30, required, passed)
+
+	a_errmsg		,a		;Error message (optional, returned)
+	
+	;End of argument list
+
+	;Return status
+	;
+	;	1	Failed to initialize Repository
+	;
+	;	2	File definition not found
+	;
+	;	3	File is not an ISAM file
+	;
+	;	4	Structure definition not found
+	;
+	;	5	Failed to retrieve structure fields
+	;
+
+.include "RPSLIB:ddinfo.def"
+
+.align
+stack record intvars
+	fail			,i4		;Return status (0=Success)
+	datafile		,i4		;Data file channel
+	outfile			,i4		;Output file channel
+	mh1				,i4		;Dynamic memory handle (field names)
+	mh2				,i4		;Dynamic memory handle (data buffer)
+	c				,i4		;Local counter
+	pos				,i4		;Position in a string
+	err				,i4		;Local error flag
+
+stack record nonintvars
+	dtdfile			,a80	;Name of output DTD file
+	xmlfile			,a80	;Name of output XML file
+
+structure names
+					,a30
+structure buffer
+					,a1
+
+.proc
+
+	;Initialize UI Toolkit
+	clear ^i(intvars), nonintvars
+
+	;Initialize Repository session
+	xcall dd_init(dcs)
+	if (dcs.error)
+	begin
+		if (^passed(a_errmsg))
+			a_errmsg="Failed to initialize Repository"
+		fail=1
+	end
+
+	;Lookup file specification details in RPS
+	if (.not.fail)
+	begin
+		xcall dd_filespec(dcs,a_rpsfile,,fls_info)
+		if (dcs.error)
+		begin
+			if (^passed(a_errmsg))
+				a_errmsg="File definition not found"
+			fail=2
+		end
+	end
+		
+	;Make sure it's an ISAM file
+	if (.not.fail)
+	begin
+		if (flsi_filtyp.ne.'DBL ISAM')
+		begin
+			if (^passed(a_errmsg))
+				a_errmsg="File is not an ISAM file"
+			fail=3
+		end
+	end
+
+	;Get structure details for selected file
+	if (.not.fail)
+	begin
+		xcall dd_struct(dcs,DDS_INFO,flsi_sname,s_info)
+		if (dcs.error)
+		begin
+			if (^passed(a_errmsg))
+				a_errmsg="Structure definition not found"
+			fail=4
+		end
+	end
+	
+	;Retrieve array of field names for selected structure
+	if (.not.fail)
+	begin
+		mh1=%mem_proc(DM_ALLOC,^size(names)*si_nmflds)
+		xcall dd_field(dcs,DDF_SLIST,si_nmflds,^m(names[1],mh1))
+		if (dcs.error)
+		begin
+			if (^passed(a_errmsg))
+				a_errmsg="Failed to retrieve structure fields"
+			fail=5
+		end
+	end
+
+	;Create XML Schema file (DTD)
+	if (.not.fail)
+	begin
+		dtdfile=%atrim(flsi_sname)+'.dtd'
+		locase dtdfile
+
+		open(outfile=%syn_freechn,o:s,dtdfile)
+
+		display(outfile,'<?xml version="1.0"?>',13,10,10)
+
+		display(outfile,'  <!ELEMENT ',%atrim(flsi_sname),'_LIST (',
+		&		%atrim(flsi_sname),'*)>',13,10,10)
+
+		display(outfile,'    <!ELEMENT ',%atrim(flsi_sname),' (')
+		for c from 1 thru si_nmflds
+		begin
+			display(outfile,%atrim(^m(names[c],mh1)))
+
+			;Get details of this field
+			xcall dd_field(dcs,DDF_INFO,^m(names[c],mh1),f_info)
+
+			;Is the field required?
+			if (.not.fi_req)
+				display(outfile,'?')
+
+			if (c.lt.si_nmflds)
+				display(outfile,',')
+		end
+		display(outfile,')>',13,10,10)
+
+		for c from 1 thru si_nmflds
+			display(outfile,'      <!ELEMENT ',%atrim(^m(names[c],mh1)),
+			&		' (#PCDATA)>',13,10)
+
+		display(outfile,10)
+
+		close outfile
+	end
+
+	
+	;Create XML data file
+	if (.not.fail)
+	begin
+
+		;Open input data file and position to first record
+		open(datafile=%syn_freechn,i:i,flsi_name)
+		find(datafile,,^FIRST)
+	
+		;Allocate an input buffer
+		mh2=%mem_proc(DM_ALLOC,^size(buffer)*flsi_recsz)
+	
+		xmlfile=%atrim(flsi_sname)+'.xml'
+		locase xmlfile
+	
+		open(outfile=%syn_freechn,o:s,xmlfile)
+		
+		display(outfile,'<?xml version="1.0"?>',13,10,10)
+		display(outfile,'<!DOCTYPE ',%atrim(flsi_sname),'_LIST SYSTEM "'
+		&		,%atrim(dtdfile),'">',13,10,10)
+		
+		display(outfile,'<',%atrim(flsi_sname),'_LIST>',13,10,10)
+	
+		repeat
+		begin
+			;Get next record from file
+			reads(datafile,^m(buffer(1:flsi_recsz),mh2),eof)
+			
+			display(outfile,'  <',%atrim(flsi_sname),'>',13,10)
+			
+			for c from 1 thru si_nmflds
+			begin
+				;Get details of this field
+				xcall dd_field(dcs,DDF_INFO,^m(names[c],mh1),f_info)
+	
+				;Output opening field tag
+				display(outfile,'    <', %atrim(^m(names[c],mh1)), '>')
+	
+				;Check for and remove "&" characters in field data
+				;and replace them with "+"
+				repeat
+				begin
+					if (%instr(1,^m(buffer(fi_pos:fi_size),mh2),'&',pos)) then
+						^m(buffer(fi_pos+pos-1:1),mh2)="+"
+					else
+						exitloop
+				end
+	
+				;Output field data
+				display(outfile,%atrim(^m(buffer(fi_pos:fi_size),mh2)))
+				
+				;Output closing field tag
+				display(outfile,'</',%atrim(^m(names[c],mh1)),'>',13,10)
+			end
+			
+			display(outfile,'  </',%atrim(flsi_sname),'>',13,10,10)
+	
+		end
+Eof,
+		display(outfile,'</',%atrim(flsi_sname),'_LIST>',13,10,10)
+		
+		close outfile
+		close datafile
+		
+		mh2=%mem_proc(DM_FREE,mh2)
+
+	end
+
+	if (mh1)
+        mh1=%mem_proc(DM_FREE,mh1)
+
+	xcall dd_exit(dcs)
+	
+	freturn fail
+
+.end
+
+;Notes for future creation of XML-data schemas
+;
+; Synergy		Notes			XML-Data
+; Data Type						Definition
+;
+;	a							dt:type="string" dt:maxLength="x"
+;
+;	d			Negatives		dt:type="int" dt:min="-x" dt:max="x"
+;
+;	d			No negatives	dt:type="int" dt:min="0" dt:max="x"
+;
+;	d.d			Negatives		dt:type="fixed.x.x" min="-x.x" max="x.x"
+;
+;	d.d			No negatives	dt:type="fixed.x.x" min="0" max="x.x"
+;
+;	i1							dt:type="i1"
+;
+;	i2							dt:type="i2"
+;
+;	i3							dt:type="i3"
+;
+;	i4							dt:type="i4"
+;
+;	dt4			YYPP			?
+;
+;	dt5			YYJJJ			?		(Convert to dt8 using SYNCENTURY?)
+;
+;	dt6			YYYYPP			?
+;
+;	dt6			YYMMDD			?		(Convert to dt8 using SYNCENTURY?)
+;
+;	dt7			YYYYJJJ			?		(Convert to dt8?)
+;
+;	dt8			YYYYMMDD		dt:type="date"
+;
+;	tm4			HHMM
+;
+;	tm6			HHMMSS
+;
+;	user-a		
+;
+;	user-n		
+;
+;	user-d		
+;
+;	binary		
+
+

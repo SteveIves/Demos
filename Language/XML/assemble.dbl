@@ -1,0 +1,124 @@
+.main assemble
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "DBLDIR:synxml.def"
+
+.include "weather_report" repository, record="weather_report"
+
+record
+    inpwnd          ,i4
+    sysdatetime     ,a20
+      sysdate       ,d8 @sysdatetime
+      systime       ,d6 @sysdatetime+8
+    doc             ,XML_DOC_TYPE
+    parent          ,XML_ELEM_TYPE
+    child           ,XML_ELEM_TYPE
+    xmlstring       ,XML_STRING_TYPE
+    xmldata         ,D_ADDR
+
+.define XML_FILE    "weather_report.xml"
+
+.proc
+
+    xcall u_start("parse.ism")
+    xcall u_wndfont(D_SETFONT,DF_DEFAULT,"MS Sans Serif",8,"A")
+    xcall e_sect("Assembling XML Example (SPC2003)",D_HEADER)
+
+    ;Setup default values
+
+    sysdatetime = %datetime
+    weather_report.date = sysdate
+    weather_report.time = systime
+    weather_report.zone = "PST"
+    weather_report.location = "Sacramento, CA"
+    weather_report.temperature = 105
+    weather_report.tempscale = "farenheit"
+    weather_report.humidity = 25
+    weather_report.humscale = "percent"
+    weather_report.windspeed = 4
+    weather_report.windscale = "mph"
+    weather_report.winddir = "SE"
+
+    ;Get data to send
+
+    xcall i_ldinp(inpwnd,,"WEATHER_REPORT")
+    xcall w_brdr(inpwnd,WB_TITLE,"Weather Report To Send")
+    xcall i_display(inpwnd,,weather_report)
+    xcall i_next(inpwnd,,"TEMPERATURE")
+    repeat
+    begin
+        xcall i_input(inpwnd,,weather_report)
+        if (.not.g_setsts)
+            exitloop
+    end
+
+
+    ;Create XML document and get root element
+
+    doc = %xml_doc_create
+    parent = %xml_doc_getroot(doc)
+
+    ;Create and add root elements children
+
+    xcall xml_elem_setname(parent,"WeatherReport")
+    xcall xml_elem_setattribute(parent,"date",%string(weather_report.date))
+    xcall xml_elem_setattribute(parent,"time",%string(weather_report.time))
+    xcall xml_elem_setattribute(parent,"zone",weather_report.zone)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Location")
+    xcall xml_elem_settext(child,weather_report.location)
+    xcall xml_elem_addchild(parent,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Temperature")
+    xcall xml_elem_setattribute(child,"unit",weather_report.tempscale)
+    xcall xml_elem_settext(child,%string(weather_report.temperature))
+    xcall xml_elem_addchild(parent,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Humidity")
+    xcall xml_elem_setattribute(child,"unit",weather_report.humscale)
+    xcall xml_elem_settext(child,%string(weather_report.humidity))
+    xcall xml_elem_addchild(parent,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Wind")
+    xcall xml_elem_addchild(parent,child)
+
+    ;Create and add Wind elements children
+
+    parent = child
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Speed")
+    xcall xml_elem_setattribute(child,"unit",weather_report.windscale)
+    xcall xml_elem_settext(child,%string(weather_report.windspeed))
+    xcall xml_elem_addchild(parent,child)
+
+    child = %xml_elem_create
+    xcall xml_elem_setname(child,"Direction")
+    xcall xml_elem_settext(child,weather_report.winddir)
+    xcall xml_elem_addchild(parent,child)
+
+    ;Display generated XML
+
+    xmlstring = %xml_doc_tostring(doc,1)            ;Get an XML string
+    xmldata = %xml_string_gethandle(xmlstring)      ;Get handle of XML data
+    xcall u_msgbox(^m(xmldata),,"Generated XML")    ;Display it
+    xcall xml_string_delete(xmlstring)              ;Delete the XML string
+
+    ;Save XML to file and clean up
+
+    xcall xml_doc_tofile(doc,XML_FILE)
+
+    ;Delete XML document
+
+    xcall xml_doc_delete(doc)
+
+    xcall u_finish
+    stop
+
+.end
+

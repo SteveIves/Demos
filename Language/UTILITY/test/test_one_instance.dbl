@@ -1,0 +1,15 @@
+.main test_one_instance
+;
+; Sample mainline for check_oneinstance.  Try running this program multiple times.
+;
+.align
+stack record
+	chr	,a1
+.proc
+	xcall u_start
+	xcall one_instance("Testing check_oneinstance")
+	xcall u_chr(chr)	;Wait around...
+	xcall u_finish
+.end
+
+

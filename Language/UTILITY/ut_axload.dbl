@@ -1,0 +1,66 @@
+;----------------------------------------------------------------------------
+;
+; ActiveX.dbl   ActiveX support routines
+;
+; Chip Camden   October, 1998
+;
+;----------------------------------------------------------------------------
+
+.include "DBLDIR:activex.def"
+
+.function ut_axload     ,^val, reentrant
+;
+; Description:  Load an ActiveX control, with auto-registration
+;
+; Arguments:
+;
+        a_ctrid     ,n      ;Container ID
+        
+        a_control   ,a      ;Control's registered name
+        
+        a_path      ,a      ;(Optional) path to attempt registration if
+                            ;   not found
+                            
+        a_xpos      ,n      ;(Optional) X position
+        
+        a_ypos      ,n      ;(Optional) Y position
+        
+        a_xsiz      ,n      ;(Optional) X size
+        
+        a_ysiz      ,n      ;(Optional) Y size
+        
+        a_license   ,a      ;(Optional) license string
+
+	a_prefix    ,a	    ;(Optional) prefix for auto-bind of events
+;
+; Return value: The control ID
+;
+; Notes:
+;
+;   This routine wraps the %ax_load Synergy-supplied routine, adding
+;   the ability to attempt to register the control if it is not already
+;   registered, using a_path as the name of the .OCX file to attempt.
+;
+.align
+stack record
+        handle      ,i4     ;Handle to .OCX DLL
+.proc
+        onerror auto_register
+        freturn %ax_load(a_ctrid, a_control, a_xpos, a_ypos,
+        &	            a_xsiz, a_ysiz, a_license, a_prefix)
+        
+auto_register,
+        offerror
+        if (^passed(a_path))			;.OCX file path passed?
+          begin
+            onerror could_not
+            handle = %dll_open(a_path)
+            xcall dll_call(handle,DLL_TYPE_WINAPI,"DllRegisterServer")
+            xcall dll_close(handle)
+            freturn %ax_load(a_ctrid, a_control, a_xpos, a_ypos,
+            &	                a_xsiz, a_ysiz, a_license, a_prefix)
+          end
+          
+could_not,
+        xcall u_abort("Could not load ActiveX control "+a_control)
+.end

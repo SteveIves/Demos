@@ -1,0 +1,68 @@
+;*******************************************************************************
+.subroutine AppOneInstance
+;
+; Description:  Ensure only one instance of this application is running
+;
+; Arguments:
+;
+    a_caption   ,a  ;Caption of the application
+;
+; Notes:
+;
+;   This routine makes sure that only one Synergy application with the
+;   caption passed is running at any time.  Call this routine after U_START.
+;   If another instance of this application is already running, the program
+;   will exit, after bringing the other instance to the foreground.
+;   If there is no other instance, then this instance will take on the caption
+;   passed.
+;
+
+.ifdef D_GUI
+
+.include "DBLDIR:windows.def"
+.include "WND:tools.def"
+
+.align
+record
+    dll_hndl    ,i4 ;Handle to the DLL
+    hndl        ,i4 ;Handle to the application container
+    state       ,i4
+
+.define SW_SHOWNORMAL   %integer(1)
+
+.endc ;D_GUI
+
+.proc
+
+    .ifdef D_GUI
+
+    dll_hndl = %dll_open("user32")  ;Open user32.dll
+
+    if (hndl = %dll_call(dll_hndl,DLL_TYPE_WINAPI,"FindWindowA","Synergy Container",a_caption))
+    begin
+        ;Found our application
+
+        ;Bring it to the front and activate
+        xcall dll_call(dll_hndl,DLL_TYPE_WINAPI,"ShowWindow", hndl, SW_SHOWNORMAL)
+        xcall dll_call(dll_hndl,DLL_TYPE_WINAPI,"SetForegroundWindow", hndl)
+
+        ;Don't allow multiple instances
+        xcall dll_close(dll_hndl)
+        xcall u_finish
+        stop
+
+    end
+
+    xcall dll_close(dll_hndl)
+
+    xcall e_sect(a_caption, D_CAPTION)  ;Set the caption
+
+    if (%w_info(WIF_STATE, WID_CONTAINER) .ne. WPS_MAXIMIZED);If not maximized
+      xcall w_proc(WP_STATE, WID_CONTAINER, WPS_NORMAL)  ;Restore us
+
+    .endc ;D_GUI
+
+    xreturn
+
+.end
+

@@ -1,0 +1,1010 @@
+;******************************************************************************
+; PVCS Last revision #		PVCS Last Developer who modified this code
+;******************************************************************************
+; 	$Revision:   1.6  $  				$Author: CBLUNDELL (UNFI)
+;******************************************************************************
+
+;==============================================================================
+; Subroutines that will be called by developers in their applications.
+;==============================================================================
+
+;===============================  Edit History  ===============================
+;Date		Who			Comments
+;------------------------------------------------------------------------------
+;20-may-03	BDAREZZO	Modified to carry over blank customer address lines
+;2-14-02	CB			Modified to close Peer & data sockets when done with
+;						them since Synergy language does not appear to release
+;						them correctly when disconnected by the remote host.
+;04-APR-02	CB			Added a check when setting up data connections to the
+;						remote server to ensure that the connection is opened
+;						on the same network interface that the control
+;						connection is already open on.
+;12-JUL-02	CB			Modified to fix problem with recursive external call for
+;						muti line return status and a problem with one too many
+;						carriage return line feed pairs when executing some
+;						commands.
+;
+;.define DEBUG 1		; Uncommenting this define will cause the FTP functions
+						; to log their output to the screen on channel 15 so if
+						; you do it make sure you have 15 open to the screen
+
+;******************************************************************************
+;
+.function ftpOpen			,^VAL
+
+	intConnectionID			,n
+	strServerName			,a
+	intConnectionPort		,n
+	strReturnedText			,a
+
+.align
+record
+	intStatus				,i4
+	intPortNumber			,i4	,21
+
+.proc
+
+	if (^passed(intConnectionPort))
+		intPortNumber = intConnectionPort
+
+	xcall ftpConnectToSocket(intConnectionID,intPortNumber,strServerName,intStatus)
+
+	if (!intStatus)
+	begin
+    	;If no error then we expect to get a line back from the server. This
+		;line will be either a success or fail for the connection.
+	    xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+	end
+
+	freturn(intStatus)
+
+.end
+
+;******************************************************************************
+;
+.function ftpLogin ,^VAL
+
+	intConnectionID		,n
+	strUserName			,a
+	strPassword			,a
+	strReturnedText		,a
+
+.align
+record
+	intStatus			,i4
+
+.proc
+
+	xcall ftpSendnLogCommand('USER '+strUserName, intConnectionID, intStatus, strReturnedText)
+	xcall ftpSendnLogCommand('PASS '+strPassword, intConnectionID, intStatus, strReturnedText)
+
+	freturn(intStatus)
+
+.end
+
+;******************************************************************************
+;
+.function ftpCommand ,^VAL
+
+	intConnectionID			,n
+	strParameter			,a
+	strReturnedText			,a
+
+.include "DBLDIR:synsock.def"
+
+.align
+record
+	intStatus			,i4
+
+.proc
+
+	xcall ftpSendnLogCommand(strParameter, intConnectionID, intStatus, strReturnedText)
+
+	if (strParameter.eq.'CLOSE')
+	    intStatus = %ss_close(intConnectionID)
+
+	freturn(intStatus)
+
+.end
+
+;******************************************************************************
+;
+.function ftpRename ,^val
+
+	intConnectionID		,n
+	RenameFrom			,a
+	RenameTo			,a
+	strReturnedText		,a
+
+.align
+stack record
+	intStatus			,i4
+
+.proc
+
+	xcall ftpSendnLogCommand('RNFR ' + RenameFrom, intConnectionID,
+	&	intStatus, strReturnedText)
+
+	if intStatus < 400
+	    xcall ftpSendnLogCommand('RNTO ' + RenameTo,
+	    &	intConnectionID, intStatus, strReturnedText)
+
+	if intStatus >= 300
+	    freturn 0
+
+	freturn 1
+.end
+
+;******************************************************************************
+;
+.function ftpDirectoryList ,^VAL
+
+	intConnectionID		,n
+	ptrList				,n
+	strReturnedText		,a
+	strListType			,a
+	strFilter			,a
+
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine	,a
+
+.align
+record
+	intPortNumber		,i4
+	intAddress			,i4
+	intStatus			,i4
+	intOutChannel		,i4
+	ptrStatus			,i4
+	i					,i4
+	j					,i4
+	intDataSocketID		,i4
+	intPeerSocket		,i4
+	Position			,i4
+	MemArraySize		,i4
+	MemArrayUsed		,i4
+	LineBuf				,a10000
+	OutLine				,[10000]a1 @LineBuf
+	cr					,a1
+	lf					,a1
+	strDirectoryType	,a500
+
+.include "UTL:ftp.def"
+
+structure FileListStr
+						,a^size(FileList)
+
+structure LongFileListStr
+						,a^size(LongFileList)
+
+.proc
+
+	cr = %char(13)
+	lf = %char(10)
+
+	if (.not.%passed(strListType)) then
+	    strDirectoryType = 'NLST'
+	else
+	    strDirectoryType = strListType+' '+strFilter
+
+	xcall ftpSetupDataPort(intConnectionID, intPortNumber, intDataSocketID,
+	&					   intStatus, strReturnedText)
+
+	if (intStatus.lt.300)
+	  begin
+	    xcall ftpSendnLogCommand(%atrim(strDirectoryType)+' ', intConnectionID, intStatus, strReturnedText)
+;	    do
+;	      begin
+;		xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+; 	      end
+;	    until (strReturnedText.eq.' ')
+	    if (intStatus.lt.300)
+	      then
+	      begin
+		intStatus = %ss_accept(intDataSocketID, intPeerSocket)
+		if (.not.intStatus)
+		  begin
+		    if (strDirectoryType(1,4).eq.'NLST')
+		      then
+		      begin
+			;ptrStatus = %memman('CREATE', ptrList, FileList)
+			ptrList = %mem_proc(DM_ALLOC+DM_BLANK,^size(FileList)*(MemArraySize=10))
+		      end
+		      else
+		      begin
+			;ptrStatus = %memman('CREATE', ptrList, LongFileList)
+			ptrList = %mem_proc(DM_ALLOC+DM_BLANK,^size(LongFileList)*(MemArraySize=10))
+		      end
+		    do
+		      begin
+			clear LineBuf, i
+			intStatus = %ss_recv(intPeerSocket, linebuf, i, ss_msg_peek)
+			if (.not.intStatus.and.i.gt.0)
+			  begin
+			    clear LineBuf
+			    j = 1
+			    do
+			      begin
+				intStatus = %ss_recvbuf(intPeerSocket, OutLine(j))
+				incr j
+			      end
+			    until (OutLine(j-1).eqs.%char(10))
+			    if (%trim(LineBuf).lt.3)
+			      then
+			      begin
+				FileList = ''
+			      end
+			      else
+			      begin
+				if (strDirectoryType(1,4).eq.'NLST')
+				  then
+				  begin
+				    FileList = LineBuf(1,%trim(LineBuf)-2)
+				    ;ptrStatus = %memman('ADDITEM', ptrList, FileList)
+					if ((MemArrayUsed+=1) > (MemArraySize))
+						ptrStatus = %mem_proc(DM_RESIZ,^size(FileList)*(MemArraySize+=10))
+					^m(FileListStr[MemArrayUsed],ptrStatus) = FileList
+				  end
+				  else
+				  begin
+				    LongFileList = LineBuf(1,%trim(LineBuf)-2)
+				    ;ptrStatus = %memman('ADDITEM', ptrList, LongFileList)
+					if ((MemArrayUsed+=1) > (MemArraySize))
+						ptrStatus = %mem_proc(DM_RESIZ,^size(LongFileList)*(MemArraySize+=10))
+					^m(LongFileListStr[MemArrayUsed],ptrStatus) = LongFileList
+				  end
+			      end
+			  end
+		      end
+		    until (intStatus.or.i.eq.0)
+		    xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+		    intStatus = %ss_close(intPeerSocket)
+		    intStatus = %ss_close(intDataSocketID)
+		  end
+	      end
+	      else
+	      begin
+;		xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+		intStatus = %ss_close(intPeerSocket)
+		intStatus = %ss_close(intDataSocketID)
+	      end
+	  end
+
+	freturn(intStatus)
+.end
+
+;******************************************************************************
+;
+.function ftpGetFileAs			,^VAL
+	intConnectionID			,n
+	strLocalName			,a
+	strRemoteName			,a
+	strMode				,a
+	strReturnedText			,a
+
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	intPortNumber			,i4
+	intAddress			,i4
+	intStatus			,i4
+	intOutChannel			,i4
+	ptrStatus			,i4
+	i				,i4
+	intDataSocketID			,i4
+	intPeerSocket			,i4
+	Position			,i4
+	LineBuf				,a10000
+	OutLine				,[10000]a1 @LineBuf
+	cr				,a1
+	lf				,a1
+	j				,i4
+	Char				,a1
+	strModMode			,a30
+	strTransferMode			,a1
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	if (%passed(strMode))
+	  then
+	  begin
+	    strModMode = strMode
+	    upcase strModMode
+	    using %atrim(strMode) select
+('ASCII'),    begin
+		strTransferMode = 'A'
+	      end
+('BINARY'),   begin
+		strTransferMode = 'I'
+	      end
+	    endusing
+	  end
+	  else
+	  begin
+	    strTransferMode = 'A'
+	  end
+
+	xcall ftpSetupDataPort(intConnectionID, intPortNumber, intDataSocketID, intStatus, strReturnedText)
+	if (intStatus.lt.300)
+	  begin
+	    xcall ftpSendnLogCommand('TYPE '+strTransferMode, intConnectionID, intStatus, strReturnedText)
+	    if (intStatus.lt.300)
+	      begin
+		xcall ftpSendnLogCommand('RETR '+strRemoteName, intConnectionID, intStatus, strReturnedText)
+		if (intStatus.lt.300)
+		  begin
+		    if (strTransferMode.eq.'A')
+		      then
+		      begin
+			intStatus = %ss_accept(intDataSocketID, intPeerSocket)
+			if (.not.intStatus)
+			  begin
+				open(intOutChannel=%syn_freechn,O:S,strLocalName)
+			    if (intOutChannel.gt.0)
+			      then
+			      begin
+				do
+				  begin
+				    clear LineBuf, i
+				    intStatus = %ss_recv(intPeerSocket, linebuf, i, ss_msg_peek)
+				    if (.not.intStatus.and.i.gt.0)
+				      begin
+					clear LineBuf
+					j = 1
+					do
+					  begin
+					    intStatus = %ss_recvbuf(intPeerSocket, OutLine(j))
+					    incr j
+					  end
+					until (OutLine(j-1).eqs.%char(10))
+					if (j.gt.2)
+					  then
+					  begin
+					    writes(intOutChannel, OutLine(1,j-2))
+					  end
+					  else
+					  begin
+					    writes(intOutChannel, '')
+					  end
+				      end
+				  end
+				until (intStatus.or.i.eq.0)
+				close intOutChannel
+				xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+			      end
+			      else
+			      begin
+				intStatus = %ss_close(intPeerSocket)
+				xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+			      end
+			  end
+		      end
+		      else
+		      begin
+			intStatus = %ss_accept(intDataSocketID, intPeerSocket)
+			if (.not.intStatus)
+			  begin
+			    intOutChannel = 100
+			    onerror OpenStreamError
+			    intStatus = 1
+			    open (intOutChannel, 'O', strLocalName, options:"/stream")
+			    clear intStatus
+OpenStreamError,
+			    offerror
+			    if (.not.intStatus)
+			      then
+			      begin
+				do
+				  begin
+				    clear LineBuf, i
+				    intStatus = %ss_recv(intPeerSocket, linebuf, i, ss_msg_peek)
+				    if (.not.intStatus.and.i.gt.0)
+				      begin
+					if (i.gt.10000)
+					  begin
+					    i = 10000
+					  end
+					intStatus = %ss_recvbuf(intPeerSocket, OutLine(1,i))
+					puts(intOutChannel, OutLine(1,i))
+				      end
+				  end
+				until (intStatus.or.i.eq.0)
+				close intOutChannel
+				xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+				intStatus = %ss_close(intPeerSocket)
+			      end
+			      else
+			      begin
+				intStatus = %ss_close(intPeerSocket)
+				xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+			      end
+			  end
+		      end
+		  end
+	      end
+	  end
+
+	freturn(intStatus)
+.end
+
+;******************************************************************************
+;
+.function ftpSendFileAs			,^VAL
+	intConnectionID			,n
+	strLocalName			,a
+	strRemoteName			,a
+	strMode				,a
+	strReturnedText			,a
+	strCommand			,a
+
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	intPortNumber			,i4
+	intAddress			,i4
+	intStatus			,i4
+	intOutChannel			,i4
+	ptrStatus			,i4
+	i				,i4
+	intDataSocketID			,i4
+	intPeerSocket			,i4
+	Position			,i4
+	LineBuf				,a10000
+	LineBuf_Byte			,10000a1 @LineBuf
+	cr				,a1
+	lf				,a1
+	intRecLen			,i4
+	strTermChar			,a1
+	strStoreType			,a4
+	strModMode			,a30
+	strTransferMode			,a1
+	intCount			,i4
+
+record	FileList
+	File				,a132
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	if (%passed(strMode))
+	  then
+	  begin
+	    strModMode = strMode
+	    upcase strModMode
+	    using %atrim(strMode) select
+('ASCII'),    begin
+		strTransferMode = 'A'
+	      end
+('BINARY'),   begin
+		strTransferMode = 'I'
+	      end
+	    endusing
+	  end
+	  else
+	  begin
+	    strTransferMode = 'A'
+	  end
+
+	if (.not.%passed(strCommand))
+	  then
+	  begin
+	    strStoreType = 'STOR'
+	  end
+	  else
+	  begin
+	    strStoreType = strCommand
+	  end
+
+	xcall ftpSetupDataPort(intConnectionID, intPortNumber, intDataSocketID, intStatus, strReturnedText)
+	if (intStatus.lt.300)
+	  begin
+	    xcall ftpSendnLogCommand('TYPE '+strTransferMode, intConnectionID, intStatus, strReturnedText)
+	    if (intStatus.lt.300)
+	      begin
+		xcall ftpSendnLogCommand(strStoreType+' '+strRemoteName, intConnectionID, intStatus, strReturnedText)
+		if (intStatus.lt.300)
+		  begin
+		    intStatus = %ss_accept(intDataSocketID, intPeerSocket)
+		    if (.not.intStatus)
+		      begin
+			using strTransferMode select
+('I'),			  begin
+			    onerror BadOpen
+			    intStatus = 1
+			    intOutChannel = 100
+			    open (intOutChannel, 'I', strLocalName)
+;			    intOutChannel = %sopen('I:*', strLocalName)
+			    clear intStatus
+BadOpen,
+			    offerror
+			  end
+('A'),			  begin
+			    ;intOutChannel = %sopen('I:*', strLocalName)
+				open(intoutchannel=%syn_freechn,I:*,strlocalname)
+			  end
+			endusing
+			if (.not.intStatus)
+			  then
+			  begin
+			    do
+			      begin
+				clear LineBuf
+				onerror BadRead
+				intStatus = 1
+				using strTransferMode select
+('A'),				  begin
+				    reads(intOutChannel, linebuf, BadRead)
+				  end
+('I'),				  begin
+;				    intCount = 1
+;				    do
+;				      begin
+;					gets(intOutChannel, linebuf_byte(intCount), EndOfFile)
+;					incr intCount
+;				      end
+;				    until (intCount.gt.10000)
+				    intCount = 10001
+				    clear linebuf
+				    reads (intOutChannel, linebuf(1,512), EndOfFile)
+				  end
+				endusing
+EndOfFile,
+				intCount = %trim(LineBuf)
+;
+				if (strTransferMode.eq.'A'.or.
+				&   strTransferMode.eq.'I')
+				  begin
+				    clear intStatus
+				    if (strTransferMode.eq.'I'.and.intCount.eq.10001)
+				      begin
+					intCount = intCount - 1
+				      end
+				  end
+BadRead,
+				offerror
+				if (intStatus)
+				  then
+				  begin
+				    intStatus = %error
+				  end
+				  else
+				  begin
+				    using strTransferMode select
+('A'),				      begin
+					xcall rstat(intRecLen,strTermChar)
+					if (intRecLen.eq.0)
+					  then
+					  begin
+					    intStatus = %ss_sendbuf(intPeerSocket, cr+lf)
+					  end
+					  else
+					  begin
+					    intStatus = %ss_sendbuf(intPeerSocket, LineBuf(1,intRecLen)+cr+lf)
+					  end
+				      end
+('I'),				      begin
+					intRecLen = intCount
+					if (intRecLen.eq.0)
+					  then
+					  begin
+					    intStatus = %ss_sendbuf(intPeerSocket, cr+lf)
+					  end
+					  else
+					  begin
+					    intStatus = %ss_sendbuf(intPeerSocket, LineBuf(1,intRecLen))
+					  end
+				      end
+				    endusing
+				  end
+			      end
+			    until (intStatus)
+			    close intOutChannel
+			  end
+			  else
+			  begin
+			    intStatus = %error
+			  end
+			intStatus = %ss_close(intPeerSocket)
+			xcall ftpGetnLogReply(intConnectionID, intStatus, strReturnedText)
+		      end
+		  end
+	      end
+	  end
+
+	freturn(intStatus)
+.end
+
+;******************************************************************************
+;
+.subroutine ftpConnectToSocket
+	intSocketID			,n
+	intPortNumber			,n
+	strServerName			,a
+    	intError			,n
+
+; Subroutine creates a socket on the local machine and connects to a bound port on a remote machine
+
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	inaddr				,i4
+	intLocalPort			,i4
+
+.proc
+	interror = %ss_socket(intSocketID, SS_SOCK_STREAM)
+	interror = %ss_gethostbyname(strServerName, inaddr)
+	if (intError)
+	  begin
+	    interror = %ss_inet_addr(strServerName, inaddr)
+	  end
+	if (.not.intError)
+	  begin
+	    intLocalPort = 0
+	    intError = %ss_connect(intSocketID, intPortNumber, inaddr)
+	  end
+
+	if (interror)
+	  begin
+	    clear intSocketID
+	  end
+
+	xreturn
+
+.end
+
+;******************************************************************************
+;
+.subroutine ftpSendDataToSocket
+	intSocketID			,n
+	strTextToSend			,a
+	strReplyToText			,a
+	intError			,n
+
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	err				,i4
+	cr				,a1
+	lf				,a1
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	; Push the data to the socket
+
+	intError = %ss_sendbuf(intSocketID, strTextToSend + cr + lf)
+
+	xreturn
+.end
+
+;******************************************************************************
+;
+.function ftpGetSocketLine
+        intSocketID			,n
+	intError			,n
+	intLength			,n
+
+.include "DBLDIR:synsock.def"
+
+.align
+record
+        i               		,i4
+        err             		,i4
+        linebuf         		,a10000
+        linebuf_byte    		,[10000]a1 @linebuf
+        char            		,a1
+	position			,i4
+	intStatus			,i4
+	cr				,a1
+	lf				,a1
+	j				,i4
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	clear LineBuf
+	intStatus = %ss_recv(intSocketID, linebuf, i, ss_msg_peek)
+	if (.not.intStatus.and.i.gt.0)
+	  begin
+	    clear LineBuf
+	    j = 1
+	    do
+	      begin
+		intStatus = %ss_recvbuf(intSocketID, LineBuf_Byte(j))
+		incr j
+	      end
+	    until (LineBuf_Byte(j-1).eqs.%char(10))
+	    if (j.gt.2)
+	      then
+	      begin
+		freturn (LineBuf_Byte(1,j-2))
+	      end
+	      else
+	      begin
+		freturn ('')
+	      end
+	  end
+
+	freturn('')
+
+.end
+
+;******************************************************************************
+;
+.subroutine ftpSendnLogCommand
+	strCommand			,a
+	intSocketID			,n
+	intError			,n
+	strReturnedText			,a
+
+.include "DBLDIR:synsock.def"
+.include "WND:tools.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	strTextToSend			,a1000
+	strReplyToText			,a1000
+	cr				,a1
+	lf				,a1
+	GotOne				,i4
+	strTmpReply			,a3
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	; Add a carriage return/Linefeed combination to the text so that the server will
+	; interpret the end of line correctly
+	strTextToSend = strCommand
+
+	; Send the newly built command to the server
+	xcall ftpSendDataToSocket(intSocketID, %atrim(strTextToSend), %atrim(strReplyToText), intError)
+.ifdef DEBUG
+	display(15, %atrim(strTextToSend))
+.endc
+	if (.not.intError)
+	  begin
+	    ; Log any reply to the command to the log window if one exists
+	    do
+	      begin
+		xcall ftpGetnLogReply(intSocketID, intError, strReturnedText)
+	      end
+	    until (strReturnedText.ne.' ')
+	  end
+
+	xreturn
+.end
+
+;******************************************************************************
+;
+.subroutine ftpGetnLogReply
+    	intSocketID			,n
+	intStatus			,n
+	strReturnedText			,a
+
+.include "WND:tools.def"
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+	ftpnumeric				,^VAL
+
+.align
+record
+	strReplyToText			,a1000
+	intError			,i4
+	strTmpReply			,a3
+
+.proc
+	clear strReplyToText
+	do
+	  begin
+	    strReplyToText = %ftpGetSocketLine(intSocketID, intError)
+.ifdef DEBUG
+	    display(15, %atrim(strReturnedText), 13, 10)
+.endc
+	  end
+	until (%trim(strReplyToText).ge.3)
+
+	    if (strReplyToText(4,4).eqs.'-')	; Multiline entry
+	      begin
+		strTmpReply = strReplyToText(1,3)
+		do
+		  begin
+		    strReplyToText= %ftpGetSocketLine(intSocketID, intError)
+.ifdef DEBUG
+	            display(15, %atrim(strReplyToText), 13, 10)
+.endc
+		  end
+		until (strReplyToText(1,3).eqs.strTmpReply.and.strReplyToText(4,4).ne.'-')
+	      end
+
+	if (%trim(strReplyToText).ge.3)
+	  begin
+	    if (strReplyToText.ne.'   '.and.%ftpnumeric(strReplyToText(1,3)))
+	      begin
+		if (%passed(strReturnedText))
+		  begin
+		    strReturnedText = strReplyToText
+		  end
+		intStatus = strReplyToText(1,3)
+	      end
+	  end
+
+	xreturn
+.end
+
+;******************************************************************************
+;
+.function ftpnumeric, ^VAL
+	input_field		,a
+
+.include "WND:tools.def"
+
+.align
+record
+	test_field		,d18
+	error	  		,i4
+	return_value		,i4
+
+.proc
+	onerror not_numeric
+	error = 1
+	test_field = input_field
+	clear error
+not_numeric,
+	offerror
+	if (error)
+	  then
+	  begin
+	    return_value = False
+	  end
+	  else
+	  begin
+	    return_value = True
+	  end
+
+	freturn return_value
+.end
+
+;******************************************************************************
+;
+.subroutine ftpSetupDataPort
+	intSocketID			,n
+	intPortNumber			,n
+	intDataSocketID			,n
+	intError			,n
+	strReturnedText			,a
+
+.include "WND:tools.def"
+.include "DBLDIR:synsock.def"
+
+external function
+	ftpGetSocketLine			,a
+
+.align
+record
+	i				,i4
+	cr				,a1
+	lf				,a1
+	text				,a80
+	linebuf				,a10000
+	intBytesSent			,i4
+	intOutChannel			,i4
+	intSearch			,i4
+	intPeerSocket			,i4
+	strDottedFormIP			,a50
+	strDottedFormPort		,a50
+	intPosition			,i4
+	intStartPosition		,i4
+	intAddress			,i4
+	strLocalHost			,a255
+
+.proc
+	cr = %char(13)
+	lf = %char(10)
+
+	; Create a new socket
+
+	intError = %ss_socket(intDataSocketID, SS_SOCK_STREAM)
+
+	clear intPortNumber
+
+	; Bind socket to a port and allow any interface to connect
+
+	intError = %ss_getsockname(intSocketID, intPortNumber, intAddress)
+
+	clear intPortNumber
+
+	intError = %ss_bind(intDataSocketID, intPortNumber, ss_inaddr_any)
+
+	; Get the port number we just bound to. Because we passed 0 into ss_bind we
+	; got a random free port above 1024
+
+	intError = %ss_getsockname(intDataSocketID, intPortNumber, intPeerSocket)
+
+	; Convert address and port to dotted notation
+
+	intError = %ss_inet_ntoa(intAddress, strDottedFormIP)
+	intError = %ss_inet_ntoa(intPortNumber, strDottedFormPort)
+
+	; Convert the . characters to , instead since thats what ftp wants
+
+	intPosition = 1
+
+	do
+	  begin
+	    intPosition = %instr(intPosition, strDottedFormIP, '.')
+	    if (intPosition.gt.0)
+	      begin
+		strDottedFormIP(intPosition,intPosition) = ','
+	      end
+	  end
+	until (intPosition.le.0)
+
+	intStartPosition = %instr(1, strDottedFormPort, '.')
+	intPosition = %instr(intStartPosition+1, strDottedFormPort, '.')
+	intPosition += 1
+	strDottedFormPort = strDottedFormPort(intPosition, %trim(strDottedFormPort))
+
+	intPosition = 1
+
+	do
+	  begin
+	    intPosition = %instr(intPosition, strDottedFormPort, '.')
+	    if (intPosition.gt.0)
+	      begin
+		strDottedFormPort(intPosition,intPosition) = ','
+	      end
+	  end
+	until (intPosition.le.0)
+
+	; Send the PORT command to the server to tell it which port we're listening on.
+
+	xcall ftpSendnLogCommand('PORT '+%atrim(strDottedFormIP)+','+%atrim(strDottedFormPort), intSocketID, intError, strReturnedText)
+
+	if (intError.lt.300)
+	  then
+	  begin
+	    ; Actually listen now.
+
+	    intError = %ss_listen(intDataSocketID)	; RFC says default port is same as control connection = 21
+					    		; but can't do that beacause the port is already being used
+					    		; by the UCX FTP server on VMS so we get a conflict and it
+					    		; don't work.
+	  end
+	  else
+	  begin
+	    intError = %ss_Close(intPeerSocket)
+	    intError = %ss_close(intDataSocketID)
+	  end
+
+	xreturn
+
+.end
+

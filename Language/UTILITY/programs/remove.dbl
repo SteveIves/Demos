@@ -1,0 +1,80 @@
+.main remove
+
+record
+	
+	termch		,i4
+	inch		,i4
+	outch		,i4
+	
+	count		,i4
+	
+	infile		,a40
+	string		,a40
+	buffer		,a10000
+	savebuff	,a10000
+
+.proc
+
+	xcall flags(7004020,1)
+	open(termch=%syn_freechn,i,'tt:')
+
+	display(termch,'Input file: ')
+	reads(termch,infile,abort)
+
+	if (infile) 
+	begin
+
+		repeat
+		begin
+			
+			display(termch,'Remove records containing: ')
+			reads(termch,string,abort)
+	
+			if (.not.string) then
+				exitloop
+			else
+			begin
+				locase string
+				
+				open(inch=%syn_freechn,i:s,infile) [ERR=fnf]
+				open(outch=%syn_freechn,o:s,'temp.temp')
+	
+				repeat
+				begin
+					reads(inch,buffer,eof)
+	
+					savebuff = buffer
+					locase buffer
+	
+					if %instr(1,buffer,%atrim(string)) then
+						incr count
+					else
+						writes(outch,%atrim(savebuff))
+				end
+	
+eof,			close outch
+				close inch
+	
+				if (count) 
+				begin
+					xcall delet(infile)
+					xcall renam(infile,'temp.temp')
+				end
+	
+				display(termch,"Removed ",%string(count)," records")
+			end
+	
+		end
+	end
+
+	if (0) 
+	begin
+fnf,	display(termch,"File not found")
+		sleep 1
+	end
+
+abort,	close termch
+
+	stop
+
+.end

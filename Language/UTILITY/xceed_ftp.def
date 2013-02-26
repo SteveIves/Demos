@@ -1,0 +1,13 @@
+  
+external function
+	FtpStart				, ^VAL
+	FtpEnd					, ^VAL
+	FtpConnect				, ^VAL
+	FtpDisconnect			, ^VAL
+	FtpSendFile				, ^VAL
+	FtpReceiveFile			, ^VAL
+	FtpChangeCurrentFolder	, ^VAL
+	FtpChangeToParentFolder	, ^VAL
+	FtpCreateFolder			, ^VAL
+	FtpListFolderContents	, ^VAL
+

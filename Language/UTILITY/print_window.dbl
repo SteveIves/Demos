@@ -1,0 +1,374 @@
+
+.subroutine print_window
+	
+	.include "UT:prt_control.def"
+	a_start_row,		n	;initial starting row
+	a_window_id,		n	;input window id
+	a_ratio,			n	;print size ratio
+	;End of argument list
+
+.include "WND:tools.def"
+.include "DBLDIR:windows.def"
+.include "WND:system.def"
+.include "WND:fldinf.def"
+
+record ivar
+	num_line,		i4	;number of lines in window
+	num_col,		i4	;width of window
+	field_number,	i4
+	row,			i4
+	col,			i4
+	len,			i4
+	enabled,		i4
+
+	hpos_start,		i4
+	hpos_end,		i4
+	ypos_start,		i4
+	ypos_end,  		i4
+	
+	lloop,			i4
+	ii,				i4
+	vloop,			i4
+
+	pos1,			i4
+	pos2,			i4
+
+	img_pos,		i4
+	img_width,		i4
+	img_height,		i4
+
+	v_start_row,	i4
+	v_end_row,		i4
+	v_col,			i4
+
+	got_a_box,		i4
+	box_row,		i4
+	box_depth,		i4
+
+	vert_num,		i4
+	vert_lin,		[132]i4
+	vert_typ,		[132]i4
+
+	font,			DS_FONTTYP
+
+stack record avar
+	print_texta,		a10000
+	line,			a1000
+	store_line,		a1000
+	iline,			[1000]i1@line
+	field_name,		a15
+	img_name,		a255
+	store_gs_attr,	d5
+	user_string,	a80
+
+.define prt_text(row, col, text) xcall prt_string(prt_control, col, row, text)
+
+.proc
+
+	clear ^i(ivar), avar
+
+	;Get the base window font details
+
+	xcall u_wndfont(D_GETWNDFONT, a_window_id, font)
+	xcall u_wndfont(D_GETFONT, font, wnd_font_name, wnd_font_pitch)
+
+	clear print_texta
+
+	xcall extract_window_data(a_window_id, print_texta, num_line, num_col)
+
+	clear field_number, field_name
+	repeat
+	begin
+		
+		incr field_number
+		clear field_name
+		
+		xcall i_fldinf(a_window_id,field_name,field_number,,gs_inpfld,,enabled)
+
+		if (.not.field_name)
+			exitloop	;all fields done
+
+		;Have we promprt info?
+		
+		if gs_promptfld
+		begin
+			
+			xcall w_flds(a_window_id, WF_PARAM, gs_promptfld, row, col, len)
+
+			line = print_texta((((row * num_col ) - num_col) + col):len)
+			font = gs_promptfont
+			call build_font_details
+
+			if (gs_usrptr)	;we have user data!
+			begin
+				user_string = %i_getstring(a_window_id, gs_usrptr)
+;SI (always print prompts in bold)
+;				if (%instr(1, user_string, "@B"))
+					ptxt_bold = TRUE
+				if (%instr(1, user_string, "@U"))
+					ptxt_underline = TRUE
+				if (%instr(1, user_string, "@I"))
+					ptxt_italic = TRUE
+			end
+			
+			prt_text(a_start_row+row, col, %atrim(line))
+		end
+
+		if (.not.enabled)
+			nextloop	;prompt but no field!
+
+		;now the actual field data
+
+		call set_attributes
+		
+		line = print_texta((((gs_frow * num_col ) - num_col) + gs_fcol):gs_dsplen)
+		font = gs_font
+		
+		call build_font_details
+		
+		prt_text(a_start_row + gs_frow, gs_fcol, %atrim(line))
+
+	end
+
+	repeat
+	begin
+		;first check for boxes
+
+		clear got_a_box
+
+		for lloop from 1 thru num_line
+		begin
+			;check for each top horizontal line of the box
+
+			clear line
+			line = print_texta(lloop * num_col - num_col + 1 : num_col)
+
+			for hpos_start from 1 thru %trim(line)
+			begin
+				if (iline[hpos_start].eq.3 .and. iline[hpos_start+1].eq.1)
+				begin
+					box_row = lloop
+					got_a_box = TRUE
+					clear vert_num
+					;we have a top line.  find the end of it
+					for hpos_end from hpos_start thru %trim(line) + 1
+					begin
+						if (line(hpos_end:1).eq.%char(5))
+						begin
+							exitloop
+						end
+						;check for vertical lines from here
+						if (line(hpos_end:1).eq.%char(4))
+						begin
+							incr vert_num
+							vert_lin[vert_num] = hpos_end
+							vert_typ[vert_num] = 2
+						end
+						;check for upside down T's
+						if (line(hpos_end:1).eq.%char(10))
+						begin
+							incr vert_num
+							vert_lin[vert_num] = hpos_end
+							vert_typ[vert_num] = 10
+						end
+					end
+
+					hpos_end = hpos_end - hpos_start + 1
+					clear line(hpos_start:hpos_end)
+					for ii from 1 thru vert_num
+					begin
+						^i(line(vert_lin[ii] : 1)) = vert_typ[ii]
+					end
+					print_texta(lloop * num_col - num_col + 1 : num_col) = line
+					
+					;find the bottom line position
+
+					for box_depth from lloop thru num_line
+					begin
+						clear line
+						line = print_texta(box_depth * num_col - num_col + 1 : num_col)
+						if (iline[hpos_start].eq.9 .and. iline[hpos_start+1].eq.1)
+						begin
+							exitloop	;found the end
+						end
+
+						if (iline[hpos_start].eq.7)	;crossover +
+						then
+						begin
+							^i(line(hpos_start:1)) = 7
+						end
+						else
+						begin
+							if (iline[hpos_start].eq.6 .and. iline[hpos_start+1].eq.1)
+							then
+							begin
+								^i(line(hpos_start:1)) = 1
+								^i(line(hpos_start+hpos_end-1:1)) = 1
+							end
+							else
+							begin
+								clear line(hpos_start:1)
+								clear line(hpos_start+hpos_end-1:1)
+							end
+						end
+						print_texta(box_depth * num_col - num_col + 1 : num_col) = line
+					end
+
+					for ii from hpos_start thru hpos_end
+					begin
+						if iline(ii:1).eq.1 clear line(ii:1)
+					end
+					
+					for ii from 1 thru vert_num
+					begin
+						if (vert_typ[ii].ne.10) 
+							^i(line(vert_lin[ii] : 1)) = 2
+					end
+					print_texta(box_depth * num_col - num_col + 1 : num_col) = line
+
+					xcall prt_box(prt_control, a_start_row + box_row , hpos_start, box_depth-box_row+1, hpos_end)
+
+				end
+			end
+		end
+
+		if (.not.got_a_box)
+			exitloop
+	end
+
+	;see if we have any lines
+
+	for lloop from 1 thru num_line
+	begin
+		;check for each horizontal line
+
+		clear line
+		line = print_texta(lloop * num_col - num_col + 1 : num_col)
+		
+		for hpos_start from 1 thru %trim(line)
+		begin
+			if (iline[hpos_start].eq.1 .and. iline[hpos_start+1].eq.1)
+			begin
+			;we have a line 
+				for hpos_end from hpos_start thru %trim(line) + 1
+				begin
+					if line(hpos_end:1).ne.%char(1) .and.
+					&	line(hpos_end:1).ne.%char(4) .and.
+					&	line(hpos_end:1).ne.%char(7) .and.
+					&   line(hpos_end:1).ne.%char(10) exitloop
+						
+				end
+				decr hpos_end
+				xcall prt_hline(prt_control, a_start_row + lloop, hpos_start, hpos_end, a_ratio)
+			end
+		end
+	end
+
+	;now check for vertical lines!
+
+	for lloop from 1 thru num_line
+	begin
+		clear line
+		line = print_texta(lloop * num_col - num_col + 1 : num_col)
+		
+		for vloop from 1 thru %trim(line)
+		begin
+			if (iline[vloop].eq.2 .or.
+			&   iline[vloop].eq.4 .or.
+			&   iline[vloop].eq.10)
+			begin
+				
+				;we have a line
+
+				v_start_row = lloop
+				v_col = vloop
+
+				store_line = line
+				for v_end_row from lloop thru num_line
+				begin
+					line = print_texta(v_end_row * num_col - num_col + 1 : num_col)
+					if (iline[vloop].ne.2 .and.
+					&   iline[vloop].ne.4 .and.
+					&   iline[vloop].ne.7 .and.
+					&   iline[vloop].ne.10)
+					begin
+						;no more
+						exitloop
+					end
+				end
+
+				line = store_line
+
+				decr v_end_row
+				
+				xcall prt_vline(prt_control, a_start_row + v_start_row, a_start_row + v_end_row, v_col)
+			end
+		end
+	end
+
+rcm,
+	;now any images (@IMG:)
+
+	for lloop from 1 thru num_line
+	begin
+		;check for each horizontal line
+
+		clear line
+		line = print_texta(lloop * num_col - num_col + 1 : num_col)
+		
+		if (img_pos = %instr(1, line, "@IMG:"))
+		begin
+			pos1 = %instr(img_pos, line, "(")
+			img_name = line(img_pos+1:pos1-2)
+			pos2 = %instr(pos1, line, "*")
+			img_width = line(pos1+1,pos2-1)
+			pos1 = %instr(pos2, line, ")")
+			img_height = line(pos2+1,pos1-1)
+			xcall prt_img(prt_control, img_name, lloop, img_pos, img_width, img_height)
+		end
+	end
+
+	a_start_row = a_start_row + (num_line)
+
+	xreturn
+
+set_attributes,
+
+	if gs_attr
+	begin
+		if gs_attr(2:1)	;blink		;this should be - but it's a bug!!
+			ptxt_italic = TRUE
+		if gs_attr(3:1)	;highlight
+			ptxt_bold = TRUE
+		if gs_attr(4:1)	;blink
+			ptxt_italic = TRUE
+		if gs_attr(5:1)	;blink
+			ptxt_underline = TRUE
+	end
+
+	;justification
+
+	ptxt_justify = gs_jst
+
+	return
+
+build_font_details,
+
+	;sort out the font details from the prompt/field prompt
+
+	if font.eq."   "
+	then
+	begin
+		fld_font_name = wnd_font_name
+		fld_font_pitch = wnd_font_pitch
+	end
+	else
+		xcall u_wndfont(D_GETFONT, font, fld_font_name, fld_font_pitch)
+
+	ptxt_font = fld_font_name
+	ptxt_pitch = fld_font_pitch
+
+	return
+
+.end
+

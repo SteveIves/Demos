@@ -1,0 +1,24 @@
+.script
+.date_generated "02/12/2003, 13:05"
+.version "8.1.0i"
+
+.input WEATHER_REPORT, 12, 58
+.placement 5, 13
+.title "Weather Report"
+.repository_structure WEATHER_REPORT
+.field DATE, pos(2, 12), fpos(2, 17)
+.field TIME, pos(2, 30), fpos(2, 35)
+.field ZONE, pos(2, 46), fpos(2, 51)
+.field LOCATION, pos(4, 8), fpos(4, 17)
+.field TEMPERATURE, pos(6, 5), fpos(6, 17)
+.field TEMPSCALE, noprompt, fpos(6, 23)
+.field HUMIDITY, pos(8, 8), fpos(8, 18)
+.field HUMSCALE, noprompt, fpos(8, 23)
+.field WINDSPEED, pos(10, 6), fpos(10, 18)
+.field WINDSCALE, noprompt, fpos(10, 23)
+.field WINDDIR, pos(12, 4), fpos(12, 18)
+.button I_OK, text("OK"), select("O")
+.button_set end
+.set ALL, WEATHER_REPORT, DATE, TIME, ZONE, LOCATION, TEMPERATURE, -
+     TEMPSCALE, HUMIDITY, HUMSCALE, WINDSPEED, WINDSCALE, WINDDIR
+.end

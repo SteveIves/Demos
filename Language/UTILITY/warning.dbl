@@ -1,0 +1,15 @@
+.subroutine warning
+
+	a_message		,a
+
+.include "WND:tools.def"
+
+.proc
+
+	xcall u_msgbox(%atrim(a_message),
+	&			   D_MOK+D_MICONEXCLAM,
+	&			   "Warning")
+
+	xreturn
+
+.end

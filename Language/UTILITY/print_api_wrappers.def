@@ -1,0 +1,49 @@
+;-------------------------------------------------------------------
+;                              Print API
+;                            Version 7.1.1
+;
+;         Copyright (c) 1997, Synergex International Corporation
+;
+; Source:       PrintApi.def
+;
+; Description:  Print API warpper control data argument
+;
+; Contents:     To ease the migration for cell based
+;               printing to GUI(metafile) printing
+;
+; Author:       Paul Fenton
+;
+; Created:      September, 1999
+;
+;-------------------------------------------------------------------
+
+group prt_control
+        prt_rpthandle   ,i4         ;report handle or channel
+        prt_penhandle   ,i4         ;drawing pen handle
+        prt_fontHandle  ,i4         ;font handle
+        prt_x           ,i4         ;x position on page
+        prt_y           ,i4         ;y position on page
+        prt_pix_height  ,i4         ;pixel height of pixels
+        prt_pix_width   ,i4         ;pixel width of pixels
+        prt_page_height ,i4         ;height of page in pixels
+        prt_page_width  ,i4         ;width of page in pixels
+        prt_numrows     ,i4         ;number of rows in page
+        prt_numcols     ,i4         ;number of cols in page
+        prt_nopreview   ,i4         ;suppress print preview
+        prt_noprtsel    ,i4         ;suppress printer/paper selection
+        prt_ratio       ,i4         ;ratio from mm to pixels
+        prt_print_type  ,i4         ;printer type 0=graphical,1=text only
+        prt_fontname    ,a32        ;font name(optional)
+        prt_title       ,a80        ;title
+        prt_queue       ,a128       ;printer name/queue
+endgroup
+
+
+.ifndef PRINTAPI_DEF
+.define PRINTAPI_DEF,   1           ; PrintApi.def has been included
+
+.define PRT_BOLD        1           ;3rd argument to prtapi_writes
+.define PRT_ITALIC      2
+.define PRT_UNDERLINE   4
+.endc
+

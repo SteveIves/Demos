@@ -1,0 +1,568 @@
+;-------------------------------------------------------------------------------
+;
+; gethandle.dbl		Routines to get window handles
+;
+; Camden Software Consulting	September, 2001
+;
+;------------------------------------------------------------------------------
+
+.include "DBLDIR:windows.def"
+.include "DBLDIR:apmisc.def"
+
+.define throw	,xcall exite(%ernum)
+
+.function get_window_handle	,^val, reentrant
+;
+; Description:	Function to return the handle of a Synergy window
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the window, or WID_APP/WID_CONTAINER
+;
+; Return value:	The handle of the window (trappable error if non-existent)
+;
+; Note:	This routine exists merely for completeness.
+;
+.proc
+	onerror catch
+	freturn %w_info(WIF_HWND, a_wndid)
+catch,	throw
+.end
+
+.function get_list_wndid	,^val, reentrant
+;
+; Description:  Function to return the window ID of a list's container
+;
+; Arguments:
+;
+	a_listid	,n	;ID of the list
+;
+; Return value:	ID of the container window
+;
+; Note: A fatal (non-trappable) Toolkit error occurs if the list ID is invalid
+;
+.include "WND:system.def"
+.include "WND:tools.def"
+.include "WND:lstprv.def"
+
+.proc
+	xcall lp_setup(a_listid)	;Load the global area with the right list
+	freturn glst_scrid		;Return the ID of the container
+.end
+
+.function get_list_handle	,^val, reentrant
+;
+; Description:	Function to return the handle of a Synergy list container
+;
+; Arguments:
+;
+	a_listid	,n	;ID of the list
+;
+; Return value:	The handle of the list's container window
+;
+; Note:	A fatal (non-trappable) Toolkit error occurs if the list ID is invalid
+;
+.proc
+	onerror catch
+	freturn %get_window_handle(%get_list_wndid(a_listid))
+catch,	throw
+.end
+
+.function get_field_control_handle	,^val, reentrant
+;
+; Description:	Function to return the handle of a field's control.
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_field		,n	;Name (alpha) or index (numeric) of the field
+
+;
+; Return value:	The handle of the field's input control, or zero if not
+;		currently framed.
+;
+; Notes:
+;
+;	Note that the handle of a field will be different when it is part of
+;	the currently active set, versus the opposite case.  When not part
+;	of the active set, no field has any subcomponent controls.  Use
+;	%get_field_display_handle to retrieve the handle to the display-only
+;	control.  When the field once again becomes part of the active set,
+;	the controls are recreated, so the handle may be different yet again.
+;
+;	For edit (text) fields and combo-box (drop-down selection) fields,
+;	there are no subcomponents.  For checkbox and radio button fields,
+;	however, the field itself is merely a container, and the individual
+;	checkbox or radio controls are child windows of the field itself.
+;	Use %get_field_entry_handle to retrieve the handle of the actual
+;	checkbox or radio button control.  Also see %get_field_prompt_handle
+;	and %get_field_drill_handle.
+;
+.include "WND:fldinf.def"
+
+.align
+stack record
+	winclass	,a64
+	group point	,a
+	  x		,i4
+	  y		,i4
+	endgroup
+
+
+.proc
+	if (%get_field_info(a_inpid, a_field, gs_inpfld))
+	  begin
+    	    xcall get_cell_point(a_inpid, gs_frow, gs_fcol, point)
+	    if (gs_radio .or. gs_checkbox) then
+	      winclass = "ButtonControl"
+	    else if (gs_selid) then
+	      winclass = "COMBOBOX"
+	    else
+	      winclass = "EDIT"
+	    freturn %find_window_at(%w_info(WIF_HWND, a_inpid), %atrim(winclass),
+	    &	    			point)
+	  end
+
+	freturn 0
+.end
+
+.function get_field_entry_handle	,^val, reentrant
+;
+; Description:	Function to return the handle of an entry in a checkbox or radio field
+;
+; Arguments:
+;
+	a_hcontrol	,n	;Handle to the control container (%get_field_control_handle)
+
+	a_entry		,n	;Index into component controls (1-based)
+;
+; Return value:	Handle to the component control, or 0 if no such entry exists.
+;
+; Notes:
+;
+;	Radio button and checkbox fields have a field container control, which
+;	is what is returned by %get_field_control_handle above.  To access the
+;	actual checkbox or radio button controls, pass that handle to this
+;	routine, and specify the index of the desired control (only 1 for
+;	checkbox, 1 to the number of entries for a radio button set).
+
+;
+; Undocumented structures associated with radio buttons and checkboxes:
+;
+.align
+stack record
+	user32		,D_ADDR	;Handle to user32.dll
+	pctls		,D_ADDR	;Pointer to button control structure
+	hctls		,D_ADDR	;Memory handle for control structure reference
+	pbtn		,D_ADDR	;Pointer to button structure
+	phead		,D_ADDR	;Pointer to head of linked list
+	hbtn		,D_ADDR	;Memory handle for button structure reference
+	hwnd		,D_ADDR	;Handle to the button in question
+	ndx		,i4	;Index into component buttons
+
+structure st_btnctls		;Button control structure (undocumented)
+	type		,i4	;ButtonControl type: radio/checkbox
+	flags		,i4	;Leaded/unleaded
+	index		,i4	;Number of buttons + 1
+	group button_head,a	;List of contained buttons
+	  next		,D_ADDR	;Next button
+	  prev		,D_ADDR	;Previous button
+	endgroup
+
+structure st_btn		;Data for each button entry in the linked list
+	group llst	,a	;Linked list controls
+	  next		,D_ADDR	;Next button
+	  prev		,D_ADDR	;Previous button
+	endgroup
+	type		,i4     ;Type:  radio/checkbox
+	hwnd_btn	,D_ADDR	;Hwnd of button
+	x		,i4	;Positon in cells, 1 based
+	y		,i4
+.proc
+	user32 = %dll_open("user32")
+	clear hwnd
+	;Get a pointer to the controls for this field
+	if (pctls = %dll_call(user32, DLL_TYPE_WINAPI,
+	&   "GetWindowLongA", %integer(a_hcontrol), %integer(0)))
+	  begin
+	    ;Now, convert it to a Synergy handle
+	    hctls = %mem_proc(DM_REG, ^size(st_btnctls), pctls)
+	    ;Save the address of the head of the linked list
+	    phead = ^addr(^m(st_btnctls.button_head,hctls))
+	    ;Get a pointer to the first button's control structure
+	    pbtn = ^m(st_btnctls.button_head.next,hctls)
+	    for ndx from 1 thru a_entry
+	      begin
+		if (pbtn .eq. phead)		;Made it all the way through
+		  begin
+		    clear hwnd			;Without finding it
+		    exitloop
+		  end
+		;Convert the button data pointer to a handle
+		hbtn = %mem_proc(DM_REG, ^size(st_btn), pbtn)
+		hwnd = ^m(st_btn.hwnd_btn, hbtn)	;Get the button handle
+		pbtn = ^m(st_btn.llst.next,hbtn)	;Get the next button
+	      end
+	  end
+	xcall dll_close(user32)
+	freturn hwnd
+.end
+
+.function get_field_display_handle	,^val, reentrant
+;
+; Description:  Function to return the handle of a field's display-only control.
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_field		,n	;Name (alpha) or index (numeric) of the field
+;
+; Return value:	The handle to the field's display-only control.
+;
+; Notes:
+;
+;	All fields have a display-only control that remains constant once the
+;	input window is loaded.  This control is only visible, however, when
+;	the field is not part of the currently framed input set.
+;
+.include "WND:fldinf.def"
+
+.align
+stack record
+	group point	,a
+	  x		,i4
+	  y		,i4
+	endgroup
+
+
+.proc
+	if (%get_field_info(a_inpid, a_field, gs_inpfld))
+	  begin
+    	    xcall get_cell_point(a_inpid, gs_frow, gs_fcol, point)
+	    freturn %find_window_at(%w_info(WIF_HWND, a_inpid), "SynergyStaticWnd",
+	    &	    			point)
+	  end
+
+	freturn 0
+.end
+
+.function get_field_prompt_handle	,^val, reentrant
+;
+; Description:  Function to return the handle of a field's prompt control.
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_field		,n	;Name (alpha) or index (numeric) of the field
+;
+; Return value: The handle to the field's prompt control, or 0 if no prompt.
+;
+; Notes:
+;
+;	The handle of the prompt can change, if the field has a hyperlink method
+;	and is in the currently framed input set, then the prompt will have a
+;	class of "PromptControl", and has a child window for the hyperlink (see
+;	get_field_hyperlink_handle below).  If a field has a hyperlink prompt
+;	and it is not in the current input set, then it has no handle (it is
+;	just text in the window.  If a field does not have a hyperlink prompt,
+;	its prompt will be a "SynergyStaticWnd", just like a display-only field.
+;
+;	Also worth noting: for checkboxes, the prompt is usually part of the
+;	field's control when the field is in the framed input set.  There is
+;	also a regular "SynergyStaticWnd" for when the field is display-only.
+;	When a checkbox field is in the active set and also has a hyperlink
+;	method, the prompt is a "PromptControl" with a child "Static" window.
+;
+.include "WND:fldinf.def"
+
+.align
+stack record
+	hwnd		,D_ADDR	;Returned handle
+	group point	,a
+	  x		,i4
+	  y		,i4
+	endgroup
+	row		,i4
+	col		,i4
+	len		,i4
+
+
+.proc
+	clear hwnd
+	if (%get_field_info(a_inpid, a_field, gs_inpfld) .and. gs_promptfld)
+	  begin
+    	    if (gs_checkbox) then
+	      begin
+		xcall get_cell_point(a_inpid, gs_frow, gs_fcol, point)
+		point.x += %ap_misc(MSC_CHECKBOX_X)
+	      end
+	    else
+	      begin
+		xcall w_flds(a_inpid, WF_PARAM, gs_promptfld, row, col, len)
+		xcall get_cell_point(a_inpid, row, col, point)
+	      end
+	    if (.not. (gs_hyperlink .and.		;Hyperlink?
+	    &	(hwnd = %find_window_at(%w_info(WIF_HWND, a_inpid), "PromptControl",
+	    &	    			point))))	; and active?
+	      hwnd = %find_window_at(%w_info(WIF_HWND, a_inpid), "SynergyStaticWnd",
+	    &	    			point)		;No, just text
+	  end
+
+	freturn hwnd
+.end
+
+.function get_field_hyperlink_handle	,^val, reentrant
+;
+; Description:  Get the handle of a hyperlink prompt, given the prompt handle
+;
+; Arguments:
+;
+	a_prompt	,n	;Handle to the prompt (%get_field_prompt_handle)
+;
+; Return value:	Handle to the prompt's hyperlink window, or 0 if none
+;
+.align
+stack record
+	group point	,a
+	 x		,i4
+	 y		,i4
+	endgroup
+.proc
+	point.x = point.y = 1	;Checkbox uses an offset of 1,1.  Others are 0,0
+	freturn %find_window_at(a_prompt, "Static", point)
+.end
+
+.function get_field_drill_handle	,^val, reentrant
+;
+; Description:  Function to return the handle of a field's drill-down button.
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_field		,n	;Name (alpha) or index (numeric) of the field
+;
+; Return value: The handle to the field's drill-down button, or 0 if no drill-down.
+;
+.include "WND:fldinf.def"
+
+.align
+stack record
+	hwnd		,D_ADDR
+	group rect	,a
+	  left		,i4
+	  top		,i4
+	  right		,i4
+	  bottom	,i4
+	endgroup
+	group point	,a
+	  x		,i4
+	  y		,i4
+	endgroup
+
+.proc
+	if (hwnd = %get_field_control_handle(a_inpid, a_field))	;Find the field control
+	  begin
+	    xcall ap_misc(MSC_WINDOW_RECT, hwnd, rect)	;Button follows field control
+	    point.x = rect.right + (%ap_misc(MSC_VSCROLL_X) / 2);Center of button
+	    point.y = rect.top + 1				;(Near) top of cell
+	    freturn %find_window_at(%w_info(WIF_HWND, a_inpid), "BUTTON",
+	    &	    			point)
+	  end
+
+	freturn 0
+.end
+
+.function get_button_handle	,^val, reentrant
+;
+; Description:	Function to return the handle of a button on a window
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of a Synergy window
+
+	a_button	,a	;Name of the button
+;
+; Return value: Handle of the button, or 0 if not found
+;
+; Note:	Any change to the button set for the window may cause the buttons
+;	to be recreated, thus potentially changing their handles.
+;
+;	To find a button on a list, pass %get_list_wndid(listid) for a_wndid.
+;
+;	See buttons.def for the structures and macros used in this routine.
+;
+.include "WND:buttons.def"
+
+.align
+stack record
+	hndl		,i4	;Handle to button info
+	ndx		,i4	;Index of desired button
+	user32		,i4	;Handle to user32.dll
+	hbtn		,i4	;Returned handle
+
+.proc
+	onerror catch
+	if ((hndl = %bu_info(a_wndid)) .and.		;We have buttons
+	&   (ndx = %bu_find(a_wndid, a_button, TRUE)))	;We found this one
+	  begin
+    	    user32 = %dll_open("user32")		;Find the handle
+	    hbtn = %dll_call(user32, DLL_TYPE_WINAPI,
+	    &	    "FindWindowExA", %w_info(WIF_HWND, a_wndid),
+	    &	    %integer(0), "BUTTON", %atrim(D_BUTTON_INFO(hndl, ndx, text)))
+	    xcall dll_close(user32)
+	    freturn hbtn
+	  end
+
+	freturn 0		;No buttons, or didn't find it
+
+catch,	throw
+.end
+
+.subroutine get_cell_point	,reentrant
+;
+; Description:  Compute a point within a cell in a Synergy window
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the window
+
+	a_row		,n	;Row number
+
+	a_col		,n	;Column number
+
+	group a_center	,a	;Returned center point
+	  x		,i4
+	  y		,i4
+	endgroup
+;
+; Notes:
+;
+;	The point is computed as follows.  The X (horizontal) coordinate is
+;	taken as the number of visible columns to the left of the specified
+;	column (taking display origin into account) times the character width
+;	for the window, plus any offset of the first visible column from the
+;	left edge of the window, plus 1 for good luck (to make sure we are
+;	within the next cell, rather than off the edge).  The Y (vertical)
+;	coordinate is computed in a corresponding manner, with the addition
+;	of the row leading, because the actual top of the character cell will
+;	be that far from the top of the row.
+;
+;	This routine will not work for WID_APP or WID_CONTAINER, because they
+;	do not have a display origin, hence %w_info would die with a fatal error.
+;
+.proc
+	a_center.x = %rnd(%ap_misc(MSC_CHARWIDTH, a_wndid) *
+	&		(a_col - %w_info(WIF_DCOL, a_wndid))) +
+	&		%ap_misc(MSC_XORIGIN, a_wndid) + 1
+	a_center.y = %rnd(%ap_misc(MSC_ROWHEIGHT, a_wndid) *
+	&		(a_row - %w_info(WIF_DROW, a_wndid))) +
+	&		%ap_misc(MSC_YORIGIN, a_wndid) +
+	&		%ap_misc(MSC_ROWLEADING, a_wndid) + 1
+	xreturn
+.end
+
+.function find_window_at	,^val, reentrant
+;
+; Description:  Find a window at a specific point
+;
+; Arguments:
+;
+	a_parent	,n	;Handle of parent window
+
+	a_class		,a	;Class name of desired window
+
+	group a_point	,a	;Point at which the window should be found
+	  x		,i4
+	  y		,i4
+	endgroup
+;
+; Return value:	Handle to the specified window, or 0 if none found
+;
+; Notes:
+;
+;	This routine uses a FindWindowEx loop, rather than using
+;	ChildWindowFromPoint, because the latter does not allow
+;	for more than one window to occupy the same point, nor does
+;	it allow for the specification of window class.
+;
+;	The handle returned will be the one for the first window (in the Z
+;	order, starting at the top) that is a child of a_parent, is of the
+;	class a_class (case-insensitive), and contains the point a_point
+;	(relative to a_parent's client area).  If no window matches these
+;	criteria, 0 is returned.
+;
+; Macro to determine whether or not a point is contained in a rectangle:
+;
+.define M_PTINRECT(r,p) ((p.x .ge. r.left) .and. (p.x .le. r.right) .and.
+&			 (p.y .ge. r.top) .and. (p.y .le. r.bottom))
+
+.align
+stack record
+	hchild		,D_ADDR	;Returned window handle
+	group rect	,a	;Rectangle of window
+	  left		,i4
+	  top		,i4
+	  right		,i4
+	  bottom	,i4
+	endgroup
+	user32		,i4	;Handle to user32.dll
+.proc
+	user32 = %dll_open("user32")		;Open user32.dll
+	hchild = 0				;Start at the top
+	while (hchild = %dll_call(user32, DLL_TYPE_WINAPI,
+	&      "FindWindowExA", %integer(a_parent), hchild, %atrim(a_class),
+	&      %integer(0)))		;While we have a member of the class
+	  begin
+	    xcall dll_call(user32, DLL_TYPE_WINAPI,
+	    &		   "GetWindowRect", hchild, ^addr(rect))
+						;Get its bounding rectangle
+						; and convert to client coordinates
+	    xcall dll_call(user32, DLL_TYPE_WINAPI,
+	    &		   "ScreenToClient", %integer(a_parent), ^addr(rect.left))
+	    xcall dll_call(user32, DLL_TYPE_WINAPI,
+	    &		   "ScreenToClient", %integer(a_parent), ^addr(rect.right))
+	    if (M_PTINRECT(rect, a_point))	;Is the point in the rectangle?
+	      exitloop
+	  end
+	xcall dll_close(user32)			;Close user32.dll
+	freturn hchild	       			;Return the handle, or 0
+.end
+
+.function get_field_info	,^val, reentrant
+;
+; Description:  Get information about a field
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_field		,n	;Field number or name
+
+	a_fldinf	,a	;Returned field information structure
+;
+; Return value:	TRUE if successful, FALSE if not
+;
+; Notes:
+;
+;	You may pass either a number of a name in a_field.  If a_field is
+;	alpha, it is assumed to be a name.  If that name does not correspond
+;	to a field in a_inpid, this routine returns FALSE.  If a_field is numeric,
+;	it is assumed to be a field number.  If that number is not a valid
+;	Toolkit field number, the internal call to I_FLDINF will abort with
+;	a fatal Toolit error.
+;
+.align
+stack record
+	fldnm		,i4	;Field number
+
+.proc
+	if (^datatype(%argnum(a_field)) .eq. D_TYPE_A) then
+	  xcall i_fldinf(a_inpid, ^a(a_field), fldnm,, a_fldinf)
+	else
+	  xcall i_fldinf(a_inpid,, fldnm = a_field,, a_fldinf)
+	freturn (fldnm .ne. 0)
+.end

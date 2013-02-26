@@ -1,0 +1,159 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config Name="Debug">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="dbl -dXT %n"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				ClearProcessBuffer="1"
+				CaptureOutputWith="ProcessBuffer">
+				<Exec CmdLine='dblink -d "%n" WND:tklib.elb'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				ShowOnMenu="HideIfNoCmdLine"
+				RunFromDir="%rw">
+				<Exec CmdLine=""/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug">
+				<Exec CmdLine="dbr -d %n"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute">
+				<Exec CmdLine="dbr %n"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbl" %(SYN_DBG) -XT "%p%n%e"'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine='"%(DBLDIR)\bin\dblink" %(SYN_DBG) "%n" WND:tklib.elb DBLDIR:axlib.elb'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				ShowOnMenu="HideIfNoCmdLine"
+				RunFromDir="%rw">
+				<Exec CmdLine=""/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbr" -d "%n"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine='"%(DBLDIR)\bin\dbr" "%n"'/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Synergy Test Skeletons"
+				MenuCaption="Generate Synergy Test S&amp;keletons..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynStartSkeletonGen"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl">
+			<F N="splash.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def"/>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+</Project>

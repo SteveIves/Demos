@@ -1,0 +1,24 @@
+.main test_clipboard
+;
+; Test program for clipboard functions
+;
+; Camden Software Consulting	May, 2001
+;
+.include "DBLDIR:windows.def"
+.include "WND:tools.def"
+
+external function
+	put_cliptext	,^val
+	get_cliptext	,a
+
+.proc
+	xcall u_start
+	if (%put_cliptext("ABCDEFG") .and. 
+	&   (%get_cliptext .eqs. "ABCDEFG")) then
+	  xcall u_message("Success!")
+	else
+	  xcall u_message("Failure!")
+	xcall u_finish
+	stop
+.end
+

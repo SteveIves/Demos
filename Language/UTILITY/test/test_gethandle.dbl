@@ -1,0 +1,349 @@
+.main test_gethandle
+;
+; Description:	Demonstration program for "gethandle" routines.
+;
+; Camden Software Consulting		September, 2001
+;
+.include "DBLDIR:windows.def"
+.include "WND:system.def"
+.include "WND:tools.def"
+.align
+stack record
+	hwnd		,D_ADDR
+	hwnd2		,D_ADDR
+	colid		,i4
+	bldid		,i4
+	wndid		,i4
+	lstid		,i4
+	frames		,i4
+	entry		,i4
+	ctls		,a8192
+	fldname		,a30
+	btnname		,a30
+
+.align
+literal
+	sels		,3a10, "One", "two", "three"
+
+.proc
+	xcall u_start
+	xcall mb_column(ctls, "c_test", "Test")
+	xcall mb_entry(ctls, "o_wndhnd", "Get window handle")
+	xcall mb_entry(ctls, "o_ctlhnd", "Get field control handle(s)...")
+	xcall mb_entry(ctls, "o_dsphnd", "Get field display handle...")
+	xcall mb_entry(ctls, "o_prompt", "Get field prompt handle(s)...")
+	xcall mb_entry(ctls, "o_drill",  "Get field drill button handle...")
+	xcall mb_line(ctls)
+	xcall mb_entry(ctls, "o_frames", "Frames off")
+	xcall mb_line(ctls)
+	xcall mb_entry(ctls, "o_btnhnd", "Get button handle...")
+	xcall mb_line(ctls)
+	xcall mb_entry(ctls, "o_exit", "Exit")
+	xcall mb_end(ctls, colid)
+	xcall ib_input(bldid, "", 10, 40)
+	xcall ib_field(bldid, "edit", D_FLD_SIZE, 10, D_FLD_PROMPT, "Edit field ",
+	&	       D_FLD_DRILL, "null")
+	xcall ib_field(bldid, "combo", D_FLD_SIZE, 10, D_FLD_PROMPT, "Combo box ",
+	&	       D_FLD_DRILL, "null", D_FLD_HYPERLINK, "null", D_FLD_SELECT,
+	&	       0, 0, 3,, 3, sels, D_FLD_POS, 2, 1)
+	xcall ib_field(bldid, "radio", D_FLD_SIZE, 10, D_FLD_PROMPT, "Radio",
+	&	       D_FLD_DRILL, "null", D_FLD_SELECT, 0, 0, 3,, 3, sels,
+	&	       D_FLD_RADIO, D_FLD_POS, 3, 1)
+	xcall ib_field(bldid, "ckbox", D_FLD_SIZE, 1, D_FLD_TYPE, D_DECIMAL,
+	&	       D_FLD_PROMPT, "Checkbox", D_FLD_CHECKBOX, D_FLD_DRILL, "null",
+	&	       D_FLD_POS, 6, 1)
+	xcall ib_field(bldid, "ckboxhyper", D_FLD_SIZE, 1, D_FLD_TYPE, D_DECIMAL,
+	&	       D_FLD_PROMPT, "Checkbox with hyperlink",
+	&	       D_FLD_CHECKBOX, D_FLD_DRILL, "null", D_FLD_HYPERLINK, "null",
+	&	       D_FLD_POS, 7, 1)
+	xcall ib_button(bldid, "OK")
+	xcall ib_button(bldid, "Cancel")
+	xcall ib_button(bldid, "Bitmap", DSB_BITMAP, "x.bmp")
+	xcall ib_end(bldid, wndid)
+	xcall b_enable(wndid, "OK")
+	xcall b_enable(wndid, "Cancel")
+	xcall b_enable(wndid, "Bitmap")
+	xcall u_window(D_PLACE, wndid, 5, 1)
+	xcall i_frames(wndid)			;Start with the frames visible
+	frames = TRUE
+	repeat
+	  begin
+	    xcall m_process
+	    if (g_select)
+	      using g_entnam select
+("O_WNDHND "),	xcall u_message("Handle for window id " + %string(wndid) + " is " +
+		&		%hex(%get_window_handle(wndid)))
+("O_CTLHND "), begin
+		 if (%select_field(wndid,, fldname))
+		  begin
+		    xcall u_message("Handle for field " + %atrim(fldname) + " control is " +
+		    &		   %hex(hwnd = %get_field_control_handle(wndid, fldname)))
+	    	    clear entry
+		    while (hwnd2 = %get_field_entry_handle(hwnd, (entry += 1)))
+		      xcall u_message("Handle for field entry " + %string(entry) +
+		      &		      " is " + %hex(hwnd2))
+		  end
+	       end
+("O_DSPHND "), begin
+		if (%select_field(wndid,, fldname))
+		  begin
+		    xcall u_message("Handle for field " + %atrim(fldname) + " display-only window is " +
+		    &		    %hex(%get_field_display_handle(wndid, fldname)))
+		  end
+	       end
+("O_PROMPT "), begin
+		if (%select_field(wndid,, fldname))
+		  begin
+		    xcall u_message("Handle for field " + %atrim(fldname) + " prompt is " +
+		    &		    %hex(hwnd = %get_field_prompt_handle(wndid, fldname)))
+		    if (hwnd2 = %get_field_hyperlink_handle(hwnd))
+		      xcall u_message("Handle for hyperlink is " + %hex(hwnd2))
+		  end
+	       end
+("O_DRILL "), begin
+		if (%select_field(wndid,, fldname))
+		  begin
+		    xcall u_message("Handle for field " + %atrim(fldname) + " drill button is " +
+		    &		    %hex(%get_field_drill_handle(wndid, fldname)))
+		  end
+	      end
+("O_FRAMES "), begin
+		frames = .not. frames
+		if (frames) then
+		  begin
+		    xcall i_frames(wndid)
+		    xcall m_text(colid, "o_frames", "Frames off")
+		  end
+		else
+		  begin
+		    xcall i_frames(wndid, "*NONE*")
+		    xcall m_text(colid, "o_frames", "Frames on")
+		  end
+	       end
+("O_BTNHND "), begin
+		 if (%select_button(wndid, btnname))
+		  begin
+		    xcall u_message("Handle for button " + %atrim(btnname) + " is " +
+		    &		    %hex(%get_button_handle(wndid, btnname)))
+		  end
+	       end
+(),		exitloop
+	      endusing
+	  end
+	xcall u_finish
+.end
+
+.function select_field	,^val, reentrant
+;
+; Description:  Select from a list of fields in an input window
+;
+; Arguments:
+;
+	a_inpid		,n	;ID of the input window
+
+	a_setnm		,n	;(Optional) set name or number (default = 1)
+
+	a_fldnam	,a	;Returned field name
+;
+; Return value:	TRUE if a field was selected, FALSE if cancelled
+;
+.include "WND:tools.def"
+.include "WND:setinf.def"
+
+.align
+stack record
+	rv		,i4	;Return value
+	bldid		,i4	;Input window build ID
+	inpid		,i4	;Input window ID
+	lcid		,i4	;List class ID
+	lstid		,i4	;List ID
+	req		,i4	;Request code
+	group data	,a	;Data for list
+	  fldname	,a30	;Field name
+	  prompt	,a80	;Prompt (or blank if none)
+	endgroup
+
+.proc
+	rv = FALSE
+	xcall e_enter
+	xcall l_class(lcid, "lc_selfld", 5, 1, 12, 1,,,,,, "select_field_load",
+	&	      "ACTIVEX")
+	xcall ib_input(bldid, "", 1, 110)
+	xcall ib_dsp_area(bldid, 1, 1, 1, %w_info(WIF_SCOLS) - 2)
+	xcall ib_field(bldid, "fldname", D_FLD_SIZE, 30)
+	xcall ib_field(bldid, "prompt", D_FLD_SIZE, 80)
+	xcall ib_end(bldid, inpid)
+	if (^passed(a_setnm)) then
+	  begin
+    	    if (^datatype(%argnum(a_setnm)) .eq. D_TYPE_A) then
+    	      xcall i_setinf(a_inpid, ^a(a_setnm),,, gs_fldset)
+    	    else
+    	      xcall i_setinf(a_inpid,, a_setnm,, gs_fldset)
+	  end
+	else
+	  xcall i_setinf(a_inpid,, 1,, gs_fldset)
+	xcall l_create(lstid, inpid, data,, "lc_selfld",,,,, 1, gs_setcnt)
+	xcall l_button(lstid, "OK")
+	xcall l_button(lstid, "Cancel")
+	xcall l_sect(lstid, "Select field", D_TITLE)
+	xcall l_sect(lstid, "Field name|Prompt|", D_HEADER)
+	xcall l_select(lstid, req=D_LNOP, data,,,,,,,,,,,,, a_inpid, gs_fldset)
+	if (g_select) then
+	  using g_entnam select
+("OK "),    rv = TRUE
+	  endusing
+	else
+	  rv = TRUE
+	xcall e_exit
+	if (rv) then
+	  a_fldnam = fldname
+	else
+	  clear a_fldnam
+	freturn rv
+.end
+
+.subroutine select_field_load	,reentrant
+;
+; Description:  Load method for field selection list
+;
+; Arguments:
+;
+	a_listid	,n	;Id of the list
+
+	a_req		,n	;Request code
+
+	group a_data	,a	;List data
+	  fldname	,a30	;Field name
+	  prompt	,a80	;Prompt
+	endgroup
+
+	a_inpid		,n	;Input window ID
+
+	a_dsa		,n	;Disabled flag
+
+	a_ndx		,n	;Item index
+
+	a_wndid		,n	;Input window ID (method data)
+
+	a_setinf	,a	;Set information structure (method data)
+;
+.include "WND:setinf.def"
+.include "WND:fldinf.def"
+
+.proc
+	gs_fldset = a_setinf		;Load set information
+	if (a_ndx .le. gs_setcnt) then	;Is requested item in range of fields?
+	  begin
+    	    xcall i_fldinf(a_wndid, fldname="",		;Get field name and info
+	    &		   %decml(gs_setfld(a_ndx)),, gs_inpfld)
+    	    if (gs_promptfld) then			;Do we have a promt?
+	      xcall w_flds(a_wndid, WF_GET, gs_promptfld, prompt) ;Get it
+	    else					;No prompt
+	      clear prompt
+	    xcall i_display(a_inpid,, a_data)		;Display the data
+	  end
+	else
+	  a_req = D_LEOF				;No more fields
+	xreturn
+.end
+
+.function select_button	,^val, reentrant
+;
+; Description:  Select from a list of buttons in a window
+;
+; Arguments:
+;
+	a_wndid		,n	;ID of the window
+
+	a_btnnam	,a	;Returned button name
+;
+; Return value:	TRUE if a button was selected, FALSE if cancelled
+;
+.include "WND:tools.def"
+.include "WND:buttons.def"
+
+.align
+stack record
+	rv		,i4	;Return value
+	bldid		,i4	;Input window build ID
+	inpid		,i4	;Input window ID
+	lcid		,i4	;List class ID
+	lstid		,i4	;List ID
+	req		,i4	;Request code
+	hndl		,i4	;Handle to button information
+	group data	,a	;Data for list
+	  btnname	,a30	;Button name
+	  text		,a80	;Text of caption or bitmap filename
+	endgroup
+
+.proc
+	rv = FALSE
+	if (hndl = %bu_info(a_wndid)) then	;Load button information
+	  begin
+	    xcall e_enter
+	    xcall l_class(lcid, "lc_selbtn", 5, 1, 12, 1,,,,,, "select_button_load",
+	    &	      "ACTIVEX")
+	    xcall ib_input(bldid, "", 1, 110)
+	    xcall ib_dsp_area(bldid, 1, 1, 1, %w_info(WIF_SCOLS) - 2)
+	    xcall ib_field(bldid, "btnname", D_FLD_SIZE, 30)
+	    xcall ib_field(bldid, "text", D_FLD_SIZE, 80)
+	    xcall ib_end(bldid, inpid)
+	    xcall l_create(lstid, inpid, data,, "lc_selbtn",,,,, 1, D_BUTTONSET_INFO(hndl, maxbtn))
+	    xcall l_button(lstid, "OK")
+	    xcall l_button(lstid, "Cancel")
+	    xcall l_sect(lstid, "Select button", D_TITLE)
+	    xcall l_sect(lstid, "Button name|Text or bitmap|", D_HEADER)
+	    xcall l_select(lstid, req=D_LNOP, data,,,,,,,,,,,,, hndl)
+	    if (g_select) then
+	      using g_entnam select
+    ("OK "),    rv = TRUE
+	      endusing
+	    else
+	      rv = TRUE
+	    xcall e_exit
+	  end
+	else
+	  xcall u_message("Window does not contain any buttons")
+	if (rv) then
+	  a_btnnam = btnname
+	else
+	  clear a_btnnam
+	freturn rv
+.end
+
+.subroutine select_button_load	,reentrant
+;
+; Description:  Load method for button selection list
+;
+; Arguments:
+;
+	a_listid	,n	;Id of the list
+
+	a_req		,n	;Request code
+
+	group a_data	,a	;List data
+	  btnname	,a30	;Button name
+	  text		,a80	;Text of caption or bitmap filename
+	endgroup
+
+	a_inpid		,n	;Input window ID
+
+	a_dsa		,n	;Disabled flag
+
+	a_ndx		,n	;Item index
+
+	a_hndl		,n	;Button info handle (method data)
+;
+.include "WND:buttons.def"	;Contains macros and structure definitions
+
+.proc
+	if (a_ndx .le. D_BUTTONSET_INFO(a_hndl, maxbtn)) then
+	  begin			;Requested item within range of buttons
+	    a_data.btnname = D_BUTTON_INFO(a_hndl, a_ndx, name)
+	    a_data.text = D_BUTTON_INFO(a_hndl, a_ndx, text)
+	    xcall i_display(a_inpid,, a_data)
+	  end
+	else			;No more buttons
+	  a_req = D_LEOF
+	xreturn
+.end

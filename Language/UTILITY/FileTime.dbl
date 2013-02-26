@@ -1,0 +1,118 @@
+.function FileTime	,^val
+;
+; Description:  Get the file times for a file
+;
+; Arguments:
+;
+    a_filename		,a	;Name of the file (a la Synergy)
+
+	a_creation		,a	;(Optional) returned datetime of creation
+
+	a_lastaccess	,a	;(Optional) returned datetime of last access
+
+	a_lastwrite		,a	;(Optional) returned datetime of last write
+;
+; Return value:	TRUE for success, FALSE if the file could not be opened
+;
+;
+; Notes:  datetime values are returned in the same form:
+;
+;	YYYYMMDDHRMNSCmmm
+;
+;	YYYY = year
+;	MM = month
+;	DD = day
+;	HR = hour
+;	MN = minute
+;	SC = second
+;	mmm = milliseconds
+;
+.define D_WORD		,i2
+.define D_DWORD		,i4
+
+.define D_NULL				,%integer(0)
+.define D_GENERIC_READ		,^x(80000000)
+.define D_SHARE_ALL			,%integer(3)
+.define D_OPENEXISTING		,%integer(3)
+.define D_FILEATTR_NORMAL	,^x(80)
+.define D_INVALID_HANDLE	,-1
+
+.define D_FILETIME	,a ^size(filetime)
+
+structure filetime	;Structure of returned filetime data
+	lowDateTime		,D_DWORD	;Low-order 32 bits
+	highDateTime	,D_DWORD	;High-order 32 bits
+
+
+.align
+stack record
+	dll				,i4	;DLL handle
+	file			,i4	;File handle
+	chn				,i4
+	rv				,i4
+	time_create	,D_FILETIME
+	time_access		,D_FILETIME
+	time_modified	,D_FILETIME
+	filnam			,a256	;Translated filename
+
+.proc
+	xcall u_open(chn, "I", a_filename)	;Open the file (translate logicals)
+	xcall filnm(chn, filnam)		;Get the real filename
+	xcall u_close(chn)
+	dll = %dll_open("kernel32")		;Kernel32.dll
+	file = %dll_call(dll,DLL_TYPE_WINAPI,"CreateFileA", %atrim(filnam), D_GENERIC_READ,
+	&	D_SHARE_ALL, D_NULL, D_OPENEXISTING, D_FILEATTR_NORMAL, D_NULL)
+	if (rv = (file .ne. D_INVALID_HANDLE))
+	  begin
+	    xcall dll_call(dll,DLL_TYPE_WINAPI,"GetFileTime", file, ^addr(time_create),
+	    &	       ^addr(time_access), ^addr(time_modified))
+	    xcall dll_call(dll,DLL_TYPE_WINAPI,"CloseHandle", file)
+	    if (^passed(a_creation))
+	      xcall filetime_to_systime(dll, time_create, a_creation)
+	    if (^passed(a_lastaccess))
+	      xcall filetime_to_systime(dll, time_access, a_lastaccess)
+	    if (^passed(a_lastwrite))
+	      xcall filetime_to_systime(dll, time_modified, a_lastwrite)
+	  end
+	xcall dll_close(dll)
+	freturn rv
+.end
+
+.subroutine filetime_to_systime
+;
+; Description:  Convert a D_FILETIME structure to a datetime string
+;
+; Arguments:
+;
+	a_dll		,n	;Handle to kernel32.dll
+
+	a_filetime	,a	;D_FILETIME structure
+
+	a_systime	,a	;Returned datetime string
+;
+
+stack record systemtime	;Structure of converted information
+	wYear		,D_WORD
+	wMonth		,D_WORD
+	wDayOfWeek	,D_WORD
+	wDay		,D_WORD
+	wHour		,D_WORD
+	wMinute		,D_WORD
+	wSecond		,D_WORD
+	wMilliseconds	,D_WORD
+
+
+stack record filetime	;Structure of returned filetime data
+	lowDateTime	,D_DWORD	;Low-order 32 bits
+	highDateTime	,D_DWORD	;High-order 32 bits
+
+.proc
+	xcall dll_call(a_dll,DLL_TYPE_WINAPI,"FileTimeToLocalFileTime", ^addr(a_filetime),
+	&	       ^addr(filetime))
+	xcall dll_call(a_dll,DLL_TYPE_WINAPI,"FileTimeToSystemTime", ^addr(filetime),
+	&	       ^addr(systemtime))
+	xcall s_bld(a_systime,, "%4d%2d%2d%2d%2d%2d%3d",
+	&	    wYear, wMonth, wDay, wHour, wMinute, wSecond,
+	&	    wMilliseconds)
+	xreturn
+.end

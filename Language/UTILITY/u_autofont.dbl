@@ -1,0 +1,57 @@
+;-------------------------------------------------------------------------------
+; Title:	u_autofont.dbl
+; Author:	Steve Ives (Synergex)
+; Date:		11th January 1999
+; Use:		Sets windows default and debugger fonts based on current
+;			screen resolution.  Currently supported resolutions are:
+;
+;				640 x 400
+;				640 x 480
+;				800 x 600
+;				1024 x 768
+;
+;$Log:   S:/Source/Synergy/psg/archive/u_autofont.dbv  $
+;
+;   Rev 1.0   Jun 10 1999 22:41:12   Administrator
+;Original version
+
+.subroutine u_autofont
+
+.include "WND:tools.def"
+
+external function
+	u_winres	,a
+
+.proc
+
+	.ifdef D_GUI
+	case (%u_winres) of
+	begincase
+	"640 x 400":
+		begin
+			xcall u_wndfont(D_SETFONT,DF_DEFAULT, "Terminal",5,"A")
+			xcall u_wndfont(D_SETFONT,DF_DEBUGGER,"Terminal",8,"A")
+		end
+	"640 x 480":
+		begin
+			xcall u_wndfont(D_SETFONT,DF_DEFAULT, "Terminal",7,"A")
+			xcall u_wndfont(D_SETFONT,DF_DEBUGGER,"Courier New",8,"A")
+		end
+	"800 x 600":
+		begin
+			xcall u_wndfont(D_SETFONT,DF_DEFAULT, "Courier New",8,"A")
+			xcall u_wndfont(D_SETFONT,DF_DEBUGGER,"Courier New",10,"A")
+		end
+	"1024 x 768":
+		begin
+			xcall u_wndfont(D_SETFONT,DF_DEFAULT, "Courier New",10,"A")
+			xcall u_wndfont(D_SETFONT,DF_DEBUGGER,"Courier New",10,"A")
+		end
+	endcase
+	.endc
+
+	xreturn
+
+.end
+
+

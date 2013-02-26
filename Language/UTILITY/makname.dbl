@@ -1,0 +1,30 @@
+.function makename	;,a
+;
+; Description:  Translate a Synergy-style filename to a native path
+;
+; Arguments:
+;
+	a_filename	,a	;Synergy-style filename
+
+	a_defext	,a	;(Optional) default file extension (default = ".ddf")
+;
+; Return value:	The translated path.
+;
+; Note:		This routine supports Synergy search-path logicals.
+;
+.include "DBLDIR:apmisc.def"
+.align
+stack record
+	path		,a256	;Returned native path
+
+.proc
+	xcall ap_misc(MSC_MAKENAME,	;Undocumented access to Synergy makename
+	&	      path,		;Returned path
+	&	      a_filename,	;Base filename
+	&	      1,		;Support search-list logicals?
+	&	      0,		;Normalize to current directory (WIndows only)?
+	&	      a_defext)		;Default extension
+	freturn %atrim(path)		;Trim it, in case it is passed to a
+					; non-Synergy routine that doesn't like
+					; trailing spaces.
+.end
