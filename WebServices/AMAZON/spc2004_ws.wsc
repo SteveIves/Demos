@@ -1,0 +1,78 @@
+.script
+.date_generated "02/02/2004, 16:50"
+.version "8.1.5b"
+.input inp_search, 6, 68
+.placement 4, 5
+.title "Search Options"
+.repository_structure SEARCH
+.field SEARCH_TYPE, pos(2, 3), fpos(2, 17)
+.field SEARCH_FOR, pos(4, 3), fpos(4, 17)
+.field NO_PAGES, pos(6, 3), fpos(6, 17)
+.button btn_search, text("Search"), select("S")
+.button btn_exit, text("Exit"), select("X")
+.button_set end
+.end
+.column col_main, "Main"
+.entry btn_search, "Search", key(^S)
+.line
+.entry btn_exit, "Exit", key(^E)
+.end
+.input inp_result, 19, 74
+.placement 3, 4
+.title "Results"
+.repository_structure RESULTS
+.field ITEM_NUMBER, pos(1, 2), fpos(1, 8), readonly
+.field PRODUCT_NAME, pos(3, 2), fpos(3, 23), readonly
+.field AUTHORS, pos(6, 2), fpos(6, 23), readonly
+.field RELEASE_DATE, pos(12, 2), fpos(12, 23), readonly
+.field MANUFACTURER, pos(13, 2), fpos(13, 23), readonly
+.field AVAILABILTY, pos(14, 2), fpos(14, 23), readonly
+.field LIST_PRICE, pos(18, 2), fpos(18, 13), readonly
+.field OUR_PRICE, pos(18, 23), fpos(18, 34), readonly
+.field USED_PRICE, pos(18, 44), fpos(18, 55), readonly
+.line Line1, 74, pos(2, 1)
+.line Line2, 74, pos(11, 1)
+.line Line3, 74, pos(17, 1)
+.button btn_prev, text("Previous")
+.button btn_close, text("Close")
+.line Line4, 74, pos(19, 1)
+.button btn_next, text("Next")
+.button_set center
+.end
+.column col_nav, "Navigate"
+.entry i_next, "Next Field", key(DOWN)
+.entry i_prev, "Presvious Field", key(UP)
+.entry btn_prev, "Previous", key(PREV)
+.entry btn_next, "Next", key(NEXT)
+.line
+.entry btn_close, "Close", key(^A)
+.end
+.input inp_currency, 8, 58
+.placement 4, 8
+.title "Currency Converter"
+.button i_ok, text("Convert")
+.button btn_exit, text("Exit")
+.repository_structure CURRENCY_CONVERTER
+.field FROM_CURRENCY_CODE, pos(2, 4), fpos(2, 18), -
+     change_method("Chng_Curr_From_Code")
+.field FROM_CURRENCY_DESCIPTION, fpos(2, 27), nohighlight, readonly, -
+     nodisabled
+.field AMOUNT, pos(4, 4), fpos(4, 18), required
+.field TO_CURRENCY_CODE, pos(6, 4), fpos(6, 18), -
+     change_method("Chng_Curr_To_Code")
+.field TO_CURRENCY_DESCRIPTIOIN, fpos(6, 27), readonly, nodisabled
+.field RESULT, pos(8, 3), fpos(8, 18), readonly, nodisabled
+.line Line1, 58, pos(7, 1)
+.button_set end
+.end
+
+.input inp_spellit, 1, 70
+.placement 20, 3
+.title "Toolkit Spell Checker"
+.border on, dragbar(on)
+.repository_structure SPELL_IT
+.field SUGGESTION, pos(1, 2), fpos(1, 14)
+.button btn_spell, text("Spell")
+.button btn_exit, text("Close")
+.button_set end
+.end
