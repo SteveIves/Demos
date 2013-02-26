@@ -1,0 +1,10 @@
+
+record customer
+
+	id				,a10
+	company			,a25
+	phone			,d10
+	fax				,d10
+	contact			,a25
+
+

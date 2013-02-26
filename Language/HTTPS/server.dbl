@@ -1,0 +1,379 @@
+.main server
+
+.include "WND:windows.def"
+.include "DBLDIR:synxml.def"
+
+record package
+	origin      	,a5
+	destination 	,a5
+	width       	,d3
+	depth       	,d3
+	height      	,d3
+	weight      	,d3
+
+
+record quotation
+	reference		,a10
+	cost			,d10.2
+
+.align
+record
+	shutdown		,i4
+	count			,i4
+	status			,i4
+	volume			,i4
+	tmpa			,a10
+
+common
+	terminal		,i4
+
+.align				;Used by the HTTP server
+record http
+	server			,HTTPSERVER_TYPE
+	port			,i4		,1234
+	error			,i4
+	method			,a4
+	statuscode		,i4
+	statustext		,a60
+	uri				,a60
+	errtxt			,a60
+
+.align
+record request
+	body			,D_ADDR
+	length			,i4
+	strid			,XML_STRING_TYPE
+	parser			,XML_PARSER_TYPE
+	doc				,XML_DOC_TYPE
+	root			,XML_ELEM_TYPE
+	children		,XML_ELEMLIST_TYPE
+	child			,XML_ELEM_TYPE
+	error			,i4
+	element			,a30
+
+.align
+record response
+	body			,D_ADDR
+	length			,i4
+	doc				,XML_DOC_TYPE
+	root			,XML_ELEM_TYPE
+	reference		,XML_ELEM_TYPE
+	cost			,XML_ELEM_TYPE
+	strid			,XML_STRING_TYPE
+
+.define SSL_CIPHERS		"DEFAULT"
+.define SSL_CERTIFICATE "C:\FILES\DEMO\LANGUAGE\HTTPS\CERTIFICATE\test.pem"
+.define D_SERVER_LOG	"server.log"
+
+structure tempstr
+	,a1
+
+.proc
+
+	xcall delet(D_SERVER_LOG)
+
+	xcall flags(7000020,1)
+
+	open(terminal=%syn_freechn,i,"tt:")
+	xcall w_init(1,terminal,1)
+	xcall w_caption(WC_SET,"HTTPS Server")
+
+	if %http_method(CALLBACK_PWD,"password",errtxt) then
+	begin
+		writes(terminal, %atrim(errtxt))
+		sleep 2
+	end
+	else
+	begin
+		if %http_server_create(server,
+		&					   port,
+		&					   errtxt,
+		&					   SSLVER_ALL,
+		&					   SSL_CIPHERS,
+		&					   SSL_CERTIFICATE) then
+		begin
+			writes(terminal, %atrim(errtxt))
+			sleep 2
+		end
+		else
+		begin
+			writes(terminal, "HTTPS server started on port " + %string(port))
+
+			do
+			begin
+				http.error = %http_server_receive(http.server,
+				&								  http.uri,
+				&								  http.method,
+				&								  2,
+				&								  request.body,
+				&								  request.length,
+				&								  http.errtxt,
+				&								  ,
+				&								  D_SERVER_LOG)
+
+				using http.error select
+				(0),		;No error, got a request
+				begin
+					clear response.body, response.length, http.statuscode, http.statustext
+
+					http.uri = http.uri - "https://localhost:1234"
+
+					using http.uri select
+					("/price_consignment"),
+						call price_consignment
+					("/shutdown"),
+						call shutdown
+					(),
+						call unsupported_uri
+					endusing
+
+					http.error = %http_server_send(http.server,
+					&							   http.statuscode,
+					&							   http.statustext,
+					&							   response.body,
+					&							   response.length,
+					&							   http.errtxt,
+					&							   ,
+					&							   D_SERVER_LOG)
+
+					if (http.error) then
+						writes(terminal,http.errtxt)
+					else
+					begin
+						if (response.body) then
+						begin
+							writes(terminal,"")
+							writes(terminal,"Response sent")
+							writes(terminal,^m(tempstr(1:response.length),response.body))
+						end
+						else
+						begin
+							writes(terminal,"")
+							writes(terminal,"Response sent")
+							writes(terminal,%string(http.statuscode) + " " + http.statustext)
+						end
+					end
+
+					;Clean up Response
+					if (response.body)
+					begin
+						xcall xml_string_delete(response.strid)
+						xcall xml_doc_delete(response.doc)
+					end
+
+					;Clean up Request
+					if (request.body)
+						request.body = %mem_proc(DM_FREE,request.body)
+				end
+				(10060),	;Server timeout expired
+					writes(terminal,"Waiting for request...")
+				(),			;Unexpected error
+					writes(terminal,"Error " + %string(http.error) + " " + http.errtxt)
+				endusing
+
+			end
+			until shutdown
+
+			http.server = %http_server_delete(http.server)
+			writes(terminal,"Server stopped")
+
+		end
+
+	end
+
+
+	close terminal
+
+	stop
+
+;------------------------------------------------------------------------------
+;
+price_consignment,
+
+;	<package>
+;	  <origin>95670</origin>
+;	  <destination>73455</destination>
+;	  <width>100</width>
+;	  <depth>45</depth>
+;	  <height>15</height>
+;	  <weight>95</weight>
+;	</package>
+
+;	<quotation>
+;	  <reference>98765</reference>
+;	  <cost>67.45</cost>
+;	</quotation>
+
+	writes(terminal,"")
+	writes(terminal,"Received consignment pricing request")
+	writes(terminal,^m(tempstr(1:request.length),request.body))
+
+	;------------------------------------------------------------
+	;Parse out the request
+
+	;Create an XML string to hold the inbound XML
+	if (.not.(request.strid=%xml_string_create)) then
+	begin
+		;Failed to create XML string
+		request.error=1
+	end
+	else
+	begin
+		;Load the inbound XML into the XML string
+		if ((status=%xml_string_appendHandle(request.strid,request.body,request.length)).ne.XML_SUCCESS) then
+		begin
+			;Failed to load XML into XML string
+			request.error=1
+		end
+		else
+		begin
+			;Create a parser
+			if (.not.(request.parser=%xml_parser_create)) then
+			begin
+				;Failed to create a parser
+				request.error=1
+			end
+			else
+			begin
+				;Parse the XML string
+				if (.not.(request.doc=%xml_parser_parseString(request.parser,request.strid))) then
+				begin
+					;Parse of XML string failed
+					request.error=1
+				end
+				else
+				begin
+					;Get root element <consignment>
+					request.root=%xml_doc_getRoot(request.doc)
+
+					;Get collection of child nodes
+					request.children = %xml_elem_children(request.root)
+
+					;Iterate through child nodes
+					for count from 1 thru %xml_elemlist_count(request.children)
+					begin
+						request.child = %xml_elemlist_item(request.children,count)
+
+						xcall xml_elem_getName(request.child,element)
+						locase element
+
+						using element select
+						("origin"),
+							xcall xml_elem_getText(request.child,package.origin)
+						("destination"),
+							xcall xml_elem_getText(request.child,package.destination)
+						("width"),
+						begin
+							xcall xml_elem_getText(request.child,tmpa)
+							package.width = %integer(tmpa)
+						end
+						("depth"),
+						begin
+							xcall xml_elem_getText(request.child,tmpa)
+							package.depth = %integer(tmpa)
+						end
+						("height"),
+						begin
+							xcall xml_elem_getText(request.child,tmpa)
+							package.height = %integer(tmpa)
+						end
+						("weight"),
+						begin
+							xcall xml_elem_getText(request.child,tmpa)
+							package.weight = %integer(tmpa)
+						end
+						endusing
+					end
+
+					;Calculate the quotation for this package
+					volume=(package.width * package.depth * package.height)
+					quotation.reference="98765"
+					quotation.cost=volume * 0.002 ;2 cents per cubic inch!
+
+					;Create the response document
+					response.doc = %xml_doc_create
+
+					;Set root element attributes (except total)
+					response.root = %xml_doc_getroot(response.doc)
+					xcall xml_elem_setName(response.root,"quotation")
+
+					response.reference = %xml_elem_create
+					xcall xml_elem_setName(response.reference,"reference")
+					xcall xml_elem_setText(response.reference,quotation.reference)
+					xcall xml_elem_addChild(response.root,response.reference)
+
+					response.cost = %xml_elem_create
+					xcall xml_elem_setName(response.cost,"cost")
+					xcall xml_elem_setText(response.cost,%string(quotation.cost))
+					xcall xml_elem_addChild(response.root,response.cost)
+
+					;Delete the request document.  This also deletes the root and all child elements
+					xcall xml_doc_delete(request.doc)
+				end
+
+				xcall xml_parser_delete(request.parser)
+			end
+		end
+
+		xcall xml_string_delete(request.strid)
+
+	end
+
+	;Build the body of the response
+	response.strid = %xml_doc_toString(response.doc,1)
+	response.body = %xml_string_getHandle(response.strid)
+	response.length = %xml_string_getSize(response.strid)
+
+	;-------------------------------------------------
+
+	http.statuscode	= HTTP_STATUS_OK
+	http.statustext	= HTTP_REA_OK
+
+	return
+
+;------------------------------------------------------------------------------
+;
+unsupported_uri,
+
+	writes(terminal,"")
+	writes(terminal,"Received unsupported request: " + %atrim(uri))
+
+	http.statuscode	= HTTP_STATUS_NOT_FOUND
+	http.statustext	= HTTP_REA_NOT_FOUND
+
+	return
+
+;------------------------------------------------------------------------------
+;
+shutdown,
+
+	writes(terminal,"")
+	writes(terminal,"Received shutdown request")
+
+	http.statuscode	= HTTP_STATUS_OK
+	http.statustext	= HTTP_REA_OK
+
+	shutdown	= 1
+
+	return
+
+.end
+
+;------------------------------------------------------------------------------
+;
+.subroutine password
+
+	a_password	,a
+
+common
+	terminal		,i4
+
+.proc
+
+	display(terminal,"Password for SSL certificate: ")
+	reads(terminal,a_password)
+
+	xreturn
+
+.end
+

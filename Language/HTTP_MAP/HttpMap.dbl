@@ -1,0 +1,45 @@
+main Maptest
+
+	.include "DBLDIR:synxml.def"
+	
+	record
+		tt		,i4
+		tf		,i4
+		status	,i4
+		mh		,i4
+		ms		,i4
+		error	,a80
+	
+	; Refer to http://tiger.census.gov/instruct.html for more details
+	
+	.define MAP_USA		"http://tiger.census.gov/cgi-bin/mapgen/.gif?lat=36&lon=-96&wid=50&ht=24&iwd=800&iht=600"
+	
+	
+	.define MAP_DC		"http://tiger.census.gov/cgi-bin/mapgen/.gif?lat=38.89&lon=-77.028&wid=.06&ht=.01&iht=300&iwd=400&mark=-77.0364,38.8973,redpin,White+House;-77.01,38.8895,blueball,Capitol"
+	.define MAP_NORTHEAST 	"http://tiger.census.gov/cgi-bin/mapgen/.gif?lat=42&lon=-75&wid=14&ht=11&iht=300&iwd=350"
+	.define MAP_MANHATTAN 	"http://tiger.census.gov/cgi-bin/mapgen/.gif?lat=40.739&lon=-73.99&wid=0.06&ht=0.08&iht=500&wd=240"
+	.define MAP_REGION 	"http://tiger.census.gov/cgi-bin/mapgen?lon=-80&lat=40&wid=5&ht=5&off=CITIES&murl=http://tiger.census.gov/tigerwww/mission2"
+
+proc
+
+    open(tt=%syn_freechn,o,"tt:")
+
+    status = %http_client_get(MAP_USA,5,mh,ms,error)
+
+    if (!status) then
+    begin
+		writes(tt,"OK, received "+ %string(ms) +" bytes")
+		mh = %mem_proc(DM_RESIZ,ms,mh)
+		open(tf=%syn_freechn,o,"map.jpg")
+		put(tf,^m(mh))
+		close tf
+    end
+    else
+		writes(tt,%atrim(error))
+
+    close tt
+    sleep 5
+    stop
+
+
+endmain

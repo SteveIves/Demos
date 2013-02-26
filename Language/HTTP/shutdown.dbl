@@ -1,0 +1,33 @@
+ .main shutdown
+
+.include "DBLDIR:synxml.def"
+
+.align
+record	
+	Response		,D_ADDR
+	ResponseLength	,i4
+	errmsg			,a1
+
+.define URI "http://localhost:1234/shutdown"
+
+record
+	client_log		,a10,"client.log"
+
+.proc
+
+	xcall flags(7000020,1)
+
+	xcall HTTP_CLIENT_GET(URI,
+	&					  ,
+	&					  Response,
+	&					  ResponseLength,
+	&					  errmsg,
+	&					  ,
+	&					  CLIENT_LOG)
+
+	if (Response)
+        Response = %mem_proc(DM_FREE, Response)
+
+	stop
+
+.end

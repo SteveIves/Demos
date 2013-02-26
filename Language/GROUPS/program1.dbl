@@ -1,0 +1,47 @@
+;THIS PROGRAM DEMONSTRATES THE TYPICAL APPROACH TAKEN WHEN PASSING RECORDS TO
+;EXTERNAL ROUTINES AND REQUIRING ACCESS TO THE FIELDS WITHIN THE RECORD IN THE
+;EXTERNAL ROUTINE.
+
+
+.main program1
+
+.include "customer1.def"
+
+.proc
+
+	customer.id = "ABC123"
+
+	xcall get_customer(customer)
+
+	stop
+
+.end
+
+;-------------------------------------------------------------------------------
+
+.subroutine get_customer
+
+	a_customer		,a							;Passed in customer record
+
+.include "customer1.def"						;Local customer record
+
+.proc
+
+	customer = a_customer						;Copy to local to access fields
+
+	.
+	.
+	.
+
+	read(cusch,customer,customer.id)
+
+	.
+	.
+	.
+
+	a_customer = customer						;Return data to caller
+
+
+	xreturn
+
+.end

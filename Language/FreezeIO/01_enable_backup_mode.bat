@@ -1,0 +1,2 @@
+synbackup -c
+pause

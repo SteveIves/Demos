@@ -1,0 +1,35 @@
+!	Synergy ISAM XDL File created Wed Sep 22 22:42:38 2010
+FILE
+	NAME		"contact.ism"
+	ADDRESSING	32
+	NETWORK_ENCRYPT	no
+	KEYS		1
+
+RECORD
+	SIZE		691
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	yes
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Shared index cache allowed
+	!Static vectoring disabled
+	!Creation version 9.4.2  
+	!File created on Thu Sep 16 19:24:34 2010
+	!Last re-indexed on Wed Sep 22 22:42:34 2010
+	!8 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!1539 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1
+	LENGTH		8
+	TYPE		integer
+	ORDER		descending
+	NAME		"ContactID/Custo"
+	DUPLICATES	no
+	MODIFIABLE	no
+
+	!Root 0x800, index depth 2
+	!Minimum keys per block 42

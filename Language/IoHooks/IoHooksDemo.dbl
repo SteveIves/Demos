@@ -1,0 +1,698 @@
+import Synergex.SynergyDE.IOExtensions
+import Synergex.SynergyDE.Select
+import SynPSG.Demos.IoHooks
+
+main IoHooksDemo
+
+    record
+        terminal    ,i4
+        channel     ,i4
+        logchan     ,i4
+        preIoHooks  ,IOEventMask
+        postIoHooks ,IOEventMask
+        logger      ,@ChannelLogger
+        buffer      ,a1024
+        therfa      ,a10
+    endrecord
+
+proc
+
+    flags(7004020,1)
+    open(terminal=0,i,"tt:")
+    open(logchan=0,o:s,"LOGDIR:io.log")
+
+;   ;;Enable specific hooks (regardless of what's in the class)
+;   preIoHooks = IOEventMask.Read|IOEventMask.Reads|IOEventMask.Find
+;   &   |IOEventMask.Write|IOEventMask.Writes|IOEventMask.Store
+;   &   |IOEventMask.Delete|IOEventMask.Unlock|IOEventMask.Close
+;   postIoHooks = IOEventMask.Read|IOEventMask.Reads|IOEventMask.Find
+;   &   |IOEventMask.Write|IOEventMask.Writes|IOEventMask.Store
+;   &   |IOEventMask.Delete|IOEventMask.Unlock
+;   logger = new ChannelLogger(channel,terminal,preIoHooks,postIoHooks)
+
+    ;--------------------------------------------------------------------
+    ;Channel example
+    open(channel=0,u:i,"DBLDIR:syntxt.ism")
+    logger = new ChannelLogger(channel,logchan)
+    logger.LogTimeStamps = true
+    logger.LogData = true
+    logger.LogRFA = true
+    find(channel,,^FIRST)
+    repeat
+    begin
+        reads(channel,buffer,eof,GETRFA:therfa)
+    end
+eof,
+    close channel
+
+;   ;--------------------------------------------------------------------
+;   ;Select example
+;   begin
+;       data fm, @From, new From("DBLDIR:syntxt.ism",buffer)
+;       logger = new ChannelLogger(fm,logchan)
+;       logger.LogTimeStamps = true
+;       foreach buffer in new Select(fm)
+;           nop
+;   end
+
+;   begin
+;       data key,a1
+;       display(terminal,"Press a key: ")
+;       accept(terminal,key)
+;   end
+
+    close logchan
+    close terminal
+
+endmain
+
+namespace SynPSG.Demos.IoHooks
+
+    ;;;<summary>
+    ;;;
+    ;;;</summary>
+    public sealed class ChannelLogger extends IOHooks
+
+        .region "Instance data"
+
+        private mLogChan        ,int
+        private mUpdateMode     ,boolean
+        private mFileSpec       ,string
+
+        public  LogTimeStamps   ,boolean
+        public  LogData         ,boolean
+        public  LogRFA          ,boolean
+
+        .endregion
+
+        .region "Constructors (Channel logging)"
+
+        ;;; <summary>
+        ;;;
+        ;;; </summary>
+        ;;;<param name="aChannel">Channel to hook into</param>
+        ;;;<param name="aLogChan">Channel to log to</param>
+        public method ChannelLogger
+            required in          aChannel   ,n
+            required in          aLogChan   ,n
+            endparams
+            parent(aChannel)
+        proc
+            initialize(aLogChan)
+        endmethod
+
+        ;;;<summary>
+        ;;;
+        ;;;</summary>
+        public method ChannelLogger
+            required in          aChannel   ,n
+            required in          aLogChan   ,n
+            required in          aPreMask   ,IOEventMask
+            required in          aPostMask  ,IOEventMask
+            endparams
+            parent(aChannel,aPreMask,aPostMask)
+        proc
+            initialize(aLogChan)
+        endmethod
+
+        .endregion
+
+        .region "Constructors (From object logging)"
+
+        ;;;<summary>
+        ;;;
+        ;;;</summary>
+        public method ChannelLogger
+            required in          aFromObj   ,@From
+            required in          aLogChan   ,n
+            endparams
+            parent(aFromObj)
+        proc
+            initialize(aLogChan)
+        endmethod
+
+        ;;;<summary>
+        ;;;
+        ;;;</summary>
+        method ChannelLogger
+            required in          aFromObj   ,@From
+            required in          aLogChan   ,n
+            required in          aPreMask   ,IOEventMask
+            required in          aPostMask  ,IOEventMask
+            endparams
+            parent(aFromObj,aPreMask,aPostMask)
+        proc
+            initialize(aLogChan)
+        endmethod
+
+        .endregion
+
+        .region "FIND Hooks"
+
+        ;;;<summary>
+        ;;;Called before a FIND operation
+        ;;;</summary>
+        ;;;<param name="aKeyVal">Key value passed to the FIND statement</param>
+        ;;;<param name="aInRFA">RFA or GRFA passed to the FIND statement (only passed if the RFA: qualifier was used)</param>
+        ;;;<param name="aKeyNum">Numeric key number passed to the FIND statement via the KEYNUM: qualifier</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the FIND statement</param>
+        public override method find_pre_operation_hook, void
+            optional in mismatch aKeyVal    ,n
+            optional in          aInRFA     ,a
+            optional in          aKeyNum    ,n
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            if (^passed(aInRFA)) then
+            begin
+                log("FIND    In: Position by RFA "+rfaToHex(aInRFA))
+            end
+            else
+            begin
+                if (^passed(aKeyNum)) then
+                begin
+                    if (^passed(aKeyVal)) then
+                        log("FIND    In: Position to record with key "+^arga(aKeyVal)+" in key "+%string(aKeyNum))
+                    else
+                    begin
+                        if (aIoFlags&IOFlags.POSITION_FIRST) then
+                            log("FIND    In: Position to first record in key "+%string(aKeyNum))
+                        else if (aIoFlags&IOFlags.POSITION_LAST) then
+                            log("FIND    In: Position to last record in key "+%string(aKeyNum))
+                        else if (aIoFlags&IOFlags.POSITION_BOF)
+                            log("FIND    In: Position to first record in key "+%string(aKeyNum)+" without establishing current record")
+                    end
+                end
+                else
+                begin
+                    if (^passed(aKeyVal)) then
+                        log("FIND    In: Position to record with key "+^arga(aKeyVal)+" in current key of reference")
+                    else
+                    begin
+                        if (aIoFlags&IOFlags.POSITION_FIRST) then
+                            log("FIND    In: Poistion to first record in current key of reference")
+                        else if (aIoFlags&IOFlags.POSITION_LAST) then
+                            log("FIND    In: Position to last record in current key of reference")
+                        else if (aIoFlags&IOFlags.POSITION_BOF)
+                            log("FIND    In: Position to first record in current key of reference without establishing current record")
+                    end
+                end
+            end
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a FIND operation
+        ;;;</summary>
+        ;;;<param name="aKeyVal">Key value passed to the FIND statement</param>
+        ;;;<param name="aOutRFA">RFA or GRFA being returned (only passed if the GETRFA: qualifier was used)</param>
+        ;;;<param name="aKeyNum">Numeric key number passed to the FIND statement via the KEYNUM: qualifier</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the FIND statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the FIND, or else 0</param>
+        public override method find_post_operation_hook, void
+            optional in mismatch aKeyVal    ,n
+            optional in          aOutRFA    ,a
+            optional in          aKeyNum    ,n
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            if (aErrorNum) then
+            begin
+                data msg, a256
+                data length, int
+                xcall ertxt(aErrorNum,msg,length)
+                log("FIND   Out: Error "+%string(aErrorNum)+" - "+msg(1,length))
+            end
+            else
+                log("FIND   Out: OK")
+        endmethod
+
+        .endregion
+
+        .region "READ Hooks"
+
+        ;;;<summary>
+        ;;;Called before a READ operation
+        ;;;</summary>
+        ;;;<param name="aKeyVal">Key value passed to the READ statement</param>
+        ;;;<param name="aInRFA">RFA or GRFA passed to the READ statement (only passed if the RFA: qualifier was used)</param>
+        ;;;<param name="aKeyNum">Numeric key number passed to the READ statement via the KEYNUM: qualifier</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the READ statement</param>
+        public override method read_pre_operation_hook, void
+            optional in mismatch aKeyVal    ,n
+            optional in          aInRFA     ,a
+            optional in          aKeyNum    ,n
+            required in          aIoFlags   ,IOFlags
+            endparams
+            record
+                lockPhrase  ,string
+            endrecord
+        proc
+;-----------------------------------------------------------------------
+;           if (this.mUpdateMode) then
+;           begin
+;               if ((aIoFlags&IOFlags.LOCK_NO_LOCK)
+;               &   ||(aIoFlags&IOFlags.LOCK_NO_TLOCK)) then
+;                   lockPhrase = " (no lock)"
+;               else
+;                   lockPhrase = " (lock)"
+;           end
+;           else
+;               lockPhrase = ""
+            begin
+                data noLock, boolean, aIoFlags&IOFlags.LOCK_NO_LOCK
+                data noTLock, boolean, aIoFlags&IOFlags.LOCK_NO_TLOCK
+                if (this.mUpdateMode) then
+                begin
+                    if (noLock||noTLock) then
+                        lockPhrase = " (no lock)"
+                    else
+                        lockPhrase = " (lock)"
+                end
+                else
+                    lockPhrase = ""
+            end
+;-----------------------------------------------------------------------
+
+            if (^passed(aInRFA)) then
+            begin
+                log("READ    In: Read by RFA "+rfaToHex(aInRFA)+lockPhrase)
+            end
+            else
+            begin
+                if (^passed(aKeyNum)) then
+                begin
+                    if (^passed(aKeyVal)) then
+                        log("READ    In: Read by key "+^arga(aKeyVal)+" in key "+%string(aKeyNum)+lockPhrase)
+                    else
+                    begin
+                        if (aIoFlags&IOFlags.POSITION_FIRST) then
+                            log("READ    In: Read first record in key "+%string(aKeyNum)+lockPhrase)
+                        else if (aIoFlags&IOFlags.POSITION_LAST)
+                            log("READ    In: Read last record in key "+%string(aKeyNum)+lockPhrase)
+                    end
+                end
+                else
+                begin
+                    if (^passed(aKeyVal)) then
+                        log("READ    In: Read by key "+^arga(aKeyVal)+" in current key of reference"+lockPhrase)
+                    else
+                    begin
+                        if (aIoFlags&IOFlags.POSITION_FIRST) then
+                            log("READ    In: Read first record in current key of reference"+lockPhrase)
+                        else if (aIoFlags&IOFlags.POSITION_LAST)
+                            log("READ    In: Read last record in current key of reference"+lockPhrase)
+                    end
+                end
+            end
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a READ operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record read by the READ statement</param>
+        ;;;<param name="aKeyVal">Key value passed to the READ statement</param>
+        ;;;<param name="aOutRFA">RFA or GRFA being returned (only passed if the GETRFA: qualifier was used)</param>
+        ;;;<param name="aKeyNum">Numeric key number passed to the READ statement via the KEYNUM: qualifier</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the READ statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the READ, or else 0</param>
+        public override method read_post_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in mismatch aKeyVal    ,n
+            optional in          aOutRFA    ,a
+            optional in          aKeyNum    ,n
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            if (aErrorNum) then
+            begin
+                data msg, a256
+                data length, int
+                xcall ertxt(aErrorNum,msg,length)
+                log("READ   Out: Error "+%string(aErrorNum)+" - "+msg(1,length))
+            end
+            else
+            begin
+                log("READ   Out: OK")
+            end
+            if (this.LogData)
+                log("      Data: "+%atrim(aBuffer))
+            if (^passed(aOutRFA)&&this.LogRFA)
+            begin
+                using ^size(aOutRFA) select
+                (6),    log("       RFA: 0x"+rfaToHex(aOutRFA))
+                (10),   log("      GRFA: 0x"+rfaToHex(aOutRFA))
+                endusing
+            end
+        endmethod
+
+        .endregion
+
+        .region "READS Hooks"
+
+        ;;;<summary>
+        ;;;Called before a READS operation
+        ;;;</summary>
+        ;;;<param name="aIoFlags">Any IO flags passed to the READS statement</param>
+        public override method reads_pre_operation_hook, void
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+;-----------------------------------------------------------------------
+;           if (this.mUpdateMode) then
+;           begin
+;               if ((aIoFlags&IOFlags.LOCK_NO_LOCK)
+;               &  || (aIoFlags&IOFlags.LOCK_NO_TLOCK)) then
+;                   log("READS   In: Read without lock next record")
+;               else
+;                   log("READS   In: Read and lock next record")
+;           end
+;           else
+;               log("READS   In: Read next record")
+            begin
+                data noLock, boolean, aIoFlags&IOFlags.LOCK_NO_LOCK
+                data noTLock, boolean, aIoFlags&IOFlags.LOCK_NO_TLOCK
+                if (this.mUpdateMode) then
+                begin
+                    if (noLock||noTLock) then
+                        log("READS   In: Read next record (no lock)")
+                    else
+                        log("READS   In: Read next record (lock)")
+                end
+                else
+                    log("READS   In: Read next record")
+            end
+;-----------------------------------------------------------------------
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a READS operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record read by the READS statement</param>
+        ;;;<param name="aOutRFA">RFA or GRFA being returned (only passed if the GETRFA: qualifier was used)</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the READS statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the READS, or else 0</param>
+        public override method reads_post_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in          aOutRFA    ,a
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            if (aErrorNum) then
+            begin
+                data msg, a256
+                data length, int
+                xcall ertxt(aErrorNum,msg,length)
+                log("READS  Out: Error "+%string(aErrorNum)+" - "+msg(1,length))
+            end
+            else
+            begin
+                log("READS  Out: OK")
+                if (this.LogData)
+                    log("      Data: "+%atrim(aBuffer))
+                if (^passed(aOutRFA)&&this.LogRFA)
+                begin
+                    using ^size(aOutRFA) select
+                    (6),    log("       RFA: 0x"+rfaToHex(aOutRFA))
+                    (10),   log("      GRFA: 0x"+rfaToHex(aOutRFA))
+                    endusing
+                end
+            end
+        endmethod
+
+        .endregion
+
+        .region "WRITE Hooks"
+
+        ;;;<summary>
+        ;;;Called before a WRITE operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record to be written by the WRITE statement</param>
+        ;;;<param name="aRecNum">Record number to be written by the WRITE statement (not passed for ISAM files)</param>
+        ;;;<param name="aInRFA">RFA or GRFA passed to the WRITE statement (only passed if the RFA: qualifier was used)</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the WRITE statement</param>
+        public override method write_pre_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in          aRecNum    ,n
+            optional in          aInRFA     ,a
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            log("WRITE  In : ")
+            if (this.LogData)
+                log("      Data: "+aBuffer)
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a WRITE operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record that was written by the WRITE statement</param>
+        ;;;<param name="aRecNum">Record number that was written by the WRITE statement (not passed for ISAM files)</param>
+        ;;;<param name="aOutRFA">RFA or GRFA being returned (only passed if the GETRFA: qualifier was used)</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the WRITE statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the WRITE, or else 0</param>
+        public override method write_post_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in          aRecNum    ,n
+            optional in          aOutRFA    ,a
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            log("WRITE  Out: ")
+        endmethod
+
+        .endregion
+
+        .region "WRITES Hooks"
+
+        ;;;<summary>
+        ;;;Called before a WRITES operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record to be written by the WRITES statement</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the WRITES statement</param>
+        public override method writes_pre_operation_hook, void
+            required inout       aBuffer    ,a
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            log("WRITES In : ")
+            if (this.LogData)
+                log("      Data: "+aBuffer)
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a WRITES operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record that was written by the WRITES statement</param>
+        ;;;<param name="aOutRFA">RFA or GRFA being returned (only passed if the GETRFA: qualifier was used)</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the WRITES statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the WRITES, or else 0</param>
+        public override method writes_post_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in          aStoredRFA ,a
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            log("WRITES Out: ")
+        endmethod
+
+        .endregion
+
+        .region "STORE Hooks"
+
+        ;;;<summary>
+        ;;;Called before a STORE operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record to be created by the STORE statement</param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the STORE statement</param>
+        public override method store_pre_operation_hook, void
+            required inout       aBuffer    ,a
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            log("STORE  In : ")
+            if (this.LogData)
+                log("      Data: "+aBuffer)
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a STORE operation
+        ;;;</summary>
+        ;;;<param name="aBuffer">The record that was created by the STORE statement</param>
+        ;;;<param name="aStoredRFA"></param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the STORE statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the STORE, or else 0</param>
+        public override method store_post_operation_hook, void
+            required inout       aBuffer    ,a
+            optional in          aStoredRFA ,a
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            log("STORE  Out: ")
+        endmethod
+
+        .endregion
+
+        .region "DELETE Hooks"
+
+        ;;;<summary>
+        ;;;Called before a DELETE operation
+        ;;;</summary>
+        public override method delete_pre_operation_hook, void
+            endparams
+        proc
+            log("DELETE In : ")
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after a DELETE operation
+        ;;;</summary>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the DELETE, or else 0</param>
+        public override method delete_post_operation_hook, void
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            log("DELETE Out: ")
+        endmethod
+
+        .endregion
+
+        .region "UNLOCK Hooks"
+
+        ;;;<summary>
+        ;;;Called before an UNLOCK operation
+        ;;;</summary>
+        ;;;<param name="aRFA"></param>
+        ;;;<param name="aIoFlags">Any IO flags passed to the UNLOCK statement</param>
+        public override method unlock_pre_operation_hook, void
+            optional in          aRFA       ,a
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            log("UNLOCK In : ")
+        endmethod
+
+        ;;;<summary>
+        ;;;Called after an UNLOCK operation
+        ;;;</summary>
+        ;;;<param name="aIoFlags">Any IO flags passed to the UNLOCK statement</param>
+        ;;;<param name="aErrorNum">Runtime error number that occurred during the UNLOCK, or else 0</param>
+        public override method unlock_post_operation_hook, void
+            required in          aIoFlags   ,IOFlags
+            required inout       aErrorNum  ,int
+            endparams
+        proc
+            log("UNLOCK Out: ")
+        endmethod
+
+        .endregion
+
+        .region "CLOSE Hooks"
+
+        ;;;<summary>
+        ;;;Called before a CLOSE operation
+        ;;;</summary>
+        ;;;<param name="aIoFlags">Any IO flags passed to the CLOSE statement</param>
+        public override method close_pre_operation_hook, void
+            required in          aIoFlags   ,IOFlags
+            endparams
+        proc
+            log("CLOSE     : Channel closed")
+        endmethod
+
+        .endregion
+
+        .region "Helper methods"
+
+        private method initialize, void
+            required in aLogChan, n
+            endparams
+            record
+                spec        ,a256
+                length      ,i4
+                openmode    ,a3
+            endrecord
+        proc
+            ;;Make sure the log channel is optn
+            if (aLogChan&&chopen(aLogChan)) then
+                this.mLogChan = aLogChan
+            else
+                throw new Exception("Log channel not passed or channel not open!")
+
+            ;;Get the file spec
+            filnm(this.channel,spec,length)
+            mFileSpec = spec(1,length)
+
+            ;;Determine if the file is open for update
+            getfa(this.channel,"OMD",openmode)
+            this.mUpdateMode = (openmode=="U")
+
+            ;;Display a header section in the log file
+            logNoTime("ChannelLogger File I/O Log")
+            logNoTime("")
+            logNoTime("File spec      : "+this.mFileSpec)
+            logNoTime("Channel        : "+string(this.channel))
+            logNoTime("Open mode      : "+openmode)
+            if (this.mUpdateMode) then
+                logNoTime("Record locking : YES")
+            else
+                logNoTime("Record locking : NO")
+            logNoTime("")
+
+        endmethod
+
+        private method logNoTime, void
+            required in aMessage, string
+            endparams
+        proc
+            writes(mLogChan,aMessage)
+        endmethod
+
+        private method log, void
+            required in aMessage, string
+            endparams
+            record
+                dt, a20
+            endrecord
+        proc
+            if (LogTimeStamps) then
+            begin
+                dt = %datetime
+                writes(mLogChan,dt+": "+aMessage)
+            end
+            else
+                writes(mLogChan,aMessage)
+        endmethod
+
+        private method rfaToHex ,string
+            required in a_rfa, a
+            endparams
+            stack record localData
+                ctr             ,i4
+                group rfa       ,a
+                    rfa_i       ,[10]i1
+                endgroup
+                group hex       ,a
+                  pr            ,[10]a2
+                endgroup
+            endrecord
+        proc
+            init localData
+            rfa = a_rfa
+            for ctr from 1 thru ^size(a_rfa)
+                hex.pr[ctr] = %hex(rfa_i[ctr], 1)
+            mreturn %atrim(hex)
+        endmethod
+
+        .endregion
+
+    endclass
+
+endnamespace
+
+

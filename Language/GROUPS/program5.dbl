@@ -1,0 +1,38 @@
+;THIS EXAMPLE SHOWS HOW USING REPOSITORY GREATLY SIMPLIFIES THE ISSUE
+
+.main program5
+
+.include "customer" repository, record="customer"
+
+.proc
+
+	customer.id = "ABC123"
+
+	xcall get_customer(customer)
+
+	stop
+
+.end
+
+;-------------------------------------------------------------------------------
+
+.subroutine get_customer
+
+	.include "customer" repository, group="customer"
+
+.proc
+
+	.
+	.
+	.
+
+	read(cusch,customer,customer.id)
+
+	.
+	.
+	.
+
+
+	xreturn
+
+.end

@@ -1,0 +1,46 @@
+;IN THIS EXAMPLE WE HAVE ADDED SOME LOGIC TO THE INCLUDE FILE TO ALLOW THE
+;INCLUDE TO PRODUCE EITHER A RECORD (BY DEFAULT) OR A GROUP (BY DEFINING AN
+;IDENTIFIER WHERE A GROUP IS REQUIRED.  THIS ALLOWS US TO TAKE ADVANTAGE OF
+;GROUP ARGUMENTS IN INDIVIDUAL ROUTINES, BUT WITHOUT REQUIRING CHANGES TO
+;OTHER EXISTING ROUTINES.
+
+.main program4
+
+.include "customer3.def"
+
+.proc
+
+	customer.id = "ABC123"
+
+	xcall get_customer(customer)
+
+	stop
+
+.end
+
+;-------------------------------------------------------------------------------
+
+.subroutine get_customer
+
+	.define GROUP_ARGUMENTS					;Cause STD includes to produce
+											;groups instead of records
+	.include "customer4.def"
+
+	.undefine GROUP_ARGUMENTS
+
+.proc
+
+	.
+	.
+	.
+
+	read(cusch,customer,customer.id)
+
+	.
+	.
+	.
+
+
+	xreturn
+
+.end

@@ -1,0 +1,39 @@
+.main shutdown
+
+.include "DBLDIR:synxml.def"
+
+.align
+record
+	Response		,d_addr
+	ResponseLength	,i4
+	errmsg			,a1
+
+.define URI 			"https://localhost:1234/shutdown"
+.define SSL_CIPHERS		"DEFAULT"
+.define SSL_CAFILE		"C:\FILES\DEMO\LANGUAGE\HTTPS\TRUST\trusted_cas.pem"
+
+record
+	CLIENT_LOG			,a12,"shutdown.log"
+
+.proc
+
+	xcall flags(7000000,1)
+
+	xcall HTTP_CLIENT_GET(URI,
+	&					  ,
+	&					  Response,
+	&					  ResponseLength,
+	&					  errmsg,
+	&					  ,
+	&					  CLIENT_LOG,
+	&					  SSLVER_ALL,
+	&					  SSL_CIPHERS,
+	&					  ,
+	&					  SSL_CAFILE)
+
+	if (Response)
+        Response = %mem_proc(DM_FREE, Response)
+
+	stop
+
+.end

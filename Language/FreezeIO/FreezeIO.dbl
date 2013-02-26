@@ -1,0 +1,91 @@
+main FreezeIO
+
+	.include "WND:tools.def"
+	
+	record
+		chn				,i4
+		check_backup	,i4
+		backup_mode		,i4
+		sts				,i4
+		newstate		,i4
+		buf				,a218
+	endrecord
+	
+	.define RETRY_DELAY	10
+	.define OP_DELAY	0.5
+
+proc
+
+	u_start(,1,0)
+	u_open(chn,"u:i","DBLDIR:syntxt.ism")
+
+	newstate = 0	;Suspend on backup (default)
+	;newstate = 1	;Error on backup
+	sts = syn_setstate(newstate)		
+
+	writes(g_terminal,"Checking backup status...")
+	sts = syn_getstate(0,,backup_mode)
+	if backup_mode==4 then
+		writes(1,"Backup mode checking is not active")
+	else
+	begin
+		writes(1,"Backup mode checking is active")
+		check_backup=1
+	end
+
+	repeat
+	begin
+eof,	find(chn,,^FIRST)
+		repeat
+		begin
+
+			if check_backup
+				call check_backup
+
+			;Read a record
+			reads(chn,buf,eof)
+			writes(g_terminal,"Read    "+keyval(chn,buf,0))
+
+			;And update it
+			write(chn,buf)
+			writes(g_terminal,"Updated "+keyval(chn,buf,0))
+
+			sleep OP_DELAY
+
+		end
+	end
+	u_close(chn)
+	u_finish
+	stop
+
+check_backup,
+
+	;Check backup state
+	writes(g_terminal,"Checking backup status...")
+	repeat
+	begin
+		sts = syn_getstate(0,,backup_mode)
+		using backup_mode select
+		(0),;OFF
+		begin
+			writes(g_terminal,"Backup mode OFF - continue...")
+			exitloop
+		end
+		(1),;ACTIVE
+			writes(g_terminal,"Backup mode is ACTIVE - suspending operations")
+		(2),;PENDING
+			writes(g_terminal,"Backup mode is PENDING - suspending operations")
+		(3),;NOT ALLOWED
+		begin
+			writes(g_terminal,"Backup mode is NOT ALLOWED - continue...")
+			exitloop
+		end
+		endusing
+		sleep RETRY_DELAY
+		writes(g_terminal,"Retry...")
+	end
+
+	return
+
+endmain
+

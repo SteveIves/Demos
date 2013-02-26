@@ -1,0 +1,44 @@
+;IN THIS EXAMPLE THE FIELD DUPLICATION HAS BEEN REMOVED BY MOVING THE RECORD
+;STATEMENT FROM THE INCLUDE FILE INTO THE MAIN-LINE PROGRAM.  THE PROBLEM
+;WITH THIS APPROACH IS THAT WE HAVE NOW CHANGED THE WAY THE INCLUDE FILE WORKS
+;AND THIS WILL REQUIRE US TO CHANGE EVERY ROUTINE THAT USES THE INCLUDE FILE.
+
+.main program3
+
+record customer
+.include "customer3.def"
+
+.proc
+
+	customer.id = "ABC123"
+
+	xcall get_customer(customer)
+
+	stop
+
+.end
+
+;-------------------------------------------------------------------------------
+
+.subroutine get_customer
+
+	group customer		,a						;Passed in customer record
+	  .include "customer3.def"					;
+	endgroup									;
+
+.proc
+
+	.
+	.
+	.
+
+	read(cusch,customer,customer.id)
+
+	.
+	.
+	.
+
+
+	xreturn
+
+.end

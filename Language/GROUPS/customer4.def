@@ -1,0 +1,16 @@
+
+.ifdef GROUP_ARGUMENTS
+	group customer	,a
+.else
+	record customer
+.endc
+		id				,a10
+		company			,a25
+		phone			,d10
+		fax				,d10
+		contact			,a25
+
+.ifdef GROUP_ARGUMENT
+	endgroup
+.endc
+

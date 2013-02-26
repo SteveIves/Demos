@@ -1,0 +1,168 @@
+.main client
+
+.include "WND:windows.def"
+.include "DBLDIR:synxml.def"
+
+record package
+    origin          ,a5
+    destination     ,a5
+    width           ,d3
+    depth           ,d3
+    height          ,d3
+    weight          ,d3
+
+.align
+record
+    Request         ,d_addr
+    Response        ,d_addr
+    RequestLength   ,i4
+    ResponseLength  ,i4
+    Terminal        ,i4
+    Error           ,i4
+
+    ;Used by parser
+    doc             ,XML_DOC_TYPE
+    node            ,[7]XML_ELEM_TYPE
+    strid           ,XML_STRING_TYPE
+
+    ErrMsg          ,a80
+
+.define URI             "https://localhost:1234/price_consignment"
+.define SSL_CIPHERS     "DEFAULT"
+.define SSL_CAFILE      "C:\FILES\DEMO\LANGUAGE\HTTPS\TRUST\trusted_cas.pem"
+
+record
+    CLIENT_LOG          ,a10,"client.log"
+
+structure tempstr
+    ,a1
+
+.proc
+
+    xcall delet(CLIENT_LOG)
+
+    xcall flags(7000000,1)
+    open((terminal=%syn_freechn),"o","tt:")
+    xcall w_init(1,terminal,1)
+    xcall w_caption(WC_SET,"HTTPS Client")
+
+    ;----------------------------------------------------
+    ;Hard-code example data
+
+    package.origin="95670"
+    package.destination="73455"
+    package.width=100
+    package.depth=45
+    package.height=15
+    package.weight=95
+
+    ;----------------------------------------------------
+    ;Build XML
+
+;   <package>
+;     <origin>95670</origin>
+;     <destination>73455</destination>
+;     <width>100</width>
+;     <depth>45</depth>
+;     <height>15</height>
+;     <weight>95</weight>
+;   </package>
+
+;   <quotation>
+;     <reference>98765</reference>
+;     <cost>67.45</cost>
+;   </quotation>
+
+    doc = %xml_doc_create
+    node[1] = %xml_doc_getroot(doc)
+    xcall xml_elem_setName(node[1],"package")
+
+    node[2] = %xml_elem_create
+    xcall xml_elem_setName(node[2],"origin")
+    xcall xml_elem_setText(node[2],package.origin)
+    xcall xml_elem_addChild(node[1],node[2])
+
+    node[3] = %xml_elem_create
+    xcall xml_elem_setName(node[3],"destination")
+    xcall xml_elem_setText(node[3],package.destination)
+    xcall xml_elem_addChild(node[1],node[3])
+
+    node[4] = %xml_elem_create
+    xcall xml_elem_setName(node[4],"width")
+    xcall xml_elem_setText(node[4],%string(package.width))
+    xcall xml_elem_addChild(node[1],node[4])
+
+    node[5] = %xml_elem_create
+    xcall xml_elem_setName(node[5],"depth")
+    xcall xml_elem_setText(node[5],%string(package.depth))
+    xcall xml_elem_addChild(node[1],node[5])
+
+    node[6] = %xml_elem_create
+    xcall xml_elem_setName(node[6],"height")
+    xcall xml_elem_setText(node[6],%string(package.height))
+    xcall xml_elem_addChild(node[1],node[6])
+
+    node[7] = %xml_elem_create
+    xcall xml_elem_setName(node[7],"weight")
+    xcall xml_elem_setText(node[7],%string(package.weight))
+    xcall xml_elem_addChild(node[1],node[7])
+
+    strid = %xml_doc_toString(doc,1)
+    Request = %xml_string_getHandle(strid)
+    RequestLength = %xml_string_getSize(strid)
+
+    ;----------------------------------------------------
+    ;Send it
+
+    writes(terminal,"")
+    writes(terminal,"Sending request")
+    writes(terminal,^m(tempstr(1:RequestLength),Request))
+
+    Error = %HTTP_Client_Post(URI,
+    &                         ,
+    &                         Request,
+    &                         RequestLength,
+    &                         Response,
+    &                         ResponseLength,
+    &                         ErrMsg,
+    &                         ,
+    &                         CLIENT_LOG,
+    &                         SSLVER_ALL,
+    &                         SSL_CIPHERS,
+    &                         ,
+    &                         SSL_CAFILE)
+
+    if (Error) then
+        writes(terminal,"Error " + %string(Error) + " (" + %atrim(ErrMsg) + ")")
+    else
+    begin
+        if ((Response).and.(ResponseLength)) then
+        begin
+            writes(terminal,"")
+            writes(terminal,"Response received")
+            writes(terminal,^m(tempstr(1:ResponseLength),Response))
+        end
+        else
+        begin
+            writes(terminal,"")
+            writes(terminal,"Response contains no data")
+        end
+    end
+
+    ;----------------------------------------------------
+    ;Clean up
+
+    if (Response)
+        Response =  %mem_proc(DM_FREE, Response)
+
+    xcall xml_string_delete(strid)
+    xcall xml_doc_delete(doc)
+
+    display(terminal,13,10,13,10,"Press a key to exit: ")
+    accept(terminal,error)
+
+    close (Terminal)
+
+    stop
+
+.end

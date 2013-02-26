@@ -1,0 +1,47 @@
+;THIS PROGRAM DEMONSTRATES THE USE OF A "GROUP ARGUMENT" IN THE EXTERNAL ROUTINE.
+;THIS APPROACH REMOVES THE REQUIREMENT TO COPY THE PASSED RECORD TO A LOCAL
+;RECORD IN THE EXTERNAL ROUTINE IN ORDER TO GAIN ACCESS TO THE FIELDS. THE
+;PROBLEM HERE IS THAT THE FIELD INFORMATION IS NOW DUPLICATED.
+
+.main program2
+
+.include "customer2.def"
+
+.proc
+
+	customer.id = "ABC123"
+
+	xcall get_customer(customer)
+
+	stop
+
+.end
+
+;-------------------------------------------------------------------------------
+
+.subroutine get_customer
+
+	group customer		,a						;Passed in customer record
+	  id				,a10					;
+	  company			,a25					;Use "group argument" to
+	  phone				,d10					;gain access to fields
+	  fax				,d10					;within passed record
+	  contact			,a25					;
+	endgroup									;
+
+.proc
+
+	.
+	.
+	.
+
+	read(cusch,customer,customer.id)
+
+	.
+	.
+	.
+
+
+	xreturn
+
+.end
