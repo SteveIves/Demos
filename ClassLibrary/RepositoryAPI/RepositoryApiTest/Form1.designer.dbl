@@ -1,0 +1,77 @@
+namespace RepositoryApiTest 
+    
+    
+    public partial class Form1 extends System.Windows.Forms.Form
+        
+        private exitToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+        
+        private fileToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+        
+        private logwindow, @System.Windows.Forms.ListBox
+        
+        private menuStrip1, @System.Windows.Forms.MenuStrip
+        
+        private method InitializeComponent, void
+        endparams
+        proc
+            begin
+                this.logwindow = new System.Windows.Forms.ListBox()
+                this.menuStrip1 = new System.Windows.Forms.MenuStrip()
+                this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+                this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+                this.menuStrip1.SuspendLayout()
+                this.SuspendLayout()
+                ;; 
+                ;; logwindow
+                ;; 
+                this.logwindow.Dock = System.Windows.Forms.DockStyle.Fill
+                this.logwindow.Location = new System.Drawing.Point(0, 24)
+                this.logwindow.Name = (string)("logwindow")
+                this.logwindow.Size = new System.Drawing.Size(617, 446)
+                this.logwindow.TabIndex = 0
+                ;; 
+                ;; menuStrip1
+                ;; 
+                this.menuStrip1.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.fileToolStripMenuItem})
+                this.menuStrip1.Location = new System.Drawing.Point(0, 0)
+                this.menuStrip1.Name = (string)("menuStrip1")
+                this.menuStrip1.Size = new System.Drawing.Size(617, 24)
+                this.menuStrip1.TabIndex = 1
+                this.menuStrip1.Text = (string)("menuStrip1")
+                ;; 
+                ;; fileToolStripMenuItem
+                ;; 
+                this.fileToolStripMenuItem.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.exitToolStripMenuItem})
+                this.fileToolStripMenuItem.Name = (string)("fileToolStripMenuItem")
+                this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20)
+                this.fileToolStripMenuItem.Text = (string)("&File")
+                ;; 
+                ;; exitToolStripMenuItem
+                ;; 
+                this.exitToolStripMenuItem.Name = (string)("exitToolStripMenuItem")
+                this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)))
+                this.exitToolStripMenuItem.Size = new System.Drawing.Size(133, 22)
+                this.exitToolStripMenuItem.Text = (string)("E&xit")
+                 addhandler( this.exitToolStripMenuItem.Click, exitToolStripMenuItem_Click)
+                ;; 
+                ;; Form1
+                ;; 
+                this.ClientSize = new System.Drawing.Size(617, 470)
+                this.Controls.Add(this.logwindow)
+                this.Controls.Add(this.menuStrip1)
+                this.MainMenuStrip = this.menuStrip1
+                this.Name = (string)("Form1")
+                 addhandler( this.Load, Form1_Load)
+                this.menuStrip1.ResumeLayout(False)
+                this.menuStrip1.PerformLayout()
+                this.ResumeLayout(False)
+                this.PerformLayout()
+            end
+        
+        endmethod
+    
+    endclass
+    
+    endnamespace

@@ -1,0 +1,134 @@
+;; ****************************************************************************
+;;
+;; Class:		SynPsg.Rps.RpsTag
+;;
+;; Description:	Represents a single tag definition for a Repository structure
+;;
+;; Author:		Steve Ives, Synergex Professional Services Group
+;;
+;; Date: 		19th October 2007
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;;*****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+
+namespace SynPsg.Rps
+
+	public class RpsTag
+
+		.region "Private data"
+		
+		protected p_tg_info	,tg_info
+		protected p_TagName	,String
+		
+		.endregion
+
+		.region "Constructors and destructors"
+
+		public method RpsTag
+			required in StructureName, String
+			required in TagName, String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadTag(StructureName,TagName)
+		endmethod
+
+		.endregion
+
+		.region "Private methods"
+
+		private method LoadTag, void
+			required in StructureName, String
+			required in TagName, String
+			endparams
+		proc
+			;;Save the tag name
+			p_TagName = TagName.Trim().ToUpper()
+			begin
+				data p_s_info, s_info
+				;;Set the current structure
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName.Trim().ToUpper(),^a(p_s_info))
+				if (Repository.RpsControl.error)
+					throw new RpsTagException(string.Format("Failed to set current repository structure to {0}.",StructureName))
+				;;Load tag information
+				dd_tag(Repository.RpsControl,DDTG_INFO,p_TagName,^a(p_tg_info))
+				if (Repository.RpsControl.error)
+					throw new RpsTagException(string.Format("Failed to load structure {0} tag {1}.",StructureName,TagName))
+			end
+		endmethod
+		
+		.endregion
+
+		.region "Public properties"
+
+		;;Tag name
+		public property Name, String
+			method get
+			proc
+				mreturn p_TagName
+			endmethod
+		endproperty
+		
+		;;Sequence number
+		public property SequenceNumber, int
+			method get
+			proc
+				mreturn p_tg_info.tgi_seqnm
+			endmethod
+		endproperty
+
+		;;Tag field comparison connector
+		public property ComparisonConnector, RpsTagComparison
+			method get
+			proc
+				mreturn (RpsTagComparison)integer(p_tg_info.tgi_tagcon)
+			endmethod
+		endproperty
+
+		;;Field name (if si_tagtyp = TAGFLD)
+		public property Field, String
+			method get
+			proc
+				mreturn RpsUtils.Uppercase(p_tg_info.tgi_tagfld)
+			endmethod
+		endproperty
+
+		;;Tag field comparison operator
+		public property ComparisonOperator, RpsTagOperator
+			method get
+			proc
+				mreturn (RpsTagOperator)integer(p_tg_info.tgi_tagcmp)
+			endmethod
+		endproperty
+
+		;;Tag field comparison value
+		public property ComparisonValue, String
+			method get
+			proc
+				mreturn %atrim(p_tg_info.tgi_tagval)
+			endmethod
+		endproperty
+
+		.endregion
+
+	endclass
+
+endnamespace
+

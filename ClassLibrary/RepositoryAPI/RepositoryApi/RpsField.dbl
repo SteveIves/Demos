@@ -1,0 +1,1976 @@
+;;*****************************************************************************
+;;
+;; Class:       SynPsg.Rps.RpsField
+;;
+;; Description: Represents a single Repository field definition
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+;; Date:        19th October 2007
+;;
+;; ****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;; ****************************************************************************
+;;
+;; IMPLEMENTATION NOTE
+;;
+;; Certain implementation details in this class relate to my requirements for
+;; extending this class in another application.  If you intend to use this class
+;; only as a part of the repository API with which it is provided then you may
+;; wish to undo some of my changes, as follows:
+;;
+;; 1. Change all class fields from "protected" to "private"
+;; 2. Remove the "FieldData" property
+;; 3. Remove the "set" methods from all properties
+;; 4. Remove the constructor which accepts an existing RpsField object.
+;;
+;; ****************************************************************************
+;;
+;; $Revision: 6 $
+;;
+;; $Date: 2012-06-20 10:35:49-07:00 $
+;;
+;; ****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+    public class RpsField
+		
+		.region "Private data"
+		
+		;;Field attribute data
+		protected m_f_info				,f_info
+		protected m_StructureName		,String
+		protected m_Name				,String
+		protected m_Description			,a40
+		protected m_LongDescription		,a1800
+		protected m_UserFieldType		,a30
+		protected m_ReportHeading		,a40
+		protected m_Prompt				,a80
+		protected m_HelpIdentifier		,a80
+		protected m_InfoLineText		,a80
+		protected m_UserText			,a80
+		protected m_AlternateName		,a30
+		protected m_FieldFont			,a30
+		protected m_PromptFont			,a30
+		protected m_DefaultValue		,a80
+		protected m_ArriveMethod		,a30
+		protected m_LeaveMethod			,a30
+		protected m_DrillMethod			,a30
+		protected m_HyperlinkMethod		,a30
+		protected m_ChangeMethod		,a30
+		protected m_DisplayMethod		,a30
+		protected m_EditFormatMethod	,a30
+		protected m_ArrayDimension		,[#]int
+		protected m_fti_range			,fti_range
+		protected m_fti_enum			,fti_enum
+		protected m_AllowList			,@List<String>
+		protected m_SelectionList		,@List<String>
+		protected m_CorecedType			,RpsFieldCorecedType
+		protected m_EnumName			,a30
+		
+		;;Group fields
+		protected m_GroupFields			,@RpsGroupFieldCollection
+		protected m_GroupStructure		,a30
+		protected m_GroupMemberPrefix	,a30
+		
+		.endregion
+		
+		.region "Constructors and destructors"
+		
+		;;Constructor for a regular structure field
+		public method RpsField
+			required in StructureName, String
+			required in FieldName, String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadField(StructureName,,FieldName)
+		endmethod
+		
+		;;Constructor for a group field
+		public method RpsField
+			required in StructureName, String
+			required in GroupName, String
+			required in FieldName, String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadField(StructureName,GroupName,FieldName)
+		endmethod
+		
+		;;Constructor to base this field on another field
+		public method RpsField
+			required in SourceField, @RpsField
+			endparams
+		proc
+			m_f_info				= SourceField.FieldData
+			m_StructureName			= SourceField.StructureName
+			m_Name					= SourceField.Name
+			m_Description			= SourceField.Description
+			m_LongDescription		= SourceField.LongDescription  
+			m_UserFieldType			= SourceField.UserFieldType    
+			m_ReportHeading			= SourceField.ReportHeading    
+			m_Prompt				= SourceField.Prompt           
+			m_HelpIdentifier		= SourceField.HelpIdentifier   
+			m_InfoLineText			= SourceField.InfoLineText     
+			m_UserText				= SourceField.UserText         
+			m_AlternateName			= SourceField.AlternateName    
+			m_FieldFont				= SourceField.FieldFont        
+			m_PromptFont			= SourceField.PromptFont       
+			m_DefaultValue			= SourceField.DefaultValue     
+			m_ArriveMethod			= SourceField.ArriveMethod     
+			m_LeaveMethod			= SourceField.LeaveMethod      
+			m_DrillMethod			= SourceField.DrillMethod      
+			m_HyperlinkMethod		= SourceField.HyperlinkMethod  
+			m_ChangeMethod			= SourceField.ChangeMethod     
+			m_DisplayMethod			= SourceField.DisplayMethod    
+			m_EditFormatMethod		= SourceField.EditFormatMethod 
+			m_ArrayDimension		= SourceField.ArrayDimension   
+			m_fti_range.fti_rgmin	= SourceField.NumericRangeMinimum
+			m_fti_range.fti_rgmax	= SourceField.NumericRangeMaximum
+			m_fti_enum.fti_enmlen	= SourceField.EnumeratedDisplayLength
+			m_fti_enum.fti_enmbase	= SourceField.EnumeratedBaseValue
+			m_fti_enum.fti_enmstep	= SourceField.EnumeratedStepValue
+			m_AllowList				= SourceField.AllowList        
+			m_SelectionList			= SourceField.SelectionList    
+			m_GroupFields			= SourceField.GroupFields
+			m_GroupStructure		= SourceField.GroupStructure   
+			m_GroupMemberPrefix		= SourceField.GroupMemberPrefix
+			m_CorecedType			= SourceField.CorecedType
+			m_EnumName				= SourceField.EnumName
+		endmethod
+		
+		;;Destructor
+		method ~RpsField
+		proc
+			clear m_AllowList, m_SelectionList, m_GroupFields
+		endmethod
+		
+		.endregion
+		
+		.region "Private methods"
+
+		;;Load the data for this field
+		private method LoadField, void
+			required in StructureName, String
+			optional in GroupName, a
+			required in FieldName, String
+			endparams
+		proc
+			begin
+				data p_s_info ,s_info
+				
+				;;Save the structure and field names
+				m_StructureName = StructureName.Trim().ToUpper()
+				m_Name = FieldName.Trim().ToUpper()
+				
+				;;Set the current structure
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,p_s_info)
+				if (Repository.RpsControl.error)
+					throw new RpsFieldException("Failed to get information for repository structure "+StructureName)
+					
+				;;Descend into a group if that's what we're going
+				if (^passed(GroupName))
+				begin
+					dd_field(Repository.RpsControl,DDF_GROUP,GroupName)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to set group to "+GroupName)
+				end
+				
+				;;Load the field information structure
+				dd_field(Repository.RpsControl,DDF_INFO,FieldName,^a(m_f_info))
+				if (Repository.RpsControl.error)
+					throw new RpsFieldException("Failed to get information for repository structure " + m_StructureName +  " field "+FieldName)
+					
+				;;Load extended data
+				
+				m_ArrayDimension = new int[4]
+				m_ArrayDimension[1] = m_f_info.fi_dim[1]
+				m_ArrayDimension[2] = m_f_info.fi_dim[2]
+				m_ArrayDimension[3] = m_f_info.fi_dim[3]
+				m_ArrayDimension[4] = m_f_info.fi_dim[4]
+				
+				;;Load description (a40)
+				if (m_f_info.fi_desc)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_desc,m_Description)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get description for repository field "+FieldName)
+				end
+				
+				;;Load long description (a1800)
+				if (m_f_info.fi_ldesc)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_ldesc,m_LongDescription)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get long description for repository field "+FieldName)
+				end
+				
+				;;Load user defined field type (a30)
+				if (m_f_info.fi_usrtyp)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_usrtyp,m_UserFieldType)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get user defined type for repository field "+FieldName)
+				end
+				
+				;;Load report heading (a40)
+				if (m_f_info.fi_heading)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_heading,m_ReportHeading)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get report heading for repository field "+FieldName)
+				end
+				
+				;;Load prompt (a80)
+				if (m_f_info.fi_prompt)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_prompt,m_Prompt)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get prompt for repository field "+FieldName)
+				end
+				
+				;;Load help identifier (a80)
+				if (m_f_info.fi_help)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_help,m_HelpIdentifier)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get help identifier for repository field "+FieldName)
+				end
+				
+				;;Load information line text (a80)
+				if (m_f_info.fi_infoln)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_infoln,m_InfoLineText)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get information line text for repository field "+FieldName)
+				end
+				
+				;;Load user text string (a80)
+				if (m_f_info.fi_utext)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_utext,m_UserText)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get user text for repository field "+FieldName)
+				end
+				
+				;;Load alternate name (a30)
+				if (m_f_info.fi_altnm)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_altnm,m_AlternateName)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get alternate name for repository field "+FieldName)
+				end
+				
+				;;Load field font (a30)
+				if (m_f_info.fi_font)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_font,m_FieldFont)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get field font for repository field "+FieldName)
+				end
+				
+				;;Load prompt font (a30)
+				if (m_f_info.fi_prmptfont)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_prmptfont,m_PromptFont)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get prompt font for repository field "+FieldName)
+				end
+				
+				;;Load default value (a80)
+				if (m_f_info.fi_def)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_def,m_DefaultValue)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get default value for repository field "+FieldName)
+				end
+				
+				;;Load arrive method (a30)
+				if (m_f_info.fi_arrivemeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_arrivemeth,m_ArriveMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get arrive method for repository field "+FieldName)
+				end
+				
+				;;Load leave method (a30)
+				if (m_f_info.fi_leavemeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_leavemeth,m_LeaveMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get leave method for repository field "+FieldName)
+				end
+				
+				;;Load drill method (a30)
+				if (m_f_info.fi_drillmeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_drillmeth,m_DrillMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get drill method for repository field "+FieldName)
+				end
+				
+				;;Load hyperlink method (a30)
+				if (m_f_info.fi_hypermeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_hypermeth,m_HyperlinkMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get hyperlink method for repository field "+FieldName)
+				end
+				
+				;;Load change method (a30)
+				if (m_f_info.fi_changemeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_changemeth,m_ChangeMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get change method for repository field "+FieldName)
+				end
+				
+				;;Load display format method (a30)
+				if (m_f_info.fi_dispmeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_dispmeth,m_DisplayMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get display method for repository field "+FieldName)
+				end
+				
+				;;Load edit format method (a30)
+				if (m_f_info.fi_editfmtmeth)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_editfmtmeth,m_EditFormatMethod)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get edit format method for repository field "+FieldName)
+				end
+				
+				;;Load allowed value list (@ArrayList)
+				m_AllowList = new List<String>()
+				if (m_f_info.fi_alwlst&&m_f_info.fi_alwct)
+				begin
+					data ListData, fti_entlst
+                    dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_alwlst,^a(ListData))
+					if (Repository.RpsControl.error) then
+						throw new RpsFieldException("Failed to get allow list entries for repository field "+FieldName)
+					else
+					begin
+						data idx, int
+						for idx from 1 thru m_f_info.fi_alwct
+						m_AllowList.Add(%atrim(ListData.fti_entlstary[idx]))
+						end
+				end
+				
+				;;Load valid selections (@ArrayList)
+				m_SelectionList = new List<String>()
+				if (m_f_info.fi_sellist&&m_f_info.fi_selct)
+				begin
+					data ListData, fti_entlst
+                    dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_sellist,^a(ListData))
+					if (Repository.RpsControl.error) then
+						throw new RpsFieldException("Failed to get allow list entries for repository field "+FieldName)
+					else
+					begin
+						data idx, int
+						for idx from 1 thru m_f_info.fi_selct
+						m_SelectionList.Add(%atrim(ListData.fti_entlstary[idx]))
+						end
+				end
+				
+				;;Load numeric range values (fti_range)
+				if (m_f_info.fi_range) 
+				begin
+                    dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_range,^a(m_fti_range))
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get ranges for repository field "+FieldName)
+				end
+				
+				;;Load Toolkit enumeration data (fti_enum)
+				if (m_f_info.fi_enum) 
+				begin
+                    dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_enum,^a(m_fti_enum))
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get emumeration data for repository field "+FieldName)
+				end
+				
+				;;Load enumerated field name
+				if ((m_f_info.fi_type==T_INT)&&(m_f_info.fi_class==C_ENUM)&&(m_f_info.fi_enmfld))
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_enmfld,m_EnumName)
+				if (Repository.RpsControl.error)
+					throw new RpsFieldException("Failed to get emumeration name for repository field "+FieldName)
+					
+				;;Things below here are unique to fields (not included in templates)
+				
+				;;Load group structure name (a30)
+				if (m_f_info.fi_struct)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_struct,m_GroupStructure)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get group structure for repository field "+FieldName)
+				end
+				
+				;;Load group member prefix (a30)
+				if (m_f_info.fi_prefix)
+				begin
+					dd_field(Repository.RpsControl,DDF_TEXT,m_f_info.fi_prefix,m_GroupMemberPrefix)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to get group prefix for repository field "+FieldName)
+				end
+				
+				;;Load group subfields
+				if (m_f_info.fi_group) then
+					m_GroupFields = new RpsGroupFieldCollection(StructureName,FieldName)
+				else
+					m_GroupFields = new RpsGroupFieldCollection()
+					
+				;;Back out of the group if that's what we're going
+				if (^passed(GroupName))
+				begin
+					dd_field(Repository.RpsControl,DDF_ENDGROUP)
+					if (Repository.RpsControl.error)
+						throw new RpsFieldException("Failed to back out of group "+GroupName)
+				end
+				
+				;;Load the fields coerced type
+				using m_f_info.fi_type select
+				(T_DEC),
+				begin
+					using m_f_info.fi_class select
+					(C_YYMMDD,C_YYYYMMDD,C_YYJJJ,C_YYYYJJJ,C_YYPP,C_YYYYPP,C_HHMMSS,C_HHMM),
+					begin
+						using m_f_info.fi_coertype select
+						(CT_DATETIME),
+							m_CorecedType = RpsFieldCorecedType.CtNone
+						(CT_NULLDATETIME),
+							m_CorecedType = RpsFieldCorecedType.CtNullDateTime
+						endusing
+					end
+					(),
+					begin
+						if (m_f_info.fi_prec) then 
+						begin
+							using m_f_info.fi_coertype select
+							(CT_DECIMAL),
+								m_CorecedType = RpsFieldCorecedType.CtNone
+							(CT_DOUBLE),
+								m_CorecedType = RpsFieldCorecedType.CtDouble
+							(CT_FLOAT),
+								m_CorecedType = RpsFieldCorecedType.CtFloat
+							endusing
+						end
+						else
+						begin
+							using m_f_info.fi_coertype select
+							(CT_DEFAULT),
+								m_CorecedType = RpsFieldCorecedType.CtNone
+							(CT_BYTE),
+								m_CorecedType = RpsFieldCorecedType.CtByte
+							(CT_SHORT),
+								m_CorecedType = RpsFieldCorecedType.CtShort
+							(CT_INT),
+								m_CorecedType = RpsFieldCorecedType.CtInt
+							(CT_LONG),
+								m_CorecedType = RpsFieldCorecedType.CtLong
+							(CT_SBYTE),
+								m_CorecedType = RpsFieldCorecedType.CtSbyte
+							(CT_USHORT),
+								m_CorecedType = RpsFieldCorecedType.CtUshort
+							(CT_UINT),
+								m_CorecedType = RpsFieldCorecedType.CtUint
+							(CT_ULONG),
+								m_CorecedType = RpsFieldCorecedType.CtUlong
+							(CT_BOOLEAN),
+								m_CorecedType = RpsFieldCorecedType.CtBoolean
+							endusing
+						end
+					end
+					endusing
+				end
+				(T_INT),
+				begin
+					using m_f_info.fi_coertype select
+					(CT_DEFAULT),
+						m_CorecedType = RpsFieldCorecedType.CtNone
+					(CT_BYTE),
+						m_CorecedType = RpsFieldCorecedType.CtByte
+					(CT_SHORT),
+						m_CorecedType = RpsFieldCorecedType.CtShort
+					(CT_INT),
+						m_CorecedType = RpsFieldCorecedType.CtInt
+					(CT_LONG),
+						m_CorecedType = RpsFieldCorecedType.CtLong
+					(CT_SBYTE),
+						m_CorecedType = RpsFieldCorecedType.CtSbyte
+					(CT_USHORT),
+						m_CorecedType = RpsFieldCorecedType.CtUshort
+					(CT_UINT),
+						m_CorecedType = RpsFieldCorecedType.CtUint
+					(CT_ULONG),
+						m_CorecedType = RpsFieldCorecedType.CtUlong
+					(CT_BOOLEAN),
+						m_CorecedType = RpsFieldCorecedType.CtBoolean
+					endusing
+				end
+				(),
+					m_CorecedType = RpsFieldCorecedType.CtNone
+				endusing
+				
+			end
+		endmethod
+		.endregion
+
+		.region "Private properties"
+
+		;;This property is present because of my specific requirements for using this class
+		;;in CodeGen. In most other scenarios this property should be removed.
+		protected property FieldData, f_info
+			method get
+			proc
+				mreturn m_f_info
+			endmethod
+		endproperty
+		
+		.endregion
+
+		.region "Public properties"
+		
+        ;;Structure name
+        public property StructureName, String
+            method get
+            proc
+                mreturn m_StructureName
+			endmethod
+			method set
+			proc
+				m_StructureName = value.Trim().ToUpper()
+			endmethod
+        endproperty
+        
+        ;;Field name
+        public property Name, String
+            method get
+            proc
+                mreturn m_Name
+            endmethod
+			method set
+			proc
+				m_Name = value.Trim().ToUpper()
+			endmethod
+        endproperty
+
+        ;;Sequence number
+        public property SequenceNumber, int
+            method get
+            proc
+                mreturn m_f_info.fi_seqnm
+			endmethod
+			method set
+			proc
+				m_f_info.fi_seqnm = value
+			endmethod
+        endproperty
+
+        ;;Starting position within the record or group
+        public property StartPosition, int
+            method get
+            proc
+                mreturn m_f_info.fi_pos
+            endmethod
+			method set
+			proc
+				m_f_info.fi_pos = value
+			endmethod
+        endproperty
+        
+        ;;Name of the field being overlaid
+        public property OverlaysField, String
+            method get
+            proc
+                mreturn %atrim(m_f_info.fi_ovrfld)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_ovrfld = value
+			endmethod
+        endproperty
+        
+        ;;Overlay offset within the above field
+        public property OverlayOffset, int
+            method get
+            proc
+                mreturn m_f_info.fi_ovroff
+            endmethod
+			method set
+			proc
+				m_f_info.fi_ovroff = value
+			endmethod
+        endproperty
+
+        ;;Template referenced by this field
+        public property Template, String
+            method get
+            proc
+                mreturn %atrim(m_f_info.fi_template)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_template = value
+			endmethod
+        endproperty
+
+		;;Description
+		public property Description, String
+			method get
+			proc
+				mreturn %atrim(m_Description)
+			endmethod
+			method set
+			proc
+				m_Description = value
+			endmethod
+		endproperty
+
+		;;Long description
+		public property LongDescription, String
+			method get
+			proc
+				mreturn %atrim(m_LongDescription)
+			endmethod
+			method set
+			proc
+				m_LongDescription = value
+			endmethod
+		endproperty
+
+		;;Data type
+		public property DataType, RpsFieldDataType
+			method get
+				record 
+					retval, RpsFieldDataType
+				endrecord
+			proc
+				using m_f_info.fi_type select
+				("A"),
+					using m_f_info.fi_class select
+					(C_BINARY),
+						retval = RpsFieldDataType.Binary
+					(C_STRFLD),
+						retval = RpsFieldDataType.StructField
+					(),
+						retval = RpsFieldDataType.Alpha
+					endusing
+				("D"),
+					retval = RpsFieldDataType.Decimal
+				("I"),
+				begin
+					using m_f_info.fi_class select
+					(C_BOOLEAN),
+						retval = RpsFieldDataType.Boolean
+					(C_ENUM),
+						retval = RpsFieldDataType.Enum
+					(),
+						retval = RpsFieldDataType.Integer
+					endusing
+				end
+				("U"),
+					retval = RpsFieldDataType.User
+				endusing
+				mreturn retval
+			endmethod
+			method set
+			proc
+				using value select
+				(RpsFieldDataType.Alpha),
+					m_f_info.fi_type = "A"
+				(RpsFieldDataType.Decimal),
+					m_f_info.fi_type = "D"
+				(RpsFieldDataType.Integer),
+					m_f_info.fi_type = "I"
+				(RpsFieldDataType.User),
+					m_f_info.fi_type = "U"
+				(RpsFieldDataType.Boolean),
+				begin
+					m_f_info.fi_type = "I"
+					m_f_info.fi_class = C_BOOLEAN
+					m_f_info.fi_size = 1
+				end
+				(RpsFieldDataType.Enum),
+				begin
+					m_f_info.fi_type = "I"
+					m_f_info.fi_class = C_ENUM
+					m_f_info.fi_size = 4
+				end
+				(RpsFieldDataType.Binary),
+				begin
+					m_f_info.fi_type = "A"
+					m_f_info.fi_class = C_BINARY
+				end
+				(RpsFieldDataType.StructField),
+				begin
+					m_f_info.fi_type = "A"
+					m_f_info.fi_class = C_STRFLD
+				end
+				endusing
+			endmethod
+		endproperty
+    
+		;;Data type code ("A", "D", "I" or "U")
+		public property DataTypeCode, String
+			method get
+			proc
+				mreturn m_f_info.fi_type
+			endmethod
+			method set
+			proc
+				using value select
+				("A","D","I","U"),
+					m_f_info.fi_type = value.ToUpper()
+				endusing
+			endmethod
+		endproperty
+
+		;;DBL type subclass
+		public property DataTypeSubclass, RpsFieldSubclass
+			method get
+				record 
+					retval, RpsFieldSubclass
+				endrecord
+			proc
+				retval = RpsFieldSubclass.None
+				using m_f_info.fi_type select
+				(T_ALP),
+					using m_f_info.fi_class select
+					(C_BINARY),
+						retval = RpsFieldSubclass.None
+					endusing
+				(T_DEC),
+				begin
+					using m_f_info.fi_class select
+					(C_YYMMDD),
+						retval = RpsFieldSubclass.DateYYMMDD
+					(C_YYYYMMDD),
+						retval = RpsFieldSubclass.DateYYYYMMDD
+					(C_YYJJJ),
+						retval = RpsFieldSubclass.DateYYJJJ
+					(C_YYYYJJJ),
+						retval = RpsFieldSubclass.DateYYYYJJJ
+					(C_YYPP),
+						retval = RpsFieldSubclass.DateYYPP
+					(C_YYYYPP),
+						retval = RpsFieldSubclass.DateYYYYPP
+					(C_HHMMSS),
+						retval = RpsFieldSubclass.TimeHHMMSS
+					(C_HHMM),
+						retval = RpsFieldSubclass.TimeHHMM
+					endusing
+				end
+				(T_USR),
+				begin
+					using m_f_info.fi_class select
+					(C_ALPHA),
+						retval = RpsFieldSubclass.UserAlpha
+					(C_NUMERIC),
+						retval = RpsFieldSubclass.UserNumeric
+					(C_DATE),
+						retval = RpsFieldSubclass.UserDate
+					endusing
+				end
+				endusing
+				mreturn retval
+			endmethod
+			method set
+			proc
+				using value select
+				(RpsFieldSubclass.DateYYMMDD),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYMMDD
+				end
+				(RpsFieldSubclass.DateYYYYMMDD),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYYYMMDD
+				end
+				(RpsFieldSubclass.DateYYJJJ),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYJJJ
+				end
+				(RpsFieldSubclass.DateYYYYJJJ),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYYYJJJ
+				end
+				(RpsFieldSubclass.DateYYPP),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYPP
+				end
+				(RpsFieldSubclass.DateYYYYPP),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_YYYYPP
+				end
+				(RpsFieldSubclass.TimeHHMMSS),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_HHMMSS
+				end
+				(RpsFieldSubclass.TimeHHMM),
+				begin
+					m_f_info.fi_type = T_DEC
+					m_f_info.fi_class = C_HHMM
+				end
+				(RpsFieldSubclass.Binary),
+				begin
+					m_f_info.fi_type = T_ALP
+					m_f_info.fi_class = C_BINARY
+				end
+				(RpsFieldSubclass.UserAlpha),
+				begin
+					m_f_info.fi_type = T_USR
+					m_f_info.fi_class = C_ALPHA
+				end
+				(RpsFieldSubclass.UserNumeric),
+				begin
+					m_f_info.fi_type = T_USR
+					m_f_info.fi_class = C_NUMERIC
+				end
+				(RpsFieldSubclass.UserDate),
+				begin
+					m_f_info.fi_type = T_USR
+					m_f_info.fi_class = C_DATE
+				end
+				endusing
+			endmethod
+		endproperty		
+
+		;;User defined field type
+		public property UserFieldType, String
+			method get
+			proc
+				mreturn %atrim(m_UserFieldType)
+			endmethod
+			method set
+			proc
+				m_UserFieldType = value
+			endmethod
+		endproperty
+
+        ;;Field size
+        public property Size, int
+            method get
+            proc
+                mreturn m_f_info.fi_size
+            endmethod
+			method set
+			proc
+				m_f_info.fi_size = value
+			endmethod
+        endproperty
+
+        ;;Digits to right of decimal point
+        public property Precision, int
+            method get
+            proc
+                mreturn m_f_info.fi_prec
+            endmethod
+			method set
+			proc
+				m_f_info.fi_prec = value
+			endmethod
+        endproperty
+        
+        ;;Array dimensions
+       public property ArrayDimension, [#]int
+           method get
+           proc
+				mreturn m_ArrayDimension
+           endmethod
+			method set
+			proc
+				m_ArrayDimension = value
+			endmethod
+       endproperty
+        
+        ;;Native data size
+        public property NativeSize, int
+            method get
+            proc
+                mreturn m_f_info.fi_ndsize
+            endmethod
+			method set
+			proc
+				m_f_info.fi_ndsize = value
+			endmethod
+        endproperty
+        
+        ;;Excluded by language
+        public property ExcludedByLanguage, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_dblvw
+            endmethod
+			method set
+			proc
+				m_f_info.fi_dblvw = value
+			endmethod
+        endproperty
+        
+        ;;Excluded by ReportWriter
+        public property ExcludedByReportWriter, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_rptvw
+            endmethod
+			method set
+			proc
+				m_f_info.fi_rptvw = value
+			endmethod
+        endproperty
+
+        ;;Excluded by Toolkit
+        public property ExcludedByToolkit, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_scrptvw
+            endmethod
+			method set
+			proc
+				m_f_info.fi_scrptvw = value
+			endmethod
+        endproperty
+
+        ;;Excluded by Web?
+		public property ExcludedByWeb, boolean
+			method get
+			proc
+				mreturn m_f_info.fi_webvw
+			endmethod
+			method set
+			proc
+				m_f_info.fi_webvw = value
+			endmethod
+		endproperty
+
+		;;Field name is the name link
+        public property NoNameLink, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_nolnk
+            endmethod
+			method set
+			proc
+				m_f_info.fi_nolnk = value
+			endmethod
+        endproperty
+        
+		;Report heading
+		public property ReportHeading, String
+			method get
+			proc
+				mreturn %atrim(m_ReportHeading)
+			endmethod
+			method set
+			proc
+				m_ReportHeading = value
+			endmethod
+		endproperty
+
+        ;;Display format name
+        public property FormatName, String
+            method get
+            proc
+                mreturn %atrim(m_f_info.fi_fmt)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_fmt = value
+			endmethod
+        endproperty
+
+		;;Report field justification
+		public property ReportJustification, RpsJustification
+			method get
+			proc
+				mreturn (RpsJustification)integer(m_f_info.fi_rptjust)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_rptjust = (int)value
+			endmethod
+		endproperty
+
+		;;Input field justification
+		public property InputJustification, RpsJustification
+			method get
+			proc
+				mreturn (RpsJustification)integer(m_f_info.fi_inpjust)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_inpjust = (int)value
+			endmethod
+		endproperty
+
+		;;Input field position mode
+		public property FieldPositionMode, RpsPositionMode
+			method get
+			proc
+				mreturn (RpsPositionMode)integer(m_f_info.fi_fpostyp)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_fpostyp = (int)value
+			endmethod
+		endproperty
+
+        ;;Input field row
+        public property FieldRow, int
+            method get
+            proc
+                mreturn m_f_info.fi_finprow
+            endmethod
+			method set
+			proc
+				m_f_info.fi_finprow = value
+			endmethod
+        endproperty
+
+        ;;Input field column
+        public property FieldColumn, int
+            method get
+            proc
+                mreturn m_f_info.fi_finpcol
+            endmethod
+			method set
+			proc
+				m_f_info.fi_finpcol = value
+			endmethod
+        endproperty
+
+		;;Prompt position mode
+		public property PromptPositionMode, RpsPositionMode
+			method get
+			proc
+				mreturn (RpsPositionMode)integer(m_f_info.fi_postyp)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_postyp = (int)value
+			endmethod
+		endproperty
+
+        ;;Prompt row
+        public property PromptRow, int
+            method get
+            proc
+                mreturn m_f_info.fi_inprow
+            endmethod
+			method set
+			proc
+				m_f_info.fi_inprow = value
+			endmethod
+        endproperty
+
+        ;;Prompt column
+        public property PromptColumn, int
+            method get
+            proc
+                mreturn m_f_info.fi_inpcol
+            endmethod
+			method set
+			proc
+				m_f_info.fi_inpcol = value
+			endmethod
+        endproperty
+
+		;;Blank if zero?
+        public property BlankIfZero, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_bzro
+            endmethod
+			method set
+			proc
+				m_f_info.fi_bzro = value
+			endmethod
+        endproperty
+
+        ;;Custom paint character specified
+        public property PaintCharacterSpecified, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_paint
+            endmethod
+			method set
+			proc
+				m_f_info.fi_paint = value
+			endmethod
+        endproperty
+
+        ;;Custom paint character
+        public property PaintCharacter, String
+            method get
+            proc
+                mreturn m_f_info.fi_pntchr
+            endmethod
+			method set
+			proc
+				m_f_info.fi_pntchr = value
+			endmethod
+        endproperty
+
+		;;View field as
+		public property ViewAs, RpsFieldViewAs
+			method get
+			proc
+				mreturn (RpsFieldViewAs)integer(m_f_info.fi_view)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_view = (int)value
+			endmethod
+		endproperty
+
+		;;Color palette
+		public property ColorPalette, RpsColorPalette
+			method get
+			proc
+				mreturn (RpsColorPalette)integer(m_f_info.fi_color)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_color = (int)value
+			endmethod
+		endproperty
+
+		;;Override the highlight attribute
+		public property RenditionHighlight, boolean
+			method get
+			proc
+				mreturn (m_f_info.fi_attrib&&m_f_info.fi_highlight)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_highlight = value
+			endmethod
+		endproperty
+
+        ;;Override the reverse attribute
+        public property RenditionReverse, boolean
+            method get
+            proc
+                mreturn (m_f_info.fi_attrib&&m_f_info.fi_reverse)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_reverse = value
+			endmethod
+        endproperty
+        
+        ;;Override the blink attribute
+        public property RenditionBlink, boolean
+            method get
+            proc
+                mreturn (m_f_info.fi_attrib&&m_f_info.fi_blink)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_blink = value
+			endmethod
+        endproperty
+
+        ;;Override the underline attribute
+        public property RenditionUnderline, boolean
+            method get
+            proc
+                mreturn (m_f_info.fi_attrib&&m_f_info.fi_underline)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_underline = value
+			endmethod
+        endproperty
+
+        ;;Read-only
+        public property ReadOnly, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_readonly
+            endmethod
+			method set
+			proc
+				m_f_info.fi_readonly = value
+			endmethod
+        endproperty
+        
+        ;;Disabled
+        public property Disabled, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_disabled
+            endmethod
+			method set
+			proc
+				m_f_info.fi_disabled = value
+			endmethod
+        endproperty
+
+        ;;Display length
+        public property DisplayLength, int
+            method get
+            proc
+                mreturn m_f_info.fi_displen
+            endmethod
+			method set
+			proc
+				m_f_info.fi_displen = value
+			endmethod
+        endproperty
+
+        ;;View length
+        public property ViewLength, int
+            method get
+            proc
+                mreturn m_f_info.fi_viewlen
+            endmethod
+			method set
+			proc
+				m_f_info.fi_viewlen = value
+			endmethod
+        endproperty
+
+        ;;Don't echo characters typed
+        public property NoEcho, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_noecho
+            endmethod
+			method set
+			proc
+				m_f_info.fi_noecho = value
+			endmethod
+        endproperty
+
+		;;Echo character for characters typed
+		;;(Only used if NoEcho = true)
+        public property NoEchoCharacter, String
+            method get
+            proc
+                mreturn m_f_info.fi_echochr
+            endmethod
+			method set
+			proc
+				m_f_info.fi_echochr = value
+			endmethod
+        endproperty
+
+		;;Default action
+		public property DefaultAction, RpsFieldDefaultAction
+			method get
+			proc
+				mreturn (RpsFieldDefaultAction)integer(m_f_info.fi_defact)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_defact = (int)value
+			endmethod
+		endproperty
+
+        ;;Automatic default action?
+        public property DefaultAuotmatic, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_auto
+            endmethod
+			method set
+			proc
+				m_f_info.fi_auto = value
+			endmethod
+        endproperty
+
+        ;;Default date to current date?
+        public property DateDefaultToday, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_today
+            endmethod
+			method set
+			proc
+				m_f_info.fi_today = value
+			endmethod
+        endproperty
+
+        ;;Allow short date?
+        public property AllowShortDate, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_short
+            endmethod
+			method set
+			proc
+				m_f_info.fi_short = value
+			endmethod
+        endproperty
+
+        ;;Default time to current time?
+        public property TimeDefaultNow, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_now
+            endmethod
+			method set
+			proc
+				m_f_info.fi_now = value
+			endmethod
+        endproperty
+
+        ;;Display meridian indicator?
+        public property TimeAmPm, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_ampm
+            endmethod
+			method set
+			proc
+				m_f_info.fi_ampm = value
+			endmethod
+        endproperty
+
+		;;Input timeout mode
+		public property InputTimeoutMode, RpsFieldTimeout
+			method get
+			proc
+				mreturn (RpsFieldTimeout)integer(m_f_info.fi_wait)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_wait = (int)value
+			endmethod
+		endproperty
+
+		;;Input timeout delay
+		;;(Only used if InputTimeoutMode = RpsFieldTimeout.Time)
+        public property InputTimeout, int
+            method get
+            proc
+                mreturn m_f_info.fi_waittime
+            endmethod
+			method set
+			proc
+				m_f_info.fi_waittime = value
+			endmethod
+        endproperty
+
+        ;;Convert input to uppercase
+        public property Uppercase, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_uc
+            endmethod
+			method set
+			proc
+				m_f_info.fi_uc = value
+			endmethod
+        endproperty
+
+        ;;No decimal needs to be entered
+        public property NoDecimalRequired, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_nodec
+            endmethod
+			method set
+			proc
+				m_f_info.fi_nodec = value
+			endmethod
+        endproperty
+
+        ;;Field terminates automatically when filled
+        public property NoTerminatorRequired, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_noterm
+            endmethod
+			method set
+			proc
+				m_f_info.fi_noterm = value
+			endmethod
+        endproperty
+
+        ;;Cursor position is retained
+        public property RetainPosition, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_retpos
+            endmethod
+			method set
+			proc
+				m_f_info.fi_retpos = value
+			endmethod
+        endproperty
+
+        ;;Input length
+        public property InputLength, int
+            method get
+            proc
+                mreturn m_f_info.fi_inplen
+            endmethod
+			method set
+			proc
+				m_f_info.fi_inplen = value
+			endmethod
+        endproperty
+
+        ;;Required field
+        public property Required, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_req
+            endmethod
+			method set
+			proc
+				m_f_info.fi_req = value
+			endmethod
+        endproperty
+
+		;;Break field
+		public property BreakMode, RpsFieldBreak
+			method get
+			proc
+				mreturn (RpsFieldBreak)integer(m_f_info.fi_break)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_break = (int)value
+			endmethod
+		endproperty
+
+		;;Negatives allowed
+		;;(Only used for numeric fields)
+		public property NegativeAllowed, RpsFieldNegatives
+			method get
+			proc
+				mreturn (RpsFieldNegatives)integer(m_f_info.fi_negalw)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_negalw = (int)value
+			endmethod
+		endproperty
+
+        ;;Allowed values list
+        public property AllowList, @List<String>
+            method get
+            proc
+                mreturn m_AllowList
+            endmethod
+			method set
+			proc
+				m_AllowList = value
+			endmethod
+        endproperty
+
+        ;;Length of longest allow list entry
+        public property AllowListMaxLength, int
+            method get
+            proc
+                mreturn m_f_info.fi_alwlen
+            endmethod
+			method set
+			proc
+				m_f_info.fi_alwlen = value
+			endmethod
+        endproperty
+
+        ;;Case sensitive matches for allow list values
+        public property AllowListMatchCase, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_matchcs
+            endmethod
+			method set
+			proc
+				m_f_info.fi_matchcs = value
+			endmethod
+        endproperty
+
+        ;;Exact matches for allow list values
+        public property AllowListMatchExact, boolean
+            method get
+            proc
+                mreturn m_f_info.fi_matchex
+            endmethod
+			method set
+			proc
+				m_f_info.fi_matchex = value
+			endmethod
+        endproperty
+
+        ;;Selection List
+        public property SelectionList, @List<String>
+            method get
+            proc
+                mreturn m_SelectionList
+            endmethod
+			method set
+			proc
+				m_SelectionList = value
+			endmethod
+        endproperty
+
+        ;;Length of longest selection list entry
+        public property SelectionListMaxLength, int
+            method get
+            proc
+                mreturn m_f_info.fi_sellen
+            endmethod
+			method set
+			proc
+				m_f_info.fi_sellen = value
+			endmethod
+        endproperty
+
+		;;Selection list type
+		public property SelectionListType, RpsFieldSelectionType
+			method get
+			proc
+				mreturn (RpsFieldSelectionType)integer(m_f_info.fi_seltyp)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_seltyp = (int)value
+			endmethod
+		endproperty
+
+        ;;Selection window row
+        public property SelectionWindowRow, int
+            method get
+            proc
+                mreturn m_f_info.fi_selrow
+            endmethod
+			method set
+			proc
+				m_f_info.fi_selrow = value
+			endmethod
+        endproperty
+
+        ;;Selection window column
+        public property SelectionWindowColumn, int
+            method get
+            proc
+                mreturn m_f_info.fi_selcol
+            endmethod
+			method set
+			proc
+				m_f_info.fi_selcol = value
+			endmethod
+        endproperty
+
+		;;Selection window name
+		;;(Only used if SelectionListType = RpsFieldSelectionType.Window)
+        public property SelectionWindowName, String
+            method get
+            proc
+                mreturn %atrim(m_f_info.fi_selwin)
+            endmethod
+			method set
+			proc
+				m_f_info.fi_selwin = value.ToUpper()
+			endmethod
+        endproperty
+
+        ;;Selection window height
+		;;(Only used if SelectionListType = RpsFieldSelectionType.List)
+        public property SelectionWindowHeight, int
+            method get
+            proc
+                mreturn m_f_info.fi_selht
+            endmethod
+			method set
+			proc
+				m_f_info.fi_selht = value
+			endmethod
+        endproperty
+
+		;;Field prompt
+        public property Prompt, String
+            method get
+            proc
+                mreturn %atrim(m_Prompt)
+            endmethod
+			method set
+			proc
+				m_Prompt = value
+			endmethod
+        endproperty
+        
+		;;Help identifier
+        public property HelpIdentifier, String
+            method get
+            proc
+                mreturn %atrim(m_HelpIdentifier)
+            endmethod
+			method set
+			proc
+				m_HelpIdentifier = value
+			endmethod
+        endproperty
+        
+		;;Information line text
+        public property InfoLineText, String
+            method get
+            proc
+                mreturn %atrim(m_InfoLineText)
+            endmethod
+			method set
+			proc
+				m_InfoLineText = value
+			endmethod
+        endproperty
+		
+		;User text string
+        public property UserText, String
+            method get
+            proc
+                mreturn %atrim(m_UserText)
+            endmethod
+			method set
+			proc
+				m_UserText = value
+			endmethod
+        endproperty
+        
+		;;Alternate name
+        public property AlternateName, String
+            method get
+            proc
+                mreturn %atrim(m_AlternateName)
+            endmethod
+			method set
+			proc
+				m_AlternateName = value
+			endmethod
+        endproperty
+        
+		;;Field font palette name
+        public property FieldFont, String
+            method get
+            proc
+                mreturn %atrim(m_FieldFont)
+            endmethod
+			method set
+			proc
+				m_FieldFont = value
+			endmethod
+        endproperty
+        
+		;;Prompt font palette name
+        public property PromptFont, String
+            method get
+            proc
+                mreturn %atrim(m_PromptFont)
+            endmethod
+			method set
+			proc
+				m_PromptFont = value
+			endmethod
+        endproperty
+		
+		;;Default value
+        public property DefaultValue, String
+            method get
+            proc
+                mreturn %atrim(m_DefaultValue)
+            endmethod
+			method set
+			proc
+				m_DefaultValue = value
+			endmethod
+        endproperty
+        
+		;;Arrive method name
+		public property ArriveMethod, String
+            method get
+            proc
+                mreturn %atrim(m_ArriveMethod)
+            endmethod
+			method set
+			proc
+				m_ArriveMethod = value
+			endmethod
+        endproperty
+        
+		;;Leave method name
+        public property LeaveMethod, String
+            method get
+            proc
+                mreturn %atrim(m_LeaveMethod)
+            endmethod
+			method set
+			proc
+				m_LeaveMethod = value
+			endmethod
+        endproperty
+        
+		;;Drill method name
+        public property DrillMethod, String
+            method get
+            proc
+                mreturn %atrim(m_DrillMethod)
+            endmethod
+			method set
+			proc
+				m_DrillMethod = value
+			endmethod
+        endproperty
+        
+		;;Hyperlink method name
+        public property HyperlinkMethod, String
+            method get
+            proc
+                mreturn %atrim(m_HyperlinkMethod)
+            endmethod
+			method set
+			proc
+				m_HyperlinkMethod = value
+			endmethod
+        endproperty
+        
+		;;Change method name
+        public property ChangeMethod, String
+            method get
+            proc
+                mreturn %atrim(m_ChangeMethod)
+            endmethod
+			method set
+			proc
+				m_ChangeMethod = value
+			endmethod
+        endproperty
+        
+		;;Display method name
+        public property DisplayMethod, String
+            method get
+            proc
+                mreturn %atrim(m_DisplayMethod)
+            endmethod
+			method set
+			proc
+				m_DisplayMethod = value
+			endmethod
+        endproperty
+        
+		;;Edit format method name
+        public property EditFormatMethod, String
+            method get
+            proc
+                mreturn %atrim(m_EditFormatMethod)
+            endmethod
+			method set
+			proc
+				m_EditFormatMethod = value
+			endmethod
+        endproperty
+        
+        ;Numeric range exists
+        public property NumericRangeExists, Boolean
+            method get
+            proc
+                mreturn m_f_info.fi_range
+            endmethod
+			method set
+			proc
+				m_f_info.fi_range = value
+			endmethod
+        endproperty
+        
+        ;Numeric field range minimum
+        public property NumericRangeMinimum, decimal
+            method get
+            proc
+                mreturn m_fti_range.fti_rgmin
+            endmethod
+			method set
+			proc
+				m_fti_range.fti_rgmin = value
+			endmethod
+        endproperty
+        
+        ;Numeric field range maximum
+        public property NumericRangeMaximum, decimal
+            method get
+            proc
+                mreturn m_fti_range.fti_rgmax
+            endmethod
+			method set
+			proc
+				m_fti_range.fti_rgmax = value
+			endmethod
+        endproperty
+        
+        ;Enumerated (Toolkit)
+        public property Enumerated, int
+            method get
+            proc
+                mreturn m_f_info.fi_enum
+            endmethod
+			method set
+			proc
+				m_f_info.fi_enum = value
+			endmethod
+        endproperty
+
+        ;Enumerated field display length (Toolkit)
+        public property EnumeratedDisplayLength, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmlen
+            endmethod
+			method set
+			proc
+				m_fti_enum.fti_enmlen = value
+			endmethod
+        endproperty
+
+        ;Enumerated field base value (Toolkit)
+        public property EnumeratedBaseValue, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmbase
+            endmethod
+			method set
+			proc
+				m_fti_enum.fti_enmbase = value
+			endmethod
+        endproperty
+
+        ;Enumerated field step value (Toolkit)
+        public property EnumeratedStepValue, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmstep
+            endmethod
+			method set
+			proc
+				m_fti_enum.fti_enmstep = value
+			endmethod
+		endproperty
+						
+		;Enum name
+		public property EnumName, String
+			method get
+			proc
+				mreturn %atrim(m_EnumName)
+			endmethod
+			method set
+			proc
+				m_EnumName = value
+			endmethod
+		endproperty
+
+;ADD fi_flags        ,[15]i1   ;;Template override flags ([15]i1 see .defines above)
+
+		;;Things below here are unique to fields (not included in templates)
+
+		;Group structure name
+		;Only used for implicit groups, i.e. groups based on a different repository structure.
+		public property GroupStructure, String
+			method get
+			proc
+				mreturn %atrim(m_GroupStructure)
+			endmethod
+			method set
+			proc
+				m_GroupStructure = value
+			endmethod
+		endproperty
+
+		;Group member prefix
+		public property GroupMemberPrefix, String
+			method get
+			proc
+				mreturn %atrim(m_GroupMemberPrefix)
+			endmethod
+			method set
+			proc
+				m_GroupMemberPrefix = value
+			endmethod
+		endproperty
+
+		;GroupFields collection (@RpsGroupFieldsCollection)
+		;If this field is not a group then this collection will be empty
+		public property GroupFields, @RpsGroupFieldCollection
+			method get
+			proc
+				mreturn m_GroupFields
+			endmethod
+			method set
+			proc
+				m_GroupFields = value
+			endmethod
+		endproperty
+
+        ;;Group flag
+		public property GroupType, RpsFieldGroup
+			method get
+			proc
+				mreturn (RpsFieldGroup)integer(m_f_info.fi_group)
+			endmethod
+			method set
+			proc
+				m_f_info.fi_group = (int)value
+			endmethod
+		endproperty
+
+		;Group size = size of all members
+		public property GroupSizeEqualsMembers, boolean
+			method get
+			proc
+				mreturn m_f_info.fi_nosize
+			endmethod
+			method set
+			proc
+				m_f_info.fi_nosize = value
+			endmethod
+		endproperty
+
+        ;;Group member prefix used by compiler
+		public property CompilerPrefix, boolean
+			method get
+			proc
+				mreturn m_f_info.fi_cmppref
+			endmethod
+			method set
+			proc
+				m_f_info.fi_cmppref = value
+			endmethod
+		endproperty
+
+		;;Coerced type
+		public property CorecedType, RpsFieldCorecedType
+			method get
+			proc
+				mreturn m_CorecedType
+			endmethod
+			method set
+			proc
+				m_CorecedType = value
+			endmethod
+		endproperty
+		
+		.endregion
+
+	endclass
+
+endnamespace

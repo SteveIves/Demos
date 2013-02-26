@@ -1,0 +1,181 @@
+;;*****************************************************************************
+;;
+;; Class:		SynPsg.Rps.RpsKeySegment
+;;
+;; Description:	Represents a single key segment for a Repository structures key
+;;
+;; Author:		Steve Ives, Synergex Professional Services Group
+;;
+;; Date: 		19th October 2007
+;;
+;; ****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;; ****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;; ****************************************************************************
+;
+import SynPsg.Rps
+
+namespace SynPsg.Rps
+
+	class RpsKeySegment
+		
+		.region "Private data"
+
+		protected m_SegmentType		,RpsKeySegmentType		;;Segment type
+		protected m_Position		,int					;;Segment field position
+		protected m_Length			,int					;;Segment field/literal length
+		protected m_Field			,String					;;Segment field name
+		protected m_Structure		,String					;;Segment structure name
+		protected m_LiteralValue	,String					;;Segment literal value (length in ki_seglen)
+		protected m_DataType		,RpsKeySegmentDataType	;;Optional, segment data type
+		protected m_Order			,RpsKeySegmentOrder		;;Optional, segment order
+
+		.endregion
+		
+		.region "Constructors and destructors"
+
+		public method RpsKeySegment
+			required in a_SegmentType	,String
+			required in a_Position		,int
+			required in a_Length		,int
+			required in a_Field			,String
+			required in a_Structure		,String
+			required in a_LiteralValue	,String
+			required in a_DataType		,int
+			required in a_Order			,int
+			endparams
+		proc
+			using a_SegmentType select
+			("F"),	m_SegmentType = RpsKeySegmentType.Field
+			("L"),	m_SegmentType = RpsKeySegmentType.Literal
+			("E"),	m_SegmentType = RpsKeySegmentType.External
+			("R"),	m_SegmentType = RpsKeySegmentType.RecordNumber
+			endusing
+			m_Position 		= a_Position 
+			m_Length        = a_Length        
+			m_Field		    = RpsUtils.UpperCase(a_Field)
+			m_Structure		= RpsUtils.UpperCase(a_Structure)
+
+			if (m_SegmentType == RpsKeySegmentType.Literal) then
+				m_LiteralValue  = a_LiteralValue.Substring(0,a_Length)
+			else
+				m_LiteralValue = ""
+			
+			;;Segment data types are optional in Repository, but default to alpha in ISAM.
+			;;If we don't have a segment data type, default to alpha
+			if (a_DataType) then
+				m_DataType = (RpsKeySegmentDataType)integer(a_DataType)
+			else
+				m_DataType = RpsKeySegmentDataType.Alpha
+
+			;;Segment orders are optional in Repository, but default to ascending in ISAM.
+			;;If we don't have a segment order, default to ascending
+			if (a_Order) then
+				m_Order = (RpsKeySegmentOrder)integer(a_Order)
+			else
+				m_Order = RpsKeySegmentOrder.Ascending
+
+		endmethod
+
+		.endregion
+
+		.region "Public Properties"
+
+		;;Segment type
+		public property SegmentType, RpsKeySegmentType
+			method get
+			proc
+				mreturn m_SegmentType
+			endmethod
+		endproperty
+
+		;;Segment field position
+		public property Position, int
+			method get
+			proc
+				mreturn m_Position
+			endmethod
+		endproperty
+
+		;;Segment field/literal length
+		public property Length, int
+			method get
+			proc
+				mreturn m_Length
+			endmethod
+		endproperty
+
+		;;Segment field name
+		public property Field, String
+			method get
+			proc
+				mreturn m_Field
+			endmethod
+		endproperty
+
+		;;Segment structure name
+		public property Structure, String
+			method get
+			proc
+				mreturn m_Structure
+			endmethod
+		endproperty
+
+		;;Segment literal value
+		public property LiteralValue, String
+			method get
+			proc
+				mreturn m_LiteralValue
+			endmethod
+		endproperty
+
+		;;Segment data type (optional)
+		public property DataType, RpsKeySegmentDataType
+			method get
+			proc
+				mreturn m_DataType
+			endmethod
+		endproperty
+
+		;;Segment data type name (optional)
+		public property DataTypeName, String
+			method get
+			proc
+				using m_DataType select
+				(RpsKeySegmentDataType.Alpha),
+					mreturn "ALPHA"
+				(RpsKeySegmentDataType.NoCaseAlpha),
+					mreturn "NOCASE"
+				(RpsKeySegmentDataType.Decimal),
+					mreturn "DECIMAL"
+				(RpsKeySegmentDataType.SignedInteger),
+					mreturn "INTEGER"
+				(RpsKeySegmentDataType.UnsignedInteger),
+					mreturn "UNSIGNED"
+				endusing
+			endmethod
+		endproperty
+
+		;;Optional, segment order
+		public property Order, RpsKeySegmentOrder
+			method get
+			proc
+				mreturn m_Order
+			endmethod
+		endproperty
+
+		.endregion
+
+	endclass
+	
+endnamespace
+

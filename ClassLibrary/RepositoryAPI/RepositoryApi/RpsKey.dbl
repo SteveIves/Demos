@@ -1,0 +1,257 @@
+;;*****************************************************************************
+;;
+;; Class:		SynPsg.Rps.RpsKey
+;;
+;; Description:	Represents a single key for a Repository structure
+;;
+;; Author:		Steve Ives, Synergex Professional Services Group
+;;
+;; Date: 		19th October 2007
+;;
+;; ****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;; ****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;; ****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+
+namespace SynPsg.Rps
+
+	class RpsKey
+		
+		.region "Private data"
+
+		protected m_k_info				,k_info
+		protected m_Description			,a40
+		protected m_NullValue			,a255
+		protected m_Segments			,@RpsKeySegmentCollection
+		
+		.endregion
+
+		.region "Constructors and destructors"
+
+		public method RpsKey
+			required in StructureName	,String
+			required in KeyName			,String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadKey(StructureName,KeyName)
+		endmethod
+		
+		method ~RpsKey
+		proc
+			clear m_Segments
+		endmethod
+		
+		
+		.endregion
+
+		.region "Private methods"
+		
+		private method LoadKey			,void
+			required in StructureName	,String
+			required in KeyName			,String
+			endparams
+		proc
+			begin
+				data p_s_info, s_info
+				;;Set the current structure
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,^a(p_s_info))
+				if (Repository.RpsControl.error)
+					throw new RpsKeyException(String.Format("Failed to set current repository structure to {0}.",StructureName))
+				;;Get key information record
+				dd_key(Repository.RpsControl,DDK_INFO,KeyName,^a(m_k_info))
+				if (Repository.RpsControl.error)
+					throw new RpsKeyException(string.Format("Failed to get key information for repository key {0}.{1}.",StructureName,KeyName))
+				;;Get key description
+				if (m_k_info.ki_desc)
+				begin
+					dd_key(Repository.RpsControl,DDK_TEXT,m_k_info.ki_desc,m_Description)
+					if (Repository.RpsControl.error)
+						throw new RpsKeyException(string.Format("Failed to get description repository key {0}.{1}.",StructureName,KeyName))
+				end
+				;;Get null value string
+				if (m_k_info.ki_nullval)
+				begin
+					dd_key(Repository.RpsControl,DDK_TEXT,m_k_info.ki_nullval,m_NullValue)
+					if (Repository.RpsControl.error)
+						throw new RpsKeyException(string.Format("Failed to get null key string for repository key {0}.{1}.",StructureName,KeyName))
+				end
+				
+				;;Load the key segments collection
+				m_Segments = new RpsKeySegmentCollection(m_k_info)
+				
+				;I;f no key density is specified then default to 50%
+				if (!m_k_info.ki_density)
+					m_k_info.ki_density = 50
+			end
+		endmethod
+		
+		.endregion
+
+		.region "Public properties"
+
+		;;Sequence number
+		public property SequenceNumber, int
+			method get
+			proc
+				mreturn m_k_info.ki_seqnm
+			endmethod
+		endproperty
+		
+		;;Key name
+		public property Name, String
+			method get
+			proc
+				mreturn %atrim(m_k_info.ki_name)
+			endmethod
+		endproperty
+		
+		;;Key type
+		public property KeyType, RpsKeyType
+			method get
+			proc
+				mreturn (RpsKeyType)integer(m_k_info.ki_ktype)
+			endmethod
+		endproperty
+		
+		;;Total size of all key segments
+		public property Size, int
+			method get
+			proc
+				mreturn m_k_info.ki_size
+			endmethod
+		endproperty
+		
+		;;Short description
+		public property Description, String
+			method get
+			proc
+				mreturn %atrim(m_Description)
+			endmethod
+		endproperty
+		
+		;;Sort order
+		public property SortOrder, RpsKeyOrder
+			method get
+			proc
+				mreturn (RpsKeyOrder)integer(m_k_info.ki_order)
+			endmethod
+		endproperty
+		
+		;;Are dups allowed?
+		public property Duplicates, RpsKeyDuplicates
+			method get
+			proc
+				mreturn (RpsKeyDuplicates)integer(m_k_info.ki_dups)
+			endmethod
+		endproperty
+		
+		;;If dups, insert at front or end
+		public property InsertDuplicates, RpsKeyInsertDups
+			method get
+			proc
+				mreturn (RpsKeyInsertDups)integer(m_k_info.ki_insert)
+			endmethod
+		endproperty
+		
+		;;Modifiable?
+		public property Modifiable, boolean
+			method get
+			proc
+				mreturn m_k_info.ki_mod
+			endmethod
+		endproperty
+		
+		;;Null key?
+		public property NullKey, RpsKeyNullType
+			method get
+			proc
+				mreturn (RpsKeyNullType)integer(m_k_info.ki_null)
+			endmethod
+		endproperty
+		
+		;;Null value string
+		public property NullKeyValue, String
+			method get
+			proc
+				mreturn %atrim(m_NullValue)
+			endmethod
+		endproperty
+		
+		;;Optional explicit key of reference
+		public property KeyOfReference, int
+			method get
+			proc
+				mreturn m_k_info.ki_krf
+			endmethod
+		endproperty
+		
+		;;Key density
+		public property Density, int
+			method get
+			proc
+				mreturn m_k_info.ki_density
+			endmethod
+		endproperty
+		
+		;;Compress index?
+		public property CompressIndex, boolean
+			method get
+			proc
+				mreturn m_k_info.ki_cmpidx
+			endmethod
+		endproperty
+		
+		;;Compress record?
+		public property CompressData, boolean
+			method get
+			proc
+				mreturn m_k_info.ki_cmprec
+			endmethod
+		endproperty
+		
+		;;Compress key?
+		public property CompressKey, boolean
+			method get
+			proc
+				mreturn m_k_info.ki_cmpkey
+			endmethod
+		endproperty
+		
+		;;Is key accessible to ODBC?
+		public property OdbcAccessible, boolean
+			method get
+			proc
+				mreturn m_k_info.ki_odbcvw
+			endmethod
+		endproperty
+		
+		;;Key segments collection
+		public property Segments, @RpsKeySegmentCollection
+			method get
+			proc
+				mreturn m_Segments
+			endmethod
+		endproperty
+		
+		.endregion
+	
+	endclass
+	
+endnamespace
+

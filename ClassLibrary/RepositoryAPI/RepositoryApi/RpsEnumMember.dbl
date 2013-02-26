@@ -1,0 +1,101 @@
+;;*****************************************************************************
+;;
+;; Class:       SynPsg.Rps.RpsEnumMember
+;;
+;; Description: Represents a single Repository enumeration member
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+;; Date:        2nd November 2009
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;;*****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections
+
+namespace SynPsg.Rps
+
+    public class RpsEnumMember
+		
+		.region "Private data"
+		
+		protected m_EnumName            ,String
+		protected m_Name				,String
+		protected m_ExplicitValue		,String
+		protected m_ImplicitValue		,String
+
+		.endregion
+		
+		.region "Constructors and destructors"
+		
+		public method RpsEnumMember
+			required in EnumName		,String
+			required in Name			,String
+			required in ExplicitValue	,String
+			required in ImplicitValue	,String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			m_EnumName = EnumName.Trim().ToUpper()
+			m_Name = Name.Trim().ToUpper()
+			m_ExplicitValue = ExplicitValue
+			m_ImplicitValue = ImplicitValue
+		endmethod
+		
+		.endregion
+		
+		.region "Public properties"
+		
+        ;;Structure name
+        public property EnumName, String
+            method get
+            proc
+                mreturn m_EnumName
+			endmethod
+        endproperty
+        
+        ;;Member name
+        public property Name, String
+            method get
+            proc
+                mreturn m_Name
+            endmethod
+        endproperty
+
+		;;Member explicit value (may be blank)
+		public property ExplicitValue, String
+			method get
+			proc
+				mreturn m_ExplicitValue
+			endmethod
+		endproperty
+
+		;;Member implicit value (will not be blank)
+		public property ImplicitValue, String
+			method get
+			proc
+				mreturn m_ImplicitValue
+			endmethod
+		endproperty
+
+		.endregion
+	
+	endclass
+
+endnamespace

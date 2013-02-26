@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>"RepositoryApi"</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{d0a9e4fb-6978-491d-8d8a-05aebb919686}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SynPsg.Rps</RootNamespace>
+    <AssemblyName>RepositoryApi</AssemblyName>
+    <MainFile>Class.dbl</MainFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetPlatform>v4</TargetPlatform>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <DBL_qWarnLevel>
+    </DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -qstack</DBLCmdOptions>
+    <StartupObject>(Not set)</StartupObject>
+    <ApplicationIcon>(Default icon)</ApplicationIcon>
+    <ResourceType>Icon</ResourceType>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <DBL_qAltif>False</DBL_qAltif>
+    <DBL_qErrWarn>False</DBL_qErrWarn>
+    <DBL_qDisWarnOpt />
+    <DBL_qVariantOpt />
+    <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
+    <DBL_StackSize />
+    <OtherOptions />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <RunPostBuildEvent>On successful build</RunPostBuildEvent>
+    <ProjEnvVars>
+    </ProjEnvVars>
+    <SignManifests>false</SignManifests>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile />
+    <RemoteDebugMachine />
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants />
+    <PlatformTarget>x86</PlatformTarget>
+    <WarningsAsErrors />
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile />
+    <SerializeAssembly>Auto</SerializeAssembly>
+    <DllBaseAddress />
+    <DebugOptimize>
+    </DebugOptimize>
+    <StartAction>Project</StartAction>
+    <StartProgram />
+    <StartURL />
+    <StartArguments />
+    <StartWorkingDirectory />
+    <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <EnableSQLServerDebugging>false</EnableSQLServerDebugging>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="Synergex.SynergyDE.ddlib" />
+    <Reference Include="synrnt" />
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+    <Compile Include="Repository.dbl" />
+    <Compile Include="RpsEnum.dbl" />
+    <Compile Include="RpsEnumCollection.dbl" />
+    <Compile Include="RpsEnumMember.dbl" />
+    <Compile Include="RpsEnumMemberCollection.dbl" />
+    <Compile Include="RpsExceptions.dbl" />
+    <Compile Include="RpsField.dbl" />
+    <Compile Include="RpsFieldCollection.dbl" />
+    <Compile Include="RpsFile.dbl" />
+    <Compile Include="RpsFileCollection.dbl" />
+    <Compile Include="RpsFormat.dbl" />
+    <Compile Include="RpsFormatCollection.dbl" />
+    <Compile Include="RpsGroupFieldCollection.dbl" />
+    <Compile Include="RpsKey.dbl" />
+    <Compile Include="RpsKeyCollection.dbl" />
+    <Compile Include="RpsKeySegment.dbl" />
+    <Compile Include="RpsKeySegmentCollection.dbl" />
+    <Compile Include="RpsRelation.dbl" />
+    <Compile Include="RpsRelationCollection.dbl" />
+    <Compile Include="RpsStructure.dbl" />
+    <Compile Include="RpsStructureCollection.dbl" />
+    <Compile Include="RpsTag.dbl" />
+    <Compile Include="RpsTagCollection.dbl" />
+    <Compile Include="RpsTemplate.dbl" />
+    <Compile Include="RpsTemplateCollection.dbl" />
+    <Compile Include="RpsUtils.dbl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+</Project>

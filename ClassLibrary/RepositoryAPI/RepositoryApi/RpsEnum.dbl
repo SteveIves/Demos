@@ -1,0 +1,143 @@
+;;*****************************************************************************
+;;
+;; Class:       SynPsg.Rps.Enum
+;;
+;; Description:	Represents a single repository enumeration definition
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+;; Date:        2nd November 2009
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+;; $Revision: 4 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;;*****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+
+namespace SynPsg.Rps
+
+	public class RpsEnum
+
+		.region "Private data"
+		
+		;;Enumeration attribute data
+		protected m_Members				,@RpsEnumMemberCollection
+		protected m_e_info				,e_info
+		protected m_Name				,String		;;Name
+		protected m_Description			,a40		;;Description
+		protected m_LongDescription		,a1800		;;Long description
+		
+		.endregion
+		
+		.region "Constructors and destructors"
+		
+		;;Load enum by name, load all members
+		public method RpsEnum
+			required in EnumName, String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadEnum(EnumName)
+		endmethod
+		
+		;;Destructor
+		method ~RpsEnum
+		proc
+			clear m_Members
+		endmethod
+		
+		.endregion
+		
+		.region "Private methods"
+
+		;;Load the details of an enum
+		private method LoadEnum, void
+			required in EnumName, String
+			endparams
+		proc
+			;;Save enum name
+			m_Name = EnumName.Trim().ToUpper()
+			
+			;;Load enum information
+			dd_enum(Repository.RpsControl,DDE_INFO,m_Name,^a(m_e_info))
+			if (Repository.RpsControl.error)
+				throw new RpsEnumException("Failed to get information for repository enumeration "+m_Name)
+				
+			;;Load the enums text-based attributes
+			
+			;;Description
+			if (m_e_info.ei_desc)
+			begin
+				xcall dd_enum(Repository.RpsControl,DDE_TEXT,m_e_info.ei_desc,m_Description)
+				if (Repository.RpsControl.error)
+					throw new RpsEnumException("Failed to get description for repository enumeration "+m_Name)
+			end
+			
+			;;Long description
+			if (m_e_info.ei_ldesc)
+			begin
+				dd_enum(Repository.RpsControl,DDE_TEXT,m_e_info.ei_ldesc,m_LongDescription)
+				if (Repository.RpsControl.error)
+					throw new RpsEnumException("Failed to get long description for repository enumeration "+m_Name)
+			end
+		endmethod
+		
+		.endregion
+
+		.region "Public properties"
+		
+		;;Members collection
+		public property Members, @RpsEnumMemberCollection
+			method get
+			proc
+				;;Load the members collection the first time it is referenced
+				if (m_Members==^null)
+					m_Members = new RpsEnumMemberCollection(m_Name)
+				mreturn m_Members
+			endmethod
+		endproperty
+		
+		;;Enumeration name
+		public property Name, String
+			method get
+			proc
+				mreturn m_Name
+			endmethod
+		endproperty
+		
+		;;Description
+		public property Description, String
+			method get
+			proc
+				mreturn %atrim(m_Description)
+			endmethod
+		endproperty
+		
+		;;Long description
+		public property LongDescription, String
+			method get
+			proc
+				mreturn %atrim(m_LongDescription)
+			endmethod
+		endproperty
+		
+		.endregion
+		
+	endclass
+
+endnamespace
+

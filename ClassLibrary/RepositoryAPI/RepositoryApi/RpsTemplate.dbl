@@ -1,0 +1,1198 @@
+;; ****************************************************************************
+;;
+;; Class:       SynPsg.Rps.RpsTemplate
+;;
+;; Description: Represents a single Repository template definition
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+;; Date:        19th October 2007
+;;
+;; ****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;; ****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;; ****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+    public class RpsTemplate
+        
+		.region "Private data"
+
+        protected m_t_info              ,t_info
+        protected m_TemplateName        ,String
+        protected m_Description         ,a40
+        protected m_LongDescription     ,a1800
+        protected m_UserFieldType       ,a30
+        protected m_ReportHeading       ,a40
+        protected m_Prompt              ,a80
+        protected m_HelpIdentifier      ,a80
+        protected m_InfoLineText        ,a80
+        protected m_UserText            ,a80
+        protected m_AlternateName       ,a30
+        protected m_FieldFont           ,a30
+        protected m_PromptFont          ,a30
+        protected m_DefaultValue        ,a80
+        protected m_ArriveMethod        ,a30
+        protected m_LeaveMethod         ,a30
+        protected m_DrillMethod         ,a30
+        protected m_HyperlinkMethod     ,a30
+        protected m_ChangeMethod        ,a30
+        protected m_DisplayMethod       ,a30
+        protected m_EditFormatMethod    ,a30
+        protected m_ArrayDimension      ,[#]int
+        protected m_fti_range           ,fti_range
+        protected m_fti_enum            ,fti_enum
+        protected m_AllowList           ,@List<String>
+        protected m_SelectionList       ,@List<String>
+		protected m_CorecedType			,RpsFieldCorecedType
+
+		.endregion
+
+		.region "Constructors and destructors"
+
+        public method RpsTemplate
+            required in TemplateName, String
+            endparams
+        proc
+            Repository.CheckIsOpen()
+            LoadTemplate(TemplateName)
+        endmethod
+        
+        method ~RpsTemplate
+        proc
+            clear m_AllowList, m_SelectionList
+        endmethod
+        
+		.endregion
+
+		.region "Private methods"
+
+        private method LoadTemplate, void
+            required in TemplateName, String
+            endparams
+        proc
+            ;;Save the template name
+            m_TemplateName = TemplateName.Trim().ToUpper()
+            
+            ;;Load the template information structure
+			dd_template(Repository.RpsControl,DDT_INFO,m_TemplateName,m_t_info)
+            if (Repository.RpsControl.error)
+                throw new RpsTemplateException("Failed to get information for repository template "+TemplateName)
+
+            ;;Load extended data
+            
+			m_ArrayDimension = new int[4]
+			m_ArrayDimension[1] = m_t_info.ti_dim[1]
+			m_ArrayDimension[2] = m_t_info.ti_dim[2]
+			m_ArrayDimension[3] = m_t_info.ti_dim[3]
+			m_ArrayDimension[4] = m_t_info.ti_dim[4]
+			
+            ;;Load description (a40)
+            if (m_t_info.ti_desc)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_desc,m_Description)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get description for repository template "+TemplateName)
+            end
+            
+            ;;Load long description (a1800)
+            if (m_t_info.ti_ldesc)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_ldesc,m_LongDescription)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get long description for repository template "+TemplateName)
+            end
+            
+            ;;Load user defined field type (a30)
+            if (m_t_info.ti_usrtyp)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_usrtyp,m_UserFieldType)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get user defined type for repository template "+TemplateName)
+            end
+            
+            ;;Load report heading (a40)
+            if (m_t_info.ti_heading)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_heading,m_ReportHeading)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get report heading for repository template "+TemplateName)
+            end
+            
+            ;;Load prompt (a80)
+            if (m_t_info.ti_prompt)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_prompt,m_Prompt)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get prompt for repository template "+TemplateName)
+            end
+            
+            ;;Load help identifier (a80)
+            if (m_t_info.ti_help)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_help,m_HelpIdentifier)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get help identifier for repository template "+TemplateName)
+            end
+            
+            ;;Load information line text (a80)
+            if (m_t_info.ti_infoln)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_infoln,m_InfoLineText)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get information line text for repository template "+TemplateName)
+            end
+            
+            ;;Load user text string (a80)
+            if (m_t_info.ti_utext)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_utext,m_UserText)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get user text for repository template "+TemplateName)
+            end
+            
+            ;;Load alternate name (a30)
+            if (m_t_info.ti_altnm)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_altnm,m_AlternateName)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get alternate name for repository template "+TemplateName)
+            end
+            
+            ;;Load field font (a30)
+            if (m_t_info.ti_font)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_font,m_FieldFont)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get field font for repository template "+TemplateName)
+            end
+            
+            ;;Load prompt font (a30)
+            if (m_t_info.ti_prmptfont)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_prmptfont,m_PromptFont)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get prompt font for repository template "+TemplateName)
+            end
+            
+            ;;Load default value (a80)
+            if (m_t_info.ti_def)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_def,m_DefaultValue)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get default value for repository template "+TemplateName)
+            end
+            
+            ;;Load arrive method (a30)
+            if (m_t_info.ti_arrivemeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_arrivemeth,m_ArriveMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get arrive method for repository template "+TemplateName)
+            end
+            
+            ;;Load leave method (a30)
+            if (m_t_info.ti_leavemeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_leavemeth,m_LeaveMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get leave method for repository template "+TemplateName)
+            end
+            
+            ;;Load drill method (a30)
+            if (m_t_info.ti_drillmeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_drillmeth,m_DrillMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get drill method for repository template "+TemplateName)
+            end
+            
+            ;;Load hyperlink method (a30)
+            if (m_t_info.ti_hypermeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_hypermeth,m_HyperlinkMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get hyperlink method for repository template "+TemplateName)
+            end
+            
+            ;;Load change method (a30)
+            if (m_t_info.ti_changemeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_changemeth,m_ChangeMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get change method for repository template "+TemplateName)
+            end
+            
+            ;;Load display format method (a30)
+            if (m_t_info.ti_dispmeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_dispmeth,m_DisplayMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get display method for repository template "+TemplateName)
+            end
+            
+            ;;Load edit format method (a30)
+            if (m_t_info.ti_editfmtmeth)
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_editfmtmeth,m_EditFormatMethod)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get edit format method for repository template "+TemplateName)
+            end
+
+            ;;Allowed values
+            m_AllowList = new List<String>()
+            if (m_t_info.ti_alwlst&&m_t_info.ti_alwct)
+            begin
+                data ListData, fti_entlst
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_alwlst,ListData)
+                if (Repository.RpsControl.error) then
+                    throw new RpsTemplateException("Failed to get allow list entries for repository template "+TemplateName)
+                else
+                begin
+                    data idx, int
+                    for idx from 1 thru m_t_info.ti_alwct
+                        m_AllowList.Add(%atrim(ListData.fti_entlstary[idx]))
+                end
+            end
+
+            ;;Valid selections
+            m_SelectionList = new List<String>()
+            if (m_t_info.ti_sellist&&m_t_info.ti_selct)
+            begin
+                data ListData, fti_entlst
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_sellist,ListData)
+                if (Repository.RpsControl.error) then
+                    throw new RpsTemplateException("Failed to get selection list entries for repository template "+TemplateName)
+                else
+                begin
+                    data idx, int
+                    for idx from 1 thru m_t_info.ti_selct
+                        m_SelectionList.Add(%atrim(ListData.fti_entlstary[idx]))
+                end
+            end
+
+            ;;Load numeric range values (fti_range)
+            if (m_t_info.ti_range) 
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_range,m_fti_range)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get ranges for repository template "+TemplateName)
+            end
+
+            ;;Load enumeration data (fti_enum)
+            if (m_t_info.ti_enum) 
+            begin
+                dd_template(Repository.RpsControl,DDT_TEXT,m_t_info.ti_enum,m_fti_enum)
+                if (Repository.RpsControl.error)
+                    throw new RpsTemplateException("Failed to get emumeration data for repository template "+TemplateName)
+            end
+
+			;;Load the fields coerced type
+			using m_t_info.ti_type select
+			(T_DEC),
+			begin
+				using m_t_info.ti_class select
+				(C_YYMMDD,C_YYYYMMDD,C_YYJJJ,C_YYYYJJJ,C_YYPP,C_YYYYPP,C_HHMMSS,C_HHMM),
+				begin
+					using m_t_info.ti_coertype select
+					(CT_DATETIME),
+						m_CorecedType = RpsFieldCorecedType.CtNone
+					(CT_NULLDATETIME),
+						m_CorecedType = RpsFieldCorecedType.CtNullDateTime
+					endusing
+				end
+				(),
+				begin
+					if (m_t_info.ti_prec) then 
+					begin
+						using m_t_info.ti_coertype select
+						(CT_DECIMAL),
+							m_CorecedType = RpsFieldCorecedType.CtNone
+						(CT_DOUBLE),
+							m_CorecedType = RpsFieldCorecedType.CtDouble
+						(CT_FLOAT),
+							m_CorecedType = RpsFieldCorecedType.CtFloat
+						endusing
+					end
+					else
+					begin
+						using m_t_info.ti_coertype select
+						(CT_DEFAULT),
+							m_CorecedType = RpsFieldCorecedType.CtNone
+						(CT_BYTE),
+							m_CorecedType = RpsFieldCorecedType.CtByte
+						(CT_SHORT),
+							m_CorecedType = RpsFieldCorecedType.CtShort
+						(CT_INT),
+							m_CorecedType = RpsFieldCorecedType.CtInt
+						(CT_LONG),
+							m_CorecedType = RpsFieldCorecedType.CtLong
+						(CT_SBYTE),
+							m_CorecedType = RpsFieldCorecedType.CtSbyte
+						(CT_USHORT),
+							m_CorecedType = RpsFieldCorecedType.CtUshort
+						(CT_UINT),
+							m_CorecedType = RpsFieldCorecedType.CtUint
+						(CT_ULONG),
+							m_CorecedType = RpsFieldCorecedType.CtUlong
+						(CT_BOOLEAN),
+							m_CorecedType = RpsFieldCorecedType.CtBoolean
+						endusing
+					end
+				end
+				endusing
+			end
+			(T_INT),
+			begin
+				using m_t_info.ti_coertype select
+				(CT_DEFAULT),
+					m_CorecedType = RpsFieldCorecedType.CtNone
+				(CT_BYTE),
+					m_CorecedType = RpsFieldCorecedType.CtByte
+				(CT_SHORT),
+					m_CorecedType = RpsFieldCorecedType.CtShort
+				(CT_INT),
+					m_CorecedType = RpsFieldCorecedType.CtInt
+				(CT_LONG),
+					m_CorecedType = RpsFieldCorecedType.CtLong
+				(CT_SBYTE),
+					m_CorecedType = RpsFieldCorecedType.CtSbyte
+				(CT_USHORT),
+					m_CorecedType = RpsFieldCorecedType.CtUshort
+				(CT_UINT),
+					m_CorecedType = RpsFieldCorecedType.CtUint
+				(CT_ULONG),
+					m_CorecedType = RpsFieldCorecedType.CtUlong
+				(CT_BOOLEAN),
+					m_CorecedType = RpsFieldCorecedType.CtBoolean
+				endusing
+			end
+			(),
+				m_CorecedType = RpsFieldCorecedType.CtNone
+			endusing
+
+        endmethod
+        
+		.endregion
+
+		.region "Public properties"
+
+        ;;Template name
+        public property Name, String
+            method get
+            proc
+                mreturn m_TemplateName
+            endmethod
+        endproperty
+        
+        ;;Parent template
+        public property ParentTemplate, String
+            method get
+            proc
+                mreturn %atrim(m_t_info.ti_template)
+            endmethod
+        endproperty
+        
+        ;;Description
+        public property Description, String
+            method get
+            proc
+                mreturn %atrim(m_Description)
+            endmethod
+        endproperty
+        
+        ;;Long description
+        public property LongDescription, String
+            method get
+            proc
+                mreturn %atrim(m_LongDescription)
+            endmethod
+        endproperty
+
+        ;;Data type
+        public property DataType, RpsFieldDataType
+            method get
+                record 
+                    retval, RpsFieldDataType
+                endrecord
+            proc
+                using m_t_info.ti_type select
+                ("A"), retval = RpsFieldDataType.Alpha
+                ("D"), retval = RpsFieldDataType.Decimal
+                ("I"), retval = RpsFieldDataType.Integer
+                ("U"), retval = RpsFieldDataType.User
+                endusing
+                mreturn retval
+            endmethod
+        endproperty
+
+        ;;Data type code ("A", "D", "I" or "U")
+        public property DataTypeCode, String
+            method get
+            proc
+                mreturn m_t_info.ti_type
+            endmethod
+        endproperty
+
+        ;;DBL type subclass
+        public property DataTypeSubclass, RpsFieldSubclass
+            method get
+                record 
+                    tmpy_SubClass, RpsFieldSubclass
+                endrecord
+            proc
+                tmpy_SubClass = RpsFieldSubclass.None
+                using m_t_info.ti_type select
+                (T_ALP),
+                    using m_t_info.ti_class select
+                    (C_BINARY),
+                        tmpy_SubClass = RpsFieldSubclass.None
+                    endusing
+                (T_DEC),
+                begin
+                    using m_t_info.ti_class select
+                    (C_YYMMDD),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYMMDD
+                    (C_YYYYMMDD),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYYYMMDD
+                    (C_YYJJJ),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYJJJ
+                    (C_YYYYJJJ),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYYYJJJ
+                    (C_YYPP),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYPP
+                    (C_YYYYPP),
+                        tmpy_SubClass = RpsFieldSubclass.DateYYYYPP
+                    (C_HHMMSS),
+                        tmpy_SubClass = RpsFieldSubclass.TimeHHMMSS
+                    (C_BINARY),
+                        tmpy_SubClass = RpsFieldSubclass.TimeHHMM
+                    endusing
+                end
+                (T_USR),
+                begin
+                    using m_t_info.ti_class select
+                    (C_ALPHA),
+                        tmpy_SubClass = RpsFieldSubclass.UserAlpha
+                    (C_NUMERIC),
+                        tmpy_SubClass = RpsFieldSubclass.UserNumeric
+                    (C_DATE),
+                        tmpy_SubClass = RpsFieldSubclass.UserDate
+                    endusing
+                end
+                endusing
+                mreturn tmpy_SubClass
+            endmethod
+        endproperty     
+        
+        ;;User defined field type
+        public property UserFieldType, String
+            method get
+            proc
+                mreturn %atrim(m_UserFieldType)
+            endmethod
+        endproperty
+
+        ;;Field size
+        public property Size, int
+            method get
+            proc
+                mreturn m_t_info.ti_size
+            endmethod
+        endproperty
+
+        ;;Digits to right of decimal point
+        public property Precision, int
+            method get
+            proc
+                mreturn m_t_info.ti_prec
+            endmethod
+        endproperty
+
+        ;;Array dimensions
+        public property ArrayDimension, [#]int
+            method get
+            proc
+	            mreturn m_ArrayDimension
+            endmethod
+        endproperty
+        
+        ;;Native data size
+        public property NativeSize, int
+            method get
+            proc
+                mreturn m_t_info.ti_ndsize
+            endmethod
+        endproperty
+
+        ;;Excluded by language
+        public property ExcludedByLanguage, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_dblvw
+            endmethod
+        endproperty
+
+        ;;Excluded by ReportWriter
+        public property ExcludedByReportWriter, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_rptvw
+            endmethod
+        endproperty
+
+        ;;Excluded by Toolkit
+        public property ExcludedByToolkit, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_scrptvw
+            endmethod
+        endproperty
+
+        ;;Excluded by Web?
+        public property ExcludedByWeb, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_webvw
+            endmethod
+        endproperty
+
+        ;;Field name is the name link
+        public property NoNameLink, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_nolnk
+            endmethod
+        endproperty
+
+        ;Report heading
+        public property ReportHeading, String
+            method get
+            proc
+                mreturn %atrim(m_ReportHeading)
+            endmethod
+        endproperty
+
+        ;;Display format name
+        public property FormatName, String
+            method get
+            proc
+                mreturn %atrim(m_t_info.ti_fmt)
+            endmethod
+        endproperty
+
+        ;;Report field justification
+        public property ReportJustification, RpsJustification
+            method get
+            proc
+                mreturn (RpsJustification)integer(m_t_info.ti_rptjust)
+            endmethod
+        endproperty
+
+        ;;Input field justification
+        public property InputJustification, RpsJustification
+            method get
+            proc
+                mreturn (RpsJustification)integer(m_t_info.ti_inpjust)
+            endmethod
+        endproperty
+
+        ;;Input field position mode
+        public property FieldPositionMode, RpsPositionMode
+            method get
+            proc
+                mreturn (RpsPositionMode)integer(m_t_info.ti_fpostyp)
+            endmethod
+        endproperty
+
+        ;;Input field row
+        public property FieldRow, int
+            method get
+            proc
+                mreturn m_t_info.ti_finprow
+            endmethod
+        endproperty
+
+        ;;Input field column
+        public property FieldColumn, int
+            method get
+            proc
+                mreturn m_t_info.ti_finpcol
+            endmethod
+        endproperty
+
+        ;;Prompt position type
+        public property PromptPositionMode, RpsPositionMode
+            method get
+            proc
+                mreturn (RpsPositionMode)integer(m_t_info.ti_postyp)
+            endmethod
+        endproperty
+
+        ;;Prompt row
+        public property PromptRow, int
+            method get
+            proc
+                mreturn m_t_info.ti_inprow
+            endmethod
+        endproperty
+
+        ;;Prompt column
+        public property PromptColumn, int
+            method get
+            proc
+                mreturn m_t_info.ti_inpcol
+            endmethod
+        endproperty
+
+        ;;Blank if zero?
+        public property BlankIfZero, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_bzro
+            endmethod
+        endproperty
+
+        ;;Custom paint character specified
+        public property PaintCharacterSpecified, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_paint
+            endmethod
+        endproperty
+
+        ;;Custom paint character
+        public property PaintCharacter, String
+            method get
+            proc
+                mreturn m_t_info.ti_pntchr
+            endmethod
+        endproperty
+
+        ;;View field as
+        public property ViewAs, RpsFieldViewAs
+            method get
+            proc
+                mreturn (RpsFieldViewAs)integer(m_t_info.ti_view)
+            endmethod
+        endproperty
+
+        ;;Color palette
+        public property ColorPalette, RpsColorPalette
+            method get
+            proc
+                mreturn (RpsColorPalette)integer(m_t_info.ti_color)
+            endmethod
+        endproperty
+
+        ;;Override the highlight attribute
+        public property RenditionHighlight, boolean
+            method get
+            proc
+                mreturn (m_t_info.ti_attrib&&m_t_info.ti_highlight)
+            endmethod
+        endproperty
+
+        ;;Override the reverse attribute
+        public property RenditionReverse, boolean
+            method get
+            proc
+                mreturn (m_t_info.ti_attrib&&m_t_info.ti_reverse)
+            endmethod
+        endproperty
+
+        ;;Override the blink attribute
+        public property RenditionBlink, boolean
+            method get
+            proc
+                mreturn (m_t_info.ti_attrib&&m_t_info.ti_blink)
+            endmethod
+        endproperty
+
+        ;;Override the underline attribute
+        public property RenditionUnderline, boolean
+            method get
+            proc
+                mreturn (m_t_info.ti_attrib&&m_t_info.ti_underline)
+            endmethod
+        endproperty
+
+        ;;Read-only
+        public property ReadOnly, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_readonly
+            endmethod
+        endproperty
+
+        ;;Disabled
+        public property Disabled, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_disabled
+            endmethod
+        endproperty
+
+        ;;Display length
+        public property DisplayLength, int
+            method get
+            proc
+                mreturn m_t_info.ti_displen
+            endmethod
+        endproperty
+
+        ;;View length
+        public property ViewLength, int
+            method get
+            proc
+                mreturn m_t_info.ti_viewlen
+            endmethod
+        endproperty
+
+        ;;Don't echo characters typed
+        public property NoEcho, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_noecho
+            endmethod
+        endproperty
+
+        ;;Echo character for characters typed
+        ;;(Only used if NoEcho = true)
+        public property NoEchoCharacter, String
+            method get
+            proc
+                mreturn m_t_info.ti_echochr
+            endmethod
+        endproperty
+
+        ;;Default action
+        public property DefaultAction, RpsFieldDefaultAction
+            method get
+            proc
+                mreturn (RpsFieldDefaultAction)integer(m_t_info.ti_defact)
+            endmethod
+        endproperty
+        
+        ;;Automatic default action?
+        public property DefaultAuotmatic, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_auto
+            endmethod
+        endproperty
+
+        ;;Default date to current date?
+        public property DateDefaultToday, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_today
+            endmethod
+        endproperty
+
+        ;;Allow short date?
+        public property AllowShortDate, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_short
+            endmethod
+        endproperty
+
+        ;;Default time to current time?
+        public property TimeDefaultNow, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_now
+            endmethod
+        endproperty
+
+        ;;Display meridian indicator?
+        public property TimeAmPm, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_ampm
+            endmethod
+        endproperty
+
+        ;;Input timeout mode
+        public property InputTimeoutMode, RpsFieldTimeout
+            method get
+            proc
+                mreturn (RpsFieldTimeout)integer(m_t_info.ti_wait)
+            endmethod
+        endproperty
+
+        ;;Input timeout delay
+        ;;(Only used if InputTimeoutMode = RpsFieldTimeout.Time)
+        public property InputTimeout, int
+            method get
+            proc
+                mreturn m_t_info.ti_waittime
+            endmethod
+        endproperty
+
+        ;;Convert input to uppercase
+        public property Uppercase, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_uc
+            endmethod
+        endproperty
+
+        ;;No decimal needs to be entered
+        public property NoDecimalRequired, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_nodec
+            endmethod
+        endproperty
+
+        ;;Field terminates automatically when filled
+        public property NoTerminatorRequired, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_noterm
+            endmethod
+        endproperty
+
+        ;;Cursor position is retained
+        public property RetainPosition, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_retpos
+            endmethod
+        endproperty
+
+        ;;Input length
+        public property InputLength, int
+            method get
+            proc
+                mreturn m_t_info.ti_inplen
+            endmethod
+        endproperty
+
+        ;;Required field
+        public property Required, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_req
+            endmethod
+        endproperty
+
+        ;;Break field?
+        public property BreakMode, RpsFieldBreak
+            method get
+            proc
+                mreturn (RpsFieldBreak)integer(m_t_info.ti_break)
+            endmethod
+        endproperty
+
+        ;;Negative allowed (Only used for numeric fields)
+        public property NegativeAllowed, RpsFieldNegatives
+            method get
+            proc
+                mreturn (RpsFieldNegatives)integer(m_t_info.ti_negalw)
+            endmethod
+        endproperty
+
+        ;;Allowed values list
+        public property AllowList, @List<String>
+            method get
+            proc
+                mreturn m_AllowList
+            endmethod
+        endproperty
+
+        ;;Length of longest allow list entry
+        public property AllowListMaxLength, int
+            method get
+            proc
+                mreturn m_t_info.ti_alwlen
+            endmethod
+        endproperty
+
+        ;;Case sensitive matches for allow list values
+        public property AllowListMatchCase, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_matchcs
+            endmethod
+        endproperty
+
+        ;;Exact matches for allow list values
+        public property AllowListMatchExact, boolean
+            method get
+            proc
+                mreturn m_t_info.ti_matchex
+            endmethod
+        endproperty
+
+        ;;Selection List
+        public property SelectionList, @List<String>
+            method get
+            proc
+                mreturn m_SelectionList
+            endmethod
+        endproperty
+
+        ;;Length of longest selection list entry
+        public property SelectionListMaxLength, int
+            method get
+            proc
+                mreturn m_t_info.ti_sellen
+            endmethod
+        endproperty
+
+        ;;Current selection type
+        public property SelectionListType, RpsFieldSelectionType
+            method get
+            proc
+                mreturn (RpsFieldSelectionType)integer(m_t_info.ti_seltyp)
+            endmethod
+        endproperty
+
+        ;;Selection window row
+        public property SelectionWindowRow, int
+            method get
+            proc
+                mreturn m_t_info.ti_selrow
+            endmethod
+        endproperty
+
+        ;;Selection window column
+        public property SelectionWindowColumn, int
+            method get
+            proc
+                mreturn m_t_info.ti_selcol
+            endmethod
+        endproperty
+
+        ;;Selection window name (Only used if SelectionListType = RpsFieldSelectionType.Window)
+        public property SelectionWindowName, String
+            method get
+            proc
+                mreturn %atrim(m_t_info.ti_selwin)
+            endmethod
+        endproperty
+
+        ;;Selection window height (Only used if SelectionListType = RpsFieldSelectionType.List)
+        public property SelectionWindowHeight, int
+            method get
+            proc
+                mreturn m_t_info.ti_selht
+            endmethod
+        endproperty
+        
+        ;;Field prompt
+        public property Prompt, String
+            method get
+            proc
+                mreturn %atrim(m_Prompt)
+            endmethod
+        endproperty
+        
+        ;;Help identifier
+        public property HelpIdentifier, String
+            method get
+            proc
+                mreturn %atrim(m_HelpIdentifier)
+            endmethod
+        endproperty
+        
+        ;;Information line text
+        public property InfoLineText, String
+            method get
+            proc
+                mreturn %atrim(m_InfoLineText)
+            endmethod
+        endproperty
+
+        ;User text string
+        public property UserText, String
+            method get
+            proc
+                mreturn %atrim(m_UserText)
+            endmethod
+        endproperty
+        
+        ;;Alternate name
+        public property AlternateName, String
+            method get
+            proc
+                mreturn %atrim(m_AlternateName)
+            endmethod
+        endproperty
+
+        ;;Field font palette name
+        public property FieldFont, String
+            method get
+            proc
+                mreturn %atrim(m_FieldFont)
+            endmethod
+        endproperty
+
+        ;;Prompt font palette name
+        public property PromptFont, String
+            method get
+            proc
+                mreturn %atrim(m_PromptFont)
+            endmethod
+        endproperty
+
+        ;;Default value
+        public property DefaultValue, String
+            method get
+            proc
+                mreturn %atrim(m_DefaultValue)
+            endmethod
+        endproperty
+        
+        ;;Arrive method name
+        public property ArriveMethod, String
+            method get
+            proc
+                mreturn %atrim(m_ArriveMethod)
+            endmethod
+        endproperty
+
+        ;;Leave method name
+        public property LeaveMethod, String
+            method get
+            proc
+                mreturn %atrim(m_LeaveMethod)
+            endmethod
+        endproperty
+
+        ;;Drill method name
+        public property DrillMethod, String
+            method get
+            proc
+                mreturn %atrim(m_DrillMethod)
+            endmethod
+        endproperty
+
+        ;;Hyperlink method name
+        public property HyperlinkMethod, String
+            method get
+            proc
+                mreturn %atrim(m_HyperlinkMethod)
+            endmethod
+        endproperty
+
+        ;;Change method name
+        public property ChangeMethod, String
+            method get
+            proc
+                mreturn %atrim(m_ChangeMethod)
+            endmethod
+        endproperty
+
+        ;;Display method name
+        public property DisplayMethod, String
+            method get
+            proc
+                mreturn %atrim(m_DisplayMethod)
+            endmethod
+        endproperty
+
+        ;;Edit format method name
+        public property EditFormatMethod, String
+            method get
+            proc
+                mreturn %atrim(m_EditFormatMethod)
+            endmethod
+        endproperty
+        
+        ;Numeric range exists
+        public property NumericRangeExists, Boolean
+            method get
+            proc
+                mreturn m_t_info.ti_range
+            endmethod
+        endproperty
+
+        ;Numeric field range minimum
+        public property NumericRangeMinimum, decimal
+            method get
+            proc
+                mreturn m_fti_range.fti_rgmin
+            endmethod
+        endproperty
+
+        ;Numeric field range maximum
+        public property NumericRangeMaximum, decimal
+            method get
+            proc
+                mreturn m_fti_range.fti_rgmax
+            endmethod
+        endproperty
+
+        ;Enumerated
+        public property Enumerated, Boolean
+            method get
+            proc
+                mreturn m_t_info.ti_enum
+            endmethod
+        endproperty
+
+        ;Enumerated field display length
+        public property EnumeratedDisplayLength, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmlen
+            endmethod
+        endproperty
+
+        ;Enumerated field base value
+        public property EnumeratedBaseValue, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmbase
+            endmethod
+        endproperty
+
+        ;Enumerated field step value
+        public property EnumeratedStepValue, int
+            method get
+            proc
+                mreturn m_fti_enum.fti_enmstep
+            endmethod
+        endproperty
+
+		;;Coerced type
+		public property CorecedType, RpsFieldCorecedType
+			method get
+			proc
+				mreturn m_CorecedType
+			endmethod
+			method set
+			proc
+				m_CorecedType = value
+			endmethod
+		endproperty
+
+		;ADD ti_flags ,[15]i1   ;;Template override flags ([15]i1 see .defines above)
+
+		.endregion
+
+    endclass
+    
+endnamespace
+

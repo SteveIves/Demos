@@ -1,0 +1,81 @@
+
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+import SynPsg.Rps
+
+namespace RepositoryApiTest
+	
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent();
+		endmethod
+		
+		private  method Form1_Load, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				rps		,@Repository
+			endrecord
+		proc
+			try
+			begin	
+				logwindow.Items.Add("Opening repository...")
+				rps = new Repository()
+				
+				logwindow.Items.Add("Main file opened is "+rps.MainFile)
+				logwindow.Items.Add("Text file opened is "+rps.TextFile)				
+				
+				logwindow.items.Add(rps.Structures.Count.ToString() + " structures found")
+				
+				;Display structures
+				data str, @RpsStructure
+				foreach str in rps.Structures
+				begin
+					logwindow.Items.Add(" - Structure: " + str.Name)
+
+					;Display structure fields
+					data fld, @RpsField
+					foreach fld in str.Fields
+						logwindow.Items.Add("    - Field: " + fld.Name)							
+					
+					;Display structure keys
+					data key, @RpsKey
+					foreach key in str.Keys
+						logwindow.Items.Add("    - Key: " + key.Name)
+				end
+
+				logwindow.items.Add(rps.Files.Count.ToString() + " files found")
+				
+				data fil, @RpsFile
+				foreach fil in rps.Files
+					logwindow.Items.Add(" - File: " + fil.Name)
+			end
+			catch (ex, @Exception)
+			begin
+				logwindow.Items.Add("Exception: "+ex.Message)
+			end
+			finally
+			begin
+				logwindow.Items.Add("Closing repository...")
+				clear rps
+			end
+			endtry
+		endmethod
+
+		private method exitToolStripMenuItem_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			this.Close()
+		endmethod
+	endclass
+endnamespace

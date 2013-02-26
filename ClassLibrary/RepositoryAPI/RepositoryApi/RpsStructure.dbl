@@ -1,0 +1,282 @@
+;;*****************************************************************************
+;;
+;; Class:		SynPsg.Rps.RpsStructure
+;;
+;; Description:	Represents a single Repository structure definition
+;;
+;; Author:		Steve Ives, Synergex Professional Services Group
+;;
+;; Date: 		19th October 2007
+;;
+;; ****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;; ****************************************************************************
+;;
+;; $Revision: 3 $
+;;
+;; $Date: 2011-06-09 16:05:17-07:00 $
+;;
+;; ****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections
+
+namespace SynPsg.Rps
+
+	public class RpsStructure
+
+		.region "Private data"
+
+		protected m_s_info				,s_info
+		protected m_StructureName		,String		;;Structure name
+		protected m_StructureAlias		,String		;;Structure alias (CodeGen)
+		protected m_Description			,a40		;;Description
+		protected m_LongDescription		,a1800		;;Long description
+		protected m_UserText			,a60		;;User text
+		protected m_Fields				,@RpsFieldCollection
+		protected m_Keys				,@RpsKeyCollection
+		protected m_Files				,@RpsFileCollection
+		protected m_Tags				,@RpsTagCollection
+		protected m_Formats				,@RpsFormatCollection
+		protected m_Relations			,@RpsRelationCollection
+
+		.endregion
+
+		.region "Constructors and destructors"
+
+		;;Load structure by name, load all fields
+		public method RpsStructure
+			required in StructureName, String
+			endparams
+		proc
+			Repository.CheckIsOpen()
+			LoadStructure(StructureName)
+		endmethod
+
+		;;Load structure by name, fields passed in
+		public method RpsStructure
+			required in StructureName, String
+			required in Fields, @RpsFieldCollection
+			endparams
+		proc
+			m_Fields = Fields
+			Repository.CheckIsOpen()
+			LoadStructure(StructureName)
+		endmethod
+
+		;;Destructor
+		method ~RpsStructure
+		proc
+			clear m_Fields, m_Keys, m_Files, m_Tags, m_Formats, m_Relations
+		endmethod
+
+		.endregion
+
+		.region "Private methods"
+
+		private method LoadStructure, void
+			required in StructureName, String
+			endparams
+		proc
+
+			;;Save structure name
+			m_StructureName = StructureName.Trim().ToUpper()
+
+			;;Load structure information
+			dd_struct(Repository.RpsControl,DDS_INFO,m_StructureName,m_s_info)
+			if (Repository.RpsControl.error)
+				throw new RpsStructureException("Failed to get information for repository structure "+m_StructureName)
+
+			;;Load the structures text-based attributes
+
+			;;Description
+			if (m_s_info.si_desc)
+			begin
+				xcall dd_struct(Repository.RpsControl,DDS_TEXT,m_s_info.si_desc,m_Description)
+				if (Repository.RpsControl.error)
+					throw new RpsStructureException("Failed to get description for repository structure "+m_StructureName)
+			end
+
+			;;Long description
+			if (m_s_info.si_ldesc)
+			begin
+				dd_struct(Repository.RpsControl,DDS_TEXT,m_s_info.si_ldesc,m_LongDescription)
+				if (Repository.RpsControl.error)
+					throw new RpsStructureException("Failed to get long description for repository structure "+m_StructureName)
+			end
+
+			;;User text string
+			if (m_s_info.si_utext)
+			begin
+				dd_struct(Repository.RpsControl,DDS_TEXT,m_s_info.si_utext,m_UserText)
+				if (Repository.RpsControl.error)
+					throw new RpsStructureException("Failed to get user text for repository structure "+m_StructureName)
+			end
+
+		endmethod
+
+		.endregion
+
+		.region "Public properties"
+
+		;;Fields collection
+		public property Fields, @RpsFieldCollection
+			method get
+			proc
+				if (m_Fields==^null)
+					m_Fields = new RpsFieldCollection(m_StructureName)
+				mreturn m_Fields
+			endmethod
+		endproperty
+
+		;;Keys collection
+		public property Keys, @RpsKeyCollection
+			method get
+			proc
+				if (m_Keys==^null)
+					m_Keys = new RpsKeyCollection(m_StructureName)
+				mreturn m_Keys
+			endmethod
+		endproperty
+
+		;;Files collection
+		public property Files, @RpsFileCollection
+			method get
+			proc
+				if (m_Files==^null)
+					m_Files = new RpsFileCollection(m_StructureName)
+				mreturn m_Files
+			endmethod
+		endproperty
+
+		;;Tags collection
+		public property Tags, @RpsTagCollection
+			method get
+			proc
+				if (m_Tags==^null)
+					m_Tags = new RpsTagCollection(m_StructureName)
+				mreturn m_Tags
+			endmethod
+		endproperty
+
+		;;Formats collection
+		public property Formats, @RpsFormatCollection
+			method get
+			proc
+				if (m_Formats==^null)
+					m_Formats = new RpsFormatCollection(m_StructureName)
+				mreturn m_Formats
+			endmethod
+		endproperty
+
+		;;Relations collection
+		public property Relations, @RpsRelationCollection
+			method get
+			proc
+				if (m_Relations==^null)
+					m_Relations = new RpsRelationCollection(m_StructureName)
+				mreturn m_Relations
+			endmethod
+		endproperty
+
+		;;Structure name
+		public property Name, String
+			method get
+			proc
+				mreturn m_StructureName
+			endmethod
+		endproperty
+
+		;;Structure alias
+		;;This property would not normally be here, it was added so that
+		;;CodeGen can override a structure name via it's structure alias
+		;;mechanism.  For other uses this property should be removed.
+		public property Alias, String
+			method get
+			proc
+				mreturn m_StructureAlias
+			endmethod
+			method set
+			proc
+				m_StructureAlias = value.Trim().ToUpper()
+			endmethod
+		endproperty
+
+		;;File type (e.g. "DBL ISAM", "ASCII")
+		public property FileType, String
+			method get
+			proc
+				mreturn %atrim(m_s_info.si_filtyp)
+			endmethod
+		endproperty
+
+		;;Description
+		public property Description, String
+			method get
+			proc
+				mreturn %atrim(m_Description)
+			endmethod
+		endproperty
+
+		;;Long description
+		public property LongDescription, String
+			method get
+			proc
+				mreturn %atrim(m_LongDescription)
+			endmethod
+		endproperty
+
+		;;User text
+		public property UserText, String
+			method get
+			proc
+				mreturn %atrim(m_UserText)
+			endmethod
+		endproperty
+
+		;;Record size
+		public property Length, int
+			method get
+			proc
+				mreturn m_s_info.si_recsz
+			endmethod
+		endproperty
+
+		;;Number of fields/groups in first level
+		public property ChildCount, int
+			method get
+			proc
+				mreturn m_s_info.si_childct
+			endmethod
+		endproperty
+
+		;;Structure tag type
+		public property TagType, RpsTagType
+			method get
+			proc
+				mreturn (RpsTagType)integer(m_s_info.si_tagtyp)
+			endmethod
+		endproperty
+
+		;;First (or only) file assigned to
+		public property FirstFile, String
+			method get
+			proc
+				mreturn %atrim(m_s_info.si_file)
+			endmethod
+		endproperty
+
+		.endregion
+
+	endclass
+
+endnamespace
+
