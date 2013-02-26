@@ -1,0 +1,199 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+    WorkingDir="%wp"
+    Version="10.0"
+    VendorName="SlickEdit">
+    <Config
+        Name="Release"
+        OutputFile=""
+        CompilerConfigName="Latest Version">
+        <Menu>
+            <Target
+                Name="Load Test Data"
+                MenuCaption="&amp;Load Test Data"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1"
+                SaveOption="SaveAll">
+                <Exec CmdLine="load_data"/>
+            </Target>
+            <Target
+                Name="Import Repository Schema"
+                MenuCaption="&amp;Import Repository Schema"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1"
+                SaveOption="SaveAll">
+                <Exec CmdLine="rps_import"/>
+            </Target>
+            <Target
+                Name="Export Repository Schema"
+                MenuCaption="&amp;Export Repository Schema"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1">
+                <Exec CmdLine="rps_export"/>
+            </Target>
+        </Menu>
+        <SynSettings>
+            <SynSetting
+                Name="compile_all_folder"
+                Value="Source Files"/>
+            <SynSetting
+                Name="config64"
+                Value="0"/>
+            <SynSetting
+                Name="proto_command_line"
+                Value="dblproto %p%n%e"/>
+            <SynSetting
+                Name="compile_command_line"
+                Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+            <SynSetting
+                Name="proto_clear_dbh"
+                Value="1"/>
+            <SynSetting
+                Name="build_prototype"
+                Value="1"/>
+            <SynSetting
+                Name="proto_first_run"
+                Value="1"/>
+            <SynSetting
+                Name="compile_single"
+                Value="0"/>
+            <SynSetting
+                Name="object_name"
+                Value=""/>
+            <SynSetting
+                Name="linklibr_command_line"
+                Value="dblink -o %n.dbr %n"/>
+            <SynSetting
+                Name="proto_namespace_sequence"
+                Value="namespace1.namespace2.namespace3"/>
+        </SynSettings>
+    </Config>
+    <Config
+        Name="Debug"
+        OutputFile=""
+        CompilerConfigName="Latest Version">
+        <Menu>
+            <Target
+                Name="Load Test Data"
+                MenuCaption="&amp;Load Test Data"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1"
+                SaveOption="SaveAll">
+                <Exec CmdLine="load_data"/>
+            </Target>
+            <Target
+                Name="Import Repository Schema"
+                MenuCaption="&amp;Import Repository Schema"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1"
+                SaveOption="SaveAll">
+                <Exec CmdLine="rps_import"/>
+            </Target>
+            <Target
+                Name="Export Repository Schema"
+                MenuCaption="&amp;Export Repository Schema"
+                RunFromDir="%(BAT)"
+                CaptureOutputWith="ProcessBuffer"
+                ClearProcessBuffer="1">
+                <Exec CmdLine="rps_export"/>
+            </Target>
+        </Menu>
+        <SynSettings>
+            <SynSetting
+                Name="compile_all_folder"
+                Value="Source Files"/>
+            <SynSetting
+                Name="config64"
+                Value="0"/>
+            <SynSetting
+                Name="proto_command_line"
+                Value="dblproto %p%n%e"/>
+            <SynSetting
+                Name="compile_command_line"
+                Value='dbl -XT -qalign -qstrict "%p%n%e"'/>
+            <SynSetting
+                Name="proto_clear_dbh"
+                Value="1"/>
+            <SynSetting
+                Name="build_prototype"
+                Value="1"/>
+            <SynSetting
+                Name="proto_first_run"
+                Value="1"/>
+            <SynSetting
+                Name="compile_single"
+                Value="0"/>
+            <SynSetting
+                Name="object_name"
+                Value=""/>
+            <SynSetting
+                Name="linklibr_command_line"
+                Value="dblink -o %n.dbr %n"/>
+            <SynSetting
+                Name="proto_namespace_sequence"
+                Value="namespace1.namespace2.namespace3"/>
+        </SynSettings>
+    </Config>
+    <Files>
+        <Folder
+            Name="Batch Files"
+            Filters="*.bat">
+            <F N="../BAT/load_data.bat"/>
+            <F N="../BAT/rps_export.bat"/>
+            <F N="../BAT/rps_import.bat"/>
+        </Folder>
+        <Folder
+            Name="Repository"
+            Filters="*.sch">
+            <F N="../RPS/rps.sch"/>
+        </Folder>
+        <Folder
+            Name="File Definitions"
+            Filters="*.xdl">
+            <F N="../XDL/department.xdl"/>
+            <F N="../XDL/employee.xdl"/>
+            <F N="../XDL/replication.xdl"/>
+        </Folder>
+        <Folder
+            Name="Test Data"
+            Filters="*.seq">
+            <F N="../DAT/department.seq"/>
+            <F N="../DAT/employee.seq"/>
+        </Folder>
+        <Folder
+            Name="Other Files"
+            Filters="">
+            <F N="../readme.txt"/>
+        </Folder>
+        <Folder
+            Name="Source Files"
+            Filters="*.dbl;*.tpl;*.dbc"/>
+        <Folder
+            Name="Header Files"
+            Filters="*.def;*.dbh"/>
+        <Folder
+            Name="Toolkit Script Files"
+            Filters="*.wsc"/>
+    </Files>
+    <Macro>
+        <ExecMacro CmdLine="syn_set ROOT=%wp"/>
+        <ExecMacro CmdLine="syn_set SUBSYS=%rn"/>
+        <ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC\%(SUBSYS)"/>
+        <ExecMacro CmdLine="syn_set INC=%(ROOT)SRC\INC"/>
+        <ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ\%(SUBSYS)"/>
+        <ExecMacro CmdLine="syn_set LIB=%(ROOT)LIB"/>
+        <ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
+        <ExecMacro CmdLine="syn_set FDL=%(ROOT)FDL"/>
+        <ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
+        <ExecMacro CmdLine="syn_set BAT=%(ROOT)BAT"/>
+        <ExecMacro CmdLine="syn_set XDL=%(ROOT)XDL"/>
+        <ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
+        <ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+        <ExecMacro CmdLine="syn_set SUBLIBS="/>
+    </Macro>
+</Project>

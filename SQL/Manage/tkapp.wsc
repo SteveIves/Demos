@@ -1,0 +1,298 @@
+.script
+.date_generated "04/05/2006, 13:14"
+.version "8.3.1a"
+
+.column FILE, "File"
+.entry U_ABOUT, "About"
+.entry O_HELP, "Help", key(f1)
+.line
+.entry O_EXITAPP, "Exit", key(f4)
+.end
+
+.column APPS, "Applications"
+.entry ORDERS, "Order Entry"
+.entry MAINTAIN, "Maintain", sub
+.end
+
+.column MAINTAIN, "Maintain"
+.entry CUSTOMERS, "Customers"
+.entry PRODUCTS, "Products"
+.entry GROUPS, "Product Groups"
+.entry USERS, "Users"
+.end
+
+.column INPOPT, "Options"
+.entry I_OK,    "Save record", key(f4)
+.entry O_ABANDON, "Cancel changes", key(f3)
+.line
+.entry O_DELETE, "Delete record", key(f8), disable
+.end
+
+.column TABINPOPT, "Options"
+.entry TS_TABPREV, "Previous Tab", key(^B)
+.entry TS_TABNEXT, "Next Tab", key(^N)
+.line
+.entry O_SAVE,    "Save record", key(f4)
+.entry O_ABANDON, "Cancel changes", key(f3)
+.line
+.entry O_DELETE, "Delete record", key(f8), disable
+.end
+
+.column ORDOPT, "Options"
+.entry O_SAVE, "Save order", key(f4), disable
+.entry O_ABANDON, "Cancel order", key(f3)
+.line
+.entry O_DELETE, "Delete record", key(f8), disable
+.entry O_SWITCH, "Switch window", key(f9), disable
+.end
+
+.column INPUT, "Input"
+.entry I_PREV, "Previous Field", key(up)
+.entry I_NEXT, "Next Field", key(down)
+.entry I_FRST, "First Field", key(^F)
+.entry I_LAST, "Last Field", key(^L)
+.line
+.entry E_LEFT, "Left", key(LEFT)
+.entry E_RIGHT, "Right", key(RIGHT)
+.line
+.entry I_DRILL, "Lookup Value", key(f7)
+.end
+
+.column SELECT, "Select"
+.entry S_UP, "Previous Entry", key(up)
+.entry S_DOWN, "Next Entry", key(down)
+.entry S_LEFT, "Move Left", key(left)
+.entry S_RIGHT, "Move Right", key(right)
+.end
+
+.column LIST, "List"
+.entry S_UP, "Previous Entry", key(up)
+.entry S_DOWN, "Next Entry", key(down)
+.line
+.entry S_PGUP, "Previous Page", key(prev)
+.entry S_PGDN, "Next Page", key(next)
+.end
+
+.input PRDGRP, 5, 60
+.placement 3, 4
+.title "Product Group", reverse
+.repository_structure PRODUCT_GROUP
+.field NAME, pos(2, 3), fpos(2, 18), -
+     change_method("change_product_group_maint")
+.field DESCRIPTION, pos(4, 3), fpos(4, 18)
+.button I_OK, text("OK")
+.button O_DELETE, text("Delete")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.set ALL, PRODUCT_GROUP, NAME, DESCRIPTION
+.set KEY, PRODUCT_GROUP, NAME
+.set DATA, PRODUCT_GROUP, DESCRIPTION
+.end
+
+.input PRODUCT, 16, 78
+.placement 2, 2
+.title "Product Details", reverse
+.repository_structure PRODUCT
+.field SKU, pos(2, 2), fpos(2, 14), change_method("change_sku_maint")
+.field GROUP, pos(2, 31), fpos(2, 37)
+.field DESCRIPTION, pos(4, 2), fpos(4, 14), view_length(60)
+.field PRICE_GROUP, pos(6, 2), fpos(6, 14)
+.field SELLING_PRICE, pos(7, 2), fpos(7, 14)
+.field LAST_SALE, pos(13, 3), fpos(13, 14), nodrill_method
+.field LAST_COST_PRICE, pos(14, 3), fpos(14, 14)
+.field MOVING_AVE_COST_PRICE, pos(15, 3), fpos(15, 14)
+.field QTY_IN_STOCK, pos(13, 32), fpos(13, 43)
+.field QTY_ALLOCATED, pos(14, 32), fpos(14, 43)
+.field QTY_IN_TRANSIT, pos(13, 56), fpos(13, 67)
+.field QTY_ON_ORDER, pos(14, 56), fpos(14, 67)
+.field REFERENCE, pos(6, 31), fpos(6, 43)
+.field PUBLISHER, pos(9, 2), fpos(9, 14)
+.field AUTHOR, pos(10, 2), fpos(10, 14)
+.field TYPE, pos(7, 31), fpos(7, 43)
+.field RELEASE_DATE, pos(2, 54), fpos(2, 63)
+.field RATING, pos(11, 2), fpos(11, 14)
+.button I_OK, text("OK")
+.button O_DELETE, text("Delete")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.set ALL, PRODUCT, SKU, GROUP, RELEASE_DATE, DESCRIPTION, PRICE_GROUP, -
+     SELLING_PRICE, REFERENCE, TYPE, PUBLISHER, AUTHOR, RATING, -
+     LAST_SALE, LAST_COST_PRICE, MOVING_AVE_COST_PRICE, QTY_IN_STOCK, -
+     QTY_ALLOCATED, QTY_IN_TRANSIT, QTY_ON_ORDER
+.set KEY, PRODUCT, SKU
+.set DATA, PRODUCT, GROUP, RELEASE_DATE, DESCRIPTION, PRICE_GROUP, -
+     SELLING_PRICE, REFERENCE, TYPE, PUBLISHER, AUTHOR, RATING, -
+     LAST_SALE, LAST_COST_PRICE, MOVING_AVE_COST_PRICE, QTY_IN_STOCK, -
+     QTY_ALLOCATED, QTY_IN_TRANSIT, QTY_ON_ORDER
+.end
+
+.input PRDGRPLST, 1, 53
+.title "Product Group Lookup",reverse
+.border on, dragbar(on)
+.repository_structure PRODUCT_GROUP
+.field NAME, noprompt, fpos(1, 1), nochange_method, nodrill_method
+.field DESCRIPTION, noprompt, fpos(1, 13)
+.end
+
+.input PRDLST, 1, 65
+.title "Product Lookup",reverse
+.border on, dragbar(on)
+.repository_structure PRODUCT
+.field SKU, noprompt, fpos(1, 1), nochange_method, nodrill_method
+.field GROUP, noprompt, fpos(1, 13), nochange_method, nodrill_method
+.field DESCRIPTION, noprompt, fpos(1, 25), view_length(40)
+.end
+
+.input USER, 10, 65
+.title "User Details", reverse
+.repository_structure USER
+.field USERNAME, pos(2, 2), fpos(2, 13), -
+     change_method("change_username_maint")
+.field FIRST_NAME, pos(4, 2), fpos(4, 13)
+.field LAST_NAME, pos(5, 2), fpos(5, 13)
+.field PASSWORD, pos(6, 2), fpos(6, 13)
+.field USER_CUSTOMER, pos(7, 2), fpos(7, 13)
+.field PHONE_AREA, pos(8, 2), fpos(8, 13)
+.field PHONE_NUMBER, fpos(8, 19)
+.field EMAIL, pos(9, 2), fpos(9, 13), view_length(50)
+.button I_OK, text("OK")
+.button O_DELETE, text("Delete")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.set ALL, USER, USERNAME, FIRST_NAME, LAST_NAME, PASSWORD, USER_CUSTOMER, -
+     PHONE_AREA, PHONE_NUMBER, EMAIL
+.set KEY, USER, USERNAME
+.set DATA, USER, FIRST_NAME, LAST_NAME, PASSWORD, USER_CUSTOMER, -
+     PHONE_AREA, PHONE_NUMBER, EMAIL
+.end
+
+.input USERLST, 1, 53
+.placement 2, 2
+.title "User Lookup",reverse
+.border on, dragbar(on)
+.repository_structure USER
+.field USERNAME, noprompt, fpos(1, 1), nochange_method, nodrill_method, -
+     view_length(20)
+.field LAST_NAME, noprompt, fpos(1, 23), view_length(20)
+.field USER_CUSTOMER, noprompt, fpos(1, 45), nochange_method, nodrill_method
+.end
+
+.input CUSTOMER1, 16, 76
+.placement 2, 2
+.title "Company", reverse
+.repository_structure CUSTOMER
+.field ACCOUNT, pos(2, 2), fpos(2, 10), -
+     change_method("change_customer_maint")
+.field COMPANY, pos(2, 26), fpos(2, 35)
+.field STREET, pos(5, 2), prompt("Street"), fpos(5, 10)
+.field CITY, pos(6, 2), fpos(6, 10)
+.field REGION, pos(7, 2), fpos(7, 10)
+.field POSTAL_CODE, pos(8, 2), fpos(8, 10)
+.field COUNTRY, pos(9, 2), fpos(9, 10)
+.field PHONE_COUNTRY, pos(5, 52), fpos(5, 65)
+.field PHONE_AREA, pos(7, 52), fpos(7, 59)
+.field PHONE_NUMBER, fpos(7, 65)
+.field FAX_AREA, pos(8, 52), fpos(8, 59)
+.field FAX_NUMBER, fpos(8, 65)
+.field MOBILE_AREA, pos(9, 52), fpos(9, 59)
+.field MOBILE_NUMBER, fpos(9, 65)
+.field PAGER_AREA, pos(10, 52), fpos(10, 59)
+.field PAGER_NUMBER, fpos(10, 65)
+.field EMAIL1, pos(11, 2), fpos(11, 10), view_length(40)
+.field EMAIL2, pos(13, 2), fpos(13, 10), view_length(40)
+.field NUMBER, pos(4, 2), fpos(4, 10)
+.set ALL, CUSTOMER, ACCOUNT, COMPANY, NUMBER, STREET, CITY, REGION, -
+     POSTAL_CODE, COUNTRY, PHONE_COUNTRY, PHONE_AREA, PHONE_NUMBER, -
+     FAX_AREA, FAX_NUMBER, MOBILE_AREA, MOBILE_NUMBER, PAGER_AREA, -
+     PAGER_NUMBER, EMAIL1, EMAIL2
+.set KEY, CUSTOMER, ACCOUNT
+.set DATA, CUSTOMER, COMPANY, NUMBER, STREET, CITY, REGION, POSTAL_CODE, -
+     COUNTRY, PHONE_COUNTRY, PHONE_AREA, PHONE_NUMBER, FAX_AREA, -
+     FAX_NUMBER, MOBILE_AREA, MOBILE_NUMBER, PAGER_AREA, PAGER_NUMBER, -
+     EMAIL1, EMAIL2
+.end
+
+.input CUSTOMER2, 16, 76
+.placement 2, 2
+.title "Financials", reverse
+.repository_structure CUSTOMER
+.field DATE_OPENED, pos(2, 27), fpos(2, 34)
+.field DATE_HOLD, pos(3, 27), fpos(3, 34)
+.field DATE_CLOSED, pos(4, 27), fpos(4, 34)
+.field STATUS, pos(2, 2), fpos(2, 10)
+.field LIMIT, pos(8, 3), fpos(8, 16)
+.field BALANCE, pos(10, 3), fpos(10, 16)
+.field CARD_NUMBER, pos(8, 37), fpos(8, 48)
+.field CARD_EXPIRY, pos(9, 37), fpos(9, 48)
+.field CARD_NAME, pos(10, 37), fpos(10, 48)
+.line Line1, 76, pos(6, 1)
+.line Line3, 11, pos(6, 33), vertical
+.set ALL, CUSTOMER, STATUS, DATE_OPENED, DATE_HOLD, DATE_CLOSED, LIMIT, -
+     BALANCE, CARD_NUMBER, CARD_EXPIRY, CARD_NAME
+.end
+
+.input CUSLST, 1, 51
+.title "Customer Lookup",reverse
+.border on, dragbar(on)
+.repository_structure CUSTOMER
+.field ACCOUNT, noprompt, fpos(1, 1), nochange_method, nodrill_method
+.field COMPANY, noprompt, fpos(1, 11)
+.end
+
+.input LOGIN, 5, 54
+.title "User Login", reverse
+.repository_structure USER
+.field USERNAME, pos(2, 2), fpos(2, 12), nochange_method, nodrill_method
+.field PASSWORD, pos(4, 2), fpos(4, 12)
+.button I_OK, text("OK")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.end
+
+.input ORDER, 6, 75
+.title "Create New Order",reverse
+.repository_structure ORDER_HEADER
+.field CUSTOMER, pos(1, 2), fpos(1, 10)
+.field ORDER_DATE, pos(1, 24), fpos(1, 29)
+.field CUSTOMER_ORDER_REF, pos(1, 44), fpos(1, 54)
+.field GIFT_WRAP, fpos(2, 63)
+.field GIFT_MESSAGE, pos(3, 2), fpos(3, 10), noview_length
+.field GOODS_VALUE, pos(5, 2), fpos(5, 10)
+.field TAX_VALUE, pos(5, 24), fpos(5, 29)
+.field SHIPPING_VALUE, pos(5, 44), fpos(5, 54)
+.button I_OK, text("OK")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.set ALL, ORDER_HEADER, CUSTOMER, ORDER_DATE, CUSTOMER_ORDER_REF, -
+     GIFT_WRAP, GIFT_MESSAGE, GOODS_VALUE, TAX_VALUE, SHIPPING_VALUE
+.end
+
+.input ORDLINELST, 1, 74
+.placement 2, 2
+.title "Order Line Items",reverse
+.border on, dragbar(on)
+.repository_structure ORDER_LINE
+.field SKU, noprompt, fpos(1, 1), nochange_method, nodrill_method
+.field DESCRIPTION, noprompt, fpos(1, 13), view_length(53)
+.field QTY_ORDERED, noprompt, fpos(1, 68)
+.end
+
+.input ORDLINE, 19, 78
+.placement 2, 2
+.title "Add Item To Order",reverse
+.repository_structure ORDER_LINE
+.field SKU, pos(2, 2), fpos(2, 14), change_method("change_sku_ordent")
+.field QTY_ORDERED, pos(2, 57), fpos(2, 67)
+.field DESCRIPTION, pos(4, 2), fpos(4, 14), view_length(60)
+.field PRICE, pos(2, 31), fpos(2, 43)
+.button I_OK, text("Add Item")
+.button O_SAVE, text("Save")
+.button O_ABANDON, text("Cancel")
+.button_set end
+.end
+
+.select selcountry
+.item "Please select an item from the list"
+.end
+
+

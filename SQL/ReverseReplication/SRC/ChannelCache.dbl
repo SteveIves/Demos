@@ -1,0 +1,147 @@
+;;*****************************************************************************
+;;
+;; Routine:     ChannelCacheInit
+;;
+;; Description: Initializes and resizes a dynamic memory array which is used to
+;;              cache the last record read and locked on a channel.  The cache
+;;              can then be used on subsequent update operations to determine
+;;              if a record has been updated since it was read and locked.
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+subroutine ChannelCacheInit
+
+    required in a_channel   ,n          ;;Channel number
+    endparams
+
+    global common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
+
+    stack record
+        recsize             ,i4         ;;Record size
+    endrecord
+
+proc
+
+    xcall getfa(a_channel,"RSZ",recsize)
+    if (cc$cache[a_channel]) then
+    begin
+        cc$cache[a_channel] = %mem_proc(DM_RESIZ,recsize,cc$cache[a_channel])
+        clear ^m(cc$cache[a_channel])
+    end
+    else
+        cc$cache[a_channel] = %mem_proc(DM_ALLOC|DM_STATIC|DM_BLANK,recsize)
+
+    xreturn
+
+endsubroutine
+
+;;*****************************************************************************
+;;
+;; Routine:     ChannelCacheUpdate
+;;
+;; Description: Updates the current record stored in the channel cache
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+subroutine ChannelCacheUpdate
+
+    required in a_channel   ,n          ;;Channel number
+    required in a_data      ,a          ;;Data buffer
+    endparams
+
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
+
+proc
+
+    ^m(cc$cache[a_channel]) = a_data
+
+    xreturn
+
+endsubroutine
+
+;;*****************************************************************************
+;;
+;; Routine:     ChannelCacheCompare
+;;
+;; Description: Compares a record to the last record stored in the channel
+;;              cache in order to determine if the record has changed.
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+function ChannelCacheCompare, ^val
+
+    required in a_channel   ,n          ;;Channel number
+    required in a_data      ,a          ;;Data buffer
+    endparams
+
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
+
+proc
+
+    if (^m(cc$cache[a_channel])==a_data) then
+        freturn 0
+    else
+        freturn 1
+
+endfunction
+
+;;*****************************************************************************
+;;
+;; Routine:     ChannelCacheRetrieve
+;;
+;; Description: Retrieved the last record stored in the channel cache.
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+subroutine ChannelCacheRetrieve
+
+    required in  a_channel  ,n          ;;Channel number
+    required out a_data     ,a          ;;Data buffer
+    endparams
+
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
+
+proc
+
+    a_data = ^m(cc$cache[a_channel])
+
+    xreturn
+
+endsubroutine
+
+;;*****************************************************************************
+;;
+;; Routine:     ChannelCacheRelease
+;;
+;; Description: Release the channel cache memory for a specific channel.
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+subroutine ChannelCacheRelease
+
+    required in a_channel   ,n          ;;Channel number
+    endparams
+
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
+
+proc
+
+    onerror continue
+    cc$cache[a_channel] = %mem_proc(DM_FREE,cc$cache[a_channel])
+
+continue,
+
+    xreturn
+
+endsubroutine
+

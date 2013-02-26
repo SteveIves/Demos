@@ -1,0 +1,2888 @@
+;
+;******************************************************************************
+.ifdef TKAPP_INCLUDE
+;******************************************************************************
+.undefine TKAPP_INCLUDE
+
+.ifndef APP_TITLE
+.define APP_TITLE   "SQL Connection Tutorial Application"
+.define APP_VERSION "V1.0"
+.define APP_ICON    "EXE:tkapp.ico"
+.define D_SALES_TAX 7.25
+.endc
+
+.include "WND:tools.def"
+.include "WND:tkctl.def"
+.include "WND:windows.def"
+.ifdef D_GUI
+.include "DBLDIR:activex.def"
+.include "WND:toolbar.def"
+.endc
+
+.ifdef TKAPP_INIT
+.undefine TKAPP_INIT
+global data section tkapp_data, init
+.else
+global data section tkapp_data
+.endc
+record
+    idc_file        ,i4     ;File menu column ID
+    idc_apps        ,i4     ;Applications menu column ID
+    idc_inpopt      ,i4     ;Input options menu column ID
+    idc_tabinpopt   ,i4     ;Tab input options menu column ID
+    idc_input       ,i4     ;Input menu column ID
+    idc_select      ,i4     ;Select mentu column ID
+    idc_list        ,i4     ;List selection menu column ID
+    idf_customer    ,i4     ;Customer file channel
+    idf_group       ,i4     ;Product groups file channel
+    idf_order       ,i4     ;Order header file channel
+    idf_orderline   ,i4     ;Order detail file channel
+    idf_product     ,i4     ;Product file channel
+    idf_user        ,i4     ;User file channel
+    .ifdef D_GUI
+    weclose         ,i4     ;Close window event set
+    toolbar         ,i4     ;Toolbar ID
+    list_event_set  ,i4     ;list event method set id
+    .endc
+    iddb_channel    ,i4     ;database channel
+
+.include "USER" repository, record="this_user"
+
+endglobal
+
+;******************************************************************************
+.else  ;TKAPP_INCLUDE
+;******************************************************************************
+
+.main tkapp
+
+.define TKAPP_INCLUDE
+.define TKAPP_INIT
+.include "SRC:tkapp.dbl"
+
+.ifdef D_GUI
+record
+    lastmnuopt      ,a12
+.endc
+
+.proc
+
+    ;Get things up and running
+    if (%tkapp_startup)
+    begin
+
+        xcall e_sect("Pick an item from the menu")
+
+        ;Process the menu
+        .ifdef D_GUI
+        xcall m_defcol(0)       ;No default column
+        .else
+        lastmnuopt = "[ORDERS]"
+        .endc
+
+        repeat
+        begin
+
+            .ifdef D_GUI
+            xcall m_process ;No default entry
+            .else
+            xcall m_process(lastmnuopt)
+            lastmnuopt = g_mnustrng
+            .endc
+
+            using g_entnam select
+            ("O_EXIT"),
+                exitloop
+            ("GROUPS"),
+                xcall product_groups
+            ("PRODUCTS"),
+                xcall products
+            ("CUSTOMERS"),
+                xcall customers
+            ("USERS"),
+                xcall users
+            ("ORDERS"),
+                xcall order_entry
+            endusing
+
+        end
+
+    end
+
+    ;We're all done
+    xcall tkapp_shutdown
+
+    stop
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       tkapp_startup
+;
+;Description:   Application startup processing
+;
+.function tkapp_startup, ^val
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+stack record ivars
+    ok              ,i4
+    error           ,i4
+    ii              ,i4
+
+stack record avar
+    bmp_filename    ,a255
+
+.proc
+
+    clear ^i(ivars)
+    ok = TRUE
+
+    ;Start UI Toolkit
+    xcall u_start("EXE:tkapp.ism",1,0,,24,80)
+
+    ;Set the default font to MS Sans Serif
+    xcall u_wndfont(D_SETFONT,DF_CURRENT,
+    &               "MS Sans Serif",8,"A")
+
+    ;Behave like cell-based on all platforms
+    g_plc_col_args = FALSE;TRUE
+
+    ;Setup UI Toolkit environment
+    xcall e_sect(APP_TITLE,D_HEADER,D_CENTER)
+    xcall e_method(D_METH_HELP,"ehelp_method",
+    &              D_METH_UTILS,"eutils_method",
+    &              D_METH_ENTRST, "eentrst_method")
+    xcall e_state(D_ON,D_VALSTCHG,D_RETURNBTN)
+    .ifdef D_GUI
+    weclose=%u_wndevents(D_CREATE,,
+    &                    D_EVENT_CLOSE,"weclose")
+    xcall u_icon(D_ICONSET,APP_ICON,1)
+    .endc
+
+    ;Create and configure the toolbar
+    .ifdef D_GUI
+    xcall getlog("BMP", bmp_filename, ii)
+    xcall setlog("SYN_TRANSPARENT_COLOR",
+    &            "0xFF,0x00,0xFF",error)
+    toolbar = %tb_tkcreate(TBC_TOP,,25)
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "U_PRINT",4,4,16,16,
+    &               TBLOAD_TYPE_BMAP,"BMP:print.bmp",
+    &               "Print",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "E_CUT",24,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "cut.bmp",
+    &               "Cut",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "E_COPY",44,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "copy.bmp",
+    &               "Copy",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "E_PASTE",64,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "paste.bmp",
+    &               "Paste",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "I_DRILL",84,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "search.bmp",
+    &               "Lookup value",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "O_DELETE",104,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "delete.bmp",
+    &               "Delete record",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_LOAD,
+    &               "U_ABOUT",124,4,16,16,
+    &               TBLOAD_TYPE_BMAP,%atrim(bmp_filename) + "about.bmp",
+    &               "About",,,"toolbar_lclick")
+    xcall tb_button(toolbar,TBB_DISABLE,"E_CUT")
+    xcall tb_button(toolbar,TBB_DISABLE,"E_COPY")
+    xcall tb_button(toolbar,TBB_DISABLE,"E_PASTE")
+    xcall tb_button(toolbar,TBB_DISABLE,"I_DRILL")
+    xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+    xcall tb_toolbar(TB_PLACE, toolbar, TBC_TOP, , )
+    .endc
+
+    ;Load the file menu column
+    xcall m_ldcol(idc_file,g_utlib,"FILE",,,error,D_GLOBAL)
+    if (error)
+    begin
+        xcall error_message("Failed to load menu column FILE")
+        ok = FALSE
+    end
+
+    ;Load the input options menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_inpopt,g_utlib,"INPOPT",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column INPOPT")
+            ok = FALSE
+        end
+    end
+
+    ;Load the tab input options menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_tabinpopt,g_utlib,"TABINPOPT",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column TABINPOPT")
+            ok = FALSE
+        end
+    end
+
+    ;Load the input menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_input,g_utlib,"INPUT",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column INPUT")
+            ok = FALSE
+        end
+    end
+
+    ;Load the selection menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_select,g_utlib,"SELECT",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column SELECT")
+            ok = FALSE
+        end
+    end
+
+    ;Load the list selection menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_list,g_utlib,"LIST",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column LIST")
+            ok = FALSE
+        end
+    end
+
+    ;Open the users file
+    if (ok)
+    begin
+        if (.not.%open_user)
+        begin
+            xcall error_message("Failed to open user file!")
+            ok = FALSE
+        end
+    end
+
+    ;Log the user in
+    if (ok)
+        ok = %tkapp_login
+
+    ;Load the applications menu column
+    if (ok)
+    begin
+        xcall m_ldcol(idc_file,g_utlib,"APPS",,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load menu column APPS")
+            ok = FALSE
+        end
+    end
+
+    ;Open the customer file
+    if (ok)
+    begin
+        if (.not.%open_customer)
+        begin
+            xcall error_message("Failed to open customer file!")
+            ok = FALSE
+        end
+    end
+
+    ;Open the product groups data file
+    if (ok)
+    begin
+        if (.not.%open_group)
+        begin
+            xcall error_message("Failed to open product group file!")
+            ok = FALSE
+        end
+    end
+
+    ;Open the order header file
+    if (ok)
+    begin
+        if (.not.%open_order)
+        begin
+            xcall error_message("Failed to open order file!")
+            ok = FALSE
+        end
+    end
+
+    ;Open the order details file
+    if (ok)
+    begin
+        if (.not.%open_orderline)
+        begin
+            xcall error_message("Failed to open order line items file!")
+            ok = FALSE
+        end
+    end
+
+    ;Open the product file
+    if (ok)
+    begin
+        if (.not.%open_product)
+        begin
+            xcall error_message("Failed to open product file!")
+            ok = FALSE
+        end
+    end
+
+    freturn ok
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       tkapp_login
+;
+;Description:   User login
+;
+.function tkapp_login, ^val
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "USER" repository, stack record="entered_user"
+
+.align
+stack record ivars
+    status      ,i4
+    inpwnd      ,i4
+    error       ,i4
+    ok          ,i4
+
+.proc
+
+    xcall e_enter
+
+    clear ^i(ivars), entered_user
+    ok = TRUE
+
+    ;Load the login form
+    xcall i_ldinp(inpwnd,g_utlib,"LOGIN",,,error)
+    if (error)
+    begin
+        xcall error_message("Failed to load input window LOGIN")
+        ok = FALSE
+    end
+
+    .ifdef D_GUI
+    ;Assign the window close event to the window
+    if (ok)
+    begin
+        xcall u_wndevents(D_ASSIGN,weclose,inpwnd)
+        xcall u_icon(D_ICONSET,APP_ICON,1,inpwnd)
+    end
+    .endc
+
+    ;Process the login form
+    if (ok)
+    begin
+        xcall m_column(D_PLACE,idc_inpopt)
+        xcall u_window(D_PLACE,inpwnd,6,13)
+        repeat
+        begin
+            xcall i_input(inpwnd,,entered_user,idc_input,,,D_NOTERM)
+            if (g_select.and.(g_entnam.eq."O_ABANDON")) then
+            begin
+                ok = FALSE
+                exitloop
+            end
+            else
+            begin
+                ;Try to read the user record for the username entered
+                this_user=entered_user.username
+                if (%get_user(this_user))
+                begin
+                    ;Username is good, check the password
+                    if (entered_user.password.eq.this_user.password)
+                        exitloop
+                end
+
+                ;Bad username or bad password
+nouser,         xcall info_message("Invalid login")
+                xcall i_init(inpwnd,,entered_user)
+                xcall i_next(inpwnd,,"*FRST*")
+            end
+        end
+    end
+
+    xcall e_exit
+
+    freturn ok
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       tkapp_shutdown
+;
+;Description:   Application shutdown processing
+;
+.subroutine tkapp_shutdown
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.proc
+
+    xcall close_customer
+    xcall close_user
+    xcall close_group
+    xcall close_product
+    xcall close_order
+    xcall close_orderline
+
+    ;Close down UI Toolkit
+    xcall u_finish
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       ehelp_method
+;
+;Description:   Help processing
+;
+.subroutine ehelp_method
+
+    a_ident     ,a      ;Help identifier
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.proc
+
+    xcall info_message("Help!")
+
+    clear g_select
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       eutils_method
+;
+;Description:   Utility processing
+;
+.subroutine eutils_method
+
+    a_record        ,a      ;(optional)
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.proc
+
+    using g_entnam select
+    ("U_ABOUT"),
+      xcall u_about(APP_TITLE,APP_VERSION,%datecompiled)
+    (),
+      xcall u_beep
+    endusing
+
+    clear g_select
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       eentrst_method
+;
+;Description:   Preserve content of interrupted input fields
+;
+.subroutine eentrst_method
+
+    a_nomod     ,n      ;field is not modified
+    a_reset     ,n      ;field does not need resetting
+
+;end of argument list
+
+.include "WND:tools.def"
+
+.proc
+
+    if (.not.a_nomod)
+      a_reset = FALSE
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       product_groups
+;
+;Description:   Maintain product groups
+;
+.subroutine product_groups
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT_GROUP" repository, stack record="product_group"
+
+stack record ivars
+    inpid           ,i4     ;Input window ID
+    all_done        ,i4     ;All finished, exit program
+    create          ,i4     ;Create a new product group?
+
+stack record avars
+    set_name        ,a4     ;Name of current set
+
+.proc
+
+    clear ^i(ivars), avars, product_group
+
+    ;Setup the UI
+    xcall e_enter
+    xcall m_column(D_REMOVE,D_LOCAL,D_PLACE,idc_inpopt)
+
+    ;Load the input window
+    xcall i_ldinp(inpid,g_utlib,"PRDGRP")
+    xcall u_window(D_PLACE,inpid,3,10)
+    set_name = "KEY"
+    xcall i_disable(D_SET,inpid,"DATA")
+
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall u_wndevents(D_ASSIGN,weclose,inpid)
+    xcall u_icon(D_ICONSET,APP_ICON,1,inpid)
+    ;Enable toolbar buttons
+    xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+    xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+    .endc
+
+    do
+    begin
+        xcall i_input(inpid,"ALL",product_group,idc_input,idc_select,,D_NOTERM)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("GOAMEND"),
+                call edit_record
+            ("GOCREATE"),
+                call create_record
+            ("O_DELETE"),
+                call delete_record
+            ("O_EXIT"),
+                all_done=TRUE
+            ("O_ABANDON"),
+                call cancel_record
+            endusing
+        end
+        else
+            call save_record
+
+    end
+    until all_done
+
+    xcall e_exit
+
+    xreturn
+
+create_record,
+
+    create=TRUE
+
+edit_record,
+
+    if (.not.create)
+    begin
+        xcall m_enable(D_ENTRY,idc_inpopt,"O_DELETE")
+        .ifdef D_GUI
+        xcall b_enable(inpid,"O_DELETE")
+        xcall tb_button(toolbar,TBB_ENABLE,"O_DELETE")
+        .endc
+    end
+    xcall i_next(inpid,(set_name="DATA"),"*FRST*")
+
+    xcall i_disable(D_SET,inpid,"KEY")
+    xcall i_enable(D_SET,inpid,"DATA")
+
+    return
+
+save_record,
+
+    if (create) then
+        xcall create_group(product_group)
+    else
+        xcall update_group(product_group)
+
+    call reset_ui
+
+    return
+
+cancel_record,
+
+    if (set_name.eq."DATA") then
+    begin
+        xcall release_group
+        call reset_ui
+    end
+    else
+        all_done = TRUE
+
+    return
+
+delete_record,
+
+    if (%find_product(product_group.name,1)) then
+        xcall info_message("You can't delete a product group which has products assigned!")
+    else
+    begin
+        if (%yesno("Delete product group "+%atrim(product_group.name)+"?"))
+        begin
+            xcall delete_group(product_group.name)
+            call reset_ui
+        end
+    end
+
+    return
+
+reset_ui,
+
+    xcall i_init(inpid,"ALL",product_group)
+    xcall i_enable(D_SET,inpid,"KEY")
+    xcall i_disable(D_SET,inpid,"DATA")
+    xcall m_disable(D_ENTRY,idc_inpopt,"O_DELETE")
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+    .endc
+    set_name="KEY"
+    clear create
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       products
+;
+;Description:   Maintain products
+;
+.subroutine products
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT" repository, record="product"
+
+stack record ivars
+    inpid           ,i4     ;Input window ID
+    all_done        ,i4     ;All finished, exit program
+    create          ,i4     ;Create a new product group?
+
+stack record avars
+    set_name        ,a4     ;Name of current set
+
+.proc
+
+    clear ^i(ivars), avars
+
+    xcall e_enter
+    xcall m_column(D_REMOVE,D_LOCAL,D_PLACE,idc_inpopt)
+
+    ;Load the input window
+    xcall i_ldinp(inpid,g_utlib,"PRODUCT",D_NOPLC)
+    xcall u_window(D_PLACE,inpid, 3,1)
+    set_name = "KEY"
+    xcall i_disable(D_SET,inpid,"DATA")
+
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall u_wndevents(D_ASSIGN,weclose,inpid)
+    xcall u_icon(D_ICONSET,APP_ICON,1,inpid)
+    ;Enable toolbar buttons
+    xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+    xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+    .endc
+
+    do
+    begin
+        xcall i_input(inpid,"ALL",product,idc_input,idc_select,,D_NOTERM)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("GOAMEND"),
+                call edit_record
+            ("GOCREATE"),
+                call create_record
+            ("O_DELETE"),
+                call delete_record
+            ("O_EXIT"),
+                all_done=TRUE
+            ("O_ABANDON"),
+                call cancel_record
+            endusing
+        end
+        else
+            call save_record
+
+    end
+    until all_done
+
+    xcall e_exit
+
+    xreturn
+
+create_record,
+
+    create=TRUE
+
+edit_record,
+
+    if (.not.create)
+    begin
+        xcall m_enable(D_ENTRY,idc_inpopt,"O_DELETE")
+        .ifdef D_GUI
+        xcall b_enable(inpid,"O_DELETE")
+        xcall tb_button(toolbar,TBB_ENABLE,"O_DELETE")
+        .endc
+    end
+    xcall i_next(inpid,(set_name="DATA"),"*FRST*")
+
+    xcall i_disable(D_SET,inpid,"KEY")
+    xcall i_enable(D_SET,inpid,"DATA")
+
+    return
+
+save_record,
+
+    if (create) then
+        xcall create_product(product)
+    else
+        xcall update_product(product)
+
+    call reset_ui
+
+    return
+
+cancel_record,
+
+    if (set_name.eq."DATA") then
+    begin
+        xcall release_product
+        call reset_ui
+    end
+    else
+        all_done = TRUE
+
+    return
+
+delete_record,
+
+    if (%yesno("Delete product " + %atrim(product.sku) + "?"))
+    begin
+        xcall delete_product(product.sku)
+        call reset_ui
+    end
+
+    return
+
+reset_ui,
+
+    xcall i_init(inpid,"ALL",product)
+    xcall i_enable(D_SET,inpid,"KEY")
+    xcall i_disable(D_SET,inpid,"DATA")
+    xcall m_disable(D_ENTRY,idc_inpopt,"O_DELETE")
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+    .endc
+    set_name="KEY"
+    clear create
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       customers
+;
+;Description:   Maintain customers
+;
+.subroutine customers
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository, stack record="customer"
+
+stack record ivars
+    inpid           ,[2]i4  ;Input window IDs
+    dspid           ,i4     ;display window address
+    tabid           ,i4     ;Tab set ID
+    all_done        ,i4     ;All finished, exit program
+    create          ,i4     ;Create a new product group?
+
+stack record avars
+    set_name        ,a4     ;Name of current set
+    address         ,a80    ;Full address
+    phone           ,a16    ;Full phone number
+    chr             ,a1     ;temp character
+
+.proc
+
+    clear ^i(ivars), avars, customer
+
+    xcall e_enter
+    xcall m_column(D_REMOVE,D_LOCAL,D_PLACE,idc_tabinpopt)
+
+    ;Load the input windows
+    xcall i_ldinp(inpid[1],g_utlib,"CUSTOMER1")
+    xcall i_ldinp(inpid[2],g_utlib,"CUSTOMER2")
+
+    ;Create the tab set
+    tabid = %ts_tabset(DTS_CREATE,"CUSTTAB",16,76)
+    xcall ts_tabset(DTS_WINDOW,tabid,inpid[1],
+    &               "customers_tab",,"Company details")
+    xcall ts_tabset(DTS_WINDOW,tabid,inpid[2],
+    &               "customers_tab",,"Financials")
+    xcall ts_tabset(DTS_DISABLE,tabid,2)
+
+    .ifdef D_GUI
+    xcall ts_tabset(DTS_BUTTON,tabid,
+    &               "O_SAVE",DSB_TEXT,"OK")
+    xcall ts_tabset(DTS_BUTTON,tabid,
+    &               "O_DELETE",DSB_TEXT,"Delete")
+    xcall b_disable(tabid,"O_DELETE")
+    xcall ts_tabset(DTS_BUTTON,tabid,
+    &               "O_ABANDON",DSB_TEXT,"Cancel")
+    xcall ts_tabset(DTS_BUTTONSET,tabid,,,DSB_END)
+    xcall u_wndevents(D_ASSIGN,weclose,tabid)
+    xcall u_icon(D_ICONSET,APP_ICON,1,tabid)
+    ;Enable toolbar buttons
+    xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+    xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+    .endc
+
+    xcall w_brdr(tabid,
+    &            WB_TITLE,"Customer Details",
+    &            WB_TPOS,WBT_TOP,WBT_CENTER,
+    &            WB_TATTR,ATTR_SET+ATTR_RVRS)
+
+    xcall u_window(D_PLACE,tabid,3,3)
+
+    set_name = "KEY"
+    xcall i_disable(D_SET,inpid,"DATA")
+
+    do
+    begin
+        xcall ts_process(tabid,customer)
+
+        if (g_select)
+        begin
+            using g_entnam select
+            ("GOAMEND"),
+                call edit_record
+            ("GOCREATE"),
+                call create_record
+            ("O_DELETE"),
+                call delete_record
+            ("O_EXIT"),
+                all_done=TRUE
+            ("O_SAVE"),
+                call save_record
+            ("O_ABANDON"),
+                call cancel_record
+            endusing
+        end
+
+    end
+    until all_done
+
+    xcall e_exit
+
+    xreturn
+
+create_record,
+
+    create=TRUE
+
+edit_record,
+
+    if (.not.create)
+    begin
+        xcall i_display(inpid[1],"ALL",customer)
+        xcall i_display(inpid[2],"ALL",customer)
+        xcall m_enable(D_ENTRY,idc_tabinpopt,"O_DELETE")
+        .ifdef D_GUI
+        xcall b_enable(tabid,"O_DELETE")
+        xcall tb_button(toolbar,TBB_ENABLE,"O_DELETE")
+        ;Display address on map
+        if (customer.country.eq."United States of America")
+        begin
+            xcall s_bld(address,,"%a,%a,%a,%a",
+            &           customer.street,
+            &           customer.city,
+            &           customer.region,
+            &           customer.postal_code)
+            xcall s_bld(phone,,"+%d (%d) %d",
+            &           customer.phone_country,
+            &           customer.phone_area,
+            &           customer.phone_number)
+        end
+        .endc
+    end
+    xcall ts_tabset(DTS_ENABLE,tabid,2)
+    xcall i_next(inpid[1],(set_name="DATA"),"*FRST*")
+    xcall i_next(inpid[2],,"*FRST*")
+
+    xcall i_disable(D_SET,inpid[1],"KEY")
+    xcall i_enable(D_SET,inpid[1],"DATA")
+
+    return
+
+save_record,
+
+    if (create) then
+        xcall create_customer(customer)
+    else
+        xcall update_customer(customer)
+
+    call reset_ui
+
+    return
+
+cancel_record,
+
+    if (set_name.eq."DATA") then
+    begin
+        xcall release_customer
+        call reset_ui
+    end
+    else
+        all_done = TRUE
+
+    return
+
+delete_record,
+
+    if (%find_user(customer.account,1)) then
+        xcall info_message("You can't delete a customer which has users assigned!")
+    else
+    begin
+        if (%yesno("Delete customer "+%atrim(customer.account)+"?"))
+        begin
+            xcall delete_customer(customer.account)
+            call reset_ui
+        end
+    end
+
+    return
+
+reset_ui,
+
+    xcall i_init(inpid[1],"ALL",customer)
+    xcall i_init(inpid[2],"ALL",customer)
+    xcall ts_tabset(DTS_ACTIVE,tabid,1)
+    xcall ts_tabset(DTS_DISABLE,tabid,2)
+    xcall m_disable(D_ENTRY,idc_tabinpopt,"O_DELETE")
+    .ifdef D_GUI
+    xcall b_disable(tabid,"O_DELETE")
+    xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+    .endc
+    set_name="KEY"
+    clear create
+
+    xcall i_enable(D_SET,inpid[1],"KEY")
+    xcall i_disable(D_SET,inpid[1],"DATA")
+
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       customers_tap
+;
+;Description:   Maintain customers tab input processor
+;
+.subroutine customers_tab
+
+    a_inpid         ,n
+    a_customer      ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.proc
+
+    repeat
+    begin
+        xcall i_input(a_inpid,"ALL",a_customer,
+        &             idc_input,idc_select,,D_NOTERM)
+        if (g_setsts) then
+            exitloop
+        else
+            xcall i_next(a_inpid,"ALL","*FRST*")
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       users
+;
+;Description:   Maintain users
+;
+.subroutine users
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "USER" repository, stack record="user"
+
+stack record ivars
+    inpid           ,i4     ;Input window ID
+    all_done        ,i4     ;All finished, exit program
+    create          ,i4     ;Create a new product group?
+
+stack record avars
+    set_name        ,a4     ;Name of current set
+
+.proc
+
+    clear ^i(ivars), avars, user
+
+    xcall e_enter
+    xcall m_column(D_REMOVE,D_LOCAL,D_PLACE,idc_inpopt)
+
+    ;Load the input window
+    xcall i_ldinp(inpid,g_utlib,"USER")
+    xcall u_window(D_PLACE,inpid,4,7)
+    set_name = "KEY"
+    xcall i_disable(D_SET,inpid,"DATA")
+
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall u_wndevents(D_ASSIGN,weclose,inpid)
+    xcall u_icon(D_ICONSET,APP_ICON,1,inpid)
+    ;Enable toolbar buttons
+    xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+    xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+    xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+    .endc
+
+    do
+    begin
+        xcall i_input(inpid,"ALL",user,idc_input,idc_select,,D_NOTERM)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("GOAMEND"),
+                call edit_record
+            ("GOCREATE"),
+                call create_record
+            ("O_DELETE"),
+                call delete_record
+            ("O_EXIT"),
+                all_done=TRUE
+            ("O_ABANDON"),
+                call cancel_record
+            endusing
+        end
+        else
+            call save_record
+
+    end
+    until all_done
+
+    xcall e_exit
+
+    xreturn
+
+create_record,
+
+    create=TRUE
+
+edit_record,
+
+    if (.not.create)
+    begin
+        xcall m_enable(D_ENTRY,idc_inpopt,"O_DELETE")
+        .ifdef D_GUI
+        xcall b_enable(inpid,"O_DELETE")
+        xcall tb_button(toolbar,TBB_ENABLE,"O_DELETE")
+        .endc
+    end
+    xcall i_next(inpid,(set_name="DATA"),"*FRST*")
+
+    xcall i_disable(D_SET,inpid,"KEY")
+    xcall i_enable(D_SET,inpid,"DATA")
+
+    return
+
+save_record,
+
+    if (create) then
+        xcall create_user(user)
+    else
+        xcall update_user(user)
+
+    call reset_ui
+
+    return
+
+cancel_record,
+
+    if (set_name.eq."DATA") then
+    begin
+        xcall release_user
+        call reset_ui
+    end
+    else
+        all_done = TRUE
+
+    return
+
+delete_record,
+
+    if (%yesno("Delete user " + %atrim(user.username) + "?"))
+    begin
+        xcall delete_user(user.username)
+        call reset_ui
+    end
+
+    return
+
+reset_ui,
+
+    xcall i_init(inpid,"ALL",user)
+    xcall i_enable(D_SET,inpid,"KEY")
+    xcall i_disable(D_SET,inpid,"DATA")
+    xcall m_disable(D_ENTRY,idc_inpopt,"O_DELETE")
+    .ifdef D_GUI
+    xcall b_disable(inpid,"O_DELETE")
+    xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+    .endc
+    set_name="KEY"
+    clear create
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       order_entry
+;
+;Description:   Order entry
+;
+.subroutine order_entry
+
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository, stack record="customer_record"
+
+.include "ORDER_HEADER" repository, stack record="oheader"
+.include "ORDER_LINE" repository, structure="odetail"
+
+.align
+stack record ivars
+    ohinpwnd        ,i4
+    error           ,i4
+    ok              ,i4
+    odetail_handle  ,i4     ;Handle of ORDER_LINE records
+    odetail_count   ,i4     ;Number of ORDER_LINE records
+    count           ,i4     ;Generic loop counter
+    cc_inpid        ,i4
+
+stack record avars
+    datetime        ,a20
+    today           ,d8@datetime
+    ;
+    sms_number      ,a20
+
+stack record cc_details
+    card_number         ,d16
+    expiry_month        ,d2
+    expiry_year         ,d4
+
+
+.proc
+
+    clear ^i(ivars), oheader
+    ok = TRUE
+
+    xcall e_enter
+    xcall m_column(D_REMOVE,D_LOCAL,D_PLACE,idc_inpopt)
+
+    ;Load the input window
+    xcall i_ldinp(ohinpwnd,g_utlib,"ORDER",D_NOPLC,,error)
+    if (error)
+    begin
+        xcall error_message("Failed to load input window ORDER")
+        ok = FALSE
+    end
+
+    ;Process the input window
+    if (ok)
+    begin
+        xcall i_disable(D_FLDS,ohinpwnd,"GIFT_MESSAGE")
+        .ifdef D_GUI
+        xcall u_wndevents(D_ASSIGN,weclose,ohinpwnd)
+        xcall u_icon(D_ICONSET,APP_ICON,1,ohinpwnd)
+        ;Enable toolbar buttons
+        xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+        xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+        xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+        xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+        .endc
+        xcall u_window(D_PLACE,ohinpwnd,1,1)
+        repeat
+        begin
+            xcall i_input(ohinpwnd,,oheader,idc_input,idc_select,,D_NOTERM)
+            if (g_setsts) then
+            begin
+                using g_entnam select
+                ("O_ABANDON"),
+                    exitloop
+                endusing
+            end
+            else
+            begin
+                ;If we have order lines, save the order
+                if (%order_detail(odetail_handle))
+                    call save_order
+                ;And setup for the next order
+                xcall i_init(ohinpwnd,,oheader)
+            end
+        end
+    end
+
+    xcall e_exit
+
+    xreturn
+
+save_order,
+
+    ;How many order detail records to process?
+    odetail_count = (%mem_proc(DM_GETSIZE,odetail_handle)/^size(odetail))
+
+    ;Fill out remainder of order header record
+    datetime = %datetime
+    oheader.order_date = today
+    oheader.ship_date = today
+    oheader.delivery_date = today
+    oheader.status = "O"
+
+    ;Get the order totals from the detail records
+    for count from 1 thru odetail_count
+    begin
+        oheader.goods_value += ^m(odetail[count].line_value,odetail_handle)
+        oheader.tax_value += ^m(odetail[count].tax,odetail_handle)
+        oheader.shipping_value += ^m(odetail[count].qty_ordered,odetail_handle)
+    end
+
+    xcall i_display(ohinpwnd,"ALL",oheader)
+
+    if (%yesno("Save this order?",,D_MDEFBUTTON1))
+    begin
+        if (%order_save(oheader,odetail_count,odetail_handle)) then
+        begin
+            xcall info_message("Your order number is " + %string(oheader.order),"Order Created")
+        end
+        else
+            xcall error_message("Failed to save order!")
+    end
+
+    ;Release the order details memory
+    odetail_handle = %mem_proc(DM_FREE,odetail_handle)
+
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       order_detail
+;
+;Description:   Enter order details
+;
+.function order_detail, ^val
+
+    a_odetail_handle    ,n  ;Handle for order detail records
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.ifdef D_GUI
+.include "DBLDIR:activex.def"
+stack record
+    axid          ,i4   ;ActiveX Control ID
+.endc
+
+.include "ORDER_LINE" repository, structure="odetail"
+
+.align
+stack record ivars
+    inpwnd      ,i4
+    lstinpwnd   ,i4
+    lstcls      ,i4
+    lstid       ,i4
+    error       ,i4
+    ok          ,i4
+    req         ,i4
+    modify      ,i4
+    itemcount   ,i4
+    idc_ordopt  ,i4
+    count       ,i4
+
+stack record avars
+    inprec      ,a^size(odetail)
+    listrec     ,a^size(odetail)
+
+.proc
+
+    clear ^i(ivars), avars
+    ok = TRUE
+
+    xcall e_enter
+
+    ;Remove the input options column and replace it with the order options column
+    xcall m_column(D_REMOVE,idc_inpopt)
+    xcall m_ldcol(idc_ordopt,g_utlib,"ORDOPT",,,error)
+    if (error)
+    begin
+        xcall error_message("Failed to load menu column ORDOPT")
+        ok = FALSE
+    end
+
+    ;Load input window
+    if (ok)
+    begin
+        xcall i_ldinp(inpwnd,g_utlib,"ORDLINE",D_NOPLC,,error)
+        if (error) then
+        begin
+            xcall error_message("Failed to load input window ORDLINE")
+            ok = FALSE
+        end
+        else
+        begin
+            xcall u_window(D_PLACE,inpwnd,2,2)
+            .ifdef D_GUI
+            xcall b_disable(inpwnd,"O_SAVE")
+            xcall u_wndevents(D_ASSIGN,weclose,inpwnd)
+            xcall u_icon(D_ICONSET,APP_ICON,1,inpwnd)
+            .endc
+        end
+    end
+
+    ;Load list input window
+    if (ok)
+    begin
+        xcall i_ldinp(lstinpwnd,g_utlib,"ORDLINELST",D_NOPLC,,error)
+        if (error)
+        begin
+            xcall error_message("Failed to load input window ORDLINELST")
+            ok = FALSE
+        end
+    end
+
+    ;Create list class
+    if (ok)
+    begin
+        xcall l_class(lstcls,"ODLIST",7,3,12,1,
+        &             ,,,,,,"NOBAR,ACTIVEX",error)
+        if (error)
+        begin
+            xcall error_message("Failed to create list class ODLIST")
+            ok = FALSE
+        end
+    end
+
+    ;Create list
+    if (ok)
+    begin
+        xcall l_create(lstid,lstinpwnd,listrec,,
+        &              "ODLIST",,,,,,,error)
+        if (error) then
+        begin
+            xcall error_message("Failed to create list ODLIST")
+            ok = FALSE
+        end
+        else
+        begin
+            ;Remove list border
+            xcall l_border(lstid,D_OFF)
+            ;Set list headers
+            .ifdef D_GUI
+            xcall l_sect(lstid,"Product|Description|Qty|")
+            xcall l_status(lstid,D_LAXCTRL,axid)
+            xcall ax_set(axid,"LightItemColor",RGB_VALUE(255,255,180))
+            xcall ax_set(axid,"RowMode",1)
+            xcall ax_set(axid,"SelBackColor",RGB_VALUE(0,0,180))
+            xcall slave_window(inpwnd,lstid,1)
+            .else
+            xcall l_sect(lstid,"Product     Description                                               Qty")
+            .endc
+            ;Get the list up and running
+            xcall l_process(lstid,req=D_LNOP,listrec)
+            if (req.eq.D_LLOADBOT)
+                xcall l_process(lstid,req=D_LEOF,listrec)
+        end
+    end
+
+    ;Main processing
+    if (ok)
+    begin
+        clear inprec
+        repeat
+        begin
+            if (.not.modify) then
+            begin
+                ;Process the input window
+                xcall m_disable(D_ENTRY,idc_ordopt,"O_DELETE")
+                .ifdef D_GUI
+                ;Reconfigure toolbar buttons
+                xcall tb_button(toolbar,TBB_ENABLE,"E_CUT")
+                xcall tb_button(toolbar,TBB_ENABLE,"E_COPY")
+                xcall tb_button(toolbar,TBB_ENABLE,"E_PASTE")
+                xcall tb_button(toolbar,TBB_ENABLE,"I_DRILL")
+                xcall tb_button(toolbar,TBB_DISABLE,"O_DELETE")
+                .endc
+                xcall i_input(inpwnd,,inprec,idc_input,
+                &             idc_select,,D_NOTERM)
+                if (g_setsts) then
+                begin
+                    using g_entnam select
+                    ("O_SAVE"),
+                    begin
+                        call extract_items
+                        exitloop
+                    end
+                    ("O_ABANDON"),
+                    begin
+                        if (%yesno("Cancel this order?"))
+                        begin
+                            ok = FALSE
+                            exitloop
+                        end
+                    end
+                    ("O_SWITCH"),
+                        modify = itemcount
+                    endusing
+                end
+                else
+                begin
+                    call insert_item
+                    xcall i_init(inpwnd,,inprec)
+                end
+            end
+            else
+            begin
+                ;Process the list
+                xcall m_enable(D_ENTRY,idc_ordopt,"O_DELETE")
+                .ifdef D_GUI
+                ;Reconfigure toolbar buttons
+                xcall tb_button(toolbar,TBB_DISABLE,"E_CUT")
+                xcall tb_button(toolbar,TBB_DISABLE,"E_COPY")
+                xcall tb_button(toolbar,TBB_DISABLE,"E_PASTE")
+                xcall tb_button(toolbar,TBB_DISABLE,"I_DRILL")
+                xcall tb_button(toolbar,TBB_ENABLE,"O_DELETE")
+                .endc
+                xcall l_select(lstid,req=D_LNOP,listrec,,,,,,idc_list)
+                if (g_select) then
+                begin
+                    using g_entnam select
+                    ("O_SAVE"),
+                    begin
+                        call extract_items
+                        exitloop
+                    end
+                    ("O_ABANDON"),
+                    begin
+                        if (%yesno("Cancel this order?"))
+                        begin
+                            ok = FALSE
+                            exitloop
+                        end
+                    end
+                    ("O_DELETE"),
+                        call remove_item
+                    ("O_SWITCH"),
+                        clear modify
+                    endusing
+                end
+                else
+                begin
+                    nop
+                end
+            end
+
+        end
+    end
+
+    xcall e_exit
+
+    freturn ok
+
+insert_item,
+
+    xcall l_queue(lstid,D_LBOTTOM)
+    xcall l_process(lstid,req=D_LAPPEND,listrec)
+
+    ^m(odetail.line_value,inprec) = ^m(odetail.qty_ordered,inprec) * ^m(odetail.price,inprec)
+    ^m(odetail.tax,inprec) = ((^m(odetail.line_value,inprec)/100)*D_SALES_TAX)
+
+    xcall i_display(lstinpwnd,,listrec=inprec)
+    xcall l_process(lstid,req=D_LNOP,listrec)
+
+    if ((itemcount+=1).eq.1)
+    begin
+        xcall m_enable(D_ENTRY,idc_ordopt,"O_SWITCH")
+        xcall m_enable(D_ENTRY,idc_ordopt,"O_SAVE")
+        .ifdef D_GUI
+        xcall b_enable(inpwnd,"O_SAVE")
+        .endc
+    end
+
+    return
+
+remove_item,
+
+    if (%yesno("Delete this item from the order?"))
+    begin
+        xcall l_process(lstid,req=D_LDELITEM,listrec)
+        if (.not.(modify=(itemcount-=1)))
+        begin
+            xcall m_disable(D_ENTRY,idc_ordopt,"O_SWITCH")
+            xcall m_disable(D_ENTRY,idc_ordopt,"O_SAVE")
+            .ifdef D_GUI
+            xcall b_disable(inpwnd,"O_SAVE")
+            .endc
+        end
+    end
+
+    return
+
+extract_items,
+
+    a_odetail_handle = %mem_proc(DM_ALLOC|DM_BLANK|DM_STATIC,^size(odetail)*itemcount)
+
+    clear count
+    xcall l_data(lstid,D_LFIRST,lstinpwnd,listrec,,error)
+    while (.not.error)
+    begin
+        ^m(odetail[count+=1],a_odetail_handle) = listrec
+        xcall l_data(lstid,D_LNEXT,lstinpwnd,listrec,,error)
+    end
+
+
+    return
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_customer
+;
+;Description:   Change method for customer account (general use)
+;
+.function change_customer ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository, stack record="tmpcustomer"
+
+.align
+stack record
+    sts                 ,i4
+
+.proc
+
+    if ((sts=a_pending_status).eq.D_OK)
+    begin
+        if (.not.%find_customer(a_data_entered,tmpcustomer))
+        begin
+            xcall info_message("Customer account not found!")
+            sts = D_EMITTEDERR
+        end
+    end
+
+    freturn sts
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_customer_maint
+;
+;Description:   Change method for customer account (maintenance program)
+;
+.function change_customer_maint ,^val ,reentrant
+
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository, stack record="customer"
+
+.align
+stack record
+    sts                 ,i4
+
+.proc
+
+    if ((sts=a_pending_status).eq.D_OK)
+    begin
+        customer.account=a_data_entered
+        if (%get_customer(customer,1)) then
+        begin
+            a_inprec=customer
+            xcall m_signal("GOAMEND")
+        end
+        else
+        begin
+            if (%yesno("Create a new customer?")) then
+                xcall m_signal("GOCREATE")
+            else
+                sts = D_EMITTEDERR
+        end
+    end
+
+    freturn sts
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_customer_status
+;
+;Description:   Change method for customer status (maintenance program)
+;
+.function change_customer_status ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    .include "CUSTOMER" repository, group="a_inprec" ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.align
+stack record
+    datetime    ,a20
+    date        ,d8 @ datetime
+
+.proc
+
+    datetime = %datetime
+
+    using ^d(a_data_stored) select
+    (0),    ;Active
+      begin
+          xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_HOLD",0)
+          xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_CLOSED",0)
+      end
+    (1),    ;Credit hold
+      begin
+          xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_HOLD",date)
+          xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_CLOSED",0)
+      end
+    (2),    ;Inactive
+    begin
+        xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_HOLD",0)
+        xcall i_putfld(inp_wndid,"ALL",a_inprec,"DATE_CLOSED",date)
+    end
+    endusing
+
+    freturn D_OK
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_gift_wrap
+;
+;Description:   Change method for gift wrap field
+;
+.function change_gift_wrap ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.proc
+
+    if (a_data_entered.eq.g_chk_char) then
+    begin
+        xcall i_enable(D_FLDS,inp_wndid,"GIFT_MESSAGE")
+        xcall i_next(inp_wndid,,"GIFT_MESSAGE")
+    end
+    else
+    begin
+        xcall i_disable(D_FLDS,inp_wndid,"GIFT_MESSAGE")
+        xcall i_putfld(inp_wndid,,a_inprec,"GIFT_MESSAGE","")
+    end
+
+    freturn D_OK
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_product_group
+;
+;Description:   Change method for product group (general use)
+;
+.function change_product_group ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+        if (.not.%find_group(a_data_entered))
+        begin
+            xcall info_message("Product group not found!")
+            status = D_EMITTEDERR
+        end
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_product_group_maint
+;
+;Description:   Change method for product group (maintenance program)
+;
+.function change_product_group_maint ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT_GROUP" repository, stack record="product_group"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+        product_group.name = a_data_entered
+        if (%get_group(product_group,1)) then
+        begin
+            xcall i_display(inp_wndid,"ALL",(a_inprec=product_group))
+            xcall m_signal("GOAMEND")
+        end
+        else
+        begin
+            if (%yesno("Create a new product group?")) then
+                xcall m_signal("GOCREATE")
+            else
+                status = D_EMITTEDERR
+        end
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_sku_ordent
+;
+;Description:   Change method for sku (order entry program)
+;
+.function change_sku_ordent ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT" repository, stack record="product"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+        product.sku = a_data_entered
+        if (%get_product(product)) then
+        begin
+            xcall i_putfld(inp_wndid,,a_inprec,"DESCRIPTION",product.description)
+            xcall i_putfld(inp_wndid,,a_inprec,"PRICE",product.selling_price)
+        end
+        else
+        begin
+            xcall info_message("Product not found!")
+            status = D_EMITTEDERR
+        end
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_sku_maint
+;
+;Description:   Change method for sku (maintenance program)
+;
+.function change_sku_maint ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT" repository, stack record="product"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+        product.sku = a_data_entered
+        if (%get_product(product,1)) then
+        begin
+            xcall i_display(inp_wndid,"ALL",(a_inprec=product))
+            xcall m_signal("GOAMEND")
+        end
+        else
+        begin
+            if (%yesno("Create a new product?")) then
+                xcall m_signal("GOCREATE")
+            else
+                status = D_EMITTEDERR
+        end
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_state
+;
+;Description:   Change method for state
+;
+.function change_state ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.align
+stack record
+    status              ,i4
+
+literal
+    states  ,a* ,"AL,AK,AZ,AR,CA,CO,CT,DE,DC,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,"
+    &            "ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,"
+    &            "PA,PR,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,"
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+        ;If the region is 2 characters in length then assume it's a US state
+        ;and validate it
+        if (%trimz(a_data_stored).eq.2)
+        begin
+            if (.not.%instr(1,states,a_data_stored(1:2)+","))
+            begin
+                xcall info_message("Invalid state")
+                status = D_EMITTEDERR
+            end
+        end
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_country
+;
+;Description:   Change method for country name
+;
+.function change_country ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    using a_data_stored select
+    ("United Kingdom"),
+        xcall i_putfld(inp_wndid,,a_inprec,"PHONE_COUNTRY",44)
+    (),
+        xcall i_putfld(inp_wndid,,a_inprec,"PHONE_COUNTRY",1)
+    endusing
+
+    freturn D_OK
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       change_username_maint
+;
+;Description:   Change method for username (maintenance program)
+;
+.function change_username_maint ,^val ,reentrant
+
+    ;Arguments
+    a_data_entered      ,a      ;Data as entered by the user.
+    a_data_stored       ,a      ;Data as stroed in variable
+    a_pending_status    ,n      ;Result of Toolkit's field validations.
+    .include "WND:inpinf.def"   ;Input information structure
+    a_inprec            ,a      ;Input data area
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "USER" repository, stack record="user"
+
+.align
+stack record
+    status              ,i4
+
+.proc
+
+    if ((status=a_pending_status).eq.D_OK)
+    begin
+
+        user.username = a_data_entered
+        if (%get_user(user,1)) then
+        begin
+            xcall i_display(inp_wndid,"ALL",(a_inprec=user))
+            xcall m_signal("GOAMEND")
+        end
+        else
+        begin
+            if (%yesno("Create a new user?")) then
+                xcall m_signal("GOCREATE")
+            else
+                status = D_EMITTEDERR
+        end
+
+    end
+
+    freturn status
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_customer
+;
+;Description:   Drill method for customers
+;
+.subroutine drill_customer ,reentrant
+
+    .include "WND:inpinf.def"
+    a_inprec        ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository, stack record="customer"
+
+stack record ivars
+    inpid           ,i4     ;List input window
+    lstcls          ,i4     ;List class
+    lstid           ,i4     ;List ID
+    req             ,i4     ;List processor request
+
+.proc
+
+    xcall e_enter
+
+    xcall i_ldinp(inpid,g_utlib,"CUSLST",D_NOPLC)
+    xcall l_class(lstcls,"CLDRILL",5,12,10,1,,,,,,
+    &             "drill_customer_load","ACTIVEX")
+    xcall l_create(lstid,inpid,customer,,"CLDRILL")
+
+    .ifdef D_GUI
+    xcall windows_list(lstid)
+    .endc
+
+    .ifdef D_GUI
+    xcall l_sect(lstid,"Account|Company Name|",D_HEADER)
+    .else
+    xcall l_sect(lstid,"Account   Company Name",D_HEADER)
+    .endc
+
+    repeat
+    begin
+        xcall l_select(lstid,req=D_LNOP,customer,,,,,,idc_list)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("I_OK"),
+            begin
+                xcall i_force(customer.account)
+                exitloop
+            end
+            ("O_EXIT","O_ABANDON"),
+                exitloop
+            endusing
+        end
+        else
+        begin
+            xcall i_force(customer.account)
+            exitloop
+        end
+
+    end
+
+    xcall e_exit
+    clear g_select
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_customer_load
+;
+;Description:   Load method for customer list
+;
+.subroutine drill_customer_load
+
+    a_listid    ,n  ;List id
+    a_req       ,n  ;Request flag
+    a_data      ,a  ;Item data
+    a_inpid     ,n  ;Input window id
+    a_disable   ,n  ;(Optional) Disable flag
+    a_index     ,n  ;Loading index
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "CUSTOMER" repository,  static record = "customer"
+
+.proc
+
+    if ((a_index.eq.1) .and. (.not.%find_customer(, customer)))
+        a_req = D_LEOF
+
+    if (a_req.ne.D_LEOF)
+    begin
+        if (%get_next_customer(customer)) then
+            xcall i_display(a_inpid,,a_data = customer)
+        else
+            a_req = D_LEOF
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_product_group
+;
+;Description:   Drill method
+;
+.subroutine drill_product_group ,reentrant
+
+    .include "WND:inpinf.def"
+    a_inprec        ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT_GROUP" repository, stack record="product_group"
+
+stack record ivars
+    inpid           ,i4     ;List input window
+    lstcls          ,i4     ;List class
+    lstid           ,i4     ;List ID
+    req             ,i4     ;List processor request
+
+.proc
+
+    xcall e_enter
+
+    xcall i_ldinp(inpid,g_utlib,"PRDGRPLST",D_NOPLC)
+    xcall l_class(lstcls,"PGDRILL",5,12,10,1,,,,,,
+    &             "drill_product_group_load","ACTIVEX")
+    xcall l_create(lstid,inpid,product_group,,"PGDRILL")
+
+    xcall windows_list(lstid)
+
+    .ifdef D_GUI
+    xcall l_sect(lstid,"Group|Description|",D_HEADER)
+    .else
+    xcall l_sect(lstid,"Group       Description",D_HEADER)
+    .endc
+
+    repeat
+    begin
+        xcall l_select(lstid,req=D_LNOP,product_group,,,,,,idc_list)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("I_OK"),
+             begin
+                 xcall i_force(product_group.name)
+                 exitloop
+             end
+            ("O_EXIT","O_ABANDON"),
+                exitloop
+            endusing
+        end
+        else
+        begin
+            xcall i_force(product_group.name)
+            exitloop
+        end
+
+    end
+
+    xcall e_exit
+    clear g_select
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_product_group_load
+;
+;Description:   Load method for product group list
+;
+.subroutine drill_product_group_load
+
+    a_listid    ,n  ;List id
+    a_req       ,n  ;Request flag
+    a_data      ,a  ;Item data
+    a_inpid     ,n  ;Input window id
+    a_disable   ,n  ;(Optional) Disable flag
+    a_index     ,n  ;Loading index
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT_GROUP" repository, static record = "product_group"
+
+.proc
+
+    if ((a_index.eq.1) .and. (.not.%find_group(, product_group)))
+        a_req = D_LEOF
+
+    if (a_req.ne.D_LEOF)
+    begin
+        if (%get_next_group(product_group)) then
+            xcall i_display(a_inpid,,a_data = product_group)
+        else
+            a_req = D_LEOF
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_sku
+;
+;Description:   Drill method for product SKU
+;
+.subroutine drill_sku ,reentrant
+
+    .include "WND:inpinf.def"
+    a_inprec        ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT" repository, stack record="product"
+
+stack record ivars
+    inpid           ,i4     ;List input window
+    lstcls          ,i4     ;List class
+    lstid           ,i4     ;List ID
+    req             ,i4     ;List processor request
+
+.proc
+
+    xcall e_enter
+
+    xcall i_ldinp(inpid,g_utlib,"PRDLST",D_NOPLC)
+    xcall l_class(lstcls,"PRDRILL",4,5,15,1,,,,,,
+    &             "drill_sku_load","ACTIVEX")
+    xcall l_create(lstid,inpid,product,,"PRDRILL")
+
+    .ifdef D_GUI
+    xcall windows_list(lstid)
+    .endc
+
+    .ifdef D_GUI
+    xcall l_sect(lstid,"Product|Group|Description|",D_HEADER)
+    .else
+    xcall l_sect(lstid,"Product     Group       Description",D_HEADER)
+    .endc
+
+    repeat
+    begin
+        xcall l_select(lstid,req=D_LNOP,product,,,,,,idc_list)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("I_OK"),
+             begin
+                 xcall i_force(product.sku)
+                 exitloop
+             end
+            ("O_EXIT","O_ABANDON"),
+                exitloop
+            endusing
+        end
+        else
+        begin
+            xcall i_force(product.sku)
+            exitloop
+        end
+
+    end
+
+    xcall e_exit
+    clear g_select
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_sku_load
+;
+;Description:   Load method for product list
+;
+.subroutine drill_sku_load
+
+    a_listid    ,n  ;List id
+    a_req       ,n  ;Request flag
+    a_data      ,a  ;Item data
+    a_inpid     ,n  ;Input window id
+    a_disable   ,n  ;(Optional) Disable flag
+    a_index     ,n  ;Loading index
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "PRODUCT" repository, static record = "product"
+
+.proc
+
+    if ((a_index.eq.1) .and. (.not.%find_product(,, product)))
+        a_req = D_LEOF
+
+    if (a_req.ne.D_LEOF)
+    begin
+        if (%get_next_product(product)) then
+            xcall i_display(a_inpid,,a_data = product)
+        else
+            a_req = D_LEOF
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_state
+;
+;Description:   Drill method for state code
+;
+.subroutine drill_state ,reentrant
+
+    .include "WND:inpinf.def"
+    a_inprec        ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+stack record state
+    code            ,a2     ;State code
+    name            ,a20    ;State name
+
+stack record ivars
+    bldid           ,i4     ;Input window build ID
+    inpid           ,i4     ;List input window
+    lstcls          ,i4     ;List class
+    lstid           ,i4     ;List ID
+    req             ,i4     ;List processor request
+
+.proc
+
+    xcall e_enter
+
+    xcall ib_input(bldid,"STATELST",1,23)
+    xcall ib_field(bldid,   "CODE",
+    &                       D_FLD_TYPE  ,D_ALPHA,
+    &                       D_FLD_SIZE  ,2,
+    &                       D_FLD_FPOS  ,1,1)
+    xcall ib_field(bldid,   "NAME",
+    &                       D_FLD_TYPE  ,D_ALPHA,
+    &                       D_FLD_SIZE  ,20,
+    &                       D_FLD_FPOS  ,1,4)
+    xcall ib_end(bldid,inpid)
+
+    xcall l_class(lstcls,"STDRILL",6,10,15,,,,,,,
+    &             "drill_state_load","ACTIVEX")
+    xcall l_create(lstid,inpid,state,,"STDRILL")
+
+    .ifdef D_GUI
+    xcall windows_list(lstid)
+    xcall l_sect(lstid,"State|Name|",D_HEADER)
+    xcall windows_list(lstid)
+    .endc
+
+    xcall l_sect(lstid,"US States",D_TITLE)
+
+    repeat
+    begin
+        xcall l_select(lstid,req=D_LNOP,state,,,,,,idc_list)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("I_OK"),
+             begin
+                 xcall i_force(state.code)
+                 exitloop
+             end
+            ("O_EXIT","O_ABANDON"),
+                exitloop
+            endusing
+        end
+        else
+        begin
+            xcall i_force(state.code)
+            exitloop
+        end
+
+    end
+
+    xcall e_exit
+    clear g_select
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_state_load
+;
+;Description:   Load method for state list
+;
+.subroutine drill_state_load
+
+    a_listid    ,n  ;List id
+    a_req       ,n  ;Request flag
+    group a_data,a  ;Item data
+      code      ,a2
+      name      ,a20
+    endgroup
+    a_inpid     ,n  ;Input window id
+    a_disable   ,n  ;(Optional) Disable flag
+    a_index     ,n  ;Loading index
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+literal state
+    code    ,52a2,  "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA",
+            &       "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA",
+            &       "MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY",
+            &       "NC","ND","OH","OK","OR","PA","PR","RI","SC","SD","TN",
+            &       "TX","UT","VT","VA","WA","WV","WI","WY"
+    name    ,10a20, "ALABAMA","ALASKA","ARIZONA","ARKANSAS","CALIFORNIA",
+            &       "COLORADO","CONNECTICUT","DELAWARE","DISTRICT OF COLUMBIA",
+            &       "FLORIDA"
+            ,10a20, "GEORGIA","HAWAII","IDAHO","ILLINOIS","INDIANA",
+            &       "IOWA","KANSAS","KENTUCKY","LOUISIANA","MAINE"
+            ,10a20, "MARYLAND","MASSACHUSETTS","MICHIGAN","MINNESOTA",
+            &       "MISSISSIPPI","MISSOURI","MONTANA","NEBRASKA","NEVADA",
+            &       "NEW HAMPSHIRE"
+            ,10a20, "NEW JERSEY","NEW MEXICO","NEW YORK","NORTH CAROLINA",
+            &       "NORTH DAKOTA","OHIO","OKLAHOMA","OREGON","PENNSYLVANIA",
+            &       "PUERTO RICO"
+            ,10a20, "RHODE ISLAND","SOUTH CAROLINA","SOUTH DAKOTA","TENNESSEE",
+            &       "TEXAS","UTAH","VERMONT","VIRGINIA","WASHINGTON",
+            &       "WEST VIRGINIA"
+            ,2a20,  "WISCONSIN","WYOMING"
+
+.proc
+
+    if (a_index.le.52) then
+    begin
+        a_data.code = state.code(a_index)
+        a_data.name = state.name(a_index)
+        xcall i_display(a_inpid,,a_data)
+    end
+    else
+        a_req = D_LEOF
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_username
+;
+;Description:   Drill method for username
+;
+.subroutine drill_username ,reentrant
+
+    .include "WND:inpinf.def"
+    a_inprec        ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "USER" repository, stack record="user"
+
+stack record ivars
+    inpid           ,i4     ;List input window
+    lstcls          ,i4     ;List class
+    lstid           ,i4     ;List ID
+    req             ,i4     ;List processor request
+
+.proc
+
+    xcall e_enter
+
+    xcall i_ldinp(inpid,g_utlib,"USERLST",D_NOPLC)
+    xcall l_class(lstcls,"USDRILL",6,10,15,1,,,,,,
+    &             "drill_username_load","ACTIVEX")
+    xcall l_create(lstid,inpid,user,,"USDRILL")
+
+    .ifdef D_GUI
+    xcall windows_list(lstid)
+    xcall l_sect(lstid,"Username|Last Name|Company|",D_HEADER)
+    .else
+    xcall l_sect(lstid,"Username              Last Name             Company",D_HEADER)
+    .endc
+
+    repeat
+    begin
+        xcall l_select(lstid,req=D_LNOP,user,,,,,,idc_list)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("I_OK"),
+             begin
+                 xcall i_force(user.username)
+                 exitloop
+             end
+            ("O_EXIT","O_ABANDON"),
+                exitloop
+            endusing
+        end
+        else
+        begin
+            xcall i_force(user.username)
+            exitloop
+        end
+
+    end
+
+    xcall e_exit
+    clear g_select
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       drill_username_load
+;
+;Description:   Load method for user list
+;
+.subroutine drill_username_load
+
+    a_listid    ,n  ;List id
+    a_req       ,n  ;Request flag
+    a_data      ,a  ;Item data
+    a_inpid     ,n  ;Input window id
+    a_disable   ,n  ;(Optional) Disable flag
+    a_index     ,n  ;Loading index
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "user" repository, static record = "user"
+
+.proc
+
+    if ((a_index.eq.1) .and. (.not.%find_user(,, user)))
+        a_req = D_LEOF
+
+    if (a_req.ne.D_LEOF)
+    begin
+        if (%get_next_user(user)) then
+            xcall i_display(a_inpid,,a_data = user)
+        else
+            a_req = D_LEOF
+    end
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       info_message
+;
+;Description:   Display an information message
+;
+.subroutine info_message
+
+    a_message   ,a
+    a_title     ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+stack record avars
+    title       ,a40
+
+.proc
+
+    if (^passed(a_title) .and. a_title) then
+        title = a_title
+    else
+        title = "Information"
+
+    xcall u_msgbox(%atrim(a_message),
+    &              D_MOK|D_MICONINFO|D_MCENTER,
+    &              %atrim(title))
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       error_message
+;
+;Description:   Display an error message
+;
+.subroutine error_message
+
+    a_message   ,a
+    a_title     ,a
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+stack record avars
+    title       ,a40
+
+.proc
+
+    if (^passed(a_title) .and. a_title) then
+        title = a_title
+    else
+        title = "Error"
+
+    xcall u_msgbox(%atrim(a_message),
+    &              D_MOK|D_MICONEXCLAM|D_MCENTER,
+    &              %atrim(title))
+
+    xreturn
+
+.end
+
+;-------------------------------------------------------------------------------
+;Routine:       yesno
+;
+;Description:   Ask a yes/no question
+;
+.function yesno, ^val
+
+    a_message   ,a
+    a_title     ,a
+    a_default   ,n
+    ;End of argument list
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+stack record ivars
+    yesno       ,i4
+    default     ,i4
+    option      ,i4
+
+stack record avars
+    title       ,a40
+
+.proc
+
+    if (^passed(a_title) .and. a_title) then
+        title = a_title
+    else
+        title = "Confirm"
+
+    if (^passed(a_default)) then
+        default = a_default
+    else
+        default = D_MDEFBUTTON2
+
+    option = %u_msgbox(%atrim(a_message),
+    &       D_MYESNO|default|D_MICONQUESTION|D_MCENTER,
+    &       %atrim(title),idc_select)
+
+    using option select
+    (D_MIDYES),
+        yesno = TRUE
+    (D_MIDNO),
+        yesno = FALSE
+    endusing
+
+    freturn yesno
+
+.end
+
+;-----------------------------------------------------
+
+.ifdef D_GUI
+.subroutine windows_list
+
+    lid        ,n     ;List ID
+
+.define TKAPP_INCLUDE
+.include "SRC:tkapp.dbl"
+
+.include "DBLDIR:activex.def"
+
+stack record
+    axid          ,i4   ;ActiveX Control ID
+
+.proc
+
+    xcall l_button(lid,DSB_ADD,"I_OK",DSB_TEXT,"OK")
+    xcall l_button(lid,DSB_ADD,"O_ABANDON",DSB_TEXT,"Cancel")
+    xcall l_buttonset(lid,,,DSB_END)
+
+    xcall l_status(lid,D_LAXCTRL,axid)
+    xcall ax_set(axid,"LightItemColor",RGB_VALUE(255,255,180))
+    xcall ax_set(axid,"RowMode",1)
+    xcall ax_set(axid,"SelBackColor",RGB_VALUE(0,0,180))
+
+    xcall l_method(lid,D_LWNDEVENT,weclose)
+    xcall l_icon(lid,APP_ICON,1)
+
+    xreturn
+
+.end
+.endc
+
+;-----------------------------------------------------
+
+.ifdef D_GUI
+.subroutine slave_window
+    a_parent         ,n    ;Parent window to slave to
+    a_child          ,n    ;Child window (or list)
+    a_child_is_list  ,n    ;Is the child a list?
+
+.include "WND:windows.def"
+
+    stack record ivars
+    user32           ,i4   ;DLL handle
+    hparent          ,i4   ;Windows handle to parent
+    hchild           ,i4   ;Windows handle to child
+    container        ,i4   ;List container ID
+
+.proc
+
+    clear ^i(ivars)
+    ;Get parent handle
+    hparent = %w_info(WIF_HWND, a_parent)
+
+    ;Get child handle
+    if (^passed(a_child_is_list).and.(a_child_is_list)) then
+    begin
+        xcall l_status(a_child,D_LCTRID,container)
+        hchild = %w_info(WIF_HWND, container)
+    end
+    else
+        hchild = %w_info(WIF_HWND, a_child)
+    ;Slave them together
+    user32 = %dll_open("user32.dll")
+    xcall dll_call(user32, DLL_TYPE_WINAPI,
+    &              "SetParent", hchild, hparent)
+    xcall dll_close(user32)
+    xreturn
+.end
+.endc
+
+;-----------------------------------------------------
+;Window close method
+;
+.ifdef D_GUI
+.function weclose, ^val
+.proc
+    xcall m_signal("O_ABANDON")
+    freturn TRUE
+.end
+.endc
+
+.ifdef D_GUI
+
+;-----------------------------------------------------
+;Routine:       toolbar_lclick
+;
+;Description:   Toolbar button click processor
+;
+.subroutine toolbar_lclick ,reentrant
+
+    a_button    ,a  ;Name of button being clicked
+
+.proc
+    ;Raise the corresponding menu event
+    xcall m_signal(a_button)
+
+    xreturn
+
+.end
+.endc
+
+;******************************************************************************
+.endc ;TKAPP_INCLUDE
+;******************************************************************************
+

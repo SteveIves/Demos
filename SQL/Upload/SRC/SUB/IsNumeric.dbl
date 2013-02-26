@@ -1,0 +1,31 @@
+;*******************************************************************************
+;
+;Does a string contain a numeric value?
+;
+.function IsNumeric ,^val
+
+    a_string    ,a
+
+stack record
+    numeric     ,i4
+    d18         ,d18
+
+.proc
+
+    clear numeric
+
+    onerror notnum
+
+    d18 = %atrim(a_string)
+
+    numeric=1
+
+notnum,
+
+    offerror
+
+    freturn numeric
+
+.end
+
+

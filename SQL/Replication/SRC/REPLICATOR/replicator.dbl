@@ -1,0 +1,810 @@
+;;*****************************************************************************
+;;
+;; Program:     Replicator
+;;
+;; Desctiption: This program replicates Synergy data file changes (which have
+;;              been recorded in the replucation log file) to the relational
+;;              database.
+;;
+;; Author:      Steve Ives (stevei)
+;;
+;; Company:     Synergex
+;;
+;;***********************************************************************************
+
+.include "REPLICATION_INSTRUCTION" repository, enum, end
+
+main Replicator
+
+    ;Local system using the ODBC driver and a DSN
+    ;                             user              password            dsn            machine
+    ;.define DB_CONSTR "VTX12_ODBC:ReplicationServer/ReplicationPassword/SqlReplication@LOCALHOST"
+
+    ;Local system using SQL Native Driver (SQL Server 2008)
+    ;                                   user              password            dbname         machine
+    ;.define DB_CONSTR "VTX12_SQLNATIVE:ReplicationServer/ReplicationPassword/SqlReplication/LOCALHOST"
+    .define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.\\SQLEXPRESS///Trusted_connection=yes"
+    ;
+    ;Steves PC from Steves Personal Alpha, using the ODBC driver and a DSN
+    ;                       user              password            dsn            machine
+    ;.define DB_CONSTR "net:ReplicationServer/ReplicationPassword/SqlReplication@192.168.128.1!VTX12_ODBC"
+
+    .include "CONNECTDIR:ssql.def"
+    .include "DBLDIR:namspc.def"
+    .include "GENSRC:StructureIO.def"
+    .include "REPLICATION" repository, record="transaction", end
+
+    .define D_MAX_CUR       20
+    .define D_MAX_COL       200
+    .define D_MAX_BUFFER    4096
+
+    .define D_TRANS_FILE    "DAT:REPLICATION.ISM"
+    .define D_SLEEP_TIME    5                   ;;Seconds to hibernate if nothing to do
+    .define D_ERROR_TIME    0.5                 ;;Time to hibernate after an error
+
+    .define log(x)          writes(logch,%atrim(x))
+    .define debuglog(x)     if (fullLogging) writes(logch,x)
+
+    global common
+        db                  ,i4                 ;;Database channel
+        nsid                ,i4                 ;;Name space id
+        tch                 ,i4                 ;;Transaction file channel
+        logch               ,i4                 ;;Log file channel
+        inserts             ,i4                 ;;Number of create operations completed
+        updates             ,i4                 ;;Number of update operations completed
+        deletes             ,i4                 ;;Number of delete operations completed
+        fails               ,i4                 ;;Number of failed operations
+    endcommon
+
+    record local_data
+        sleep_time          ,i4                 ;;Seconds to sleep
+        error               ,i4                 ;;Fatal error occured
+        nsptr               ,i4                 ;;Name space pointer
+        dberr               ,i4                 ;;Database error
+        length              ,i4                 ;;Length of buffer
+        status              ,i4                 ;;General working status return
+        eof                 ,i4                 ;;End of file
+        rows                ,i4                 ;;Number of rows affected
+        success_count       ,i4                 ;;Bulk load success count
+        fail_count          ,i4                 ;;Bulk load failure count
+        fullLogging         ,boolean            ;;Are we doing full logging?
+        logKeys             ,boolean            ;;Include key data in debug logs
+        switchMode          ,boolean            ;;Switched from INSERT to UPDATE or vice versa
+        function_name       ,a40                ;;External function to call
+        log_file            ,a256
+        log_mode            ,a3
+        databuffer          ,a(D_MAX_BUFFER)
+        dberrtxt            ,a1024
+        primaryKey          ,string             ;;Primary key of current record
+        shutdownCommand     ,a3
+    endrecord
+
+    record structure_data
+        structure_name      ,a30                ;;Name of structure
+        structure_chan      ,i4                 ;;ISAM channel being used
+        structure_size      ,i4                 ;;Record length
+    endrecord
+
+    external function
+        xsubr               ,^val
+        IsNumeric           ,^val
+    endexternal
+
+proc
+
+    init local_data
+    xcall flags(7004020,1)
+
+    .ifdef OS_VMS
+    xcall openelb("LIBRARY_SH")
+    .else
+    xcall openelb("EXE:LIBRARY.ELB")
+    .endc
+
+    ;;Are we running on a terminal?
+    if (%tnmbr>=0) then
+    begin
+        log_file = "tt:"
+        log_mode = "o"
+    end
+    else
+    begin
+        ;;Do we have a log file specified?
+        xcall getlog("REPLICATOR_LOGFILE",databuffer,length)
+        if (length) then
+        begin
+            ;;Yes - use it
+            log_file = databuffer
+        end
+        else
+        begin
+            ;;No - create one in the current directory
+            log_file = "REPLICATOR.LOG"
+        end
+        log_mode = "o:s"
+    end
+
+    sleep_time = D_SLEEP_TIME
+    xcall getlog("REPLICATOR_INTERVAL",databuffer,length)
+    if ((length>0)&&%IsNumeric(%atrim(databuffer)))
+        sleep_time = %integer(%atrim(databuffer))
+
+    xcall getlog("REPLICATOR_FULL_LOG",databuffer,length)
+    if ((length>0)&&(databuffer.eq."YES"))
+        fullLogging = 1
+
+    xcall getlog("REPLICATOR_LOG_KEYS",databuffer,length)
+    if ((length>0)&&(databuffer.eq."YES"))
+        logKeys = true
+
+    ;;Open the log file
+    begin
+        open(logch=%syn_freechn,log_mode,log_file) [ERR=logerr]
+        exit
+logerr, xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Replicator failed to open log file " + %atrim(log_file)+". Error number " + %string(%ernum))
+        error=1
+    end
+
+    if (!error)
+    begin
+        log("------------------------------------------------------------")
+        log("SQL Replicator")
+        log("")
+        log("Transaction file : " + D_TRANS_FILE)
+        log("Sleep interval   : " + %string(sleep_time) + " seconds.")
+        log("")
+    end
+
+    ;;Open the transaction file
+    if (!error)
+    begin
+        open(tch=%syn_freechn,U:I,D_TRANS_FILE) [ERR=tferr]
+        exit
+tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
+        error=1
+    end
+
+    ;;Enable and Initialize SQL Connection
+    if (!error)
+    begin
+        debuglog("Initializing SQL Connection")
+        .ifdef OS_VMS
+        xcall init_ssql
+        .else
+        status=%option(48,1)
+        .endc
+        if (%ssc_init(db=1,D_MAX_CUR,D_MAX_COL,D_MAX_BUFFER)==SSQL_FAILURE)
+        begin
+            log("ERROR: Failed to initialize SQL Connection")
+            error=1
+        end
+    end
+
+    ;;Connect to the database
+    if (!error)
+    begin
+        debuglog("Connecting to database, connect string is:")
+        debuglog(DB_CONSTR)
+        if (%ssc_connect(db,DB_CONSTR)==SSQL_FAILURE)
+        begin
+            xcall ssc_getemsg(db,dberrtxt,length)
+            log("ERROR: Failed to connect to SQL Server")
+            log("Connect string: " + DB_CONSTR)
+            log("Error message : " + dberrtxt(1,length))
+            error=1
+        end
+    end
+
+    ;;Main processing
+    if (!error)
+    begin
+        ;;Create a namespace to record information about Synergy data files that we have opened.
+        nsid = %nspc_open(,%size(structure_data))
+
+        log("Ready to process transactions...")
+        log("------------------------------------------------------------")
+
+        ;;Main loop
+        repeat
+        begin
+
+            ;;Check for outstanding transactions
+            call GetTransaction
+
+            if (eof) then
+            begin
+                debuglog("Sleeping for " + %string(sleep_time) + " seconds...")
+                sleep sleep_time
+            end
+            else
+            begin
+
+                ;;If this is not a "regular" replication request
+                ;;(create/update/delete) then skip the file and
+                ;;table checks and go straight to the code
+                if (
+                &   (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.CREATE_ROW)
+                &   || (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.UPDATE_ROW)
+                &   || (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.DELETE_ROW)
+                &   )
+                begin
+                    ;;Check if we already have the file open
+                    call CheckFileTable
+
+                    ;;If we don't have the file open by now then we probably have a
+                    ;;configuration problem, so abort processing
+                    if (!structure_data.structure_chan)
+                    begin
+                        log("ERROR: Abnormal replication server shutdown")
+                        exitloop
+                    end
+                end
+
+                ;;Execute the transaction
+
+                using (transaction.sdms_action) select
+
+                ;;"Routine" processing requests
+
+                (REPLICATION_INSTRUCTION.CREATE_ROW),
+                    call DoInsert
+
+                (REPLICATION_INSTRUCTION.UPDATE_ROW),
+                    call DoUpdate
+
+                (REPLICATION_INSTRUCTION.DELETE_ROW),
+                    call DoDelete
+
+                ;;"Special" processing requests
+
+                (REPLICATION_INSTRUCTION.CREATE_TABLE),
+                    call DoCreateTable
+
+                (REPLICATION_INSTRUCTION.LOAD_TABLE),
+                    call DoLoadTable
+
+                (REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE),
+                    call DoCreateAndLoadTable
+
+                (REPLICATION_INSTRUCTION.DELETE_ALL_ROWS),
+                    call DoDeleteAllRows
+
+                (REPLICATION_INSTRUCTION.DELETE_TABLE),
+                    call DoDeleteTable
+
+                endusing
+
+                ;;Delete the transaction file record
+                delete(tch)
+
+            end
+
+            ;;Go back to first record in transaction file and start over
+            find(tch,,^FIRST) [ERR=notrans]
+notrans,
+
+            ;;Check for instruction to exit
+            xcall getlog("REPLICATOR_SHUTDOWN",shutdownCommand="",length)
+            if ((length==3)&&(shutdownCommand=="YES"))
+            begin
+                xcall ReplicatorShutdown
+                stop
+            end
+
+        end
+
+    end
+
+    ;;Close the database
+    if (db)
+        xcall ssc_release(db)
+
+    ;;Release the name space.
+    if (nsid)
+        xcall nspc_close(nsid)
+
+    ;;Close the transaction file
+    if (tch)
+        close tch
+
+    ;;If logging to tt: then pause so messages can be read
+    if (log_file == "tt:")
+        sleep 10
+
+    ;;We're done
+    stop
+
+;;-----------------------------------------------------------------------------
+;; Look for a pending transaction record in the transaction file
+;;
+GetTransaction,
+
+    clear eof
+
+    repeat
+    begin
+        reads(tch,transaction,eof,LOCK:Q_AUTO_LOCK) [$err_locked=TrLocked]
+        if (!transaction)
+            nextloop
+        if (0)
+        begin
+eof,        eof=1
+            exitloop
+TrLocked,   sleep D_ERROR_TIME
+            nextloop
+        end
+        exitloop
+    end
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Does this file already have an entry in the namespace?
+;;
+CheckFileTable,
+
+    if (nsptr=%nspc_find(nsid,transaction.structure_name,structure_data)) then
+        nop
+    else
+    begin
+        ;;No, open the file and make sure it worked
+        call OpenFile
+        if (!structure_data.structure_chan)
+            exit
+
+        ;;Get the record size of the file
+        function_name = %atrim(transaction.structure_name)+"_LENGTH"
+        onerror FunctionFail
+        structure_data.structure_size = %xsubr(function_name)
+        offerror
+
+        ;;And save the structure name
+        structure_data.structure_name = transaction.structure_name
+
+        ;;Record the new open file in the namespace
+        nsptr=%nspc_add(nsid,transaction.structure_name,structure_data)
+    end
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Open a Synergy data file
+;;
+OpenFile,
+
+    debuglog("Opening file " + %atrim(transaction.structure_name))
+
+    function_name = %atrim(transaction.structure_name)+"_IO"
+    onerror FunctionFail
+    status= %xsubr(function_name,IO_OPEN_INP,structure_data.structure_chan,,,,,,dberrtxt)
+    offerror
+    if (status==IO_OK) then
+        call CheckTable
+    else
+    begin
+        debuglog("Failed to open file")
+        clear structure_data.structure_chan
+        call FunctionError
+    end
+    return
+
+;;-----------------------------------------------------------------------------
+;; Find out if the corresponding table exists in the SQL database
+;;
+CheckTable,
+
+    debuglog("Checking if table " + %atrim(transaction.structure_name) + " exists")
+
+    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
+    using status select
+    (1),;Yes
+        nop
+    (0),;No
+        call CreateTable
+    (<0),;Error
+        call FunctionError
+    endusing
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Create a new table in the SQL database
+;;
+CreateTable,
+
+    debuglog("Creating table " + %atrim(transaction.structure_name))
+
+    function_name = %atrim(transaction.structure_name)+"_CREATE"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
+    if (status) then
+        call LoadTable
+    else
+        call FunctionError
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Perform an initial load of a new table in the SQL database
+;;
+LoadTable,
+
+    debuglog("Performing full load of table " + %atrim(transaction.structure_name))
+
+    function_name = %atrim(transaction.structure_name)+"_LOAD"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt,,,success_count,fail_count)
+    offerror
+    if (status) then
+    begin
+        debuglog(" - " + %string(success_count) + " rows inserted, " + %string(fail_count) + " rows failed")
+        inserts += success_count
+        fails   += fail_count
+    end
+    else
+        call FunctionError
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Add a new row
+;;
+DoInsert,
+
+    if (switchMode) then
+    begin
+        debuglog(" - INSERT row in table " + %atrim(transaction.structure_name))
+        switchMode = false
+    end
+    else
+    begin
+        debuglog("INSERT row in table " + %atrim(transaction.structure_name))
+        call ReadSynergyRecord
+    end
+
+    if ((status==IO_OK)&&(databuffer))
+    begin
+        function_name = %atrim(transaction.structure_name) + '_INSERT_ROW'
+        onerror FunctionFail
+        status = %xsubr(function_name,db,databuffer(1,structure_data.structure_size),dberrtxt)
+        offerror
+
+        using status select
+        (0),
+            call FunctionError
+        (1),
+            inserts+=1
+        (2),
+        begin
+            debuglog(" - Row already exists, switching to UPDATE")
+            status = IO_OK
+            switchMode = true
+            call DoUpdate
+        end
+        endusing
+    end
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Update an existing row
+;;
+DoUpdate,
+
+    if (switchMode) then
+    begin
+        debuglog(" - UPDATE row in table " + %atrim(transaction.structure_name))
+        switchMode = false
+    end
+    else
+    begin
+        debuglog("UPDATE row in table " + %atrim(transaction.structure_name))
+        call ReadSynergyRecord
+    end
+
+    ;; Check that a record was returned before calling update because the record
+    ;; may have been deleted since. If so just ignore the transaction.
+
+    if ((status==IO_OK)&&(databuffer))
+    begin
+        function_name = %atrim(transaction.structure_name) + '_UPDATE_ROW'
+        onerror FunctionFail
+        status = %xsubr(function_name,db,databuffer(1,structure_data.structure_size),rows,dberrtxt)
+        offerror
+        if (status) then
+        begin
+            if (rows) then
+                updates+=1
+            else
+            begin
+                debuglog(" - Row not found, switching to INSERT")
+                status = IO_OK
+                sWitchMode = true
+                call DoInsert
+            end
+
+        end
+        else
+            call FunctionError
+    end
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Delete a row
+;;
+DoDelete,
+
+    debuglog("DELETE row in table " + %atrim(transaction.structure_name))
+    if (logKeys)
+        debugLog(" - Replication key: [" + transaction.structure_key + "]")
+
+    function_name = %atrim(transaction.structure_name) + '_DELETE_ROW'
+    onerror FunctionFail
+    status= %xsubr(function_name,db,transaction.structure_key,dberrtxt)
+    offerror
+    if (status) then
+        deletes+=1
+    else
+    begin
+        debuglog(dberrtxt)
+        call FunctionError
+    end
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Create a new table
+;;
+DoCreateTable,
+
+    ;;Create a new table (only)
+    ;;If the table already exists, do nothing
+
+
+
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Load new data into existing table
+;;
+DoLoadTable,
+
+    ;;Do a full load of an existing table with new data
+    ;;Delete all existing data before loading new data
+
+
+
+
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Create a new table and load new data into it
+;;
+DoCreateAndLoadTable,
+
+    ;;Create a new table, do nothing if the table already exists
+    ;;We create the table, then do a full load of data
+
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Delete all rows from an existing table
+;;
+DoDeleteAllRows,
+
+    debuglog("TRUNCATE TABLE " + %atrim(transaction.structure_name))
+
+    function_name = %atrim(transaction.structure_name)+"_CLEAR"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
+
+    if (!status)
+        call FunctionError
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; Delete an existing table
+;;
+DoDeleteTable,
+
+    ;;Is the file in the file table?
+    if (nsptr=%nspc_find(nsid,transaction.structure_name,structure_data))
+    begin
+
+        ;Yes - close the file
+        if ((structure_data.structure_chan)&&%chopen(structure_data.structure_chan))
+        begin
+            close structure_data.structure_chan
+            clear structure_data
+        end
+
+        ;And remove it from the file table
+        xcall nspc_delete(nsid,nsptr)
+    end
+
+    debuglog("DELETE TABLE " + %atrim(transaction.structure_name))
+
+    function_name = %atrim(transaction.structure_name)+"_DROP"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
+
+    if (!status)
+        call FunctionError
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; This routine reads the full record associated with the unique key retrieved
+;; from the transaction file.  It uses the special IO_READ_SQL mode, which knows
+;; which key is the REPLICATION_KEY key for that file.
+;;
+ReadSynergyRecord,
+
+    ;;Find the master record details
+    function_name = %atrim(transaction.structure_name)+"_IO"
+    onerror FunctionFail
+    status= %xsubr(function_name,IO_READ_SQL,structure_data.structure_chan,
+    &   transaction.structure_key,,databuffer(1,structure_data.structure_size),,,dberrtxt)
+    offerror
+
+    using status select
+    (IO_OK),
+    begin
+        if (logKeys)
+        begin
+            primaryKey = %keyval(structure_data.structure_chan,databuffer(1,structure_data.structure_size),0)
+            debugLog(" - Replication key: [" + transaction.structure_key + "] Primary key: [" + primaryKey + "]")
+        end
+    end
+    (IO_NOT_FOUND,IO_EOF),
+        debuglog(" - Record not found in ISAM file!")
+    (),
+        call FunctionError
+    endusing
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; If we get here then some routine that we tried to XSUBR encountered a
+;; an unexpected / fatal error.
+;;
+FunctionFail,
+
+    offerror
+    xcall ertxt(error=%error,dberrtxt)
+    log("ERROR: Error calling %"+%atrim(function_name)
+    &   +". Error "+%string(error)+" "+%atrim(dberrtxt))
+
+    return
+
+;;-----------------------------------------------------------------------------
+;; If we get here then some routine that we tried to XSUBR trapped an error
+;; and returned a fail status.
+;;
+FunctionError,
+
+    log("ERROR: %"+%atrim(function_name)+" failed with status "
+    &   +%string(status)+" "+%atrim(dberrtxt))
+
+    return
+
+endmain
+
+;;*****************************************************************************
+;;
+;; Routine:     ReplicatorShutdown
+;;
+;; Description: This routine is an event handler which is called when the
+;;              replicator service is being stopped by the Windows operating
+;;              system.
+;;
+;; Author:      Steve Ives
+;;
+;; Company:     Synergex
+;;
+;; Created:     04/10/2008 at 22:17
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code. This text
+;; must remain unaltered in this file at all times. Possession or use of this
+;; code, or any modified version of this code, indicates your acceptance of
+;; these conditions.
+;;
+;;*****************************************************************************
+;;
+subroutine ReplicatorShutdown
+
+    endparams
+
+    .include "CONNECTDIR:ssql.def"
+    .include "DBLDIR:namspc.def"
+    .include "GENSRC:StructureIO.def"
+
+    external common
+        db                  ,i4                 ;;Database channel
+        nsid                ,i4                 ;;Name space id
+        tch                 ,i4                 ;;Transaction file channel
+        logch               ,i4                 ;;Log file channel
+        inserts             ,i4                 ;;Number of create operations completed
+        updates             ,i4                 ;;Number of update operations completed
+        deletes             ,i4                 ;;Number of delete operations completed
+        fails               ,i4                 ;;Number of failed operations
+    endcommon
+
+    stack record
+        idx             ,i4                     ;;Loop counter
+        access_code     ,i4                     ;;Namespace access code
+        status          ,i4                     ;;Function return status
+        function_name   ,a40                    ;;External function name to call
+
+    record structure_data
+        structure_name  ,a30                    ;;Name of structure
+        structure_chan  ,i4                     ;;ISAM channel being used
+        structure_size  ,i4                     ;;Record length
+
+proc
+
+    log("------------------------------------------------------------")
+    log("Replicator shutdown has been requested. Session summary:")
+    log("INSERTS: " + %string(inserts,"ZZZ,ZZZ,ZZZ,ZZX"))
+    log("UPDATES: " + %string(updates,"ZZZ,ZZZ,ZZZ,ZZX"))
+    log("DELETES: " + %string(deletes,"ZZZ,ZZZ,ZZZ,ZZX"))
+    log("ERRORS:  " + %string(fails,  "ZZZ,ZZZ,ZZZ,ZZX"))
+    log("------------------------------------------------------------")
+
+    ;;Close the database
+    if (db)
+    begin
+        xcall ssc_release(db)
+        clear db
+    end
+
+    ;;Close any data files that we have open
+    if (nsid)
+    begin
+        for idx from 1 thru %nspc_stoa(nsid,9999)
+        begin
+            ;;Get the item data from the namespace
+            access_code = %nspc_stoa(nsid,idx)
+            xcall nspc_getdata(nsid,access_code,structure_data)
+            ;;Close the channel
+            if ((structure_data.structure_chan)&&%chopen(structure_data.structure_chan))
+            begin
+                function_name = %atrim(structure_data.structure_name)+"_IO"
+                onerror ignore
+                status= %xsubr(function_name,IO_CLOSE,structure_data.structure_chan)
+    ignore,     offerror
+            end
+        end
+
+        xcall nspc_close(nsid)
+        clear nsid
+
+    end
+
+    ;;Close the transaction file
+    if (tch)
+    begin
+        close tch
+        clear tch
+    end
+
+    xreturn
+
+endsubroutine
+
+.include "GENSRC:IsNumeric.dbl"
