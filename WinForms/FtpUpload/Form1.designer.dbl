@@ -1,0 +1,117 @@
+namespace FtpUpload 
+    
+    
+    public partial class Form1 extends System.Windows.Forms.Form
+        
+        private lblFtpServer, @System.Windows.Forms.Label
+        
+        private txtUsername, @System.Windows.Forms.TextBox
+        
+        private txtFtpServer, @System.Windows.Forms.TextBox
+        
+        private btnUpload, @System.Windows.Forms.Button
+        
+        private lblPassword, @System.Windows.Forms.Label
+        
+        private txtPassword, @System.Windows.Forms.TextBox
+        
+        private lblUsername, @System.Windows.Forms.Label
+        
+        private openFileDialog1, @System.Windows.Forms.OpenFileDialog
+        
+        private method InitializeComponent, void
+        endparams
+        proc
+            begin
+                this.lblFtpServer = new System.Windows.Forms.Label()
+                this.txtFtpServer = new System.Windows.Forms.TextBox()
+                this.lblUsername = new System.Windows.Forms.Label()
+                this.txtUsername = new System.Windows.Forms.TextBox()
+                this.lblPassword = new System.Windows.Forms.Label()
+                this.txtPassword = new System.Windows.Forms.TextBox()
+                this.btnUpload = new System.Windows.Forms.Button()
+                this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog()
+                this.SuspendLayout()
+                ;; 
+                ;; lblFtpServer
+                ;; 
+                this.lblFtpServer.AutoSize = True
+                this.lblFtpServer.Location = new System.Drawing.Point(55, 40)
+                this.lblFtpServer.Name = (string)("lblFtpServer")
+                this.lblFtpServer.Size = new System.Drawing.Size(61, 13)
+                this.lblFtpServer.TabIndex = 1
+                this.lblFtpServer.Text = (string)("FTP Server")
+                ;; 
+                ;; txtFtpServer
+                ;; 
+                this.txtFtpServer.Location = new System.Drawing.Point(122, 37)
+                this.txtFtpServer.Name = (string)("txtFtpServer")
+                this.txtFtpServer.Size = new System.Drawing.Size(189, 20)
+                this.txtFtpServer.TabIndex = 2
+                this.txtFtpServer.Text = (string)("ftp.steveives.com")
+                ;; 
+                ;; lblUsername
+                ;; 
+                this.lblUsername.AutoSize = True
+                this.lblUsername.Location = new System.Drawing.Point(55, 69)
+                this.lblUsername.Name = (string)("lblUsername")
+                this.lblUsername.Size = new System.Drawing.Size(55, 13)
+                this.lblUsername.TabIndex = 3
+                this.lblUsername.Text = (string)("Username")
+                ;; 
+                ;; txtUsername
+                ;; 
+                this.txtUsername.Location = new System.Drawing.Point(122, 66)
+                this.txtUsername.Name = (string)("txtUsername")
+                this.txtUsername.Size = new System.Drawing.Size(189, 20)
+                this.txtUsername.TabIndex = 4
+                this.txtUsername.Text = (string)("stevei")
+                ;; 
+                ;; lblPassword
+                ;; 
+                this.lblPassword.AutoSize = True
+                this.lblPassword.Location = new System.Drawing.Point(55, 100)
+                this.lblPassword.Name = (string)("lblPassword")
+                this.lblPassword.Size = new System.Drawing.Size(53, 13)
+                this.lblPassword.TabIndex = 5
+                this.lblPassword.Text = (string)("Password")
+                ;; 
+                ;; txtPassword
+                ;; 
+                this.txtPassword.Location = new System.Drawing.Point(122, 97)
+                this.txtPassword.Name = (string)("txtPassword")
+                this.txtPassword.PasswordChar = '*'
+                this.txtPassword.Size = new System.Drawing.Size(189, 20)
+                this.txtPassword.TabIndex = 6
+                ;; 
+                ;; btnUpload
+                ;; 
+                this.btnUpload.Location = new System.Drawing.Point(196, 135)
+                this.btnUpload.Name = (string)("btnUpload")
+                this.btnUpload.Size = new System.Drawing.Size(115, 23)
+                this.btnUpload.TabIndex = 7
+                this.btnUpload.Text = (string)("Upload a File")
+                this.btnUpload.UseVisualStyleBackColor = True
+                 addhandler( this.btnUpload.Click, btnUpload_Click)
+                ;; 
+                ;; Form1
+                ;; 
+                this.ClientSize = new System.Drawing.Size(632, 512)
+                this.Controls.Add(this.btnUpload)
+                this.Controls.Add(this.txtPassword)
+                this.Controls.Add(this.lblPassword)
+                this.Controls.Add(this.txtUsername)
+                this.Controls.Add(this.lblUsername)
+                this.Controls.Add(this.txtFtpServer)
+                this.Controls.Add(this.lblFtpServer)
+                this.Name = (string)("Form1")
+                 addhandler( this.Load, Form1_Load)
+                this.ResumeLayout(False)
+                this.PerformLayout()
+            end
+        
+        endmethod
+    
+    endclass
+
+endnamespace

@@ -1,0 +1,55 @@
+import System
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Bullet extends GameObject
+		
+		const kBulletInterval, int, 20
+		public BulletInterval, int, kBulletInterval
+		
+		public method Bullet
+			x, int 
+			y, int 
+			endparams
+		proc
+			begin
+				ImageBounds.Width = 5
+				ImageBounds.Height = 15
+				Position.X = x
+				Position.Y = y
+			end
+		endmethod
+		
+		public method Reset, void
+			endparams
+		proc
+			if (FrmMain.ActiveForm != ^null)
+			begin
+				Position.Y = FrmMain.ActiveForm.ClientRectangle.Bottom
+				MovingBounds.Y = Position.Y
+			end
+			BulletInterval = kBulletInterval
+		endmethod
+		
+		public method Slow, void
+			endparams
+		proc
+			;; BulletInterval = 3;
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			UpdateBounds()
+			g.FillRectangle(Brushes.Red, MovingBounds)
+			Position.Y = Position.Y - BulletInterval
+		endmethod
+	
+	endclass
+
+endnamespace
+

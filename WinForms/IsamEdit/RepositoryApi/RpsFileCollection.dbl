@@ -1,0 +1,149 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsFileCollection
+;
+; Description:	Represents a collection of Repository files.  This can either
+;				be all files in the Repository, or all f=of the files assigned
+;				to a single structure.
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:55-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsFileCollection extends List<RpsFile>
+
+		; Constructor for (load all files)
+		public method RpsFileCollection
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadAllFiles()
+		endmethod
+		
+		; Constructor (optional load all files)
+		public method RpsFileCollection
+			required in LoadMode, RpsLoadMode
+			endparams
+			parent()
+		proc
+			if (LoadMode==RpsLoadMode.Load)
+			begin
+				Repository.CheckIsOpen()
+				LoadAllFiles()
+			end
+		endmethod
+
+		; Constructor (load files for a structure)
+		public method RpsFileCollection
+			required in StructureName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadStructureFiles(StructureName)
+		endmethod
+
+		; Load all Files
+		private method LoadAllFiles, void
+			endparams
+			record local_data
+				FileCount, int
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try
+			begin
+				;Get the number of files defined in the repository
+				dd_name(Repository.RpsControl,DDN_COUNT,DDN_FILE,FileCount)
+				if (Repository.RpsControl.error)
+					throw new RpsFileException("Failed to get number of repository file definitions")
+				;Do we have any files to load?
+				if (FileCount)
+				begin
+					;Size the format names array and get the format names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*FileCount)
+					dd_name(Repository.RpsControl,DDN_LIST,DDN_FILE,FileCount,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsFileException("Failed to get repository file definition names")
+					;Add files to collection
+					for ix from 1 thru FileCount
+						this.Add(new RpsFile(^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Free file names array
+				if (MemHandle)
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+
+		; Load structure Files
+		private method LoadStructureFiles, void
+			required in StructureName, a
+			endparams
+			record local_data
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try
+			begin
+				data p_s_info, s_info
+				;Set the current structure?
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,p_s_info)
+				if (Repository.RpsControl.error)
+					throw new RpsFileException("Failed to get information for repository structure "+StructureName)
+				;Do we have any files to load?
+				if (p_s_info.si_nmfils)
+				begin
+					;Size the file names array and get file names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_s_info.si_nmfils)
+					dd_struct(Repository.RpsControl,DDS_FILS,p_s_info.si_nmfils,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsFileException("Failed to get file names for repository structure "+StructureName)
+					;Add files to collection
+					for ix from 1 thru p_s_info.si_nmfils
+						this.Add(new RpsFile(^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Free file names array
+				if (MemHandle)
+					MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+
+	endclass
+
+endnamespace

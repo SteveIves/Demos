@@ -1,0 +1,53 @@
+
+import System.Collections.Generic
+
+namespace ContactBrowser
+	
+	function GetCustomers, boolean
+
+		required out customers		,@List<Customer>
+		required out message		,string
+		endparams
+
+		record
+			ch			,i4
+			cust		,strCustomer
+			retval		,boolean, true
+		endrecord
+	
+	proc
+	
+		customers = new List<Customer>()
+		message = ""
+	
+		try
+		begin
+			open(ch=syn_freechn,i:i,"DAT:customer.ism")
+			find(ch,,^FIRST,KEYNUM:1)
+			repeat
+			begin
+				reads(ch,cust)
+				customers.Add(new Customer(cust))
+			end
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			nop
+		end
+		catch (ex, @FileIOException)
+		begin
+			retval = false
+			message = "Failed to open file!"
+		end
+		finally
+		begin
+			if (ch&&chopen(ch))
+				close ch
+		end
+		endtry
+	
+		freturn retval
+	
+	endfunction
+	
+endnamespace

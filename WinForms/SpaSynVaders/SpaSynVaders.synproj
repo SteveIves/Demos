@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>SpaSynVaders</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{371002cf-4b08-4f0d-9771-274492404e4b}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SpaSynVaders</RootNamespace>
+    <AssemblyName>SpaSynVaders</AssemblyName>
+    <MainFile>Program.dbl</MainFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetPlatform>v4</TargetPlatform>
+    <DBL_qWarnLevel>3 - Don't display warnings levels higher than 3</DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -W3 -qstack</DBLCmdOptions>
+    <Language>Synergy</Language>
+    <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
+    <StartupObject>(Not set)</StartupObject>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ResourceType>Icon</ResourceType>
+    <ResourceName />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <RunPostBuildEvent>On successful build</RunPostBuildEvent>
+    <DBL_qAltif>False</DBL_qAltif>
+    <DBL_qErrWarn>False</DBL_qErrWarn>
+    <DBL_qDisWarnOpt />
+    <DBL_qVariantOpt />
+    <DBL_StackSize />
+    <OtherOptions />
+    <ProjEnvVars>SYNPROJDIR=C:\Dev\SynNetTesting\SpaSynVaders;</ProjEnvVars>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Debug</DebugOptimize>
+    <DefineConstants />
+    <WarningsAsErrors />
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile />
+    <SerializeAssembly>Auto</SerializeAssembly>
+    <DllBaseAddress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Release\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="synrnt">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutBox.dbl">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.designer.dbl">
+      <DependentUpon>AboutBox.dbl</DependentUpon>
+    </Compile>
+    <Compile Include="Bomb.dbl" />
+    <Compile Include="Bullet.dbl" />
+    <Compile Include="FrmMain.dbl">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMain.designer.dbl">
+      <DependentUpon>FrmMain.dbl</DependentUpon>
+    </Compile>
+    <Compile Include="GameObject.dbl" />
+    <Compile Include="HighScore.dbl" />
+    <Compile Include="Invader.dbl" />
+    <Compile Include="InvaderRow.dbl" />
+    <Compile Include="LevelIndicator.dbl" />
+    <Compile Include="LivesIndicator.dbl" />
+    <Compile Include="Man.dbl" />
+    <Compile Include="Program.dbl" />
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+    <Compile Include="Saucer.dbl" />
+    <Compile Include="Score.dbl" />
+    <Compile Include="Shield.dbl" />
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.dbl</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.dbl</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.designer.dbl</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.designer.dbl">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Properties\Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Properties\Settings.designer.dbl</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.designer.dbl">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Properties\Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="App.ico">
+      <SubType>Resource</SubType>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader1.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader1c.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader2.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader2c.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader3.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invader3c.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\man.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\saucer0.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\saucer1.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\saucer2.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shield.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stars.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TopShip.gif">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound0.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound1.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound2.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound3.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound4.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound5.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound6.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound7.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sound8.wav">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+</Project>

@@ -1,0 +1,12 @@
+Import System.Windows.Forms
+Import System.Drawing
+Import System
+Import System.Runtime.Remoting
+Import System.Windows.Forms.Layout
+Import System.ComponentModel
+Import SynPSG.Examples.NetMenu
+Import NetMenuComponent__
+Import System_Windows_Forms__
+Import System_Drawing__
+Import mscorlib__
+Import System__

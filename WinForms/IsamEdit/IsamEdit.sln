@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "IsamEdit", "IsamEdit\IsamEdit.synproj", "{A2D6A499-E967-41EA-B2BC-3F74B3C415FD}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "RepositoryApi", "RepositoryApi\RepositoryApi.synproj", "{D0A9E4FB-6978-491D-8D8A-05AEBB919686}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2D6A499-E967-41EA-B2BC-3F74B3C415FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D6A499-E967-41EA-B2BC-3F74B3C415FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D6A499-E967-41EA-B2BC-3F74B3C415FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D6A499-E967-41EA-B2BC-3F74B3C415FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0A9E4FB-6978-491D-8D8A-05AEBB919686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A9E4FB-6978-491D-8D8A-05AEBB919686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A9E4FB-6978-491D-8D8A-05AEBB919686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A9E4FB-6978-491D-8D8A-05AEBB919686}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

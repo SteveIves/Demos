@@ -1,0 +1,33 @@
+
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+
+namespace MessageBrowser
+
+    public partial class MessageBrowser extends System.Windows.Forms.Form
+    
+		public method MessageBrowser
+        endparams
+        proc
+            this.InitializeComponent();
+        endmethod
+		
+		
+		private method MessageBrowser_Load, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				msgs, @List<Message>
+			endrecord
+		proc
+			xcall GetMessages(msgs)
+			dataGridView1.DataSource = msgs
+		endmethod
+
+    endclass
+endnamespace

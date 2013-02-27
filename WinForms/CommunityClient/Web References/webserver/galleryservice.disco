@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://ivesworld.com/community/photos/galleryservice.asmx?wsdl" docRef="http://ivesworld.com/community/photos/galleryservice.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://ivesworld.com/community/photos/galleryservice.asmx" xmlns:q1="http://communityserver.org/gallery/services/posts/" binding="q1:GalleryServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://ivesworld.com/community/photos/galleryservice.asmx" xmlns:q2="http://communityserver.org/gallery/services/posts/" binding="q2:GalleryServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

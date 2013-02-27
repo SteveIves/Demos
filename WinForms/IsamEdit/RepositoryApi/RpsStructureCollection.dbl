@@ -1,0 +1,102 @@
+;******************************************************************************
+;
+; Class:        SynPsg.Rps.RpsStructureCollection
+;
+; Description:  Represents a collection of all Repository structures
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Date:         19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:54-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+	
+	public class RpsStructureCollection extends List<RpsStructure>
+		
+		; Constructor (load all structures)
+		public method RpsStructureCollection
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadStructures()
+		endmethod
+		
+		; Constructor (optional load)
+		public method RpsStructureCollection
+			LoadMode, RpsLoadMode
+			endparams
+			parent()
+		proc
+			if (LoadMode==RpsLoadMode.Load) 
+			begin
+				Repository.CheckIsOpen()
+				LoadStructures()
+			end
+		endmethod
+		
+		; Load structures
+		private method LoadStructures, void
+			endparams
+			record local_data
+				MemHandle, int
+				StructureCount, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				;Get the number of structures in the repository
+				dd_name(Repository.RpsControl,DDN_COUNT,DDN_STRUCT,StructureCount)
+				if (Repository.RpsControl.error)
+					throw new RpsStructureException("Failed to get repository structure count")
+				;Do we have any structures to load?
+				if (StructureCount) 
+				begin
+					;Allocate structure name memory and get structure names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*StructureCount)
+					dd_name(Repository.RpsControl,DDN_LIST,DDN_STRUCT,StructureCount,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsStructureException("Failed to get repository structure names")
+					for ix from 1 thru StructureCount
+					this.Add(new RpsStructure(^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			catch (ex, @Exception)
+			begin
+				throw new RpsStructureException("Failed to load repository structure. " + ex.Message)
+			end
+			finally
+			begin
+				;Release structure names memory
+				if (StructureCount)
+					MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+		
+	endclass
+	
+endnamespace
+

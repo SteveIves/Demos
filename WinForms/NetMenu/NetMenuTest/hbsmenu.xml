@@ -1,0 +1,596 @@
+<?xml version='1.0'?>
+<HBSmenu menu_title="MASTER MENU" init_subroutine="MasterMenuInit">
+  <submenu name="Rx System" info="" state="0" hotkey="A" executeMethod="RxSystemSub" validateMethod="RxSystemValSub" executeType="1" helpId="0" securityWindow="1" securityItem="1" ELBname="" menu_title="Rx System Menu" init_subroutine="SXC_rx_menu_init" exit_subroutine="SXC_rx_menu_exit">
+    <program name="Patient Inquiry" info="" state="0" hotkey="P" executeMethod="EXE:ptinq" validateMethod="" executeType="3" helpId="0" securityWindow="1" securityItem="2" ELBname=""/>
+    <program name="Rx Inquiry" info="" state="0" hotkey="X" executeMethod="EXE:rxinq" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="New Rx" info="" state="0" hotkey="N" executeMethod="EXE:rxnew" validateMethod="" executeType="3" helpId="0" securityWindow="1" securityItem="17" ELBname=""/>
+    <program name="Refill" info="" state="0" hotkey="R" executeMethod="EXE:rxfil" validateMethod="" executeType="3" helpId="0" securityWindow="1" securityItem="17" ELBname=""/>
+    <program name="Patient Rx History" info="" state="0" hotkey="H" executeMethod="EXE:rxhst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Inquiry" info="" state="0" hotkey="D" executeMethod="EXE:dginq" validateMethod="" executeType="3" helpId="0" securityWindow="2" securityItem="1" ELBname=""/>
+    <program name="Doctor Inquiry" info="" state="0" hotkey="M" executeMethod="EXE:dtrmn" validateMethod="" executeType="3" helpId="0" securityWindow="3" securityItem="1" ELBname=""/>
+    <program name="Family Members &amp; Coverages" info="" state="0" hotkey="F" executeMethod="EXE:prfil" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Interactions" info="" state="0" hotkey="DI" executeMethod="EXE:drgint" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="ECS Status Display" info="" state="0" hotkey="EC" executeMethod="EXE:shwrsp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Education" info="" state="0" hotkey="PE" executeMethod="EXE:peinq" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Queued Claims" info="" state="0" hotkey="QC" executeMethod="EXE:qc_shwque" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cash Pricing" info="" state="0" hotkey="PR" executeMethod="EXE:sxc_price" validateMethod="" executeType="3" helpId="0" securityWindow="5" securityItem="1" ELBname=""/>
+    <program name="Automatic Refill" info="" state="0" hotkey="A" executeMethod="SXC_RX_034_signal_AF" validateMethod="" executeType="2" helpId="0" securityWindow="19" securityItem="1" ELBname="SXC_rx_rx"/>
+    <program name="Auto Refill All Patients" info="" state="0" hotkey="A" executeMethod="SXC_rx_026_signal_A" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_rx"/>
+    <program name="Auto Refill Single Patient" info="" state="0" hotkey="B" executeMethod="SXC_rx_026_signal_B" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_rx"/>
+    <program name="Auto Refill Single Drug" info="" state="0" hotkey="C" executeMethod="SXC_rx_026_signal_C" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_rx"/>
+    <program name="Auto Refill By Patient" info="" state="0" hotkey="C" executeMethod="SXC_RX_034_signal_AP" validateMethod="" executeType="2" helpId="-3?28?28" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Refill Queue ***" info="" state="0" hotkey="RFQ" executeMethod="EXE:vrupick_rfq" validateMethod="RxSystemVruValSub" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Verification Queue" info="" state="0" hotkey="A" executeMethod="EXE:vfq_main" validateMethod="VerificationQueueVal" executeType="3" helpId="0" securityWindow="17" securityItem="5" ELBname=""/>
+    <program name="Quality Assurance Station" info="" state="0" hotkey="B" executeMethod="EXE:qascan_QA" validateMethod="QualityAssuranceStationVal" executeType="3" helpId="0" securityWindow="17" securityItem="1" ELBname=""/>
+    <program name="RPh Checking Station" info="" state="1" hotkey="C" executeMethod="EXE:qascan_WFR" validateMethod="RphCheckStationVal" executeType="3" helpId="0" securityWindow="17" securityItem="2" ELBname=""/>
+    <program name="Rx Workflow Information" info="" state="0" hotkey="A" executeMethod="SXC_wf_rx_info" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_wf"/>
+    <program name="Patient Workflow Counts" info="" state="0" hotkey="B" executeMethod="SXC_rx_wfcnts_patient" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Store Workflow Counts" info="" state="0" hotkey="C" executeMethod="SXC_rx_wfcnts_store" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Manually Delete Workflow Scan" info="" state="0" hotkey="D" executeMethod="EXE:wfsub_DELQA" validateMethod="" executeType="3" helpId="0" securityWindow="17" securityItem="3" ELBname=""/>
+    <program name="Bypass Single Rx" info="" state="0" hotkey="A" executeMethod="SXC_wf_bypass_rx" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_wf"/>
+    <program name="Bypass by Rx Date Span" info="" state="0" hotkey="B" executeMethod="SXC_wf_bypass_by_date" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_wf"/>
+    <program name="Display Rx Hardcopy Image" info="" state="0" hotkey="F" executeMethod="EXE:wfsub_HC" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Display Insurance Card" info="" state="0" hotkey="G" executeMethod="EXE:wfsub_CRD" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Workflow Productivity Report" info="" state="0" hotkey="A" executeMethod="EXE:wf_prdrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Workflow Fill Time Report" info="" state="0" hotkey="B" executeMethod="EXE:wf_timerpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Non-Match Workflow Scan Report" info="" state="0" hotkey="C" executeMethod="EXE:wf_scanrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="GPI Match Workflow Scan Report" info="" state="0" hotkey="D" executeMethod="EXE:wf_gpirpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="No RPh Check Workflow Scan Report" info="" state="0" hotkey="E" executeMethod="EXE:wf_norcrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx With No Hardcopy Image Report" info="" state="0" hotkey="F" executeMethod="EXE:wf_noimgrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="View Problem Queue" info="" state="0" hotkey="A" executeMethod="SXC_rx_pqmnt_problem" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="View Pending Rx Queue" info="" state="0" hotkey="B" executeMethod="SXC_rx_pqmnt_pending_rx" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Doctor Call In for New Rx" info="" state="0" hotkey="C" executeMethod="Problem_Add_Dc_Sub" validateMethod="" executeType="2" helpId="0" securityWindow="18" securityItem="2" ELBname="SXC_rxlib"/>
+    <program name="Patient Request for New Rx" info="" state="0" hotkey="D" executeMethod="Problem_Add_Pr_Sub" validateMethod="" executeType="2" helpId="0" securityWindow="18" securityItem="2" ELBname="SXC_rxlib"/>
+    <program name="Store Workflow Counts" info="" state="0" hotkey="E" executeMethod="SXC_rx_wfcnts_store" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rx_wf"/>
+    <program name="Will Call" info="" state="0" hotkey="G" executeMethod="EXE:wcl_new" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Fax Queue" info="" state="0" hotkey="H" executeMethod="EXE:faxque" validateMethod="FaxQueueVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Bin Maintenance" info="" state="0" hotkey="I" executeMethod="SXC_rx_binmnt" validateMethod="BinManagementVal" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Will Call" info="" state="0" hotkey="WCL" executeMethod="EXE:wcl_new" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auxiliary Labels" info="" state="0" hotkey="AL" executeMethod="EXE:auxl1" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Set Delivery Date" info="" state="0" hotkey="DD" executeMethod="Delivery_Date_Sub" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Set Terminal Date" info="" state="0" hotkey="DT" executeMethod="Terminal_Date_Sub" validateMethod="" executeType="2" helpId="0" securityWindow="15" securityItem="14" ELBname=""/>
+    <program name="Delete Patient" info="" state="0" hotkey="DP" executeMethod="SXC_delete_main_signal_DP" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Delete Insurance Coverage" info="" state="0" hotkey="DC" executeMethod="SXC_delete_main_signal_DC" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Delete RX" info="" state="0" hotkey="DR" executeMethod="SXC_delete_main_signal_DR" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Delete Refill" info="" state="0" hotkey="DF" executeMethod="SXC_delete_main_signal_DF" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Delete Drug" info="" state="0" hotkey="DD" executeMethod="SXC_delete_main_signal_DD" validateMethod="" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname="SXC_rxlib"/>
+    <program name="Family Rx History" info="" state="0" hotkey="FH" executeMethod="EXE:rxfam" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Family Member Merge" info="" state="0" hotkey="FM" executeMethod="EXE:famopt" validateMethod="" executeType="3" helpId="0" securityWindow="1" securityItem="16" ELBname=""/>
+    <program name="FAX Queue" info="" state="0" hotkey="FXQ" executeMethod="EXE:faxque" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Price Change" info="" state="0" hotkey="PC" executeMethod="EXE:sxc_price_change" validateMethod="" executeType="3" helpId="0" securityWindow="5" securityItem="2" ELBname=""/>
+    <program name="Patient Rx Merge" info="" state="0" hotkey="PM" executeMethod="SXC_merge" validateMethod="" executeType="2" helpId="0" securityWindow="1" securityItem="10" ELBname=""/>
+    <program name="Change RPH" info="" state="0" hotkey="RPH" executeMethod="EXE:chgrph" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Total New/Refil Rx&apos;s" info="" state="0" hotkey="T" executeMethod="RxSystemRxCntSub" validateMethod="" executeType="2" helpId="0" securityWindow="15" securityItem="4" ELBname=""/>
+    <program name="Today&apos;s Message" info="" state="0" hotkey="TM" executeMethod="EXE:str2sm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="File Maintenance System" info="" state="0" hotkey="B" executeMethod="FileMaintenanceSystemSub" validateMethod="" executeType="1" helpId="0" securityWindow="15" securityItem="9" ELBname="" menu_title="FILE MAINTENANCE MENU">
+    <program name="Signa Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:msigmn" validateMethod="" executeType="3" helpId="0" securityWindow="4" securityItem="1" ELBname=""/>
+    <program name="Caution Maintenance" info="" state="1" hotkey="B" executeMethod="EXE:mcaumn" validateMethod="CautionMaintVal" executeType="3" helpId="0" securityWindow="15" securityItem="3" ELBname=""/>
+    <program name="Aller-Chek(TM) Maintentance" info="" state="0" hotkey="C" executeMethod="EXE:mstvmn" validateMethod="SensitivityMaintVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Treatment Master Maintenance" info="" state="0" hotkey="D" executeMethod="EXE:trtmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Side Effect Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:sefmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="ICD-9 File (Medispan Drug Disease)" info="" state="0" hotkey="A" executeMethod="EXE:icd9lp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="ICD-9 File (AMA)" info="" state="0" hotkey="A" executeMethod="EXE:icd9mn" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Load ICD-9 into HBS File" info="" state="0" hotkey="B" executeMethod="EXE:icd9fl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="GPI Maintenance" info="" state="0" hotkey="C" executeMethod="EXE:ndcgpi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="State Formulary Maintenance" info="" state="0" hotkey="D" executeMethod="EXE:frmmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Manufacturer Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:cman" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing Manufacturer Print-Out" info="" state="0" hotkey="B" executeMethod="EXE:cman_missing" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Code 1 Maintenance" info="" state="0" hotkey="F" executeMethod="EXE:cd1rmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="TAR Code Maintenance" info="" state="0" hotkey="G" executeMethod="EXE:tarcdmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Price Table Maintenance" info="" state="0" hotkey="H" executeMethod="EXE:prctable" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Problem Comment Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:sxc_pbq_cmts_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Problem Reason Maintenance" info="" state="0" hotkey="B" executeMethod="EXE:sxc_pbq_reason_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Problem Delete Functions" info="" state="0" hotkey="C" executeMethod="EXE:pmm_delete" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Specialty Code Maintenance" info="" state="0" hotkey="G" executeMethod="EXE:spcmn" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NCPDP Reject Code Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:rmsmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DUR Reason For Service" info="" state="0" hotkey="B" executeMethod="EXE:durrfs" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DUR Professional Service" info="" state="0" hotkey="C" executeMethod="EXE:durps" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DUR Result of Service" info="" state="0" hotkey="D" executeMethod="EXE:durros" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Expiration Code Maintenance" info="" state="0" hotkey="I" executeMethod="EXE:expmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RPH Initial Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:rphmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Technician Maintenance" info="" state="0" hotkey="B" executeMethod="EXE:tchmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Generic Drug Marking Maintenance" info="" state="0" hotkey="K" executeMethod="EXE:genric" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Update Drug TNC" info="" state="0" hotkey="A" executeMethod="EXE:updtnc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Update Price Table" info="" state="0" hotkey="B" executeMethod="EXE:updprc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Update Drug File" info="" state="0" hotkey="A" executeMethod="EXE:whludg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Wholesaler Layout" info="" state="0" hotkey="B" executeMethod="EXE:whlmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Purchase Order Import" info="" state="0" hotkey="C" executeMethod="EXE:whlpoi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Receive X12 File(s)" info="" state="0" hotkey="D" executeMethod="EXE:x12comm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Apply X12 File(s)" info="" state="0" hotkey="E" executeMethod="EXE:x12dir" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Import Mckesson Acquisition Updates" info="" state="0" hotkey="F" executeMethod="EXE:whlmck" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alpha Caution Print" info="" state="1" hotkey="N" executeMethod="EXE:alcpr" validateMethod="CautionPrintVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pre-Packaging Labels" info="" state="0" hotkey="A" executeMethod="EXE:ppkg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Laser Pre-Packaging Labels" info="" state="0" hotkey="B" executeMethod="EXE:ppl_lbl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Thermal Pre-Packaging Labels" info="" state="0" hotkey="C" executeMethod="EXE:ppt_lbl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Recalculate Monthly Totals" info="" state="0" hotkey="P" executeMethod="EXE:clmxrx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx Repricing" info="" state="0" hotkey="Q" executeMethod="EXE:reprc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="SureScripts Doctors Report" info="" state="0" hotkey="A" executeMethod="EXE:ssdocpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="SureScripts Doctor Notes" info="" state="0" hotkey="B" executeMethod="EXE:ssdocnts" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Link Doctors" info="" state="0" hotkey="C" executeMethod="EXE:linkdocs" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Transfer Pharmacy Maintenance" info="" state="0" hotkey="S" executeMethod="EXE:iopmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Insurance File Maintenance" info="" state="0" hotkey="T" executeMethod="EXE:sxc_insmnt_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Employer File Maintenance" info="" state="0" hotkey="U" executeMethod="EXE:sxc_empmnt_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Documentation Maintenance" info="" state="0" hotkey="V" executeMethod="EXE:dmttyp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="MTS Reject Queue" info="" state="0" hotkey="W" executeMethod="EXE:sxc_mts_rejq_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Clinic Maintenance" info="" state="0" hotkey="X" executeMethod="EXE:sxc_clncmnt_main" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Docutrack Document Types" info="" state="0" hotkey="Y" executeMethod="EXE:dtrtyp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Category Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:mntcat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="AHFS Code Maintenance" info="" state="0" hotkey="B" executeMethod="EXE:mntahf" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="GPI Code Maintenance" info="" state="0" hotkey="C" executeMethod="EXE:mntgpi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Daily Report System" info="" state="0" hotkey="C" executeMethod="DailyReportSystemSub" validateMethod="" executeType="1" helpId="0" securityWindow="10" securityItem="1" ELBname="" menu_title="DAILY REPORT MENU">
+    <program name="Rx Register" info="" state="0" hotkey="A" executeMethod="EXE:alprxr" validateMethod="RxRegisterVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Export File" info="" state="0" hotkey="B" executeMethod="EXE:exprxr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Special Rx Register" info="" state="0" hotkey="C" executeMethod="EXE:iv_rxreg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Controlled Substance Report" info="" state="0" hotkey="B" executeMethod="EXE:clss3" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="4" ELBname=""/>
+    <program name="Class II Report" info="" state="0" hotkey="C" executeMethod="EXE:clss2" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="4" ELBname=""/>
+    <program name="Drug Enforcement Agency Report" info="" state="0" hotkey="D" executeMethod="EXE:dea" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="4" ELBname=""/>
+    <program name="Rebill Register" info="" state="0" hotkey="E" executeMethod="EXE:rbreg" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Rx Audit" info="" state="0" hotkey="F" executeMethod="EXE:auditrx" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="3" ELBname=""/>
+    <program name="Refill Register" info="" state="0" hotkey="G" executeMethod="EXE:clss4" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="ECS Register" info="" state="0" hotkey="H" executeMethod="EXE:ecsrg" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Refill Due Report" info="" state="0" hotkey="I" executeMethod="EXE:rfldue" validateMethod="RefillDueReportVal" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Documentation Report" info="" state="0" hotkey="J" executeMethod="EXE:dokrep" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Daily Charge Register" info="" state="0" hotkey="K" executeMethod="EXE:chgrg" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Adjustments To Sales" info="" state="0" hotkey="L" executeMethod="EXE:adjsls" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Prescription &quot;Changes&quot; Report" info="" state="0" hotkey="M" executeMethod="EXE:rxtrak" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Non-Billed Rx Report" info="" state="0" hotkey="N" executeMethod="EXE:rxunb" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Deleted Rx Register" info="" state="0" hotkey="O" executeMethod="EXE:delrxr" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="2" ELBname=""/>
+    <program name="HIPPA Signature Log" info="" state="0" hotkey="A" executeMethod="EXE:hipaalogrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="3rd Party Signature Log" info="" state="0" hotkey="B" executeMethod="EXE:rxsigrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="3rd Party Missing Signatures" info="" state="0" hotkey="C" executeMethod="EXE:missigrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Mailed Rx Report" info="" state="0" hotkey="D" executeMethod="EXE:rxmailrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Outstanding Will Call Report" info="" state="0" hotkey="E" executeMethod="EXE:wcl_notpk" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Financial Reports" info="" state="0" hotkey="F" executeMethod="EXE:wcl_fin" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Units Owed Report" info="" state="0" hotkey="Q" executeMethod="EXE:pqmnt_main" validateMethod="UnitsOwedReportVal" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Tax Report" info="" state="0" hotkey="R" executeMethod="EXE:taxrpt" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+    <program name="Daily Sales Report" info="" state="0" hotkey="S" executeMethod="EXE:slsrpt" validateMethod="" executeType="3" helpId="0" securityWindow="10" securityItem="5" ELBname=""/>
+  </submenu>
+  <submenu name="Billing System" info="" state="0" hotkey="D" executeMethod="BillingSystemSub" validateMethod="" executeType="1" helpId="0" securityWindow="11" securityItem="1" ELBname="" menu_title="BILLING MENU" reload_backdoor="BILL">
+    <program name="Commonwealth of Pennsylvania" info="" state="0" hotkey="A" executeMethod="EXE:PAdpa" validateMethod="StateBillingVal" executeType="3" helpId="0" securityWindow="11" securityItem="2" ELBname=""/>
+    <program name="Electronic Claim Submission" info="" state="0" hotkey="B" executeMethod="EXE:makecs" validateMethod="" executeType="3" helpId="0" securityWindow="11" securityItem="3" ELBname=""/>
+    <program name="Billing Recap" info="" state="0" hotkey="C" executeMethod="EXE:recap" validateMethod="BillingRecapVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Universal Claim Forms" info="" state="0" hotkey="A" executeMethod="EXE:alpinv" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="1500 Forms" info="" state="0" hotkey="B" executeMethod="EXE:chaalp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Workman&apos;s Comp" info="" state="0" hotkey="C" executeMethod="EXE:alpwcfrm" validateMethod="WorkmansCompVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="HMO Billing" info="" state="0" hotkey="D" executeMethod="EXE:hmo" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Profile Style Billing" info="" state="0" hotkey="E" executeMethod="EXE:proalp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DC Medicaid" info="" state="0" hotkey="F" executeMethod="EXE:alpdcm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Monthly Detail Report" info="" state="0" hotkey="G" executeMethod="EXE:detrep" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pharmacy Invoice" info="" state="0" hotkey="H" executeMethod="EXE:phinv" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Prior Authorization Report" info="" state="0" hotkey="E" executeMethod="EXE:prarpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Third Party Credits" info="" state="0" hotkey="F" executeMethod="EXE:ertmi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Narcotic Reporting" info="" state="0" hotkey="G" executeMethod="EXE:narmen" validateMethod="NarcoticReportingVal" executeType="3" helpId="0" securityWindow="11" securityItem="4" ELBname=""/>
+    <program name="P.A.P. Drug Replacement Report" info="" state="0" hotkey="H" executeMethod="EXE:invxexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="P.A.P. Drug Category Summary Report" info="" state="0" hotkey="I" executeMethod="EXE:trans_summary_rpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="MHA Export" info="" state="0" hotkey="J" executeMethod="EXE:mhaexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Keystone Alliance" info="" state="0" hotkey="K" executeMethod="EXE:keyexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Miscellaneous Reports System" info="" state="0" hotkey="E" executeMethod="MiscReportsSystemSub" validateMethod="" executeType="1" helpId="0" securityWindow="10" securityItem="8" ELBname="" menu_title="MISCELLANEOUS REPORTS MENU">
+    <program name="New Doctor List" info="" state="0" hotkey="A" executeMethod="EXE:newdoc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="New Doctor List By ZIP" info="" state="0" hotkey="B" executeMethod="EXE:newdocbyzip" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Doctor Report" info="" state="0" hotkey="B" executeMethod="EXE:topdoc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NJ Invalid Imp # List" info="" state="0" hotkey="C" executeMethod="EXE:dtrstl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor By Zip Code Report" info="" state="0" hotkey="D" executeMethod="EXE:dziprpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor File Print" info="" state="0" hotkey="A" executeMethod="EXE:dtrpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor 3rd Party License Print" info="" state="0" hotkey="B" executeMethod="EXE:dtrplc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Duplicate DEA Report" info="" state="0" hotkey="C" executeMethod="EXE:dupdtrdea" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="New Customers List" info="" state="0" hotkey="A" executeMethod="EXE:newpat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Third Party List" info="" state="0" hotkey="B" executeMethod="EXE:thdlst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Price Table Report" info="" state="0" hotkey="C" executeMethod="EXE:ptblrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Active Patient List - By Last Name" info="" state="0" hotkey="A" executeMethod="EXE:actvpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Active Patient List - By Zip Code" info="" state="0" hotkey="B" executeMethod="EXE:actvpt2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inactive Patient List" info="" state="0" hotkey="C" executeMethod="EXE:inactv" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Active Patient&apos;s Total Report" info="" state="0" hotkey="E" executeMethod="EXE:custstha" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient/HIPAA Comment List" info="" state="0" hotkey="F" executeMethod="EXE:patcmtl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Retail Birthday Report" info="" state="0" hotkey="G" executeMethod="EXE:rtbir" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Invalid Allergy Report by Patient" info="" state="0" hotkey="H" executeMethod="EXE:patndc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Allergy Report" info="" state="0" hotkey="I" executeMethod="EXE:alalg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="SDI - Call Patients Report" info="" state="0" hotkey="J" executeMethod="EXE:sdicall" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Profiled Rx Report" info="" state="0" hotkey="A" executeMethod="EXE:prflrx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DAW Report" info="" state="0" hotkey="B" executeMethod="EXE:dawrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Active Refill Report" info="" state="0" hotkey="C" executeMethod="EXE:actref" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Phoned In Rx Report" info="" state="0" hotkey="D" executeMethod="EXE:wcl_phrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Transfer Report" info="" state="0" hotkey="E" executeMethod="EXE:transfr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx By Month Report" info="" state="0" hotkey="F" executeMethod="EXE:rxbymth" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX Denial Code Report" info="" state="0" hotkey="A" executeMethod="EXE:rxdenrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX DUR Code Report" info="" state="0" hotkey="B" executeMethod="EXE:rxdurrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX Other Coverage Report" info="" state="0" hotkey="C" executeMethod="EXE:rxotherc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx Doctor Order Form" info="" state="0" hotkey="H" executeMethod="EXE:phyform" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx Statistics By Days Supply" info="" state="0" hotkey="I" executeMethod="EXE:custat3" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rx Number List" info="" state="0" hotkey="J" executeMethod="EXE:audrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Batch Hard Copy" info="" state="0" hotkey="K" executeMethod="EXE:hdlbl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Retail Missing DX Report" info="" state="0" hotkey="L" executeMethod="EXE:rtmissdx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Activity Report" info="" state="0" hotkey="M" executeMethod="EXE:drg020" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Prescription Comments Report" info="" state="0" hotkey="N" executeMethod="EXE:rxcmts" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX Amount Paid Report" info="" state="0" hotkey="O" executeMethod="EXE:payrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Number RX By Age Report" info="" state="0" hotkey="P" executeMethod="EXE:rxbyage" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Tracking Report" info="" state="0" hotkey="A" executeMethod="EXE:drgtrk" validateMethod="DrugTrackingReportVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Expiration Report" info="" state="0" hotkey="B" executeMethod="EXE:drgexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Expiration Report (Date Range)" info="" state="0" hotkey="C" executeMethod="EXE:expdr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Recall Report" info="" state="0" hotkey="D" executeMethod="EXE:recall" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Caut/Stv Print" info="" state="1" hotkey="E" executeMethod="EXE:dgsvrp" validateMethod="DrugCautionVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Selling Drug Report" info="" state="0" hotkey="A" executeMethod="EXE:topdrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Selling Report by AHFS" info="" state="0" hotkey="B" executeMethod="EXE:drgcst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Selling Report by NDC (Utilized Only)" info="" state="0" hotkey="A" executeMethod="EXE:salerpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Selling Report by NDC (Utilized and Same NDC)" info="" state="0" hotkey="B" executeMethod="EXE:salerptf" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drugs Not Updated Report" info="" state="0" hotkey="G" executeMethod="EXE:fdold" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Generic Exception Report" info="" state="0" hotkey="H" executeMethod="EXE:genexc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Rebate Util Report" info="" state="0" hotkey="I" executeMethod="EXE:rebutl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Manufacturer Rebate Report" info="" state="0" hotkey="J" executeMethod="EXE:rebaterpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Clozaril Report" info="" state="0" hotkey="K" executeMethod="EXE:clozpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug-Disease Monitoring(TM)" info="" state="1" hotkey="L" executeMethod="EXE:ddprt" validateMethod="DrugDiseaseMonitoringVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Legend only" info="" state="0" hotkey="A" executeMethod="EXE:drgpr1" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="OTC only" info="" state="0" hotkey="B" executeMethod="EXE:drgpr2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Both (Legend &amp; OTC)" info="" state="0" hotkey="C" executeMethod="EXE:drgpr3" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Compound Drug Print Out" info="" state="0" hotkey="D" executeMethod="EXE:drgpr4" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Generics Print Out" info="" state="0" hotkey="E" executeMethod="EXE:drgpr5" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print By Pricing Table #" info="" state="0" hotkey="F" executeMethod="EXE:drgpr6" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Generic AWP Only" info="" state="0" hotkey="G" executeMethod="EXE:drgpr7" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Direct Buy Prices Only" info="" state="0" hotkey="H" executeMethod="EXE:drgpr8" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="By Alt Manu #" info="" state="0" hotkey="I" executeMethod="EXE:drgpr9" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Category List" info="" state="0" hotkey="A" executeMethod="EXE:alpcat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Miscellaneous Orders List" info="" state="0" hotkey="B" executeMethod="EXE:alpmo" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Stock List" info="" state="0" hotkey="K" executeMethod="EXE:stklst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="New Drug List" info="" state="0" hotkey="L" executeMethod="EXE:drgadd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Lab List" info="" state="0" hotkey="M" executeMethod="EXE:lablst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Information File Print Out" info="" state="0" hotkey="N" executeMethod="EXE:dgiprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Unit Dose Print Out" info="" state="0" hotkey="O" executeMethod="EXE:drgpr15" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Cost Report" info="" state="0" hotkey="P" executeMethod="EXE:mdgctrt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="UPC Bar Code Entry" info="" state="0" hotkey="Q" executeMethod="EXE:mentbar" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Interface Drug List" info="" state="0" hotkey="R" executeMethod="EXE:atmlis" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Pricing Table Report" info="" state="0" hotkey="S" executeMethod="EXE:drgtbl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pharmex Code List" info="" state="0" hotkey="T" executeMethod="EXE:prtphx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Formulary Drugs" info="" state="0" hotkey="A" executeMethod="EXE:frmrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Equivalents Drugs" info="" state="0" hotkey="B" executeMethod="EXE:eqvrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create APA Formulary" info="" state="0" hotkey="C" executeMethod="EXE:apafrm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Formulary Messages" info="" state="0" hotkey="D" executeMethod="EXE:apamsg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Formulary Sponsor" info="" state="0" hotkey="E" executeMethod="EXE:apaspn" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="By Sig Def or Form" info="" state="0" hotkey="V" executeMethod="EXE:drgpr10" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Medicare Formulary Report" info="" state="0" hotkey="W" executeMethod="EXE:frmprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="340B Drug List" info="" state="0" hotkey="X" executeMethod="EXE:drg340b" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing GPI Codes" info="" state="0" hotkey="Y" executeMethod="EXE:drggpi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Unit Cost Cutoff Report" info="" state="0" hotkey="A" executeMethod="EXE:drgpr13" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Invalid NDC Report" info="" state="0" hotkey="B" executeMethod="EXE:prt_drgndc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Duplicate NDC Report" info="" state="0" hotkey="C" executeMethod="EXE:dupndcrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NDC Drug Classes" info="" state="0" hotkey="D" executeMethod="EXE:drgalrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Tracked/NonTracked Drug List" info="" state="0" hotkey="E" executeMethod="EXE:trklst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NDC/UPC Drug List" info="" state="0" hotkey="F" executeMethod="EXE:drgndcupc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Short Name Allergy Drug Print" info="" state="0" hotkey="G" executeMethod="EXE:drgsnm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug File Export" info="" state="0" hotkey="N" executeMethod="EXE:exp_dgexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Price Difference Report" info="" state="0" hotkey="A" executeMethod="EXE:prcdif" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Price Update Report By Date" info="" state="0" hotkey="B" executeMethod="EXE:fdrng" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Sales By State Report" info="" state="0" hotkey="A" executeMethod="EXE:slsbysta" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Sales By Doctor Zip" info="" state="0" hotkey="B" executeMethod="EXE:slsbyzip" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cash/Charge Co-Pay Report" info="" state="0" hotkey="D" executeMethod="EXE:rxcshch" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Price Less Than Acq. Report" info="" state="0" hotkey="E" executeMethod="EXE:prcacqrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Retail High Cost Report" info="" state="0" hotkey="F" executeMethod="EXE:rtlcst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Hard Copy / Insurance Profile (Unsorted)" info="" state="0" hotkey="A" executeMethod="EXE:hrdpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Hard Copy / Insurance Profile (Date Sorted)" info="" state="0" hotkey="B" executeMethod="EXE:hrdpr2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Medical Profile" info="" state="0" hotkey="C" executeMethod="EXE:jpsprf" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Hard Copy Profile - Family" info="" state="0" hotkey="B" executeMethod="EXE:hrdfm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Alpha Patient Profiles" info="" state="0" hotkey="C" executeMethod="EXE:alppro" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Insurance Profile Print" info="" state="0" hotkey="D" executeMethod="EXE:hrdins" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Utilization Update" info="" state="0" hotkey="A" executeMethod="EXE:utlupd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="YTD Utilization" info="" state="0" hotkey="B" executeMethod="EXE:utlytd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Utilization Report" info="" state="0" hotkey="C" executeMethod="EXE:utlrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drugs Not Utilized Report" info="" state="0" hotkey="D" executeMethod="EXE:utlrpt2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Usage Report" info="" state="0" hotkey="B" executeMethod="EXE:drgusg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Drug Usage Report" info="" state="0" hotkey="C" executeMethod="EXE:dtrusg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Drug Monitoring Report" info="" state="0" hotkey="D" executeMethod="EXE:dtdgmn" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Mailing Labels &lt;by 3rd party&gt;" info="" state="0" hotkey="A" executeMethod="EXE:patlab" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Mailing Labels &lt;by Doctor&gt;" info="" state="0" hotkey="B" executeMethod="EXE:dtrlab" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Mailing Labels" info="" state="0" hotkey="C" executeMethod="EXE:dtrlbl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Mailing Labels &lt;by Patient Type&gt;" info="" state="0" hotkey="D" executeMethod="EXE:patlb2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Laser Label Menu" info="" state="0" hotkey="E" executeMethod="EXE:lasrlb" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Export File" info="" state="0" hotkey="F" executeMethod="EXE:patlbe" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Auxiliary Label File" info="" state="0" hotkey="B" executeMethod="EXE:auxprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Detail Billing" info="" state="0" hotkey="A" executeMethod="EXE:hmobil" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Utilization" info="" state="0" hotkey="B" executeMethod="EXE:drgulz" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Physician&apos;s Activity Report" info="" state="0" hotkey="C" executeMethod="EXE:docdrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Utilization by 3rd Party" info="" state="0" hotkey="D" executeMethod="EXE:drgul2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Category Report" info="" state="0" hotkey="A" executeMethod="EXE:rtldct" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Roster Report" info="" state="0" hotkey="B" executeMethod="EXE:catroster" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Outstanding Will Call Report" info="" state="0" hotkey="A" executeMethod="EXE:wcl_notpk" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Financial Will Call Report" info="" state="0" hotkey="B" executeMethod="EXE:wcl_fin" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Expected Amount Report" info="" state="0" hotkey="C" executeMethod="EXE:rxpkp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Productivity Report" info="" state="0" hotkey="A" executeMethod="EXE:prdrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Productivity Report By Security Group" info="" state="0" hotkey="B" executeMethod="EXE:prodrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Rph Summary Report" info="" state="0" hotkey="G" executeMethod="EXE:rphsum" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="ECS by Group Report" info="" state="0" hotkey="H" executeMethod="EXE:ecsgrp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Medicine on Time Patient List" info="" state="0" hotkey="I" executeMethod="EXE:patmot" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="TAR Status Report" info="" state="0" hotkey="J" executeMethod="EXE:tarstrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing Original Narcotic Report" info="" state="0" hotkey="K" executeMethod="EXE:misorgnar" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Territory Sales Report" info="" state="1" hotkey="L" executeMethod="EXE:asa_tsale" validateMethod="TerrSalesVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing Vendor Report" info="" state="0" hotkey="M" executeMethod="EXE:missvnd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Delivery System" info="" state="0" hotkey="F" executeMethod="DeliverySub" validateMethod="DeliverySystemVal" executeType="1" helpId="0" securityWindow="0" securityItem="0" ELBname="" menu_title="DELIVERY SYSTEM MENU">
+    <program name="Search/Add Deliveries" info="" state="0" hotkey="A" executeMethod="EXE:dlvhdr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Display &quot;Open&quot; Deliveries" info="" state="0" hotkey="B" executeMethod="EXE:dlvhdro" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="C" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="D" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Mark for Delivery" info="" state="0" hotkey="E" executeMethod="EXE:dlvhdrm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Delivery Manifest" info="" state="0" hotkey="A" executeMethod="EXE:PrtDlvMnfst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Delivery Tickets" info="" state="0" hotkey="B" executeMethod="EXE:PrtDlvTicket" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Both" info="" state="0" hotkey="C" executeMethod="EXE:PrtDlvTktMnfst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Display &quot;Currently Being Delivered&quot;" info="" state="0" hotkey="G" executeMethod="EXE:dlvhdrd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Check In Deliveries" info="" state="0" hotkey="H" executeMethod="EXE:dlvhdrc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Display &quot;On Hold&quot; Deliveries" info="" state="0" hotkey="I" executeMethod="EXE:dlvhdrh" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Search/Purge &quot;Closed&quot; Deliveries" info="" state="0" hotkey="J" executeMethod="EXE:dlvhdrp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Route Maintenance" info="" state="0" hotkey="K" executeMethod="EXE:routemnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Driver Maintenance" info="" state="0" hotkey="L" executeMethod="EXE:drvmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Delivery Statistics" info="" state="0" hotkey="A" executeMethod="EXE:DlvStats" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Closed Delivery Report" info="" state="0" hotkey="B" executeMethod="EXE:DlvClosed" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Delivery Routes" info="" state="0" hotkey="C" executeMethod="EXE:DlvRoutes" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Accounts Receivable" info="" state="0" hotkey="G" executeMethod="AccountsReceiveableSub" validateMethod="AccountsReceivableVal" executeType="1" helpId="0" securityWindow="7" securityItem="1" ELBname="" menu_title="ACCOUNTS RECEIVABLE MENU">
+    <program name="Maintain Customers" info="" state="0" hotkey="A" executeMethod="EXE:cusmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Customers" info="" state="0" hotkey="B" executeMethod="EXE:cusprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Verify A/R Accounts" info="" state="0" hotkey="C" executeMethod="EXE:vercus" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Department Maintenance" info="" state="0" hotkey="B" executeMethod="EXE:depmnt" validateMethod="" executeType="3" helpId="0" securityWindow="7" securityItem="3" ELBname=""/>
+    <program name="Add Transactions" info="" state="0" hotkey="A" executeMethod="EXE:slsent" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Edit Transactions" info="" state="0" hotkey="B" executeMethod="EXE:slsentE" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Transaction Edit List" info="" state="0" hotkey="C" executeMethod="EXE:slsedt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Deposit List Report" info="" state="0" hotkey="D" executeMethod="EXE:depslp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Customer Account Inquiry" info="" state="0" hotkey="D" executeMethod="EXE:actinq" validateMethod="" executeType="3" helpId="0" securityWindow="7" securityItem="2" ELBname=""/>
+    <program name="Calculate Finance Charges" info="" state="0" hotkey="A" executeMethod="EXE:finchg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alphabetical Trial Balance" info="" state="0" hotkey="A" executeMethod="EXE:alpbal" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Numerical Trial Balance" info="" state="0" hotkey="B" executeMethod="EXE:artbal" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alphabetical By Bill Cycle" info="" state="0" hotkey="C" executeMethod="EXE:albbal" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Align AR Statement Form" info="" state="0" hotkey="A" executeMethod="EXE:aligns" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alphabetic By Bill Cycle" info="" state="0" hotkey="B" executeMethod="EXE:cycstm2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Numeric Order" info="" state="0" hotkey="C" executeMethod="EXE:rtlstm2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Past Due Message Maintenance" info="" state="0" hotkey="D" executeMethod="EXE:duemnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Purge Open Item File" info="" state="0" hotkey="E" executeMethod="EXE:purgar" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cycle File Maintenance" info="" state="0" hotkey="F" executeMethod="EXE:cycmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Overdue Report" info="" state="0" hotkey="G" executeMethod="EXE:over45" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Dunning Letters" info="" state="0" hotkey="A" executeMethod="EXE:dunmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Prepare Dunning Letter File" info="" state="0" hotkey="B" executeMethod="EXE:dunprp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Dunning Letters" info="" state="0" hotkey="C" executeMethod="EXE:dunprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Prepare Statement File" info="" state="0" hotkey="I" executeMethod="EXE:stmfil" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alpha Customer List (Short Format)" info="" state="0" hotkey="A" executeMethod="EXE:cuslst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="AR- RX Interface Totals" info="" state="0" hotkey="B" executeMethod="EXE:rxtotl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Monthly Sales/Credit Report" info="" state="0" hotkey="C" executeMethod="EXE:mnslrp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Daily Charge Report" info="" state="0" hotkey="A" executeMethod="EXE:dlyrp1" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Daily Cash Receipts and Credits Report" info="" state="0" hotkey="B" executeMethod="EXE:dlyrp2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Daily Cash Receipts Only" info="" state="0" hotkey="C" executeMethod="EXE:dlyrp3" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Manual Credits Only" info="" state="0" hotkey="D" executeMethod="EXE:dlyrp4" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alpha Mailing Labels" info="" state="0" hotkey="A" executeMethod="EXE:alabel" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Selective Mailing Labels" info="" state="0" hotkey="B" executeMethod="EXE:mlabel" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Zip Code Mailing Labels" info="" state="0" hotkey="C" executeMethod="EXE:zlabel" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Customer Rolodex Cards" info="" state="0" hotkey="F" executeMethod="EXE:roldex" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Interface List" info="" state="0" hotkey="H" executeMethod="EXE:arpatlst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Credit Balance Report" info="" state="0" hotkey="I" executeMethod="EXE:arrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Over Credit Limit Report" info="" state="0" hotkey="J" executeMethod="EXE:crdlmrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing Cycle List" info="" state="0" hotkey="K" executeMethod="EXE:misscyc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Entry (All Claims)" info="" state="0" hotkey="A" executeMethod="EXE:recon2_entry_all" validateMethod="" executeType="3" helpId="0" securityWindow="7" securityItem="9" ELBname=""/>
+    <program name="Reconciliation Entry (Open Claims)" info="" state="0" hotkey="B" executeMethod="EXE:recon2_entry_open" validateMethod="" executeType="3" helpId="0" securityWindow="7" securityItem="9" ELBname=""/>
+    <program name="ECS Payment Date Entry" info="" state="0" hotkey="A" executeMethod="EXE:rcupd_2e" validateMethod="ECSPayDateVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Batch Exceptions" info="" state="0" hotkey="A" executeMethod="EXE:nhbexc_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Rebill" info="" state="0" hotkey="C" executeMethod="EXE:rcrbl_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Write-off" info="" state="0" hotkey="D" executeMethod="EXE:rcupd_2w" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Purge" info="" state="0" hotkey="E" executeMethod="EXE:rcupd_2p" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NON-ECS Payment Date Entry" info="" state="0" hotkey="F" executeMethod="EXE:rcupd_2n" validateMethod="NonECSPayDateVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Status Report" info="" state="0" hotkey="A" executeMethod="EXE:rcnstat_rpt2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Aging Report" info="" state="0" hotkey="B" executeMethod="EXE:recage_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Posted Report" info="" state="0" hotkey="C" executeMethod="EXE:rcnpost_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reconciliation Posted Report By Fill Date" info="" state="0" hotkey="D" executeMethod="EXE:rcn_rmbrpt_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Group Maintenance" info="" state="0" hotkey="E" executeMethod="EXE:recon_grpmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Electronic Payment Update" info="" state="0" hotkey="F" executeMethod="EXE:rcnupd_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Electronic Payment Backout" info="" state="0" hotkey="G" executeMethod="EXE:rcnback_2" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Nursing Home System" info="" state="0" hotkey="H" executeMethod="NursingHomeSystemSub" validateMethod="nhomeVal" executeType="1" helpId="0" securityWindow="0" securityItem="0" ELBname="" menu_title="NURSING HOME MENU">
+    <program name="Home File Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:hommnt_no_menu" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Home Drug File Maintenance" info="" state="0" hotkey="B" executeMethod="EXE:hdmmnu" validateMethod="" executeType="3" helpId="0" securityWindow="8" securityItem="4" ELBname=""/>
+    <program name="Drug Category Maintenance" info="" state="0" hotkey="C" executeMethod="HomeDrugCatMaint" validateMethod="" executeType="3" helpId="0" securityWindow="8" securityItem="4" ELBname=""/>
+    <program name="Treatment/Misc Order Maintenance" info="" state="0" hotkey="D" executeMethod="EXE:tctmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Discharge Reason Maintenance" info="" state="0" hotkey="E" executeMethod="EXE:dischg_mnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="PRI Maintenance" info="" state="0" hotkey="F" executeMethod="EXE:primnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Alternate Doctor Schedule" info="" state="0" hotkey="G" executeMethod="EXE:altdtr" validateMethod="" executeType="3" helpId="0" securityWindow="8" securityItem="4" ELBname=""/>
+    <program name="Change Physician for a Station" info="" state="0" hotkey="A" executeMethod="ChangeDocForStation" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Change Physician to Another" info="" state="0" hotkey="B" executeMethod="ChangeDocForAnother" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Copy Functions" info="" state="0" hotkey="I" executeMethod="EXE:hmcopy" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Home/Third Party Message Maintenance" info="" state="0" hotkey="J" executeMethod="EXE:hmbmsg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Change HOA on Prescriptions" info="" state="0" hotkey="K" executeMethod="EXE:hoa_change" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Import" info="" state="0" hotkey="L" executeMethod="HomePatImportSub" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Packing List" info="" state="0" hotkey="A" executeMethod="EXE:alppkg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Validate Packing List" info="" state="0" hotkey="B" executeMethod="EXE:pkgval" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Packing List Reports" info="" state="0" hotkey="C" executeMethod="EXE:pkgrpt" validateMethod="PackingListReportsVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Packing List Problem" info="" state="0" hotkey="D" executeMethod="EXE:plpupd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Delivery Slips Update" info="" state="0" hotkey="E" executeMethod="EXE:dvrmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Delivery Slips Print" info="" state="0" hotkey="F" executeMethod="EXE:dvrprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Batch Labels" info="" state="0" hotkey="C" executeMethod="EXE:alpbat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Nursing Home Register" info="" state="0" hotkey="A" executeMethod="EXE:alpnhr_no_menu" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Nursing Home Register By Station" info="" state="0" hotkey="B" executeMethod="EXE:hsr_alpnhr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Nursing Home Billing &amp; Credits" info="" state="0" hotkey="E" executeMethod="EXE:nblmen" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Med Sheets" info="" state="0" hotkey="F" executeMethod="EXE:crtsht" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Full Pass" info="" state="0" hotkey="A" executeMethod="HomeQtyFullPass" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Quick Pass" info="" state="0" hotkey="B" executeMethod="HomeQtyQuickPass" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Quantities" info="" state="0" hotkey="C" executeMethod="EXE:qtyent" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Quantity Entry Edit Listing" info="" state="0" hotkey="D" executeMethod="EXE:qtyedt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Update Quantity Entry (Or Month End Totaling)" info="" state="0" hotkey="E" executeMethod="EXE:upqtys" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cassette Exchange Labels" info="" state="0" hotkey="F" executeMethod="EXE:alpcas" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Bucket Processing" info="" state="0" hotkey="G" executeMethod="EXE:bktrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cassette Exchange Forecast" info="" state="0" hotkey="H" executeMethod="EXE:qtycas" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Qty Entry Labels" info="" state="0" hotkey="I" executeMethod="EXE:qlbat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Rx With Inactive Drugs" info="" state="0" hotkey="J" executeMethod="EXE:inacrx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NR Report" info="" state="0" hotkey="K" executeMethod="EXE:batnew" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Create Cycle Fill" info="" state="0" hotkey="A" executeMethod="AutoCreateCycleFill" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Batch Rx#-s-" info="" state="0" hotkey="B" executeMethod="EXE:batrx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cycle Fill Listing" info="" state="0" hotkey="C" executeMethod="EXE:batexc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Corrections To Current Cycle Fill" info="" state="0" hotkey="D" executeMethod="EXE:batedt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Make New Rx-s-" info="" state="0" hotkey="E" executeMethod="EXE:upbat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cycle Fill Labels" info="" state="0" hotkey="F" executeMethod="EXE:blbat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Clear Cycle Fill" info="" state="0" hotkey="G" executeMethod="ClearCycleFill" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Add Up Daily Quantities" info="" state="0" hotkey="H" executeMethod="EXE:totbat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cycle Fill Report" info="" state="0" hotkey="A" executeMethod="CycleFillReport" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Blister Card Forecast" info="" state="0" hotkey="B" executeMethod="BlisterCardForecast" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="NR Report" info="" state="0" hotkey="C" executeMethod="nrreport" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Create Report" info="" state="0" hotkey="D" executeMethod="EXE:bataut" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Create Error Report" info="" state="0" hotkey="E" executeMethod="EXE:baterr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cycle Fill Errors" info="" state="0" hotkey="J" executeMethod="EXE:batinq" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create AutoMed File" info="" state="0" hotkey="A" executeMethod="EXE:automed" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create AutoMed Drug File" info="" state="0" hotkey="B" executeMethod="EXE:autodrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create Baxter File" info="" state="0" hotkey="A" executeMethod="EXE:mpsmnu" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Copy Baxter File To Floppy" info="" state="0" hotkey="B" executeMethod="CopyBaxterFileToFloppy" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Baxter Label" info="" state="0" hotkey="C" executeMethod="PrintBaxterLabel" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DocuDose" info="" state="0" hotkey="C" executeMethod="NursingHomeIFDocuDose" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="KVM - Envoy" info="" state="0" hotkey="D" executeMethod="EXE:envoy_menu" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Medicine On Time" info="" state="0" hotkey="E" executeMethod="NursingHomeIFMedicineOnTimeSub" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Omnicell" info="" state="0" hotkey="F" executeMethod="NursingHomeIFOmnicell" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create PACMED File" info="" state="0" hotkey="A" executeMethod="CreatePacmedFile" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="B" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Create PACMED Drug File" info="" state="0" hotkey="C" executeMethod="EXE:pacdrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pathlinks" info="" state="0" hotkey="H" executeMethod="EXE:pathlinks_export" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pyxis Drug Export" info="" state="0" hotkey="I" executeMethod="EXE:pyxdrgexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Admissions Report" info="" state="0" hotkey="A" executeMethod="EXE:nhadm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Roster" info="" state="0" hotkey="A" executeMethod="EXE:nhros" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Activity" info="" state="0" hotkey="B" executeMethod="EXE:actrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Labels" info="" state="0" hotkey="C" executeMethod="EXE:nhlabl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Birthday Report" info="" state="0" hotkey="C" executeMethod="EXE:nhbir" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Discharge Report" info="" state="0" hotkey="D" executeMethod="EXE:nhdsc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Discontinue Report" info="" state="0" hotkey="E" executeMethod="EXE:alpdis" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Guarantor Report" info="" state="0" hotkey="F" executeMethod="EXE:nhgnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Room Census Report" info="" state="0" hotkey="G" executeMethod="EXE:nhcen" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Allergy Report" info="" state="0" hotkey="H" executeMethod="EXE:alpalg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Report Menu" info="" state="0" hotkey="I" executeMethod="EXE:alpdac" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Visit Report" info="" state="0" hotkey="A" executeMethod="EXE:nhvst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Auto Calendar" info="" state="0" hotkey="B" executeMethod="EXE:autcal" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Cycle Report" info="" state="0" hotkey="C" executeMethod="EXE:patcycle" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Extended Cycle Report" info="" state="0" hotkey="D" executeMethod="EXE:extcycle" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Visit Update" info="" state="0" hotkey="E" executeMethod="EXE:vstupd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Category Report" info="" state="0" hotkey="A" executeMethod="EXE:catrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Surgical Report" info="" state="0" hotkey="B" executeMethod="EXE:ivrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Side Effects Report" info="" state="0" hotkey="L" executeMethod="EXE:alpsef" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Interation Report" info="" state="0" hotkey="M" executeMethod="EXE:alpdi" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Recall Report" info="" state="0" hotkey="N" executeMethod="EXE:alprcl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Labels" info="" state="0" hotkey="O" executeMethod="EXE:alpdcl" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Dx Reports" info="" state="0" hotkey="P" executeMethod="EXE:missdx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pending Report" info="" state="0" hotkey="Q" executeMethod="EXE:pndrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cost Reports" info="" state="0" hotkey="R" executeMethod="EXE:cstrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Misc Order Templaste Printout" info="" state="0" hotkey="S" executeMethod="EXE:prtmo" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="MDS Report" info="" state="0" hotkey="T" executeMethod="EXE:alpndc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Usage Report" info="" state="0" hotkey="U" executeMethod="EXE:drgusg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Doctor Usage Report" info="" state="0" hotkey="V" executeMethod="EXE:dtusg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Not On Formulary Report" info="" state="0" hotkey="W" executeMethod="EXE:alpnof" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Update Monthly PRI&apos;s" info="" state="0" hotkey="X" executeMethod="EXE:uppri" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="PRI Report" info="" state="0" hotkey="Y" executeMethod="EXE:priphy" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Schedule II Doctor Letters" info="" state="0" hotkey="Z" executeMethod="EXE:alpltr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX Doctor Letters" info="" state="0" hotkey="J" executeMethod="EXE:alprxl" validateMethod="RXDoctorLettersVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Category Reports" info="" state="0" hotkey="K" executeMethod="EXE:alpdct" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Treatment/MO Category Reports" info="" state="0" hotkey="L" executeMethod="EXE:alptct" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Stock/Formulary/Treatment/MS List" info="" state="0" hotkey="M" executeMethod="EXE:alphs" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Profile" info="" state="0" hotkey="N" executeMethod="EXE:nppro" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Quarterly Pharmacy Report" info="" state="0" hotkey="O" executeMethod="EXE:qtrrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Top Selling Drug Report" info="" state="0" hotkey="P" executeMethod="EXE:nhtopd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Attending Physician Report" info="" state="0" hotkey="Q" executeMethod="EXE:dtrrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pharmacy RX Statistics" info="" state="0" hotkey="R" executeMethod="EXE:alpstat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Summary Category Report" info="" state="0" hotkey="A" executeMethod="EXE:smdrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Duplicate Medication Report" info="" state="0" hotkey="B" executeMethod="EXE:dupdrg" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Physician&apos;s Telephone Orders" info="" state="0" hotkey="C" executeMethod="EXE:docord" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Year To Date Patient Report" info="" state="0" hotkey="D" executeMethod="EXE:patytd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient Education Report" info="" state="0" hotkey="E" executeMethod="EXE:patedu" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Resident Controlled Substance Report" info="" state="0" hotkey="A" executeMethod="EXE:nhnarc3" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Controlled Substance Report" info="" state="0" hotkey="B" executeMethod="EXE:nhnarc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Cumulative Refill Due Report" info="" state="0" hotkey="G" executeMethod="EXE:rflduecum" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Equivalent Drug Report" info="" state="0" hotkey="H" executeMethod="EXE:eqvrptlgb" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="House Stock Drug/Patient Report" info="" state="0" hotkey="I" executeMethod="EXE:hstck" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="RX By Month Report" info="" state="0" hotkey="J" executeMethod="EXE:rxbymth" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Active Patient&apos;s Total Report" info="" state="0" hotkey="K" executeMethod="EXE:custstha" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Patient&apos;s Mailing Labels" info="" state="0" hotkey="L" executeMethod="EXE:nhpatlb" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Refill Order Report" info="" state="0" hotkey="M" executeMethod="EXE:nhentrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="N" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing HOA Frequency Reports" info="" state="0" hotkey="O" executeMethod="EXE:hoarpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Category Recap Report" info="" state="0" hotkey="P" executeMethod="EXE:ccrcatrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="P R N  Report" info="" state="0" hotkey="Q" executeMethod="EXE:alpprn" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Non Formulary Rx Report" info="" state="0" hotkey="R" executeMethod="EXE:nfrmrx" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="HOA Reports" info="" state="0" hotkey="S" executeMethod="EXE:fc_hoarpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Usage Report By Category" info="" state="0" hotkey="T" executeMethod="EXE:ccr_usgexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Medicare Statistics Report" info="" state="0" hotkey="U" executeMethod="EXE:medstat" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Missing Part D Plans" info="" state="0" hotkey="V" executeMethod="EXE:partdrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="KONSULT Interface" info="" state="0" hotkey="A" executeMethod="EXE:konsult" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DAGAR Interface" info="" state="0" hotkey="B" executeMethod="EXE:dagar" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Comprehensive Consultiant" info="" state="0" hotkey="C" executeMethod="EXE:spectrum" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Apothecare Interface" info="" state="0" hotkey="D" executeMethod="EXE:apotha" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Gerimed Interface" info="" state="0" hotkey="E" executeMethod="EXE:gerimed" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Bar Code Verification" info="" state="0" hotkey="L" executeMethod="EXE:upcval" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Send  Eligibility Request" info="" state="0" hotkey="A" executeMethod="EXE:make_eev" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Eligibility Rejects" info="" state="0" hotkey="B" executeMethod="EXE:patmpdrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Inventory System" info="" state="0" hotkey="I" executeMethod="InventorySelectSub" validateMethod="InventorySystemVal" executeType="1" helpId="0" securityWindow="9" securityItem="1" ELBname="" menu_title="INVENTORY SYSTEM">
+    <program name="Order Generation" info="" state="0" hotkey="A" executeMethod="EXE:inv_pgen" validateMethod="" executeType="3" helpId="0" securityWindow="9" securityItem="6" ELBname=""/>
+    <program name="Create Purchase Order" info="" state="0" hotkey="A" executeMethod="EXE:INV_Create" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Edit Purchase Order" info="" state="0" hotkey="B" executeMethod="EXE:INV_Edtprch" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Purchase Order" info="" state="0" hotkey="C" executeMethod="EXE:INV_prtpo" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Release Purchase Order" info="" state="0" hotkey="D" executeMethod="EXE:INV_releaseprch" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Delete Purchase Order" info="" state="0" hotkey="E" executeMethod="EXE:INV_delprch" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Export PO System" info="" state="0" hotkey="F" executeMethod="EXE:INV_FLOP" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Send Order    (850)" info="" state="0" hotkey="A" executeMethod="EXE:inv_x12" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Receive X12 File(s)" info="" state="0" hotkey="B" executeMethod="EXE:x12comm" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Apply X12 File(s)" info="" state="0" hotkey="C" executeMethod="EXE:x12dir" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Order Receiving" info="" state="0" hotkey="D" executeMethod="EXE:inv_prcv" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Listing" info="" state="0" hotkey="A" executeMethod="EXE:inv_lst" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Purchase Order Summary" info="" state="0" hotkey="B" executeMethod="EXE:inv_prtpo" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Receiving Summary" info="" state="0" hotkey="C" executeMethod="EXE:inv_prtrcv" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Write-Up Report" info="" state="0" hotkey="D" executeMethod="EXE:inv_wrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Sales Report" info="" state="0" hotkey="E" executeMethod="EXE:inv_srpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Valuation Report" info="" state="0" hotkey="F" executeMethod="EXE:inv_val" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Physical Inventory Report" info="" state="0" hotkey="G" executeMethod="EXE:inv_phy" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Single Drug Activity Report" info="" state="0" hotkey="H" executeMethod="EXE:inv_drpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Purchase Order Purge Report" info="" state="0" hotkey="I" executeMethod="EXE:inv_purg" validateMethod="" executeType="3" helpId="0" securityWindow="9" securityItem="7" ELBname=""/>
+    <program name="SKU Drug Listing" info="" state="0" hotkey="J" executeMethod="EXE:inv_sku" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Purchase Orders By Vendor" info="" state="0" hotkey="K" executeMethod="EXE:inv_vprt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Log Report" info="" state="0" hotkey="L" executeMethod="EXE:inv_logrpt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Vendor File Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:venmaint" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Vendor File Listing (Alphabetically)" info="" state="0" hotkey="B" executeMethod="EXE:vendorlist_a" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Vendor File Listing (Numerically)" info="" state="0" hotkey="C" executeMethod="EXE:vendorlist_n" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Vendor X12 Listing (Alphabetically)" info="" state="0" hotkey="D" executeMethod="EXE:vendorx12list_a" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Vendor X12 Listing (Numerically)" info="" state="0" hotkey="E" executeMethod="EXE:vendorx12list_n" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="By Manufacturer #" info="" state="0" hotkey="A" executeMethod="EXE:inv_veneM" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="By Drug Name" info="" state="0" hotkey="B" executeMethod="EXE:inv_veneD" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Enter Physical Inventory From Report" info="" state="0" hotkey="B" executeMethod="EXE:inv_phye" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Drug Utilization Update" info="Update_MenuSwVal" state="0" hotkey="A" executeMethod="EXE:utlupd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="YTD Utilization" info="Update_MenuSwVal" state="0" hotkey="B" executeMethod="EXE:utlytd" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Recalculate Reorder Levels" info="" state="0" hotkey="C" executeMethod="EXE:calcord" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Copy Recalculation Parameters" info="" state="0" hotkey="D" executeMethod="EXE:updloc" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Import" info="" state="0" hotkey="I" executeMethod="EXE:inv_prmoh" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Inventory Export" info="" state="0" hotkey="J" executeMethod="EXE:hi_drgexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Inventory Report" info="" state="0" hotkey="A" executeMethod="EXE:invpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Password Maintenance" info="" state="0" hotkey="A" executeMethod="EXE:pasmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Password Activity Report" info="" state="0" hotkey="B" executeMethod="EXE:actpr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Price Updates/Invalid NDC&apos;s ***" info="" state="0" hotkey="J" executeMethod="PriceUpdatesSub" validateMethod="PriceUpdatesVal" executeType="1" helpId="0" securityWindow="15" securityItem="2" ELBname="" menu_title="PRICE UPDATE MENU">
+    <program name="Apply Price Updates ***" info="" state="0" hotkey="A" executeMethod="ApplyPriceUpdatesSub" validateMethod="ApplyPriceUpdatesVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Price Updates" info="" state="0" hotkey="B" executeMethod="EXE:ndclst" validateMethod="PrintPriceUpdatesVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Print Invalid NDC&apos;s" info="" state="0" hotkey="C" executeMethod="EXE:prt_drgndc" validateMethod="PrintInvalidNDCVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="System Interfaces" info="" state="0" hotkey="K" executeMethod="SystemInterfacesSub" validateMethod="" executeType="1" helpId="0" securityWindow="15" securityItem="10" ELBname="" menu_title="SYSTEM INTERFACES MENU">
+    <program name="Medicine On Time" info="" state="0" hotkey="A" executeMethod="EXE:mot" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="DocuDose" info="" state="0" hotkey="B" executeMethod="EXE:docudose" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Mediset" info="" state="1" hotkey="C" executeMethod="EXE:mediset" validateMethod="MedisetVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Omnicell" info="" state="0" hotkey="D" executeMethod="EXE:omnicell" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pyxis" info="" state="0" hotkey="E" executeMethod="EXE:pyxcrt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Pyxis HL7" info="" state="1" hotkey="F" executeMethod="EXE:pyxhl7crt" validateMethod="PyxisHL7Val" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="File Export/File Import Menu" info="" state="0" hotkey="G" executeMethod="EXE:filexp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="US Bioservices Export" info="" state="0" hotkey="H" executeMethod="EXE:aps_export" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="PSP Import" info="" state="0" hotkey="I" executeMethod="EXE:psp" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+  <submenu name="Single Job Menu" info="" state="0" hotkey="" executeMethod="" validateMethod="" executeType="1" helpId="0" securityWindow="0" securityItem="0" ELBname="" menu_title="SINGLE JOB MENU">
+    <program name="Run End of Day" info="" state="0" hotkey="B" executeMethod="EXE:eodque" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="2" ELBname=""/>
+    <program name="End of Day Maintenance" info="" state="0" hotkey="C" executeMethod="EXE:eodmnt" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="2" ELBname=""/>
+    <program name="Transaction Maintenance" info="" state="0" hotkey="D" executeMethod="EXE:trnmnt" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="3" ELBname=""/>
+    <program name="Spool Maintenance" info="" state="0" hotkey="E" executeMethod="SpoolMaintenanceSub" validateMethod="" executeType="2" helpId="0" securityWindow="13" securityItem="8" ELBname=""/>
+    <program name="Spool Print" info="" state="0" hotkey="F" executeMethod="EXE:splprt" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="9" ELBname=""/>
+    <program name="Clear ECS Register File" info="" state="0" hotkey="G" executeMethod="EXE:clrecs" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="11" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="I" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Install Software" info="" state="0" hotkey="L" executeMethod="InstallSoftwareSub" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Review Backup Status" info="" state="0" hotkey="M" executeMethod="EXE:revbup" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Baker Cell Manager" info="" state="0" hotkey="N" executeMethod="EXE:bkrmgr" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="OS System Menu" info="" state="0" hotkey="O" executeMethod="EXE:system_menu" validateMethod="" executeType="3" helpId="0" securityWindow="13" securityItem="7" ELBname=""/>
+    <program name="Restart Signature Capture" info="" state="0" hotkey="P" executeMethod="EXE:screstart" validateMethod="RestartSignatureCaptureVal" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Reserved" info="This item is reserved for future enhancements, call HBS for more info." state="1" hotkey="Q" executeMethod="" validateMethod="menu_validate_invalid" executeType="2" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Packing List Barcode Maintenance" info="" state="0" hotkey="R" executeMethod="EXE:barmnt" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+    <program name="Exit Pharmacy System" info="" state="0" hotkey="X" executeMethod="SystemMenuSub" validateMethod="" executeType="3" helpId="0" securityWindow="0" securityItem="0" ELBname=""/>
+  </submenu>
+</HBSmenu>

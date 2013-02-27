@@ -1,0 +1,67 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+
+namespace ContactBrowser
+
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+
+
+		private method Form1_Load, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				msg			,String
+				customers	,@List<Customer>
+			endrecord
+		proc
+			if (%GetCustomers(customers,msg)) then
+			begin
+				cboCustomer.DataSource = customers
+				cboCustomer.ValueMember="CustomerId"
+				cboCustomer.DisplayMember="CompanyName"
+			end
+			else
+			begin
+				MessageBox.Show(msg)
+			end
+		endmethod
+
+		private method exitToolStripMenuItem_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			this.Close()
+		endmethod
+
+		private method cboCustomer_SelectedIndexChanged, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				cust, @Customer
+				contacts, @List<Contact>
+				msg, string
+			endrecord
+		proc
+			cust = (Customer)cboCustomer.SelectedItem
+			if %GetCustomerContacts(cust.CustomerId,contacts,msg) then
+				grdContacts.DataSource = contacts
+			else
+				MessageBox.Show(msg)
+
+		endmethod
+	endclass
+endnamespace
+

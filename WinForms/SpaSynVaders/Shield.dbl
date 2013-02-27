@@ -1,0 +1,101 @@
+import System
+import System.Drawing
+import System.Collections
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Shield extends GameObject
+		
+		private BulletHoles, @ArrayList, new ArrayList(50)
+		
+		public method Shield
+			endparams
+			parent("shield.gif")
+		proc
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+			record
+				r	,Rectangle
+			endrecord
+		proc
+			parent.Draw(g)
+			foreach r in BulletHoles
+				g.FillRectangle(Brushes.Black, r)
+		endmethod
+		
+		public method AddBulletHole, void
+			r, Rectangle 
+			dir, boolean 
+			endparams
+			record
+				rup, Rectangle
+			endrecord
+		proc
+			rup = r
+			rup.Inflate(r.Width/4,-r.Height/4)
+			if (dir) then
+				rup.Offset(0,-r.Height/2)
+			else
+			begin
+				rup.Height = rup.Height + 20
+				;;  Make sure the whole top part of the shield is clear
+				if ((rup.Y - Position.Y) <= 20)
+				begin
+					rup.Y = Position.Y
+					rup.Height = rup.Height + 5
+				end
+			end
+			BulletHoles.Add(rup)
+		endmethod
+		
+		private method CheckBulletHoleIntersection, boolean
+			rTest, Rectangle 
+			dirDown, boolean 
+			endparams
+			record
+				rTest1, Rectangle
+				r, Rectangle
+			endrecord
+		proc
+			rTest1 = rTest
+			;;  Thin out bullet for test
+			rTest1.X = rTest1.X + (rTest1.Width/2)
+			rTest1.Width = 3
+			foreach r in BulletHoles
+			begin
+				if (rTest1.IntersectsWith(r))
+					mreturn true
+			end
+			mreturn false
+		endmethod
+		
+		public method TestCollision, boolean
+			r				,Rectangle 
+			directionDown	,boolean 
+			out bulletHole	,boolean 
+			endparams
+		proc
+			bulletHole = false
+			if (CheckBulletHoleIntersection(r, directionDown))
+			begin
+				bulletHole = true
+				mreturn false
+			end
+			;;  Doesn't count as a collision
+			if (r.IntersectsWith(MovingBounds)) then
+			begin
+				AddBulletHole(r, directionDown)
+				mreturn true
+			end
+			else
+				mreturn false
+		endmethod
+
+	endclass
+
+endnamespace
+

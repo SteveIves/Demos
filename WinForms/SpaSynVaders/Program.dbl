@@ -1,0 +1,25 @@
+;;**********************************************************************************************
+;; The code in this application is based in part on a Space Invaders game originally written in
+;; C# by Mike Gold (msgold@gmail.com) and is published with his kind permission.
+;;**********************************************************************************************
+;;
+import System
+import System.Collections.Generic
+import System.Windows.Forms
+
+.array 0
+namespace SpaSynVaders
+
+	;;; <summary>
+	;;; The main entry point for the application.
+	;;; </summary>
+	{STAThread}
+	main 
+		
+	proc
+		System.Windows.Forms.Application.EnableVisualStyles()
+		System.Windows.Forms.Application.Run(new SpaSynVaders.FrmMain())
+	end
+
+endnamespace
+

@@ -1,0 +1,45 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+namespace MessageBrowser
+    
+    public class Message
+
+        private p_Code, string
+        private p_Severity, string
+        private p_Text, string
+        
+        public method Message
+            required in msgrec, a
+        proc
+            p_Code = msgrec(9:10)
+            p_Severity = msgrec(19:1)
+            p_Text = msgrec(20:60)
+        end
+        
+        public property Code, string
+            method get
+            proc
+                mreturn p_Code
+            endmethod
+        endproperty
+
+        public property Severity, string
+            method get
+            proc
+                mreturn p_Severity
+            endmethod
+        endproperty
+        
+        public property Text, string
+            method get
+            proc
+                mreturn p_Text
+            endmethod
+        endproperty
+        
+    endclass
+    
+endnamespace

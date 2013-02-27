@@ -1,0 +1,73 @@
+import System
+import System.Drawing
+import System.Drawing.Imaging
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Score
+		
+		public Count	,int	,0
+		public Position	,Point	,new Point(0,0)
+		public MyFont	,@Font	,new Font("Compact",24,GraphicsUnit.Pixel)
+		
+		public method Score
+			x, int 
+			y, int 
+			endparams
+		proc
+			Position.X = x
+			Position.Y = y
+		endmethod
+		
+		public GameOver, boolean, false
+		
+		public virtual method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			if (!GameOver) then
+				g.DrawString("Score: " + Count.ToString(), MyFont, Brushes.LimeGreen, Position.X, Position.Y, new StringFormat())
+			else
+				g.DrawString("Game Over - Final Score: " + Count.ToString(), MyFont, Brushes.White, Position.X-100, Position.Y+MyFont.Height+5, new StringFormat())
+		endmethod
+		
+		public method GetFrame, Rectangle
+			endparams
+			record
+				myRect, Rectangle
+			endrecord
+		proc
+			myRect = new Rectangle(Position.X, Position.Y, (int)MyFont.SizeInPoints * Count.ToString().Length, MyFont.Height)
+			mreturn myRect
+		endmethod
+		
+		;;;  <summary>
+		;;;  Resets the score to 0
+		;;;  </summary>		
+		public method Reset, void
+			endparams
+		proc
+			Count = 0
+		endmethod
+
+		;;;  <summary>
+		;;;  Increments the score by 1
+		;;;  </summary>		
+		public method Increment, void
+			endparams
+		proc
+			Count += 1
+		endmethod
+		
+		public method AddScore, void
+			val, int 
+			endparams
+		proc
+			Count += val
+		endmethod
+
+	endclass
+
+endnamespace
+

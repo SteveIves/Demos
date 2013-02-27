@@ -1,0 +1,124 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+namespace ContactBrowser
+
+	.include "CONTACT" repository, structure="strContact", end
+
+	public class Contact
+
+		private mContact, strContact
+
+		public  method Contact
+			required in contact, strContact
+			endparams
+		proc
+			mContact = contact
+		endmethod
+
+		public property ContactId, int
+			method get
+			proc
+				mreturn mContact.contact_id 
+			endmethod
+			method set
+			proc
+				mContact.contact_id = value 
+			endmethod
+		endproperty
+		
+		public property FirstName, string
+			method get
+			proc
+				mreturn mContact.first_name 
+			endmethod
+			method set
+			proc
+				mContact.first_name = value 
+			endmethod
+		endproperty
+		
+		public property LastName, string
+			method get
+			proc
+				mreturn mContact.last_name 
+			endmethod
+			method set
+			proc
+				mContact.last_name = value 
+			endmethod
+		endproperty
+		
+		public property Title, string
+			method get
+			proc
+				mreturn mContact.title
+			endmethod
+			method set
+			proc
+				mContact.title = value
+			endmethod
+		endproperty
+		
+		public property Department, string
+			method get
+			proc
+				mreturn mContact.department
+			endmethod
+			method set
+			proc
+				mContact.department = value
+			endmethod
+		endproperty
+		
+		public property WorkPhone, string
+			method get
+			proc
+				mreturn %string(mContact.work_phone)
+			endmethod
+			method set
+			proc
+				mContact.work_phone = value
+			endmethod
+		endproperty
+		
+		public property MobilePhone, string
+			method get
+			proc
+				mreturn %string(mContact.mobile_phone)
+			endmethod
+			method set
+			proc
+				mContact.mobile_phone = value
+			endmethod
+		endproperty
+		
+		public property Fax, string
+			method get
+			proc
+				mreturn %string(mContact.fax)
+			endmethod
+			method set
+			proc
+				mContact.fax = value
+			endmethod
+		endproperty
+		
+		public property Email, string
+			method get
+			proc
+				mreturn mContact.email
+			endmethod
+			method set
+			proc
+				mContact.email = value
+			endmethod
+		endproperty
+		
+
+	endclass
+
+endnamespace
+

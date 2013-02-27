@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>MessageBrowser</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{f4a73bba-90d0-4c87-adbe-947a3bd3706f}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MessageBrowser</RootNamespace>
+    <AssemblyName>MessageBrowser</AssemblyName>
+    <MainFile>Program.dbl</MainFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetPlatform>v4</TargetPlatform>
+    <DBL_qWarnLevel>3 - Don't display warnings levels higher then 3</DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -W3</DBLCmdOptions>
+    <StartupObject>(Not set)</StartupObject>
+    <ApplicationIcon>(Default icon)</ApplicationIcon>
+    <ResourceType>Icon</ResourceType>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <ProjEnvVars>SYNPROJDIR=C:\Dev\SynNetTesting\MessageBrowser;</ProjEnvVars>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MessageBrowser.dbl">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageBrowser.designer.dbl">
+      <DependentUpon>MessageBrowser.dbl</DependentUpon>
+    </Compile>
+    <Compile Include="GetMessages.dbl" />
+    <Compile Include="Message.dbl" />
+    <Compile Include="Program.dbl" />
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+    <EmbeddedResource Include="MessageBrowser.resx">
+      <DependentUpon>MessageBrowser.dbl</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.designer.dbl</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.designer.dbl">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Properties\Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Properties\Settings.designer.dbl</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.designer.dbl">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Properties\Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+</Project>

@@ -1,0 +1,153 @@
+import System
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Invader extends GameObject
+		
+		private OtherImage		,@Image		,^null
+		private kBombInterval	,int		,200
+		private TheBomb			,@Bomb		,new Bomb(0,0)
+		private ActiveBomb		,boolean	,false
+		public BeenHit			,boolean	,false
+		public CountExplosion	,int		,0
+		public Died				,boolean	,false
+		private rseed			,int		,(int)DateTime.Now.Ticks
+		private RandomNumber	,@Random	,^null
+		public DirectionRight	,boolean	,true
+		private kInterval		,int		,10
+		private Counter			,long		,0
+		
+		public method Invader
+			image1, @string 
+			image2, @string 
+			endparams
+			parent(image1)
+		proc
+			using image2 select
+			("invader1c.gif"),
+				OtherImage = Properties.Resources.invader1c
+			("invader2c.gif"),
+				OtherImage = Properties.Resources.invader2c
+			("invader3c.gif"),
+				OtherImage = Properties.Resources.invader3c
+			endusing
+			RandomNumber = new Random(rseed)
+			Position.X = 20
+			Position.Y = 10
+			UpdateBounds()
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			UpdateBounds()
+			if (BeenHit)
+			begin
+				DrawExplosion(g)
+				mreturn
+			end
+				
+			if ((Counter-(2*integer(Counter/2)))==0) then
+				g.DrawImage(TheImage,MovingBounds,0,0,ImageBounds.Width,ImageBounds.Height,GraphicsUnit.Pixel)
+			else
+				g.DrawImage(OtherImage,MovingBounds,0,0,ImageBounds.Width,ImageBounds.Height,GraphicsUnit.Pixel)
+			if (ActiveBomb)
+			begin
+				TheBomb.Draw(g)
+				if (FrmMain.ActiveForm != ^null)
+				begin
+					if (TheBomb.Position.Y > FrmMain.ActiveForm.ClientRectangle.Height)
+						ActiveBomb = false
+				end
+			end
+
+			if (!ActiveBomb && (Counter-(kBombInterval*integer(Counter/kBombInterval)) == 0))
+			begin
+				ActiveBomb = true
+				TheBomb.Position.X = MovingBounds.X + MovingBounds.Width / 2
+				TheBomb.Position.Y = MovingBounds.Y + 5
+			end
+		endmethod
+		
+		public method SlowBomb, void
+			endparams
+		proc
+			;; TheBomb.TheBombInterval = 2;
+		endmethod
+		
+		public method ResetBombPosition, void
+			endparams
+		proc
+			TheBomb.Position.X = MovingBounds.X + MovingBounds.Width / 2
+			TheBomb.ResetBomb(MovingBounds.Y + 5)
+		endmethod
+		
+		public method SetCounter, void
+			lCount, long 
+			endparams
+		proc
+			Counter = lCount
+		endmethod
+		
+		public method DrawExplosion, void
+			g, @Graphics 
+			endparams
+		proc
+			if (Died)
+				mreturn
+			CountExplosion += 1
+			if (CountExplosion < 15) then
+			begin
+				data i, int
+				for i from 0 thru 49
+				begin
+					data xval, int, RandomNumber.Next(MovingBounds.Width)
+					data yval, int, RandomNumber.Next(MovingBounds.Height)
+					xval += Position.X
+					yval += Position.Y
+					g.DrawLine(Pens.Red, xval, yval, xval, yval + 1)
+				end
+			end
+			else
+				Died = true
+		endmethod
+		
+		public method Move, void
+			endparams
+		proc
+			if (BeenHit)
+				mreturn
+			if (DirectionRight) then
+				Position.X = Position.X + kInterval
+			else
+				Position.X = Position.X - kInterval
+			Counter += 1
+		endmethod
+		
+		public method MoveInPlace, void
+			endparams
+		proc
+			Counter += 1
+		endmethod
+		
+		public method GetBombBounds, Rectangle
+			endparams
+		proc
+			mreturn TheBomb.GetBounds()
+		endmethod
+		
+		public method IsBombColliding, boolean
+			r, Rectangle 
+			endparams
+		proc
+			mreturn (ActiveBomb && TheBomb.GetBounds().IntersectsWith(r))
+		endmethod
+	
+	endclass
+
+endnamespace
+

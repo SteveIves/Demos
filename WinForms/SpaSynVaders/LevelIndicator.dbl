@@ -1,0 +1,74 @@
+import System
+import System.Drawing
+import System.Drawing.Imaging
+
+.array 0
+namespace SpaSynVaders
+	
+	public class LevelIndicator
+		
+		public m_level		,int	,0
+		public m_position	,Point	,new Point(0,0)
+		public m_font		,@Font	,new Font("Compact",24,GraphicsUnit.Pixel)
+		
+		public method LevelIndicator
+			x, int 
+			y, int 
+			endparams
+		proc
+			m_position.X = x
+			m_position.Y = y
+		endmethod
+		
+		public GameOver, boolean, false
+		
+		public virtual method Draw, void
+			g, @Graphics 
+			endparams
+			record
+				levelToDisplay, int
+			endrecord
+		proc
+			levelToDisplay = m_level + 1
+			g.DrawString("Level: " + levelToDisplay.ToString(), m_font, Brushes.LimeGreen, m_position.X, m_position.Y, new StringFormat())
+		endmethod
+		
+		public method GetFrame, Rectangle
+			endparams
+			record
+				myRect, Rectangle
+			endrecord
+		proc
+			myRect = new Rectangle(m_position.X, m_position.Y, (int)m_font.SizeInPoints * m_level.ToString().Length, m_font.Height)
+			mreturn myRect
+		endmethod
+		
+		;;;  <summary>
+		;;;  Resets the score to 0
+		;;;  </summary>		
+		public method Reset, void
+			endparams
+		proc
+			m_level = 0
+		endmethod
+		
+		;;;  <summary>
+		;;;  Increments the score by 1
+		;;;  </summary>		
+		public method Increment, void
+			endparams
+		proc
+			m_level += 1
+		endmethod
+
+		public property CurrentLevel, int
+			method get
+			proc
+				mreturn m_level
+			endmethod
+		endproperty
+		
+	endclass
+	
+endnamespace
+

@@ -1,0 +1,34 @@
+
+import System.Collections.Generic
+
+subroutine GetMessages
+    required out msgs, @List<Message>
+    endparams
+    
+    record
+        ch, int
+        buf, a218
+    endrecord
+    
+proc
+
+    msgs = new List<Message>()
+    
+    ch = %syn_freechn()
+    open(ch,i:i,"DBLDIR:syntxt.ism")
+    
+    repeat
+    begin
+        reads(ch,buf,eof)
+        if (buf(1:3)=="CMP") then
+        begin
+            msgs.Add(new Message(buf))
+        end
+        else
+            exitloop
+    end    
+eof,
+    close ch
+    xreturn
+    
+endsubroutine

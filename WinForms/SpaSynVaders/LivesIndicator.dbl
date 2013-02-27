@@ -1,0 +1,43 @@
+import System
+import System.Collections.Generic
+import System.Text
+import System.Drawing
+
+.array 0
+namespace SpaSynVaders
+	
+	class LivesIndicator extends GameObject
+		
+		m_livesLeft, int, 3
+		
+		public method LivesIndicator
+			x, int 
+			y, int 
+			endparams
+			parent("man.gif")
+		proc
+			this.Position = new Point(x, y)
+		endmethod
+		
+		public method Decrement, void
+			endparams
+		proc
+			m_livesLeft -= 1
+		endmethod
+		
+		public override method Draw, void
+			g, @System.Drawing.Graphics 
+			endparams
+		proc
+			if (m_livesLeft > 0)
+				g.DrawImage(TheImage,Position.X,Position.Y,TheImage.Width*2/3,TheImage.Height*2/3)
+			if (m_livesLeft > 1)
+				g.DrawImage(TheImage,Position.X+4+TheImage.Width*2/3,Position.Y,TheImage.Width*2/3,TheImage.Height*2/3)
+			if (m_livesLeft > 2)
+				g.DrawImage(TheImage,Position.X+8+2*TheImage.Width*2/3,Position.Y,TheImage.Width*2/3,TheImage.Height*2/3)
+		endmethod
+
+	endclass
+
+endnamespace
+

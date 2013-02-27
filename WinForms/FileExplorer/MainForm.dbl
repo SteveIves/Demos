@@ -1,0 +1,544 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.IO
+import System.Security.AccessControl
+import System.Windows.Forms
+
+namespace FileExplorer
+	
+	public partial class MainForm extends System.Windows.Forms.Form
+		
+		.region "Fields"
+		
+		private currentViewMode, View
+		
+		.endregion "Fields"
+		
+		.region "Constructors"
+		
+		;;Constructor
+		public method MainForm
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+		.endregion "Constructors"
+		
+		.region "Main Form"
+		
+		;;Form loaded
+		private method MainForm_Load, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			currentViewMode = View.Details
+			fileList.View = currentViewMode
+			loadDriveButtons()
+
+			fileList.Columns.Add("Name",200,HorizontalAlignment.Left)
+			fileList.Columns.Add("Date modified",120,HorizontalAlignment.Left)
+		endmethod
+		
+		.endregion "Main Form"
+		
+		.region "Drive Buttons"
+		
+		private method loadDriveButtons, void
+			endparams
+			record
+				drive, @DriveInfo
+			endrecord
+		proc
+			drivebar.Controls.Clear()
+			foreach drive in DriveInfo.GetDrives()
+			begin
+				data db, @DriveButton
+				db = new DriveButton(drive,driveButtonImages)
+				addhandler(db.Click,driveButton_Click)
+				drivebar.Controls.Add(db)
+			end
+			;;Focus the first button and load the folders for that device
+			if (drivebar.Controls.Count>0)
+			begin
+				data b, @Button
+				data di, @DriveInfo
+				b = (Button)drivebar.Controls[0]
+				di = (DriveInfo)b.Tag
+				b.Focus()
+				loadDriveFolders(di)
+			end
+		endmethod
+		
+		private method driveButton_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			loadDriveFolders((DriveInfo)(((Button)sender).Tag))
+		endmethod
+		
+		.endregion "Drive Buttons"
+		
+		.region "Folder Tree"
+		
+		private method loadDriveFolders, void
+			required in drive, @DriveInfo
+			endparams
+			record
+				folder, @DirectoryInfo
+				rootNode, @TreeNode
+				newNode, @TreeNode
+			endrecord
+		proc
+			tree.Nodes.Clear()
+			rootNode = getNodeForFolder(drive.RootDirectory)
+			tree.Nodes.Add(rootNode)
+			foreach folder in drive.RootDirectory.GetDirectories()
+			begin
+				newNode = getNodeForFolder(folder)
+				if (newNode != ^null)
+					rootNode.Nodes.Add(newNode)
+			end
+			rootNode.Expand()
+			tree.SelectedNode = rootNode
+		endmethod
+		
+		private method getNodeForFolder, @TreeNode
+			required in folder, @DirectoryInfo
+			endparams
+			record
+				newFolderNode, @TreeNode
+				dummySubFolder, @TreeNode
+				;				folderSecurity, @DirectorySecurity
+				childFolders, [#]@DirectoryInfo
+			endrecord
+		proc
+			;TODO: Add code to not return a node if the folder is not accessible
+			;			folderSecurity = folder.GetAccessControl()		???
+			newFolderNode = new TreeNode(folder.Name)
+			newFolderNode.Tag = folder
+			dummySubFolder = new TreeNode("dummy")
+			newFolderNode.Nodes.Add(dummySubFolder)
+			mreturn newFolderNode
+		endmethod
+		
+		private method tree_AfterSelect, void
+			byval sender, @System.Object
+			byval e, @System.Windows.Forms.TreeViewEventArgs
+			endparams
+			record
+				di, @DirectoryInfo
+				fi, @FileInfo
+				newFileNode, @ListViewItem
+				fileSpec, String
+			endrecord
+		proc
+			fileList.Items.Clear()
+			di = (DirectoryInfo)e.Node.Tag
+			try
+			begin
+				foreach fi in di.GetFiles()
+				begin
+					newFileNode = new ListViewItem(fi.Name)
+					newFileNode.Tag = fi
+					newFileNode.ImageKey = "File-New"
+					;TODO: need to add a file icon to the list item
+					
+					
+					;TODO: need to add sub items for details view
+					newFileNode.SubItems.Add(fi.LastWriteTime.ToString())
+					
+					
+					
+					fileList.Items.Add(newFileNode)
+				end
+			end
+			catch (ex, @UnauthorizedAccessException)
+			begin
+				MessageBox.Show(ex.Message)
+			end
+			endtry
+		endmethod
+		
+		private method loadSubFolders, Void
+			required in parentNode, @TreeNode
+			endparams
+			record
+				folder, @DirectoryInfo
+				newNode, @TreeNode
+			endrecord
+		proc
+			try
+			begin
+				foreach folder in ((DirectoryInfo)parentNode.Tag).GetDirectories()
+				begin
+					newNode = getNodeForFolder(folder)
+					if (newNode!=^null)
+						parentNode.Nodes.Add(newNode)
+				end
+			end
+			catch (ex, @UnauthorizedAccessException)
+			begin
+				MessageBox.Show(ex.Message)
+			end
+			endtry
+		endmethod
+		
+		.endregion "Folder Tree"
+		
+		.region "File View"
+		
+		private method fileList_SelectedIndexChanged, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+		endmethod
+		
+		private method tree_BeforeExpand, void
+			byval sender, @System.Object
+			byval e, @System.Windows.Forms.TreeViewCancelEventArgs
+			endparams
+		proc
+			;;A node is about to be expanded. Look for the dummy child node and
+			;;if found, replace with real child nodes.
+			if (e.Node.FirstNode.Text=="dummy")
+			begin
+				e.Node.Nodes.RemoveAt(0)
+				loadSubFolders(e.Node)
+			end
+		endmethod
+		
+		.endregion "File View"
+		
+		.region "Folder Context Menu"
+		
+		private method mnuFolder_Opening, void
+			byval sender, @System.Object
+			byval e, @System.ComponentModel.CancelEventArgs
+			endparams
+		proc
+			mnuFolderExpand.Visible = !tree.SelectedNode.IsExpanded
+			mnuFolderCollapse.Visible = tree.SelectedNode.IsExpanded
+		endmethod
+		
+		private method mnuFolderExpand_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			tree.SelectedNode.Expand()
+		endmethod
+		
+		private method mnuFolderCollapse_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			tree.SelectedNode.Collapse()
+		endmethod
+		
+		private method mnuFolderDelete_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuFolderNewFolder_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuFolderProperties_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		.endregion "Folder Context Menu"
+		
+		.region "File Context Menu"
+		
+		private method fileContextMenu_Opening, void
+			byval sender, @System.Object
+			byval e, @System.ComponentModel.CancelEventArgs
+			endparams
+		proc
+			mnuFileContextCut.Enabled = (fileList.SelectedItems.Count > 0)
+			mnuFileContextCopy.Enabled = (fileList.SelectedItems.Count > 0)
+			mnuFileContextDelete.Enabled = (fileList.SelectedItems.Count > 0)
+			
+			mnuFileContextRename.Enabled = (fileList.SelectedItems.Count == 1)
+			
+			;TODO: Enable paste only if items copied or cut
+			;mnuFileContextPaste.Enabled = ???
+			
+		endmethod
+		
+		private method mnuFileContextCut_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			;TODO: Implement file cut
+			notImplemented()
+		endmethod
+		
+		private method mnuFileContextCopy_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			;TODO: Implement file copy
+			notImplemented()
+		endmethod
+		
+		private method mnuFileContextPaste_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			;TODO: Implement file paste
+			notImplemented()
+		endmethod
+		
+		private method mnuFileContextRename_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			;TODO: Implement file rename
+			notImplemented()
+		endmethod
+		
+		private method mnuFileContextDelete_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				item, @ListViewItem
+				fi, @FileInfo
+				msg, String
+			endrecord
+		proc
+			fi = (FileInfo)fileList.SelectedItems[0].Tag
+			if (fileList.SelectedItems.Count == 1) then
+			begin
+				msg = string.format("Delete file {0} ?",fi.Name)
+				if (MessageBox.Show(msg,"Confirm Delete",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
+				begin
+					try
+					begin
+						fi.Delete()
+						fileList.Items.Remove(item)
+					end
+					catch (ex)
+					begin
+						MessageBox.Show("Failed to delete file " + fi.Name)
+					end
+					endtry
+				end
+			end
+			else
+			begin
+				if (fileList.SelectedItems.Count == 2) then
+					msg = string.format("Delete file {0} and 1 other file ?",fi.Name)
+				else
+					msg = string.format("Delete file {0} and {1} other files ?",fi.Name,fileList.SelectedItems.Count-1)
+				if (MessageBox.Show(msg,"Confirm Delete",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
+				begin
+					foreach item in fileList.SelectedItems
+					begin
+						fi = (FileInfo)item.Tag
+						try
+						begin
+							fi.Delete()
+							fileList.Items.Remove(item)
+						end
+						catch (ex)
+						begin
+							MessageBox.Show("Failed to delete file " + fi.Name)
+						end
+						endtry
+					end
+				end
+			end
+		endmethod
+		
+		.endregion "File Context Menu"
+		
+		.region "File Menu"
+		
+		private method mnuFileExit_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			this.Close()
+		endmethod
+		
+		.endregion "File Menu"
+		
+		.region "Edit Menu / Toolbar"
+		
+		private method mnuEdit_DropDownOpening, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			;TODO: Enable and disable items as appropriate
+		endmethod
+		
+		private method mnuEditCut_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method btnCut_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuEditCopy_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method btnCopy_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuEditPaste_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method btnPaste_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuEditRename_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method mnuEditDelete_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		private method btnDelete_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			notImplemented()
+		endmethod
+		
+		.endregion "Edit Menu / Toolbar"
+		
+		.region "View Menu / Toolbar"
+		
+		private method switchCurrentView, void
+			byval sender, @Object
+			byval e, @System.EventArgs
+			endparams
+			record
+				clickedMenuItem, @ToolStripMenuItem
+				clickedButton, @ToolStripButton
+				newViewMode, String
+			endrecord
+		proc
+			if (sender.is.ToolStripMenuItem) then
+			begin
+				clickedMenuItem = (ToolStripMenuItem)sender
+				newViewMode = clickedMenuItem.Tag.ToString()
+			end
+			else if (sender.is.ToolStripButton)
+			begin
+				clickedButton = (ToolStripButton)sender
+				newViewMode = clickedButton.Tag.ToString()
+			end
+			
+			;Switch the fileList to the new view mode
+			using newViewMode select
+			("Detail"),
+				currentViewMode = View.Details
+			("LargeIcons"),
+				currentViewMode = View.LargeIcon
+			("List"),
+				currentViewMode = View.List
+			("SmallIcons"),
+				currentViewMode = View.SmallIcon
+			("Tile"),
+				currentViewMode = View.Tile
+			endusing
+			
+			fileList.View = currentViewMode
+			
+		endmethod
+		
+		private method mnuViewRescanDrives_Click, void
+			byval sender, @System.Object
+			byval e, @System.EventArgs
+			endparams
+		proc
+			tree.Nodes.Clear()
+			fileList.Items.Clear()
+			loadDriveButtons()
+		endmethod
+		
+		.endregion "View Menu / Toolbar"
+		
+		.region "Miscellaneous"
+		
+		private method notImplemented, Void
+			endparams
+		proc
+			MessageBox.Show("Not implemented")
+		endmethod
+		
+		.endregion "Miscellaneous"
+		
+	endclass
+	
+endnamespace
+

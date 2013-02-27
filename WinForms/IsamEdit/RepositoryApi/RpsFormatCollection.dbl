@@ -1,0 +1,146 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsFormatCollection
+;
+; Description:	Represents a collection of Repository formats for a single
+;				structure, or a collection of global structures, or pre-defined
+;				date or time structures
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:55-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsFormatCollection extends List<RpsFormat>
+		
+		; Constructor (structure formats)
+		public method RpsFormatCollection
+			required in StructureName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadFormats(StructureName)
+		endmethod
+		
+		; Constructor (global or predefined formats)
+		public method RpsFormatCollection
+			required in GlobalFormatType, RpsGlobalFormatType
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadFormats(GlobalFormatType)
+		endmethod
+
+		;----------------------------------------------------------------------
+		; Private methods and properties
+
+		; Load structure formats
+		private method LoadFormats, void
+			required in StructureName, a
+			endparams
+			record local_data
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				data p_s_info, s_info
+				;Set the current structure?
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,p_s_info)
+				if (Repository.RpsControl.error)
+					throw new RpsFormatException("Failed to get information for repository structure "+StructureName)
+				;Do we have any formats to load?
+				if (p_s_info.si_nmfmts) 
+				begin
+					;Size the format names array and get the format names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_s_info.si_nmfmts)
+					dd_format(Repository.RpsControl,DDM_LIST,p_s_info.si_nmfmts,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsFormatException("Failed to get formats for repository structure "+StructureName)
+					;Add format names to the collection
+					for ix from 1 thru p_s_info.si_nmfmts
+						this.Add(new RpsFormat(StructureName,^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Free format names array
+				if (MemHandle) 
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+
+
+		endmethod
+		
+		; Load global or predefined formats
+		private method LoadFormats, void
+			required in GlobalFormatType, RpsGlobalFormatType
+			endparams
+			record local_data
+				MemHandle, int
+				FormatCount, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				;Get the global format count
+				dd_name(Repository.RpsControl,DDN_COUNT,GlobalFormatType,FormatCount)
+				if (Repository.RpsControl.error)
+					throw new RpsFormatException("Failed to get repository global format count")
+				;Do we have any formats to load?
+				if (FormatCount) 
+				begin
+					;Size the format names array and get the format names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*FormatCount)
+					dd_name(Repository.RpsControl,DDN_LIST,GlobalFormatType,FormatCount,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsFormatException("Failed to get repository global format names")
+					;Add formats to collection
+					for ix from 1 thru FormatCount
+					begin
+						this.Add(new RpsFormat(^m(strIdentifier[ix],MemHandle)))
+					end
+				end
+			end
+			finally
+			begin
+				;Free format names array
+				if (MemHandle) 
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+
+		endmethod
+
+	endclass
+
+endnamespace

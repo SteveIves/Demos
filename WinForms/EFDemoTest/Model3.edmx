@@ -1,0 +1,1172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="BigModel.Store" Alias="Self" Provider="Synergex.Data.SynergyDBMSClient" ProviderManifestToken="02.00" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="BigModelStoreContainer">
+          <EntitySet Name="ACTIVITY" EntityType="BigModel.Store.ACTIVITY" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ATTACHMENT" EntityType="BigModel.Store.ATTACHMENT" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CHRONOTRACK_USER" EntityType="BigModel.Store.CHRONOTRACK_USER" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONSULTANT" EntityType="BigModel.Store.CONSULTANT" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTACT" EntityType="BigModel.Store.CONTACT" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTRACT" EntityType="BigModel.Store.CONTRACT" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="COUNTRY" EntityType="BigModel.Store.COUNTRY" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CUSTOMER" EntityType="BigModel.Store.CUSTOMER" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="EXPENSE" EntityType="BigModel.Store.EXPENSE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="EXPENSETYPE" EntityType="BigModel.Store.EXPENSETYPE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="FEE" EntityType="BigModel.Store.FEE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="FEETYPE" EntityType="BigModel.Store.FEETYPE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="LOCATION" EntityType="BigModel.Store.LOCATION" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="NOTE" EntityType="BigModel.Store.NOTE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PROJECT" EntityType="BigModel.Store.PROJECT" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="REQUEST" EntityType="BigModel.Store.REQUEST" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="SQL_REPLICATION_ITEM" EntityType="BigModel.Store.SQL_REPLICATION_ITEM" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="STATE" EntityType="BigModel.Store.STATE" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TASK" EntityType="BigModel.Store.TASK" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TASKTYP" EntityType="BigModel.Store.TASKTYP" store:Type="Tables" Schema="PUBLIC" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <AssociationSet Name="PROJECT_ACTIVITY_KEY0" Association="BigModel.Store.PROJECT_ACTIVITY_KEY0">
+            <End Role="PROJECT" EntitySet="PROJECT" />
+            <End Role="ACTIVITY" EntitySet="ACTIVITY" />
+          </AssociationSet>
+          <AssociationSet Name="PROJECT_KEY1" Association="BigModel.Store.PROJECT_KEY1">
+            <End Role="CUSTOMER" EntitySet="CUSTOMER" />
+            <End Role="PROJECT" EntitySet="PROJECT" />
+          </AssociationSet>
+          <AssociationSet Name="COORDINATOR" Association="BigModel.Store.COORDINATOR">
+            <End Role="CHRONOTRACK_USER" EntitySet="CHRONOTRACK_USER" />
+            <End Role="PROJECT" EntitySet="PROJECT" />
+          </AssociationSet>
+        </EntityContainer>
+        <!--Errors Found During Generation:
+      warning 6035: The relationship 'PROJECT_KEY0' has columns that are not part of the key of the table on the primary side of the relationship which is not supported, the relationship was excluded.
+      -->
+        <EntityType Name="ACTIVITY">
+          <Key>
+            <PropertyRef Name="ACTIVITY_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ACTIVITY_ID" Type="int" Nullable="false" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="END_DATE" Type="date" />
+          <Property Name="END_TIME" Type="time" />
+          <Property Name="MODIFIED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_DATE" Type="date" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="START_DATE" Type="date" />
+          <Property Name="START_TIME" Type="time" />
+          <Property Name="TASK_ID" Type="int" Nullable="false" />
+          <Property Name="TEXT" Type="varchar" MaxLength="700" />
+        </EntityType>
+        <EntityType Name="ATTACHMENT">
+          <Key>
+            <PropertyRef Name="ATTACHMENT_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ATTACHMENT_ID" Type="int" Nullable="false" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="DOC_TYPE" Type="tinyint" />
+          <Property Name="FILESPEC" Type="varchar" MaxLength="255" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="TASK_ID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CHRONOTRACK_USER">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="ADDR1" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR2" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR3" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR4" Type="varchar" MaxLength="30" />
+          <Property Name="COUNTRY_ID" Type="varchar" MaxLength="2" />
+          <Property Name="EMAIL" Type="varchar" MaxLength="70" />
+          <Property Name="FIRST_NAME" Type="varchar" MaxLength="30" />
+          <Property Name="FRIENDLY_NAME" Type="varchar" MaxLength="60" />
+          <Property Name="INACTIVE" Type="tinyint" />
+          <Property Name="IS_CONSULTANT" Type="tinyint" />
+          <Property Name="IS_EMPLOYEE" Type="tinyint" />
+          <Property Name="IS_MANAGER" Type="tinyint" />
+          <Property Name="LAST_NAME" Type="varchar" MaxLength="30" />
+          <Property Name="MOBILE_PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="OFFICE_PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="PICTURE_FILE" Type="varchar" MaxLength="255" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="STATE" Type="varchar" MaxLength="2" />
+          <Property Name="TITLE" Type="varchar" MaxLength="30" />
+          <Property Name="USER_ID" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="ZIP" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6035: The relationship 'PROJECT_ID_FOREIGN' has columns that are not part of the key of the table on the primary side of the relationship which is not supported, the relationship was excluded.
+      -->
+        <EntityType Name="CONSULTANT">
+          <Key>
+            <PropertyRef Name="CONSULTANT_ID" />
+            <PropertyRef Name="FEE_TYPE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CONSULTANT_ID" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="COST" Type="decimal" Precision="11" Scale="2" />
+          <Property Name="FEE" Type="decimal" Precision="11" Scale="2" />
+          <Property Name="FEE_TYPE_ID" Type="tinyint" Nullable="false" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6035: The relationship 'CUSTOMER_KEY0' has columns that are not part of the key of the table on the primary side of the relationship which is not supported, the relationship was excluded.
+      -->
+        <EntityType Name="CONTACT">
+          <Key>
+            <PropertyRef Name="CONTACT_ID" />
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="CONTACT_ID" Type="int" Nullable="false" />
+          <Property Name="CURRENT_LOCATION" Type="tinyint" />
+          <Property Name="CUSTOMER_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="EMAIL" Type="varchar" MaxLength="70" />
+          <Property Name="FIRST_NAME" Type="varchar" MaxLength="30" />
+          <Property Name="FRIENDLY_NAME" Type="varchar" MaxLength="60" />
+          <Property Name="LAST_NAME" Type="varchar" MaxLength="30" />
+          <Property Name="MOBILE_PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="OFFICE_PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="PICTURE_FILE" Type="varchar" MaxLength="255" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="TITLE" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="CONTRACT">
+          <Key>
+            <PropertyRef Name="CONTRACT_ID" />
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="CONTRACT_DOCUMENT" Type="varchar" MaxLength="255" />
+          <Property Name="CONTRACT_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="CUSTOMER_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="ISSUED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="ISSUED_DATE" Type="date" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="SIGNED_BY" Type="int" />
+          <Property Name="SIGNED_DATE" Type="date" />
+        </EntityType>
+        <EntityType Name="COUNTRY">
+          <Key>
+            <PropertyRef Name="COUNTRY_ID" />
+          </Key>
+          <Property Name="COUNTRY_ID" Type="varchar" Nullable="false" MaxLength="2" />
+          <Property Name="COUNTRY_NAME" Type="varchar" MaxLength="30" />
+          <Property Name="CURRENCY_CODE" Type="varchar" MaxLength="2" />
+          <Property Name="DIALING_CODE" Type="bigint" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="CUSTOMER">
+          <Key>
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="COMPANY" Type="varchar" MaxLength="40" />
+          <Property Name="CURRENT_CONTRACT" Type="varchar" MaxLength="10" />
+          <Property Name="CUSTOMER_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="LEGAL_CONTACT_ID" Type="int" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="TECH_CONTACT_ID" Type="int" />
+        </EntityType>
+        <EntityType Name="EXPENSE">
+          <Key>
+            <PropertyRef Name="EXPENSE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CURRENCY_CODE" Type="varchar" MaxLength="2" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="ENTERED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="ENTERED_DATE" Type="date" />
+          <Property Name="EXPENSED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="EXPENSE_DATE" Type="date" />
+          <Property Name="EXPENSE_ID" Type="bigint" Nullable="false" />
+          <Property Name="EXPENSE_TYPE" Type="varchar" MaxLength="10" />
+          <Property Name="IS_ESTIMATE" Type="tinyint" />
+          <Property Name="MODIFIED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_DATE" Type="date" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="QUANTITY" Type="decimal" Precision="6" Scale="2" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="UNIT_PRICE" Type="decimal" Precision="11" Scale="2" />
+        </EntityType>
+        <EntityType Name="EXPENSETYPE">
+          <Key>
+            <PropertyRef Name="EXPENSE_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="35" />
+          <Property Name="EXPENSE_TYPE_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="HAS_UNITS" Type="tinyint" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6035: The relationship 'USER_KEY0' has columns that are not part of the key of the table on the primary side of the relationship which is not supported, the relationship was excluded.
+      -->
+        <EntityType Name="FEE">
+          <Key>
+            <PropertyRef Name="FEE_TYPE_ID" />
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="COST" Type="decimal" Precision="11" Scale="2" />
+          <Property Name="FEE_TYPE_ID" Type="tinyint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="USER_ID" Type="varchar" Nullable="false" MaxLength="15" />
+        </EntityType>
+        <EntityType Name="FEETYPE">
+          <Key>
+            <PropertyRef Name="FEE_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="35" />
+          <Property Name="FEE_TYPE_ID" Type="tinyint" Nullable="false" />
+          <Property Name="HAS_UNITS" Type="tinyint" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="LOCATION">
+          <Key>
+            <PropertyRef Name="CUSTOMER_ID" />
+            <PropertyRef Name="LOCATION_ID" />
+          </Key>
+          <Property Name="ADDR1" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR2" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR3" Type="varchar" MaxLength="30" />
+          <Property Name="ADDR4" Type="varchar" MaxLength="30" />
+          <Property Name="COUNTRY_ID" Type="varchar" MaxLength="2" />
+          <Property Name="CUSTOMER_ID" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="LOCATION_ID" Type="tinyint" Nullable="false" />
+          <Property Name="PHONE" Type="varchar" MaxLength="20" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="STATE" Type="varchar" MaxLength="2" />
+          <Property Name="ZIP" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="NOTE">
+          <Key>
+            <PropertyRef Name="NOTE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="MODIFIED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_DATE" Type="date" />
+          <Property Name="NOTE_ID" Type="int" Nullable="false" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="TEXT" Type="varchar" MaxLength="700" />
+        </EntityType>
+        <EntityType Name="PROJECT">
+          <Key>
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="APPROVAL_LOCATION" Type="tinyint" />
+          <Property Name="APPROVED_BY_FIRST" Type="int" />
+          <Property Name="APPROVED_BY_LAST" Type="int" />
+          <Property Name="APPROVED_DATE" Type="date" />
+          <Property Name="CONTRACT_ID" Type="varchar" MaxLength="10" />
+          <Property Name="CONTRACT_PROJECT_ID" Type="int" />
+          <Property Name="COORDINATOR" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="CURRENT_STATUS" Type="tinyint" />
+          <Property Name="CUSTOMER_ID" Type="varchar" MaxLength="10" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="END_DATE" Type="date" />
+          <Property Name="LEAD_CONSULTANT" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_DATE" Type="date" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="PROJECT_ID_FOREIGN" Type="bigint" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="START_DATE" Type="date" />
+          <Property Name="STATUS_DATE" Type="date" />
+          <Property Name="TEXT" Type="varchar" MaxLength="700" />
+          <Property Name="WORK_LOCATION_ID" Type="tinyint" />
+        </EntityType>
+        <EntityType Name="REQUEST">
+          <Key>
+            <PropertyRef Name="REQUEST_ID" />
+          </Key>
+          <Property Name="CONTACT_ID" Type="int" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="CUSTOMER_ID" Type="varchar" MaxLength="10" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="END_DATE" Type="date" />
+          <Property Name="END_TIME" Type="time" />
+          <Property Name="PROJECT_ID" Type="bigint" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="REQUEST_ID" Type="bigint" Nullable="false" />
+          <Property Name="RESOURCE" Type="varchar" MaxLength="15" />
+          <Property Name="START_DATE" Type="date" />
+          <Property Name="START_TIME" Type="time" />
+          <Property Name="TEXT" Type="varchar" MaxLength="700" />
+          <Property Name="WORK_LOCATION_ID" Type="tinyint" />
+        </EntityType>
+        <EntityType Name="SQL_REPLICATION_ITEM">
+          <Key>
+            <PropertyRef Name="UNIQUE_KEY_VALUE" />
+          </Key>
+          <Property Name="SDMS_ACTION" Type="tinyint" />
+          <Property Name="STRUCTURE_NAME" Type="varchar" MaxLength="32" />
+          <Property Name="UNIQUE_KEY_VALUE" Type="varchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="STATE">
+          <Key>
+            <PropertyRef Name="CODE" />
+          </Key>
+          <Property Name="CODE" Type="varchar" Nullable="false" MaxLength="2" />
+          <Property Name="NAME" Type="varchar" MaxLength="30" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="TASK">
+          <Key>
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ASSIGNED_TO" Type="varchar" MaxLength="15" />
+          <Property Name="BILLABLE_HOURS" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="COMPLETED" Type="tinyint" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="CREATED_DATE" Type="date" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="60" />
+          <Property Name="END_DATE" Type="date" />
+          <Property Name="END_TIME" Type="time" />
+          <Property Name="LOCATION" Type="tinyint" />
+          <Property Name="MODIFIED_BY" Type="varchar" MaxLength="15" />
+          <Property Name="MODIFIED_DATE" Type="date" />
+          <Property Name="PROJECT_ID" Type="bigint" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="START_DATE" Type="date" />
+          <Property Name="START_TIME" Type="time" />
+          <Property Name="TASK_ID" Type="int" Nullable="false" />
+          <Property Name="TASK_TYPE" Type="int" />
+          <Property Name="TEXT" Type="varchar" MaxLength="700" />
+        </EntityType>
+        <EntityType Name="TASKTYP">
+          <Key>
+            <PropertyRef Name="TASK_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="35" />
+          <Property Name="REPLICATION_KEY" Type="varchar" MaxLength="20" />
+          <Property Name="TASK_TYPE_ID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="PROJECT_ACTIVITY_KEY0">
+          <End Role="PROJECT" Type="BigModel.Store.PROJECT" Multiplicity="1" />
+          <End Role="ACTIVITY" Type="BigModel.Store.ACTIVITY" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROJECT">
+              <PropertyRef Name="PROJECT_ID" />
+            </Principal>
+            <Dependent Role="ACTIVITY">
+              <PropertyRef Name="PROJECT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PROJECT_KEY1">
+          <End Role="CUSTOMER" Type="BigModel.Store.CUSTOMER" Multiplicity="0..1" />
+          <End Role="PROJECT" Type="BigModel.Store.PROJECT" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CUSTOMER">
+              <PropertyRef Name="CUSTOMER_ID" />
+            </Principal>
+            <Dependent Role="PROJECT">
+              <PropertyRef Name="CUSTOMER_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="COORDINATOR">
+          <End Role="CHRONOTRACK_USER" Type="BigModel.Store.CHRONOTRACK_USER" Multiplicity="0..1" />
+          <End Role="PROJECT" Type="BigModel.Store.PROJECT" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CHRONOTRACK_USER">
+              <PropertyRef Name="USER_ID" />
+            </Principal>
+            <Dependent Role="PROJECT">
+              <PropertyRef Name="COORDINATOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--Errors Found During Generation:
+      warning 6013: The table/view 'PUBLIC.LOGIN_AUDIT' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity you will need to review your schema, add the correct keys and uncomment it.
+      
+      <EntityType Name="LOGIN_AUDIT">
+        <Property Name="APPLICATION" Type="varchar" MaxLength="6" />
+        <Property Name="CONCURRENT_USERS" Type="bigint" />
+        <Property Name="LOGIN_TIME" Type="datetime" />
+        <Property Name="PRODUCER" Type="varchar" MaxLength="6" />
+        <Property Name="USER_ID" Type="varchar" MaxLength="15" />
+      </EntityType>-->
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BigModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="Entities">
+          <EntitySet Name="ACTIVITY" EntityType="BigModel.ACTIVITY" />
+          <EntitySet Name="ATTACHMENT" EntityType="BigModel.ATTACHMENT" />
+          <EntitySet Name="CHRONOTRACK_USER" EntityType="BigModel.CHRONOTRACK_USER" />
+          <EntitySet Name="CONSULTANT" EntityType="BigModel.CONSULTANT" />
+          <EntitySet Name="CONTACT" EntityType="BigModel.CONTACT" />
+          <EntitySet Name="CONTRACT" EntityType="BigModel.CONTRACT" />
+          <EntitySet Name="COUNTRY" EntityType="BigModel.COUNTRY" />
+          <EntitySet Name="CUSTOMER" EntityType="BigModel.CUSTOMER" />
+          <EntitySet Name="EXPENSE" EntityType="BigModel.EXPENSE" />
+          <EntitySet Name="EXPENSETYPE" EntityType="BigModel.EXPENSETYPE" />
+          <EntitySet Name="FEE" EntityType="BigModel.FEE" />
+          <EntitySet Name="FEETYPE" EntityType="BigModel.FEETYPE" />
+          <EntitySet Name="LOCATION" EntityType="BigModel.LOCATION" />
+          <EntitySet Name="NOTE" EntityType="BigModel.NOTE" />
+          <EntitySet Name="PROJECT" EntityType="BigModel.PROJECT" />
+          <EntitySet Name="REQUEST" EntityType="BigModel.REQUEST" />
+          <EntitySet Name="SQL_REPLICATION_ITEM" EntityType="BigModel.SQL_REPLICATION_ITEM" />
+          <EntitySet Name="STATE" EntityType="BigModel.STATE" />
+          <EntitySet Name="TASK" EntityType="BigModel.TASK" />
+          <EntitySet Name="TASKTYP" EntityType="BigModel.TASKTYP" />
+          <AssociationSet Name="PROJECT_ACTIVITY_KEY0" Association="BigModel.PROJECT_ACTIVITY_KEY0">
+            <End Role="PROJECT" EntitySet="PROJECT" />
+            <End Role="ACTIVITY" EntitySet="ACTIVITY" />
+          </AssociationSet>
+          <AssociationSet Name="COORDINATOR" Association="BigModel.COORDINATOR">
+            <End Role="CHRONOTRACK_USER" EntitySet="CHRONOTRACK_USER" />
+            <End Role="PROJECT" EntitySet="PROJECT" />
+          </AssociationSet>
+          <AssociationSet Name="PROJECT_KEY1" Association="BigModel.PROJECT_KEY1">
+            <End Role="CUSTOMER" EntitySet="CUSTOMER" />
+            <End Role="PROJECT" EntitySet="PROJECT" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="ACTIVITY">
+          <Key>
+            <PropertyRef Name="ACTIVITY_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ACTIVITY_ID" Type="Int32" Nullable="false" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="END_DATE" Type="DateTime" />
+          <Property Name="END_TIME" Type="DateTime" />
+          <Property Name="MODIFIED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_DATE" Type="DateTime" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="START_DATE" Type="DateTime" />
+          <Property Name="START_TIME" Type="DateTime" />
+          <Property Name="TASK_ID" Type="Int32" Nullable="false" />
+          <Property Name="TEXT" Type="String" MaxLength="700" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="PROJECT" Relationship="BigModel.PROJECT_ACTIVITY_KEY0" FromRole="ACTIVITY" ToRole="PROJECT" />
+        </EntityType>
+        <EntityType Name="ATTACHMENT">
+          <Key>
+            <PropertyRef Name="ATTACHMENT_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ATTACHMENT_ID" Type="Int32" Nullable="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="DOC_TYPE" Type="Byte" />
+          <Property Name="FILESPEC" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="TASK_ID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CHRONOTRACK_USER">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="ADDR1" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR2" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR3" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR4" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="COUNTRY_ID" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="EMAIL" Type="String" MaxLength="70" Unicode="false" FixedLength="false" />
+          <Property Name="FIRST_NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="FRIENDLY_NAME" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="INACTIVE" Type="Byte" />
+          <Property Name="IS_CONSULTANT" Type="Byte" />
+          <Property Name="IS_EMPLOYEE" Type="Byte" />
+          <Property Name="IS_MANAGER" Type="Byte" />
+          <Property Name="LAST_NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="MOBILE_PHONE" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="OFFICE_PHONE" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="PICTURE_FILE" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="STATE" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="TITLE" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="USER_ID" Type="String" Nullable="false" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="ZIP" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="PROJECT" Relationship="BigModel.COORDINATOR" FromRole="CHRONOTRACK_USER" ToRole="PROJECT" />
+        </EntityType>
+        <EntityType Name="CONSULTANT">
+          <Key>
+            <PropertyRef Name="CONSULTANT_ID" />
+            <PropertyRef Name="FEE_TYPE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CONSULTANT_ID" Type="String" Nullable="false" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="COST" Type="Decimal" Precision="11" Scale="2" />
+          <Property Name="FEE" Type="Decimal" Precision="11" Scale="2" />
+          <Property Name="FEE_TYPE_ID" Type="Byte" Nullable="false" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="CONTACT">
+          <Key>
+            <PropertyRef Name="CONTACT_ID" />
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="CONTACT_ID" Type="Int32" Nullable="false" />
+          <Property Name="CURRENT_LOCATION" Type="Byte" />
+          <Property Name="CUSTOMER_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="EMAIL" Type="String" MaxLength="70" Unicode="false" FixedLength="false" />
+          <Property Name="FIRST_NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="FRIENDLY_NAME" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="LAST_NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="MOBILE_PHONE" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="OFFICE_PHONE" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="PICTURE_FILE" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="TITLE" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="CONTRACT">
+          <Key>
+            <PropertyRef Name="CONTRACT_ID" />
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="CONTRACT_DOCUMENT" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="CONTRACT_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="CUSTOMER_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="ISSUED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="ISSUED_DATE" Type="DateTime" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="SIGNED_BY" Type="Int32" />
+          <Property Name="SIGNED_DATE" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="COUNTRY">
+          <Key>
+            <PropertyRef Name="COUNTRY_ID" />
+          </Key>
+          <Property Name="COUNTRY_ID" Type="String" Nullable="false" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="COUNTRY_NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="CURRENCY_CODE" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="DIALING_CODE" Type="Int64" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="CUSTOMER">
+          <Key>
+            <PropertyRef Name="CUSTOMER_ID" />
+          </Key>
+          <Property Name="COMPANY" Type="String" MaxLength="40" Unicode="false" FixedLength="false" />
+          <Property Name="CURRENT_CONTRACT" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="CUSTOMER_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="LEGAL_CONTACT_ID" Type="Int32" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="TECH_CONTACT_ID" Type="Int32" />
+          <NavigationProperty Name="PROJECT" Relationship="BigModel.PROJECT_KEY1" FromRole="CUSTOMER" ToRole="PROJECT" />
+        </EntityType>
+        <EntityType Name="EXPENSE">
+          <Key>
+            <PropertyRef Name="EXPENSE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CURRENCY_CODE" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="ENTERED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="ENTERED_DATE" Type="DateTime" />
+          <Property Name="EXPENSED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="EXPENSE_DATE" Type="DateTime" />
+          <Property Name="EXPENSE_ID" Type="Int64" Nullable="false" />
+          <Property Name="EXPENSE_TYPE" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="IS_ESTIMATE" Type="Byte" />
+          <Property Name="MODIFIED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_DATE" Type="DateTime" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="QUANTITY" Type="Decimal" Precision="6" Scale="2" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="UNIT_PRICE" Type="Decimal" Precision="11" Scale="2" />
+        </EntityType>
+        <EntityType Name="EXPENSETYPE">
+          <Key>
+            <PropertyRef Name="EXPENSE_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="String" MaxLength="35" Unicode="false" FixedLength="false" />
+          <Property Name="EXPENSE_TYPE_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="HAS_UNITS" Type="Byte" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="FEE">
+          <Key>
+            <PropertyRef Name="FEE_TYPE_ID" />
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="COST" Type="Decimal" Precision="11" Scale="2" />
+          <Property Name="FEE_TYPE_ID" Type="Byte" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="USER_ID" Type="String" Nullable="false" MaxLength="15" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="FEETYPE">
+          <Key>
+            <PropertyRef Name="FEE_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="String" MaxLength="35" Unicode="false" FixedLength="false" />
+          <Property Name="FEE_TYPE_ID" Type="Byte" Nullable="false" />
+          <Property Name="HAS_UNITS" Type="Byte" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="LOCATION">
+          <Key>
+            <PropertyRef Name="CUSTOMER_ID" />
+            <PropertyRef Name="LOCATION_ID" />
+          </Key>
+          <Property Name="ADDR1" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR2" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR3" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ADDR4" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="COUNTRY_ID" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="CUSTOMER_ID" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="LOCATION_ID" Type="Byte" Nullable="false" />
+          <Property Name="PHONE" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="STATE" Type="String" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="ZIP" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="NOTE">
+          <Key>
+            <PropertyRef Name="NOTE_ID" />
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_DATE" Type="DateTime" />
+          <Property Name="NOTE_ID" Type="Int32" Nullable="false" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="TEXT" Type="String" MaxLength="700" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="PROJECT">
+          <Key>
+            <PropertyRef Name="PROJECT_ID" />
+          </Key>
+          <Property Name="APPROVAL_LOCATION" Type="Byte" />
+          <Property Name="APPROVED_BY_FIRST" Type="Int32" />
+          <Property Name="APPROVED_BY_LAST" Type="Int32" />
+          <Property Name="APPROVED_DATE" Type="DateTime" />
+          <Property Name="CONTRACT_ID" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="CONTRACT_PROJECT_ID" Type="Int32" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="CURRENT_STATUS" Type="Byte" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="END_DATE" Type="DateTime" />
+          <Property Name="LEAD_CONSULTANT" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_DATE" Type="DateTime" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="PROJECT_ID_FOREIGN" Type="Int64" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="START_DATE" Type="DateTime" />
+          <Property Name="STATUS_DATE" Type="DateTime" />
+          <Property Name="TEXT" Type="String" MaxLength="700" Unicode="false" FixedLength="false" />
+          <Property Name="WORK_LOCATION_ID" Type="Byte" />
+          <NavigationProperty Name="ACTIVITY" Relationship="BigModel.PROJECT_ACTIVITY_KEY0" FromRole="PROJECT" ToRole="ACTIVITY" />
+          <NavigationProperty Name="CHRONOTRACK_USER" Relationship="BigModel.COORDINATOR" FromRole="PROJECT" ToRole="CHRONOTRACK_USER" />
+          <NavigationProperty Name="CUSTOMER" Relationship="BigModel.PROJECT_KEY1" FromRole="PROJECT" ToRole="CUSTOMER" />
+        </EntityType>
+        <EntityType Name="REQUEST">
+          <Key>
+            <PropertyRef Name="REQUEST_ID" />
+          </Key>
+          <Property Name="CONTACT_ID" Type="Int32" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="CUSTOMER_ID" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="END_DATE" Type="DateTime" />
+          <Property Name="END_TIME" Type="DateTime" />
+          <Property Name="PROJECT_ID" Type="Int64" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="REQUEST_ID" Type="Int64" Nullable="false" />
+          <Property Name="RESOURCE" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="START_DATE" Type="DateTime" />
+          <Property Name="START_TIME" Type="DateTime" />
+          <Property Name="TEXT" Type="String" MaxLength="700" Unicode="false" FixedLength="false" />
+          <Property Name="WORK_LOCATION_ID" Type="Byte" />
+        </EntityType>
+        <EntityType Name="SQL_REPLICATION_ITEM">
+          <Key>
+            <PropertyRef Name="UNIQUE_KEY_VALUE" />
+          </Key>
+          <Property Name="SDMS_ACTION" Type="Byte" />
+          <Property Name="STRUCTURE_NAME" Type="String" MaxLength="32" Unicode="false" FixedLength="false" />
+          <Property Name="UNIQUE_KEY_VALUE" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="STATE">
+          <Key>
+            <PropertyRef Name="CODE" />
+          </Key>
+          <Property Name="CODE" Type="String" Nullable="false" MaxLength="2" Unicode="false" FixedLength="false" />
+          <Property Name="NAME" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TASK">
+          <Key>
+            <PropertyRef Name="PROJECT_ID" />
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="ASSIGNED_TO" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="BILLABLE_HOURS" Type="Decimal" Precision="4" Scale="1" />
+          <Property Name="COMPLETED" Type="Byte" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="60" Unicode="false" FixedLength="false" />
+          <Property Name="END_DATE" Type="DateTime" />
+          <Property Name="END_TIME" Type="DateTime" />
+          <Property Name="LOCATION" Type="Byte" />
+          <Property Name="MODIFIED_BY" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="MODIFIED_DATE" Type="DateTime" />
+          <Property Name="PROJECT_ID" Type="Int64" Nullable="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="START_DATE" Type="DateTime" />
+          <Property Name="START_TIME" Type="DateTime" />
+          <Property Name="TASK_ID" Type="Int32" Nullable="false" />
+          <Property Name="TASK_TYPE" Type="Int32" />
+          <Property Name="TEXT" Type="String" MaxLength="700" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TASKTYP">
+          <Key>
+            <PropertyRef Name="TASK_TYPE_ID" />
+          </Key>
+          <Property Name="DESCRIPTION" Type="String" MaxLength="35" Unicode="false" FixedLength="false" />
+          <Property Name="REPLICATION_KEY" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="TASK_TYPE_ID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="PROJECT_ACTIVITY_KEY0">
+          <End Role="PROJECT" Type="BigModel.PROJECT" Multiplicity="1" />
+          <End Role="ACTIVITY" Type="BigModel.ACTIVITY" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROJECT">
+              <PropertyRef Name="PROJECT_ID" />
+            </Principal>
+            <Dependent Role="ACTIVITY">
+              <PropertyRef Name="PROJECT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="COORDINATOR">
+          <End Role="CHRONOTRACK_USER" Type="BigModel.CHRONOTRACK_USER" Multiplicity="0..1" />
+          <End Role="PROJECT" Type="BigModel.PROJECT" Multiplicity="*" />
+        </Association>
+        <Association Name="PROJECT_KEY1">
+          <End Role="CUSTOMER" Type="BigModel.CUSTOMER" Multiplicity="0..1" />
+          <End Role="PROJECT" Type="BigModel.PROJECT" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BigModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="ACTIVITY">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.ACTIVITY)">
+              <MappingFragment StoreEntitySet="ACTIVITY">
+                <ScalarProperty Name="ACTIVITY_ID" ColumnName="ACTIVITY_ID" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="END_TIME" ColumnName="END_TIME" />
+                <ScalarProperty Name="MODIFIED_BY" ColumnName="MODIFIED_BY" />
+                <ScalarProperty Name="MODIFIED_DATE" ColumnName="MODIFIED_DATE" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="START_DATE" ColumnName="START_DATE" />
+                <ScalarProperty Name="START_TIME" ColumnName="START_TIME" />
+                <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+                <ScalarProperty Name="TEXT" ColumnName="TEXT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ATTACHMENT">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.ATTACHMENT)">
+              <MappingFragment StoreEntitySet="ATTACHMENT">
+                <ScalarProperty Name="ATTACHMENT_ID" ColumnName="ATTACHMENT_ID" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="DOC_TYPE" ColumnName="DOC_TYPE" />
+                <ScalarProperty Name="FILESPEC" ColumnName="FILESPEC" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CHRONOTRACK_USER">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.CHRONOTRACK_USER)">
+              <MappingFragment StoreEntitySet="CHRONOTRACK_USER">
+                <ScalarProperty Name="ADDR1" ColumnName="ADDR1" />
+                <ScalarProperty Name="ADDR2" ColumnName="ADDR2" />
+                <ScalarProperty Name="ADDR3" ColumnName="ADDR3" />
+                <ScalarProperty Name="ADDR4" ColumnName="ADDR4" />
+                <ScalarProperty Name="COUNTRY_ID" ColumnName="COUNTRY_ID" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="FRIENDLY_NAME" ColumnName="FRIENDLY_NAME" />
+                <ScalarProperty Name="INACTIVE" ColumnName="INACTIVE" />
+                <ScalarProperty Name="IS_CONSULTANT" ColumnName="IS_CONSULTANT" />
+                <ScalarProperty Name="IS_EMPLOYEE" ColumnName="IS_EMPLOYEE" />
+                <ScalarProperty Name="IS_MANAGER" ColumnName="IS_MANAGER" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="MOBILE_PHONE" ColumnName="MOBILE_PHONE" />
+                <ScalarProperty Name="OFFICE_PHONE" ColumnName="OFFICE_PHONE" />
+                <ScalarProperty Name="PICTURE_FILE" ColumnName="PICTURE_FILE" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="STATE" ColumnName="STATE" />
+                <ScalarProperty Name="TITLE" ColumnName="TITLE" />
+                <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+                <ScalarProperty Name="ZIP" ColumnName="ZIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CONSULTANT">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.CONSULTANT)">
+              <MappingFragment StoreEntitySet="CONSULTANT">
+                <ScalarProperty Name="CONSULTANT_ID" ColumnName="CONSULTANT_ID" />
+                <ScalarProperty Name="COST" ColumnName="COST" />
+                <ScalarProperty Name="FEE" ColumnName="FEE" />
+                <ScalarProperty Name="FEE_TYPE_ID" ColumnName="FEE_TYPE_ID" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CONTACT">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.CONTACT)">
+              <MappingFragment StoreEntitySet="CONTACT">
+                <ScalarProperty Name="CONTACT_ID" ColumnName="CONTACT_ID" />
+                <ScalarProperty Name="CURRENT_LOCATION" ColumnName="CURRENT_LOCATION" />
+                <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="FRIENDLY_NAME" ColumnName="FRIENDLY_NAME" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="MOBILE_PHONE" ColumnName="MOBILE_PHONE" />
+                <ScalarProperty Name="OFFICE_PHONE" ColumnName="OFFICE_PHONE" />
+                <ScalarProperty Name="PICTURE_FILE" ColumnName="PICTURE_FILE" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="TITLE" ColumnName="TITLE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CONTRACT">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.CONTRACT)">
+              <MappingFragment StoreEntitySet="CONTRACT">
+                <ScalarProperty Name="CONTRACT_DOCUMENT" ColumnName="CONTRACT_DOCUMENT" />
+                <ScalarProperty Name="CONTRACT_ID" ColumnName="CONTRACT_ID" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+                <ScalarProperty Name="ISSUED_BY" ColumnName="ISSUED_BY" />
+                <ScalarProperty Name="ISSUED_DATE" ColumnName="ISSUED_DATE" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="SIGNED_BY" ColumnName="SIGNED_BY" />
+                <ScalarProperty Name="SIGNED_DATE" ColumnName="SIGNED_DATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="COUNTRY">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.COUNTRY)">
+              <MappingFragment StoreEntitySet="COUNTRY">
+                <ScalarProperty Name="COUNTRY_ID" ColumnName="COUNTRY_ID" />
+                <ScalarProperty Name="COUNTRY_NAME" ColumnName="COUNTRY_NAME" />
+                <ScalarProperty Name="CURRENCY_CODE" ColumnName="CURRENCY_CODE" />
+                <ScalarProperty Name="DIALING_CODE" ColumnName="DIALING_CODE" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CUSTOMER">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.CUSTOMER)">
+              <MappingFragment StoreEntitySet="CUSTOMER">
+                <ScalarProperty Name="COMPANY" ColumnName="COMPANY" />
+                <ScalarProperty Name="CURRENT_CONTRACT" ColumnName="CURRENT_CONTRACT" />
+                <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+                <ScalarProperty Name="LEGAL_CONTACT_ID" ColumnName="LEGAL_CONTACT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="TECH_CONTACT_ID" ColumnName="TECH_CONTACT_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EXPENSE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.EXPENSE)">
+              <MappingFragment StoreEntitySet="EXPENSE">
+                <ScalarProperty Name="CURRENCY_CODE" ColumnName="CURRENCY_CODE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="ENTERED_BY" ColumnName="ENTERED_BY" />
+                <ScalarProperty Name="ENTERED_DATE" ColumnName="ENTERED_DATE" />
+                <ScalarProperty Name="EXPENSED_BY" ColumnName="EXPENSED_BY" />
+                <ScalarProperty Name="EXPENSE_DATE" ColumnName="EXPENSE_DATE" />
+                <ScalarProperty Name="EXPENSE_ID" ColumnName="EXPENSE_ID" />
+                <ScalarProperty Name="EXPENSE_TYPE" ColumnName="EXPENSE_TYPE" />
+                <ScalarProperty Name="IS_ESTIMATE" ColumnName="IS_ESTIMATE" />
+                <ScalarProperty Name="MODIFIED_BY" ColumnName="MODIFIED_BY" />
+                <ScalarProperty Name="MODIFIED_DATE" ColumnName="MODIFIED_DATE" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="QUANTITY" ColumnName="QUANTITY" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="UNIT_PRICE" ColumnName="UNIT_PRICE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EXPENSETYPE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.EXPENSETYPE)">
+              <MappingFragment StoreEntitySet="EXPENSETYPE">
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="EXPENSE_TYPE_ID" ColumnName="EXPENSE_TYPE_ID" />
+                <ScalarProperty Name="HAS_UNITS" ColumnName="HAS_UNITS" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FEE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.FEE)">
+              <MappingFragment StoreEntitySet="FEE">
+                <ScalarProperty Name="COST" ColumnName="COST" />
+                <ScalarProperty Name="FEE_TYPE_ID" ColumnName="FEE_TYPE_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FEETYPE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.FEETYPE)">
+              <MappingFragment StoreEntitySet="FEETYPE">
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="FEE_TYPE_ID" ColumnName="FEE_TYPE_ID" />
+                <ScalarProperty Name="HAS_UNITS" ColumnName="HAS_UNITS" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LOCATION">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.LOCATION)">
+              <MappingFragment StoreEntitySet="LOCATION">
+                <ScalarProperty Name="ADDR1" ColumnName="ADDR1" />
+                <ScalarProperty Name="ADDR2" ColumnName="ADDR2" />
+                <ScalarProperty Name="ADDR3" ColumnName="ADDR3" />
+                <ScalarProperty Name="ADDR4" ColumnName="ADDR4" />
+                <ScalarProperty Name="COUNTRY_ID" ColumnName="COUNTRY_ID" />
+                <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="LOCATION_ID" ColumnName="LOCATION_ID" />
+                <ScalarProperty Name="PHONE" ColumnName="PHONE" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="STATE" ColumnName="STATE" />
+                <ScalarProperty Name="ZIP" ColumnName="ZIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NOTE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.NOTE)">
+              <MappingFragment StoreEntitySet="NOTE">
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="MODIFIED_BY" ColumnName="MODIFIED_BY" />
+                <ScalarProperty Name="MODIFIED_DATE" ColumnName="MODIFIED_DATE" />
+                <ScalarProperty Name="NOTE_ID" ColumnName="NOTE_ID" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="TEXT" ColumnName="TEXT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PROJECT">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.PROJECT)">
+              <MappingFragment StoreEntitySet="PROJECT">
+                <ScalarProperty Name="APPROVAL_LOCATION" ColumnName="APPROVAL_LOCATION" />
+                <ScalarProperty Name="APPROVED_BY_FIRST" ColumnName="APPROVED_BY_FIRST" />
+                <ScalarProperty Name="APPROVED_BY_LAST" ColumnName="APPROVED_BY_LAST" />
+                <ScalarProperty Name="APPROVED_DATE" ColumnName="APPROVED_DATE" />
+                <ScalarProperty Name="CONTRACT_ID" ColumnName="CONTRACT_ID" />
+                <ScalarProperty Name="CONTRACT_PROJECT_ID" ColumnName="CONTRACT_PROJECT_ID" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="CURRENT_STATUS" ColumnName="CURRENT_STATUS" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="LEAD_CONSULTANT" ColumnName="LEAD_CONSULTANT" />
+                <ScalarProperty Name="MODIFIED_BY" ColumnName="MODIFIED_BY" />
+                <ScalarProperty Name="MODIFIED_DATE" ColumnName="MODIFIED_DATE" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="PROJECT_ID_FOREIGN" ColumnName="PROJECT_ID_FOREIGN" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="START_DATE" ColumnName="START_DATE" />
+                <ScalarProperty Name="STATUS_DATE" ColumnName="STATUS_DATE" />
+                <ScalarProperty Name="TEXT" ColumnName="TEXT" />
+                <ScalarProperty Name="WORK_LOCATION_ID" ColumnName="WORK_LOCATION_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="REQUEST">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.REQUEST)">
+              <MappingFragment StoreEntitySet="REQUEST">
+                <ScalarProperty Name="CONTACT_ID" ColumnName="CONTACT_ID" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="END_TIME" ColumnName="END_TIME" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="REQUEST_ID" ColumnName="REQUEST_ID" />
+                <ScalarProperty Name="RESOURCE" ColumnName="RESOURCE" />
+                <ScalarProperty Name="START_DATE" ColumnName="START_DATE" />
+                <ScalarProperty Name="START_TIME" ColumnName="START_TIME" />
+                <ScalarProperty Name="TEXT" ColumnName="TEXT" />
+                <ScalarProperty Name="WORK_LOCATION_ID" ColumnName="WORK_LOCATION_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SQL_REPLICATION_ITEM">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.SQL_REPLICATION_ITEM)">
+              <MappingFragment StoreEntitySet="SQL_REPLICATION_ITEM">
+                <ScalarProperty Name="SDMS_ACTION" ColumnName="SDMS_ACTION" />
+                <ScalarProperty Name="STRUCTURE_NAME" ColumnName="STRUCTURE_NAME" />
+                <ScalarProperty Name="UNIQUE_KEY_VALUE" ColumnName="UNIQUE_KEY_VALUE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STATE">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.STATE)">
+              <MappingFragment StoreEntitySet="STATE">
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TASK">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.TASK)">
+              <MappingFragment StoreEntitySet="TASK">
+                <ScalarProperty Name="ASSIGNED_TO" ColumnName="ASSIGNED_TO" />
+                <ScalarProperty Name="BILLABLE_HOURS" ColumnName="BILLABLE_HOURS" />
+                <ScalarProperty Name="COMPLETED" ColumnName="COMPLETED" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="END_TIME" ColumnName="END_TIME" />
+                <ScalarProperty Name="LOCATION" ColumnName="LOCATION" />
+                <ScalarProperty Name="MODIFIED_BY" ColumnName="MODIFIED_BY" />
+                <ScalarProperty Name="MODIFIED_DATE" ColumnName="MODIFIED_DATE" />
+                <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="START_DATE" ColumnName="START_DATE" />
+                <ScalarProperty Name="START_TIME" ColumnName="START_TIME" />
+                <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+                <ScalarProperty Name="TASK_TYPE" ColumnName="TASK_TYPE" />
+                <ScalarProperty Name="TEXT" ColumnName="TEXT" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TASKTYP">
+            <EntityTypeMapping TypeName="IsTypeOf(BigModel.TASKTYP)">
+              <MappingFragment StoreEntitySet="TASKTYP">
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="REPLICATION_KEY" ColumnName="REPLICATION_KEY" />
+                <ScalarProperty Name="TASK_TYPE_ID" ColumnName="TASK_TYPE_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="PROJECT_ACTIVITY_KEY0" TypeName="BigModel.PROJECT_ACTIVITY_KEY0" StoreEntitySet="ACTIVITY">
+            <EndProperty Name="PROJECT">
+              <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+            </EndProperty>
+            <EndProperty Name="ACTIVITY">
+              <ScalarProperty Name="ACTIVITY_ID" ColumnName="ACTIVITY_ID" />
+              <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+              <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="COORDINATOR" TypeName="BigModel.COORDINATOR" StoreEntitySet="PROJECT">
+            <EndProperty Name="CHRONOTRACK_USER">
+              <ScalarProperty Name="USER_ID" ColumnName="COORDINATOR" />
+            </EndProperty>
+            <EndProperty Name="PROJECT">
+              <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+            </EndProperty>
+            <Condition ColumnName="COORDINATOR" IsNull="false" />
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="PROJECT_KEY1" TypeName="BigModel.PROJECT_KEY1" StoreEntitySet="PROJECT">
+            <EndProperty Name="CUSTOMER">
+              <ScalarProperty Name="CUSTOMER_ID" ColumnName="CUSTOMER_ID" />
+            </EndProperty>
+            <EndProperty Name="PROJECT">
+              <ScalarProperty Name="PROJECT_ID" ColumnName="PROJECT_ID" />
+            </EndProperty>
+            <Condition ColumnName="CUSTOMER_ID" IsNull="false" />
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer>
+    <edmx:Connection>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <edmx:Diagram Name="Model3" ZoomLevel="47">
+        <edmx:EntityTypeShape EntityType="BigModel.ACTIVITY" Width="1.5" PointX="5.25" PointY="2" Height="3.9033007812499996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.ATTACHMENT" Width="1.5" PointX="5.75" PointY="6.75" Height="2.3648893229166674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.CHRONOTRACK_USER" Width="1.5" PointX="0.75" PointY="6.25" Height="5.2494108072916674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.CONSULTANT" Width="1.5" PointX="7.75" PointY="0.75" Height="2.1725878906249996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.CONTACT" Width="1.5" PointX="2.75" PointY="7.75" Height="3.3263964843749996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.CONTRACT" Width="1.5" PointX="7.75" PointY="3.75" Height="2.941793619791667" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.COUNTRY" Width="1.5" PointX="7.75" PointY="7.75" Height="1.9802864583333326" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.CUSTOMER" Width="1.5" PointX="0.75" PointY="2.75" Height="2.3648893229166674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.EXPENSE" Width="1.5" PointX="9.75" PointY="0.75" Height="3.9033007812499996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.EXPENSETYPE" Width="1.5" PointX="9.75" PointY="5.75" Height="1.7879850260416674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.FEE" Width="1.5" PointX="9.75" PointY="8.75" Height="1.7879850260416674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.FEETYPE" Width="1.5" PointX="4.75" PointY="10.75" Height="1.7879850260416674" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.LOCATION" Width="1.5" PointX="6.75" PointY="10.75" Height="3.3263964843749996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.NOTE" Width="1.5" PointX="11.75" PointY="0.75" Height="2.7494921874999996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.PROJECT" Width="1.5" PointX="3" PointY="1.125" Height="5.634013671875" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.REQUEST" Width="1.5" PointX="11.75" PointY="4.75" Height="3.9033007812499996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.SQL_REPLICATION_ITEM" Width="1.5" PointX="8.75" PointY="11.75" Height="1.5956835937499996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.STATE" Width="1.5" PointX="11.75" PointY="9.75" Height="1.5956835937499996" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.TASK" Width="1.5" PointX="0.75" PointY="12.75" Height="4.480205078125" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="BigModel.TASKTYP" Width="1.5" PointX="10.75" PointY="12.75" Height="1.5956835937499996" IsExpanded="true" />
+        <edmx:AssociationConnector Association="BigModel.PROJECT_ACTIVITY_KEY0" ManuallyRouted="false">
+          <edmx:ConnectorPoint PointX="4.5" PointY="3.951650390625" />
+          <edmx:ConnectorPoint PointX="5.25" PointY="3.951650390625" /></edmx:AssociationConnector>
+        <edmx:AssociationConnector Association="BigModel.COORDINATOR" ManuallyRouted="false">
+          <edmx:ConnectorPoint PointX="2.25" PointY="6.5045068359375" />
+          <edmx:ConnectorPoint PointX="3" PointY="6.5045068359375" /></edmx:AssociationConnector>
+        <edmx:AssociationConnector Association="BigModel.PROJECT_KEY1" ManuallyRouted="false">
+          <edmx:ConnectorPoint PointX="2.25" PointY="3.9324446614583337" />
+          <edmx:ConnectorPoint PointX="3" PointY="3.9324446614583337" /></edmx:AssociationConnector></edmx:Diagram></edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

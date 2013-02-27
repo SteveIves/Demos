@@ -1,0 +1,98 @@
+import System
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class GameObject
+		
+		protected TheImage, @Image, ^null
+		public Position, Point, new Point(50,50)
+		protected ImageBounds, Rectangle, new Rectangle(0,0,10,10)
+		protected MovingBounds, Rectangle, new Rectangle()
+		
+		public method GameObject
+			fileName, @string 
+			endparams
+		proc
+			using fileName select
+			("invader1.gif"),
+				TheImage = Properties.Resources.invader1
+			("invader2.gif"),
+				TheImage = Properties.Resources.invader2
+			("invader3.gif"),
+				TheImage = Properties.Resources.invader3
+			("man.gif"),
+				TheImage = Properties.Resources.man
+			("saucer0.gif"),
+				TheImage = Properties.Resources.saucer0
+			("shield.gif"),
+				TheImage = Properties.Resources.shield
+			("Stars.gif"),
+				TheImage = Properties.Resources.Stars
+			("TopShip.gif"),
+				TheImage = Properties.Resources.TopShip
+			endusing
+			;;TheImage = Image.FromFile(fileName)
+			ImageBounds.Width = TheImage.Width
+			ImageBounds.Height = TheImage.Height
+		endmethod
+		
+		public method GameObject
+			endparams
+		proc
+			TheImage = ^null
+		endmethod
+		
+		public property Width, int
+			method get
+			proc
+				mreturn ImageBounds.Width
+			endmethod
+		endproperty
+		
+		public property Height, int
+			method get
+			proc
+				mreturn ImageBounds.Height
+			endmethod
+		endproperty
+		
+		public virtual method GetWidth, int
+			endparams
+		proc
+			mreturn ImageBounds.Width
+		endmethod
+		
+		public method GetImage, @Image
+			endparams
+		proc
+			mreturn TheImage
+		endmethod
+		
+		public virtual method GetBounds, Rectangle
+			endparams
+		proc
+			mreturn MovingBounds
+		endmethod
+		
+		public method UpdateBounds, void
+			endparams
+		proc
+			MovingBounds = ImageBounds
+			MovingBounds.Offset(Position)
+		endmethod
+		
+		public virtual method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			UpdateBounds()
+			g.DrawImage(TheImage, MovingBounds, 0, 0, ImageBounds.Width, ImageBounds.Height, GraphicsUnit.Pixel)
+		endmethod
+		
+	endclass
+	
+endnamespace
+

@@ -1,0 +1,97 @@
+
+.include "NETSRC:NetMenuWrappers.inc"
+
+main NetMenu
+
+	.include "SRC:RegistryApi.def"
+
+	record 
+		ErrStatus	,int
+		RegHdl		,int
+		RegHive		,int	,HKEY_LOCAL_MACHINE
+		RegKey		,a*		,"SOFTWARE\Health Business Systems\RiteRX\"
+		RegOpen		,boolean
+		sts			,int
+		dbrSpec		,a256
+		installPath	,a256
+		netDllPath	,a356
+		xmlFile		,a256
+		objMainMenu	,@SynPSG.Examples.NetMenu.MainMenu
+	endrecord
+	
+proc
+
+	u_start()
+	flags(7004020,1)
+
+	;Unset XSHOW because this will affect any launched processes
+	setlog("XSHOW",,sts)
+
+	try 
+		
+	begin
+		;----------------------------------------------------------------------
+		;Locate and build the spec for dbr.exe
+
+		getlog("DBLDIR",dbrSpec,sts)
+		if (!sts)
+			throw new Exception("Environment variable DBLDIR is not set.")
+
+		if (dbrSpec(trimz(dbrSpec):1)!="\")
+			dbrSpec=atrim(dbrSpec)+"\"
+
+		dbrSpec=atrim(dbrSpec)+"bin\dbr.exe"
+
+		;----------------------------------------------------------------------
+		;Look for InstallPath in the registry. To allow us to run the app in a
+		;development environment we'll check the environment variable NETXML first.
+
+		getlog("NETXML",installpath,sts)
+		if (!sts)
+		begin
+			if (ErrStatus=%RegStartSession(RegHdl))
+				throw new Exception("Failed to start registry session")
+			RegOpen=true
+			if (ErrStatus=%RegGetString(RegHdl,RegHive,RegKey,"InstallPath",installPath))
+				throw new Exception("InstallPath not found in registry.")
+		end
+
+		;----------------------------------------------------------------------
+		;Make sure we know where our .NET assemblies are
+
+		getlog("NETDLL",netDllPath,sts)
+		if (!sts)
+			xcall setlog("NETDLL",installPath,sts)
+
+		;----------------------------------------------------------------------
+		;And build the spec of the menu data XML file
+
+		xmlFile = installPath
+		if (xmlFile(trimz(xmlFile):1)!="\")
+			xmlFile=atrim(xmlFile)+"\"
+		xmlFile=atrim(xmlFile)+"hbsmenu.xml"
+
+		;----------------------------------------------------------------------
+		;Show the main menu form
+
+		objMainMenu = new MainMenu("RiteRX",xmlFile,dbrSpec)
+		objMainMenu.ShowDialog()
+
+	end
+	catch (ex, @Exception)
+	begin
+		u_msgbox(ex.Message)
+	end
+	finally
+	begin
+		if (RegOpen)
+			xcall RegEndSession(RegHdl)
+		u_finish()
+	end
+	endtry
+
+	stop
+	
+endmain
+
+.include "SRC:RegistryApi.dbl"

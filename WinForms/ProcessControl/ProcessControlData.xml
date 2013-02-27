@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProcessControl>
+  <item name="Acronis TrueImage Home">
+    <component Type="Service" name="AcrSch2Svc" />
+    <component Type="Program" name="TrueImageMonitor" program="C:\Program Files (x86)\Acronis\TrueImageHome\TrueImageMonitor.exe" />
+    <component Type="Program" name="TimounterMonitor" program="C:\Program Files (x86)\Acronis\TrueImageHome\TimounterMonitor.exe" />
+    <component Type="Program" name="schedhlp" program="C:\Program Files (x86)\Common Files\Acronis\Schedule2\schedhlp.exe" />
+  </item>
+</ProcessControl>

@@ -1,0 +1,51 @@
+
+import System
+import System.Drawing
+import System.IO
+import System.Windows.Forms
+
+namespace FileExplorer
+
+	public class DriveButton extends Button
+		
+		public method DriveButton
+			required in drive, @System.IO.DriveInfo
+			required in il, @ImageList
+			endparams
+		proc
+			this.Name = "driveButton" + drive.RootDirectory.ToString().Substring(0,1)
+			this.Width = 45
+			
+			this.Text = drive.RootDirectory.ToString().Substring(0,2)
+			this.TextAlign = ContentAlignment.MiddleRight
+			
+			this.ImageList = il
+			this.ImageAlign = ContentAlignment.MiddleLeft
+			
+			using drive.DriveType select
+			(DriveType.Fixed),
+				this.ImageKey = "Drive-Hard"
+			(DriveType.CDRom),
+				this.ImageKey = "Drive-CD"
+			(DriveType.Network),
+				this.ImageKey = "Drive-Hard"
+			(DriveType.NoRootDirectory),
+				this.ImageKey = "Drive-Hard"
+			(DriveType.Ram),
+				this.ImageKey = "Drive-Hard"
+			(DriveType.Removable),
+				this.ImageKey = "Drive-Floppy"
+			(DriveType.Unknown),
+				this.ImageKey = "Drive-Hard"
+			endusing
+
+			this.Enabled = drive.IsReady
+
+			this.Tag = drive
+
+		endmethod
+
+	endclass
+
+endnamespace
+

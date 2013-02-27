@@ -1,0 +1,48 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace ContactBrowser
+
+	.include "CUSTOMER" repository, structure="strCustomer", end
+
+	public class Customer
+
+		private mCustomer, strCustomer
+
+		public method Customer
+			required in a_customer, strCustomer
+			endparams
+		proc
+			mCustomer = a_customer
+		endmethod
+		
+		public property CustomerId, int
+			method get
+			proc
+				mreturn mCustomer.customer_id
+			endmethod
+			method set
+			proc
+				mCustomer.customer_id = value
+			endmethod
+		endproperty
+		
+		public property CompanyName, string
+			method get
+			proc
+				mreturn mCustomer.name
+			endmethod
+			method set
+			proc
+				mCustomer.name = value
+			endmethod
+		endproperty
+		
+
+	endclass
+
+endnamespace
+

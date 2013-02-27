@@ -1,0 +1,106 @@
+
+namespace SpaSynVaders
+
+	public partial class FrmMain extends System.Windows.Forms.Form
+
+		private components, @System.ComponentModel.IContainer
+		private mnuExit, @System.Windows.Forms.MenuItem
+		private mnuGame, @System.Windows.Forms.MenuItem
+		private mainMenu1, @System.Windows.Forms.MainMenu
+		private mnuPause, @System.Windows.Forms.MenuItem
+		private mnuFile, @System.Windows.Forms.MenuItem
+		private timer1, @System.Windows.Forms.Timer
+		private mnuRestart, @System.Windows.Forms.MenuItem
+		private MnuHelp, @System.Windows.Forms.MenuItem
+		private MnuHelpAbout, @System.Windows.Forms.MenuItem
+
+		private method InitializeComponent, void
+			endparams
+		proc
+			begin
+				this.components = new System.ComponentModel.Container()
+				data resources, @System.ComponentModel.ComponentResourceManager, new System.ComponentModel.ComponentResourceManager(^typeof(FrmMain))
+				this.timer1 = new System.Windows.Forms.Timer(this.components)
+				this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components)
+				this.mnuFile = new System.Windows.Forms.MenuItem()
+				this.mnuRestart = new System.Windows.Forms.MenuItem()
+				this.mnuExit = new System.Windows.Forms.MenuItem()
+				this.mnuGame = new System.Windows.Forms.MenuItem()
+				this.mnuPause = new System.Windows.Forms.MenuItem()
+				this.MnuHelp = new System.Windows.Forms.MenuItem()
+				this.MnuHelpAbout = new System.Windows.Forms.MenuItem()
+				this.SuspendLayout()
+				;; 
+				;; timer1
+				;; 
+				this.timer1.Interval = 50
+				addhandler(this.timer1.Tick, timer1_Tick)
+				;; 
+				;; mainMenu1
+				;; 
+				this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[#] {this.mnuFile, this.mnuGame, this.MnuHelp})
+				;; 
+				;; mnuFile
+				;; 
+				this.mnuFile.Index = 0
+				this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[#] {this.mnuRestart, this.mnuExit})
+				this.mnuFile.Text = ((string)"&File")
+				;; 
+				;; mnuRestart
+				;; 
+				this.mnuRestart.Index = 0
+				this.mnuRestart.Text = ((string)"&Restart Game")
+				addhandler(this.mnuRestart.Click, mnuRestart_Click)
+				;; 
+				;; mnuExit
+				;; 
+				this.mnuExit.Index = 1
+				this.mnuExit.Shortcut = System.Windows.Forms.Shortcut.F9
+				this.mnuExit.Text = ((string)"E&xit")
+				addhandler(this.mnuExit.Click, mnuExit_Click)
+				;; 
+				;; mnuGame
+				;; 
+				this.mnuGame.Index = 1
+				this.mnuGame.MenuItems.AddRange(new System.Windows.Forms.MenuItem[#] {this.mnuPause})
+				this.mnuGame.Text = ((string)"&Game")
+				;; 
+				;; mnuPause
+				;; 
+				this.mnuPause.Index = 0
+				this.mnuPause.Shortcut = System.Windows.Forms.Shortcut.F12
+				this.mnuPause.Text = ((string)"&Pause")
+				addhandler(this.mnuPause.Click, mnuPause_Click)
+				;; 
+				;; MnuHelp
+				;; 
+				this.MnuHelp.Index = 2
+				this.MnuHelp.MenuItems.AddRange(new System.Windows.Forms.MenuItem[#] {this.MnuHelpAbout})
+				this.MnuHelp.Text = ((string)"&Help")
+				;; 
+				;; MnuHelpAbout
+				;; 
+				this.MnuHelpAbout.Index = 0
+				this.MnuHelpAbout.Text = ((string)"&About")
+				addhandler(this.MnuHelpAbout.Click, MnuHelpAbout_Click)
+				;; 
+				;; FrmMain
+				;; 
+				this.BackgroundImage = (System.Drawing.Image)resources.GetObject(((string)"$this.BackgroundImage"))
+				this.ClientSize = new System.Drawing.Size(672, 601)
+				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
+				this.Icon = (System.Drawing.Icon)resources.GetObject(((string)"$this.Icon"))
+				this.MaximizeBox = ((boolean)false)
+				this.Menu = this.mainMenu1
+				this.MinimizeBox = ((boolean)false)
+				this.Name = ((string)"FrmMain")
+				this.Text = ((string)"SpaSynVaders Game")
+				addhandler(this.Paint, FrmMain_Paint)
+				addhandler(this.KeyDown, FrmMain_KeyDown)
+				addhandler(this.KeyUp, FrmMain_KeyUp)
+				this.ResumeLayout(((boolean)false))
+			end
+		endmethod
+	endclass
+endnamespace
+

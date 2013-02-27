@@ -1,0 +1,88 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsRelationCollection
+;
+; Description:	Represents a collection of relations for a Repository structure
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:54-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsRelationCollection extends List<RpsRelation>
+		
+		; Constructor (relations for a structure)
+		public method RpsRelationCollection
+			required in StructureName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadRelations(StructureName)
+		endmethod
+		
+		; Load relations
+		private method LoadRelations, void
+			required in StructureName, a
+			endparams
+			record local_data
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				data p_s_info, s_info
+				;Set the current structure?
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,^a(p_s_info))
+				if (Repository.RpsControl.error)
+					throw new RpsRelationException("Failed to get information for repository structure "+StructureName)
+				;Do we have any relations to load?
+				if (p_s_info.si_nmrels) 
+				begin
+					;Size the relation names array and get the relation names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_s_info.si_nmrels)
+					dd_relation(Repository.RpsControl,DDR_LIST,p_s_info.si_nmrels,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsRelationException("Failed to get relation names for repository structure "+StructureName)
+					;Add relation names to the collection
+					for ix from 1 thru p_s_info.si_nmrels
+						this.Add(new RpsRelation(StructureName,^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Free format names array
+				if (MemHandle) 
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+
+		endmethod
+		
+	endclass
+
+endnamespace

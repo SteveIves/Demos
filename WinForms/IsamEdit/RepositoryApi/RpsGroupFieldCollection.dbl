@@ -1,0 +1,278 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsGroupFieldCollection
+;
+; Description:	Represents a collection of fields for a group field
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		1tth November 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 3 $
+;
+; $Date: 2012-07-11 12:10:55-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsGroupFieldCollection extends List<RpsField>
+		
+		; Constructor (Don't load any fields)
+		public method RpsGroupFieldCollection
+			endparams
+			parent()
+		proc
+		endmethod
+
+		; Constructor (Fields for a group in a structure)
+		public method RpsGroupFieldCollection
+			required in StructureName, a
+			required in GroupName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadFields(StructureName,GroupName)
+		endmethod
+		
+		; Load group fields
+		private method LoadFields, void
+			required in StructureName, a
+			required in GroupName, a
+			endparams
+			record local_data
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				data p_s_info, s_info
+				data p_f_info, f_info
+
+				;Set the current structure and get structure information
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,p_s_info)
+				if (Repository.RpsControl.error)
+					throw new RpsGroupException("Failed to get information for repository structure "+StructureName)
+
+				;Get field information for group field
+                dd_field(Repository.RpsControl,DDF_INFO,GroupName,^a(p_f_info))
+				if (Repository.RpsControl.error)
+				begin
+					data msg, a128
+					s_bld(msg,,"Failed to get information for repository field %a.%a",StructureName,GroupName)
+					throw new RpsGroupException(atrim(msg))
+				end
+
+				;Make sure this really is a group
+				if (!p_f_info.fi_group)
+				begin
+					data msg, a128
+					s_bld(msg,,"Repository field %a.%a is not a group!",StructureName,GroupName)
+					throw new RpsGroupException(atrim(msg))
+				end
+				
+				;Is this an implicit group?
+				if (p_f_info.fi_struct) then 
+				begin
+					;Implicit group, we need to get the group fields from another structure
+					data ReferencedStructure, a30
+					data refd_s_info, s_info
+
+					;Get the name of the implicit groups structure
+					dd_field(Repository.RpsControl,DDF_TEXT,p_f_info.fi_struct,ReferencedStructure)
+					if (Repository.RpsControl.error)
+					begin
+						data msg, a128
+						s_bld(msg,,"Failed to get referenced structure name for repository field %a.%a",StructureName,GroupName)
+						throw new RpsGroupException(atrim(msg))
+					end
+
+					;Get the implicit group structures information
+					dd_struct(Repository.RpsControl,DDS_INFO,ReferencedStructure,refd_s_info)
+					if (Repository.RpsControl.error)
+						throw new RpsGroupException("Failed to get information for referenced structure "+ReferencedStructure)
+
+					;Make sure the referenced structure has fields
+					if (!refd_s_info.si_childct)
+						throw new RpsGroupException("Referenced structure "+atrim(ReferencedStructure)+ " has no fields!")
+							
+					;Get a list of the fields for the implicit groups structure
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*refd_s_info.si_childct)
+					dd_field(Repository.RpsControl,DDF_SLIST,refd_s_info.si_childct,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsGroupException("Failed to get field names for referenced structure "+ReferencedStructure)
+
+					;Add fields to the collection
+					for ix from 1 thru refd_s_info.si_childct
+					begin
+						data ReferencedField, a30
+						ReferencedField = ^m(strIdentifier[ix],MemHandle)
+						this.Add(new RpsField(ReferencedStructure,ReferencedField))
+					end
+
+				end
+				else
+				begin
+					;Explicit group, we the group fields are defined locally
+
+					;Do we have any fields to load?
+					if (p_f_info.fi_mbrct)
+					begin
+
+						;Set context to the requested group field
+						dd_field(Repository.RpsControl,DDF_GROUP,GroupName)
+						if (Repository.RpsControl.error)
+							throw new RpsGroupException("Failed to set field context to group "+GroupName)
+
+						;Size the field names array and get field names
+						MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_f_info.fi_mbrct)
+						dd_field(Repository.RpsControl,DDF_SLIST,p_f_info.fi_mbrct,^m(strIdentifier,MemHandle))
+						if (Repository.RpsControl.error)
+							throw new RpsGroupException("Failed to get field names for group "+GroupName)
+
+						;Add fields to the collection
+						for ix from 1 thru p_f_info.fi_mbrct
+							this.Add(new RpsField(StructureName,GroupName,^m(strIdentifier[ix],MemHandle)))
+
+						;Reset field context
+						dd_field(Repository.RpsControl,DDF_ENDGROUP)
+						if (Repository.RpsControl.error)
+							throw new RpsGroupException("Failed to reset field context from group "+GroupName)
+
+					end
+				end
+			end
+			finally
+			begin
+				;Free field names array
+				if (MemHandle)
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+		
+		; Remove overlay fields from the collection
+		public method RemoveOverlays, void
+			record 
+				index, int, 0
+			endrecord
+		proc
+			repeat
+			begin
+				if (index<=(this.Count - 1)) then
+				begin
+					if (this[index].OverlaysField) then
+						this.RemoveAt(index)
+					else
+						index+=1
+				end
+				else
+					exitloop
+			end
+		endmethod
+
+		; Remove fields marked as "Excluded by Language" from the collection
+		public method RemoveExcludedByLanguage, void
+			endparams
+			record 
+				index, int, 0
+			endrecord
+		proc
+			repeat
+			begin
+				if (index<=(this.Count - 1)) then
+				begin
+					if (this[index].ExcludedByLanguage) then
+						this.RemoveAt(index)
+					else
+						index+=1
+				end
+				else
+					exitloop
+			end
+		endmethod
+
+		; Remove fields marked as "Excluded by Toolkit" from the collection
+		public method RemoveExcludedByToolkit, void
+			endparams
+			record 
+				index, int, 0
+			endrecord
+		proc
+			repeat
+			begin
+				if (index<=(this.Count - 1)) then
+				begin
+					if (this[index].ExcludedByToolkit) then
+						this.RemoveAt(index)
+					else
+						index+=1
+				end
+				else
+					exitloop
+			end
+		endmethod
+
+		; Remove fields marked as "Excluded by ReportWriter" from the collection
+		public method RemoveExcludedByReportWriter, void
+			endparams
+			record 
+				index, int, 0
+			endrecord
+		proc
+			repeat
+			begin
+				if (index<=(this.Count - 1)) then
+				begin
+					if (this[index].ExcludedByReportWriter) then
+						this.RemoveAt(index)
+					else
+						index+=1
+				end
+				else
+					exitloop
+			end
+		endmethod
+
+		; Remove fields marked as "Excluded by Web" from the collection
+		public method RemoveExcludedByWeb, void
+			endparams
+			record 
+				index, int, 0
+			endrecord
+		proc
+			repeat
+			begin
+				if (index<=(this.Count - 1)) then
+				begin
+					if (this[index].ExcludedByWeb) then
+						this.RemoveAt(index)
+					else
+						index+=1
+				end
+				else
+					exitloop
+			end
+		endmethod
+
+	endclass
+
+endnamespace

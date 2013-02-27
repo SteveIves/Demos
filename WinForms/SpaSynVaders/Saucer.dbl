@@ -1,0 +1,147 @@
+import System
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Saucer extends GameObject
+		
+		private OtherImage1		,@Image		,^null
+		private OtherImage2		,@Image		,^null
+		public BeenHit			,boolean	,false
+		public CountExplosion	,int		,0
+		public Died				,boolean	,false
+		private rseed			,int		,(int)DateTime.Now.Ticks
+		private RandomNumber	,@Random	,^null
+		public DirectionRight	,boolean	,true
+		private kInterval		,int		,10
+		private Counter			,long		,0
+		
+		public method Saucer
+			image1, @string 
+			image2, @string 
+			image3, @string 
+			endparams
+			parent(image1)
+		proc
+			using image2 select
+			("saucer1.gif"),
+				OtherImage1 = Properties.Resources.saucer1
+			("saucer2.gif"),
+				OtherImage1 = Properties.Resources.saucer2
+			endusing
+			
+			using image3 select
+			("saucer1.gif"),
+				OtherImage2 = Properties.Resources.saucer1
+			("saucer2.gif"),
+				OtherImage2 = Properties.Resources.saucer2
+			endusing
+			
+			RandomNumber = new Random(rseed)
+			Position.X = 20
+			Position.Y = 50
+			UpdateBounds()
+		endmethod
+		
+		public method Reset, void
+			endparams
+		proc
+			Position.X = 20
+			Died = false
+			BeenHit = false
+			ScoreCalculated = false
+			CountExplosion = 0
+			UpdateBounds()
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			
+			UpdateBounds()
+			
+			if (BeenHit)
+			begin
+				DrawExplosion(g)
+				DrawNumber(g)
+				mreturn
+			end
+			
+			if ((Counter-(3*integer(Counter/3)))==0) then
+				g.DrawImage(TheImage,MovingBounds,0,0,ImageBounds.Width,ImageBounds.Height,GraphicsUnit.Pixel)
+			else if ((Counter-(3*integer(Counter/3)))==1) then
+				g.DrawImage(OtherImage1,MovingBounds,0,0,ImageBounds.Width,ImageBounds.Height,GraphicsUnit.Pixel)
+			else
+				g.DrawImage(OtherImage2,MovingBounds,0,0,ImageBounds.Width,ImageBounds.Height,GraphicsUnit.Pixel)
+
+		endmethod
+		
+		public method SetCounter, void
+			lCount, long 
+			endparams
+		proc
+			Counter = lCount
+		endmethod
+		
+		public method DrawExplosion, void
+			g, @Graphics 
+			endparams
+		proc
+			if (Died)
+				mreturn
+			CountExplosion += 1
+			if (CountExplosion<15) then
+			begin
+				data i, int
+				for i from 0 thru 49
+				begin
+					data xval, int, RandomNumber.Next(MovingBounds.Width)
+					data yval, int, RandomNumber.Next(MovingBounds.Height)
+					xval += Position.X
+					yval += Position.Y
+					g.DrawLine(Pens.White,xval,yval,xval,yval+1)
+				end
+			end
+			else
+				Died = ((boolean)true)
+		endmethod
+		
+		public method Move, void
+			endparams
+		proc
+			if (BeenHit)
+				mreturn
+			Position.X = Position.X + kInterval
+			Counter += 1
+		endmethod
+		
+		public ScoreValue, int, 50
+		public ScoreCalculated, boolean, false
+		
+		public method CalculateScore, int
+			endparams
+			record
+				RandomScore, @Random
+			endrecord
+		proc
+			RandomScore = new Random((int)DateTime.Now.Ticks)
+			ScoreValue = RandomScore.Next(1,4) * 50
+			mreturn ScoreValue
+		endmethod
+		
+		public method DrawNumber, void
+			g, @Graphics 
+			endparams
+		proc
+			if (Died == ((boolean)true))
+				mreturn
+			g.DrawString(ScoreValue.ToString(),new Font("Ariel",14,FontStyle.Bold),Brushes.White,MovingBounds,new StringFormat())
+		endmethod
+
+	endclass
+
+endnamespace
+

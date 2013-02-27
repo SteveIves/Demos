@@ -1,0 +1,111 @@
+
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Bomb extends GameObject
+		
+		public const kBombInterval	,int			, 5
+		public TheBombInterval		,int			,kBombInterval
+		
+		BombPen						,@Pen
+		bombIn						,@GraphicsPath	,new GraphicsPath()
+		bombOut						,@GraphicsPath	,new GraphicsPath()
+		bombInTransformed			,@GraphicsPath	,new GraphicsPath()
+		bombOutTransformed			,@GraphicsPath	,new GraphicsPath()
+		
+		public method Bomb
+			x, int 
+			y, int 
+			endparams
+		proc
+			ImageBounds.Width = 5
+			ImageBounds.Height = 15
+			Position.X = x
+			Position.Y = y
+			CreateBombInPath()
+			CreateBombOutPath()
+			BombPen = new Pen(Color.Yellow, 2)
+			BombPen.DashStyle = DashStyle.DashDot
+		endmethod
+		
+		
+		method CreateBombInPath, void
+			endparams
+			record
+				lWidth	,float	,5
+				lHeight	,float	,15
+				lSeg	,float
+			endrecord
+		proc
+			lSeg = lHeight / 3
+			bombIn.AddLine(new PointF(0,0),new PointF(lWidth,lSeg))
+			bombIn.AddLine(new PointF(lWidth,lSeg),new PointF(0,lSeg*2))
+			bombIn.AddLine(new PointF(0,lSeg*2),new PointF(lWidth,lSeg*3))
+		endmethod
+		
+		method CreateBombOutPath, void
+			endparams
+			record
+				lWidth	,float	,5
+				lHeight	,float	,15
+				lSeg	,float
+			endrecord
+		proc
+			lSeg = lHeight/3
+			bombOut.AddLine(new PointF(lWidth,0),new PointF(0,lSeg))
+			bombOut.AddLine(new PointF(0,lSeg),new PointF(lWidth,lSeg*2))
+			bombOut.AddLine(new PointF(lWidth,lSeg*2),new PointF(0,lSeg*3))
+		endmethod
+		
+		m_invert, boolean, false
+		
+		;;;  <summary>
+		;;;  This routine draws the animated bomb using two toggling graphics paths
+		;;;  giving the effect of a spinning bomb.
+		;;;  </summary>
+		;;;  <param name="g"></param>
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+			record
+				m, @Matrix
+			endrecord
+		proc
+			UpdateBounds()
+			m = new Matrix()
+			m.Translate(MovingBounds.Left, MovingBounds.Top)
+			if (m_invert) then
+			begin
+				bombInTransformed = (GraphicsPath)bombIn.Clone()
+				bombInTransformed.Transform(m)
+				g.DrawPath(BombPen, bombInTransformed)
+				bombInTransformed.Dispose()
+			end
+			else
+			begin
+				bombOutTransformed = (GraphicsPath)bombOut.Clone()
+				bombOutTransformed.Transform(m)
+				g.DrawPath(BombPen, bombOutTransformed)
+				bombOutTransformed.Dispose()
+			end
+			m_invert = !m_invert
+			Position.Y = Position.Y + TheBombInterval
+		endmethod
+		
+		public method ResetBomb, void
+			yPos, int 
+			endparams
+		proc
+			Position.Y = yPos
+			TheBombInterval = kBombInterval
+			UpdateBounds()
+		endmethod
+
+	endclass
+
+endnamespace
+

@@ -1,0 +1,126 @@
+;;*****************************************************************************
+;;
+;; Class:		SynPsg.Rps.RpsEnumMemberCollection
+;;
+;; Description:	Represents a collection of members for a Repository enumeration
+;;
+;; Author:		Steve Ives, Synergex Professional Services Group
+;;
+;; Date: 		2nd November 2009
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+;; $Revision: 2 $
+;;
+;; $Date: 2012-07-11 12:10:54-07:00 $
+;;
+;;*****************************************************************************
+;;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsEnumMemberCollection extends List<RpsEnumMember>
+		
+		; Constructor (don't load any members)
+		public method RpsEnumMemberCollection
+			endparams
+			parent()
+		proc
+		endmethod
+
+		; Constructor (load members for named enum)
+		public method RpsEnumMemberCollection
+			required in EnumName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadMembers(EnumName)
+		endmethod
+		
+		; Load members
+		private method LoadMembers, void
+			required in EnumName, a
+			endparams
+			record local_data
+				MemHandleName, int
+				MemHandleValue, int
+				ix, int
+			endrecord
+			structure strEnumValue
+				,a11
+			endstructure
+		proc
+			init local_data
+			try 
+			begin
+				data p_e_info, e_info
+				;Set the current enum and get enum information
+
+				dd_enum(Repository.RpsControl,DDE_INFO,EnumName,^a(p_e_info))
+				if (Repository.RpsControl.error)
+					throw new RpsEnumException("Failed to get information for repository enumeration "+EnumName)
+				;Do we have any members to load?
+				if (p_e_info.ei_nmmbrs)
+				begin
+					;Size the member names and values arrays and get the data
+					MemHandleName = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_e_info.ei_nmmbrs)
+					MemHandleValue = %mem_proc(DM_ALLOC,^size(strEnumValue)*p_e_info.ei_nmmbrs)
+					dd_enum(Repository.RpsControl,DDE_MBRS,p_e_info.ei_nmmbrs,^m(strIdentifier,MemHandleName),^m(strEnumValue,MemHandleValue))
+					if (Repository.RpsControl.error)
+						throw new RpsEnumException("Failed to get members for repository enumeration "+EnumName)
+					;Add members to the collection
+					for ix from 1 thru p_e_info.ei_nmmbrs
+					begin
+						data MemberName , a30
+						data ExplicitValue, a11
+						data ImplicitValue, a11, ""
+						MemberName = ^m(strIdentifier[ix],MemHandleName)
+						ExplicitValue = ^m(strEnumValue[ix],MemHandleValue)
+						if (ExplicitValue) then 
+							ImplicitValue = ExplicitValue
+						else
+						begin
+							;;Figure out the implicit value for the new member
+							if (this.Count==0) then 
+								ImplicitValue = "0"
+							else
+							begin
+								;Workaround for bug in %integer with negative numbers in 9.2.1
+								data mbr, @RpsEnumMember
+								data tmpd, d18
+								mbr = (RpsEnumMember)this[this.Count]
+								tmpd = mbr.ImplicitValue
+								ImplicitValue = tmpd + 1 [LEFT]
+							end
+						end
+						this.Add(new RpsEnumMember(EnumName,MemberName,ExplicitValue,ImplicitValue))
+					end
+				end
+			end
+			finally
+			begin
+				;Free arrays
+				if (MemHandleName)
+					MemHandleName = %mem_proc(DM_FREE,MemHandleName)
+				if (MemHandleValue)
+					MemHandleValue = %mem_proc(DM_FREE,MemHandleValue)
+			end
+			endtry
+		endmethod	
+		
+	endclass
+
+endnamespace

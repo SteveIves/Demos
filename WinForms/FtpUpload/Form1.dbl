@@ -1,0 +1,72 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.IO
+import System.Net
+import System.Windows.Forms
+
+namespace FtpUpload
+
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+		
+		private method Form1_Load, void
+			byval sender, @object
+			byval e, @System.EventArgs
+			endparams
+		proc
+		
+		endmethod
+		
+		private method btnUpload_Click, void
+			byval sender, @object
+			byval e, @System.EventArgs
+			endparams
+			record
+				request, @FtpWebRequest
+				stream, @FileStream
+				reqStream, @Stream
+				buffer, [#]byte
+				uri, @String
+			endrecord
+		proc
+			
+			if (openFileDialog1.ShowDialog()==DialogResult.OK)
+			begin
+				try
+				begin
+					uri = string.Format("ftp://{0}/Tools/{1}",txtFtpServer.Text,Path.GetFileName(openFileDialog1.FileName))
+					request = (FtpWebRequest)FtpWebRequest.Create(uri)
+					request.Method = WebRequestMethods.Ftp.UploadFile
+					request.Credentials = new NetworkCredential(txtUsername.Text,txtPassword.Text)
+					request.UsePassive = true
+					request.UseBinary = true
+					request.KeepAlive = false
+					stream = File.OpenRead(openFileDialog1.FileName)
+					buffer = new byte[stream.Length]
+					stream.Read(buffer, 0, buffer.Length)
+					stream.Close()
+					
+					reqStream = request.GetRequestStream()
+					reqStream.Write(buffer, 0, buffer.Length)
+					reqStream.Close()
+				end
+				catch (ex)
+				begin
+				    MessageBox.Show(ex.Message)
+				end
+				endtry
+
+			end
+		endmethod
+	endclass
+endnamespace
+

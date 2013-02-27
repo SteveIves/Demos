@@ -1,0 +1,140 @@
+namespace ContactBrowser 
+    
+    
+    public partial class Form1 extends System.Windows.Forms.Form
+        
+        private grdContacts, @System.Windows.Forms.DataGridView
+        
+        private panel1, @System.Windows.Forms.Panel
+        
+        private cboCustomer, @System.Windows.Forms.ComboBox
+        
+        private statusStrip1, @System.Windows.Forms.StatusStrip
+        
+        private exitToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+        
+        private label1, @System.Windows.Forms.Label
+        
+        private fileToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+        
+        private menuStrip1, @System.Windows.Forms.MenuStrip
+        
+        private method InitializeComponent, void
+        endparams
+        proc
+            begin
+                this.menuStrip1 = new System.Windows.Forms.MenuStrip()
+                this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+                this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+                this.statusStrip1 = new System.Windows.Forms.StatusStrip()
+                this.panel1 = new System.Windows.Forms.Panel()
+                this.cboCustomer = new System.Windows.Forms.ComboBox()
+                this.label1 = new System.Windows.Forms.Label()
+                this.grdContacts = new System.Windows.Forms.DataGridView()
+                this.menuStrip1.SuspendLayout()
+                this.panel1.SuspendLayout()
+                ((System.ComponentModel.ISupportInitialize)(this.grdContacts)).BeginInit()
+                this.SuspendLayout()
+                ;; 
+                ;; menuStrip1
+                ;; 
+                this.menuStrip1.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.fileToolStripMenuItem})
+                this.menuStrip1.Location = new System.Drawing.Point(0, 0)
+                this.menuStrip1.Name = (string)("menuStrip1")
+                this.menuStrip1.Size = new System.Drawing.Size(744, 24)
+                this.menuStrip1.TabIndex = 0
+                this.menuStrip1.Text = (string)("menuStrip1")
+                ;; 
+                ;; fileToolStripMenuItem
+                ;; 
+                this.fileToolStripMenuItem.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.exitToolStripMenuItem})
+                this.fileToolStripMenuItem.Name = (string)("fileToolStripMenuItem")
+                this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20)
+                this.fileToolStripMenuItem.Text = (string)("&File")
+                ;; 
+                ;; exitToolStripMenuItem
+                ;; 
+                this.exitToolStripMenuItem.Name = (string)("exitToolStripMenuItem")
+                this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22)
+                this.exitToolStripMenuItem.Text = (string)("E&xit")
+                 addhandler( this.exitToolStripMenuItem.Click, exitToolStripMenuItem_Click)
+                ;; 
+                ;; statusStrip1
+                ;; 
+                this.statusStrip1.Location = new System.Drawing.Point(0, 374)
+                this.statusStrip1.Name = (string)("statusStrip1")
+                this.statusStrip1.Size = new System.Drawing.Size(744, 22)
+                this.statusStrip1.TabIndex = 1
+                this.statusStrip1.Text = (string)("statusStrip1")
+                ;; 
+                ;; panel1
+                ;; 
+                this.panel1.Controls.Add(this.cboCustomer)
+                this.panel1.Controls.Add(this.label1)
+                this.panel1.Dock = System.Windows.Forms.DockStyle.Top
+                this.panel1.Location = new System.Drawing.Point(0, 24)
+                this.panel1.Name = (string)("panel1")
+                this.panel1.Size = new System.Drawing.Size(744, 46)
+                this.panel1.TabIndex = 2
+                ;; 
+                ;; cboCustomer
+                ;; 
+                this.cboCustomer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+                this.cboCustomer.FormattingEnabled = True
+                this.cboCustomer.Location = new System.Drawing.Point(69, 13)
+                this.cboCustomer.Name = (string)("cboCustomer")
+                this.cboCustomer.Size = new System.Drawing.Size(197, 21)
+                this.cboCustomer.TabIndex = 1
+                 addhandler( this.cboCustomer.SelectedIndexChanged, cboCustomer_SelectedIndexChanged)
+                ;; 
+                ;; label1
+                ;; 
+                this.label1.AutoSize = True
+                this.label1.Location = new System.Drawing.Point(12, 16)
+                this.label1.Name = (string)("label1")
+                this.label1.Size = new System.Drawing.Size(51, 13)
+                this.label1.TabIndex = 0
+                this.label1.Text = (string)("Customer")
+                ;; 
+                ;; grdContacts
+                ;; 
+                this.grdContacts.AllowUserToAddRows = False
+                this.grdContacts.AllowUserToDeleteRows = False
+                this.grdContacts.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+                this.grdContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                this.grdContacts.Dock = System.Windows.Forms.DockStyle.Fill
+                this.grdContacts.Location = new System.Drawing.Point(0, 70)
+                this.grdContacts.Name = (string)("grdContacts")
+                this.grdContacts.ReadOnly = True
+                this.grdContacts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+                this.grdContacts.Size = new System.Drawing.Size(744, 304)
+                this.grdContacts.TabIndex = 3
+                ;; 
+                ;; Form1
+                ;; 
+                this.ClientSize = new System.Drawing.Size(744, 396)
+                this.Controls.Add(this.grdContacts)
+                this.Controls.Add(this.panel1)
+                this.Controls.Add(this.statusStrip1)
+                this.Controls.Add(this.menuStrip1)
+                this.MainMenuStrip = this.menuStrip1
+                this.Name = (string)("Form1")
+                this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+                this.Text = (string)("Contact Browser")
+                 addhandler( this.Load, Form1_Load)
+                this.menuStrip1.ResumeLayout(False)
+                this.menuStrip1.PerformLayout()
+                this.panel1.ResumeLayout(False)
+                this.panel1.PerformLayout()
+                ((System.ComponentModel.ISupportInitialize)(this.grdContacts)).EndInit()
+                this.ResumeLayout(False)
+                this.PerformLayout()
+            end
+        
+        endmethod
+    
+    endclass
+    
+    endnamespace

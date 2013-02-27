@@ -1,0 +1,84 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsTemplateCollection
+;
+; Description:	Represents a collection of Repository templates
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:54-07:00 $
+;
+;*******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsTemplateCollection extends List<RpsTemplate>
+		
+		; Constructor (load all templates)
+		public method RpsTemplateCollection
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadTemplates()
+		endmethod
+		
+		; Load templates
+		private method LoadTemplates, void
+			endparams
+			record local_data
+				MemHandle, int
+				TemplateCount, int
+				ix,	int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				;Get the number of templates in the repository
+				dd_name(Repository.RpsControl,DDN_COUNT,DDN_TEMPLATE,TemplateCount)
+				if (Repository.RpsControl.error)
+					throw new RpsTemplateException("Failed to get number of repository templates")
+				;Do we have any templates to load?
+				if (TemplateCount) 
+				begin
+					;Allocate template name memory and get template names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*TemplateCount)
+					dd_name(Repository.RpsControl,DDN_LIST,DDN_TEMPLATE,TemplateCount,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsTemplateException("Failed to get repository template names")
+					for ix from 1 thru TemplateCount
+						this.Add(new RpsTemplate(^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Release template names memory
+				if (TemplateCount) 
+					MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+
+	endclass
+
+endnamespace

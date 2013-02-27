@@ -1,0 +1,100 @@
+import System
+import System.Drawing
+import System.Drawing.Drawing2D
+
+.array 0
+namespace SpaSynVaders
+	
+	public class Man extends GameObject
+		
+		private	kInterval	,int		,10
+		public	Died		,boolean	,false
+		
+		public method Man
+			endparams
+			parent("man.gif")
+		proc
+			Position.X = 200
+			Position.Y = 400
+		endmethod
+		
+		public method GetBulletStart, Point
+			endparams
+		proc
+			mreturn new Point(MovingBounds.Left+ MovingBounds.Width/2,MovingBounds.Top-10)
+		endmethod
+		
+		CountExplosion, int, 0
+		RandomNumber, @Random, new Random((int)DateTime.Now.Ticks)
+		
+		public method DrawExplosion, void
+			g, @Graphics 
+			endparams
+		proc
+			CountExplosion += 1
+			if (CountExplosion < 15)
+			begin
+				data i, int
+				for i from 0 thru 49
+				begin
+					data xval, int, RandomNumber.Next(MovingBounds.Width)
+					data yval, int, RandomNumber.Next(MovingBounds.Height)
+					xval += Position.X
+					yval += Position.Y
+					g.DrawLine(Pens.Red, xval, yval, xval, yval + 1)
+				end
+			end
+		endmethod
+		
+		public BeenHit, boolean, false
+		
+		public method MoveLeft, void
+			endparams
+		proc
+			Position.X = Position.X - kInterval
+			if (Position.X < 0)
+				Position.X = 0
+		endmethod
+		
+		public method MoveRight, void
+			nLimit, int 
+			endparams
+		proc
+			Position.X = Position.X + kInterval
+			if (Position.X > nLimit - Width)
+				Position.X = nLimit - Width
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			begin
+				if (Died)
+					mreturn
+				if (!BeenHit) then
+					parent.Draw(g)
+				else
+				begin
+					if (CountExplosion < 15) then
+						DrawExplosion(g)
+					else
+						Died = true
+				end
+			end
+		endmethod
+		
+		public method Reset, void
+			endparams
+		proc
+			begin
+				BeenHit = false
+				Died = false
+				CountExplosion = 0
+			end
+		endmethod
+	
+	endclass
+
+endnamespace
+

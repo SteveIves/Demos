@@ -1,0 +1,682 @@
+<?xml version='1.0'?>
+<HBSmenu version="1.0" menu_title="MASTER MENU" init_subroutine="MasterMenuInit">
+  <submenu name="Rx System" state="0" executeType="1" executeMethod="RxSystemSub" validateMethod="RxSystemValSub" hotkey="A" securityWindow="1" securityItem="1" appState="std">
+    <program name="Patient Inquiry" state="0" executeType="3" executeDbr="EXE:ptinq.dbr" executeMethod="SXC_ptinq" hotkey="P" securityWindow="1" securityItem="2" appState="wide"/>
+    <program name="Rx Inquiry" state="0" executeType="3" executeDbr="EXE:rxinq.dbr" hotkey="X" appState="wide"/>
+    <program name="New Rx" state="0" executeType="3" executeDbr="EXE:rxnew.dbr" hotkey="N" securityWindow="1" securityItem="17" appState="wide"/>
+    <program name="Refill" state="0" executeType="3" executeDbr="EXE:rxfil.dbr" hotkey="R" securityWindow="1" securityItem="17" appState="wide"/>
+    <program name="Patient Rx History" state="0" executeType="3" executeDbr="EXE:rxhst.dbr" hotkey="H" appState="wide"/>
+    <program name="Drug Inquiry" state="0" executeType="3" executeDbr="EXE:dginq.dbr" hotkey="D" securityWindow="2" securityItem="1" appState="wide"/>
+    <program name="Doctor Inquiry" state="0" executeType="3" executeDbr="EXE:dtrmn.dbr" hotkey="M" securityWindow="3" securityItem="1" appState="wide"/>
+    <program name="Family Members &amp; Coverages" state="0" executeType="3" executeDbr="EXE:prfil.dbr" hotkey="F" appState="wide"/>
+    <program name="Drug Interactions" state="0" executeType="3" executeDbr="EXE:drgint.dbr" hotkey="DI" appState="wide"/>
+    <program name="ECS Status Display" state="0" executeType="3" executeDbr="EXE:shwrsp.dbr" hotkey="EC" appState="wide"/>
+    <program name="Patient Education" state="0" executeType="3" executeDbr="EXE:peinq.dbr" hotkey="PE" appState="wide"/>
+    <program name="Queued Claims" state="0" executeType="3" executeDbr="EXE:qc_shwque.dbr" hotkey="QC" appState="wide"/>
+    <program name="Cash Pricing" state="0" executeType="3" executeDbr="EXE:sxc_price.dbr" hotkey="PR" securityWindow="5" securityItem="1" appState="wide"/>
+    <program name="Refill Queue ***" state="0" executeType="3" executeDbr="EXE:vrupick_rfq.dbr" validateMethod="RxSystemVruValSub" hotkey="RFQ" appState="wide"/>
+    <program name="Will Call" state="0" executeType="3" executeDbr="EXE:wcl_new.dbr" hotkey="WCL" appState="wide"/>
+    <program name="Automatic Refill" state="0" executeType="2" executeMethod="SXC_RX_034_signal_AF" ELBname="SXC_rx_rx" hotkey="A" securityWindow="19" securityItem="1" appState="std"/>
+    <program name="Auto Refill By Patient" state="0" executeType="2" executeMethod="SXC_RX_034_signal_AP" hotkey="C" helpId="-3?28?28" appState="std"/>
+    <program name="Auto Refill All Patients" state="0" executeType="2" executeMethod="SXC_rx_026_signal_A" ELBname="SXC_rx_rx" hotkey="A" appState="std"/>
+    <program name="Auto Refill Single Patient" state="0" executeType="2" executeMethod="SXC_rx_026_signal_B" ELBname="SXC_rx_rx" hotkey="B" appState="std"/>
+    <program name="Auto Refill Single Drug" state="0" executeType="2" executeMethod="SXC_rx_026_signal_C" ELBname="SXC_rx_rx" hotkey="C" appState="std"/>
+    <program name="Verification Queue" state="0" executeType="3" executeDbr="EXE:vfq_main.dbr" validateMethod="VerificationQueueVal" hotkey="A" securityWindow="17" securityItem="5" appState="wide"/>
+    <program name="RPh Checking Station" state="1" executeType="3" executeDbr="EXE:qascan_WFR.dbr" validateMethod="RphCheckStationVal" hotkey="C" securityWindow="17" securityItem="2" appState="wide"/>
+    <program name="Will Call" state="0" executeType="3" executeDbr="EXE:wcl_new.dbr" hotkey="G" appState="wide"/>
+    <program name="Fax Queue" state="0" executeType="3" executeDbr="EXE:faxque.dbr" validateMethod="FaxQueueVal" hotkey="H" appState="wide"/>
+    <program name="Bin Maintenance" state="0" executeType="2" executeMethod="SXC_rx_binmnt" ELBname="SXC_rxlib" validateMethod="BinManagementVal" hotkey="I" appState="wide"/>
+    <program name="Rx Workflow Information" state="0" executeType="2" executeMethod="SXC_wf_rx_info" ELBname="SXC_rx_wf" hotkey="A" appState="wide"/>
+    <program name="Patient Workflow Counts" state="0" executeType="2" executeMethod="SXC_rx_wfcnts_patient" ELBname="SXC_rxlib" hotkey="B" appState="wide"/>
+    <program name="Store Workflow Counts" state="0" executeType="2" executeMethod="SXC_rx_wfcnts_store" ELBname="SXC_rxlib" hotkey="C" appState="wide"/>
+    <program name="Manually Delete Workflow Scan" state="0" executeType="3" executeDbr="EXE:wfsub_DELQA.dbr" hotkey="D" securityWindow="17" securityItem="3" appState="wide"/>
+    <program name="Display Rx Hardcopy Image" state="0" executeType="3" executeDbr="EXE:wfsub_HC.dbr" hotkey="F" appState="wide"/>
+    <program name="Display Insurance Card" state="0" executeType="3" executeDbr="EXE:wfsub_CRD.dbr" hotkey="G" appState="wide"/>
+    <program name="Bypass Single Rx" state="0" executeType="2" executeMethod="SXC_wf_bypass_rx" ELBname="SXC_rx_wf" hotkey="A" appState="std"/>
+    <program name="Bypass by Rx Date Span" state="0" executeType="2" executeMethod="SXC_wf_bypass_by_date" ELBname="SXC_rx_wf" hotkey="B" appState="std"/>
+    <program name="Workflow Productivity Report" state="0" executeType="3" executeDbr="EXE:wf_prdrpt.dbr" hotkey="A" appState="wide"/>
+    <program name="Workflow Fill Time Report" state="0" executeType="3" executeDbr="EXE:wf_timerpt.dbr" hotkey="B" appState="wide"/>
+    <program name="Non-Match Workflow Scan Report" state="0" executeType="3" executeDbr="EXE:wf_scanrpt.dbr" hotkey="C" appState="wide"/>
+    <program name="GPI Match Workflow Scan Report" state="0" executeType="3" executeDbr="EXE:wf_gpirpt.dbr" hotkey="D" appState="wide"/>
+    <program name="No RPh Check Workflow Scan Report" state="0" executeType="3" executeDbr="EXE:wf_norcrpt.dbr" hotkey="E" appState="wide"/>
+    <program name="Rx With No Hardcopy Image Report" state="0" executeType="3" executeDbr="EXE:wf_noimgrpt.dbr" hotkey="F" appState="wide"/>
+    <program name="View Problem Queue" state="0" executeType="2" executeMethod="SXC_rx_pqmnt_problem" ELBname="SXC_rxlib" hotkey="A" appState="std"/>
+    <program name="View Pending Rx Queue" state="0" executeType="2" executeMethod="SXC_rx_pqmnt_pending_rx" ELBname="SXC_rxlib" hotkey="B" appState="std"/>
+    <program name="Doctor Call In for New Rx" state="0" executeType="2" executeMethod="Problem_Add_Dc_Sub" ELBname="SXC_rxlib" hotkey="C" securityWindow="18" securityItem="2" appState="std"/>
+    <program name="Patient Request for New Rx" state="0" executeType="2" executeMethod="Problem_Add_Pr_Sub" ELBname="SXC_rxlib" hotkey="D" securityWindow="18" securityItem="2" appState="std"/>
+    <program name="Store Workflow Counts" state="0" executeType="2" executeMethod="SXC_rx_wfcnts_store" ELBname="SXC_rx_wf" hotkey="E" appState="std"/>
+    <program name="Auxiliary Labels" state="0" executeType="3" executeDbr="EXE:auxl1.dbr" hotkey="AL" appState="std"/>
+    <program name="Set Delivery Date" state="0" executeType="2" executeMethod="Delivery_Date_Sub" hotkey="DD" appState="std"/>
+    <program name="Set Terminal Date" state="0" executeType="2" executeMethod="Terminal_Date_Sub" hotkey="DT" securityWindow="15" securityItem="14" appState="std"/>
+    <program name="Family Rx History" state="0" executeType="3" executeDbr="EXE:rxfam.dbr" hotkey="FH" appState="std"/>
+    <program name="Family Member Merge" state="0" executeType="3" executeDbr="EXE:famopt.dbr" hotkey="FM" securityWindow="1" securityItem="16" appState="std"/>
+    <program name="FAX Queue" state="0" executeType="3" executeDbr="EXE:faxque.dbr" hotkey="FXQ" appState="std"/>
+    <program name="Price Change" state="0" executeType="3" executeDbr="EXE:sxc_price_change.dbr" hotkey="PC" securityWindow="5" securityItem="2" appState="std"/>
+    <program name="Patient Rx Merge" state="0" executeType="2" executeMethod="SXC_merge" hotkey="PM" securityWindow="1" securityItem="10" appState="std"/>
+    <program name="Change RPH" state="0" executeType="3" executeDbr="EXE:chgrph.dbr" hotkey="RPH" appState="std"/>
+    <program name="Total New/Refil Rx&apos;s" state="0" executeType="2" executeMethod="RxSystemRxCntSub" hotkey="T" securityWindow="15" securityItem="4" appState="std"/>
+    <program name="Today&apos;s Message" state="0" executeType="3" executeDbr="EXE:str2sm.dbr" hotkey="TM" appState="std"/>
+    <program name="Delete Patient" state="0" executeType="2" executeMethod="SXC_delete_main_signal_DP" ELBname="SXC_rxlib" hotkey="DP" appState="std"/>
+    <program name="Delete Insurance Coverage" state="0" executeType="2" executeMethod="SXC_delete_main_signal_DC" ELBname="SXC_rxlib" hotkey="DC" appState="std"/>
+    <program name="Delete RX" state="0" executeType="2" executeMethod="SXC_delete_main_signal_DR" ELBname="SXC_rxlib" hotkey="DR" appState="std"/>
+    <program name="Delete Refill" state="0" executeType="2" executeMethod="SXC_delete_main_signal_DF" ELBname="SXC_rxlib" hotkey="DF" appState="std"/>
+    <program name="Delete Drug" state="0" executeType="2" executeMethod="SXC_delete_main_signal_DD" ELBname="SXC_rxlib" hotkey="DD" appState="std"/>
+  </submenu>
+  <submenu name="File Maintenance System" state="0" executeType="1" executeMethod="FileMaintenanceSystemSub" hotkey="B" securityWindow="15" securityItem="9" appState="std">
+    <program name="Signa Maintenance" state="0" executeType="3" executeDbr="EXE:msigmn.dbr" hotkey="A" securityWindow="4" securityItem="1" appState="std"/>
+    <program name="Caution Maintenance" state="1" executeType="3" executeDbr="EXE:mcaumn.dbr" validateMethod="CautionMaintVal" hotkey="B" securityWindow="15" securityItem="3" appState="std"/>
+    <program name="Aller-Chek(TM) Maintentance" state="0" executeType="3" executeDbr="EXE:mstvmn.dbr" validateMethod="SensitivityMaintVal" hotkey="C" appState="std"/>
+    <program name="Treatment Master Maintenance" state="0" executeType="3" executeDbr="EXE:trtmnt.dbr" hotkey="D" appState="std"/>
+    <program name="Specialty Code Maintenance" state="0" executeType="3" executeDbr="EXE:spcmn.dbr" hotkey="G" appState="std"/>
+    <program name="Expiration Code Maintenance" state="0" executeType="3" executeDbr="EXE:expmnt.dbr" hotkey="I" appState="std"/>
+    <program name="Generic Drug Marking Maintenance" state="0" executeType="3" executeDbr="EXE:genric.dbr" hotkey="K" appState="std"/>
+    <program name="Alpha Caution Print" state="1" executeType="3" executeDbr="EXE:alcpr.dbr" validateMethod="CautionPrintVal" hotkey="N" appState="std"/>
+    <program name="Recalculate Monthly Totals" state="0" executeType="3" executeDbr="EXE:clmxrx.dbr" hotkey="P" appState="std"/>
+    <program name="Rx Repricing" state="0" executeType="3" executeDbr="EXE:reprc.dbr" hotkey="Q" appState="std"/>
+    <program name="SureScripts Doctors" state="0" executeType="3" executeDbr="SureScriptsDoctorsub.dbr" hotkey="1" appState="std"/>
+    <program name="Transfer Pharmacy Maintenance" state="0" executeType="3" executeDbr="EXE:iopmnt.dbr" hotkey="R" appState="std"/>
+    <program name="Insurance File Maintenance" state="0" executeType="3" executeDbr="EXE:sxc_insmnt_main.dbr" hotkey="S" appState="std"/>
+    <program name="Employer File Maintenance" state="0" executeType="3" executeDbr="EXE:sxc_empmnt_main.dbr" hotkey="T" appState="std"/>
+    <program name="Documentation Maintenance" state="0" executeType="3" executeDbr="EXE:dmttyp.dbr" hotkey="U" appState="std"/>
+    <program name="MTS Reject Queue" state="0" executeType="3" executeDbr="EXE:sxc_mts_rejq_main.dbr" hotkey="V" appState="std"/>
+    <program name="Clinic Maintenance" state="0" executeType="3" executeDbr="EXE:sxc_clncmnt_main.dbr" hotkey="W" appState="std"/>
+    <program name="Docutrack Document Types" state="0" executeType="3" executeDbr="EXE:dtrtyp.dbr" hotkey="X" appState="std"/>
+    <program name="Side Effect Maintenance" state="0" executeType="3" executeDbr="EXE:sefmnt.dbr" hotkey="A" appState="std"/>
+    <program name="GPI Maintenance" state="0" executeType="3" executeDbr="EXE:ndcgpi.dbr" hotkey="C" appState="std"/>
+    <program name="State Formulary Maintenance" state="0" executeType="3" executeDbr="EXE:frmmnt.dbr" hotkey="D" appState="std"/>
+    <program name="Code 1 Maintenance" state="0" executeType="3" executeDbr="EXE:cd1rmnt.dbr" hotkey="F" appState="std"/>
+    <program name="TAR Code Maintenance" state="0" executeType="3" executeDbr="EXE:tarcdmnt.dbr" hotkey="G" appState="std"/>
+    <program name="Price Table Maintenance" state="0" executeType="3" executeDbr="EXE:prctable.dbr" hotkey="H" appState="std"/>
+    <program name="ICD-9 File (Medispan Drug Disease)" state="0" executeType="3" executeDbr="EXE:icd9lp.dbr" hotkey="A" appState="std"/>
+    <program name="ICD-9 File (AMA)" state="0" executeType="3" executeDbr="EXE:icd9mn.dbr" hotkey="A" appState="std"/>
+    <program name="Load ICD-9 into HBS File" state="0" executeType="3" executeDbr="EXE:icd9fl.dbr" hotkey="B" appState="std"/>
+    <program name="Manufacturer Maintenance" state="0" executeType="3" executeDbr="EXE:cman.dbr" hotkey="A" appState="std"/>
+    <program name="Missing Manufacturer Print-Out" state="0" executeType="3" executeDbr="EXE:cman_missing.dbr" hotkey="B" appState="std"/>
+    <program name="Problem Comment Maintenance" state="0" executeType="3" executeDbr="EXE:sxc_pbq_cmts_main.dbr" hotkey="A" appState="std"/>
+    <program name="Problem Reason Maintenance" state="0" executeType="3" executeDbr="EXE:sxc_pbq_reason_main.dbr" hotkey="B" appState="std"/>
+    <program name="Problem Delete Functions" state="0" executeType="3" executeDbr="EXE:pmm_delete.dbr" hotkey="C" appState="std"/>
+    <program name="NCPDP Reject Code Maintenance" state="0" executeType="3" executeDbr="EXE:rmsmnt.dbr" hotkey="A" appState="std"/>
+    <program name="DUR Reason For Service" state="0" executeType="3" executeDbr="EXE:durrfs.dbr" hotkey="B" appState="std"/>
+    <program name="DUR Professional Service" state="0" executeType="3" executeDbr="EXE:durps.dbr" hotkey="C" appState="std"/>
+    <program name="DUR Result of Service" state="0" executeType="3" executeDbr="EXE:durros.dbr" hotkey="D" appState="std"/>
+    <program name="RPH Initial Maintenance" state="0" executeType="3" executeDbr="EXE:rphmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Technician Maintenance" state="0" executeType="3" executeDbr="EXE:tchmnt.dbr" hotkey="B" appState="std"/>
+    <program name="Update Drug TNC" state="0" executeType="3" executeDbr="EXE:updtnc.dbr" hotkey="A" appState="std"/>
+    <program name="Update Price Table" state="0" executeType="3" executeDbr="EXE:updprc.dbr" hotkey="B" appState="std"/>
+    <program name="Update Drug File" state="0" executeType="3" executeDbr="EXE:whludg.dbr" hotkey="A" appState="std"/>
+    <program name="Create Wholesaler Layout" state="0" executeType="3" executeDbr="EXE:whlmnt.dbr" hotkey="B" appState="std"/>
+    <program name="Purchase Order Import" state="0" executeType="3" executeDbr="EXE:whlpoi.dbr" hotkey="C" appState="std"/>
+    <program name="Receive X12 File(s)" state="0" executeType="3" executeDbr="EXE:x12comm.dbr" hotkey="D" appState="std"/>
+    <program name="Apply X12 File(s)" state="0" executeType="3" executeDbr="EXE:x12dir.dbr" hotkey="E" appState="std"/>
+    <program name="Import Mckesson Acquisition Updates" state="0" executeType="3" executeDbr="EXE:whlmck.dbr" hotkey="F" appState="std"/>
+    <program name="Pre-Packaging Labels" state="0" executeType="3" executeDbr="EXE:ppkg.dbr" hotkey="A" appState="std"/>
+    <program name="Laser Pre-Packaging Labels" state="0" executeType="3" executeDbr="EXE:ppl_lbl.dbr" hotkey="B" appState="std"/>
+    <program name="Thermal Pre-Packaging Labels" state="0" executeType="3" executeDbr="EXE:ppt_lbl.dbr" hotkey="C" appState="std"/>
+    <program name="Category Maintenance" state="0" executeType="3" executeDbr="EXE:mntcat.dbr" hotkey="A" appState="std"/>
+    <program name="AHFS Code Maintenance" state="0" executeType="3" executeDbr="EXE:mntahf.dbr" hotkey="B" appState="std"/>
+    <program name="GPI Code Maintenance" state="0" executeType="3" executeDbr="EXE:mntgpi.dbr" hotkey="C" appState="std"/>
+  </submenu>
+  <submenu name="Daily Report System" state="0" executeType="1" executeMethod="DailyReportSystemSub" hotkey="C" securityWindow="10" securityItem="1" appState="std">
+    <program name="Controlled Substance Report" state="0" executeType="3" executeDbr="EXE:clss3.dbr" hotkey="B" securityWindow="10" securityItem="4" appState="std"/>
+    <program name="Class II Report" state="0" executeType="3" executeDbr="EXE:clss2.dbr" hotkey="C" securityWindow="10" securityItem="4" appState="std"/>
+    <program name="Drug Enforcement Agency Report" state="0" executeType="3" executeDbr="EXE:dea.dbr" hotkey="D" securityWindow="10" securityItem="4" appState="std"/>
+    <program name="Rebill Register" state="0" executeType="3" executeDbr="EXE:rbreg.dbr" hotkey="E" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Rx Audit" state="0" executeType="3" executeDbr="EXE:auditrx.dbr" hotkey="F" securityWindow="10" securityItem="3" appState="std"/>
+    <program name="Refill Register" state="0" executeType="3" executeDbr="EXE:clss4.dbr" hotkey="G" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="ECS Register" state="0" executeType="3" executeDbr="EXE:ecsrg.dbr" hotkey="H" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Refill Due Report" state="0" executeType="3" executeDbr="EXE:rfldue.dbr" validateMethod="RefillDueReportVal" hotkey="I" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Documentation Report" state="0" executeType="3" executeDbr="EXE:dokrep.dbr" hotkey="J" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Daily Charge Register" state="0" executeType="3" executeDbr="EXE:chgrg.dbr" hotkey="K" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Adjustments To Sales" state="0" executeType="3" executeDbr="EXE:adjsls.dbr" hotkey="L" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Prescription &quot;Changes&quot; Report" state="0" executeType="3" executeDbr="EXE:rxtrak.dbr" hotkey="M" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Non-Billed Rx Report" state="0" executeType="3" executeDbr="EXE:rxunb.dbr" hotkey="N" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Deleted Rx Register" state="0" executeType="3" executeDbr="EXE:delrxr.dbr" hotkey="O" securityWindow="10" securityItem="2" appState="std"/>
+    <program name="Units Owed Report" state="0" executeType="3" executeDbr="EXE:pqmnt_main.dbr" validateMethod="UnitsOwedReportVal" hotkey="Q" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Tax Report" state="0" executeType="3" executeDbr="EXE:taxrpt.dbr" hotkey="R" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Daily Sales Report" state="0" executeType="3" executeDbr="EXE:slsrpt.dbr" hotkey="S" securityWindow="10" securityItem="5" appState="std"/>
+    <program name="Rx Register" state="0" executeType="3" executeDbr="EXE:alprxr.dbr" validateMethod="RxRegisterVal" hotkey="A" appState="wide"/>
+    <program name="Create Export File" state="0" executeType="3" executeDbr="EXE:exprxr.dbr" hotkey="B" appState="wide"/>
+    <program name="Special Rx Register" state="0" executeType="3" executeDbr="EXE:iv_rxreg.dbr" hotkey="C" appState="wide"/>
+    <program name="HIPPA Signature Log" state="0" executeType="3" executeDbr="EXE:hipaalogrpt.dbr" hotkey="A" appState="std"/>
+    <program name="3rd Party Signature Log" state="0" executeType="3" executeDbr="EXE:rxsigrpt.dbr" hotkey="B" appState="std"/>
+    <program name="3rd Party Missing Signatures" state="0" executeType="3" executeDbr="EXE:missigrpt.dbr" hotkey="C" appState="std"/>
+    <program name="Mailed Rx Report" state="0" executeType="3" executeDbr="EXE:rxmailrpt.dbr" hotkey="D" appState="std"/>
+    <program name="Outstanding Will Call Report" state="0" executeType="3" executeDbr="EXE:wcl_notpk.dbr" hotkey="E" appState="std"/>
+    <program name="Financial Reports" state="0" executeType="3" executeDbr="EXE:wcl_fin.dbr" hotkey="F" appState="std"/>
+  </submenu>
+  <submenu name="Billing System" state="0" executeType="1" executeMethod="BillingSystemSub" hotkey="D" securityWindow="11" securityItem="1" appState="std">
+    <program name="Commonwealth of Pennsylvania" state="0" executeType="3" executeDbr="EXE:PAdpa.dbr" validateMethod="StateBillingVal" hotkey="A" securityWindow="11" securityItem="2" appState="std"/>
+    <program name="Electronic Claim Submission" state="0" executeType="3" executeDbr="EXE:makecs.dbr" hotkey="B" securityWindow="11" securityItem="3" appState="std"/>
+    <program name="Prior Authorization Report" state="0" executeType="3" executeDbr="EXE:prarpt.dbr" hotkey="E" appState="std"/>
+    <program name="Third Party Credits" state="0" executeType="3" executeDbr="EXE:ertmi.dbr" hotkey="F" appState="std"/>
+    <program name="P.A.P. Drug Replacement Report" state="0" executeType="3" executeDbr="EXE:invxexp.dbr" hotkey="H" appState="std"/>
+    <program name="P.A.P. Drug Category Summary Report" state="0" executeType="3" executeDbr="EXE:trans_summary_rpt.dbr" hotkey="I" appState="std"/>
+    <program name="MHA Export" state="0" executeType="3" executeDbr="EXE:mhaexp.dbr" hotkey="J" appState="std"/>
+    <program name="Keystone Alliance" state="0" executeType="3" executeDbr="EXE:keyexp.dbr" hotkey="K" appState="std"/>
+    <program name="Universal Claim Forms" state="0" executeType="3" executeDbr="EXE:alpinv.dbr" hotkey="A" appState="std"/>
+    <program name="1500 Forms" state="0" executeType="3" executeDbr="EXE:chaalp.dbr" hotkey="B" appState="std"/>
+    <program name="Workman&apos;s Comp" state="0" executeType="3" executeDbr="EXE:alpwcfrm.dbr" validateMethod="WorkmansCompVal" hotkey="C" appState="std"/>
+    <program name="HMO Billing" state="0" executeType="3" executeDbr="EXE:hmo.dbr" hotkey="D" appState="std"/>
+    <program name="Profile Style Billing" state="0" executeType="3" executeDbr="EXE:proalp.dbr" hotkey="E" appState="std"/>
+    <program name="DC Medicaid" state="0" executeType="3" executeDbr="EXE:alpdcm.dbr" hotkey="F" appState="std"/>
+    <program name="Monthly Detail Report" state="0" executeType="3" executeDbr="EXE:detrep.dbr" hotkey="G" appState="std"/>
+    <program name="Pharmacy Invoice" state="0" executeType="3" executeDbr="EXE:phinv.dbr" hotkey="H" appState="std"/>
+  </submenu>
+  <submenu name="Miscellaneous Reports System" state="0" executeType="1" executeMethod="MiscReportsSystemSub" hotkey="E" securityWindow="10" securityItem="8" appState="std">
+    <program name="Top Doctor Report" state="0" executeType="3" executeDbr="EXE:topdoc.dbr" hotkey="B" appState="std"/>
+    <program name="NJ Invalid Imp # List" state="0" executeType="3" executeDbr="EXE:dtrstl.dbr" hotkey="C" appState="std"/>
+    <program name="Doctor By Zip Code Report" state="0" executeType="3" executeDbr="EXE:dziprpt.dbr" hotkey="D" appState="std"/>
+    <program name="New Doctor List" state="0" executeType="3" executeDbr="EXE:newdoc.dbr" hotkey="A" appState="std"/>
+    <program name="New Doctor List By ZIP" state="0" executeType="3" executeDbr="EXE:newdocbyzip.dbr" hotkey="B" appState="std"/>
+    <program name="Doctor File Print" state="0" executeType="3" executeDbr="EXE:dtrpr.dbr" hotkey="A" appState="std"/>
+    <program name="Doctor 3rd Party License Print" state="0" executeType="3" executeDbr="EXE:dtrplc.dbr" hotkey="B" appState="std"/>
+    <program name="Duplicate DEA Report" state="0" executeType="3" executeDbr="EXE:dupdtrdea.dbr" hotkey="C" appState="std"/>
+    <program name="New Customers List" state="0" executeType="3" executeDbr="EXE:newpat.dbr" hotkey="A" appState="std"/>
+    <program name="Patient Third Party List" state="0" executeType="3" executeDbr="EXE:thdlst.dbr" hotkey="B" appState="std"/>
+    <program name="Patient Price Table Report" state="0" executeType="3" executeDbr="EXE:ptblrpt.dbr" hotkey="C" appState="std"/>
+    <program name="Active Patient&apos;s Total Report" state="0" executeType="3" executeDbr="EXE:custstha.dbr" hotkey="E" appState="std"/>
+    <program name="Patient/HIPAA Comment List" state="0" executeType="3" executeDbr="EXE:patcmtl.dbr" hotkey="F" appState="std"/>
+    <program name="Retail Birthday Report" state="0" executeType="3" executeDbr="EXE:rtbir.dbr" hotkey="G" appState="std"/>
+    <program name="Invalid Allergy Report by Patient" state="0" executeType="3" executeDbr="EXE:patndc.dbr" hotkey="H" appState="std"/>
+    <program name="Patient Allergy Report" state="0" executeType="3" executeDbr="EXE:alalg.dbr" hotkey="I" appState="std"/>
+    <program name="SDI - Call Patients Report" state="0" executeType="3" executeDbr="EXE:sdicall.dbr" hotkey="J" appState="std"/>
+    <program name="Active Patient List - By Last Name" state="0" executeType="3" executeDbr="EXE:actvpt.dbr" hotkey="A" appState="std"/>
+    <program name="Active Patient List - By Zip Code" state="0" executeType="3" executeDbr="EXE:actvpt2.dbr" hotkey="B" appState="std"/>
+    <program name="Inactive Patient List" state="0" executeType="3" executeDbr="EXE:inactv.dbr" hotkey="C" appState="std"/>
+    <program name="Profiled Rx Report" state="0" executeType="3" executeDbr="EXE:prflrx.dbr" hotkey="A" appState="std"/>
+    <program name="DAW Report" state="0" executeType="3" executeDbr="EXE:dawrpt.dbr" hotkey="B" appState="std"/>
+    <program name="Active Refill Report" state="0" executeType="3" executeDbr="EXE:actref.dbr" hotkey="C" appState="std"/>
+    <program name="Phoned In Rx Report" state="0" executeType="3" executeDbr="EXE:wcl_phrpt.dbr" hotkey="D" appState="std"/>
+    <program name="Transfer Report" state="0" executeType="3" executeDbr="EXE:transfr.dbr" hotkey="E" appState="std"/>
+    <program name="Rx By Month Report" state="0" executeType="3" executeDbr="EXE:rxbymth.dbr" hotkey="F" appState="std"/>
+    <program name="Rx Doctor Order Form" state="0" executeType="3" executeDbr="EXE:phyform.dbr" hotkey="H" appState="std"/>
+    <program name="Rx Statistics By Days Supply" state="0" executeType="3" executeDbr="EXE:custat3.dbr" hotkey="I" appState="std"/>
+    <program name="Rx Number List" state="0" executeType="3" executeDbr="EXE:audrpt.dbr" hotkey="J" appState="std"/>
+    <program name="Batch Hard Copy" state="0" executeType="3" executeDbr="EXE:hdlbl.dbr" hotkey="K" appState="std"/>
+    <program name="Retail Missing DX Report" state="0" executeType="3" executeDbr="EXE:rtmissdx.dbr" hotkey="L" appState="std"/>
+    <program name="Drug Activity Report" state="0" executeType="3" executeDbr="EXE:drg020.dbr" hotkey="M" appState="std"/>
+    <program name="Prescription Comments Report" state="0" executeType="3" executeDbr="EXE:rxcmts.dbr" hotkey="N" appState="std"/>
+    <program name="RX Amount Paid Report" state="0" executeType="3" executeDbr="EXE:payrpt.dbr" hotkey="O" appState="std"/>
+    <program name="Number RX By Age Report" state="0" executeType="3" executeDbr="EXE:rxbyage.dbr" hotkey="P" appState="std"/>
+    <program name="RX Denial Code Report" state="0" executeType="3" executeDbr="EXE:rxdenrpt.dbr" hotkey="A" appState="std"/>
+    <program name="RX DUR Code Report" state="0" executeType="3" executeDbr="EXE:rxdurrpt.dbr" hotkey="B" appState="std"/>
+    <program name="RX Other Coverage Report" state="0" executeType="3" executeDbr="EXE:rxotherc.dbr" hotkey="C" appState="std"/>
+    <program name="Drug Tracking Report" state="0" executeType="3" executeDbr="EXE:drgtrk.dbr" validateMethod="DrugTrackingReportVal" hotkey="A" appState="std"/>
+    <program name="Drug Expiration Report" state="0" executeType="3" executeDbr="EXE:drgexp.dbr" hotkey="B" appState="std"/>
+    <program name="Drug Expiration Report (Date Range)" state="0" executeType="3" executeDbr="EXE:expdr.dbr" hotkey="C" appState="std"/>
+    <program name="Drug Recall Report" state="0" executeType="3" executeDbr="EXE:recall.dbr" hotkey="D" appState="std"/>
+    <program name="Drug Caut/Stv Print" state="1" executeType="3" executeDbr="EXE:dgsvrp.dbr" validateMethod="DrugCautionVal" hotkey="E" appState="std"/>
+    <program name="Drugs Not Updated Report" state="0" executeType="3" executeDbr="EXE:fdold.dbr" hotkey="G" appState="std"/>
+    <program name="Generic Exception Report" state="0" executeType="3" executeDbr="EXE:genexc.dbr" hotkey="H" appState="std"/>
+    <program name="Drug Rebate Util Report" state="0" executeType="3" executeDbr="EXE:rebutl.dbr" hotkey="I" appState="std"/>
+    <program name="Manufacturer Rebate Report" state="0" executeType="3" executeDbr="EXE:rebaterpt.dbr" hotkey="J" appState="std"/>
+    <program name="Clozaril Report" state="0" executeType="3" executeDbr="EXE:clozpr.dbr" hotkey="K" appState="std"/>
+    <program name="Drug-Disease Monitoring(TM)" state="1" executeType="3" executeDbr="EXE:ddprt.dbr" validateMethod="DrugDiseaseMonitoringVal" hotkey="L" appState="std"/>
+    <program name="Drug File Export" state="0" executeType="3" executeDbr="EXE:exp_dgexp.dbr" hotkey="N" appState="std"/>
+    <program name="Top Selling Drug Report" state="0" executeType="3" executeDbr="EXE:topdrg.dbr" hotkey="A" appState="std"/>
+    <program name="Top Selling Report by AHFS" state="0" executeType="3" executeDbr="EXE:drgcst.dbr" hotkey="B" appState="std"/>
+    <program name="Top Selling Report by NDC (Utilized Only)" state="0" executeType="3" executeDbr="EXE:salerpt.dbr" hotkey="A" appState="std"/>
+    <program name="Top Selling Report by NDC (Utilized and Same NDC)" state="0" executeType="3" executeDbr="EXE:salerptf.dbr" hotkey="B" appState="std"/>
+    <program name="Legend only" state="0" executeType="3" executeDbr="EXE:drgpr1.dbr" hotkey="A" appState="std"/>
+    <program name="OTC only" state="0" executeType="3" executeDbr="EXE:drgpr2.dbr" hotkey="B" appState="std"/>
+    <program name="Both (Legend &amp; OTC)" state="0" executeType="3" executeDbr="EXE:drgpr3.dbr" hotkey="C" appState="std"/>
+    <program name="Compound Drug Print Out" state="0" executeType="3" executeDbr="EXE:drgpr4.dbr" hotkey="D" appState="std"/>
+    <program name="Generics Print Out" state="0" executeType="3" executeDbr="EXE:drgpr5.dbr" hotkey="E" appState="std"/>
+    <program name="Print By Pricing Table #" state="0" executeType="3" executeDbr="EXE:drgpr6.dbr" hotkey="F" appState="std"/>
+    <program name="Generic AWP Only" state="0" executeType="3" executeDbr="EXE:drgpr7.dbr" hotkey="G" appState="std"/>
+    <program name="Direct Buy Prices Only" state="0" executeType="3" executeDbr="EXE:drgpr8.dbr" hotkey="H" appState="std"/>
+    <program name="By Alt Manu #" state="0" executeType="3" executeDbr="EXE:drgpr9.dbr" hotkey="I" appState="std"/>
+    <program name="Stock List" state="0" executeType="3" executeDbr="EXE:stklst.dbr" hotkey="K" appState="std"/>
+    <program name="New Drug List" state="0" executeType="3" executeDbr="EXE:drgadd.dbr" hotkey="L" appState="std"/>
+    <program name="Lab List" state="0" executeType="3" executeDbr="EXE:lablst.dbr" hotkey="M" appState="std"/>
+    <program name="Information File Print Out" state="0" executeType="3" executeDbr="EXE:dgiprt.dbr" hotkey="N" appState="std"/>
+    <program name="Unit Dose Print Out" state="0" executeType="3" executeDbr="EXE:drgpr15.dbr" hotkey="O" appState="std"/>
+    <program name="Drug Cost Report" state="0" executeType="3" executeDbr="EXE:mdgctrt.dbr" hotkey="P" appState="std"/>
+    <program name="UPC Bar Code Entry" state="0" executeType="3" executeDbr="EXE:mentbar.dbr" hotkey="Q" appState="std"/>
+    <program name="Interface Drug List" state="0" executeType="3" executeDbr="EXE:atmlis.dbr" hotkey="R" appState="std"/>
+    <program name="Drug Pricing Table Report" state="0" executeType="3" executeDbr="EXE:drgtbl.dbr" hotkey="S" appState="std"/>
+    <program name="Pharmex Code List" state="0" executeType="3" executeDbr="EXE:prtphx.dbr" hotkey="T" appState="std"/>
+    <program name="APA Formulary Drug Report" state="0" executeType="3" executeDbr="APAPrintsSub.dbr" hotkey="U" appState="std"/>
+    <program name="By Sig Def or Form" state="0" executeType="3" executeDbr="EXE:drgpr10.dbr" hotkey="V" appState="std"/>
+    <program name="Medicare Formulary Report" state="0" executeType="3" executeDbr="EXE:frmprt.dbr" hotkey="W" appState="std"/>
+    <program name="340B Drug List" state="0" executeType="3" executeDbr="EXE:drg340b.dbr" hotkey="X" appState="std"/>
+    <program name="Missing GPI Codes" state="0" executeType="3" executeDbr="EXE:drggpi.dbr" hotkey="Y" appState="std"/>
+    <program name="Category List" state="0" executeType="3" executeDbr="EXE:alpcat.dbr" hotkey="A" appState="std"/>
+    <program name="Miscellaneous Orders List" state="0" executeType="3" executeDbr="EXE:alpmo.dbr" hotkey="B" appState="std"/>
+    <program name="Drug Unit Cost Cutoff Report" state="0" executeType="3" executeDbr="EXE:drgpr13.dbr" hotkey="A" appState="std"/>
+    <program name="Invalid NDC Report" state="0" executeType="3" executeDbr="EXE:prt_drgndc.dbr" hotkey="B" appState="std"/>
+    <program name="Duplicate NDC Report" state="0" executeType="3" executeDbr="EXE:dupndcrpt.dbr" hotkey="C" appState="std"/>
+    <program name="NDC Drug Classes" state="0" executeType="3" executeDbr="EXE:drgalrg.dbr" hotkey="D" appState="std"/>
+    <program name="Tracked/NonTracked Drug List" state="0" executeType="3" executeDbr="EXE:trklst.dbr" hotkey="E" appState="std"/>
+    <program name="NDC/UPC Drug List" state="0" executeType="3" executeDbr="EXE:drgndcupc.dbr" hotkey="F" appState="std"/>
+    <program name="Short Name Allergy Drug Print" state="0" executeType="3" executeDbr="EXE:drgsnm.dbr" hotkey="G" appState="std"/>
+    <program name="Price Difference Report" state="0" executeType="3" executeDbr="EXE:prcdif.dbr" hotkey="A" appState="std"/>
+    <program name="Price Update Report By Date" state="0" executeType="3" executeDbr="EXE:fdrng.dbr" hotkey="B" appState="std"/>
+    <program name="Cash/Charge Co-Pay Report" state="0" executeType="3" executeDbr="EXE:rxcshch.dbr" hotkey="D" appState="std"/>
+    <program name="Price Less Than Acq. Report" state="0" executeType="3" executeDbr="EXE:prcacqrpt.dbr" hotkey="E" appState="std"/>
+    <program name="Retail High Cost Report" state="0" executeType="3" executeDbr="EXE:rtlcst.dbr" hotkey="F" appState="std"/>
+    <program name="Sales By State Report" state="0" executeType="3" executeDbr="EXE:slsbysta.dbr" hotkey="A" appState="std"/>
+    <program name="Sales By Doctor Zip" state="0" executeType="3" executeDbr="EXE:slsbyzip.dbr" hotkey="B" appState="std"/>
+    <program name="Hard Copy Profile - Family" state="0" executeType="3" executeDbr="EXE:hrdfm.dbr" hotkey="B" appState="std"/>
+    <program name="Print Alpha Patient Profiles" state="0" executeType="3" executeDbr="EXE:alppro.dbr" hotkey="C" appState="std"/>
+    <program name="Insurance Profile Print" state="0" executeType="3" executeDbr="EXE:hrdins.dbr" hotkey="D" appState="std"/>
+    <program name="Hard Copy / Insurance Profile (Unsorted)" state="0" executeType="3" executeDbr="EXE:hrdpr.dbr" hotkey="A" appState="std"/>
+    <program name="Hard Copy / Insurance Profile (Date Sorted)" state="0" executeType="3" executeDbr="EXE:hrdpr2.dbr" hotkey="B" appState="std"/>
+    <program name="Medical Profile" state="0" executeType="3" executeDbr="EXE:jpsprf.dbr" hotkey="C" appState="std"/>
+    <program name="Drug Usage Report" state="0" executeType="3" executeDbr="EXE:drgusg.dbr" hotkey="B" appState="std"/>
+    <program name="Doctor Drug Usage Report" state="0" executeType="3" executeDbr="EXE:dtrusg.dbr" hotkey="C" appState="std"/>
+    <program name="Doctor Drug Monitoring Report" state="0" executeType="3" executeDbr="EXE:dtdgmn.dbr" hotkey="D" appState="std"/>
+    <program name="Drug Utilization Update" state="0" executeType="3" executeDbr="EXE:utlupd.dbr" hotkey="A" appState="std"/>
+    <program name="YTD Utilization" state="0" executeType="3" executeDbr="EXE:utlytd.dbr" hotkey="B" appState="std"/>
+    <program name="Utilization Report" state="0" executeType="3" executeDbr="EXE:utlrpt.dbr" hotkey="C" appState="std"/>
+    <program name="Drugs Not Utilized Report" state="0" executeType="3" executeDbr="EXE:utlrpt2.dbr" hotkey="D" appState="std"/>
+    <program name="Print Auxiliary Label File" state="0" executeType="3" executeDbr="EXE:auxprt.dbr" hotkey="B" appState="std"/>
+    <program name="Rph Summary Report" state="0" executeType="3" executeDbr="EXE:rphsum.dbr" hotkey="G" appState="std"/>
+    <program name="ECS by Group Report" state="0" executeType="3" executeDbr="EXE:ecsgrp.dbr" hotkey="H" appState="std"/>
+    <program name="Medicine on Time Patient List" state="0" executeType="3" executeDbr="EXE:patmot.dbr" hotkey="I" appState="std"/>
+    <program name="TAR Status Report" state="0" executeType="3" executeDbr="EXE:tarstrpt.dbr" hotkey="J" appState="std"/>
+    <program name="Missing Original Narcotic Report" state="0" executeType="3" executeDbr="EXE:misorgnar.dbr" hotkey="K" appState="std"/>
+    <program name="Territory Sales Report" state="1" executeType="3" executeDbr="EXE:asa_tsale.dbr" validateMethod="TerrSalesVal" hotkey="L" appState="std"/>
+    <program name="Missing Vendor Report" state="0" executeType="3" executeDbr="EXE:missvnd.dbr" hotkey="M" appState="std"/>
+    <program name="Patient Mailing Labels &lt;by 3rd party&gt;" state="0" executeType="3" executeDbr="EXE:patlab.dbr" hotkey="A" appState="std"/>
+    <program name="Patient Mailing Labels &lt;by Doctor&gt;" state="0" executeType="3" executeDbr="EXE:dtrlab.dbr" hotkey="B" appState="std"/>
+    <program name="Doctor Mailing Labels" state="0" executeType="3" executeDbr="EXE:dtrlbl.dbr" hotkey="C" appState="std"/>
+    <program name="Patient Mailing Labels &lt;by Patient Type&gt;" state="0" executeType="3" executeDbr="EXE:patlb2.dbr" hotkey="D" appState="std"/>
+    <program name="Laser Label Menu" state="0" executeType="3" executeDbr="EXE:lasrlb.dbr" hotkey="E" appState="std"/>
+    <program name="Create Export File" state="0" executeType="3" executeDbr="EXE:patlbe.dbr" hotkey="F" appState="std"/>
+    <program name="Detail Billing" state="0" executeType="3" executeDbr="EXE:hmobil.dbr" hotkey="A" appState="std"/>
+    <program name="Drug Utilization" state="0" executeType="3" executeDbr="EXE:drgulz.dbr" hotkey="B" appState="std"/>
+    <program name="Physician&apos;s Activity Report" state="0" executeType="3" executeDbr="EXE:docdrg.dbr" hotkey="C" appState="std"/>
+    <program name="Drug Utilization by 3rd Party" state="0" executeType="3" executeDbr="EXE:drgul2.dbr" hotkey="D" appState="std"/>
+    <program name="Drug Category Report" state="0" executeType="3" executeDbr="EXE:rtldct.dbr" hotkey="A" appState="std"/>
+    <program name="Drug Roster Report" state="0" executeType="3" executeDbr="EXE:catroster.dbr" hotkey="B" appState="std"/>
+    <program name="Outstanding Will Call Report" state="0" executeType="3" executeDbr="EXE:wcl_notpk.dbr" hotkey="A" appState="std"/>
+    <program name="Financial Will Call Report" state="0" executeType="3" executeDbr="EXE:wcl_fin.dbr" hotkey="B" appState="std"/>
+    <program name="Expected Amount Report" state="0" executeType="3" executeDbr="EXE:rxpkp.dbr" hotkey="C" appState="std"/>
+    <program name="Productivity Report" state="0" executeType="3" executeDbr="EXE:prdrpt.dbr" hotkey="A" appState="std"/>
+    <program name="Productivity Report By Security Group" state="0" executeType="3" executeDbr="EXE:prodrpt.dbr" hotkey="B" appState="std"/>
+  </submenu>
+  <submenu name="Delivery System" state="0" executeType="1" executeMethod="DeliverySub" validateMethod="DeliverySystemVal" hotkey="F" appState="std">
+    <program name="Search/Add Deliveries" state="0" executeType="3" executeDbr="EXE:dlvhdr.dbr" hotkey="A" appState="std"/>
+    <program name="Display &quot;Open&quot; Deliveries" state="0" executeType="3" executeDbr="EXE:dlvhdro.dbr" hotkey="B" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="C" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="D" appState="std"/>
+    <program name="Mark for Delivery" state="0" executeType="3" executeDbr="EXE:dlvhdrm.dbr" hotkey="E" appState="std"/>
+    <program name="Display &quot;Currently Being Delivered&quot;" state="0" executeType="3" executeDbr="EXE:dlvhdrd.dbr" hotkey="G" appState="std"/>
+    <program name="Check In Deliveries" state="0" executeType="3" executeDbr="EXE:dlvhdrc.dbr" hotkey="H" appState="std"/>
+    <program name="Display &quot;On Hold&quot; Deliveries" state="0" executeType="3" executeDbr="EXE:dlvhdrh.dbr" hotkey="I" appState="std"/>
+    <program name="Search/Purge &quot;Closed&quot; Deliveries" state="0" executeType="3" executeDbr="EXE:dlvhdrp.dbr" hotkey="J" appState="std"/>
+    <program name="Route Maintenance" state="0" executeType="3" executeDbr="EXE:routemnt.dbr" hotkey="K" appState="std"/>
+    <program name="Driver Maintenance" state="0" executeType="3" executeDbr="EXE:drvmnt.dbr" hotkey="L" appState="std"/>
+    <program name="Print Delivery Manifest" state="0" executeType="3" executeDbr="EXE:PrtDlvMnfst.dbr" hotkey="A" appState="std"/>
+    <program name="Print Delivery Tickets" state="0" executeType="3" executeDbr="EXE:PrtDlvTicket.dbr" hotkey="B" appState="std"/>
+    <program name="Print Both" state="0" executeType="3" executeDbr="EXE:PrtDlvTktMnfst.dbr" hotkey="C" appState="std"/>
+    <program name="Delivery Statistics" state="0" executeType="3" executeDbr="EXE:DlvStats.dbr" hotkey="A" appState="std"/>
+    <program name="Closed Delivery Report" state="0" executeType="3" executeDbr="EXE:DlvClosed.dbr" hotkey="B" appState="std"/>
+    <program name="Delivery Routes" state="0" executeType="3" executeDbr="EXE:DlvRoutes.dbr" hotkey="C" appState="std"/>
+  </submenu>
+  <submenu name="Accounts Receivable" state="0" executeType="1" executeMethod="AccountsReceiveableSub" validateMethod="AccountsReceivableVal" hotkey="G" securityWindow="7" securityItem="1" appState="std">
+    <program name="Department Maintenance" state="0" executeType="3" executeDbr="EXE:depmnt.dbr" hotkey="B" securityWindow="7" securityItem="3" appState="std"/>
+    <program name="Customer Account Inquiry" state="0" executeType="3" executeDbr="EXE:actinq.dbr" hotkey="D" securityWindow="7" securityItem="2" appState="std"/>
+    <program name="Maintain Customers" state="0" executeType="3" executeDbr="EXE:cusmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Print Customers" state="0" executeType="3" executeDbr="EXE:cusprt.dbr" hotkey="B" appState="std"/>
+    <program name="Verify A/R Accounts" state="0" executeType="3" executeDbr="EXE:vercus.dbr" hotkey="C" appState="std"/>
+    <program name="Add Transactions" state="0" executeType="3" executeDbr="EXE:slsent.dbr" hotkey="A" appState="std"/>
+    <program name="Edit Transactions" state="0" executeType="3" executeDbr="EXE:slsentE.dbr" hotkey="B" appState="std"/>
+    <program name="Print Transaction Edit List" state="0" executeType="3" executeDbr="EXE:slsedt.dbr" hotkey="C" appState="std"/>
+    <program name="Print Deposit List Report" state="0" executeType="3" executeDbr="EXE:depslp.dbr" hotkey="D" appState="std"/>
+    <program name="Calculate Finance Charges" state="0" executeType="3" executeDbr="EXE:finchg.dbr" hotkey="A" appState="std"/>
+    <program name="Past Due Message Maintenance" state="0" executeType="3" executeDbr="EXE:duemnt.dbr" hotkey="D" appState="std"/>
+    <program name="Purge Open Item File" state="0" executeType="3" executeDbr="EXE:purgar.dbr" hotkey="E" appState="std"/>
+    <program name="Cycle File Maintenance" state="0" executeType="3" executeDbr="EXE:cycmnt.dbr" hotkey="F" appState="std"/>
+    <program name="Overdue Report" state="0" executeType="3" executeDbr="EXE:over45.dbr" hotkey="G" appState="std"/>
+    <program name="Prepare Statement File" state="0" executeType="3" executeDbr="EXE:stmfil.dbr" hotkey="I" appState="std"/>
+    <program name="Alphabetical Trial Balance" state="0" executeType="3" executeDbr="EXE:alpbal.dbr" hotkey="A" appState="std"/>
+    <program name="Numerical Trial Balance" state="0" executeType="3" executeDbr="EXE:artbal.dbr" hotkey="B" appState="std"/>
+    <program name="Alphabetical By Bill Cycle" state="0" executeType="3" executeDbr="EXE:albbal.dbr" hotkey="C" appState="std"/>
+    <program name="Align AR Statement Form" state="0" executeType="3" executeDbr="EXE:aligns.dbr" hotkey="A" appState="std"/>
+    <program name="Alphabetic By Bill Cycle" state="0" executeType="3" executeDbr="EXE:cycstm2.dbr" hotkey="B" appState="std"/>
+    <program name="Numeric Order" state="0" executeType="3" executeDbr="EXE:rtlstm2.dbr" hotkey="C" appState="std"/>
+    <program name="Enter Dunning Letters" state="0" executeType="3" executeDbr="EXE:dunmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Prepare Dunning Letter File" state="0" executeType="3" executeDbr="EXE:dunprp.dbr" hotkey="B" appState="std"/>
+    <program name="Print Dunning Letters" state="0" executeType="3" executeDbr="EXE:dunprt.dbr" hotkey="C" appState="std"/>
+    <program name="Alpha Customer List (Short Format)" state="0" executeType="3" executeDbr="EXE:cuslst.dbr" hotkey="A" appState="std"/>
+    <program name="AR-RX Interface Totals" state="0" executeType="3" executeDbr="EXE:rxtotl.dbr" hotkey="B" appState="std"/>
+    <program name="Monthly Sales/Credit Report" state="0" executeType="3" executeDbr="EXE:mnslrp.dbr" hotkey="C" appState="std"/>
+    <program name="Print Customer Rolodex Cards" state="0" executeType="3" executeDbr="EXE:roldex.dbr" hotkey="F" appState="std"/>
+    <program name="Patient Interface List" state="0" executeType="3" executeDbr="EXE:arpatlst.dbr" hotkey="H" appState="std"/>
+    <program name="Credit Balance Report" state="0" executeType="3" executeDbr="EXE:arrpt.dbr" hotkey="I" appState="std"/>
+    <program name="Over Credit Limit Report" state="0" executeType="3" executeDbr="EXE:crdlmrpt.dbr" hotkey="J" appState="std"/>
+    <program name="Missing Cycle List" state="0" executeType="3" executeDbr="EXE:misscyc.dbr" hotkey="K" appState="std"/>
+    <program name="Daily Charge Report" state="0" executeType="3" executeDbr="EXE:dlyrp1.dbr" hotkey="A" appState="std"/>
+    <program name="Daily Cash Receipts and Credits Report" state="0" executeType="3" executeDbr="EXE:dlyrp2.dbr" hotkey="B" appState="std"/>
+    <program name="Daily Cash Receipts Only" state="0" executeType="3" executeDbr="EXE:dlyrp3.dbr" hotkey="C" appState="std"/>
+    <program name="Manual Credits Only" state="0" executeType="3" executeDbr="EXE:dlyrp4.dbr" hotkey="D" appState="std"/>
+    <program name="Alpha Mailing Labels" state="0" executeType="3" executeDbr="EXE:alabel.dbr" hotkey="A" appState="std"/>
+    <program name="Selective Mailing Labels" state="0" executeType="3" executeDbr="EXE:mlabel.dbr" hotkey="B" appState="std"/>
+    <program name="Zip Code Mailing Labels" state="0" executeType="3" executeDbr="EXE:zlabel.dbr" hotkey="C" appState="std"/>
+    <program name="Reconciliation Entry (All Claims)" state="0" executeType="3" executeDbr="EXE:recon2_entry_all.dbr" hotkey="A" securityWindow="7" securityItem="9" appState="std"/>
+    <program name="Reconciliation Entry (Open Claims)" state="0" executeType="3" executeDbr="EXE:recon2_entry_open.dbr" hotkey="B" securityWindow="7" securityItem="9" appState="std"/>
+    <program name="Group Maintenance" state="0" executeType="3" executeDbr="EXE:recon_grpmnt.dbr" hotkey="E" appState="std"/>
+    <program name="Electronic Payment Update" state="0" executeType="3" executeDbr="EXE:rcnupd_2.dbr" hotkey="F" appState="std"/>
+    <program name="Electronic Payment Backout" state="0" executeType="3" executeDbr="EXE:rcnback_2.dbr" hotkey="G" appState="std"/>
+    <program name="ECS Payment Date Entry" state="0" executeType="3" executeDbr="EXE:rcupd_2e.dbr" validateMethod="ECSPayDateVal" hotkey="A" appState="std"/>
+    <program name="Auto Rebill" state="0" executeType="3" executeDbr="EXE:rcrbl_2.dbr" hotkey="C" appState="std"/>
+    <program name="Auto Write-off" state="0" executeType="3" executeDbr="EXE:rcupd_2w.dbr" hotkey="D" appState="std"/>
+    <program name="Reconciliation Purge" state="0" executeType="3" executeDbr="EXE:rcupd_2p.dbr" hotkey="E" appState="std"/>
+    <program name="NON-ECS Payment Date Entry" state="0" executeType="3" executeDbr="EXE:rcupd_2n.dbr" validateMethod="NonECSPayDateVal" hotkey="F" appState="std"/>
+    <program name="Enter Batch Exceptions" state="0" executeType="3" executeDbr="EXE:nhbexc_2.dbr" hotkey="A" appState="std"/>
+    <program name="Reconciliation Status Report" state="0" executeType="3" executeDbr="EXE:rcnstat_rpt2.dbr" hotkey="A" appState="std"/>
+    <program name="Reconciliation Aging Report" state="0" executeType="3" executeDbr="EXE:recage_2.dbr" hotkey="B" appState="std"/>
+    <program name="Reconciliation Posted Report" state="0" executeType="3" executeDbr="EXE:rcnpost_2.dbr" hotkey="C" appState="std"/>
+    <program name="Reconciliation Posted Report By Fill Date" state="0" executeType="3" executeDbr="EXE:rcn_rmbrpt_2.dbr" hotkey="D" appState="std"/>
+  </submenu>
+  <submenu name="Nursing Home System" state="0" executeType="1" executeMethod="NursingHomeSystemSub" validateMethod="nhomeVal" hotkey="H" appState="std">
+    <program name="Batch Labels" state="0" executeType="3" executeDbr="EXE:alpbat.dbr" hotkey="C" appState="std"/>
+    <program name="Nursing Home Billing &amp; Credits" state="0" executeType="3" executeDbr="EXE:nblmen.dbr" hotkey="E" appState="std"/>
+    <program name="Med Sheets" state="0" executeType="3" executeDbr="EXE:crtsht.dbr" hotkey="F" appState="std"/>
+    <program name="Bar Code Verification" state="0" executeType="3" executeDbr="EXE:upcval.dbr" hotkey="L" appState="std"/>
+    <program name="Home File Maintenance" state="0" executeType="3" executeDbr="EXE:hommnt_no_menu.dbr" hotkey="A" appState="std"/>
+    <program name="Home Drug File Maintenance" state="0" executeType="3" executeDbr="EXE:hdmmnu.dbr" hotkey="B" securityWindow="8" securityItem="4" appState="std"/>
+    <program name="Drug Category Maintenance" state="0" executeType="3" executeMethod="HomeDrugCatMaint" hotkey="C" securityWindow="8" securityItem="4" appState="std"/>
+    <program name="Treatment/Misc Order Maintenance" state="0" executeType="3" executeDbr="EXE:tctmnt.dbr" hotkey="D" appState="std"/>
+    <program name="Discharge Reason Maintenance" state="0" executeType="3" executeDbr="EXE:dischg_mnt.dbr" hotkey="E" appState="std"/>
+    <program name="PRI Maintenance" state="0" executeType="3" executeDbr="EXE:primnt.dbr" hotkey="F" appState="std"/>
+    <program name="Alternate Doctor Schedule" state="0" executeType="3" executeDbr="EXE:altdtr.dbr" hotkey="G" securityWindow="8" securityItem="4" appState="std"/>
+    <program name="Copy Functions" state="0" executeType="3" executeDbr="EXE:hmcopy.dbr" hotkey="I" appState="std"/>
+    <program name="Home/Third Party Message Maintenance" state="0" executeType="3" executeDbr="EXE:hmbmsg.dbr" hotkey="J" appState="std"/>
+    <program name="Change HOA on Prescriptions" state="0" executeType="3" executeDbr="EXE:hoa_change.dbr" hotkey="K" appState="std"/>
+    <program name="Patient Import" state="0" executeType="3" executeMethod="HomePatImportSub" hotkey="L" appState="std"/>
+    <program name="Change Physician for a Station" state="0" executeType="3" executeMethod="ChangeDocForStation" hotkey="A" appState="std"/>
+    <program name="Change Physician to Another" state="0" executeType="3" executeMethod="ChangeDocForAnother" hotkey="B" appState="std"/>
+    <program name="Print Packing List" state="0" executeType="3" executeDbr="EXE:alppkg.dbr" hotkey="A" appState="std"/>
+    <program name="Validate Packing List" state="0" executeType="3" executeDbr="EXE:pkgval.dbr" hotkey="B" appState="std"/>
+    <program name="Packing List Reports" state="0" executeType="3" executeDbr="EXE:pkgrpt.dbr" validateMethod="PackingListReportsVal" hotkey="C" appState="std"/>
+    <program name="Packing List Problem" state="0" executeType="3" executeDbr="EXE:plpupd.dbr" hotkey="D" appState="std"/>
+    <program name="Delivery Slips Update" state="0" executeType="3" executeDbr="EXE:dvrmnt.dbr" hotkey="E" appState="std"/>
+    <program name="Delivery Slips Print" state="0" executeType="3" executeDbr="EXE:dvrprt.dbr" hotkey="F" appState="std"/>
+    <program name="Nursing Home Register" state="0" executeType="3" executeDbr="EXE:alpnhr_no_menu.dbr" hotkey="A" appState="std"/>
+    <program name="Nursing Home Register By Station" state="0" executeType="3" executeDbr="EXE:hsr_alpnhr.dbr" hotkey="B" appState="std"/>
+    <program name="Create Full Pass" state="0" executeType="3" executeMethod="HomeQtyFullPass" hotkey="A" appState="std"/>
+    <program name="Create Quick Pass" state="0" executeType="3" executeMethod="HomeQtyQuickPass" hotkey="B" appState="std"/>
+    <program name="Enter Quantities" state="0" executeType="3" executeDbr="EXE:qtyent.dbr" hotkey="C" appState="std"/>
+    <program name="Quantity Entry Edit Listing" state="0" executeType="3" executeDbr="EXE:qtyedt.dbr" hotkey="D" appState="std"/>
+    <program name="Update Quantity Entry (Or Month End Totaling)" state="0" executeType="3" executeDbr="EXE:upqtys.dbr" hotkey="E" appState="std"/>
+    <program name="Cassette Exchange Labels" state="0" executeType="3" executeDbr="EXE:alpcas.dbr" hotkey="F" appState="std"/>
+    <program name="Bucket Processing" state="0" executeType="3" executeDbr="EXE:bktrpt.dbr" hotkey="G" appState="std"/>
+    <program name="Cassette Exchange Forecast" state="0" executeType="3" executeDbr="EXE:qtycas.dbr" hotkey="H" appState="std"/>
+    <program name="Qty Entry Labels" state="0" executeType="3" executeDbr="EXE:qlbat.dbr" hotkey="I" appState="std"/>
+    <program name="Print Rx With Inactive Drugs" state="0" executeType="3" executeDbr="EXE:inacrx.dbr" hotkey="J" appState="std"/>
+    <program name="NR Report" state="0" executeType="3" executeDbr="EXE:batnew.dbr" hotkey="K" appState="std"/>
+    <program name="Auto Create Cycle Fill" state="0" executeType="3" executeMethod="AutoCreateCycleFill" hotkey="A" appState="std"/>
+    <program name="Enter Batch Rx#-s-" state="0" executeType="3" executeDbr="EXE:batrx.dbr" hotkey="B" appState="std"/>
+    <program name="Cycle Fill Listing" state="0" executeType="3" executeDbr="EXE:batexc.dbr" hotkey="C" appState="std"/>
+    <program name="Enter Corrections To Current Cycle Fill" state="0" executeType="3" executeDbr="EXE:batedt.dbr" hotkey="D" appState="std"/>
+    <program name="Make New Rx-s-" state="0" executeType="3" executeDbr="EXE:upbat.dbr" hotkey="E" appState="std"/>
+    <program name="Cycle Fill Labels" state="0" executeType="3" executeDbr="EXE:blbat.dbr" hotkey="F" appState="std"/>
+    <program name="Clear Cycle Fill" state="0" executeType="3" executeMethod="ClearCycleFill" hotkey="G" appState="std"/>
+    <program name="Add Up Daily Quantities" state="0" executeType="3" executeDbr="EXE:totbat.dbr" hotkey="H" appState="std"/>
+    <program name="Cycle Fill Errors" state="0" executeType="3" executeDbr="EXE:batinq.dbr" hotkey="J" appState="std"/>
+    <program name="Cycle Fill Report" state="0" executeType="3" executeMethod="CycleFillReport" hotkey="A" appState="std"/>
+    <program name="Blister Card Forecast" state="0" executeType="3" executeMethod="BlisterCardForecast" hotkey="B" appState="std"/>
+    <program name="NR Report" state="0" executeType="3" executeMethod="nrreport" hotkey="C" appState="std"/>
+    <program name="Auto Create Report" state="0" executeType="3" executeDbr="EXE:bataut.dbr" hotkey="D" appState="std"/>
+    <program name="Auto Create Error Report" state="0" executeType="3" executeDbr="EXE:baterr.dbr" hotkey="E" appState="std"/>
+    <program name="DocuDose" state="0" executeType="3" executeMethod="NursingHomeIFDocuDose" hotkey="C" appState="std"/>
+    <program name="KVM - Envoy" state="0" executeType="3" executeDbr="EXE:envoy_menu.dbr" hotkey="D" appState="std"/>
+    <program name="Medicine On Time" state="0" executeType="3" executeMethod="NursingHomeIFMedicineOnTimeSub" hotkey="E" appState="std"/>
+    <program name="Omnicell" state="0" executeType="3" executeMethod="NursingHomeIFOmnicell" hotkey="F" appState="std"/>
+    <program name="Pathlinks" state="0" executeType="3" executeDbr="EXE:pathlinks_export.dbr" hotkey="H" appState="std"/>
+    <program name="Pyxis Drug Export" state="0" executeType="3" executeDbr="EXE:pyxdrgexp.dbr" hotkey="I" appState="std"/>
+    <program name="Create AutoMed File" state="0" executeType="3" executeDbr="EXE:automed.dbr" hotkey="A" appState="std"/>
+    <program name="Create AutoMed Drug File" state="0" executeType="3" executeDbr="EXE:autodrg.dbr" hotkey="B" appState="std"/>
+    <program name="Create Baxter File" state="0" executeType="3" executeDbr="EXE:mpsmnu.dbr" hotkey="A" appState="std"/>
+    <program name="Copy Baxter File To Floppy" state="0" executeType="3" executeMethod="CopyBaxterFileToFloppy" hotkey="B" appState="std"/>
+    <program name="Print Baxter Label" state="0" executeType="3" executeMethod="PrintBaxterLabel" hotkey="C" appState="std"/>
+    <program name="Create PACMED File" state="0" executeType="3" executeMethod="CreatePacmedFile" hotkey="A" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="B" appState="std"/>
+    <program name="Create PACMED Drug File" state="0" executeType="3" executeDbr="EXE:pacdrg.dbr" hotkey="C" appState="std"/>
+    <program name="Admissions Report" state="0" executeType="3" executeDbr="EXE:nhadm.dbr" hotkey="A" appState="std"/>
+    <program name="Birthday Report" state="0" executeType="3" executeDbr="EXE:nhbir.dbr" hotkey="C" appState="std"/>
+    <program name="Discharge Report" state="0" executeType="3" executeDbr="EXE:nhdsc.dbr" hotkey="D" appState="std"/>
+    <program name="Discontinue Report" state="0" executeType="3" executeDbr="EXE:alpdis.dbr" hotkey="E" appState="std"/>
+    <program name="Guarantor Report" state="0" executeType="3" executeDbr="EXE:nhgnt.dbr" hotkey="F" appState="std"/>
+    <program name="Room Census Report" state="0" executeType="3" executeDbr="EXE:nhcen.dbr" hotkey="G" appState="std"/>
+    <program name="Allergy Report" state="0" executeType="3" executeDbr="EXE:alpalg.dbr" hotkey="H" appState="std"/>
+    <program name="Doctor Report Menu" state="0" executeType="3" executeDbr="EXE:alpdac.dbr" hotkey="I" appState="std"/>
+    <program name="Side Effects Report" state="0" executeType="3" executeDbr="EXE:alpsef.dbr" hotkey="L" appState="std"/>
+    <program name="Drug Interation Report" state="0" executeType="3" executeDbr="EXE:alpdi.dbr" hotkey="M" appState="std"/>
+    <program name="Drug Recall Report" state="0" executeType="3" executeDbr="EXE:alprcl.dbr" hotkey="N" appState="std"/>
+    <program name="Doctor Labels" state="0" executeType="3" executeDbr="EXE:alpdcl.dbr" hotkey="O" appState="std"/>
+    <program name="Dx Reports" state="0" executeType="3" executeDbr="EXE:missdx.dbr" hotkey="P" appState="std"/>
+    <program name="Pending Report" state="0" executeType="3" executeDbr="EXE:pndrpt.dbr" hotkey="Q" appState="std"/>
+    <program name="Cost Reports" state="0" executeType="3" executeDbr="EXE:cstrpt.dbr" hotkey="R" appState="std"/>
+    <program name="Misc Order Templaste Printout" state="0" executeType="3" executeDbr="EXE:prtmo.dbr" hotkey="S" appState="std"/>
+    <program name="MDS Report" state="0" executeType="3" executeDbr="EXE:alpndc.dbr" hotkey="T" appState="std"/>
+    <program name="Drug Usage Report" state="0" executeType="3" executeDbr="EXE:drgusg.dbr" hotkey="U" appState="std"/>
+    <program name="Doctor Usage Report" state="0" executeType="3" executeDbr="EXE:dtusg.dbr" hotkey="V" appState="std"/>
+    <program name="Drug Not On Formulary Report" state="0" executeType="3" executeDbr="EXE:alpnof.dbr" hotkey="W" appState="std"/>
+    <program name="Update Monthly PRI&apos;s" state="0" executeType="3" executeDbr="EXE:uppri.dbr" hotkey="X" appState="std"/>
+    <program name="PRI Report" state="0" executeType="3" executeDbr="EXE:priphy.dbr" hotkey="Y" appState="std"/>
+    <program name="Schedule II Doctor Letters" state="0" executeType="3" executeDbr="EXE:alpltr.dbr" hotkey="Z" appState="std"/>
+    <program name="RX Doctor Letters" state="0" executeType="3" executeDbr="EXE:alprxl.dbr" validateMethod="RXDoctorLettersVal" hotkey="J" appState="std"/>
+    <program name="Drug Category Reports" state="0" executeType="3" executeDbr="EXE:alpdct.dbr" hotkey="K" appState="std"/>
+    <program name="Treatment/MO Category Reports" state="0" executeType="3" executeDbr="EXE:alptct.dbr" hotkey="L" appState="std"/>
+    <program name="Stock/Formulary/Treatment/MS List" state="0" executeType="3" executeDbr="EXE:alphs.dbr" hotkey="M" appState="std"/>
+    <program name="Patient Profile" state="0" executeType="3" executeDbr="EXE:nppro.dbr" hotkey="N" appState="std"/>
+    <program name="Quarterly Pharmacy Report" state="0" executeType="3" executeDbr="EXE:qtrrpt.dbr" hotkey="O" appState="std"/>
+    <program name="Top Selling Drug Report" state="0" executeType="3" executeDbr="EXE:nhtopd.dbr" hotkey="P" appState="std"/>
+    <program name="Attending Physician Report" state="0" executeType="3" executeDbr="EXE:dtrrpt.dbr" hotkey="Q" appState="std"/>
+    <program name="Pharmacy RX Statistics" state="0" executeType="3" executeDbr="EXE:alpstat.dbr" hotkey="R" appState="std"/>
+    <program name="Patient Roster" state="0" executeType="3" executeDbr="EXE:nhros.dbr" hotkey="A" appState="std"/>
+    <program name="Patient Activity" state="0" executeType="3" executeDbr="EXE:actrpt.dbr" hotkey="B" appState="std"/>
+    <program name="Patient Labels" state="0" executeType="3" executeDbr="EXE:nhlabl.dbr" hotkey="C" appState="std"/>
+    <program name="Visit Report" state="0" executeType="3" executeDbr="EXE:nhvst.dbr" hotkey="A" appState="std"/>
+    <program name="Auto Calendar" state="0" executeType="3" executeDbr="EXE:autcal.dbr" hotkey="B" appState="std"/>
+    <program name="Patient Cycle Report" state="0" executeType="3" executeDbr="EXE:patcycle.dbr" hotkey="C" appState="std"/>
+    <program name="Extended Cycle Report" state="0" executeType="3" executeDbr="EXE:extcycle.dbr" hotkey="D" appState="std"/>
+    <program name="Doctor Visit Update" state="0" executeType="3" executeDbr="EXE:vstupd.dbr" hotkey="E" appState="std"/>
+    <program name="Patient Category Report" state="0" executeType="3" executeDbr="EXE:catrpt.dbr" hotkey="A" appState="std"/>
+    <program name="Patient Surgical Report" state="0" executeType="3" executeDbr="EXE:ivrpt.dbr" hotkey="B" appState="std"/>
+    <program name="Summary Category Report" state="0" executeType="3" executeDbr="EXE:smdrpt.dbr" hotkey="A" appState="std"/>
+    <program name="Duplicate Medication Report" state="0" executeType="3" executeDbr="EXE:dupdrg.dbr" hotkey="B" appState="std"/>
+    <program name="Physician&apos;s Telephone Orders" state="0" executeType="3" executeDbr="EXE:docord.dbr" hotkey="C" appState="std"/>
+    <program name="Year To Date Patient Report" state="0" executeType="3" executeDbr="EXE:patytd.dbr" hotkey="D" appState="std"/>
+    <program name="Patient Education Report" state="0" executeType="3" executeDbr="EXE:patedu.dbr" hotkey="E" appState="std"/>
+    <program name="Cumulative Refill Due Report" state="0" executeType="3" executeDbr="EXE:rflduecum.dbr" hotkey="G" appState="std"/>
+    <program name="Equivalent Drug Report" state="0" executeType="3" executeDbr="EXE:eqvrptlgb.dbr" hotkey="H" appState="std"/>
+    <program name="House Stock Drug/Patient Report" state="0" executeType="3" executeDbr="EXE:hstck.dbr" hotkey="I" appState="std"/>
+    <program name="RX By Month Report" state="0" executeType="3" executeDbr="EXE:rxbymth.dbr" hotkey="J" appState="std"/>
+    <program name="Active Patient&apos;s Total Report" state="0" executeType="3" executeDbr="EXE:custstha.dbr" hotkey="K" appState="std"/>
+    <program name="Patient&apos;s Mailing Labels" state="0" executeType="3" executeDbr="EXE:nhpatlb.dbr" hotkey="L" appState="std"/>
+    <program name="Refill Order Report" state="0" executeType="3" executeDbr="EXE:nhentrpt.dbr" hotkey="M" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="N" appState="std"/>
+    <program name="Missing HOA Frequency Reports" state="0" executeType="3" executeDbr="EXE:hoarpt.dbr" hotkey="O" appState="std"/>
+    <program name="Drug Category Recap Report" state="0" executeType="3" executeDbr="EXE:ccrcatrpt.dbr" hotkey="P" appState="std"/>
+    <program name="P R N  Report" state="0" executeType="3" executeDbr="EXE:alpprn.dbr" hotkey="Q" appState="std"/>
+    <program name="Non Formulary Rx Report" state="0" executeType="3" executeDbr="EXE:nfrmrx.dbr" hotkey="R" appState="std"/>
+    <program name="HOA Reports" state="0" executeType="3" executeDbr="EXE:fc_hoarpt.dbr" hotkey="S" appState="std"/>
+    <program name="Drug Usage Report By Category" state="0" executeType="3" executeDbr="EXE:ccr_usgexp.dbr" hotkey="T" appState="std"/>
+    <program name="Medicare Statistics Report" state="0" executeType="3" executeDbr="EXE:medstat.dbr" hotkey="U" appState="std"/>
+    <program name="Missing Part D Plans" state="0" executeType="3" executeDbr="EXE:partdrpt.dbr" hotkey="V" appState="std"/>
+    <program name="Resident Controlled Substance Report" state="0" executeType="3" executeDbr="EXE:nhnarc3.dbr" hotkey="A" appState="std"/>
+    <program name="Controlled Substance Report" state="0" executeType="3" executeDbr="EXE:nhnarc.dbr" hotkey="B" appState="std"/>
+    <program name="KONSULT Interface" state="0" executeType="3" executeDbr="EXE:konsult.dbr" hotkey="A" appState="std"/>
+    <program name="DAGAR Interface" state="0" executeType="3" executeDbr="EXE:dagar.dbr" hotkey="B" appState="std"/>
+    <program name="Comprehensive Consultiant" state="0" executeType="3" executeDbr="EXE:spectrum.dbr" hotkey="C" appState="std"/>
+    <program name="Apothecare Interface" state="0" executeType="3" executeDbr="EXE:apotha.dbr" hotkey="D" appState="std"/>
+    <program name="Gerimed Interface" state="0" executeType="3" executeDbr="EXE:gerimed.dbr" hotkey="E" appState="std"/>
+    <program name="Send  Eligibility Request" state="0" executeType="3" executeDbr="EXE:make_eev.dbr" hotkey="A" appState="std"/>
+    <program name="Print Eligibility Rejects" state="0" executeType="3" executeDbr="EXE:patmpdrpt.dbr" hotkey="B" appState="std"/>
+  </submenu>
+  <submenu name="Inventory System" state="0" executeType="1" executeMethod="InventorySelectSub" validateMethod="InventorySystemVal" hotkey="I" securityWindow="9" securityItem="1" appState="std">
+    <program name="Order Generation" state="0" executeType="3" executeDbr="EXE:inv_pgen.dbr" hotkey="A" securityWindow="9" securityItem="6" appState="std"/>
+    <program name="Order Receiving" state="0" executeType="3" executeDbr="EXE:inv_prcv.dbr" hotkey="D" appState="std"/>
+    <program name="Inventory Import" state="0" executeType="3" executeDbr="EXE:inv_prmoh.dbr" hotkey="I" appState="std"/>
+    <program name="Inventory Export" state="0" executeType="3" executeDbr="EXE:hi_drgexp.dbr" hotkey="J" appState="std"/>
+    <program name="Create Purchase Order" state="0" executeType="3" executeDbr="EXE:INV_Create.dbr" hotkey="A" appState="std"/>
+    <program name="Edit Purchase Order" state="0" executeType="3" executeDbr="EXE:INV_Edtprch.dbr" hotkey="B" appState="std"/>
+    <program name="Print Purchase Order" state="0" executeType="3" executeDbr="EXE:INV_prtpo.dbr" hotkey="C" appState="std"/>
+    <program name="Release Purchase Order" state="0" executeType="3" executeDbr="EXE:INV_releaseprch.dbr" hotkey="D" appState="std"/>
+    <program name="Delete Purchase Order" state="0" executeType="3" executeDbr="EXE:INV_delprch.dbr" hotkey="E" appState="std"/>
+    <program name="Export PO System" state="0" executeType="3" executeDbr="EXE:INV_FLOP.dbr" hotkey="F" appState="std"/>
+    <program name="Send Order    (850)" state="0" executeType="3" executeDbr="EXE:inv_x12.dbr" hotkey="A" appState="std"/>
+    <program name="Receive X12 File(s)" state="0" executeType="3" executeDbr="EXE:x12comm.dbr" hotkey="B" appState="std"/>
+    <program name="Apply X12 File(s)" state="0" executeType="3" executeDbr="EXE:x12dir.dbr" hotkey="C" appState="std"/>
+    <program name="Inventory Listing" state="0" executeType="3" executeDbr="EXE:inv_lst.dbr" hotkey="A" appState="std"/>
+    <program name="Purchase Order Summary" state="0" executeType="3" executeDbr="EXE:inv_prtpo.dbr" hotkey="B" appState="std"/>
+    <program name="Receiving Summary" state="0" executeType="3" executeDbr="EXE:inv_prtrcv.dbr" hotkey="C" appState="std"/>
+    <program name="Inventory Write-Up Report" state="0" executeType="3" executeDbr="EXE:inv_wrpt.dbr" hotkey="D" appState="std"/>
+    <program name="Inventory Sales Report" state="0" executeType="3" executeDbr="EXE:inv_srpt.dbr" hotkey="E" appState="std"/>
+    <program name="Inventory Valuation Report" state="0" executeType="3" executeDbr="EXE:inv_val.dbr" hotkey="F" appState="std"/>
+    <program name="Physical Inventory Report" state="0" executeType="3" executeDbr="EXE:inv_phy.dbr" hotkey="G" appState="std"/>
+    <program name="Single Drug Activity Report" state="0" executeType="3" executeDbr="EXE:inv_drpt.dbr" hotkey="H" appState="std"/>
+    <program name="Purchase Order Purge Report" state="0" executeType="3" executeDbr="EXE:inv_purg.dbr" hotkey="I" securityWindow="9" securityItem="7" appState="std"/>
+    <program name="SKU Drug Listing" state="0" executeType="3" executeDbr="EXE:inv_sku.dbr" hotkey="J" appState="std"/>
+    <program name="Purchase Orders By Vendor" state="0" executeType="3" executeDbr="EXE:inv_vprt.dbr" hotkey="K" appState="std"/>
+    <program name="Inventory Log Report" state="0" executeType="3" executeDbr="EXE:inv_logrpt.dbr" hotkey="L" appState="std"/>
+    <program name="Vendor File Maintenance" state="0" executeType="3" executeDbr="EXE:venmaint.dbr" hotkey="A" appState="std"/>
+    <program name="Vendor File Listing (Alphabetically)" state="0" executeType="3" executeDbr="EXE:vendorlist_a.dbr" hotkey="B" appState="std"/>
+    <program name="Vendor File Listing (Numerically)" state="0" executeType="3" executeDbr="EXE:vendorlist_n.dbr" hotkey="C" appState="std"/>
+    <program name="Vendor X12 Listing (Alphabetically)" state="0" executeType="3" executeDbr="EXE:vendorx12list_a.dbr" hotkey="D" appState="std"/>
+    <program name="Vendor X12 Listing (Numerically)" state="0" executeType="3" executeDbr="EXE:vendorx12list_n.dbr" hotkey="E" appState="std"/>
+    <program name="Enter Physical Inventory From Report" state="0" executeType="3" executeDbr="EXE:inv_phye.dbr" hotkey="B" appState="std"/>
+    <program name="By Manufacturer #" state="0" executeType="3" executeDbr="EXE:inv_veneM.dbr" hotkey="A" appState="std"/>
+    <program name="By Drug Name" state="0" executeType="3" executeDbr="EXE:inv_veneD.dbr" hotkey="B" appState="std"/>
+    <program name="Drug Utilization Update" state="0" executeType="3" executeDbr="EXE:utlupd.dbr" info="Update_MenuSwVal" hotkey="A" appState="std"/>
+    <program name="YTD Utilization" state="0" executeType="3" executeDbr="EXE:utlytd.dbr" info="Update_MenuSwVal" hotkey="B" appState="std"/>
+    <program name="Recalculate Reorder Levels" state="0" executeType="3" executeDbr="EXE:calcord.dbr" hotkey="C" appState="std"/>
+    <program name="Copy Recalculation Parameters" state="0" executeType="3" executeDbr="EXE:updloc.dbr" hotkey="D" appState="std"/>
+    <program name="Print Inventory Report" state="0" executeType="3" executeDbr="EXE:invpr.dbr" hotkey="A" appState="std"/>
+    <program name="Password Maintenance" state="0" executeType="3" executeDbr="EXE:pasmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Password Activity Report" state="0" executeType="3" executeDbr="EXE:actpr.dbr" hotkey="B" appState="std"/>
+  </submenu>
+  <submenu name="Price Updates/Invalid NDC&apos;s" state="0" executeType="1" executeMethod="PriceUpdatesSub" validateMethod="PriceUpdatesVal" hotkey="J" securityWindow="15" securityItem="2" appState="std">
+    <program name="Apply Price Updates" state="0" executeType="2" executeMethod="ApplyPriceUpdatesSub" validateMethod="ApplyPriceUpdatesVal" hotkey="A" appState="std"/>
+    <program name="Print Price Updates" state="0" executeType="3" executeDbr="EXE:ndclst.dbr" validateMethod="PrintPriceUpdatesVal" hotkey="B" appState="std"/>
+    <program name="Print Invalid NDC&apos;s" state="0" executeType="3" executeDbr="EXE:prt_drgndc.dbr" validateMethod="PrintInvalidNDCVal" hotkey="C" appState="std"/>
+  </submenu>
+  <submenu name="System Interfaces" state="0" executeType="1" executeMethod="SystemInterfacesSub" hotkey="K" securityWindow="15" securityItem="10" appState="std">
+    <program name="Medicine On Time" state="0" executeType="3" executeDbr="EXE:mot.dbr" hotkey="A" appState="std"/>
+    <program name="DocuDose" state="0" executeType="3" executeDbr="EXE:docudose.dbr" hotkey="B" appState="std"/>
+    <program name="Mediset" state="1" executeType="3" executeDbr="EXE:mediset.dbr" validateMethod="MedisetVal" hotkey="C" appState="std"/>
+    <program name="Omnicell" state="0" executeType="3" executeDbr="EXE:omnicell.dbr" hotkey="D" appState="std"/>
+    <program name="Pyxis" state="0" executeType="3" executeDbr="EXE:pyxcrt.dbr" hotkey="E" appState="std"/>
+    <program name="Pyxis HL7" state="1" executeType="3" executeDbr="EXE:pyxhl7crt.dbr" validateMethod="PyxisHL7Val" hotkey="F" appState="std"/>
+    <program name="File Export/File Import Menu" state="0" executeType="3" executeDbr="EXE:filexp.dbr" hotkey="G" appState="std"/>
+    <program name="US Bioservices Export" state="0" executeType="3" executeDbr="EXE:aps_export.dbr" hotkey="H" appState="std"/>
+    <program name="PSP Import" state="0" executeType="3" executeDbr="EXE:psp.dbr" hotkey="I" appState="std"/>
+  </submenu>
+  <submenu name="System Maintenance" state="0" executeType="1" executeMethod="SystemMaintenanceSub" hotkey="M" securityWindow="15" securityItem="6" appState="std">
+    <program name="Master File Maintenance" state="0" executeType="3" executeDbr="EXE:masmnt.dbr" hotkey="B" appState="std"/>
+    <program name="FAX Settings" state="0" executeType="3" executeDbr="EXE:faxmnt.dbr" hotkey="C" appState="std"/>
+    <program name="Remote N/H Reports" state="0" executeType="3" executeDbr="EXE:homenu.dbr" hotkey="D" appState="std"/>
+    <program name="Remote N/H Login" state="0" executeType="3" executeDbr="EXE:hmomen.dbr" hotkey="E" appState="std"/>
+    <program name="System File Maintenance" state="0" executeType="3" executeDbr="EXE:sysmnt.dbr" hotkey="G" appState="std"/>
+    <program name="ECS Switching" state="0" executeType="3" executeDbr="EXE:setenvoy.dbr" hotkey="H" appState="std"/>
+    <program name="Run A Program" state="0" executeType="2" executeMethod="RunProgVal" hotkey="I" appState="std"/>
+    <program name="Store Information" state="0" executeType="3" executeDbr="EXE:stinf.dbr" hotkey="A" securityWindow="12" securityItem="2" appState="std"/>
+    <program name="Set Price Update Parameters" state="0" executeType="3" executeDbr="EXE:prcpar.dbr" hotkey="G" appState="std"/>
+    <program name="Third Party Information" state="0" executeType="3" executeDbr="EXE:tpmnt.dbr" hotkey="A" securityWindow="6" securityItem="2" appState="std"/>
+    <program name="ECS Plan File Maintenance" state="0" executeType="3" executeDbr="EXE:plnmnt.dbr" hotkey="C" securityWindow="6" securityItem="5" appState="std"/>
+    <program name="Other Payer ID Maintenance" state="0" executeType="3" executeDbr="EXE:opimnt.dbr" hotkey="D" appState="std"/>
+    <program name="MAC List Maintenance" state="0" executeType="3" executeDbr="EXE:mmacmnt.dbr" hotkey="E" appState="std"/>
+    <program name="Third Party File Maintenance" state="0" executeType="3" executeDbr="EXE:mcanmnt.dbr" hotkey="A" appState="std"/>
+    <program name="User Defined Compensibility Code Maintenance" state="0" executeType="3" executeDbr="EXE:usrdef_comp.dbr" hotkey="B" appState="std"/>
+    <program name="Pricing Tables" state="0" executeType="3" executeDbr="EXE:caprc.dbr" hotkey="A" securityWindow="5" securityItem="3" appState="std"/>
+    <program name="Rounding Tables" state="0" executeType="3" executeDbr="EXE:caprd.dbr" hotkey="B" appState="std"/>
+    <program name="Premium Tables" state="0" executeType="3" executeDbr="EXE:caprm.dbr" hotkey="C" appState="std"/>
+    <program name="Copay Tables" state="0" executeType="3" executeDbr="EXE:coprc.dbr" hotkey="D" appState="std"/>
+    <program name="Discount Pricing Tables" state="0" executeType="3" executeDbr="EXE:cdprc.dbr" hotkey="E" appState="std"/>
+    <program name="Birth Control Pill Pricing" state="0" executeType="3" executeDbr="EXE:bcpillpr.dbr" hotkey="F" appState="std"/>
+    <program name="Sales Tax Parameters" state="0" executeType="3" executeDbr="EXE:salestaxparm.dbr" hotkey="H" appState="std"/>
+    <program name="Print Pricing Tables" state="0" executeType="3" executeDbr="EXE:caprt.dbr" hotkey="I" appState="std"/>
+    <program name="Special Price Printout" state="0" executeType="3" executeDbr="EXE:prlist.dbr" hotkey="J" appState="std"/>
+    <program name="Pat Type Price Table Maintenance" state="0" executeType="3" executeDbr="EXE:patprcmnt.dbr" hotkey="K" appState="std"/>
+    <program name="Pricing Tables Global Maintenance" state="0" executeType="3" executeDbr="EXE:mnt_prctbl.dbr" hotkey="L" appState="std"/>
+    <program name="Special Pricing Parameters" state="0" executeType="3" executeDbr="EXE:spprparm.dbr" hotkey="A" appState="std"/>
+    <program name="OTC Pricing Fee/Percentage" state="0" executeType="3" executeDbr="EXE:otcprfee.dbr" hotkey="B" appState="std"/>
+    <program name="Age Discounts Maintenance" state="0" executeType="3" executeDbr="EXE:agediscmnt.dbr" hotkey="C" appState="std"/>
+    <program name="Other Pricing Parameters" state="0" executeType="3" executeDbr="EXE:oprparm.dbr" hotkey="D" appState="std"/>
+    <program name="Patient Parameters" state="0" executeType="3" executeDbr="EXE:patpar.dbr" hotkey="A" appState="std"/>
+    <program name="Prescription Parameters" state="0" executeType="3" executeDbr="EXE:prepar.dbr" hotkey="B" appState="std"/>
+    <program name="ECS Parameters" state="0" executeType="3" executeDbr="EXE:ecspar.dbr" hotkey="C" appState="std"/>
+    <program name="Conversion Parameters" state="0" executeType="3" executeDbr="EXE:cnvpar.dbr" hotkey="D" appState="std"/>
+    <program name="Standard Label Parameters" state="0" executeType="3" executeDbr="EXE:stlblpar.dbr" hotkey="E" appState="std"/>
+    <program name="Laser Label Parameters" state="0" executeType="3" executeDbr="EXE:llpfldpar.dbr" hotkey="F" appState="std"/>
+    <program name="Documentation Parameters" state="0" executeType="3" executeDbr="EXE:documnt_parm.dbr" validateMethod="DOCPARMVAL" hotkey="G" appState="std"/>
+    <program name="Problem Queue Parameters" state="0" executeType="3" executeDbr="EXE:pbqparm.dbr" validateMethod="PQPARMVAL" hotkey="H" appState="std"/>
+    <program name="Bin Management Parameters" state="0" executeType="3" executeDbr="EXE:binmgt.dbr" validateMethod="BINPARMVAL" hotkey="J" appState="std"/>
+    <program name="Signature Capture Parameters" state="0" executeType="3" executeDbr="EXE:sigcap_parm.dbr" validateMethod="SIGPARMVAL" hotkey="K" appState="std"/>
+    <program name="Medi-Span Parameters" state="0" executeType="3" executeDbr="EXE:medispan.dbr" hotkey="L" appState="std"/>
+    <program name="Report Parameters" state="0" executeType="3" executeDbr="EXE:rptfldpar.dbr" hotkey="M" appState="std"/>
+    <program name="Delivery Parameters" state="0" executeType="3" executeDbr="EXE:dlvparm.dbr" validateMethod="DLVPARMVAL" hotkey="N" appState="std"/>
+    <program name="Accounts Receivable Parameters" state="0" executeType="3" executeDbr="EXE:arfldpar.dbr" validateMethod="ARPARMVAL" hotkey="O" appState="std"/>
+    <program name="Nursing Home Parameters" state="0" executeType="3" executeDbr="EXE:nhpar.dbr" validateMethod="NHPARMVAL" hotkey="P" appState="std"/>
+    <program name="Inventory Parameters" state="0" executeType="3" executeDbr="EXE:invparm.dbr" validateMethod="INVPARMVAL" hotkey="Q" appState="std"/>
+    <program name="APA Program Parameters" state="0" executeType="3" executeDbr="EXE:apapar.dbr" hotkey="R" appState="std"/>
+    <program name="IVR Parameters" state="0" executeType="3" executeDbr="EXE:ivrparm.dbr" validateMethod="IVRPARMVAL" hotkey="S" appState="std"/>
+    <program name="3rd Party Reconciliation Parameters" state="0" executeType="3" executeDbr="EXE:recon_parm.dbr" hotkey="T" appState="std"/>
+    <program name="Workers Comp Parameters" state="0" executeType="3" executeDbr="EXE:wrkcomp_parm.dbr" hotkey="U" appState="std"/>
+    <program name="General Parameters" state="0" executeType="3" executeDbr="EXE:wfgenprm.dbr" hotkey="A" appState="std"/>
+    <program name="N/H General Parameters" state="0" executeType="3" executeDbr="EXE:wfnhprm.dbr" hotkey="B" appState="std"/>
+    <program name="Verification Station" state="0" executeType="3" executeDbr="EXE:wfverprm.dbr" hotkey="C" appState="std"/>
+    <program name="Quality Assurance Station" state="0" executeType="3" executeDbr="EXE:wfqaprm.dbr" hotkey="D" appState="std"/>
+    <program name="RPh Checking Station" state="0" executeType="3" executeDbr="EXE:wfrphprm.dbr" hotkey="E" appState="std"/>
+    <program name="Look and Feel Maintenance" state="0" executeType="3" executeDbr="EXE:lafmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Keyboard Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:devmntk.dbr" hotkey="B" appState="std"/>
+    <program name="Printer Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:devmntp.dbr" hotkey="C" appState="std"/>
+    <program name="Modem Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:devmntm.dbr" hotkey="D" appState="std"/>
+    <program name="Network Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:netcf.dbr" hotkey="E" appState="std"/>
+    <program name="Drive Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:devmntd.dbr" hotkey="F" appState="std"/>
+    <program name="Baker Cell Set-Up/Maintenance" state="0" executeType="3" executeDbr="EXE:devmntb.dbr" hotkey="G" appState="std"/>
+    <program name="Printer Capability Maintenance" state="0" executeType="3" executeDbr="EXE:devcapp.dbr" hotkey="H" appState="std"/>
+    <program name="Network Tuning Parameter Maintenance" state="0" executeType="3" executeDbr="EXE:tune.dbr" hotkey="I" appState="std"/>
+    <program name="Communication Scope Manager" state="0" executeType="3" executeDbr="EXE:scope.dbr" hotkey="J" appState="std"/>
+    <program name="City State Parameters" state="0" executeType="3" executeDbr="EXE:shctcd.dbr" hotkey="A" appState="std"/>
+    <program name="City State Maintenance" state="0" executeType="3" executeDbr="EXE:mctymn.dbr" hotkey="B" appState="std"/>
+    <program name="HIPAA Policy Maintenance" state="0" executeType="3" executeDbr="EXE:hipmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Acknowledgement Text(English)" state="0" executeType="3" executeDbr="EXE:hipackmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Acknowledgement Text(Alternate Language)" state="0" executeType="3" executeDbr="EXE:hipackaltmnt.dbr" hotkey="B" appState="std"/>
+    <program name="Signature Log Text(English)" state="0" executeType="3" executeDbr="EXE:thrdpackmnt.dbr" hotkey="A" appState="std"/>
+    <program name="Signature Log Text(Alternate Language)" state="0" executeType="3" executeDbr="EXE:thrdpackaltmnt.dbr" hotkey="B" appState="std"/>
+    <program name="Print Manager Barcodes" state="0" executeType="3" executeDbr="EXE:prtmgrbar.dbr" hotkey="A" appState="std"/>
+    <program name="Pharmacy Password Maintenance" state="0" executeType="3" executeDbr="EXE:secmnt.dbr" hotkey="A" appState="std"/>
+    <program name="N/H Web Server Password Maintenance" state="0" executeType="3" executeDbr="EXE:secnhmnt.dbr" hotkey="B" securityWindow="15" securityItem="15" appState="std"/>
+    <program name="Security Parameters" state="0" executeType="3" executeDbr="EXE:parmnt.dbr" hotkey="C" appState="std"/>
+  </submenu>
+  <submenu name="Misc Menu" state="0" executeType="1" appState="std" menu_title="MASTER MENU" init_subroutine="MasterMenuInit">
+    <program name="File Status" state="0" executeType="3" executeDbr="EXE:mfilst.dbr" hotkey="L" appState="std"/>
+    <program name="Change Store" state="1" executeType="2" executeMethod="ChangeStoreSub" validateMethod="ChangeStoreVal" hotkey="N" securityWindow="15" securityItem="1" appState="std"/>
+    <program name="HBS Web Server" state="0" executeType="3" executeDbr="EXE:hbsweb.dbr" hotkey="O" appState="std"/>
+    <program name="Pharmacy Mail" state="0" executeType="3" executeDbr="EXE:sysmsg.dbr" hotkey="P" helpId="15" securityWindow="7" securityItem="0" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="InternetBatchesVal" hotkey="Q" appState="std"/>
+    <program name="Exit Pharmacy System" state="0" executeType="2" executeMethod="EndProgramValidStop" hotkey="X" appState="std"/>
+  </submenu>
+  <submenu name="Single Job Menu" state="0" executeType="1" securityWindow="13" securityItem="1" appState="std" menu_title="SINGLE JOB MENU">
+    <program name="Run End of Day" state="0" executeType="3" executeDbr="EXE:eodque.dbr" hotkey="B" securityWindow="13" securityItem="2" appState="std"/>
+    <program name="End of Day Maintenance" state="0" executeType="3" executeDbr="EXE:eodmnt.dbr" hotkey="C" securityWindow="13" securityItem="2" appState="std"/>
+    <program name="Transaction Maintenance" state="0" executeType="3" executeDbr="EXE:trnmnt.dbr" hotkey="D" securityWindow="13" securityItem="3" appState="std"/>
+    <program name="Spool Maintenance" state="0" executeType="2" executeMethod="SpoolMaintenanceSub" hotkey="E" securityWindow="13" securityItem="8" appState="std"/>
+    <program name="Spool Print" state="0" executeType="3" executeDbr="EXE:splprt.dbr" hotkey="F" securityWindow="13" securityItem="9" appState="std"/>
+    <program name="Clear ECS Register File" state="0" executeType="3" executeDbr="EXE:clrecs.dbr" hotkey="G" securityWindow="13" securityItem="11" appState="std"/>
+    <submenu name="File Create Menu" state="0" executeType="1" executeMethod="FileCreateMenuSub" hotkey="H" securityWindow="13" securityItem="4" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="I" appState="std"/>
+    <submenu name="Drug - Doctor Merge &amp; Purge" state="0" executeType="1" executeMethod="DrugDoctorMergePurgeSub" hotkey="J" securityWindow="13" securityItem="5" appState="std"/>
+    <submenu name="Rx Purge Options" state="0" executeType="1" executeMethod="RxPurgeOptionsSub" hotkey="K" securityWindow="13" securityItem="6" appState="std"/>
+    <program name="Install Software" state="0" executeType="3" executeMethod="InstallSoftwareSub" hotkey="L" appState="std"/>
+    <program name="Review Backup Status" state="0" executeType="3" executeDbr="EXE:revbup.dbr" hotkey="M" appState="std"/>
+    <program name="Baker Cell Manager" state="0" executeType="3" executeDbr="EXE:bkrmgr.dbr" hotkey="N" appState="std"/>
+    <program name="OS System Menu" state="0" executeType="3" executeDbr="EXE:system_menu.dbr" hotkey="O" securityWindow="13" securityItem="7" appState="std"/>
+    <program name="Restart Signature Capture" state="0" executeType="3" executeDbr="EXE:screstart.dbr" validateMethod="RestartSignatureCaptureVal" hotkey="P" appState="std"/>
+    <program name="Reserved" state="1" executeType="2" validateMethod="menu_validate_invalid" info="This item is reserved for future enhancements, call HBS for more info." hotkey="Q" appState="std"/>
+    <program name="Packing List Barcode Maintenance" state="0" executeType="3" executeDbr="EXE:barmnt.dbr" hotkey="R" appState="std"/>
+    <program name="Exit Pharmacy System" state="0" executeType="2" executeDbr="SystemMenuSub.dbr" hotkey="X" appState="std"/>
+  </submenu>
+  <submenu name="Test Programs" state="0" executeType="1" securityWindow="13" securityItem="1" appState="std" menu_title="SINGLE JOB MENU">
+    <program name="Repository" state="0" executeType="3" executeDbr="RPS:rps.dbr" hotkey="B" securityWindow="13" securityItem="2" appState="std"/>
+    <program name="ReportWriter" state="0" executeType="3" executeDbr="RPT:rpt.dbr" hotkey="B" securityWindow="13" securityItem="2" appState="std"/>
+    <program name="MDU" state="0" executeType="3" executeDbr="DBLDIR:mdu.dbr" hotkey="B" securityWindow="13" securityItem="2" appState="std"/>
+    <program name="Status" state="0" executeType="3" executeDbr="DBLDIR:status.dbr" hotkey="B" securityWindow="13" securityItem="2" appState="std"/>
+  </submenu>
+</HBSmenu>

@@ -1,0 +1,699 @@
+namespace FileExplorer 
+    
+    
+    public partial class MainForm extends System.Windows.Forms.Form
+        
+        private mainMenu, @System.Windows.Forms.MenuStrip
+        
+        private mnuFile, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFileExit, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuEdit, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuEditCut, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuEditCopy, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuEditPaste, @System.Windows.Forms.ToolStripMenuItem
+        
+        private toolStripMenuItem3, @System.Windows.Forms.ToolStripSeparator
+        
+        private mnuEditRename, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuEditDelete, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuView, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewSmallIcons, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewLargeIcons, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewList, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewDetail, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewTile, @System.Windows.Forms.ToolStripMenuItem
+        
+        private toolStripMenuItem1, @System.Windows.Forms.ToolStripSeparator
+        
+        private mnuViewRescanDrives, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuViewRefresh, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuTools, @System.Windows.Forms.ToolStripMenuItem
+        
+        private toolbar, @System.Windows.Forms.ToolStrip
+        
+        private btnViewSmallIcons, @System.Windows.Forms.ToolStripButton
+        
+        private btnViewLargeIcons, @System.Windows.Forms.ToolStripButton
+        
+        private btnViewList, @System.Windows.Forms.ToolStripButton
+        
+        private btnViewDetails, @System.Windows.Forms.ToolStripButton
+        
+        private btnCut, @System.Windows.Forms.ToolStripButton
+        
+        private btnCopy, @System.Windows.Forms.ToolStripButton
+        
+        private btnPaste, @System.Windows.Forms.ToolStripButton
+        
+        private btnDelete, @System.Windows.Forms.ToolStripButton
+        
+        private drivebar, @System.Windows.Forms.FlowLayoutPanel
+        
+        private driveButtonImages, @System.Windows.Forms.ImageList
+        
+        private components, @System.ComponentModel.IContainer
+        
+        private splitContainer, @System.Windows.Forms.SplitContainer
+        
+        private tree, @System.Windows.Forms.TreeView
+        
+        private folderContextMenu, @System.Windows.Forms.ContextMenuStrip
+        
+        private mnuFolderExpand, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFolderCollapse, @System.Windows.Forms.ToolStripMenuItem
+        
+        private toolStripMenuItem2, @System.Windows.Forms.ToolStripSeparator
+        
+        private mnuFolderDelete, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFolderNew, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFolderNewFolder, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFolderProperties, @System.Windows.Forms.ToolStripMenuItem
+        
+        private smallImages, @System.Windows.Forms.ImageList
+        
+        private fileList, @System.Windows.Forms.ListView
+        
+        private fileContextMenu, @System.Windows.Forms.ContextMenuStrip
+        
+        private mnuFileContextCut, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFileContextCopy, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFileContextPaste, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFileContextRename, @System.Windows.Forms.ToolStripMenuItem
+        
+        private mnuFileContextDelete, @System.Windows.Forms.ToolStripMenuItem
+        
+        private largeImages, @System.Windows.Forms.ImageList
+        
+        private toolbarImages, @System.Windows.Forms.ImageList
+        
+        private method InitializeComponent, void
+        endparams
+        proc
+            begin
+                data resources, @System.ComponentModel.ComponentResourceManager , new System.ComponentModel.ComponentResourceManager(^typeof(MainForm))
+                this.components = new System.ComponentModel.Container()
+                this.mainMenu = new System.Windows.Forms.MenuStrip()
+                this.mnuFile = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFileExit = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem()
+                this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator()
+                this.mnuEditRename = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuView = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewTile = new System.Windows.Forms.ToolStripMenuItem()
+                this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator()
+                this.mnuViewRescanDrives = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewRefresh = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuTools = new System.Windows.Forms.ToolStripMenuItem()
+                this.toolbar = new System.Windows.Forms.ToolStrip()
+                this.drivebar = new System.Windows.Forms.FlowLayoutPanel()
+                this.driveButtonImages = new System.Windows.Forms.ImageList(this.components)
+                this.splitContainer = new System.Windows.Forms.SplitContainer()
+                this.tree = new System.Windows.Forms.TreeView()
+                this.folderContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components)
+                this.mnuFolderExpand = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFolderCollapse = new System.Windows.Forms.ToolStripMenuItem()
+                this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator()
+                this.mnuFolderDelete = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFolderNew = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFolderNewFolder = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFolderProperties = new System.Windows.Forms.ToolStripMenuItem()
+                this.smallImages = new System.Windows.Forms.ImageList(this.components)
+                this.fileList = new System.Windows.Forms.ListView()
+                this.fileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components)
+                this.mnuFileContextCut = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFileContextCopy = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFileContextPaste = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFileContextRename = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuFileContextDelete = new System.Windows.Forms.ToolStripMenuItem()
+                this.largeImages = new System.Windows.Forms.ImageList(this.components)
+                this.toolbarImages = new System.Windows.Forms.ImageList(this.components)
+                this.btnViewSmallIcons = new System.Windows.Forms.ToolStripButton()
+                this.btnViewLargeIcons = new System.Windows.Forms.ToolStripButton()
+                this.btnViewList = new System.Windows.Forms.ToolStripButton()
+                this.btnViewDetails = new System.Windows.Forms.ToolStripButton()
+                this.btnCut = new System.Windows.Forms.ToolStripButton()
+                this.btnCopy = new System.Windows.Forms.ToolStripButton()
+                this.btnPaste = new System.Windows.Forms.ToolStripButton()
+                this.btnDelete = new System.Windows.Forms.ToolStripButton()
+                this.mnuEditCut = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuEditCopy = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuEditPaste = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuEditDelete = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewSmallIcons = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewLargeIcons = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewList = new System.Windows.Forms.ToolStripMenuItem()
+                this.mnuViewDetail = new System.Windows.Forms.ToolStripMenuItem()
+                this.mainMenu.SuspendLayout()
+                this.toolbar.SuspendLayout()
+                ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit()
+                this.splitContainer.Panel1.SuspendLayout()
+                this.splitContainer.Panel2.SuspendLayout()
+                this.splitContainer.SuspendLayout()
+                this.folderContextMenu.SuspendLayout()
+                this.fileContextMenu.SuspendLayout()
+                this.SuspendLayout()
+                ;; 
+                ;; mainMenu
+                ;; 
+                this.mainMenu.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuFile,
+                            & this.mnuEdit,
+                            & this.mnuView,
+                            & this.mnuTools})
+                this.mainMenu.Location = new System.Drawing.Point(0, 0)
+                this.mainMenu.Name = (string)("mainMenu")
+                this.mainMenu.Size = new System.Drawing.Size(868, 24)
+                this.mainMenu.TabIndex = 0
+                this.mainMenu.Text = (string)("Main Menu")
+                ;; 
+                ;; mnuFile
+                ;; 
+                this.mnuFile.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuFileExit})
+                this.mnuFile.Name = (string)("mnuFile")
+                this.mnuFile.Size = new System.Drawing.Size(37, 20)
+                this.mnuFile.Text = (string)("&File")
+                ;; 
+                ;; mnuFileExit
+                ;; 
+                this.mnuFileExit.Name = (string)("mnuFileExit")
+                this.mnuFileExit.Size = new System.Drawing.Size(92, 22)
+                this.mnuFileExit.Text = (string)("E&xit")
+                 addhandler( this.mnuFileExit.Click, mnuFileExit_Click)
+                ;; 
+                ;; mnuEdit
+                ;; 
+                this.mnuEdit.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuEditCut,
+                            & this.mnuEditCopy,
+                            & this.mnuEditPaste,
+                            & this.toolStripMenuItem3,
+                            & this.mnuEditRename,
+                            & this.mnuEditDelete})
+                this.mnuEdit.Name = (string)("mnuEdit")
+                this.mnuEdit.Size = new System.Drawing.Size(39, 20)
+                this.mnuEdit.Text = (string)("&Edit")
+                 addhandler( this.mnuEdit.DropDownOpening, mnuEdit_DropDownOpening)
+                ;; 
+                ;; toolStripMenuItem3
+                ;; 
+                this.toolStripMenuItem3.Name = (string)("toolStripMenuItem3")
+                this.toolStripMenuItem3.Size = new System.Drawing.Size(141, 6)
+                ;; 
+                ;; mnuEditRename
+                ;; 
+                this.mnuEditRename.Name = (string)("mnuEditRename")
+                this.mnuEditRename.ShortcutKeys = System.Windows.Forms.Keys.F2
+                this.mnuEditRename.Size = new System.Drawing.Size(144, 22)
+                this.mnuEditRename.Text = (string)("&Rename")
+                 addhandler( this.mnuEditRename.Click, mnuEditRename_Click)
+                ;; 
+                ;; mnuView
+                ;; 
+                this.mnuView.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuViewSmallIcons,
+                            & this.mnuViewLargeIcons,
+                            & this.mnuViewList,
+                            & this.mnuViewDetail,
+                            & this.mnuViewTile,
+                            & this.toolStripMenuItem1,
+                            & this.mnuViewRescanDrives,
+                            & this.mnuViewRefresh})
+                this.mnuView.Name = (string)("mnuView")
+                this.mnuView.Size = new System.Drawing.Size(44, 20)
+                this.mnuView.Text = (string)("&View")
+                ;; 
+                ;; mnuViewTile
+                ;; 
+                this.mnuViewTile.Name = (string)("mnuViewTile")
+                this.mnuViewTile.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewTile.Tag = (string)("Tile")
+                this.mnuViewTile.Text = (string)("&Tile")
+                 addhandler( this.mnuViewTile.Click, switchCurrentView)
+                ;; 
+                ;; toolStripMenuItem1
+                ;; 
+                this.toolStripMenuItem1.Name = (string)("toolStripMenuItem1")
+                this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6)
+                ;; 
+                ;; mnuViewRescanDrives
+                ;; 
+                this.mnuViewRescanDrives.Name = (string)("mnuViewRescanDrives")
+                this.mnuViewRescanDrives.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewRescanDrives.Text = (string)("&Rescan Drives")
+                 addhandler( this.mnuViewRescanDrives.Click, mnuViewRescanDrives_Click)
+                ;; 
+                ;; mnuViewRefresh
+                ;; 
+                this.mnuViewRefresh.Image = FileExplorer.Resources.Refresh
+                this.mnuViewRefresh.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuViewRefresh.Name = (string)("mnuViewRefresh")
+                this.mnuViewRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5
+                this.mnuViewRefresh.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewRefresh.Text = (string)("Refresh")
+                ;; 
+                ;; mnuTools
+                ;; 
+                this.mnuTools.Name = (string)("mnuTools")
+                this.mnuTools.Size = new System.Drawing.Size(48, 20)
+                this.mnuTools.Text = (string)("&Tools")
+                ;; 
+                ;; toolbar
+                ;; 
+                this.toolbar.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.btnViewSmallIcons,
+                            & this.btnViewLargeIcons,
+                            & this.btnViewList,
+                            & this.btnViewDetails,
+                            & this.btnCut,
+                            & this.btnCopy,
+                            & this.btnPaste,
+                            & this.btnDelete})
+                this.toolbar.Location = new System.Drawing.Point(0, 24)
+                this.toolbar.Name = (string)("toolbar")
+                this.toolbar.Size = new System.Drawing.Size(868, 25)
+                this.toolbar.TabIndex = 1
+                this.toolbar.Text = (string)("toolStrip1")
+                ;; 
+                ;; drivebar
+                ;; 
+                this.drivebar.Dock = System.Windows.Forms.DockStyle.Top
+                this.drivebar.Location = new System.Drawing.Point(0, 49)
+                this.drivebar.Name = (string)("drivebar")
+                this.drivebar.Size = new System.Drawing.Size(868, 33)
+                this.drivebar.TabIndex = 2
+                ;; 
+                ;; driveButtonImages
+                ;; 
+                this.driveButtonImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject((string)("driveButtonImages.ImageStream"))))
+                this.driveButtonImages.TransparentColor = System.Drawing.Color.Fuchsia
+                this.driveButtonImages.Images.SetKeyName(0, (string)("Drive-Hard"))
+                this.driveButtonImages.Images.SetKeyName(1, (string)("Drive-CD"))
+                this.driveButtonImages.Images.SetKeyName(2, (string)("Drive-CD2"))
+                this.driveButtonImages.Images.SetKeyName(3, (string)("Drive-Floppy"))
+                this.driveButtonImages.Images.SetKeyName(4, (string)("Drive-Floppy"))
+                ;; 
+                ;; splitContainer
+                ;; 
+                this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill
+                this.splitContainer.Location = new System.Drawing.Point(0, 82)
+                this.splitContainer.Name = (string)("splitContainer")
+                ;; 
+                ;; splitContainer.Panel1
+                ;; 
+                this.splitContainer.Panel1.Controls.Add(this.tree)
+                ;; 
+                ;; splitContainer.Panel2
+                ;; 
+                this.splitContainer.Panel2.Controls.Add(this.fileList)
+                this.splitContainer.Size = new System.Drawing.Size(868, 517)
+                this.splitContainer.SplitterDistance = 229
+                this.splitContainer.TabIndex = 3
+                ;; 
+                ;; tree
+                ;; 
+                this.tree.ContextMenuStrip = this.folderContextMenu
+                this.tree.Dock = System.Windows.Forms.DockStyle.Fill
+                this.tree.ImageIndex = 1
+                this.tree.ImageList = this.smallImages
+                this.tree.Location = new System.Drawing.Point(0, 0)
+                this.tree.Name = (string)("tree")
+                this.tree.SelectedImageIndex = 0
+                this.tree.Size = new System.Drawing.Size(229, 517)
+                this.tree.TabIndex = 0
+                 addhandler( this.tree.BeforeExpand, tree_BeforeExpand)
+                 addhandler( this.tree.AfterSelect, tree_AfterSelect)
+                ;; 
+                ;; folderContextMenu
+                ;; 
+                this.folderContextMenu.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuFolderExpand,
+                            & this.mnuFolderCollapse,
+                            & this.toolStripMenuItem2,
+                            & this.mnuFolderDelete,
+                            & this.mnuFolderNew,
+                            & this.mnuFolderProperties})
+                this.folderContextMenu.Name = (string)("mnuFolder")
+                this.folderContextMenu.Size = new System.Drawing.Size(128, 120)
+                 addhandler( this.folderContextMenu.Opening, mnuFolder_Opening)
+                ;; 
+                ;; mnuFolderExpand
+                ;; 
+                this.mnuFolderExpand.Name = (string)("mnuFolderExpand")
+                this.mnuFolderExpand.Size = new System.Drawing.Size(127, 22)
+                this.mnuFolderExpand.Text = (string)("&Expand")
+                 addhandler( this.mnuFolderExpand.Click, mnuFolderExpand_Click)
+                ;; 
+                ;; mnuFolderCollapse
+                ;; 
+                this.mnuFolderCollapse.Name = (string)("mnuFolderCollapse")
+                this.mnuFolderCollapse.Size = new System.Drawing.Size(127, 22)
+                this.mnuFolderCollapse.Text = (string)("&Collapse")
+                 addhandler( this.mnuFolderCollapse.Click, mnuFolderCollapse_Click)
+                ;; 
+                ;; toolStripMenuItem2
+                ;; 
+                this.toolStripMenuItem2.Name = (string)("toolStripMenuItem2")
+                this.toolStripMenuItem2.Size = new System.Drawing.Size(124, 6)
+                ;; 
+                ;; mnuFolderDelete
+                ;; 
+                this.mnuFolderDelete.Name = (string)("mnuFolderDelete")
+                this.mnuFolderDelete.Size = new System.Drawing.Size(127, 22)
+                this.mnuFolderDelete.Text = (string)("&Delete")
+                 addhandler( this.mnuFolderDelete.Click, mnuFolderDelete_Click)
+                ;; 
+                ;; mnuFolderNew
+                ;; 
+                this.mnuFolderNew.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuFolderNewFolder})
+                this.mnuFolderNew.Name = (string)("mnuFolderNew")
+                this.mnuFolderNew.Size = new System.Drawing.Size(127, 22)
+                this.mnuFolderNew.Text = (string)("&New")
+                ;; 
+                ;; mnuFolderNewFolder
+                ;; 
+                this.mnuFolderNewFolder.Name = (string)("mnuFolderNewFolder")
+                this.mnuFolderNewFolder.Size = new System.Drawing.Size(107, 22)
+                this.mnuFolderNewFolder.Text = (string)("&Folder")
+                 addhandler( this.mnuFolderNewFolder.Click, mnuFolderNewFolder_Click)
+                ;; 
+                ;; mnuFolderProperties
+                ;; 
+                this.mnuFolderProperties.Name = (string)("mnuFolderProperties")
+                this.mnuFolderProperties.Size = new System.Drawing.Size(127, 22)
+                this.mnuFolderProperties.Text = (string)("&Properties")
+                 addhandler( this.mnuFolderProperties.Click, mnuFolderProperties_Click)
+                ;; 
+                ;; smallImages
+                ;; 
+                this.smallImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject((string)("smallImages.ImageStream"))))
+                this.smallImages.TransparentColor = System.Drawing.Color.Fuchsia
+                this.smallImages.Images.SetKeyName(0, (string)("Folder"))
+                this.smallImages.Images.SetKeyName(1, (string)("Folder-Closed"))
+                this.smallImages.Images.SetKeyName(2, (string)("Folder-Delete"))
+                this.smallImages.Images.SetKeyName(3, (string)("Folder-New"))
+                this.smallImages.Images.SetKeyName(4, (string)("Folder-Options"))
+                this.smallImages.Images.SetKeyName(5, (string)("Folder-Search"))
+                this.smallImages.Images.SetKeyName(6, (string)("Folder-Search-2"))
+                this.smallImages.Images.SetKeyName(7, (string)("File-New"))
+                ;; 
+                ;; fileList
+                ;; 
+                this.fileList.ContextMenuStrip = this.fileContextMenu
+                this.fileList.Dock = System.Windows.Forms.DockStyle.Fill
+                this.fileList.LargeImageList = this.largeImages
+                this.fileList.Location = new System.Drawing.Point(0, 0)
+                this.fileList.Name = (string)("fileList")
+                this.fileList.Size = new System.Drawing.Size(635, 517)
+                this.fileList.SmallImageList = this.smallImages
+                this.fileList.TabIndex = 0
+                this.fileList.UseCompatibleStateImageBehavior = False
+                this.fileList.View = System.Windows.Forms.View.Details
+                 addhandler( this.fileList.SelectedIndexChanged, fileList_SelectedIndexChanged)
+                ;; 
+                ;; fileContextMenu
+                ;; 
+                this.fileContextMenu.Items.AddRange( new System.Windows.Forms.ToolStripItem[#] {
+                        &this.mnuFileContextCut,
+                            & this.mnuFileContextCopy,
+                            & this.mnuFileContextPaste,
+                            & this.mnuFileContextRename,
+                            & this.mnuFileContextDelete})
+                this.fileContextMenu.Name = (string)("contextMenuStrip1")
+                this.fileContextMenu.Size = new System.Drawing.Size(118, 114)
+                 addhandler( this.fileContextMenu.Opening, fileContextMenu_Opening)
+                ;; 
+                ;; mnuFileContextCut
+                ;; 
+                this.mnuFileContextCut.Name = (string)("mnuFileContextCut")
+                this.mnuFileContextCut.Size = new System.Drawing.Size(117, 22)
+                this.mnuFileContextCut.Text = (string)("Cut")
+                 addhandler( this.mnuFileContextCut.Click, mnuFileContextCut_Click)
+                ;; 
+                ;; mnuFileContextCopy
+                ;; 
+                this.mnuFileContextCopy.Name = (string)("mnuFileContextCopy")
+                this.mnuFileContextCopy.Size = new System.Drawing.Size(117, 22)
+                this.mnuFileContextCopy.Text = (string)("Copy")
+                 addhandler( this.mnuFileContextCopy.Click, mnuFileContextCopy_Click)
+                ;; 
+                ;; mnuFileContextPaste
+                ;; 
+                this.mnuFileContextPaste.Name = (string)("mnuFileContextPaste")
+                this.mnuFileContextPaste.Size = new System.Drawing.Size(117, 22)
+                this.mnuFileContextPaste.Text = (string)("Paste")
+                 addhandler( this.mnuFileContextPaste.Click, mnuFileContextPaste_Click)
+                ;; 
+                ;; mnuFileContextRename
+                ;; 
+                this.mnuFileContextRename.Name = (string)("mnuFileContextRename")
+                this.mnuFileContextRename.Size = new System.Drawing.Size(117, 22)
+                this.mnuFileContextRename.Text = (string)("Rename")
+                 addhandler( this.mnuFileContextRename.Click, mnuFileContextRename_Click)
+                ;; 
+                ;; mnuFileContextDelete
+                ;; 
+                this.mnuFileContextDelete.Name = (string)("mnuFileContextDelete")
+                this.mnuFileContextDelete.Size = new System.Drawing.Size(117, 22)
+                this.mnuFileContextDelete.Text = (string)("Delete")
+                 addhandler( this.mnuFileContextDelete.Click, mnuFileContextDelete_Click)
+                ;; 
+                ;; largeImages
+                ;; 
+                this.largeImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject((string)("largeImages.ImageStream"))))
+                this.largeImages.TransparentColor = System.Drawing.Color.Fuchsia
+                this.largeImages.Images.SetKeyName(0, (string)("Folder"))
+                this.largeImages.Images.SetKeyName(1, (string)("Folder-Closed"))
+                this.largeImages.Images.SetKeyName(2, (string)("Folder-Delete"))
+                this.largeImages.Images.SetKeyName(3, (string)("Folder-New"))
+                this.largeImages.Images.SetKeyName(4, (string)("Folder-Options"))
+                this.largeImages.Images.SetKeyName(5, (string)("Folder-Search"))
+                this.largeImages.Images.SetKeyName(6, (string)("Folder-Search-2"))
+                this.largeImages.Images.SetKeyName(7, (string)("File-New"))
+                ;; 
+                ;; toolbarImages
+                ;; 
+                this.toolbarImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject((string)("toolbarImages.ImageStream"))))
+                this.toolbarImages.TransparentColor = System.Drawing.Color.Fuchsia
+                this.toolbarImages.Images.SetKeyName(0, (string)("View-List"))
+                this.toolbarImages.Images.SetKeyName(1, (string)("View-Details"))
+                this.toolbarImages.Images.SetKeyName(2, (string)("View-Large Icons"))
+                this.toolbarImages.Images.SetKeyName(3, (string)("View-Small Icons"))
+                ;; 
+                ;; btnViewSmallIcons
+                ;; 
+                this.btnViewSmallIcons.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnViewSmallIcons.Image = FileExplorer.Resources.View_SmallIcons
+                this.btnViewSmallIcons.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnViewSmallIcons.Name = (string)("btnViewSmallIcons")
+                this.btnViewSmallIcons.Size = new System.Drawing.Size(23, 22)
+                this.btnViewSmallIcons.Tag = (string)("SmallIcons")
+                this.btnViewSmallIcons.Text = (string)("Small Icons")
+                 addhandler( this.btnViewSmallIcons.Click, switchCurrentView)
+                ;; 
+                ;; btnViewLargeIcons
+                ;; 
+                this.btnViewLargeIcons.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnViewLargeIcons.Image = FileExplorer.Resources.View_LargeIcons
+                this.btnViewLargeIcons.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnViewLargeIcons.Name = (string)("btnViewLargeIcons")
+                this.btnViewLargeIcons.Size = new System.Drawing.Size(23, 22)
+                this.btnViewLargeIcons.Tag = (string)("LargeIcons")
+                this.btnViewLargeIcons.Text = (string)("Large Icons")
+                 addhandler( this.btnViewLargeIcons.Click, switchCurrentView)
+                ;; 
+                ;; btnViewList
+                ;; 
+                this.btnViewList.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnViewList.Image = FileExplorer.Resources.View_List
+                this.btnViewList.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnViewList.Name = (string)("btnViewList")
+                this.btnViewList.Size = new System.Drawing.Size(23, 22)
+                this.btnViewList.Tag = (string)("List")
+                this.btnViewList.Text = (string)("List")
+                 addhandler( this.btnViewList.Click, switchCurrentView)
+                ;; 
+                ;; btnViewDetails
+                ;; 
+                this.btnViewDetails.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnViewDetails.Image = FileExplorer.Resources.View_Details
+                this.btnViewDetails.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnViewDetails.Name = (string)("btnViewDetails")
+                this.btnViewDetails.Size = new System.Drawing.Size(23, 22)
+                this.btnViewDetails.Tag = (string)("Details")
+                this.btnViewDetails.Text = (string)("Details")
+                 addhandler( this.btnViewDetails.Click, switchCurrentView)
+                ;; 
+                ;; btnCut
+                ;; 
+                this.btnCut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnCut.Image = FileExplorer.Resources.Cut
+                this.btnCut.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnCut.Name = (string)("btnCut")
+                this.btnCut.Size = new System.Drawing.Size(23, 22)
+                this.btnCut.Text = (string)("Cut")
+                 addhandler( this.btnCut.Click, btnCut_Click)
+                ;; 
+                ;; btnCopy
+                ;; 
+                this.btnCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnCopy.Image = FileExplorer.Resources.Copy
+                this.btnCopy.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnCopy.Name = (string)("btnCopy")
+                this.btnCopy.Size = new System.Drawing.Size(23, 22)
+                this.btnCopy.Text = (string)("Copy")
+                 addhandler( this.btnCopy.Click, btnCopy_Click)
+                ;; 
+                ;; btnPaste
+                ;; 
+                this.btnPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnPaste.Image = FileExplorer.Resources.Paste
+                this.btnPaste.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnPaste.Name = (string)("btnPaste")
+                this.btnPaste.Size = new System.Drawing.Size(23, 22)
+                this.btnPaste.Text = (string)("Paste")
+                 addhandler( this.btnPaste.Click, btnPaste_Click)
+                ;; 
+                ;; btnDelete
+                ;; 
+                this.btnDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+                this.btnDelete.Image = FileExplorer.Resources.Delete
+                this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta
+                this.btnDelete.Name = (string)("btnDelete")
+                this.btnDelete.Size = new System.Drawing.Size(23, 22)
+                this.btnDelete.Text = (string)("Delete")
+                 addhandler( this.btnDelete.Click, btnDelete_Click)
+                ;; 
+                ;; mnuEditCut
+                ;; 
+                this.mnuEditCut.Image = FileExplorer.Resources.Cut
+                this.mnuEditCut.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuEditCut.Name = (string)("mnuEditCut")
+                this.mnuEditCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)))
+                this.mnuEditCut.Size = new System.Drawing.Size(144, 22)
+                this.mnuEditCut.Text = (string)("Cu&t")
+                 addhandler( this.mnuEditCut.Click, mnuEditCut_Click)
+                ;; 
+                ;; mnuEditCopy
+                ;; 
+                this.mnuEditCopy.Image = FileExplorer.Resources.Copy
+                this.mnuEditCopy.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuEditCopy.Name = (string)("mnuEditCopy")
+                this.mnuEditCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)))
+                this.mnuEditCopy.Size = new System.Drawing.Size(144, 22)
+                this.mnuEditCopy.Text = (string)("&Copy")
+                 addhandler( this.mnuEditCopy.Click, mnuEditCopy_Click)
+                ;; 
+                ;; mnuEditPaste
+                ;; 
+                this.mnuEditPaste.Image = FileExplorer.Resources.Paste
+                this.mnuEditPaste.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuEditPaste.Name = (string)("mnuEditPaste")
+                this.mnuEditPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)))
+                this.mnuEditPaste.Size = new System.Drawing.Size(144, 22)
+                this.mnuEditPaste.Text = (string)("&Paste")
+                 addhandler( this.mnuEditPaste.Click, mnuEditPaste_Click)
+                ;; 
+                ;; mnuEditDelete
+                ;; 
+                this.mnuEditDelete.Image = FileExplorer.Resources.Delete
+                this.mnuEditDelete.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuEditDelete.Name = (string)("mnuEditDelete")
+                this.mnuEditDelete.Size = new System.Drawing.Size(144, 22)
+                this.mnuEditDelete.Text = (string)("&Delete")
+                 addhandler( this.mnuEditDelete.Click, mnuEditDelete_Click)
+                ;; 
+                ;; mnuViewSmallIcons
+                ;; 
+                this.mnuViewSmallIcons.Image = FileExplorer.Resources.View_SmallIcons
+                this.mnuViewSmallIcons.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuViewSmallIcons.Name = (string)("mnuViewSmallIcons")
+                this.mnuViewSmallIcons.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewSmallIcons.Tag = (string)("SmallIcons")
+                this.mnuViewSmallIcons.Text = (string)("&Small Icons")
+                 addhandler( this.mnuViewSmallIcons.Click, switchCurrentView)
+                ;; 
+                ;; mnuViewLargeIcons
+                ;; 
+                this.mnuViewLargeIcons.Image = FileExplorer.Resources.View_LargeIcons
+                this.mnuViewLargeIcons.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuViewLargeIcons.Name = (string)("mnuViewLargeIcons")
+                this.mnuViewLargeIcons.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewLargeIcons.Tag = (string)("LargeIcons")
+                this.mnuViewLargeIcons.Text = (string)("&Large Icons")
+                 addhandler( this.mnuViewLargeIcons.Click, switchCurrentView)
+                ;; 
+                ;; mnuViewList
+                ;; 
+                this.mnuViewList.Image = FileExplorer.Resources.View_List
+                this.mnuViewList.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuViewList.Name = (string)("mnuViewList")
+                this.mnuViewList.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewList.Tag = (string)("List")
+                this.mnuViewList.Text = (string)("L&ist")
+                 addhandler( this.mnuViewList.Click, switchCurrentView)
+                ;; 
+                ;; mnuViewDetail
+                ;; 
+                this.mnuViewDetail.Image = FileExplorer.Resources.View_Details
+                this.mnuViewDetail.ImageTransparentColor = System.Drawing.Color.Fuchsia
+                this.mnuViewDetail.Name = (string)("mnuViewDetail")
+                this.mnuViewDetail.Size = new System.Drawing.Size(152, 22)
+                this.mnuViewDetail.Tag = (string)("Details")
+                this.mnuViewDetail.Text = (string)("&Details")
+                 addhandler( this.mnuViewDetail.Click, switchCurrentView)
+                ;; 
+                ;; MainForm
+                ;; 
+                this.ClientSize = new System.Drawing.Size(868, 599)
+                this.Controls.Add(this.splitContainer)
+                this.Controls.Add(this.drivebar)
+                this.Controls.Add(this.toolbar)
+                this.Controls.Add(this.mainMenu)
+                this.MainMenuStrip = this.mainMenu
+                this.Name = (string)("MainForm")
+                this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+                this.Text = (string)("Synergy .NET File Explorer")
+                this.WindowState = System.Windows.Forms.FormWindowState.Maximized
+                 addhandler( this.Load, MainForm_Load)
+                this.mainMenu.ResumeLayout(False)
+                this.mainMenu.PerformLayout()
+                this.toolbar.ResumeLayout(False)
+                this.toolbar.PerformLayout()
+                this.splitContainer.Panel1.ResumeLayout(False)
+                this.splitContainer.Panel2.ResumeLayout(False)
+                ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit()
+                this.splitContainer.ResumeLayout(False)
+                this.folderContextMenu.ResumeLayout(False)
+                this.fileContextMenu.ResumeLayout(False)
+                this.ResumeLayout(False)
+                this.PerformLayout()
+            end
+        
+        endmethod
+    
+    endclass
+    
+    endnamespace

@@ -1,0 +1,87 @@
+;******************************************************************************
+;
+; Class:		SynPsg.Rps.RpsTagCollection
+;
+; Description:	Represents a collection of tags for a Repository structure
+;
+; Author:		Steve Ives, Synergex Professional Services Group
+;
+; Date: 		19th October 2007
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;******************************************************************************
+;
+; $Revision: 2 $
+;
+; $Date: 2012-07-11 12:10:54-07:00 $
+;
+;******************************************************************************
+;
+.define DDINFO_DEFINES_ONLY
+.include "RPSLIB:ddinfo.def"
+.undefine DDINFO_DEFINES_ONLY
+
+import SynPsg.Rps
+import System.Collections.Generic
+
+namespace SynPsg.Rps
+
+	public class RpsTagCollection extends List<RpsTag>
+		
+		; Constructor (load tags for a structure)
+		public method RpsTagCollection
+			required in StructureName, a
+			endparams
+			parent()
+		proc
+			Repository.CheckIsOpen()
+			LoadTags(StructureName)
+		endmethod
+		
+		; Load tags
+		private method LoadTags, void
+			required in StructureName, a
+			endparams
+			record local_data
+				MemHandle, int
+				ix, int
+			endrecord
+		proc
+			init local_data
+			try 
+			begin
+				data p_s_info, s_info
+				;Set the current structure?
+				dd_struct(Repository.RpsControl,DDS_INFO,StructureName,p_s_info)
+				if (Repository.RpsControl.error)
+					throw new RpsTagException("Failed to get information for repository structure "+StructureName)
+				;Do we have any tags to load?
+				if (p_s_info.si_nmtags) 
+				begin
+					;Size the tag names array and get the tag names
+					MemHandle = %mem_proc(DM_ALLOC,^size(strIdentifier)*p_s_info.si_nmtags)
+					dd_tag(Repository.RpsControl,DDTG_LIST,p_s_info.si_nmtags,^m(strIdentifier,MemHandle))
+					if (Repository.RpsControl.error)
+						throw new RpsTagException("Failed to get tags for repository structure "+StructureName)
+					;Add tags to collection
+					for ix from 1 thru p_s_info.si_nmtags
+						this.Add(new RpsTag(StructureName,^m(strIdentifier[ix],MemHandle)))
+				end
+			end
+			finally
+			begin
+				;Free tag names array
+				if (MemHandle) 
+                    MemHandle = %mem_proc(DM_FREE,MemHandle)
+			end
+			endtry
+		endmethod
+		
+	endclass
+
+endnamespace

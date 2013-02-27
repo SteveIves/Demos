@@ -1,0 +1,56 @@
+import System
+import System.Drawing
+import System.IO
+
+.array 0
+namespace SpaSynVaders
+	
+	public class HighScore extends Score
+		
+		public method HighScore
+			x, int 
+			y, int 
+			endparams
+			parent(x, y)
+		proc
+			begin
+			end
+		endmethod
+		
+		public override method Draw, void
+			g, @Graphics 
+			endparams
+		proc
+			g.DrawString("High Score: " + Count.ToString(), MyFont, Brushes.LimeGreen, Position.X, Position.Y, new StringFormat())
+		endmethod
+		
+		public method Write, void
+			theScore, int 
+			endparams
+		proc
+			this.Read()
+			if (Count < theScore)
+			begin
+				Count = theScore
+				data sw, @StreamWriter, new StreamWriter("highscore.txt",false)
+				sw.WriteLine(Count.ToString())
+				sw.Close()
+			end
+		endmethod
+		
+		public method Read, void
+			endparams
+		proc
+			if (File.Exists("highscore.txt"))
+			begin
+				data sr, @StreamReader, new StreamReader("highscore.txt")
+				data lScore, @string, sr.ReadLine()
+				Count = Convert.ToInt32(lScore)
+				sr.Close()
+			end
+		endmethod
+
+	endclass
+
+endnamespace
+

@@ -1,0 +1,691 @@
+import System
+import System.Drawing
+import System.IO
+import System.Media
+import System.Runtime.InteropServices
+import System.Threading
+import System.Windows.Forms
+
+.array 0
+namespace SpaSynVaders
+	
+	public class FrmMain extends Form
+		
+		.region "Private data"
+
+		private const kNumberOfRows		,int				,5					;;Number of rows of invaders
+		private const kNumberOfShields	,int				,4					;;Number of shields
+		private const kSaucerInterval	,int				,400				;;Interval for appearance of flying saucers
+		private const kScoresYpos		,int				,20					;;Vertical position of score displays
+		
+		private m_GameGoing				,boolean			,true				;;Is there a game in ptogress?
+		private m_SaucerFlying			,boolean			,false				;;Is there a saucer flying?
+		private m_ActiveBullet			,boolean			,false				;;Is a bullet flying?
+		
+		private m_TimerCounter			,long				,0
+		private m_GameSpeed				,int				,6					;;Game speed (6=slowest, 1=fastest)
+		private m_LivesRemaining		,int				,3					;;How many lives remaining?
+		
+		private m_Player				,@Man				,^null				;;Player object
+		private m_Shields				,[#]@Shield								;;Shield objects
+		private m_InvaderRows			,[#]@InvaderRow							;;Row of iinvader objects
+		private m_Saucer				,@Saucer			,^null				;;Flying saucer object
+		private m_Bullet				,@Bullet			,new Bullet(20,30)	;;Bullet object
+		
+		private m_Level					,@LevelIndicator	,^null				;;Current level display object
+		private m_Score					,@Score				,^null				;;Score display object
+		private m_HighScore				,@HighScore			,^null				;;High score display object
+		private m_livesIndicator		,@LivesIndicator						;;Lives remaining display object
+		
+		private m_CurrentKeyDown		,@string			," "
+		private m_LastKeyDown			,@string			," "
+		
+		private m_SoundThread			,@Thread			,^null				;;Thread used to play sounds
+		private m_CurrentSound			,@string			,"sound1"			;;Current sound to play
+		private m_CurrentSoundPriority	,int				,3					;;Priority of current sound being played
+		
+		.endregion
+
+		.region "Constructors"
+
+		public method FrmMain
+			endparams
+		proc
+			begin
+				;-----------------------------------------------------------
+				;TODO: Should be able to do this in the initializers (above)
+				m_InvaderRows = new InvaderRow[kNumberOfRows]
+				m_Shields = new Shield[kNumberOfShields]
+				;-----------------------------------------------------------
+				
+				InitializeComponent()
+				
+				;;  reduce flicker
+				SetStyle(ControlStyles.UserPaint, true)
+				SetStyle(ControlStyles.AllPaintingInWmPaint, true)
+				SetStyle(ControlStyles.OptimizedDoubleBuffer, true)
+
+				InitializeAllGameObjects(true)
+				
+				timer1.Start()				
+			end
+		endmethod
+
+		.endregion
+
+		.region "UI Event Handlers"
+		
+		private method FrmMain_KeyDown, void
+			sender	,@object 
+			e		,@KeyEventArgs 
+			endparams
+		proc
+			m_CurrentKeyDown = e.KeyData.ToString()
+			if (m_CurrentKeyDown == "Left" || m_CurrentKeyDown == "Right")
+				m_LastKeyDown = m_CurrentKeyDown
+		endmethod
+		
+		private method FrmMain_KeyUp, void
+			sender	,@object 
+			e		,@KeyEventArgs 
+			endparams
+			record
+				tmp	,@String
+			endrecord
+		proc
+			tmp = e.KeyData.ToString()
+			if (tmp == "Left" || tmp == "Right")
+				m_LastKeyDown = " "
+		endmethod
+
+		private method FrmMain_Paint, void
+			sender	,@object 
+			e		,@PaintEventArgs 
+			endparams
+			record
+				gfx	,@Graphics
+				sh	,@Shield
+				ir	,@InvaderRow
+			endrecord
+		proc
+			
+			gfx = e.Graphics
+
+			foreach sh in m_Shields
+				sh.Draw(gfx)
+			
+			m_Player.Draw(gfx)
+			m_Level.Draw(gfx)
+			m_Score.Draw(gfx)
+			m_HighScore.Draw(gfx)
+			m_livesIndicator.Draw(gfx)
+			
+			if (m_ActiveBullet)
+				m_Bullet.Draw(gfx)
+			
+			if (m_SaucerFlying)
+				m_Saucer.Draw(gfx)
+
+			foreach ir in m_InvaderRows
+				ir.Draw(gfx)
+
+		endmethod
+		
+		private method mnuPause_Click, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			PauseResume()
+		endmethod
+		
+		private method mnuRestart_Click, void
+			sender	,@object 
+			e		,@EventArgs 
+			endparams
+		proc
+			InitializeAllGameObjects(true)
+			m_Level.Reset()
+		endmethod
+		
+		private method mnuExit_Click, void
+			sender	,@object 
+			e		,@EventArgs 
+			endparams
+		proc
+			Application.Exit()
+		endmethod
+		
+		private method MnuHelpAbout_Click, void
+			sender		,@Object 
+			e			,@System.EventArgs 
+			endparams
+			record
+				dlg		,@AboutBox
+				paused	,Boolean	,false
+			endrecord
+		proc
+			if (m_GameGoing)
+			begin
+				PauseResume()
+				paused = true
+			end
+			
+			dlg = new AboutBox()
+			dlg.ShowDialog()
+		
+			if (paused)
+				PauseResume()
+		endmethod
+		
+		.endregion
+
+		.region "Timer Event Handlers"
+		
+		private method timer1_Tick, void
+			sender	,@object 
+			e		,@EventArgs 
+			endparams
+		proc
+			begin
+				HandleKeys()
+				
+				m_TimerCounter += 1
+				
+				if (!m_GameGoing)
+				begin
+					if (m_TimerCounter-(6*integer(m_TimerCounter/6)) == 0)
+						MoveInvadersInPlace()
+					Invalidate()
+					mreturn
+				end
+				
+				if (m_Bullet.Position.Y < 0)
+					m_ActiveBullet = false
+				
+				if (m_TimerCounter-(kSaucerInterval*integer(m_TimerCounter/kSaucerInterval)) == 0)
+				begin
+					InitializeSaucer()
+					PlaySoundInThread("sound8",1)
+					m_SaucerFlying = true
+				end
+				
+				if (m_SaucerFlying)
+				begin
+					m_Saucer.Move()
+					if (m_Saucer.GetBounds().Left > ClientRectangle.Right)
+						m_SaucerFlying = false
+				end
+				
+				if (m_TimerCounter-(m_GameSpeed*integer(m_TimerCounter/m_GameSpeed)) == 0)
+				begin
+					MoveInvaders()
+					data totalInvaders, int, TotalNumberOfInvaders()
+					using totalInvaders select
+					(0),
+					begin
+						;;Level completed. Reset the game but not the total score.
+						InitializeAllGameObjects(false)
+						m_Level.Increment()
+					end
+					(<=20),
+						m_GameSpeed = 5
+					(<=10),
+						m_GameSpeed = 4
+					(<=5),
+						m_GameSpeed = 3
+					(<=3),
+						m_GameSpeed = 2
+					(<=1),
+						m_GameSpeed = 1
+					endusing
+				end
+				TestBulletCollision()
+				TestBombCollision()
+				Invalidate()
+			end
+		endmethod
+
+		.endregion
+		
+		.region "Initialization Methods"
+
+		private method InitializeAllGameObjects, void
+			resetScore	,boolean 
+			endparams
+		proc
+			InitializeShields()
+			InitializeMan()
+			if (resetScore)
+			begin
+				InitializeScore()
+				InitializeLivesIndicator()
+			end
+			InitializeInvaderRows(m_Level.CurrentLevel)
+			m_Saucer = new Saucer("saucer0.gif", "saucer1.gif", "saucer2.gif")
+			m_Score.GameOver = false
+			m_GameGoing = true
+			m_GameSpeed = 6
+		endmethod
+		
+		private method InitializeSaucer, void
+			endparams
+		proc
+			m_Saucer.Reset()
+			m_SaucerFlying = true
+		endmethod
+		
+		private method InitializeMan, void
+			endparams
+		proc
+			m_Player = new Man()
+			m_Player.Position.Y = ClientRectangle.Bottom - 50
+			m_LivesRemaining = 3
+		endmethod
+		
+		private method InitializeLivesIndicator, void
+			endparams
+		proc
+			m_livesIndicator = new LivesIndicator(ClientRectangle.Right - 150, kScoresYpos)
+		endmethod
+		
+		private method InitializeScore, void
+			endparams
+		proc
+			m_Level = new LevelIndicator(ClientRectangle.Left + 20, kScoresYpos)
+			m_Score = new Score(ClientRectangle.Left + 130, kScoresYpos)
+			m_HighScore = new HighScore(ClientRectangle.Left + 290, kScoresYpos)
+			m_HighScore.Read()
+		endmethod
+		
+		private method InitializeShields, void
+			endparams
+			record
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfShields - 1
+			begin
+				m_Shields[ix] = new Shield()
+				m_Shields[ix].UpdateBounds()
+				m_Shields[ix].Position.X = (m_Shields[ix].GetBounds().Width + 75) * ix + 35
+				m_Shields[ix].Position.Y = ClientRectangle.Bottom - (m_Shields[ix].GetBounds().Height + 75)
+			end
+		endmethod
+		
+		method InitializeInvaderRows, void
+			level	,int 
+			endparams
+		proc
+			m_InvaderRows[0] = new InvaderRow("invader1.gif", "invader1c.gif", 2 + level)
+			m_InvaderRows[1] = new InvaderRow("invader2.gif", "invader2c.gif", 3 + level)
+			m_InvaderRows[2] = new InvaderRow("invader2.gif", "invader2c.gif", 4 + level)
+			m_InvaderRows[3] = new InvaderRow("invader3.gif", "invader3c.gif", 5 + level)
+			m_InvaderRows[4] = new InvaderRow("invader3.gif", "invader3c.gif", 6 + level)
+		endmethod
+		
+		.endregion
+
+		.region "Sound methods"
+
+		public method PlayASound, void
+			endparams
+		proc
+			if (m_CurrentSound.Length > 0)
+			begin
+				data ms, @System.IO.UnmanagedMemoryStream
+				using m_CurrentSound select
+				("sound0"),
+					ms = Properties.Resources.sound0
+				("sound1"),
+					ms = Properties.Resources.sound1
+				("sound2"),
+					ms = Properties.Resources.sound2
+				("sound3"),
+					ms = Properties.Resources.sound3
+				("sound4"),
+					ms = Properties.Resources.sound4
+				("sound5"),
+					ms = Properties.Resources.sound5
+				("sound6"),
+					ms = Properties.Resources.sound6
+				("sound7"),
+					ms = Properties.Resources.sound7
+				("sound8"),
+					ms = Properties.Resources.sound8
+				endusing
+					
+				data player, @SoundPlayer ,new System.Media.SoundPlayer(ms)
+				player.PlaySync()
+				
+				ms.Close()
+				ms.Dispose()
+			end
+			m_CurrentSound = ""
+			m_CurrentSoundPriority = 3
+			m_SoundThread.Abort()
+		endmethod
+		
+		public method PlaySoundInThread, void
+			soundName	,@string 
+			priority	,int 
+			endparams
+		proc
+			begin
+				if (priority <= m_CurrentSoundPriority)
+				begin
+					m_CurrentSoundPriority = priority
+					if (m_SoundThread != ^null)
+						m_SoundThread.Abort()
+					m_CurrentSound = soundName
+					m_SoundThread = new Thread(new ThreadStart(PlayASound))
+					m_SoundThread.Start()
+				end
+			end			
+		endmethod
+		
+		.endregion
+
+		.region "Other methods"
+
+		private method HandleKeys, void
+			endparams
+		proc
+			using m_CurrentKeyDown select
+			("Space"),
+			begin
+				if (!m_ActiveBullet)
+				begin
+					m_Bullet.Position = m_Player.GetBulletStart()
+					m_ActiveBullet = true
+					PlaySoundInThread("sound1",2)
+				end
+				m_CurrentKeyDown = m_LastKeyDown
+			end
+			("Left"),
+			begin
+				m_Player.MoveLeft()
+				Invalidate(m_Player.GetBounds())
+				if (!timer1.Enabled)
+					timer1.Start()
+			end
+			("Right"),
+			begin
+				m_Player.MoveRight(ClientRectangle.Right)
+				Invalidate(m_Player.GetBounds())
+				if (!timer1.Enabled)
+					timer1.Start()
+			end
+			endusing
+		endmethod
+		
+		private method CalculateLargestLastPosition, int
+			endparams
+			record
+				max		,int	,0
+				ix		,int
+				lastPos	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+			begin
+				lastPos = m_InvaderRows[ix].GetLastInvader().Position.X
+				if (lastPos > max)
+					max = lastPos
+			end
+			mreturn max
+		endmethod
+		
+		private method CalculateSmallestFirstPosition, int
+			endparams
+			record
+				min			,int	,50000
+				ix			,int
+				firstPos	,int
+			endrecord
+		proc
+			try
+			begin
+				for ix from 0 thru kNumberOfRows - 1
+				begin
+					firstPos = m_InvaderRows[ix].GetFirstInvader().Position.X
+					if (firstPos < min)
+						min = firstPos
+				end
+			end
+			catch (ex, @Exception)
+			begin
+				MessageBox.Show(ex.Message.ToString())
+			end
+			endtry
+			mreturn min
+		endmethod
+		
+		private method MoveInvaders, void
+			endparams
+			record
+				bMoveDown	,boolean, false
+				ix			,int
+				TheInvaders	,@InvaderRow
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+			begin
+				TheInvaders = m_InvaderRows[ix]
+				TheInvaders.Move()
+			end
+			
+			PlaySoundInThread("sound4",3)
+			
+			if ((CalculateLargestLastPosition()) > ClientRectangle.Width - m_InvaderRows[4][0].GetWidth())
+			begin
+				TheInvaders.DirectionRight = false
+				SetAllDirections(false)
+			end
+			if (CalculateSmallestFirstPosition() < (m_InvaderRows[4][0].Width / 3))
+			begin
+				TheInvaders.DirectionRight = true
+				SetAllDirections(true)
+				for ix from 0 thru kNumberOfRows - 1
+					bMoveDown = true
+			end
+			if (bMoveDown)
+			begin
+				for ix from 0 thru kNumberOfRows - 1
+					m_InvaderRows[ix].MoveDown()
+			end
+		endmethod
+		
+		private method TotalNumberOfInvaders, int
+			endparams
+			record
+				sum	,int	,0
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+				sum += m_InvaderRows[ix].NumberOfLiveInvaders()
+			mreturn sum
+		endmethod
+		
+		private method MoveInvadersInPlace, void
+			endparams
+			record
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+				m_InvaderRows[ix].MoveInPlace()
+		endmethod
+		
+		private method SetAllDirections, void
+			bDirection, boolean 
+			endparams
+			record
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+				m_InvaderRows[ix].DirectionRight = bDirection
+		endmethod
+		
+		public method CalcScoreFromRow, int
+			rowNum	,int 
+			endparams
+		proc
+			using rowNum select
+			(0),
+				mreturn 30
+			(1,2),
+				mreturn 20
+			(3,4),
+				mreturn 10
+			(),
+				mreturn 10
+			endusing
+		endmethod
+		
+		private method TestBulletCollision, void
+			endparams
+			record
+				rowNum	,int, 0
+				ix		,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+			begin
+				rowNum = ix
+				data collisionIndex, int, m_InvaderRows[ix].CollisionTest(m_Bullet.GetBounds())
+				if ((collisionIndex >= 0) && m_ActiveBullet)
+				begin
+					m_InvaderRows[ix].Invaders[collisionIndex].BeenHit = true
+					m_Score.AddScore(CalcScoreFromRow(rowNum))
+					PlaySoundInThread("sound0",1)
+					m_ActiveBullet = false
+					m_Bullet.Reset()
+				end
+				if (m_SaucerFlying && m_ActiveBullet && m_Saucer.GetBounds().IntersectsWith(m_Bullet.GetBounds()))
+				begin
+					m_Saucer.BeenHit = true
+					if (m_Saucer.ScoreCalculated == false)
+					begin
+						m_Score.AddScore(m_Saucer.CalculateScore())
+						m_Saucer.ScoreCalculated = true
+						PlaySoundInThread("sound3",1)
+					end
+				end
+			end
+		endmethod
+		
+		private method TestForLanding, void
+			endparams
+			record
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+			begin
+				if (m_InvaderRows[ix].AlienHasLanded(ClientRectangle.Bottom))
+				begin
+					m_Player.BeenHit = true
+					PlaySoundInThread("sound2",1)
+					m_Score.GameOver = true
+					m_HighScore.Write(m_Score.Count)
+					m_GameGoing = false
+				end
+			end
+		endmethod
+		
+		private method ResetAllBombCounters, void
+			endparams
+			record
+				ix	,int
+			endrecord
+		proc
+			for ix from 0 thru kNumberOfRows - 1
+				m_InvaderRows[ix].ResetBombCounters()
+		endmethod
+		
+		private method TestBombCollision, void
+			endparams
+			record
+				ix	,int
+				jx	,int
+				kx	,int
+			endrecord
+		proc
+			if (m_Player.Died)
+			begin
+				m_LivesRemaining -= 1
+				m_livesIndicator.Decrement()
+				;;  also show on lives indicator
+				Invalidate()
+				if (m_LivesRemaining == 0) then
+				begin
+					m_HighScore.Write(m_Score.Count)
+					m_Score.GameOver = true
+					m_GameGoing = false
+				end
+				else
+				begin
+					m_Player.Reset()
+					ResetAllBombCounters()
+				end
+			end
+			
+			if (m_Player.BeenHit == true)
+				mreturn
+			
+			for ix from 0 thru kNumberOfRows - 1
+			begin
+				for jx from 0 thru m_InvaderRows[ix].Invaders.Length - 1
+				begin
+					for kx from 0 thru kNumberOfShields - 1
+					begin
+						data bulletHole, boolean, false
+						if (m_Shields[kx].TestCollision(m_InvaderRows[ix].Invaders[jx].GetBombBounds(), true, bulletHole))
+						begin
+							m_InvaderRows[ix].Invaders[jx].ResetBombPosition()
+							Invalidate(m_Shields[kx].GetBounds())
+						end
+						if (m_Shields[kx].TestCollision(m_Bullet.GetBounds(), false, bulletHole))
+						begin
+							m_ActiveBullet = false
+							Invalidate(m_Shields[kx].GetBounds())
+							m_Bullet.Reset()
+						end
+					end
+					if (m_InvaderRows[ix].Invaders[jx].IsBombColliding(m_Player.GetBounds()))
+					begin
+						m_Player.BeenHit = true
+						PlaySoundInThread("sound2",1)
+					end
+				end
+			end
+		endmethod
+		
+		private method PauseResume, void
+			endparams
+		proc
+			if (m_GameGoing) then
+			begin
+				timer1.Stop()
+				m_GameGoing = false
+				mnuPause.Text = "&Resume"
+			end
+			else
+			begin
+				timer1.Start()
+				m_GameGoing = true
+				mnuPause.Text = "&Pause"
+			end
+		endmethod
+
+		.endregion
+	
+	endclass
+	
+endnamespace
+
+
+

@@ -1,0 +1,61 @@
+
+import System.Collections.Generic
+
+namespace ContactBrowser
+
+	function GetCustomerContacts, boolean
+	
+		required in  customer_id	,int
+		required out contacts		,@List<Contact>
+		required out message		,string
+		endparams
+
+		record
+			ch			,i4
+			ctact		,strContact
+			retval		,Boolean, true
+		endrecord
+
+	proc
+
+		contacts = new List<Contact>()
+		message = ""
+
+		try
+		begin
+			open(ch=syn_freechn,i:i,"DAT:contact.ism")
+			find(ch,,customer_id,KEYNUM:1)
+			repeat
+			begin
+				reads(ch,ctact)
+				if (ctact.customer_id!=customer_id)
+					exitloop
+				contacts.Add(new Contact(ctact))
+			end
+		end
+		catch (ex, @KeyNotSameException)
+		begin
+			message = "No contacts for that customer!"
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			if (contacts.Count==0)
+				message = "No contacts for that customer!"
+		end
+		catch (ex, @FileIOException)
+		begin
+			retval = false
+			message = "Failed to open file!"
+		end
+		finally
+		begin
+			if (ch&&chopen(ch))
+				close ch
+		end
+		endtry
+
+		freturn retval
+
+	endfunction
+
+endnamespace
