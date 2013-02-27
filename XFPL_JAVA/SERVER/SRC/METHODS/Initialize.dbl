@@ -1,0 +1,64 @@
+;*******************************************************************************
+;
+; Title:        Initialize.dbl
+;
+; Type:         Method
+;
+; Description:  Initializes a server-side environment
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Initializes the server environment.</summary>
+;;;<returns>Returns 0 on success.</returns>
+
+function Initialize, ^val
+
+    endparams
+    
+    .define REMOTE_DATA_INIT
+    .include "INC:remote.def"
+    
+    stack record
+        error, i4                               ;Function return value
+    endrecord
+
+proc
+
+    try 
+    begin
+        error=1
+        open(ch_user=%syn_freechn,"u:i","DAT:user.ism")
+
+        error=2
+        open(ch_customer=%syn_freechn,"u:i","DAT:customer.ism")
+
+        error=3
+        open(ch_group=%syn_freechn,"u:i","DAT:group.ism")
+
+        error=4
+        open(ch_product=%syn_freechn,"u:i","DAT:product.ism")
+
+        error=5
+        open(ch_order=%syn_freechn,"u:i","DAT:order.ism")
+
+        error=6
+        open(ch_orderline=%syn_freechn,"u:i","DAT:orderline.ism")
+
+        error=7
+        xcall openelb("DBLDIR:synxml")
+
+        clear error
+    end
+    catch (ex, @Exception)
+    begin
+        nop
+    end
+    endtry
+
+    freturn error
+
+endfunction

@@ -1,0 +1,43 @@
+;*******************************************************************************
+;
+; Title:        GetProductGroups2.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of all product groups
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import System.Collections
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves all product groups.</summary>
+;;;<param name="productGroups">Returned collection of product groups.</param>
+
+subroutine GetProductGroups2
+
+	{xfParameter(name="productGroups",collectionType=xfCollectType.structure,structure="strProductGroup")}
+    required out a_al	,@ArrayList
+
+    endparams
+
+    stack record
+		pgroup		,strProductGroup
+    endrecord
+
+proc
+
+	;;Get all product groups
+	foreach pgroup in new Select(
+	&	new From("DAT:group.ism",pgroup)		;Records from product group file
+	&	)
+		a_al.Add((@strProductGroup)pgroup)
+	
+    xreturn
+
+endsubroutine
+

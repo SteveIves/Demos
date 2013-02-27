@@ -1,0 +1,43 @@
+;*******************************************************************************
+;
+; Title:        Cleanup.dbl
+;
+; Type:         Method
+;
+; Description:  Cleans up the server-side environment
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Terminates the server-side environment (logout).</summary>
+
+subroutine Cleanup
+
+    endparams
+
+    .include "INC:remote.def"
+
+proc
+
+    try 
+    begin
+        close ch_user          
+        close ch_customer
+        close ch_group
+        close ch_product
+        close ch_order
+        close ch_orderline
+    end
+    catch (ex, @Exception)
+    begin
+        nop
+    end
+    endtry
+    
+    xreturn
+
+endsubroutine
+

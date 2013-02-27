@@ -1,0 +1,63 @@
+;*******************************************************************************
+;
+; Title:        GetCustomerOrders.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of order records for a specific customer
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves all orders for a customer.</summary>
+;;;<returns>Returns the number of orders retrieved.</returns>
+;;;<param name="customerCode">Passed customer code.</param>
+;;;<param name="orders">Returned collection of orders.</param>
+
+function GetCustomerOrders, ^VAL
+
+	{xfParameter(name="customerCode")}
+    required in  a_customer	,a8
+
+	{xfParameter(name="orders",collectionType=xfCollectType.structure,structure="strOrderHeader")}
+    required out a_mh		,D_HANDLE
+
+    endparams
+
+    stack record local_data
+        allocated	,i4
+        used		,i4
+		order		,strOrderHeader
+    endrecord
+
+proc
+
+    init local_data
+
+	foreach order in new Select(
+	&	new From("DAT:order.ism",order),	;Records from order header file
+	&	(Where)order.customer==a_customer,	;For the requested customer
+	&	OrderBy.DescendingKey(0)			;Newest order first
+	&	)
+	begin
+		;;Make sure we have room for it
+		if ((used+=1)>allocated)
+			a_mh = %mem_proc(DM_RESIZ,^size(strOrderHeader)*(allocated+=100),a_mh)
+		;;Save it
+		^m(strOrderHeader[used],a_mh) = order
+	end
+
+	;;Resize to the actual number of orders loaded
+	if (used<allocated)
+		a_mh = %mem_proc(DM_RESIZ,^size(strOrderHeader)*used,a_mh)
+	
+    freturn used
+
+endfunction
+

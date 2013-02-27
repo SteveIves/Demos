@@ -1,0 +1,15 @@
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+function DataTestMethod, ^val
+	required in    d21_in    ,d2.1
+	required out   d21_out   ,d2.1
+	required inout d21_inout ,d2.1
+	required in    d2818_in    ,d28.18
+	required out   d2818_out   ,d28.18
+	required inout d2818_inout ,d28.18
+
+    endparams
+
+proc
+    freturn 1
+endfunction
+

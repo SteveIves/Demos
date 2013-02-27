@@ -1,0 +1,65 @@
+;*******************************************************************************
+;
+; Title:        UpdateProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Locks and updates a product record.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Updates a product record.</summary>
+;;;<returns>Returns 0 on success, 1 on error.</returns>
+;;;<param name="product">Passed product to be updated.</param>
+;;;<param name="errorText">Returned error message (on error).</param>
+
+function UpdateProduct, ^VAL
+
+	{xfParameter(name="product")}
+    required in  a_product, strProduct
+
+	{xfParameter(name="errorText")}
+	required out a_errtxt, a40
+	
+    endparams
+
+    .include "INC:remote.def"
+
+    stack record
+        retval		,i4
+		tmpProduct	,strProduct
+    endrecord
+
+proc
+
+	try 
+	begin
+		read(ch_product,tmpProduct,a_product.sku,KEYNUM:0)
+		write(ch_product,a_product)
+		clear retval, a_errtxt
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		retval=1
+		a_errtxt = "Failed to lock product for update!"
+	end
+	catch (ex, @KeyNotSameException)
+	begin
+		retval=1
+		a_errtxt = "Failed to lock product for update!"
+	end
+	catch (ex, @Exception)
+	begin
+		retval=1
+		a_errtxt = "Failed to update product!"
+	end
+	endtry
+
+    freturn retval
+
+endfunction
+

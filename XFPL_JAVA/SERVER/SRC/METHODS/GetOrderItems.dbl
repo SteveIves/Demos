@@ -1,0 +1,61 @@
+;*******************************************************************************
+;
+; Title:        GetOrderItems.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of order item records for a specific order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves line items for an order.</summary>
+;;;<returns>Returns the number of line items retrieved.</returns>
+;;;<param name="orderNumber">Passed order number.</param>
+;;;<param name="items">Returned collection of line items.</param>
+
+function GetOrderItems, ^val
+
+	{xfParameter(name="orderNumber")}
+    required in  a_order	,d8
+
+	{xfParameter(name="items",collectionType=xfCollectType.structure,structure="strOrderLine")}
+    required out a_mh		,D_HANDLE
+
+    endparams
+
+    stack record local_data
+        allocated	,i4
+        used		,i4
+		item		,strOrderLine
+    endrecord
+
+proc
+
+    init local_data
+
+	foreach item in new Select(
+	&	new From("DAT:orderline.ism",item),		;Records from order item file
+	&	(Where)item.order==a_order				;For the requested order
+	&	)
+	begin
+		;;Make sure we have room for it
+		if ((used+=1)>allocated)
+			a_mh = %mem_proc(DM_RESIZ,^size(strOrderLine)*(allocated+=10),a_mh)
+		;;Save it
+		^m(strOrderLine[used],a_mh) = item
+	end
+
+	;;Resize to exact size if necessary
+	if (used<allocated)
+		a_mh = %mem_proc(DM_RESIZ,^size(strOrderLine)*used,a_mh)
+
+    freturn used
+
+endfunction
+

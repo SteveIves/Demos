@@ -1,0 +1,21 @@
+[COMPONENT INFORMATION]
+Component_Name=JavaComponent
+Component_Directory=D:\Dev\Demos\XFPL_JAVA\COMPONENT
+Generate_Javadoc=1
+Use_Alternate_Field_Names=0
+Repository_Main_File=D:\Dev\Demos\XFPL_JAVA\SERVER\RPS\rpsmain.ism
+Repository_Text_File=D:\Dev\Demos\XFPL_JAVA\SERVER\RPS\rpstext.ism
+Error_Tag=
+SMC_Directory=D:\Dev\Demos\XFPL_JAVA\SERVER\XFPL
+Package_Name=SynergyApp
+Read_Only_Properties=0
+Jar_Java_Version=1.6
+Class_Java_Version=1.5
+
+[GLOBAL]
+syn_version=6
+Synergy=JAVA
+
+[SMC Interfaces]
+Interface_0=SynergyMethods:
+

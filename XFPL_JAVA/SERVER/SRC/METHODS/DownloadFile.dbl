@@ -1,0 +1,35 @@
+;*******************************************************************************
+;
+; Title:        DownloadFile.dbl
+;
+; Type:         Method
+;
+; Description:  Downloads a named local file to the client
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Downloads a file from the server.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="fileName">The name of the file to download.</param>
+;;;<param name="fileData">The returned file data.</param>
+
+function DownloadFile ,^val
+
+	{xfParameter(name="fileName")}
+    required in  a_file	,a80
+
+	{xfParameter(name="fileData",type=SynType.binaryhandle)}
+    required out a_mh	,D_HANDLE
+
+    endparams
+
+proc
+
+    freturn %FileToHandle(a_file,a_mh)
+
+endfunction
+

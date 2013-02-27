@@ -1,0 +1,36 @@
+;*******************************************************************************
+;
+; Title:        UploadFile.dbl
+;
+; Type:         Method
+;
+; Description:  Accepts a memory handle representing the binary content of
+;               a file and saves it to a local file.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Uploads a file to the server.</summary>
+;;;<returns>Returns zero on success, 1 on error.</returns>
+;;;<param name="fileData">Passed file data.</param>
+;;;<param name="fileName">Passed name to save the file as.</param>
+
+function UploadFile ,^val
+
+	{xfParameter(name="fileData",type=SynType.binaryhandle)}
+    required in a_mh	,D_HANDLE	;Memory handle
+
+	{xfParameter(name="fileName")}
+    required in a_file	,a80    	;File to create
+
+    endparams
+
+proc
+
+	freturn %HandleToFile(a_mh,a_file)
+
+endfunction
+

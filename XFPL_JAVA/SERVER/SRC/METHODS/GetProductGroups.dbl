@@ -1,0 +1,56 @@
+;*******************************************************************************
+;
+; Title:        GetProductGroups.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of all product groups
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves all product groups.</summary>
+;;;<param name="productGroups">Returned collection of product groups.</param>
+
+subroutine GetProductGroups
+
+	{xfParameter(name="productGroups",collectionType=xfCollectType.structure,structure="strProductGroup")}
+    required out a_mh	,D_HANDLE
+
+    endparams
+
+    stack record local_data
+        allocated	,i4
+        used		,i4
+		pgroup		,strProductGroup
+    endrecord
+
+proc
+
+    init local_data
+
+	;;Get all product groups
+	foreach pgroup in new Select(
+	&	new From("DAT:group.ism",pgroup)		;Records from product group file
+	&	)
+	begin
+		;;Make sure we have room for it
+		if ((used+=1)>allocated)
+			a_mh = %mem_proc(DM_RESIZ,^size(strProductGroup)*(allocated+=100),a_mh)
+		;;Save it
+		^m(strProductGroup[used],a_mh) = pgroup
+	end
+	
+	;;Resize to number of returned groups
+	if (used<allocated)
+		a_mh = %mem_proc(DM_RESIZ,^size(strProductGroup)*used,a_mh)
+	
+    xreturn
+
+endsubroutine
+

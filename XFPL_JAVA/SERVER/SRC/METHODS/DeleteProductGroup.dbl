@@ -1,0 +1,103 @@
+;*******************************************************************************
+;
+; Title:        DeleteProductGroup.dbl
+;
+; Type:         Method
+;
+; Description:  Deletes a specific product group
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Deletes a single product group.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="productGroupCode">Passed product group code.</param>
+
+function DeleteProductGroup, ^VAL
+
+	{xfParameter(name="productGroupCode")}
+    required in  a_group	,a10
+
+	{xfParameter(name="errorText")}
+	required out a_errtxt	,a40
+
+    endparams
+
+    stack record local_data
+        retval		,i4
+		ch			,i4
+    endrecord
+
+proc
+
+    init local_data
+	
+	;;make sure there no products in the product group
+	try 
+	begin
+		open(ch,i:i,"DAT:product.ism")
+		find(ch,,a_group,KEYNUM:1)
+		retval = 1
+		a_errtxt = "Can't delete group while products exist!"
+	end
+	catch (ex, @KeyNotSameException)
+		nop
+	catch (ex, @EndOfFileException)
+	begin
+		nop
+	end
+	catch (ex, @FileIOException)
+	begin
+		retval = -1
+		a_errtxt = "Failed to open product file!"
+	end
+	finally
+	begin
+		if (ch)
+		begin
+			close ch
+			clear ch
+		end
+	end
+	endtry
+	
+	;;Delete the product group
+	if (!retval)
+	begin
+		try 
+		begin
+			open(ch,u:i,"DAT:group.ism")
+			find(ch,,a_group,KEYNUM:0,LOCK:Q_AUTO_LOCK)
+			delete(ch)
+			clear a_errtxt
+		end
+		catch (ex, @KeyNotSameException)
+		begin
+			retval = 1
+			a_errtxt = "Product group not found!"
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			retval = 1
+			a_errtxt = "Product group not found!"
+		end
+		catch (ex, @Exception)
+		begin
+			retval = 3
+			a_errtxt = "Failed to delete product group!"
+		end
+		finally
+		begin
+			if (ch)
+				close ch
+		end
+		endtry
+	end
+	
+    freturn retval
+
+endfunction
+

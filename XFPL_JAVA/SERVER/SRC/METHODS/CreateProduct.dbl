@@ -1,0 +1,54 @@
+;*******************************************************************************
+;
+; Title:        CreateProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Creates a new product
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Bulk-adds several new products.</summary>
+;;;<returns>Returns 0 on success or 1 on error.</returns>
+;;;<param name="product">Passed product to add.</param>
+
+function CreateProduct, ^val
+
+	{xfParameter(name="product")}
+    required in a_product	,strProduct
+
+    endparams
+
+    stack record local_data
+		ch			,i4
+		fail		,i4
+		product		,strProduct
+    endrecord
+
+proc
+
+	init local_data
+	
+	try 
+	begin
+		open(ch,u:i,"DAT:product.ism")
+		store(ch,product)
+		close ch
+	end
+	catch (ex, @FileIOException)
+		fail = 1
+	finally
+	begin
+		if (ch)
+			close ch
+	end
+	endtry
+	
+    freturn fail
+
+endfunction
+

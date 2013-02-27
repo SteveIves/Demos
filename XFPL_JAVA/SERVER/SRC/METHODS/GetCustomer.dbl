@@ -1,0 +1,55 @@
+;*******************************************************************************
+;
+; Title:        GetCustomer.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a specific customer record
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves a single customer record.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="customer">Customer data (containing customer code).</param>
+;;;<param name="errorText">Returned error text (on failure).</param>
+
+function GetCustomer, ^VAL
+
+	{xfParameter(name="customer")}
+    required inout a_customer	,strCustomer
+
+	{xfParameter(name="errorText")}
+    required out   a_errmsg		,a40
+
+    endparams
+
+    stack record local_data
+        retval		,i4
+		customer	,strCustomer
+    endrecord
+
+proc
+
+	init local_data
+	retval = 1
+	a_errmsg = "Customer not found!"
+	
+	foreach customer in new Select(
+	&	new From("DAT:customer.ism",customer),			;Record from the customer file
+	&	(Where)customer.account == a_customer.account	;Matching the requested account number
+	&	)
+	begin
+		a_customer = customer
+		clear retval, a_errmsg
+	end
+	
+    freturn retval
+
+endfunction
+

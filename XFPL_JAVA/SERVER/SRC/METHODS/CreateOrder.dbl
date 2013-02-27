@@ -1,0 +1,106 @@
+;*******************************************************************************
+;
+; Title:        CreateOrder.dbl
+;
+; Type:         Method
+;
+; Description:  Creates a new order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Creates a new order.</summary>
+;;;<returns>Returns 0 on error, or order number.</returns>
+;;;<param name="order">Passed order data.</param>
+;;;<param name="lineItems">Passed line items.</param>
+
+function CreateOrder, ^VAL
+
+	{xfParameter(name="order")}
+    required inout a_order_header	,strOrderHeader
+
+	{xfParameter(name="lineItems")}
+    required in    a_order_lines	,[*]strOrderLine
+
+    endparams
+
+    .define D_SALES_TAX 7.5
+    
+    stack record local_data
+		ch_header		,i4
+		ch_item			,i4
+		ordernum        ,d8
+		order_header	,strOrderHeader
+		order_line		,strOrderLine
+    endrecord
+
+proc
+
+    init local_data
+
+	;;Open files
+	try 
+	begin
+		open(ch_header,u:i,"DAT:order.ism")
+		open(ch_item,u:i,"DAT:orderline.ism")
+	end
+	catch (ex)
+	begin
+		if ((ch_header)&&%chopen(ch_header))
+			close ch_header
+		freturn 0
+	end
+	endtry
+	
+    ;Get next order number and create the order
+	if (ordernum = %GetNextOrderNumber)
+		call saveOrder
+	
+	;;Close files
+	close ch_header
+	close ch_item
+	
+	freturn ordernum
+    
+saveOrder,
+	
+	order_header = a_order_header
+	order_header.order = ordernum
+	upcase order_header.customer
+
+	;;Calculate the order total and sales tax
+	foreach order_line in a_order_lines
+	begin
+		order_header.goods_value += (order_line.qty_ordered * order_line.price)
+		order_header.tax_value = ((order_header.goods_value/100)*D_SALES_TAX)		
+	end
+	
+	;;Calculate the shipping cost for the order
+	order_header.shipping_value=10.99
+
+	;;Store the order
+	try 
+	begin
+		store(ch_header,order_header)
+		;;Store the line items
+		begin
+			data lineNumber, i4, 0
+			foreach order_line in a_order_lines
+			begin
+				order_line.order=order_header.order
+				order_line.line_number = (lineNumber+=1)
+				store(ch_item,order_line)
+			end
+		end
+	end
+	catch (ex, @Exception)
+		clear ordernum
+	endtry
+
+	return
+	
+endfunction
+

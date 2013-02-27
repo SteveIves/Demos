@@ -1,0 +1,18 @@
+
+.ifdef REMOTE_DATA_INIT
+global data section REMOTE_DATA, INIT
+.undefine REMOTE_DATA_INIT
+.else
+global data section REMOTE_DATA
+.endc
+
+record
+	ch_user			,i4
+	ch_customer		,i4
+	ch_group		,i4
+	ch_product		,i4
+	ch_order		,i4
+	ch_orderline	,i4
+
+endglobal
+

@@ -1,0 +1,39 @@
+;*******************************************************************************
+;
+; Title:        FormatStatus.dbl
+;
+; Type:         Function
+;
+; Description:  Returns the name associated with an order status code
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+function FormatStatus
+
+    required in a_status	,a1
+
+    endparams
+
+    stack record
+        status				,a12
+    endrecord
+
+proc
+
+    using a_status select
+    ("O"),  freturn "Open"
+    ("P"),  freturn "Processing"
+    ("S"),  freturn "Shipped"
+    ("D"),  freturn "Delivered"
+    ("C"),  freturn "Cancelled"
+    ("B"),  freturn "Back Ordered"
+    endusing
+
+    freturn ""
+
+endfunction
+
+
+

@@ -1,0 +1,7 @@
+<%
+	//Make sure the user has logged in, and their session has not timed out
+	if (session.getAttribute("LOGGEDIN") != "YES") {
+        RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+        rd.forward(request, response);
+	}
+%>

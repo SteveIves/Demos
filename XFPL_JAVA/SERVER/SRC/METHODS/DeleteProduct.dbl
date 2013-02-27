@@ -1,0 +1,93 @@
+;*******************************************************************************
+;
+; Title:        DeleteProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Deletes a specific product record
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Deletes a single product.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="product">Passed product data.</param>
+;;;<param name="errorText">Returned error text (on failure).</param>
+
+function DeleteProduct, ^VAL
+
+	{xfParameter(name="product")}
+    required inout a_product	,strProduct
+
+	{xfParameter(name="errorText")}
+    required out   a_errtxt		,a40
+
+    endparams
+
+    stack record local_data
+        retval		,i4
+		ch			,i4
+		tmpProduct	,strProduct
+    endrecord
+
+proc
+            
+    init local_data
+	clear a_errtxt
+    
+	;;Open product file and read/lock the product
+	try 
+	begin
+		open(ch,u:i,"DAT:product.ism")
+		read(ch,tmpProduct,a_product.sku,KEYNUM:0,LOCK:Q_AUTO_LOCK)
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		retval=1
+		a_errtxt = "Failed to lock product for delete!"
+	end
+	catch (ex, @KeyNotSameException)
+	begin
+		retval=1
+		a_errtxt = "Failed to lock product for delete!"
+	end
+	endtry
+	
+	;;Make sure the product hasn't changed
+	if (!retval)
+	begin
+		if (tmpProduct!=a_product)
+		begin
+			unlock ch
+			retval=2
+			a_errtxt = "Product has been updated by another user!"
+			a_product = tmpProduct
+		end
+	end
+	
+	;;Delete the product
+	if (!retval)
+	begin
+		try 
+		begin
+			delete(ch)
+			init a_product
+		end
+		catch (ex, @Exception)
+		begin
+			retval=3
+			a_errtxt = "Failed to delete product."
+		end
+		endtry
+	end
+	
+	;;Close file
+	if (ch&&%chopen(ch))
+		close ch
+	
+    freturn retval
+
+endfunction

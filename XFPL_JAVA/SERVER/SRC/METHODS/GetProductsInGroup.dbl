@@ -1,0 +1,63 @@
+;*******************************************************************************
+;
+; Title:        GetProductsInGroup.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of product records for a specified group,
+;               via a dynamic memory handle.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves products in a product group.</summary>
+;;;<returns>Returns the number of products retrieved.</returns>
+;;;<param name="productGroupCode">Product group code.</param>
+;;;<param name="products">Returned collection of products.</param>
+
+function GetProductsInGroup, ^val
+
+	{xfParameter(name="productGroupCode")}
+	required in  a_group    ,a10
+
+	{xfParameter(name="products",collectionType=xfCollectType.structure,structure="strProduct")}
+	required out a_mh       ,D_HANDLE   ;Returned collection
+
+	endparams
+
+	stack record local_data
+		allocated   ,i4
+		used        ,i4
+		product     ,strProduct
+	endrecord
+
+proc
+
+	init local_data
+
+	foreach product in new Select(
+	&   new From("DAT:product.ism",product),    ;Records from product file
+	&   (Where)product.group==a_group,          ;For the requested product group
+	&   OrderBy.AscendingKey(2)                 ;Order by Description
+	&   )
+	begin
+		;;Make sure we have room for it
+		if ((used+=1)>allocated)
+			a_mh = %mem_proc(DM_RESIZ,^size(strProduct)*(allocated+=100),a_mh)
+		;;Save it
+		^m(strProduct[used],a_mh) = product
+	end
+
+	;;Resize to exact size if necessary
+	if (used<allocated)
+		a_mh = %mem_proc(DM_RESIZ,^size(strProduct)*used,a_mh)
+
+	freturn used
+
+end
+

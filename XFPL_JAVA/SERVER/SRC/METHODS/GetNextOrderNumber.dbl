@@ -1,0 +1,63 @@
+;*******************************************************************************
+;
+; Title:        GetNextOrderNumber.dbl
+;
+; Type:         Support routine
+;
+; Description:  Determines the next order number to use
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+;;;<summary>Gets next available order number.</summary>
+;;;<returns>Returns 0 on error, or order number.</returns>
+
+function GetNextOrderNumber, d8
+
+    endparams
+
+    .include "INC:remote.def"
+
+    stack record local_data
+		ordernum        ,d8
+		order_header	,strOrderHeader
+    endrecord
+
+proc
+
+    init local_data
+
+    ;Need an orer number, last one used is stored in order_date for order 99999999!!!
+	
+	try 
+	begin
+		read(ch_order,order_header,"99999999",KEYNUM:0,LOCK:Q_AUTO_LOCK)
+		incr order_header.order_date
+		write(ch_order,order_header)
+		ordernum=order_header.order_date
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		nop
+	end
+	endtry
+
+	;;If we don't have an order number, start at 1
+
+	if (!ordernum)
+	begin
+		init order_header
+		order_header.order=99999999
+		set ordernum, order_header.order_date=1
+		try 
+			store(ch_order,order_header)
+		catch (ex, @Exception)
+			clear ordernum
+		endtry
+	end
+	
+    freturn ordernum
+
+endfunction
+

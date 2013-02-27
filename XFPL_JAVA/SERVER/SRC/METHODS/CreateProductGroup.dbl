@@ -1,0 +1,55 @@
+;*******************************************************************************
+;
+; Title:        CreateProductGroup.dbl
+;
+; Type:         Method
+;
+; Description:  Creates a new product group
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Creates a new product group.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="productGroup">Product group to create.</param>
+
+function CreateProductGroup, ^VAL
+
+	{xfParameter(name="productGroup")}
+    required in a_group	,strProductGroup
+
+    endparams
+
+    stack record local_data
+        retval	,i4
+		ch		,i4
+    endrecord
+
+proc
+
+	init local_data
+	
+	try 
+	begin
+		open(ch,u:i,"DAT:group.ism")
+		store(ch,a_group)
+		clear retval
+	end
+	catch (ex)
+	begin
+		retval = 1
+	end
+	finally
+	begin
+		if (ch)
+			close ch
+	end
+	endtry
+
+    freturn retval
+
+endfunction
+

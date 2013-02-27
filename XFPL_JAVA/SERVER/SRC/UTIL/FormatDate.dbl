@@ -1,0 +1,35 @@
+;*******************************************************************************
+;
+; Title:        FormatDate.dbl
+;
+; Type:         Function
+;
+; Description:  Formats a YYYYMMDD and returns MM/DD/YYYY
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+function FormatDate ,a10
+
+    required in group a_date, d8
+      a_year        ,a4
+      a_month       ,a2
+      a_day         ,a2
+    endgroup
+
+    endparams
+
+    stack record
+        strdate         ,a10
+    endrecord
+
+proc
+
+    xcall s_bld(strdate,,"%a/%a/%a",a_month,a_day,a_year)
+
+    freturn strdate
+
+endfunction
+
+

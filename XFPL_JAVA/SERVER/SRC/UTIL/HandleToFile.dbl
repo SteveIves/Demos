@@ -1,0 +1,143 @@
+;*******************************************************************************
+;
+; Title:        HandleToFile.dbl
+;
+; Type:         Function
+;
+; Description:  Saves binary data from a memory handle to a local file
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+.ifndef OS_VMS ;WINDOWS AND UNIX CODE
+;*******************************************************************************
+
+function HandleToFile ,^VAL
+
+    required in a_mh    ,i4          ;Memory handle
+    required in a_file  ,a           ;File name to load
+    endparams
+
+    stack record ivars
+        retval      ,i4             ;Routine return value
+        ch          ,i4             ;Output file channel
+        chars       ,i4             ;File size (bytes)
+        chunks      ,i4             ;Number of chunks to write
+        count       ,i4             ;Loop counter
+        remaining   ,i4             ;Chars remaining after full chunks written
+    endrecord
+
+    .define D_BUFSZ 32768
+    
+    structure chunk
+                    ,a D_BUFSZ
+    endstructure
+    
+    stack record avars
+        buf         ,a D_BUFSZ      ;IO buffer
+    endrecord
+
+proc
+
+    init ivars, avars
+
+    ;Open the input file
+    open(ch=%syn_freechn,o,a_file) [ERR=nf]
+
+    if 0
+nf,     retval=1
+
+    if (!retval)
+    begin
+        ;Find out how much data we're dealing with, and calculate how many
+        ;puts will be required based on the current vlock size.
+        chars = %mem_proc(DM_GETSIZE,a_mh)
+        chunks = (chars/D_BUFSZ)
+
+        ;Write full chunks to file
+        for count from 1 thru chunks
+            puts(ch,^m(chunk[count],a_mh))
+
+        ;Write remaining data to file
+        remaining = (chars-(chunks*D_BUFSZ))
+        if (remaining)
+            puts(ch,^m(chunk[count](1:remaining),a_mh))
+    end
+
+    ;Close file
+    if (retval!=1)
+        close ch
+
+    freturn retval
+
+endfunction
+;
+;*******************************************************************************
+.else ;VMS CODE
+;*******************************************************************************
+;
+;THIS CODE WILL NOT WORK YET!
+;
+function HandleToFile ,^VAL
+
+    required in a_mh	,D_HANDLE	;Memory handle
+    required in a_file	,a			;File name to load
+    endparams
+
+    stack record ivars
+        retval      ,i4             ;Routine return value
+        ch          ,i4             ;Output file channel
+        chars       ,i4             ;File size (bytes)
+        chunks      ,i4             ;Number of chunks to write
+        count       ,i4             ;Loop counter
+        remaining   ,i4             ;Chars remaining after full chunks written
+    endrecord
+
+    .define D_BUFSZ 512
+    
+    structure chunk
+                    ,a D_BUFSZ
+    endstructure
+    
+    stack record avars
+        buf         ,a D_BUFSZ      ;IO buffer
+    endrecord
+    
+proc
+
+    init ivars, avars
+
+    ;Open the input file
+    open(ch=%syn_freechn,o:b,a_file) [ERR=nf]
+
+    if 0
+nf,     retval=1
+
+    if (!retval)
+    begin
+        ;Find out how much data we're dealing with, and calculate how many
+        ;puts will be required based on the current vlock size.
+        chars = %mem_proc(DM_GETSIZE,a_mh)
+        chunks = chars / D_BUFSZ
+
+        ;Write full chunks to file
+        for count from 1 thru chunks
+            puts(ch,^m(chunk[count],a_mh))
+
+        ;Write remaining chunks to file
+        remaining = (chars-(chunks*D_BUFSZ))
+        if (remaining)
+            puts(ch,^m(chunk[count](1:remaining),a_mh))
+    end
+
+    ;Close file
+    if (retval!=1)
+        close ch
+
+    freturn retval
+
+endfunction
+;*******************************************************************************
+.endc ;END OF VMS CODE
+;*******************************************************************************
+

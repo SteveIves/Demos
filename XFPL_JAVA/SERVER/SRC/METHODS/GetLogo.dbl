@@ -1,0 +1,31 @@
+;*******************************************************************************
+;
+; Title:        GetLogo.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a logo image (binary file download example)
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves the application logo.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="logoData">Returned logo file data (JPG).</param>
+
+function GetLogo ,^val
+
+	{xfParameter(name="logoData",type=SynType.binaryhandle)}
+    required out a_mh	,D_HANDLE
+
+    endparams
+
+proc
+
+    freturn %FileToHandle("DAT:spc2005.jpg",a_mh)
+
+endfunction
+

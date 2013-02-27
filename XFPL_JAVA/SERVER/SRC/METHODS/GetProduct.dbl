@@ -1,0 +1,59 @@
+;*******************************************************************************
+;
+; Title:        GetProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a specific prodct record
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves a single product.</summary>
+;;;<returns>Returns 0 on success.</returns>
+;;;<param name="product">Returned product data.</param>
+
+function GetProduct, ^VAL
+
+	{xfParameter(name="product")}
+    required inout a_product, strProduct
+
+	{xfParameter(name="errorText")}
+	required inout a_errtxt, a40
+	
+    endparams
+
+    .include "INC:remote.def"
+    
+    stack record
+        retval, i4
+    endrecord
+
+proc
+
+	try 
+	begin
+		read(ch_product,a_product,a_product.sku,KEYNUM:0,LOCK:Q_NO_LOCK)
+		clear retval, a_errtxt
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		retval=1
+		a_errtxt = "Product not found!"
+		clear a_product		
+	end
+	catch (ex, @KeyNotSameException)
+	begin
+		retval=1
+		a_errtxt = "Product not found!"
+		clear a_product		
+	end
+	endtry
+	
+    freturn retval
+
+endfunction
+

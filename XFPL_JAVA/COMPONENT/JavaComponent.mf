@@ -1,0 +1,23 @@
+Name: SynergyApp\
+
+Name: SynergyApp\Customer.class
+Java-Bean: False
+
+Name: SynergyApp\Order_header.class
+Java-Bean: False
+
+Name: SynergyApp\Order_line.class
+Java-Bean: False
+
+Name: SynergyApp\Product.class
+Java-Bean: False
+
+Name: SynergyApp\Product_group.class
+Java-Bean: False
+
+Name: SynergyApp\User.class
+Java-Bean: False
+
+Name: SynergyApp\SynergyMethods.class
+Java-Bean: True
+

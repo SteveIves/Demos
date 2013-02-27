@@ -1,0 +1,61 @@
+;*******************************************************************************
+;
+; Title:        GetOrder.dbl
+;
+; Type:         Method
+;
+; Description:  Returns order header and items for a specific order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+import Synergex.SynergyDE.Select
+
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Retrieves a single order.</summary>
+;;;<returns>Returns 1 on success.</returns>
+;;;<param name="orderNumber">Passed order number.</param>
+;;;<param name="order">Returned order data.</param>
+;;;<param name="items">Returned collection of line items.</param>
+
+function GetOrder, ^val
+
+	{xfParameter(name="orderNumber")}
+    required in  a_ordernum	,d8
+
+	{xfParameter(name="order")}
+    required out a_order	,strOrderHeader
+
+	{xfParameter(name="items",collectionType=xfCollectType.structure,structure="strOrderLine")}
+    required out a_items	,D_HANDLE
+
+    endparams
+
+    .include "INC:remote.def"
+
+    stack record local_data
+        ok		,i4
+		order	,strOrderHeader
+    endrecord
+
+proc
+
+	init local_data
+	
+	foreach order in new Select(
+	&	new From("DAT:order.ism",order),	;Record from the order file
+	&	(Where)order.order == a_ordernum	;Matching the requested order number
+	&	)
+	begin
+		a_order = order
+		GetOrderItems(a_ordernum,a_items)
+		ok = 1
+		exitloop
+	end
+
+    freturn ok
+
+endfunction
+

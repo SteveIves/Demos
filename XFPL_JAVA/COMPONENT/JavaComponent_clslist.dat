@@ -1,0 +1,7 @@
+SynergyApp\Customer.class
+SynergyApp\Order_header.class
+SynergyApp\Order_line.class
+SynergyApp\Product.class
+SynergyApp\Product_group.class
+SynergyApp\User.class
+SynergyApp\SynergyMethods.class

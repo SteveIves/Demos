@@ -1,0 +1,91 @@
+;*******************************************************************************
+;
+; Title:        Login.dbl
+;
+; Type:         Method
+;
+; Description:  Validates a user login
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+;*******************************************************************************
+;
+{xfMethod(interface="SynergyMethods",elb="EXE:SynergyServer")}
+
+;;;<summary>Authenticates a user session.</summary>
+;;;<returns>Returns 0 on success, 1 on error.</returns>
+;;;<param name="username">Passed user login name.</param>
+;;;<param name="password">Passed account password.</param>
+;;;<param name="userData">Returned user information (on success).</param>
+;;;<param name="errorText">Returned error message (on error).</param>
+
+function Login, ^VAL
+
+	{xfParameter(name="username")}
+    required in  a_username	,a40
+
+	{xfParameter(name="password")}
+    required in  a_password	,a40
+
+	{xfParameter(name="userData")}
+    required out a_user		,strUser
+
+	{xfParameter(name="errorText")}
+	required out a_errmsg	,a40
+
+    endparams
+
+    .include "INC:remote.def"
+
+    stack record local_data
+        retval          ,i4
+        password        ,a40
+    endrecord
+
+proc
+
+    clear retval, a_errmsg
+
+    if (!(a_username&&a_password)) then
+    begin
+        retval=1
+        a_errmsg = "Missing username or password"
+    end
+    else
+    begin
+
+        password = a_password
+        upcase password
+
+        a_user.username = a_username
+        upcase a_user.username
+
+		try 
+		begin
+			read(ch_user,a_user,a_user.username,KEYNUM:0,LOCK:Q_NO_LOCK)
+			if (password!=a_user.password)
+			begin
+				retval = 1
+				a_errmsg = "Invalid login!"
+				clear a_user
+			end
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			retval = 1
+			a_errmsg = "Invalid login!"
+			init a_user
+		end
+		catch (ex, @KeyNotSameException)
+		begin
+			retval = 1
+			a_errmsg = "Invalid login!"
+			init a_user
+		end
+		endtry
+		
+    end
+
+    freturn retval
+
+endfunction

@@ -1,0 +1,8 @@
+
+.include "CUSTOMER" repository, structure="strCustomer", end
+.include "ORDER_HEADER" repository, structure = "strOrderHeader", end
+.include "ORDER_LINE" repository, structure="strOrderLine", end
+.include "PRODUCT" repository, structure="strProduct", end
+.include "PRODUCT_GROUP" repository, structure="strProductGroup", end
+.include "USER" repository, structure="strUser", end
+

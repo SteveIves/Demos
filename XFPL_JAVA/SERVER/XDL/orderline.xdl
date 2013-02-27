@@ -1,0 +1,46 @@
+!	Synergy ISAM XDL File created Thu Apr 17 09:42:39 2008
+FILE
+	NAME		"orderline.ism"
+	ADDRESSING	32
+	KEYS		2
+
+RECORD
+	SIZE		140
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Shared index cache allowed
+	!Creation version 8.1.5b 
+	!File created on Tue Feb 17 14:50:13 2004
+	!Last cleared on Thu Feb 09 03:50:19 2006
+	!18 byte longest key
+	!2 free index blocks, 0x2400 free list head
+	!129 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1:9
+	LENGTH		8:3
+	TYPE		alpha:alpha
+	ORDER		ascending:ascending
+	NAME		"order"
+	DUPLICATES	no
+	MODIFIABLE	no
+
+	!Root 0x1800, index depth 2
+	!Minimum keys per block 34
+
+KEY 1
+	!Alternate key #1
+	START		12:1
+	LENGTH		10:8
+	TYPE		alpha:alpha
+	ORDER		ascending:ascending
+	NAME		"sku"
+	DUPLICATES	no
+	MODIFIABLE	no
+
+	!Root 0x1000, index depth 2
+	!Minimum keys per block 23
