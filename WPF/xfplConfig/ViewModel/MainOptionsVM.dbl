@@ -1,0 +1,50 @@
+
+import System
+import System.Collections.Generic
+import System.Windows.Input
+
+namespace xfplConfig.ViewModel
+
+    public class MainOptionsVM
+        
+        private mOpenFile, @ICommand
+        private mNewFile, @ICommand
+        
+        public method MainOptionsVM
+            endparams
+        proc
+            mOpenFile = new RelayCommand(doOpenFile)
+            mNewFile = new RelayCommand(doNewFile)
+        endmethod
+
+        public property Openfile, @ICommand
+            method get
+            proc
+                mreturn mOpenFile
+            endmethod
+        endproperty
+        
+        public property Newfile, @ICommand
+            method get
+            proc
+                mreturn mNewFile
+            endmethod
+        endproperty
+        
+        private method doOpenFile, void
+            required in param, @Object
+            endparams
+        proc
+            
+        endmethod
+        
+        private method doNewFile, void
+            required in param, @Object
+            endparams
+        proc
+            
+        endmethod
+
+    endclass
+
+endnamespace

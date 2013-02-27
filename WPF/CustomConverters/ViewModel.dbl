@@ -1,0 +1,27 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace CustomConverters
+
+	public class ViewModel
+
+		private mSynergyData	,@SynergyRecord	,new SynergyRecord()
+
+		public property SynergyData, @SynergyRecord
+			method get
+			proc
+				mreturn mSynergyData
+			endmethod
+			method set
+			proc
+				mSynergyData = value
+			endmethod
+		endproperty
+			
+	endclass
+
+endnamespace
+

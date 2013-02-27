@@ -1,0 +1,40 @@
+
+namespace ContactBrowserWpf.Models
+
+	public class Customer
+
+		private mCustomer, strCustomer
+
+		public method Customer
+			required in customer, strCustomer
+			endparams
+		proc
+			mCustomer = customer
+		endmethod
+
+		public property CustomerId, int
+			method get
+			proc
+				mreturn mCustomer.customer_id
+			endmethod
+			method set
+			proc
+				mCustomer.customer_id = value
+			endmethod
+		endproperty
+		
+		public property CompanyName, string
+			method get
+			proc
+				mreturn atrim(mCustomer.name)
+			endmethod
+			method set
+			proc
+				mCustomer.name = value
+			endmethod
+		endproperty
+		
+	endclass
+
+endnamespace
+

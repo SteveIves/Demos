@@ -1,0 +1,9 @@
+﻿<Window
+    x:Class="SplashScreenTestApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Main window" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Margin="39,59,21,102" Name="label1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="36">Application main window</Label>
+    </Grid>
+</Window>

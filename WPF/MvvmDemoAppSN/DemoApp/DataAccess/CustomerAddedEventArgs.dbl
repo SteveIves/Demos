@@ -1,0 +1,34 @@
+import System
+import DemoApp.Model
+
+namespace DemoApp.DataAccess
+
+	;;;<summary>
+	;;;Event arguments used by CustomerRepository's CustomerAdded event.
+	;;;</summary>
+	public class CustomerAddedEventArgs extends EventArgs
+		
+		public method CustomerAddedEventArgs
+			required in newCustomer, @Customer
+			endparams
+		proc
+			this.NewCustomer = newCustomer
+		endmethod
+
+		private mNewCustomer, @Customer
+
+		public property NewCustomer, @Customer
+			method get
+			proc
+				mreturn mNewCustomer
+			endmethod
+			private method set
+			proc
+				mNewCustomer = value
+			endmethod
+		endproperty
+
+	endclass
+
+endnamespace
+

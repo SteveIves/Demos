@@ -1,0 +1,67 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace xfplConfig.Model
+
+    public class LogicalName extends ModelBase
+        
+        .region "Backing variables"
+
+        private mName, String
+        private mValue, String
+        
+        .endregion
+
+        .region "Constructors"
+
+        public method LogicalName
+            endparams
+        proc
+        endmethod
+
+        public method LogicalName
+            required in aName, String
+            required in aValue, String
+            endparams
+        proc
+            mName = aName
+            mValue = aValue            
+        endmethod
+
+        .endregion
+
+        .region "Properties"
+
+        public property Name, String
+            method get
+            proc
+                mreturn mName
+            endmethod
+            method set
+            proc
+                mName = value
+                notifyPropertyChanged("Name")
+            endmethod
+        endproperty
+        
+        public property Value, String
+            method get
+            proc
+                mreturn mValue
+            endmethod
+            method set
+            proc
+                mValue = value
+                notifyPropertyChanged("Value")
+            endmethod
+        endproperty
+
+        .endregion
+        
+    endclass
+
+endnamespace
+

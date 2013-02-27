@@ -1,0 +1,11 @@
+import System
+import System.Windows
+import System.Configuration
+import System.Diagnostics
+
+namespace PeopleBrowser
+
+	public partial class App extends System.Windows.Application
+		
+	endclass
+endnamespace

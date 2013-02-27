@@ -1,0 +1,184 @@
+import System
+import System.ComponentModel
+
+.array 0
+namespace Models
+	
+	public class Person extends MvvmToolkit.ModelDataBase implements IDataErrorInfo
+	
+		;;Private fields
+			
+		mPerson, strPerson
+
+		;;Constructors
+
+		public method Person
+			req in aPerson, strPerson
+			endparams
+		proc
+			mPerson = aPerson
+		endmethod
+		
+		public method Person
+			id		,int 
+			first	,@string 
+			last	,@string 
+			mail	,@string
+			endparams
+		proc
+			PersonId = id
+			FirstName = first
+			LastName = last
+			Email = mail
+		endmethod
+
+		;;Public methods
+
+		public method Update, Boolean
+			endparams
+		proc
+			throw new NotImplementedException("Person.Update() has not been implemented!")
+
+		endmethod
+		
+		public method Delete, Boolean
+			endparams
+		proc
+			throw new NotImplementedException("Person.Delete() has not been implemented!")
+		endmethod
+		
+		public method Create, Boolean
+			endparams
+		proc
+			throw new NotImplementedException("Person.Create() has not been implemented!")
+		endmethod
+		
+		public method Clone, @Person
+			endparams
+			record
+				p, @Person
+			endrecord
+		proc
+			mreturn new Person(mPerson)
+		endmethod
+
+		;;Public properties
+
+		public property PersonId, int
+			method get
+			proc
+				mreturn (int)mPerson.person_id
+			endmethod
+			method set
+			proc
+				if (value != mPerson.person_id)
+				begin
+					mPerson.person_id = value
+					NotifyPropertyChanged("PersonId")
+				end
+			endmethod
+		endproperty
+		
+		public property FirstName, @string
+			method get
+			proc
+				mreturn %atrim(mPerson.first_name)
+			endmethod
+			method set
+			proc
+				if (value != mPerson.first_name)
+				begin
+					mPerson.first_name = value
+					NotifyPropertyChanged("FirstName")
+				end
+			endmethod
+		endproperty
+		
+		public property LastName, @string
+			method get
+			proc
+				mreturn %atrim(mPerson.last_name)
+			endmethod
+			method set
+			proc
+				if (value != mPerson.last_name)
+				begin
+					mPerson.last_name = value
+					NotifyPropertyChanged("LastName")
+				end
+			endmethod
+		endproperty
+		
+		public property Email, @string
+			method get
+			proc
+				mreturn %atrim(mPerson.email)
+			endmethod
+			method set
+			proc
+				if (value != mPerson.email)
+				begin
+					mPerson.email = value
+					NotifyPropertyChanged("Email")
+				end
+			endmethod
+		endproperty
+		
+		public property Department, @string
+			method get
+			proc
+				mreturn %atrim(mPerson.department)
+			endmethod
+			method set
+			proc
+				if (value != mPerson.department)
+				begin
+					mPerson.department = value
+					NotifyPropertyChanged("Department")
+				end
+			endmethod
+		endproperty
+		
+		;;IDataErrorInfo members
+		
+		public property Error, @String
+			method get
+			proc
+				mreturn ^null
+			endmethod
+		endproperty
+		
+		public property Indexer, @String
+			required in propertyName, @String
+			method get
+				record
+					message, @String
+				endrecord
+			proc
+				message = ^null
+				using propertyName select
+				("FirstName"),
+					if (FirstName.Length==0)
+						mreturn "First name is required."
+				("LastName"),
+					if (LastName.Length==0)
+						mreturn "Last name is required."
+				("Email"),
+					if (Email.Length==0)
+						mreturn "Email address is required."
+				("Department"),
+					if (Department.Length==0)
+						mreturn "Department is required."
+				(),
+					mreturn ^null
+				endusing
+				
+				mreturn message
+				
+			endmethod
+		endproperty
+		
+	endclass
+	
+endnamespace
+

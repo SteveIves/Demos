@@ -1,0 +1,36 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
+    <Schema Namespace="CLRData" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2006/04/edm">
+      <EntityType Name="Stock">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.String" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" Nullable="true" />
+        <NavigationProperty Name="Quotes" Relationship="CLRData.Stock_Quotes" FromRole="Stock" ToRole="Quotes" />
+      </EntityType>
+      <EntityType Name="Quote">
+        <Key>
+          <PropertyRef Name="StockId" />
+          <PropertyRef Name="Timestamp" />
+        </Key>
+        <Property Name="StockId" Type="Edm.String" Nullable="false" />
+        <Property Name="Timestamp" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Buy" Type="Edm.Double" Nullable="false" />
+        <Property Name="Sell" Type="Edm.Double" Nullable="false" />
+      </EntityType>
+      <Association Name="Stock_Quotes">
+        <End Role="Stock" Type="CLRData.Stock" Multiplicity="*" />
+        <End Role="Quotes" Type="CLRData.Quote" Multiplicity="*" />
+      </Association>
+      <EntityContainer Name="StocksData" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Stocks" EntityType="CLRData.Stock" />
+        <EntitySet Name="Quotes" EntityType="CLRData.Quote" />
+        <AssociationSet Name="Stock_Quotes" Association="CLRData.Stock_Quotes">
+          <End Role="Stock" EntitySet="Stocks" />
+          <End Role="Quotes" EntitySet="Quotes" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

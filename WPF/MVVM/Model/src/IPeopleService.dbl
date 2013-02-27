@@ -1,0 +1,28 @@
+import System
+import System.Collections.ObjectModel
+
+namespace Models
+
+	interface IPeopleService
+		
+		method GetAllPeople, @ObservableCollection<Person>
+		endmethod
+		
+		method UpdatePerson, Boolean
+			required in aPerson, @Person
+		endmethod
+
+		method DeletePerson, Boolean
+			required in person, @Person 
+		endmethod
+		
+		method DeleteAllPeople, int
+		endmethod
+
+		method ReloadPeople, @ObservableCollection<Person>
+		endmethod
+
+	endinterface
+	
+endnamespace
+

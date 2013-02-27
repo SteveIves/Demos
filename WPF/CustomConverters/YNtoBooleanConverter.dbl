@@ -1,0 +1,64 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+import System.Windows.Data
+
+
+namespace CustomConverters
+
+	public class YNtoBooleanConverter implements IValueConverter
+
+		;;; <summary>
+		;;; called when converting from the binding source
+		;;; </summary>		
+		public method Convert	,@Object
+			value				,@Object
+			targetType			,@Type
+			parameter			,@Object
+			culture				,@System.Globalization.CultureInfo
+			endparams
+
+			record
+				inYN	,a1
+				outBool	,Boolean
+			endrecord
+		proc
+			inYN = (a)value
+			if (inYN == "Y") then
+				outBool = true
+			else
+				outBool = false
+
+			mreturn (Object)outBool
+
+		endmethod
+
+		;;; <summary>
+		;;; called when converting to the binding source
+		;;; </summary>
+		public method ConvertBack	,@Object
+			value					,@Object
+			targetType				,@Type
+			parameter				,@Object
+			culture					,@System.Globalization.CultureInfo
+			endparams
+
+			record
+				inBool	,Boolean
+				outYN	,a1
+			endrecord
+		proc
+			inBool = (Boolean)value
+			if (inBool) then
+				outYN = 'Y'
+			else
+				outYN = 'N'
+
+			mreturn (Object)outYN
+		endmethod
+		
+	endclass
+
+endnamespace
+

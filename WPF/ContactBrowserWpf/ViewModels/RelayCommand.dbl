@@ -1,0 +1,62 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+import System.Windows
+import System.Windows.Input
+
+namespace ContactBrowserWpf.ViewModels
+	
+	public class RelayCommand implements ICommand
+		
+		;;Private fields
+		
+		m_execute, @Action<Object>
+		m_canExecute, @Predicate<Object>
+		
+		;;Constructors
+		
+		public method RelayCommand
+			byval execute, @Action<Object>
+			endparams
+			this(execute, ^null)
+		proc
+			
+		endmethod
+		
+		public method RelayCommand
+			byval execute, @Action<Object>
+			byval canExecute, @Predicate<Object>
+			endparams
+		proc
+			if (execute == ^null)
+				throw new ArgumentNullException("execute")
+			this.m_execute = execute
+			this.m_canExecute = canExecute
+		endmethod
+		
+		;;Public members
+		
+		public method CanExecute, Boolean
+			byval parameter, @Object
+			endparams
+		proc
+			if (parameter==^null) then
+				mreturn true
+			else
+				mreturn this.m_canExecute(parameter)
+		endmethod
+		
+		public event CanExecuteChanged, @EventHandler
+		
+		public virtual method Execute, void
+			byval parameter, @Object
+			endparams
+		proc
+			this.m_execute(parameter)
+		endmethod
+		
+	endclass
+	
+endnamespace
+

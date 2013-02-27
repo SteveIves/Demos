@@ -1,0 +1,38 @@
+import System
+import System.Windows.Input
+
+namespace MvvmToolkit
+	
+	;;;  <summary>
+	;;;  Represents an actionable item displayed by a View.
+	;;;  </summary>
+	public class CommandViewModel extends ViewModelBase
+		
+		private m_Command, @ICommand
+		
+		public method CommandViewModel
+			displayName, @string 
+			command, @ICommand 
+			endparams
+		proc
+			if (command == ^null)
+				throw new ArgumentNullException("command")
+			parent.DisplayName = displayName
+			this.Command = command
+		endmethod
+		
+		public property Command, @ICommand
+			method get
+			proc
+				mreturn m_Command
+			endmethod
+			private method set
+			proc
+				m_Command = value
+			endmethod
+		endproperty
+		
+	endclass
+
+endnamespace
+

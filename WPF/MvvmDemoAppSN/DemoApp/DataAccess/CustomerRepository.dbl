@@ -1,0 +1,157 @@
+import System
+import System.Collections.Generic
+import System.IO
+import System.Linq
+import System.Windows
+import System.Windows.Resources
+import System.Xml
+import System.Xml.Linq
+import DemoApp.Model
+
+namespace DemoApp.DataAccess
+	
+	;;;<summary>
+	;;;Represents a source of customers in the application.
+	;;;</summary>
+	public class CustomerRepository
+		
+		.region "Fields"
+		
+		private readonly mCustomers, @List<Customer>
+		
+		.endregion ;;Fields
+		
+		.region "Constructors"
+		
+		;;;<summary>
+		;;;Creates a new repository of customers.
+		;;;</summary>
+		;;;<param name="customerDataFile">The relative path to an XML resource file that contains customer data.</param>
+		public method CustomerRepository
+			required in customerDataFile, string
+			endparams
+		proc
+			mCustomers = LoadCustomers(customerDataFile)
+		endmethod
+		
+		.endregion ;;Constructors
+		
+		.region "Public Interface"
+		
+		;;;<summary>
+		;;;Raised when a customer is placed into the repository.
+		;;;</summary>
+		public delegate CustomerAddedEventHandler, void
+			sender	,@*
+			e		,@CustomerAddedEventArgs
+		enddelegate
+
+		public event CustomerAdded, @CustomerAddedEventHandler
+		
+		;;;;<summary>
+		;;;;Places the specified customer into the repository.
+		;;;;If the customer is already in the repository, an
+		;;;;exception is not thrown.
+		;;;;</summary>
+		public method AddCustomer, void
+			required in customer, @Customer
+			endparams
+		proc
+			if (customer == ^null)
+				throw new ArgumentNullException("customer")
+			
+			if (!mCustomers.Contains(customer))
+			begin
+				mCustomers.Add(customer)
+				if (CustomerAdded!=^null)
+					CustomerAdded(this, new CustomerAddedEventArgs(customer))
+			end
+		endmethod
+		
+		;;;<summary>
+		;;;Returns true if the specified customer exists in the
+		;;;repository, or false if it is not.
+		;;;</summary>
+		public method ContainsCustomer, boolean
+			required in customer, @Customer
+			endparams
+		proc
+			if (customer == ^null)
+				throw new ArgumentNullException("customer")
+			mreturn mCustomers.Contains(customer)
+		endmethod
+		
+		;;;<summary>
+		;;;Returns a shallow-copied list of all customers in the repository.
+		;;;</summary>
+		public method GetCustomers, @List<Customer>
+			endparams
+		proc
+			mreturn new List<Customer>(mCustomers)
+		endmethod
+		
+		.endregion ;;Public Interface
+		
+		.region "Private Helpers"
+		
+		private static method LoadCustomers, @List<Customer>
+			required in customerDataFile, string
+			endparams
+			record
+				stm				,@System.IO.Stream
+				xmlrdr			,@System.Xml.XmlReader
+				customerNodes	,@IEnumerable<XElement>
+				customerNode	,@System.Xml.Linq.XElement
+				customers		,@System.Collections.Generic.List<Customer>
+
+				xdoc			,@System.Xml.Linq.XDocument
+				xelem			,@System.Xml.Linq.XElement
+
+			endrecord
+		proc
+			customers = new List<Customer>()
+			
+			stm = GetResourceStream(customerDataFile)
+			xmlrdr = new XmlTextReader(stm)
+
+;			customerNodes = XDocument.Load(xmlrdr).Element("customers").Elements("customer")
+			xdoc = XDocument.Load(xmlrdr)
+			xelem = xdoc.Element(XName.Get("customers"))
+			customerNodes = xelem.Elements(XName.Get("customer"))
+			
+			foreach customerNode in customerNodes
+			begin
+				customers.Add(
+				&	Customer.CreateCustomer(
+&				(double)customerNode.Attribute(XName.Get("totalSales")),
+&				(string)customerNode.Attribute(XName.Get("firstName")),
+&				(string)customerNode.Attribute(XName.Get("lastName")),
+&				(boolean)customerNode.Attribute(XName.Get("isCompany")),
+&				(string)customerNode.Attribute(XName.Get("email"))
+				&	)
+				&)
+			end
+			mreturn customers
+		endmethod
+		
+		private static method GetResourceStream, @Stream
+			required in resourceFile, string
+			endparams
+			record
+				tmpUri	,@Uri
+				srInfo	,@StreamResourceInfo
+			endrecord
+		proc
+			tmpUri = new Uri(resourceFile, UriKind.RelativeOrAbsolute)
+			srInfo = Application.GetResourceStream(tmpUri)
+			if ((srInfo == ^null)||(srInfo.Stream == ^null))
+				throw new ApplicationException("Missing resource file: " + resourceFile)
+			mreturn srInfo.Stream
+		endmethod
+		
+		.endregion ;;Private Helpers
+
+	endclass
+	
+endnamespace
+

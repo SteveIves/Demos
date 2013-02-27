@@ -1,0 +1,29 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Text
+import System.Windows
+import System.Windows.Controls
+import System.Windows.Data
+import System.Windows.Documents
+import System.Windows.Input
+import System.Windows.Media
+import System.Windows.Media.Imaging
+import System.Windows.Shapes
+
+namespace SplashScreenTestApp
+
+	;;; <summary>
+	;;; Interaction logic for SplashScreen.xaml
+	;;; </summary>
+	public partial class SplashScreen extends Window
+		
+		public method SplashScreen
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+	endclass
+endnamespace
+

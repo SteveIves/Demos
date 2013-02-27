@@ -1,0 +1,35 @@
+import System
+import System.Windows.Input
+
+namespace DemoApp.ViewModel
+
+	public class CommandViewModel extends ViewModelBase
+
+		public method CommandViewModel
+			required in displayName	,string
+			required in command		,@ICommand
+			endparams
+		proc
+			if (command == ^null)
+				throw new ArgumentNullException("command")
+			parent.DisplayName = displayName
+			this.Command = command
+		endmethod
+		
+		private mCommand, @ICommand
+
+		public property Command, @ICommand
+			method get
+			proc
+				mreturn mCommand
+			endmethod
+			private method set
+			proc
+				mCommand = value
+			endmethod
+		endproperty
+		
+	endclass
+
+endnamespace
+

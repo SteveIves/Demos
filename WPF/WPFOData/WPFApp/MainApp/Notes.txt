@@ -1,0 +1,10 @@
+﻿To add a Service Reference:
+http://localhost:64557/WebApplication1/WebApplication1-StocksDomainService.svc
+i.e. replace '.' with '-'.
+
+
+http://localhost:64557/WebApplication1/WebApplication1-StocksDomainService.svc/OData/$metadata
+
+to add pox service
+
+same but binary instead of odata

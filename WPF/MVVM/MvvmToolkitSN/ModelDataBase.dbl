@@ -1,0 +1,33 @@
+import System
+import System.ComponentModel
+import System.Runtime.Serialization
+
+.array 0
+namespace MvvmToolkit
+
+	;;;  <summary>
+	;;;  An abstract base class used when implementing model data classes.
+	;;;  </summary>
+	
+	{DataContract}
+	public abstract class ModelDataBase implements INotifyPropertyChanged
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected virtual method NotifyPropertyChanged, void
+			local_property, string 
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				PropertyChanged(this, new PropertyChangedEventArgs(local_property))
+		endmethod
+
+		;; #region IActiveRecord
+		;; public abstract bool Create();
+		;; public abstract bool Update();
+		;; public abstract bool Delete();
+		;; #endregion
+
+	endclass
+
+endnamespace

@@ -1,0 +1,14 @@
+namespace DemoApp
+
+	public partial class MainWindow extends System.Windows.Window
+		
+		public method MainWindow
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+
+	endclass
+
+endnamespace
+

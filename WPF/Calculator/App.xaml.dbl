@@ -1,0 +1,30 @@
+import System
+import System.Collections.Generic
+import System.Configuration
+import System.Data
+import System.Linq
+import System.Windows
+import Calculator.ViewModels
+
+namespace Calculator
+
+	;;;  <summary>
+	;;;  Interaction logic for App.xaml
+	;;;  </summary>	
+	public partial class App extends Application
+		
+		private method OnStartup, void
+			sender, @object 
+			e, @StartupEventArgs 
+			endparams
+		proc
+			;;  Create the ViewModel and expose it using the View's DataContext
+			data view, @Views.CalculatorView, new Views.CalculatorView()
+			view.DataContext = new ViewModels.CalculatorViewModel()
+			view.Show()
+		endmethod
+
+	endclass
+
+endnamespace
+

@@ -1,0 +1,103 @@
+
+import System
+import System.Windows.Threading
+
+namespace WPFStopWatch
+
+	;;; <summary>
+	;;; A class which implements the functionality of a simple stop watch
+	;;; </summary>
+	public class Ticker
+		
+		private mInterval	,TimeSpan
+		private mTimer		,@DispatcherTimer
+		private mStartTime	,DateTime
+		
+		public event ValueChanged, @EventHandler
+		
+		;;; <summary>
+		;;; Constructor
+		;;; </summary>
+		public method Ticker
+			endparams
+		proc
+			mTimer = new DispatcherTimer()
+			mTimer.Interval = new TimeSpan(0, 0, 0, 0, 100)
+			mTimer.Tick += new EventHandler(mTimer_Tick)
+			UpdateInterval(true)
+		endmethod
+		
+		private method mTimer_Tick, void
+			sender, @object 
+			e, @EventArgs 
+			endparams
+		proc
+			UpdateInterval(false)
+		endmethod
+		
+		private method UpdateInterval, void
+			reset, boolean 
+			endparams
+		proc
+			if (reset) then
+				mInterval = new TimeSpan()
+			else
+				mInterval = (DateTime.Now - mStartTime)
+			if (ValueChanged!=^null)
+				ValueChanged(this,new EventArgs())
+		endmethod
+		
+		public property ElapsedTime, TimeSpan
+			method get
+			proc
+				mreturn mInterval
+			endmethod
+		endproperty
+		
+		;;; <summary>
+		;;; Start the timer
+		;;; </summary>
+		public method Start, void
+			endparams
+		proc
+			if (!mTimer.IsEnabled)
+			begin
+				mStartTime = (DateTime.Now - mInterval)
+				mTimer.Start()
+			end
+		endmethod
+		
+		;;; <summary>
+		;;; Stop the timer
+		;;; </summary>
+		public method Stop, void
+			endparams
+		proc
+			if (mTimer.IsEnabled)
+				mTimer.Stop()
+		endmethod
+		
+		;;; <summary>
+		;;; Reset the timer to zero
+		;;; </summary>
+		public method Clear, void
+			endparams
+		proc
+			mStartTime = DateTime.Now
+			UpdateInterval(true)
+		endmethod
+		
+		;;; <summary>
+		;;; Indicates if the timer is running
+		;;; </summary>
+		public property IsStarted, Boolean
+			method get
+			proc
+				mreturn mTimer.IsEnabled
+			endmethod
+		endproperty
+		
+	endclass
+	
+
+endnamespace

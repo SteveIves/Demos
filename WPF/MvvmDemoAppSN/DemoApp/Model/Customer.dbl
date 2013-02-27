@@ -1,0 +1,263 @@
+import System
+import System.ComponentModel
+import System.Diagnostics
+import System.Text.RegularExpressions
+
+namespace DemoApp.Model
+
+	;;;<summary>
+	;;;Represents a customer of a company.  This class
+	;;;has built-in validation logic. It is wrapped
+	;;;by the CustomerViewModel class, which enables it to
+	;;;be easily displayed and edited by a WPF user interface.
+	;;;</summary>
+	public class Customer implements IDataErrorInfo
+		
+		.region "Creation"
+
+		public static method CreateNewCustomer, @Customer
+			endparams
+		proc
+			mreturn new Customer()
+		endmethod
+		
+		public static method CreateCustomer, @Customer
+			required in totalSales	,double
+			required in firstName	,string
+			required in lastName	,string
+			required in isCompany	,boolean
+			required in email		,string
+			endparams
+			record
+				c, @Customer
+			endrecord
+		proc
+			c = new Customer()
+			c.TotalSales = totalSales
+			c.FirstName = firstName
+			c.LastName = lastName
+			c.IsCompany = isCompany
+			c.Email = email
+			mreturn c
+		endmethod
+		
+		protected method Customer
+			endparams
+		proc
+
+		endmethod
+
+		.endregion ;;Creation
+		
+		.region "State Properties"
+
+		;;;<summary>
+		;;;Gets/sets the e-mail address for the customer.
+		;;;</summary>
+		private mEmail, string
+		public property Email, string
+			method get
+			proc
+				mreturn mEmail
+			endmethod
+			method set
+			proc
+				mEmail = value
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Gets/sets the customer's first name.  If this customer is a 
+		;;;company, this value stores the company's name.
+		;;;</summary>
+		private mFirstName, string
+		public property FirstName, string
+			method get
+			proc
+				mreturn mFirstName
+			endmethod
+			method set
+			proc
+				mFirstName = value
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Gets/sets whether the customer is a company or a person.
+		;;;The default value is false.
+		;;;</summary>
+		private mIsCompany, boolean
+		public property IsCompany, Boolean
+			method get
+			proc
+				mreturn mIsCompany
+			endmethod
+			method set
+			proc
+				mIsCompany = value
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Gets/sets the customer's last name.  If this customer is a 
+		;;;company, this value is not set.
+		;;;</summary>
+		private mLastName, string
+		public property LastName, string
+			method get
+			proc
+				mreturn mLastName
+			endmethod
+			method set
+			proc
+				mLastName = value
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Returns the total amount of money spent by the customer.
+		;;;</summary>
+		private mTotalSales, Double
+		public property TotalSales, Double
+			method get
+			proc
+				mreturn mTotalSales
+			endmethod
+			method set
+			proc
+				mTotalSales = value
+			endmethod
+		endproperty
+
+		.endregion ;;State Properties
+
+		.region "IDataErrorInfo Members"
+
+		public property IDataErrorInfo.Error, string
+			method get
+			proc
+				mreturn ^null
+			endmethod
+		endproperty
+		
+		public property IDataErrorInfo.indexer, string
+			required in propertyName, string
+			method get
+			proc
+				mreturn this.GetValidationError(propertyName)
+			endmethod
+		endproperty
+
+		.endregion ;;IDataErrorInfo Members
+
+		.region "Validation"
+
+		;;;<summary>
+		;;;Returns true if this object has no validation errors.
+		;;;</summary>
+		public property IsValid, boolean
+			method get
+				record
+					prop, string
+				endrecord
+			proc
+				foreach prop in ValidatedProperties
+					if (GetValidationError(prop) != ^null)
+							mreturn false
+				mreturn true
+			endmethod
+		endproperty
+		
+		private static ValidatedProperties, [#]string
+		
+		static method Customer
+		proc
+			ValidatedProperties = new string[#] { "Email", "FirstName", "LastName" }
+		endmethod
+
+		private method GetValidationError, string
+			propertyName, string
+			endparams
+			record
+				errtxt, string
+			endrecord
+		proc
+			if (Array.IndexOf(ValidatedProperties, propertyName) < 0)
+				mreturn ^null
+		
+			errtxt = ^null
+
+			using propertyName select
+			("Email"),
+				errtxt = this.ValidateEmail()
+			("FirstName"),
+				errtxt = this.ValidateFirstName()
+			("LastName"),
+				errtxt = this.ValidateLastName()
+			(),
+				Debug.Fail("Unexpected property being validated on Customer: " + propertyName)
+			endusing
+		
+			mreturn errtxt
+		endmethod
+		
+		private method ValidateEmail, string
+			endparams
+		proc
+			if (IsStringMissing(this.Email)) then
+				mreturn Strings.Customer_Error_MissingEmail
+			else if (!IsValidEmailAddress(this.Email))
+				mreturn Strings.Customer_Error_InvalidEmail
+			mreturn ^null
+		endmethod
+		
+		private method ValidateFirstName, string
+			endparams
+		proc
+			if (IsStringMissing(this.FirstName))
+				mreturn Strings.Customer_Error_MissingFirstName
+			mreturn ^null
+		endmethod
+		
+		private method ValidateLastName, string
+			endparams
+		proc
+			if (this.IsCompany) then
+			begin
+				if (!IsStringMissing(this.LastName))
+					mreturn Strings.Customer_Error_CompanyHasNoLastName
+			end
+			else
+			begin
+				if (IsStringMissing(this.LastName))
+					mreturn Strings.Customer_Error_MissingLastName
+			end
+			mreturn ^null
+		endmethod
+		
+		private static method IsStringMissing, boolean
+			required in value, string
+			endparams
+		proc
+			mreturn String.IsNullOrEmpty(value) || value.Trim() == String.Empty
+		endmethod
+		
+		private static method IsValidEmailAddress, boolean
+			required in email, string
+			endparams
+			record
+				pattern, string
+			endrecord
+		proc
+			if (IsStringMissing(email))
+				mreturn false
+			pattern = "^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$"
+			mreturn Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase)
+		endmethod
+		
+		.endregion ;;Validation
+
+	endclass
+
+endnamespace
+

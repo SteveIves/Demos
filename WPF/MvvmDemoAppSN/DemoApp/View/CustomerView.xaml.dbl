@@ -1,0 +1,15 @@
+namespace DemoApp.View
+
+	;;; <summary>
+	;;; Interaction logic for CustomerView.xaml
+	;;; </summary>
+	public partial class CustomerView extends System.Windows.Controls.UserControl
+		
+		public method CustomerView
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+	endclass
+endnamespace
+

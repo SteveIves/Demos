@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "PeopleBrowserSN", "PeopleBrowserSN\PeopleBrowserSN.synproj", "{5E020E61-FADD-4DF4-9836-5B01FE5820EC}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "Models", "Model\src\Models.synproj", "{D92B1899-EE38-4469-BD3C-3CC3AC3EE901}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ViewModelsSN", "ViewModelsSN\ViewModelsSN.synproj", "{12094A2F-7E6E-4A84-8A6B-F0F3FBE6BF51}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "MvvmToolkitSN", "MvvmToolkitSN\MvvmToolkitSN.synproj", "{8674CB1E-8C75-4053-BA56-A1AC8AC0BCA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E020E61-FADD-4DF4-9836-5B01FE5820EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E020E61-FADD-4DF4-9836-5B01FE5820EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E020E61-FADD-4DF4-9836-5B01FE5820EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E020E61-FADD-4DF4-9836-5B01FE5820EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D92B1899-EE38-4469-BD3C-3CC3AC3EE901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D92B1899-EE38-4469-BD3C-3CC3AC3EE901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D92B1899-EE38-4469-BD3C-3CC3AC3EE901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D92B1899-EE38-4469-BD3C-3CC3AC3EE901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12094A2F-7E6E-4A84-8A6B-F0F3FBE6BF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12094A2F-7E6E-4A84-8A6B-F0F3FBE6BF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12094A2F-7E6E-4A84-8A6B-F0F3FBE6BF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12094A2F-7E6E-4A84-8A6B-F0F3FBE6BF51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8674CB1E-8C75-4053-BA56-A1AC8AC0BCA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8674CB1E-8C75-4053-BA56-A1AC8AC0BCA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8674CB1E-8C75-4053-BA56-A1AC8AC0BCA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8674CB1E-8C75-4053-BA56-A1AC8AC0BCA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

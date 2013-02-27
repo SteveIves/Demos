@@ -1,0 +1,177 @@
+import System
+import System.Collections.Generic
+import System.Collections.ObjectModel
+import System.Collections.Specialized
+import System.ComponentModel
+import System.Linq;
+import DemoApp.DataAccess
+import DemoApp.Properties
+
+namespace DemoApp.ViewModel
+
+	;;;<summary>
+	;;;Represents a container of CustomerViewModel objects
+	;;;that has support for staying synchronized with the
+	;;;CustomerRepository.  This class also provides information
+	;;;related to multiple selected customers.
+	;;;</summary>
+	public class AllCustomersViewModel extends WorkspaceViewModel
+		
+		.region "Fields"
+
+		private readonly mCustomerRepository	,@CustomerRepository
+		private mAllCustomers					,@ObservableCollection<CustomerViewModel>
+		
+		.endregion ;;Fields
+
+		.region "Constructors"
+
+		public method AllCustomersViewModel
+			required in customerRepository, @CustomerRepository
+			endparams
+		proc
+			
+			if (customerRepository == ^null)
+				throw new ArgumentNullException("customerRepository")
+		
+			parent.DisplayName = Strings.AllCustomersViewModel_DisplayName
+		
+			mCustomerRepository = customerRepository
+		
+			;;Subscribe for notifications of when a new customer is saved.
+			addhandler(mCustomerRepository.CustomerAdded,OnCustomerAddedToRepository)
+		
+			;;Populate the AllCustomers collection with CustomerViewModels.
+			this.CreateAllCustomers()
+
+		endmethod
+		
+		private method CreateAllCustomers, void
+			endparams
+			record
+				all			,@List<CustomerViewModel>
+				customer	,@Customer
+				cvm			,@CustomerViewModel
+			endrecord
+		proc
+			all = new List<CustomerViewModel>()
+			foreach customer in mCustomerRepository.GetCustomers()
+				all.Add(new CustomerViewModel(customer, mCustomerRepository))
+			foreach cvm in all
+				addhandler(cvm.PropertyChanged,this.OnCustomerViewModelPropertyChanged)
+			this.AllCustomers = new ObservableCollection<CustomerViewModel>(all)
+			addhandler(this.AllCustomers.CollectionChanged,this.OnCollectionChanged)
+		endmethod
+
+		.endregion ;;Constructors
+
+		.region "Public Interface"
+		
+		;;;<summary>
+		;;;Returns a collection of all the CustomerViewModel objects.
+		;;;</summary>
+		public property AllCustomers, @ObservableCollection<CustomerViewModel>
+				method get
+			proc
+				mreturn mAllCustomers
+			endmethod
+			private method set
+			proc
+				mAllCustomers = value
+			endmethod
+		endproperty
+			
+		;;;<summary>
+		;;;Returns the total sales sum of all selected customers.
+		;;;</summary>
+		public property TotalSelectedSales, double
+			method get
+				record local_data
+					tmpCustomerVM, @CustomerViewModel
+					totalSales, double
+				endrecord
+			proc
+				init local_data
+				foreach tmpCustomerVM in AllCustomers
+					if (tmpCustomerVM.IsSelected)
+						totalSales += tmpCustomerVM.TotalSales
+				mreturn totalSales
+			endmethod
+		endproperty
+	
+		.endregion ;;Public interface
+
+		.region "Base class overrides"
+
+		protected override method OnDispose, void
+			endparams
+			record
+				custVM, @CustomerViewModel
+			endrecord
+		proc
+			foreach custVM in this.AllCustomers
+				custVM.Dispose()
+			this.AllCustomers.Clear()
+			removehandler(mAllCustomers.CollectionChanged,OnCollectionChanged)
+			removehandler(mCustomerRepository.CustomerAdded,OnCustomerAddedToRepository)
+		endmethod
+		
+		.endregion ;;Base class overrides
+
+		.region "Event Handling Methods"
+
+		method OnCollectionChanged, void
+			sender	,@Object
+			e		,@NotifyCollectionChangedEventArgs
+			endparams
+			record
+				custVM, @CustomerViewModel
+			endrecord
+		proc
+			if ((e.NewItems!=^null) && (e.NewItems.Count!=0))
+			foreach custVM in e.NewItems
+				addhandler(custVM.PropertyChanged,this.OnCustomerViewModelPropertyChanged)
+			if ((e.OldItems!=^null) && (e.OldItems.Count!=0))
+				foreach custVM in e.OldItems
+					removehandler(custVM.PropertyChanged,this.OnCustomerViewModelPropertyChanged)
+		endmethod
+			
+		method OnCustomerViewModelPropertyChanged, Void
+			sender	,@Object
+			e		,@PropertyChangedEventArgs
+			endparams
+			record
+				IsSelected, string
+			endrecord
+		proc
+			IsSelected = "IsSelected"
+			
+			;;Make sure that the property name we're referencing is valid.
+			;;This is a debugging technique, and does not execute in a Release build.
+			((@CustomerViewModel)sender).VerifyPropertyName(IsSelected)
+			
+			;;When a customer is selected or unselected, we must let the
+			;;world know that the TotalSelectedSales property has changed,
+			;;so that it will be queried again for a new value.
+			if (e.PropertyName == IsSelected)
+				this.OnPropertyChanged("TotalSelectedSales")
+
+		endmethod
+			
+		method OnCustomerAddedToRepository, void
+			sender	,@Object
+			e		,@CustomerAddedEventArgs
+			endparams
+			record
+				custVM, @CustomerViewModel
+			endrecord
+		proc
+			custVM = new CustomerViewModel(e.NewCustomer, mCustomerRepository)
+			this.AllCustomers.Add(custVM)
+		endmethod
+	
+		.endregion ;;Event Handling Methods
+			
+	endclass
+
+endnamespace

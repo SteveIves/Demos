@@ -1,0 +1,195 @@
+.array 0
+namespace DecimalRegexTest
+
+	public partial class Form1 extends System.Windows.Forms.Form
+
+		private txtRegEx, @System.Windows.Forms.TextBox
+		private chkAllowLeadingZeros, @System.Windows.Forms.CheckBox
+		private chkNegatives, @System.Windows.Forms.CheckBox
+		private numPrecision, @System.Windows.Forms.NumericUpDown
+		private lblLength, @System.Windows.Forms.Label
+		private txtValueToTest, @System.Windows.Forms.TextBox
+		private chkAllowTrailingZeros, @System.Windows.Forms.CheckBox
+		private components, @System.ComponentModel.IContainer
+		private lblPrecision, @System.Windows.Forms.Label
+		private numLength, @System.Windows.Forms.NumericUpDown
+		private lblRegEx, @System.Windows.Forms.Label
+		private lblResult, @System.Windows.Forms.Label
+		private chkRequired, @System.Windows.Forms.CheckBox
+		private lblValueToTest, @System.Windows.Forms.Label
+
+		private method InitializeComponent, void
+			endparams
+		proc
+			this.lblLength = new System.Windows.Forms.Label()
+			this.numLength = new System.Windows.Forms.NumericUpDown()
+			this.lblPrecision = new System.Windows.Forms.Label()
+			this.numPrecision = new System.Windows.Forms.NumericUpDown()
+			this.chkNegatives = new System.Windows.Forms.CheckBox()
+			this.lblRegEx = new System.Windows.Forms.Label()
+			this.txtRegEx = new System.Windows.Forms.TextBox()
+			this.lblValueToTest = new System.Windows.Forms.Label()
+			this.txtValueToTest = new System.Windows.Forms.TextBox()
+			this.lblResult = new System.Windows.Forms.Label()
+			this.chkAllowLeadingZeros = new System.Windows.Forms.CheckBox()
+			this.chkAllowTrailingZeros = new System.Windows.Forms.CheckBox()
+			this.chkRequired = new System.Windows.Forms.CheckBox()
+			((@System.ComponentModel.ISupportInitialize)this.numLength).BeginInit()
+			((@System.ComponentModel.ISupportInitialize)this.numPrecision).BeginInit()
+			this.SuspendLayout()
+			;; 
+			;; lblLength
+			;; 
+			this.lblLength.AutoSize = true
+			this.lblLength.Location = new System.Drawing.Point(21, 19)
+			this.lblLength.Name = "lblLength"
+			this.lblLength.Size = new System.Drawing.Size(94, 13)
+			this.lblLength.TabIndex = 0
+			this.lblLength.Text = "Overall field length"
+			;; 
+			;; numLength
+			;; 
+			this.numLength.Location = new System.Drawing.Point(121, 17)
+			this.numLength.Maximum = new System.Decimal(new int[#] {28, 0, 0, 0})
+			this.numLength.Minimum = new System.Decimal(new int[#] {1, 0, 0, 0})
+			this.numLength.Name = "numLength"
+			this.numLength.Size = new System.Drawing.Size(48, 20)
+			this.numLength.TabIndex = 1
+			this.numLength.Value = new System.Decimal(new int[#] {4, 0, 0, 0})
+			addhandler(this.numLength.ValueChanged, new System.EventHandler(this.numLength_ValueChanged))
+			;; 
+			;; lblPrecision
+			;; 
+			this.lblPrecision.AutoSize = true
+			this.lblPrecision.Location = new System.Drawing.Point(188, 19)
+			this.lblPrecision.Name = "lblPrecision"
+			this.lblPrecision.Size = new System.Drawing.Size(50, 13)
+			this.lblPrecision.TabIndex = 2
+			this.lblPrecision.Text = "Precision"
+			;; 
+			;; numPrecision
+			;; 
+			this.numPrecision.Location = new System.Drawing.Point(244, 17)
+			this.numPrecision.Maximum = new System.Decimal(new int[#] {4, 0, 0, 0})
+			this.numPrecision.Name = "numPrecision"
+			this.numPrecision.Size = new System.Drawing.Size(48, 20)
+			this.numPrecision.TabIndex = 3
+			this.numPrecision.Value = new System.Decimal(new int[#] {2, 0, 0, 0})
+			addhandler(this.numPrecision.ValueChanged, new System.EventHandler(this.numPrecision_ValueChanged))
+			;; 
+			;; chkNegatives
+			;; 
+			this.chkNegatives.AutoSize = true
+			this.chkNegatives.Location = new System.Drawing.Point(324, 18)
+			this.chkNegatives.Name = "chkNegatives"
+			this.chkNegatives.Size = new System.Drawing.Size(100, 17)
+			this.chkNegatives.TabIndex = 5
+			this.chkNegatives.Text = "Allow negatives"
+			this.chkNegatives.UseVisualStyleBackColor = true
+			addhandler(this.chkNegatives.CheckedChanged, new System.EventHandler(this.chkNegatives_CheckedChanged))
+			;; 
+			;; lblRegEx
+			;; 
+			this.lblRegEx.AutoSize = true
+			this.lblRegEx.Location = new System.Drawing.Point(21, 120)
+			this.lblRegEx.Name = "lblRegEx"
+			this.lblRegEx.Size = new System.Drawing.Size(97, 13)
+			this.lblRegEx.TabIndex = 6
+			this.lblRegEx.Text = "Regular expression"
+			;; 
+			;; txtRegEx
+			;; 
+			this.txtRegEx.Location = new System.Drawing.Point(124, 117)
+			this.txtRegEx.Name = "txtRegEx"
+			this.txtRegEx.Size = new System.Drawing.Size(300, 20)
+			this.txtRegEx.TabIndex = 7
+			;; 
+			;; lblValueToTest
+			;; 
+			this.lblValueToTest.AutoSize = true
+			this.lblValueToTest.Location = new System.Drawing.Point(21, 166)
+			this.lblValueToTest.Name = "lblValueToTest"
+			this.lblValueToTest.Size = new System.Drawing.Size(66, 13)
+			this.lblValueToTest.TabIndex = 8
+			this.lblValueToTest.Text = "Value to test"
+			;; 
+			;; txtValueToTest
+			;; 
+			this.txtValueToTest.Location = new System.Drawing.Point(124, 163)
+			this.txtValueToTest.Name = "txtValueToTest"
+			this.txtValueToTest.Size = new System.Drawing.Size(300, 20)
+			this.txtValueToTest.TabIndex = 9
+			addhandler(this.txtValueToTest.TextChanged, new System.EventHandler(this.txtValueToTest_TextChanged))
+			;; 
+			;; lblResult
+			;; 
+			this.lblResult.AutoSize = true
+			this.lblResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 18, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (byte)0)
+			this.lblResult.Location = new System.Drawing.Point(128, 201)
+			this.lblResult.Name = "lblResult"
+			this.lblResult.Size = new System.Drawing.Size(94, 29)
+			this.lblResult.TabIndex = 10
+			this.lblResult.Text = "[result]"
+			;; 
+			;; chkAllowLeadingZeros
+			;; 
+			this.chkAllowLeadingZeros.AutoSize = true
+			this.chkAllowLeadingZeros.Location = new System.Drawing.Point(28, 57)
+			this.chkAllowLeadingZeros.Name = "chkAllowLeadingZeros"
+			this.chkAllowLeadingZeros.Size = new System.Drawing.Size(154, 17)
+			this.chkAllowLeadingZeros.TabIndex = 11
+			this.chkAllowLeadingZeros.Text = "Allow multiple leading zeros"
+			this.chkAllowLeadingZeros.UseVisualStyleBackColor = true
+			addhandler(this.chkAllowLeadingZeros.CheckedChanged, new System.EventHandler(this.chkAllowLeadingZeros_CheckedChanged))
+			;; 
+			;; chkAllowTrailingZeros
+			;; 
+			this.chkAllowTrailingZeros.AutoSize = true
+			this.chkAllowTrailingZeros.Location = new System.Drawing.Point(188, 57)
+			this.chkAllowTrailingZeros.Name = "chkAllowTrailingZeros"
+			this.chkAllowTrailingZeros.Size = new System.Drawing.Size(160, 17)
+			this.chkAllowTrailingZeros.TabIndex = 12
+			this.chkAllowTrailingZeros.Text = "Allow additional trailing zeros"
+			this.chkAllowTrailingZeros.UseVisualStyleBackColor = true
+			addhandler(this.chkAllowTrailingZeros.CheckedChanged, new System.EventHandler(this.chkAllowTrailingZeros_CheckedChanged))
+			;; 
+			;; chkRequired
+			;; 
+			this.chkRequired.AutoSize = true
+			this.chkRequired.Location = new System.Drawing.Point(355, 57)
+			this.chkRequired.Name = "chkRequired"
+			this.chkRequired.Size = new System.Drawing.Size(69, 17)
+			this.chkRequired.TabIndex = 13
+			this.chkRequired.Text = "Required"
+			this.chkRequired.UseVisualStyleBackColor = true
+			addhandler(this.chkRequired.CheckedChanged, new System.EventHandler(this.chkRequired_CheckedChanged))
+			;; 
+			;; Form1
+			;; 
+			this.ClientSize = new System.Drawing.Size(455, 262)
+			this.Controls.Add(this.chkRequired)
+			this.Controls.Add(this.chkAllowTrailingZeros)
+			this.Controls.Add(this.chkAllowLeadingZeros)
+			this.Controls.Add(this.lblResult)
+			this.Controls.Add(this.txtValueToTest)
+			this.Controls.Add(this.lblValueToTest)
+			this.Controls.Add(this.txtRegEx)
+			this.Controls.Add(this.lblRegEx)
+			this.Controls.Add(this.chkNegatives)
+			this.Controls.Add(this.numPrecision)
+			this.Controls.Add(this.lblPrecision)
+			this.Controls.Add(this.numLength)
+			this.Controls.Add(this.lblLength)
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+			this.Name = "Form1"
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+			this.Text = "Decimal Validation with Regular Expressions"
+			addhandler(this.Load, new System.EventHandler(this.Form1_Load))
+			((@System.ComponentModel.ISupportInitialize)this.numLength).EndInit()
+			((@System.ComponentModel.ISupportInitialize)this.numPrecision).EndInit()
+			this.ResumeLayout(false)
+			this.PerformLayout()
+		endmethod
+	endclass
+endnamespace
+

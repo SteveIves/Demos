@@ -1,0 +1,254 @@
+
+import System
+import System.Collections.ObjectModel
+import System.IO
+
+namespace xfplConfig.Model
+
+    public enum LoggingType
+        None
+        Critical
+        All
+    endenum
+
+    public enum DebugLoggingType
+        None
+        Normal
+        All
+    endenum
+
+    public class IniFile extends ModelBase
+
+        .region "Backing variables"
+
+        private mIniFileSpec, String        
+        private mLoggingEnabled, Boolean
+        private mLogFile, String
+        private mSingleLogFile, Boolean
+        private mSessionLoggingLevel, LoggingType
+        private mFunctionLoggingLevel, LoggingType
+        private mDebugLoggingLevel, DebugLoggingType
+        private mCompression, Boolean
+        private mLogicals, @ObservableCollection<LogicalName>
+
+        .endregion
+
+        .region "Constructors"
+
+        public method IniFile
+            endparams
+        proc
+            ;;Set default values for a new INI file
+            mIniFileSpec = ""
+            mLoggingEnabled = false
+            mLogFile = "DBLDIR:xfpl.log"
+            mSingleLogFile = false
+            mSessionLoggingLevel = LoggingType.None
+            mFunctionLoggingLevel = LoggingType.None
+            mDebugLoggingLevel = DebugLoggingType.None
+            mCompression = false
+            mLogicals = new ObservableCollection<LogicalName>()
+        endmethod
+        
+        public method IniFile
+            required in iniFileSpec, String
+            endparams
+            this()
+        proc
+            loadIniFile(iniFileSpec)
+        endmethod
+        
+        .endregion
+
+        .region "Private methods"
+
+        private method loadIniFile, void
+            required in iniFileSpec, String
+            endparams
+        proc
+            mIniFileSpec = iniFileSpec
+
+            ;;Open the file
+            data sr, @StreamReader, File.OpenText(mIniFileSpec)
+            while (sr.Peek() >= 0)
+            begin
+                data buff, String, sr.ReadLine()
+
+                if (buff.StartsWith("XFPL_LOGICAL:")) then
+                begin
+                    buff = buff.Replace("XFPL_LOGICAL:","")
+                    buff = buff.Replace("XFPL_LOGICAL:","").Trim()
+
+                    data splitchars, [#]char, new []char {"="}
+                    data parts, [#]String, buff.Split(splitchars)
+
+
+
+
+
+
+
+
+
+                end
+
+                else if (buff.StartsWith("XFPL_LOG=")) then
+                    mLoggingEnabled = buff.Replace("XFPL_LOG=","").Trim().ToUpper().Equals("ON")
+
+                else if (buff.StartsWith("XFPL_LOGFILE=")) then
+                    mLogFile = buff.Replace("XFPL_LOGFILE=","").Trim()
+
+                else if (buff.StartsWith("XFPL_SINGLELOGFILE=")) then
+                    mSingleLogFile = buff.Replace("XFPL_SINGLELOGFILE=","").Trim().ToUpper().Equals("ON")
+
+                else if (buff.StartsWith("XFPL_SESS_INFO=")) then
+                begin
+                    using buff.Replace("XFPL_SESS_INFO=","").Trim().ToUpper() select
+                    ("ALL"),
+                        mSessionLoggingLevel = LoggingType.All
+                    ("CRITICAL"),
+                        mSessionLoggingLevel = LoggingType.Critical
+                    (),
+                        mSessionLoggingLevel = LoggingType.None
+                    endusing
+                end
+
+                else if (buff.StartsWith("XFPL_FUNC_INFO=")) then
+                begin
+                    using buff.Replace("XFPL_FUNC_INFO=","").Trim().ToUpper() select
+                    ("ALL"),
+                        mFunctionLoggingLevel = LoggingType.All
+                    ("CRITICAL"),
+                        mFunctionLoggingLevel = LoggingType.Critical
+                    (),
+                        mFunctionLoggingLevel = LoggingType.None
+                    endusing
+                end
+
+                else if (buff.StartsWith("XFPL_DEBUG=")) then
+                begin
+                    using buff.Replace("XFPL_DEBUG=","").Trim().ToUpper() select
+                    ("DBG_ALL"),
+                        mDebugLoggingLevel = DebugLoggingType.All
+                    ("ON"),
+                        mDebugLoggingLevel = DebugLoggingType.Normal
+                    (),
+                        mDebugLoggingLevel = DebugLoggingType.None
+                    endusing
+                end
+
+                else if (buff.StartsWith("XFPL_COMPRESS="))
+                    mCompression = buff.Replace("XFPL_COMPRESS=","").Trim().ToUpper().Equals("ON")
+            end
+
+
+
+
+        endmethod
+        
+        .endregion
+
+        .region "Public Properties"
+
+        public property LoggingEnabled, Boolean
+            method get
+            proc
+                mreturn mLoggingEnabled
+            endmethod
+            method set
+            proc
+                mLoggingEnabled = value
+                notifyPropertyChanged("LoggingEnabled")
+            endmethod
+        endproperty
+        
+        public property LogFile, String
+            method get
+            proc
+                mreturn mLogFile
+            endmethod
+            method set
+            proc
+                mLogFile = value
+                notifyPropertyChanged("LogFile")
+            endmethod
+        endproperty
+        
+        public property SingleLogFile, Boolean
+            method get
+            proc
+                mreturn mSingleLogFile
+            endmethod
+            method set
+            proc
+                mSingleLogFile = value
+                notifyPropertyChanged("SingleLogFile")
+            endmethod
+        endproperty
+
+        public property SessionLoggingLevel, LoggingType
+            method get
+            proc
+                mreturn mSessionLoggingLevel
+            endmethod
+            method set
+            proc
+                mSessionLoggingLevel = value
+                notifyPropertyChanged("SessionLoggingLevel")
+            endmethod
+        endproperty
+
+        public property FunctionLoggingLevel, LoggingType
+            method get
+            proc
+                mreturn mFunctionLoggingLevel
+            endmethod
+            method set
+            proc
+                mFunctionLoggingLevel = value
+                notifyPropertyChanged("FunctionLoggingLevel")
+            endmethod
+        endproperty
+
+        public property DebugLoggingLevel, DebugLoggingType
+            method get
+            proc
+                mreturn mDebugLoggingLevel
+            endmethod
+            method set
+            proc
+                mDebugLoggingLevel = value
+                notifyPropertyChanged("DebugLoggingLevel")
+            endmethod
+        endproperty
+
+        public property Compression, Boolean
+            method get
+            proc
+                mreturn mCompression
+            endmethod
+            method set
+            proc
+                mCompression = value
+                notifyPropertyChanged("Compression")
+            endmethod
+        endproperty
+
+        public property Logicals, @ObservableCollection<LogicalName>
+            method get
+            proc
+                mreturn mLogicals
+            endmethod
+            method set
+            proc
+                mLogicals = value
+                notifyPropertyChanged("Logicals")
+            endmethod
+        endproperty
+
+        .endregion
+
+    endclass
+
+endnamespace
+

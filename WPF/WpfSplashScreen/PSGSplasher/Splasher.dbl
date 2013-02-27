@@ -1,0 +1,75 @@
+;;*****************************************************************************
+;;
+;; Class:        Splasher
+;;
+;; Author:       Steve Ives, Synergex Professional Services Group
+;;
+;; Date:         29th October 2010
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+import System
+import System.Collections.Generic
+import System.Text
+import System.Windows
+
+namespace PSGSplasher
+
+	;;;<summary>
+	;;;Helper to show or close given splash window
+	;;;</summary>
+	public static class Splasher
+		
+		;;;<summary>
+		;;;Stores the instance of the splash window being used
+		;;;</summary>
+		private static mSplashWindow, @Window
+		
+		;;;<summary>
+		;;;Get or set the splash screen window
+		;;;</summary>
+		public static property SplashWindow, @Window
+			method get
+			proc
+				mreturn mSplashWindow
+			endmethod
+			method set
+			proc
+				mSplashWindow = value
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Show splash screen
+		;;;</summary>
+		public static method ShowSplashWindow, void
+			endparams
+		proc
+			if (mSplashWindow!=^null)
+				mSplashWindow.Show()
+		endmethod
+		
+		;;;<summary>
+		;;;Close splash screen
+		;;;</summary>
+		public static method CloseSplashWindow, void
+			endparams
+		proc
+			if (mSplashWindow!=^null)
+			begin
+				mSplashWindow.Close()
+				if (mSplashWindow.is.IDisposable)
+					((IDisposable)mSplashWindow).Dispose()
+			end
+		endmethod
+			
+		endclass
+
+endnamespace
+

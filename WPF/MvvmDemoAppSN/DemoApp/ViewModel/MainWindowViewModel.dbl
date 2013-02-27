@@ -1,0 +1,212 @@
+import System
+import System.Collections.Generic
+import System.Collections.ObjectModel
+import System.Collections.Specialized
+import System.ComponentModel
+import System.Diagnostics
+import System.Linq
+import System.Windows.Data
+import DemoApp.DataAccess
+import DemoApp.Model
+import DemoApp.Properties
+
+namespace DemoApp.ViewModel
+	
+	;;;<summary>
+	;;;The ViewModel for the application's main window.
+	;;;</summary>
+	public class MainWindowViewModel extends WorkspaceViewModel
+		
+		.region "Fields"
+		
+		private readonly mCustomerRepository	,@CustomerRepository
+		private mCommands						,@ReadOnlyCollection<CommandViewModel> 
+		private mWorkspaces						,@ObservableCollection<WorkspaceViewModel>
+		
+		.endregion ;;Fields
+		
+		.region "Constructor"
+		
+		public method MainWindowViewModel
+			required in customerDataFile, string
+			endparams
+		proc
+			parent.DisplayName = Strings.MainWindowViewModel_DisplayName
+			mCustomerRepository = new CustomerRepository(customerDataFile)
+		endmethod
+		
+		.endregion ;;Constructor
+		
+		.region "Commands"
+		
+		;;;<summary>
+		;;;Returns a read-only list of commands that the UI can display and execute.
+		;;;</summary>
+		public property Commands, @ReadOnlyCollection<CommandViewModel>
+			method get
+			proc
+				if (mCommands == ^null)
+				begin
+					data cmds, @List<CommandViewModel>
+					cmds = this.CreateCommands()
+					mCommands = new ReadOnlyCollection<CommandViewModel>(cmds)
+				end
+				mreturn mCommands
+			endmethod
+		endproperty
+		
+		private method CreateCommands, @List<CommandViewModel>
+			endparams
+			record
+				cmds, @List<CommandViewModel>
+			endrecord
+		proc
+			cmds = new List<CommandViewModel>()
+			cmds.Add(
+			&	new CommandViewModel(
+			&		Strings.MainWindowViewModel_Command_ViewAllCustomers,
+			&		new RelayCommand(new RelayCommand.RelayCommandAction(showAllCustomersWrapper))
+			&		)
+			&	)
+			cmds.Add(
+			&	new CommandViewModel(
+			&		Strings.MainWindowViewModel_Command_CreateNewCustomer,
+			&		new RelayCommand(new RelayCommand.RelayCommandAction(createNewCustomerWrapper))
+			&	)
+			&)
+			mreturn cmds
+		endmethod
+		
+		.endregion ;;Commands
+		
+		.region "Workspaces"
+		
+		;;;<summary>
+		;;;Returns the collection of available workspaces to display.
+		;;;A 'workspace' is a ViewModel that can request to be closed.
+		;;;</summary>
+		public property Workspaces, @ObservableCollection<WorkspaceViewModel>
+			method get
+			proc
+				if (mWorkspaces == ^null)
+				begin
+					mWorkspaces = new ObservableCollection<WorkspaceViewModel>()
+					addhandler(mWorkspaces.CollectionChanged,OnWorkspacesChanged)
+				end
+				mreturn mWorkspaces
+			endmethod
+		endproperty
+		
+		private method OnWorkspacesChanged, void
+			sender, @*
+			e, @NotifyCollectionChangedEventArgs
+			endparams
+		proc
+			if ((e.NewItems!=^null)&&(e.NewItems.Count!=0))
+			begin
+				data workspace, @WorkspaceViewModel
+				foreach workspace in e.NewItems
+					addhandler(workspace.RequestClose,this.OnWorkspaceRequestClose)
+			end
+			
+			if ((e.OldItems!=^null)&&(e.OldItems.Count!=0))
+			begin
+				data workspace, @WorkspaceViewModel
+				foreach workspace in e.OldItems
+					removehandler(workspace.RequestClose,this.OnWorkspaceRequestClose)
+			end
+		endmethod
+		
+		private method OnWorkspaceRequestClose, void
+			required in sender	,@*
+			required in e		,@EventArgs
+			endparams
+			record
+				workspace, @WorkspaceViewModel
+			endrecord
+		proc
+			workspace = (WorkspaceViewModel)sender
+			workspace.Dispose()
+			this.Workspaces.Remove(workspace)
+		end
+		
+		.endregion ;;Workspaces
+		
+		.region "Private Helpers"
+
+		;-----------------------------------------------------------------------------------------
+		;This method is only present so that I can pass a delegate to the createNewCustomer method 
+		;via RelayCommandAction, which requires an object parameter
+		private method createNewCustomerWrapper, void
+			required in par1, @*
+			endparams
+		proc
+			createNewCustomer()
+		endmethod
+		
+		private method createNewCustomer, void
+			endparams
+			record
+				newCustomer	,@Customer
+				workspace	,@CustomerViewModel
+			endrecord
+		proc
+			newCustomer = Customer.CreateNewCustomer()
+			workspace = new CustomerViewModel(newCustomer, mCustomerRepository)
+			this.Workspaces.Add(workspace)
+			this.SetActiveWorkspace(workspace)
+		endmethod
+		
+		;-----------------------------------------------------------------------------------------
+		;This method is only present so that I can pass a delegate to the showAllCustomers method 
+		;via RelayCommandAction, which requires an object parameter
+		private method showAllCustomersWrapper, void
+			required in par1, @*
+			endparams
+		proc
+			showAllCustomers()
+		endmethod
+		
+		private method showAllCustomers, void
+			endparams
+			record
+				workspace	,@AllCustomersViewModel
+				tmpWs		,@Object
+			endrecord
+		proc
+			foreach tmpWs in this.Workspaces
+			begin
+				if (tmpWs.is.AllCustomersViewModel)
+				begin
+					workspace = (AllCustomersViewModel)tmpWs
+					exitloop
+				end
+			end
+			if (workspace == ^null)
+			begin
+				workspace = new AllCustomersViewModel(mCustomerRepository)
+				this.Workspaces.Add(workspace)
+			end
+			this.SetActiveWorkspace(workspace)
+		endmethod
+		;-----------------------------------------------------------------------------------------
+		
+		private method SetActiveWorkspace, void
+			required in workspace, @WorkspaceViewModel
+			endparams
+			record
+				collectionView, @ICollectionView
+			endrecord
+		proc
+			Debug.Assert(this.Workspaces.Contains(workspace))
+			collectionView = CollectionViewSource.GetDefaultView(this.Workspaces)
+			if (collectionView!=^null)
+				collectionView.MoveCurrentTo(workspace)
+		endmethod
+		
+		.endregion ;; Private Helpers
+		
+	endclass
+	
+endnamespace
+

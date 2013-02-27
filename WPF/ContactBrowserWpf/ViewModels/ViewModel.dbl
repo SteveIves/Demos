@@ -1,0 +1,87 @@
+
+import System
+import System.Collections.ObjectModel
+import System.ComponentModel
+import System.Text
+
+import ContactBrowserWpf.Models
+
+namespace ContactBrowserWpf.ViewModels
+
+	public class ViewModel implements INotifyPropertyChanged
+		
+		;;---------------------------------------------------------------------------
+		;;Private data
+
+		private mCustomers, @ObservableCollection<Customer>
+
+		;;---------------------------------------------------------------------------
+		;;Constructors
+
+		public method ViewModel
+			endparams
+		proc
+			;;Instantiate any required DelegateCommands
+
+
+
+		endmethod
+
+		;;---------------------------------------------------------------------------
+		;;Implement INotifyPropertyChanged
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected method NotifyPropertyChanged, void
+			propertyName, string
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				raiseevent(PropertyChanged,this, new PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		;;---------------------------------------------------------------------------
+		;;Customers collection
+
+		public property Customers, @ObservableCollection<Customer>
+			method get
+			proc
+				if (mCustomers==^null)
+					xcall GetAllCustomers(mCustomers)
+				mreturn mCustomers
+			endmethod
+			method set
+			proc
+				mCustomers = value
+			endmethod
+		endproperty		
+
+		;;---------------------------------------------------------------------------
+		;;Selected customer
+
+
+
+
+
+
+		;;---------------------------------------------------------------------------
+		;;
+
+
+		;;---------------------------------------------------------------------------
+		;;
+
+
+		;;---------------------------------------------------------------------------
+		;;
+
+
+		;;---------------------------------------------------------------------------
+		;;
+
+
+
+	endclass
+
+endnamespace
+

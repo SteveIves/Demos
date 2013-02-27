@@ -1,0 +1,85 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+import System.Windows.Data
+
+namespace CustomConverters
+	
+	public class SynergyDecimalConverter  implements IValueConverter
+		;;; <summary>
+		;;; called when converting from the binding source
+		;;; </summary>		
+		public method Convert	,@System.Object
+			value				,@System.Object
+			targetType			,@System.Type
+			parameter			,@System.Object
+			culture				,@System.Globalization.CultureInfo
+			endparams
+			
+			record
+				inDec		,d10
+				tmpString	,String
+				inPrec		,d1
+				outValue	,a11
+				format		,8a11	
+&				,'ZZZZZZZZZZX'
+&				,'ZZZZZZZZX.X'
+&				,'ZZZZZZZX.XX'
+&				,'ZZZZZZX.XXX'
+&				,'ZZZZZX.XXXX'
+&				,'ZZZZX.XXXXX'
+&				,'ZZZX.XXXXXX'
+&				,'ZZX.XXXXXXX'
+			endrecord
+		proc
+			try
+			begin
+				inDec = (d)value
+				tmpString = (string)parameter
+				inPrec = tmpString
+				outValue = inDec, format(inPrec + 1)
+			end
+			catch (e, @Exception)
+			begin
+				clear outValue
+			end
+			endtry
+
+			mreturn (Object)((string)outValue)
+			
+		endmethod
+		
+		;;; <summary>
+		;;; called when converting to the binding source
+		;;; </summary>
+		public method ConvertBack	,@System.Object
+			value				,@System.Object
+			targetType			,@System.Type
+			parameter			,@System.Object
+			culture				,@System.Globalization.CultureInfo
+			endparams
+			
+			record
+				tmpString	,String
+				bigDecimal	,d20.10
+				inPrec		,d1
+				decField	,d28
+			endrecord
+
+			literal
+				upScale		,d10	,1000000000
+			endliteral
+		proc
+			tmpString = (string)value
+			bigDecimal = tmpString
+			tmpString = (string)parameter
+			inPrec = tmpString
+			decField = bigDecimal * upScale(1:inPrec + 1)
+			mreturn (Object)decField
+		endmethod
+		
+	endclass
+	
+endnamespace
+

@@ -1,0 +1,61 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace CustomConverters
+
+	public class SynergyRecord
+
+		private mYesOrNo	,a1
+
+		public property YesOrNo, a1
+			method get
+			proc
+				mreturn mYesOrNo
+			endmethod
+			method set
+			proc
+				mYesOrNo = value
+			endmethod
+		endproperty
+		
+		private mSynergyDate	,d8
+
+		public property SynergyDate, d8
+			method get
+			proc
+				mreturn mSynergyDate
+			endmethod
+			method set
+			proc
+				mSynergyDate = value
+			endmethod
+		endproperty
+
+		private mDecimalField		,d10
+
+		public property DecimalField, d10
+			method get
+			proc
+				mreturn mDecimalField
+			endmethod
+			method set
+			proc
+				mDecimalField = value
+			endmethod
+		endproperty
+		
+		public method SynergyRecord
+			endparams
+		proc
+			mYesOrNo = 'N'
+			mSynergyDate = 20110524
+			mDecimalField = 123456
+		endmethod
+		
+	endclass
+
+endnamespace
+

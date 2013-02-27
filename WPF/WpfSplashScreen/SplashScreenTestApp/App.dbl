@@ -1,0 +1,53 @@
+import System
+import System.Windows
+import System.Data
+import System.Xml
+import System.Configuration
+import System.Diagnostics
+import System.Threading
+import PSGSplasher
+
+namespace SplashScreenTestApp
+
+	;;;<summary>
+	;;;Application entry point
+	;;;</summary>
+	{STAThread()}
+	main SplashScreenTestApp
+
+	proc
+		
+		;;Load the splash screen window and show the splash screen
+		Splasher.SplashWindow = new SplashScreen()
+		Splasher.ShowSplashWindow()
+		
+		SplasherListener.Instance.ShowMessage("Checking for updates...")
+		Thread.Sleep(1000)
+
+		SplasherListener.Instance.ShowMessage("Preparing local resources...")
+		Thread.Sleep(1500)
+
+		SplasherListener.Instance.ShowMessage("Opening files...")
+		Thread.Sleep(800)
+
+		;;Done loading, close the splash window and show the main WPF application
+		Splasher.CloseSplashWindow()
+		new App()
+	
+	endmain
+
+	public partial class App extends Application
+				
+		;;;<summary>
+		;;;Creates a new instance of the application and shows the main window
+		;;;</summary>
+		public method App
+			endparams
+		proc
+			StartupUri = new System.Uri("MainWindow.xaml",UriKind.Relative)
+			Run()
+		endmethod
+
+	endclass
+
+endnamespace

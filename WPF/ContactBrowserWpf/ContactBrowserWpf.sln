@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ContactBrowserWpf", "ContactBrowserWpf.synproj", "{0CD76825-59A4-4447-BFE2-AB1F5F45C6C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CD76825-59A4-4447-BFE2-AB1F5F45C6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CD76825-59A4-4447-BFE2-AB1F5F45C6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD76825-59A4-4447-BFE2-AB1F5F45C6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CD76825-59A4-4447-BFE2-AB1F5F45C6C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

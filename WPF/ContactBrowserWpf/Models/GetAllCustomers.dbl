@@ -1,0 +1,33 @@
+
+import System.Collections.ObjectModel
+import Synergex.SynergyDE.Select
+
+namespace ContactBrowserWpf.Models
+
+	subroutine GetAllCustomers
+
+		required out customers, @ObservableCollection<Customer>
+
+		endparams
+	
+		record 
+			ch			,int
+			cust		,strCustomer
+		endrecord
+
+	proc
+
+		open(ch=syn_freechn(),i:i,"DAT:customer.ism")
+
+		customers = new ObservableCollection<Customer>()
+
+		foreach cust in new Select(new From(ch,cust),OrderBy.AscendingKey(1))
+			customers.Add(new Customer(cust))
+
+		close ch
+
+		xreturn
+
+	endsubroutine
+
+endnamespace

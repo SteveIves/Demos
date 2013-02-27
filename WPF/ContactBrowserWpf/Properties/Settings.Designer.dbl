@@ -1,0 +1,23 @@
+namespace ContactBrowserWpf.Properties 
+    
+    
+    {System.Runtime.CompilerServices.CompilerGeneratedAttribute()}
+    {System.CodeDom.Compiler.GeneratedCodeAttribute((string)("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator"), (string)("10.0.0.0"))}
+    internal sealed partial class Settings extends System.Configuration.ApplicationSettingsBase
+        
+        private static defaultInstance, @Settings, ((Settings)(System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())))
+        
+        public static  property Default, @Settings
+            Method get
+            proc
+                begin
+                    mreturn defaultInstance
+                end
+            
+            endmethod
+        
+        endproperty
+    
+    endclass
+    
+    endnamespace

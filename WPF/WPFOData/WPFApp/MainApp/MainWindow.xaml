@@ -1,0 +1,13 @@
+﻿<Window x:Class="MainApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.codeplex.com/CompositeWPF"
+    xmlns:loc="clr-namespace:MainApp"
+    Title="OData" Height="300" Width="300">
+    <Window.DataContext>
+        <loc:ViewModel />
+    </Window.DataContext>
+    <Grid>
+        <DataGrid ItemsSource="{Binding MyData}" AutoGenerateColumns="True" />
+    </Grid>
+</Window>

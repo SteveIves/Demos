@@ -1,0 +1,32 @@
+﻿<Window x:Class="ContactBrowserWpf.Views.MainWindow1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:ContactBrowserWpf.ViewModels"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    Title="Contact Browser" Height="468" Width="707">
+    
+    <Window.Resources>
+        <vm:ViewModel x:Key="vm" />
+    </Window.Resources>
+
+    <Grid  DataContext="{StaticResource vm}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="49*" />
+            <RowDefinition Height="326*" />
+            <RowDefinition Height="54*" />
+        </Grid.RowDefinitions>
+
+        <ComboBox x:Name="customersCombo" Grid.Row="0" ItemsSource="{Binding Path=Customers}"
+                  DisplayMemberPath="CompanyName" SelectedValuePath="CustomerId">
+            <i:Interaction.Triggers>
+                <i:InvokeCommandAction
+                        Command="{Binding SelectedCustomerChanged}"
+                        CommandParameter="{Binding SelectedItem, ElementName=customersCombo}"
+                    />
+            </i:Interaction.Triggers>
+        </ComboBox>
+
+        <DataGrid Grid.Row="1" />
+
+    </Grid>
+</Window>

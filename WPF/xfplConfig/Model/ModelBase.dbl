@@ -1,0 +1,25 @@
+
+import System
+import System.ComponentModel
+
+namespace xfplConfig.Model
+
+    public class ModelBase implements INotifyPropertyChanged
+        
+        .region "INotifyPropertyChanged members"
+        
+        public event PropertyChanged, @PropertyChangedEventHandler
+        
+        protected method notifyPropertyChanged, void
+            required in propertyName, String
+            endparams
+        proc
+            raiseevent(PropertyChanged, this, new PropertyChangedEventArgs(propertyName))
+        endmethod
+        
+        .endregion        
+
+    endclass
+
+endnamespace
+

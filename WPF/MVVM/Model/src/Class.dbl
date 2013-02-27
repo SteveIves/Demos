@@ -1,0 +1,13 @@
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace Models
+
+	public class Class
+		
+	endclass
+
+endnamespace
+

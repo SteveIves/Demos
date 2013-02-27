@@ -1,0 +1,18 @@
+﻿<Window 
+    x:Class="SplashScreenTestApp.SplashScreen"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:splasher="clr-namespace:PSGSplasher;assembly=PSGSplasher"
+    Title="SplashScreen" Height="236" Width="414" WindowStartupLocation="CenterScreen" WindowStyle="None" 
+        Background="Orange" BorderBrush="DarkOrange" BorderThickness="3" ShowInTaskbar="False" ResizeMode="NoResize">
+    <Grid>
+        <Label Margin="19,22,17,80" Name="label1" Content="Synergy .NET Rocks!" FontSize="32" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="MintCream">
+            <Label.BitmapEffect>
+                <OuterGlowBitmapEffect GlowSize="15" />
+            </Label.BitmapEffect>
+        </Label>
+        <Label Height="28" Margin="19,0,17,15" Name="label2" VerticalAlignment="Bottom"
+               Content="{Binding Source={x:Static splasher:SplasherListener.Instance},Path=Message}" Foreground="White"></Label>
+    </Grid>
+</Window>
+

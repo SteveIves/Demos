@@ -1,0 +1,11 @@
+﻿<Window x:Class="xfplConfig.MainWindow1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:view="clr-namespace:xfplConfig.View"
+    Title="xfServerPlus Configuration Manager" Height="500" Width="700" WindowStartupLocation="CenterScreen">
+    <Grid>
+
+        <view:MainOptions/>
+        
+    </Grid>
+</Window>

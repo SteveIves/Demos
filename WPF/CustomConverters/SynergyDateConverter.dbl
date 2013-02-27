@@ -1,0 +1,59 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+import System.Windows.Data
+
+namespace CustomConverters
+
+	public class SynergyDateConverter implements IValueConverter
+		
+		;;; <summary>
+		;;; called when converting from the binding source
+		;;; </summary>		
+		public method Convert	,@Object
+			value				,@Object
+			targetType			,@Type
+			parameter			,@Object
+			culture				,@System.Globalization.CultureInfo
+			endparams
+			
+			record
+				inDate	,d8
+				outDate	,System.DateTime
+			endrecord
+		proc
+			inDate = (d)value
+
+			outDate = new DateTime((i)inDate(1:4), (i)inDate(5:2), (i)inDate(7:2))
+				
+			mreturn (Object)outDate
+			
+		endmethod
+		
+		;;; <summary>
+		;;; called when converting to the binding source
+		;;; </summary>
+		public method ConvertBack	,@Object
+			value					,@Object
+			targetType				,@Type
+			parameter				,@Object
+			culture					,@System.Globalization.CultureInfo
+			endparams
+
+			record
+				inDate	,System.DateTime
+				outDate	,d8
+			endrecord
+		proc
+			inDate = (DateTime)value
+			outDate(1:4) = inDate.Year
+			outDate(5:2) = inDate.Month
+			outDate(7:2) = inDate.Day
+			mreturn (Object)outDate
+		endmethod
+	
+	endclass
+
+endnamespace
+

@@ -1,0 +1,329 @@
+import System
+import System.Collections.ObjectModel
+import System.ComponentModel
+import System.Windows.Data
+import System.Windows.Input
+import MvvmToolkit
+import Models
+
+namespace ViewModels
+	
+	public class PeopleBrowserVM extends ViewModelBase
+		
+		.region "Private data"
+		
+		;;Models
+		model					,@PeopleService
+		
+		;;Backing fields for properties
+		mPeople					,@ObservableCollection<Person>
+		mSelectedPerson			,@Person
+		
+		;;Backing fields for commands
+		mSaveChangesCommand		,@RelayCommand
+		mCancelChangesCommand	,@RelayCommand
+		mDeletePersonCommand	,@RelayCommand
+		mDeleteAllPeopleCommand	,@RelayCommand
+		mReloadPeopleCommand	,@RelayCommand
+		mCloseApplicationCommand,@RelayCommand
+		mSetStatusBarTextCommand,@RelayCommand
+		
+		.endregion
+		
+		.region "Constructors"
+		
+		public method PeopleBrowserVM
+			endparams
+		proc
+			model = new PeopleService()
+		endmethod
+		
+		.endregion
+		
+		.region "Public properties for data binding"
+		
+		public property People, @ObservableCollection<Person>
+			method get
+			proc
+				if (mPeople == ^null)
+					People = model.GetAllPeople()
+				mreturn mPeople
+			endmethod
+			private method set
+			proc
+				mPeople = value
+				NotifyPropertyChanged("People")
+			endmethod
+		endproperty
+		
+		public property SelectedPerson, @Person
+			method get
+			proc
+				mreturn mSelectedPerson
+			endmethod
+			method set
+			proc
+				if (value != mSelectedPerson)
+				begin
+					mSelectedPerson = value
+					NotifyPropertyChanged("SelectedPerson")
+					
+					if (mSelectedPerson!=^null)
+						addhandler(mSelectedPerson.PropertyChanged,selectedPersonFieldChanged)
+				end
+			endmethod
+		endproperty
+		
+		.endregion
+		
+		.region "Handle selected person property changes"
+		
+		private selectedPersonEdited, Boolean
+		private originalSelectedPerson, @Person
+		
+		private method selectedPersonFieldChanged, Void
+			sender, @Object
+			e, @PropertyChangedEventArgs
+			endparams
+		proc
+			if (!selectedPersonEdited)
+				originalSelectedPerson = mSelectedPerson.Clone()
+			selectedPersonEdited = true
+		endmethod
+		
+		.endregion
+		
+		.region "SaveChanges command"
+		
+		public property SaveChanges, @ICommand
+			method get
+			proc
+				if (mSaveChangesCommand == ^null)
+					mSaveChangesCommand = new RelayCommand(doSaveChanges,canSaveChanges)
+				mreturn mSaveChangesCommand
+			endmethod
+		endproperty
+		
+		method doSaveChanges, void
+			param, @Object
+		proc
+			;TODO: Needs completing
+			try
+			begin
+				if (model.UpdatePerson(mSelectedPerson)) then
+				begin
+					;;Updated OK
+					
+				end
+				else
+				begin
+					;;Failed to update!
+					
+					
+					
+				end
+			end
+			catch (e, @Exception)
+			begin
+				System.Windows.MessageBox.Show(e.Message)
+			end
+			endtry
+			
+			selectedPersonEdited = false
+			originalSelectedPerson = ^null
+		endmethod
+		
+		method canSaveChanges, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn (selectedPersonEdited)
+		endmethod
+		
+		.endregion
+		
+		.region "CancelChanges command"
+		
+		public property CancelChanges, @ICommand
+			method get
+			proc
+				if (mCancelChangesCommand == ^null)
+					mCancelChangesCommand = new RelayCommand(doCancelChanges,canCancelChanges)
+				mreturn mCancelChangesCommand
+			endmethod
+		endproperty
+		
+		method doCancelChanges, void
+			param, @Object
+			endparams
+		proc
+			;TODO: Needs finishing
+			;;Replace the person with the original record
+			People[mPeople.IndexOf(mSelectedPerson)] = originalSelectedPerson
+			SelectedPerson = originalSelectedPerson
+			originalSelectedPerson = ^null
+			selectedPersonEdited = false
+		endmethod
+		
+		method canCancelChanges, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn (selectedPersonEdited)
+		endmethod
+		
+		.endregion
+		
+		.region "DeletePerson command"
+		
+		public property DeletePerson, @ICommand
+			method get
+			proc
+				if (mDeletePersonCommand == ^null)
+					mDeletePersonCommand = new RelayCommand(doDeletePerson,canDeletePerson)
+				mreturn mDeletePersonCommand
+			endmethod
+		endproperty
+		
+		method doDeletePerson, void
+			param, @Object
+			record
+				newSelectedIndex, int
+			endrecord
+		proc
+			;;Figure out the index of the next person to be selected
+			newSelectedIndex = mPeople.IndexOf(mSelectedPerson)
+			if (newSelectedIndex == mPeople.Count - 1)
+				decr newSelectedIndex
+			
+			;;Remove any event handler from the selected person object
+			removehandler(mSelectedPerson.PropertyChanged,selectedPersonFieldChanged)
+			
+			if (model.DeletePerson(mSelectedPerson))
+				mPeople.Remove(mSelectedPerson)
+			
+			;;Focus the new person
+			if (newSelectedIndex > -1)
+				SelectedPerson = mPeople[newSelectedIndex]
+			
+		endmethod
+		
+		method canDeletePerson, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn (mSelectedPerson != ^null)
+		endmethod
+		
+		.endregion
+		
+		.region "DeleteAllPeople command"
+		
+		public property DeleteAllPeople, @ICommand
+			method get
+			proc
+				if (mDeleteAllPeopleCommand == ^null)
+					mDeleteAllPeopleCommand = new RelayCommand(doDeleteAllPeople,canDeleteAllPeople)
+				mreturn mDeleteAllPeopleCommand
+			endmethod
+		endproperty
+		
+		method doDeleteAllPeople, void
+			param, @Object
+		proc
+			;;Remove any event handler from the selected person object
+			if (mSelectedPerson!=^null)
+				removehandler(mSelectedPerson.PropertyChanged,selectedPersonFieldChanged)
+				
+			if (model.DeleteAllPeople()==mPeople.Count) then
+				mPeople.Clear()
+			else
+				mPeople = model.GetAllPeople()
+		endmethod
+		
+		method canDeleteAllPeople, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn (mPeople.Count>0)
+		endmethod
+		
+		.endregion
+		
+		.region "ReloadPeople command"
+		
+		public property ReloadPeople, @ICommand
+			method get
+			proc
+				if (mReloadPeopleCommand == ^null)
+					mReloadPeopleCommand = new RelayCommand(doReloadPeople)
+				mreturn mReloadPeopleCommand
+			endmethod
+		endproperty
+		
+		private method doReloadPeople, void
+			param, @Object
+			endparams
+		proc
+			;;Remove any event handler from the selected person object
+			if (mSelectedPerson!=^null)
+				removehandler(mSelectedPerson.PropertyChanged,selectedPersonFieldChanged)
+			;;And re-load the data
+			People = model.ReloadPeople()
+		endmethod
+		
+		.endregion
+		
+		.region "CloseApplication command"
+		
+		public property CloseApplication, @ICommand
+			method get
+			proc
+				if (mCloseApplicationCommand == ^null)
+					mCloseApplicationCommand = new RelayCommand(doCloseApp)
+				mreturn mCloseApplicationCommand
+			endmethod
+		endproperty
+		
+		method doCloseApp, void
+			param, @Object
+			endparams
+		proc
+			System.Windows.Application.Current.Shutdown()
+		endmethod
+		
+		.endregion
+		
+		public property SetStatusBarTextCommand, @ICommand
+			method get
+			proc
+				if (mSetStatusBarTextCommand == ^null)
+					mSetStatusBarTextCommand = new RelayCommand(SetStatusBarTextCommand_Execute)
+				mreturn mSetStatusBarTextCommand
+			endmethod
+		endproperty
+		
+		private method SetStatusBarTextCommand_Execute, void
+			parameter, @Object
+			endparams
+		proc
+			StatusBarText = (String)parameter
+		endmethod
+		
+		private mStatusBarText, @String
+		
+		public property StatusBarText, @String
+			method get
+			proc
+				mreturn mStatusBarText
+			endmethod
+			method set
+			proc
+				mStatusBarText = value
+				NotifyPropertyChanged("StatusBarText")
+			endmethod
+		endproperty
+		
+	endclass
+endnamespace
+

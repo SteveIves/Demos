@@ -1,0 +1,72 @@
+;;*****************************************************************************
+;;
+;; Class:        DispatcherHelper
+;;
+;; Author:       Steve Ives, Synergex Professional Services Group
+;;
+;; Date:         29th October 2010
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+import System
+import System.Security.Permissions
+import System.Windows.Threading
+
+namespace PSGSplasher
+
+	;;;<summary>
+	;;;
+	;;;</summary>
+	public static class DispatcherHelper
+
+		;;;<summary>
+		;;;Simulate Application.DoEvents function of <see cref=" System.Windows.Forms.Application"/> class.
+		;;;</summary>
+		{SecurityPermissionAttribute(Action=SecurityAction.Demand,Flags=SecurityPermissionFlag.UnmanagedCode)}
+		public static method DoEvents, void
+			endparams
+			record
+				frame, @DispatcherFrame
+			endrecord
+		proc
+			frame = new DispatcherFrame()
+			Dispatcher.CurrentDispatcher.BeginInvoke(
+			&		DispatcherPriority.Background,
+			&		new DispatcherOperationCallback(ExitFrames),
+			&		frame
+			&		)
+			try
+			begin
+				Dispatcher.PushFrame(frame)
+			end
+			catch (ex, @InvalidOperationException)
+			begin
+				nop
+			end
+			endtry
+		
+		endmethod
+
+		;;;<summary>
+		;;;
+		;;;</summary>
+		;;;<param name="frame"></param>
+		;;;<returns></returns>
+		private static method ExitFrames, @Object
+			required in frame, @Object
+			endparams
+		proc
+			((DispatcherFrame)frame).Continue = false
+			mreturn ^null
+		endmethod
+
+	endclass
+
+endnamespace
+

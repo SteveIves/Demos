@@ -1,0 +1,167 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Text
+import System.ComponentModel
+import System.Windows
+import System.Windows.Input
+import System.Windows.Interactivity
+
+.array 0
+namespace MvvmToolkit
+	
+	;;; <summary>
+	;;; Allows an ICommand in a ViewModel to be associated with an event in a View.
+	;;; </summary>
+	public class CommandAction extends TargetedTriggerAction<FrameworkElement> implements ICommandSource
+		
+		public static readonly CommandProperty, @DependencyProperty
+		public static readonly CommandParameterProperty, @DependencyProperty
+		public static readonly CommandTargetProperty, @DependencyProperty
+		public static readonly SyncOwnerIsEnabledProperty, @DependencyProperty
+
+		;;Constructor
+		static method CommandAction
+			endparams
+		proc
+			CommandProperty = DependencyProperty.Register("Command", ^typeof(ICommand), ^typeof(CommandAction), new PropertyMetadata((ICommand)^null, OnCommandChanged))
+			CommandParameterProperty = DependencyProperty.Register("CommandParameter", ^typeof(object), ^typeof(CommandAction), new PropertyMetadata())
+			CommandTargetProperty = DependencyProperty.Register("CommandTarget", ^typeof(IInputElement), ^typeof(CommandAction), new PropertyMetadata())
+			SyncOwnerIsEnabledProperty = DependencyProperty.Register("SyncOwnerIsEnabled", ^typeof(boolean), ^typeof(CommandAction), new PropertyMetadata())
+		endmethod
+		
+		{Category("Command Properties")}
+		public property Command, @ICommand
+			method get
+			proc
+				mreturn (ICommand)GetValue(CommandProperty)
+			endmethod
+			method set
+			proc
+				SetValue(CommandProperty, value)
+			endmethod
+		endproperty
+		
+		{Category("Command Properties")}
+		public property CommandParameter, @object
+			method get
+			proc
+				mreturn (object)GetValue(CommandParameterProperty)
+			endmethod
+			method set
+			proc
+				SetValue(CommandParameterProperty, value)
+			endmethod
+		endproperty
+		
+		{Category("Command Properties")}
+		public property CommandTarget, @IInputElement
+			method get
+			proc
+				mreturn (IInputElement)GetValue(CommandTargetProperty)
+			endmethod
+			method set
+			proc
+				SetValue(CommandTargetProperty, value)
+			endmethod
+		endproperty
+		
+		{Category("Command Properties")}
+		public property SyncOwnerIsEnabled, boolean
+			method get
+			proc
+				mreturn (boolean)GetValue(SyncOwnerIsEnabledProperty)
+			endmethod
+			method set
+			proc
+				SetValue(SyncOwnerIsEnabledProperty, value)
+			endmethod
+		endproperty
+		
+		private CanExecuteChanged, @EventHandler
+		
+		private method OnCanExecuteChanged, void
+			sender, @object 
+			e, @EventArgs 
+			endparams
+		proc
+			UpdateCanExecute()
+		endmethod
+		
+		private static method OnCommandChanged, void
+			d, @DependencyObject 
+			e, DependencyPropertyChangedEventArgs 
+			endparams
+		proc
+			((CommandAction)d).OnCommandChanged((ICommand)e.OldValue, (ICommand)e.NewValue)
+		endmethod
+		
+		protected override method Invoke, void
+			o, @object 
+			endparams
+		proc
+			if (this.Command != ^null)
+			begin
+				data comRouted, @RoutedCommand
+				if (this.Command .is. RoutedCommand) then
+				begin
+					comRouted = (RoutedCommand)this.Command
+					comRouted.Execute(this.CommandParameter, this.CommandTarget)
+				end
+				else
+					this.Command.Execute(this.CommandParameter)
+			end
+		endmethod
+		
+		private method OnCommandChanged, void
+			comOld, @ICommand 
+			comNew, @ICommand 
+			endparams
+		proc
+			if (comOld != ^null)
+				UnhookCommandCanExecuteChangedEventHandler(comOld)
+			if (comNew != ^null)
+				HookupCommandCanExecuteChangedEventHandler(comNew)
+		endmethod
+		
+		private method HookupCommandCanExecuteChangedEventHandler, void
+			command, @ICommand 
+			endparams
+		proc
+			this.CanExecuteChanged = new EventHandler(OnCanExecuteChanged)
+			addhandler(command.CanExecuteChanged,CanExecuteChanged)
+			UpdateCanExecute()
+		endmethod
+		
+		private method UnhookCommandCanExecuteChangedEventHandler, void
+			command, @ICommand 
+			endparams
+		proc
+			removehandler(command.CanExecuteChanged,CanExecuteChanged)
+			UpdateCanExecute()
+		endmethod
+		
+		private method UpdateCanExecute, void
+			endparams
+		proc
+			if (this.Command != ^null)
+			begin
+				data comRouted, @RoutedCommand
+				
+				if (this.Command .is. RoutedCommand) then
+				begin
+					comRouted = (RoutedCommand)this.Command
+					this.IsEnabled = comRouted.CanExecute(this.CommandParameter, this.CommandTarget)
+				end
+				else
+					this.IsEnabled = this.Command.CanExecute(this.CommandParameter)
+
+				if (this.Target != ^null && this.SyncOwnerIsEnabled)
+					this.Target.IsEnabled = IsEnabled
+			end
+		endmethod
+
+	endclass
+
+endnamespace
+

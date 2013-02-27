@@ -1,0 +1,84 @@
+import System
+import System.Collections.ObjectModel
+import Synergex.SynergyDE
+import Synergex.SynergyDE.Select
+
+namespace Models
+	
+	public class PeopleService implements IPeopleService
+		
+		;;; <summary>Returns a collection of all people</summary>
+		;;; <returns>Collection of people</returns>
+		public method GetAllPeople, @ObservableCollection<person>
+			endparams
+			record 
+				p, strPerson
+				people, @ObservableCollection<Person>
+			endrecord
+		proc
+			people = new ObservableCollection<Person>()
+			foreach p in new Select(new From("DAT:people.ism",p),OrderBy.AscendingKey(1))
+				people.Add(new Person(p))
+			mreturn people
+		endmethod
+
+		public method UpdatePerson, Boolean
+			required in aPerson, @Person
+			endparams
+		proc
+			;TODO: needs implementing
+			throw new NotImplementedException("UpdatePerson method is not implemented yet!")
+			mreturn false
+		endmethod
+		
+		public method DeletePerson, Boolean
+			required in aPerson, @Person 
+			endparams
+			record
+				s, @Select
+				p, strPerson
+				r, Boolean
+			endrecord
+		proc
+			s = new Select(new From("DAT:people.ism",p,"/io=u:i"),(Where)p.person_id==aPerson.PersonId)
+			r = (s.Delete()==1)
+			mreturn r
+		endmethod
+		
+		public method DeleteAllPeople, int
+			endparams
+			record
+				s, @Select
+				p, strPerson
+				r, Boolean
+			endrecord
+		proc
+			s = new Select(new From("DAT:people.ism",p,"/io=u:i"))
+			mreturn s.Delete()
+		endmethod
+		
+		public method ReloadPeople, @ObservableCollection<Person>
+			endparams
+			record
+				c, i4
+				s, @Select
+				p, strPerson
+			endrecord
+		proc
+			open(c,u:i,"DAT:people.ism")
+			foreach p in new Select(new From("DAT:people.ddf",p))
+			begin
+				try
+					store(c,p)
+				catch (e, @DuplicateException)
+					nop
+				endtry
+			end
+			close c
+			mreturn GetAllPeople()
+		endmethod
+		
+	endclass
+	
+endnamespace
+

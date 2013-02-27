@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "xfplConfig", "xfplConfig.synproj", "{FF2DB6CA-F500-4D65-A446-18756DD014A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF2DB6CA-F500-4D65-A446-18756DD014A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF2DB6CA-F500-4D65-A446-18756DD014A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF2DB6CA-F500-4D65-A446-18756DD014A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF2DB6CA-F500-4D65-A446-18756DD014A4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

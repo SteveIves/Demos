@@ -1,0 +1,2040 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- This style set was code generated based on repository template definitions-->
+
+    <!-- Merge in the developer UI styles -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="UIStyles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Original repository template is AMT_PRICE_U, D9.5 -->
+    <Style x:Key="AmtPriceU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is AMT_U, D9.2 -->
+    <Style x:Key="AmtU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is DT_U, D8 -->
+    <Style x:Key="DtU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is ACCT_NO_U, D8 -->
+    <Style x:Key="AcctNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is ACCT_STAT, D2 -->
+    <Style x:Key="AcctStat_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is ACCT_TYPE_DSPLY, D2 -->
+    <Style x:Key="AcctTypeDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is ADDR_40_U, A40 -->
+    <Style x:Key="Addr40U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="40"/>
+        <Setter Property="Width" Value="480"/>
+    </Style>
+
+    <!-- Original repository template is ADDR_U, A30 -->
+    <Style x:Key="AddrU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is ADR_33, A33 -->
+    <Style x:Key="Adr33_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="33"/>
+        <Setter Property="Width" Value="396"/>
+    </Style>
+
+    <!-- Original repository template is ALT_TRUCK, A8 -->
+    <Style x:Key="AltTruck_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is AMT_12_U, D12.2 -->
+    <Style x:Key="Amt12U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="14"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is AMT_CENTS, D6.4 -->
+    <Style x:Key="AmtCents_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is AMT_CONST_USE, D7.3 -->
+    <Style x:Key="AmtConstUse_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is AMT_DISC_TAX, D7.2 -->
+    <Style x:Key="AmtDiscTax_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is AMT_INV_U, D11.2 -->
+    <Style x:Key="AmtInvU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="13"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is AMT_UNIT_PRICE_7_U, D12.5 -->
+    <Style x:Key="AmtUnitPrice7U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="14"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is AMT_UNIT_PRICE_U, D11.5 -->
+    <Style x:Key="AmtUnitPriceU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="13"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is AMT_YTD_U, D10.2 -->
+    <Style x:Key="AmtYtdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is APS_SOURCE_NO_U, D9 -->
+    <Style x:Key="ApsSourceNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is ASSIST_AGENCY, A1 -->
+    <Style x:Key="AssistAgency_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is ASSIST_MODE, A1 -->
+    <Style x:Key="AssistMode_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is AUTO_REG, A1 -->
+    <Style x:Key="AutoReg_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is AUTO_REG_DSPLY_F, D2 -->
+    <Style x:Key="AutoRegDsplyF_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is BANK_ACCT4_U, A4 -->
+    <Style x:Key="BankAcct4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is BANK_APPL_DSPLY_U, D2 -->
+    <Style x:Key="BankApplDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is BANK_APPL_U, A1 -->
+    <Style x:Key="BankApplU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is BANK_CC_PAY_METHOD_DSPLY_U, D2 -->
+    <Style x:Key="BankCcPayMethodDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is BANK_CC_PYMT_METHOD_U, A1 -->
+    <!--Need to add support for combobox fields for field BankCcPymtMethodU-->
+
+    <!-- Original repository template is BANK_NO4_U, D4 -->
+    <Style x:Key="BankNo4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is BATCH_NO_7, D7 -->
+    <Style x:Key="BatchNo7_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is BATCH_NO_U, D3 -->
+    <Style x:Key="BatchNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is BATCH_U, A7 -->
+    <Style x:Key="BatchU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is BILL_LADING_U, A12 -->
+    <Style x:Key="BillLadingU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is BTUS, D9 -->
+    <Style x:Key="Btus_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is CARRIER_ID_U, A6 -->
+    <Style x:Key="CarrierIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is CATEGORY_U, A4 -->
+    <Style x:Key="CategoryU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is CAT_TYPE, A1 -->
+    <Style x:Key="CatType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CAT_TYPE_DSPLY, D2 -->
+    <Style x:Key="CatTypeDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is CC_ACCT_U, A2 -->
+    <Style x:Key="CcAcctU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CC_NO4_U, D4 -->
+    <Style x:Key="CcNo4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is CD_SOURCE_DSPLY_U, D2 -->
+    <Style x:Key="CdSourceDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is CD_SOURCE_U, A1 -->
+    <Style x:Key="CdSourceU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CHECKING_ACCT_DSPLY_U, D2 -->
+    <Style x:Key="CheckingAcctDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <!-- Original repository template is CHECKING_ACCT_U, D2 -->
+    <Style x:Key="CheckingAcctU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CHECK_BOX_U, D1 -->
+    <!--Need to add support for checkbox fields for field CheckBoxU-->
+
+    <!-- Original repository template is CHECK_NO_10_U, A10 -->
+    <Style x:Key="CheckNo10U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is CHK_U, D7 -->
+    <Style x:Key="ChkU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is CITY_25_U, A25 -->
+    <Style x:Key="City25U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="25"/>
+        <Setter Property="Width" Value="300"/>
+    </Style>
+
+    <!-- Original repository template is CITY_U, A18 -->
+    <Style x:Key="CityU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="18"/>
+        <Setter Property="Width" Value="216"/>
+    </Style>
+
+    <!-- Original repository template is CLAIM_CLOSED_U, D1 -->
+    <!--Need to add support for checkbox fields for field ClaimClosedU-->
+
+    <!-- Original repository template is CLAIM_TYPE_U, A2 -->
+    <Style x:Key="ClaimTypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CLASS_ID_U, A3 -->
+    <Style x:Key="ClassIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is CM_B_C_DSPLY_U, D1 -->
+    <Style x:Key="CmBCDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is CM_B_C_I_A_DSPLY, D1 -->
+    <Style x:Key="CmBCIADsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is CM_B_C_I_DSPLY, D1 -->
+    <Style x:Key="CmBCIDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is CM_B_C_U, A1 -->
+    <Style x:Key="CmBCU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CM_LOCKED_DSPLY, D1 -->
+    <Style x:Key="CmLockedDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is COD, A1 -->
+    <Style x:Key="Cod_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_A_P, A1 -->
+    <Style x:Key="CodeAP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_CLASS_DSPLY, D2 -->
+    <Style x:Key="CodeClassDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is CODE_E_F_P, A1 -->
+    <Style x:Key="CodeEFP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_GROUP_P, D1 -->
+    <Style x:Key="CodeGroupP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_P, D2 -->
+    <Style x:Key="CodeP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CODE_PERIOD_P, D1 -->
+    <Style x:Key="CodePeriodP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_PRICE, D4 -->
+    <Style x:Key="CodePrice_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is CODE_PRODUCT, D2 -->
+    <Style x:Key="CodeProduct_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CODE_ST_LOC_P, D2 -->
+    <Style x:Key="CodeStLocP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is CODE_TERMS, D1 -->
+    <Style x:Key="CodeTerms_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is CODE_USAGE_DSPLY, D2 -->
+    <Style x:Key="CodeUsageDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is COL_ID_U, A3 -->
+    <Style x:Key="ColIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is COMM_FLAGS, A1 -->
+    <Style x:Key="CommFlags_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is COMP_ID, A8 -->
+    <Style x:Key="CompId_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is COMP_ID_EMP_P, D4 -->
+    <Style x:Key="CompIdEmpP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is CONAME_U, A30 -->
+    <Style x:Key="ConameU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is CONTACT_LAST_U, A20 -->
+    <Style x:Key="ContactLastU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is CONTACT_U, A14 -->
+    <Style x:Key="ContactU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="14"/>
+        <Setter Property="Width" Value="168"/>
+    </Style>
+
+    <!-- Original repository template is CONTRACT_NO, A6 -->
+    <Style x:Key="ContractNo_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is COUNT, D5 -->
+    <Style x:Key="Count_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is COUNTRY_CD_DSPLY_U, D2 -->
+    <Style x:Key="CountryCdDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <!-- Original repository template is COUNTRY_CD_U, A4 -->
+    <Style x:Key="CountryCdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is COUNTRY_TELE_ACCESS_U, D5 -->
+    <Style x:Key="CountryTeleAccessU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is CR_REASON_DSPLY_U, D2 -->
+    <Style x:Key="CrReasonDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <!-- Original repository template is CURR_CONV_TYPE, A3 -->
+    <Style x:Key="CurrConvType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is CUST_ID_U, A6 -->
+    <Style x:Key="CustIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is CYCLE, D3 -->
+    <Style x:Key="Cycle_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is CYCLE_RECURRENCE_U, D9.1 -->
+    <Style x:Key="CycleRecurrenceU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is DATE_J, D7 -->
+    <Style x:Key="DateJ_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is DAYS, D3 -->
+    <Style x:Key="Days_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is DAY_OF_WEEK, D1 -->
+    <Style x:Key="DayOfWeek_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is DAY_OF_WEEK_DSPLY, D2 -->
+    <Style x:Key="DayOfWeekDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is DD, D7.1 -->
+    <Style x:Key="Dd_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is DD_ELAPSED, D9.1 -->
+    <Style x:Key="DdElapsed_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is DD_REGION, D1 -->
+    <Style x:Key="DdRegion_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is DD_REGION_DSPLY, D2 -->
+    <Style x:Key="DdRegionDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is DD_TYPE, A1 -->
+    <Style x:Key="DdType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is DD_YEAR_DSPLY, A10 -->
+    <Style x:Key="DdYearDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is DELIVERY, D1 -->
+    <Style x:Key="Delivery_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is DEPENDENTS_P, D2 -->
+    <Style x:Key="DependentsP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is DEPOSIT_BILLED, D1 -->
+    <!--Need to add support for checkbox fields for field DepositBilled-->
+
+    <!-- Original repository template is DEPT_ID_P, A6 -->
+    <Style x:Key="DeptIdP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is DESC, A24 -->
+    <Style x:Key="Desc_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="24"/>
+        <Setter Property="Width" Value="288"/>
+    </Style>
+
+    <!-- Original repository template is DESC_12, A12 -->
+    <Style x:Key="Desc12_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is DESC_13_F, A13 -->
+    <Style x:Key="Desc13F_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="13"/>
+        <Setter Property="Width" Value="156"/>
+    </Style>
+
+    <!-- Original repository template is DESC_18, A18 -->
+    <Style x:Key="Desc18_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="18"/>
+        <Setter Property="Width" Value="216"/>
+    </Style>
+
+    <!-- Original repository template is DESC_20_U, A20 -->
+    <Style x:Key="Desc20U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is DESC_24_U, A24 -->
+    <Style x:Key="Desc24U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="24"/>
+        <Setter Property="Width" Value="288"/>
+    </Style>
+
+    <!-- Original repository template is DESC_30_U, A30 -->
+    <Style x:Key="Desc30U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is DESC_60_U, A60 -->
+    <Style x:Key="Desc60U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="60"/>
+        <Setter Property="Width" Value="720"/>
+    </Style>
+
+    <!-- Original repository template is DESC_USR_DEF, A15 -->
+    <Style x:Key="DescUsrDef_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="15"/>
+        <Setter Property="Width" Value="180"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+    </Style>
+
+    <!-- Original repository template is DIGITS, D1 -->
+    <Style x:Key="Digits_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is DIV_ID_GL_G, A3 -->
+    <Style x:Key="DivIdGlG_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is DIV_ID_P, A2 -->
+    <Style x:Key="DivIdP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is EMAIL_ADDR_U, A60 -->
+    <Style x:Key="EmailAddrU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="60"/>
+        <Setter Property="Width" Value="720"/>
+    </Style>
+
+    <!-- Original repository template is EMAIL_SELECT, D1 -->
+    <Style x:Key="EmailSelect_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is EMP_ID_P, A6 -->
+    <Style x:Key="EmpIdP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is EQMT_ID_U, A20 -->
+    <Style x:Key="EqmtIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is EQMT_OWN, A1 -->
+    <Style x:Key="EqmtOwn_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is EQMT_STATUS_DSPLY, D2 -->
+    <Style x:Key="EqmtStatusDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is EQMT_TYPE, A4 -->
+    <Style x:Key="EqmtType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is EQMT_TYPE_DSPLY, D2 -->
+    <Style x:Key="EqmtTypeDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is EQ_FLAG, A1 -->
+    <Style x:Key="EqFlag_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is EQ_KEY, A20 -->
+    <Style x:Key="EqKey_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is EXTRA_LINE_DSPLY_U, D1 -->
+    <Style x:Key="ExtraLineDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is EXTRA_LINE_U, D1 -->
+    <Style x:Key="ExtraLineU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is F1099_A, D1 -->
+    <!--Need to add support for checkbox fields for field F1099A-->
+
+    <!-- Original repository template is FACTOR, D9.4 -->
+    <Style x:Key="Factor_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is FIELD_ABBR_U, A6 -->
+    <Style x:Key="FieldAbbrU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is FILEPATH_PICT_U, A50 -->
+    <Style x:Key="FilepathPictU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="50"/>
+        <Setter Property="Width" Value="600"/>
+    </Style>
+
+    <!-- Original repository template is FILEPATH_TEXT_U, A50 -->
+    <Style x:Key="FilepathTextU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="50"/>
+        <Setter Property="Width" Value="600"/>
+    </Style>
+
+    <!-- Original repository template is FILE_ABBR_U, A4 -->
+    <Style x:Key="FileAbbrU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is FUEL_ASSIST_NO, A12 -->
+    <Style x:Key="FuelAssistNo_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is GL_ACCT_U, A12 -->
+    <Style x:Key="GlAcctU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is GL_PD_U, D2 -->
+    <Style x:Key="GlPdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is GPS_DEGREE_MIN_U, D11.9 -->
+    <Style x:Key="GpsDegreeMinU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is GPS_DEG_U, D3 -->
+    <Style x:Key="GpsDegU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is GPS_DIRECTION_U, A1 -->
+    <Style x:Key="GpsDirectionU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is GPS_EW_DSPLY, D2 -->
+    <Style x:Key="GpsEwDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is GPS_LAT_U, D10.7 -->
+    <Style x:Key="GpsLatU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is GPS_LONG_U, D10.7 -->
+    <Style x:Key="GpsLongU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is GPS_NS_DSPLY, D2 -->
+    <Style x:Key="GpsNsDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is HEAD_COMP, A1 -->
+    <Style x:Key="HeadComp_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is HRS_DEPT_P, D9.3 -->
+    <Style x:Key="HrsDeptP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is HRS_U, D7.3 -->
+    <Style x:Key="HrsU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is HR_RATE_P, D9.4 -->
+    <Style x:Key="HrRateP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is HYPER_CB_U, D1 -->
+    <!--Need to add support for checkbox fields for field HyperCbU-->
+
+    <!-- Original repository template is IMG_IR_DOC_TYPE_U, A4 -->
+    <Style x:Key="ImgIrDocTypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is IMG_IR_DRAWER_U, A4 -->
+    <Style x:Key="ImgIrDrawerU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is IMG_IR_FOLDER_U, D10 -->
+    <Style x:Key="ImgIrFolderU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is INSTALL, A8 -->
+    <Style x:Key="Install_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is INVOICES_AMOUNT, D5 -->
+    <Style x:Key="InvoicesAmount_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is INV_NO_U, A12 -->
+    <Style x:Key="InvNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is INV_SEARCH_U, A20 -->
+    <Style x:Key="InvSearchU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is INV_SORT_CODE, A4 -->
+    <Style x:Key="InvSortCode_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is INV_UPDATE_QTY_U, D1 -->
+    <Style x:Key="InvUpdateQtyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is ITEM_COV_U, D9 -->
+    <Style x:Key="ItemCovU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is ITEM_SET_U, A4 -->
+    <Style x:Key="ItemSetU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is ITEM_U, A6 -->
+    <Style x:Key="ItemU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is JOB_ID_U, A6 -->
+    <Style x:Key="JobIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is LABOR_HRS, D7.2 -->
+    <Style x:Key="LaborHrs_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is LANGUAGE_DSPLY_U, D2 -->
+    <Style x:Key="LanguageDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is LANGUAGE_U, D2 -->
+    <Style x:Key="LanguageU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is LOC, D2 -->
+    <Style x:Key="Loc_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is LOC_TYPE, A2 -->
+    <Style x:Key="LocType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is LOC_TYPE_DSPLY, D2 -->
+    <Style x:Key="LocTypeDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="156"/>
+    </Style>
+
+    <!-- Original repository template is LOW_PRESSURE, A1 -->
+    <Style x:Key="LowPressure_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is MANAGER_ID, A6 -->
+    <Style x:Key="ManagerId_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is METER_QTY, A1 -->
+    <Style x:Key="MeterQty_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is MINUTES_U, D6 -->
+    <Style x:Key="MinutesU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is MONTH_DSPLY, D2 -->
+    <Style x:Key="MonthDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is MO_DA, D4 -->
+    <Style x:Key="MoDa_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is MSG, A47 -->
+    <Style x:Key="Msg_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="47"/>
+        <Setter Property="Width" Value="564"/>
+    </Style>
+
+    <!-- Original repository template is MTR_REGION, D2 -->
+    <Style x:Key="MtrRegion_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is MULTIPLIER, D8.5 -->
+    <Style x:Key="Multiplier_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is MULTIPLIER_9_U, D9.5 -->
+    <Style x:Key="Multiplier9U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is NAME_40_U, A40 -->
+    <Style x:Key="Name40U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="40"/>
+        <Setter Property="Width" Value="480"/>
+    </Style>
+
+    <!-- Original repository template is NAME_U, A30 -->
+    <Style x:Key="NameU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is NBR_1_DSPLY, D2 -->
+    <Style x:Key="Nbr1Dsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is NBR_DSPLY_U, D2 -->
+    <Style x:Key="NbrDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is NEXT_ODOM, D9.1 -->
+    <Style x:Key="NextOdom_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is NON_CONTRACT_AR, D1 -->
+    <Style x:Key="NonContractAr_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is NOTE_47, A47 -->
+    <Style x:Key="Note47_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="47"/>
+        <Setter Property="Width" Value="564"/>
+    </Style>
+
+    <!-- Original repository template is NOTE_B_C, A1 -->
+    <Style x:Key="NoteBC_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is NOTE_KEY, A19 -->
+    <Style x:Key="NoteKey_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="19"/>
+        <Setter Property="Width" Value="228"/>
+    </Style>
+
+    <!-- Original repository template is NOTE_TYPE, A3 -->
+    <Style x:Key="NoteType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is NOTE_U, A30 -->
+    <Style x:Key="NoteU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is N_Y_U, A1 -->
+    <Style x:Key="NYU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is ODOM_U, D9.1 -->
+    <Style x:Key="OdomU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is ORDER_NUM, D7 -->
+    <Style x:Key="OrderNum_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is PATRON_TYPE_DSPLY, D2 -->
+    <Style x:Key="PatronTypeDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is PA_AMT_PCT_DSPLY_P, D2 -->
+    <Style x:Key="PaAmtPctDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PA_EXTRA_FIX_DSPLY_P, D2 -->
+    <Style x:Key="PaExtraFixDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PA_LOCAL_CODE_1_DSPLY_P, D2 -->
+    <Style x:Key="PaLocalCode1DsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is PA_LOCAL_CODE_2_DSPLY_P, D2 -->
+    <Style x:Key="PaLocalCode2DsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is PA_OTH_PAY_DSPLY_P, D2 -->
+    <Style x:Key="PaOthPayDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is PA_SCH_CODE_DSPLY_P, D2 -->
+    <Style x:Key="PaSchCodeDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is PA_TRAN_TYPE_DSPLY_P, D2 -->
+    <Style x:Key="PaTranTypeDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is PA_VAC_SICK_DSPLY_P, D2 -->
+    <Style x:Key="PaVacSickDsplyP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is PCT_DLV, D3 -->
+    <Style x:Key="PctDlv_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is PCT_TAX, D7.3 -->
+    <Style x:Key="PctTax_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is PCT_U, D5.2 -->
+    <Style x:Key="PctU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is PD_CODE, D2 -->
+    <Style x:Key="PdCode_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PERIOD_DATES_P, A23 -->
+    <Style x:Key="PeriodDatesP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="23"/>
+        <Setter Property="Width" Value="276"/>
+    </Style>
+
+    <!-- Original repository template is PHASE_ID_U, A6 -->
+    <Style x:Key="PhaseIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is PHONE_DESC_DSPLY_U, D2 -->
+    <Style x:Key="PhoneDescDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is PHONE_DESC_U, D2 -->
+    <Style x:Key="PhoneDescU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PHONE_EXT_U, D4 -->
+    <Style x:Key="PhoneExtU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is PHONE_NO_U, D11 -->
+    <Style x:Key="PhoneNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is PIECES_DEPT_P, D7 -->
+    <Style x:Key="PiecesDeptP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is PIECES_P, D5 -->
+    <Style x:Key="PiecesP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is PO_NUMBER_F, A12 -->
+    <Style x:Key="PoNumberF_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is PO_NUMBER_U, A15 -->
+    <Style x:Key="PoNumberU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="15"/>
+        <Setter Property="Width" Value="180"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is PRESSURE, D7.4 -->
+    <Style x:Key="Pressure_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is PRICE_DSPLY, D2 -->
+    <Style x:Key="PriceDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PRINTED, A1 -->
+    <Style x:Key="Printed_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is PRINT_DSPLY, D2 -->
+    <Style x:Key="PrintDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="168"/>
+    </Style>
+
+    <!-- Original repository template is PRL_GRP_U, D1 -->
+    <Style x:Key="PrlGrpU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_CPI_DSPLY_U, D2 -->
+    <Style x:Key="PrntCpiDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_DESC_DSPLY_U, D2 -->
+    <Style x:Key="PrntDescDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_DUPLEX_DSPLY_U, D2 -->
+    <Style x:Key="PrntDuplexDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_LPI_DSPLY_U, D2 -->
+    <Style x:Key="PrntLpiDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_NO_U, D3 -->
+    <Style x:Key="PrntNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_PAPER_SIZE_DSPLY_U, D2 -->
+    <Style x:Key="PrntPaperSizeDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is PRNT_TRAY_DSPLY_U, D2 -->
+    <Style x:Key="PrntTrayDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is PROD_TYPE, A1 -->
+    <Style x:Key="ProdType_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is PROD_TYPE_DSPLY_F, D2 -->
+    <Style x:Key="ProdTypeDsplyF_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is QTY_12, D12.2 -->
+    <Style x:Key="Qty12_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="14"/>
+        <Setter Property="Width" Value="144"/>
+    </Style>
+
+    <!-- Original repository template is QTY_INV_U, D11.2 -->
+    <Style x:Key="QtyInvU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="13"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is QTY_U, D9.2 -->
+    <Style x:Key="QtyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is QTY_YTD_U, D10.2 -->
+    <Style x:Key="QtyYtdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is RC_U, D2 -->
+    <Style x:Key="RcU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is READING, D10.1 -->
+    <Style x:Key="Reading_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is RECALC, A1 -->
+    <Style x:Key="Recalc_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is REC_TYPE_HIST, A1 -->
+    <Style x:Key="RecTypeHist_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is REC_TYPE_U, D1 -->
+    <Style x:Key="RecTypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is REF_NO_3_U, D3 -->
+    <Style x:Key="RefNo3U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is REF_NO_7_U, D7 -->
+    <Style x:Key="RefNo7U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is REF_NO_8_U, A8 -->
+    <Style x:Key="RefNo8U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is REGION_U, A2 -->
+    <Style x:Key="RegionU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is RK_FLAG_U, A1 -->
+    <Style x:Key="RkFlagU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RK_GROUP_1CHAR_U, A1 -->
+    <Style x:Key="RkGroup1charU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RK_GROUP_TYPE_U, D2 -->
+    <Style x:Key="RkGroupTypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is RK_TYPE_DSPLY_U, D2 -->
+    <Style x:Key="RkTypeDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is RK_TYPE_U, A1 -->
+    <Style x:Key="RkTypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RK_UNITS_DSPLY_U, D2 -->
+    <Style x:Key="RkUnitsDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is RK_UNITS_U, A1 -->
+    <Style x:Key="RkUnitsU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is ROUTE, D5 -->
+    <Style x:Key="Route_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is ROUTE_SEQ, D8.3 -->
+    <Style x:Key="RouteSeq_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is RPT_BREAK_CB_U, D1 -->
+    <!--Need to add support for checkbox fields for field RptBreakCbU-->
+
+    <!-- Original repository template is RPT_BREAK_U, A1 -->
+    <Style x:Key="RptBreakU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RPT_CUSTOM_A_U, A2 -->
+    <Style x:Key="RptCustomAU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is RPT_CUSTOM_DSPLY_U, D2 -->
+    <Style x:Key="RptCustomDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="156"/>
+    </Style>
+
+    <!-- Original repository template is RPT_CUSTOM_N_U, D2 -->
+    <Style x:Key="RptCustomNU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is RPT_PICK_CB_U, D1 -->
+    <!--Need to add support for checkbox fields for field RptPickCbU-->
+
+    <!-- Original repository template is RPT_PICK_LIST_U, A1 -->
+    <Style x:Key="RptPickListU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+    </Style>
+
+    <!-- Original repository template is RPT_ROUTE, D5 -->
+    <Style x:Key="RptRoute_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is RPT_SORT_DSPLY_U, D2 -->
+    <Style x:Key="RptSortDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="156"/>
+    </Style>
+
+    <!-- Original repository template is RPT_SORT_U, D2 -->
+    <Style x:Key="RptSortU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is RPT_SUBA_U, A1 -->
+    <Style x:Key="RptSubaU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RPT_SUBN_U, D1 -->
+    <Style x:Key="RptSubnU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RPT_SUB_DSPLY_U, D2 -->
+    <Style x:Key="RptSubDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is RPT_TOT_CB_U, D1 -->
+    <!--Need to add support for checkbox fields for field RptTotCbU-->
+
+    <!-- Original repository template is RPT_TOT_U, A1 -->
+    <Style x:Key="RptTotU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RPT_YNALL_DSPLY_U, D2 -->
+    <Style x:Key="RptYnallDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is RPT_YNALL_U, A1 -->
+    <Style x:Key="RptYnallU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RPT_Y_N_CB_U, D1 -->
+    <!--Need to add support for checkbox fields for field RptYNCbU-->
+
+    <!-- Original repository template is RPT_Y_N_U, A1 -->
+    <Style x:Key="RptYNU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is RTSEQ, D3 -->
+    <Style x:Key="Rtseq_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is RUN_CODE_DSPLY_U, D2 -->
+    <Style x:Key="RunCodeDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="156"/>
+    </Style>
+
+    <!-- Original repository template is SCHEDULED, A1 -->
+    <Style x:Key="Scheduled_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is SCHED_CODE, A3 -->
+    <Style x:Key="SchedCode_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is SCHED_FLIP, A1 -->
+    <Style x:Key="SchedFlip_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is SEQ, D3 -->
+    <Style x:Key="Seq_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is SEQ_NO, D2 -->
+    <Style x:Key="SeqNo_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is SEQ_NO_4_U, D4 -->
+    <Style x:Key="SeqNo4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is SEQ_NO_7_U, D7 -->
+    <Style x:Key="SeqNo7U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is SHIP_VIA_U, A30 -->
+    <Style x:Key="ShipViaU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="30"/>
+        <Setter Property="Width" Value="360"/>
+    </Style>
+
+    <!-- Original repository template is SLS_DRV_NO_U, D3 -->
+    <Style x:Key="SlsDrvNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is SS_NO_E_U, A11 -->
+    <Style x:Key="SsNoEU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is SS_NO_U, A11 -->
+    <Style x:Key="SsNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="132"/>
+    </Style>
+
+    <!-- Original repository template is START_END_CODES, A3 -->
+    <Style x:Key="StartEndCodes_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is START_END_REASON, A10 -->
+    <Style x:Key="StartEndReason_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is STATE_DSPLY_U, D2 -->
+    <Style x:Key="StateDsplyU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is STATUS_U, A1 -->
+    <Style x:Key="StatusU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is STMT_BITMAP, D4 -->
+    <Style x:Key="StmtBitmap_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is STMT_COL, D3 -->
+    <Style x:Key="StmtCol_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is STMT_LEN, D2 -->
+    <Style x:Key="StmtLen_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is STMT_PAGE, A1 -->
+    <Style x:Key="StmtPage_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is STMT_PRINT, D1 -->
+    <!--Need to add support for checkbox fields for field StmtPrint-->
+
+    <!-- Original repository template is STMT_PRN, A1 -->
+    <Style x:Key="StmtPrn_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is STMT_ROW, D2 -->
+    <Style x:Key="StmtRow_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is STORE_NO_U, D4 -->
+    <Style x:Key="StoreNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is ST_U, A3 -->
+    <Style x:Key="StU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is SW_ID_U, I4 -->
+    <Style x:Key="SwIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is SW_ITEM_CNT_U, D3 -->
+    <Style x:Key="SwItemCntU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is TAX_CLASS, A1 -->
+    <Style x:Key="TaxClass_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is TAX_COMPUTE, D1 -->
+    <!--Need to add support for checkbox fields for field TaxCompute-->
+
+    <!-- Original repository template is TAX_GROUP, A4 -->
+    <Style x:Key="TaxGroup_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is TAX_LICENSE_NO, A20 -->
+    <Style x:Key="TaxLicenseNo_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is TAX_SCH_ID_U, A3 -->
+    <Style x:Key="TaxSchIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is TAX_SCH_PROD_CODE_U, A1 -->
+    <Style x:Key="TaxSchProdCodeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is TCHK_HIST_DSPLY, D2 -->
+    <Style x:Key="TchkHistDsply_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is TCHK_LAST_HIST, A1 -->
+    <Style x:Key="TchkLastHist_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is TEMPERATURE, D6.1 -->
+    <Style x:Key="Temperature_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is TIME_4_U, D4 -->
+    <Style x:Key="Time4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is TIME_6_U, D6 -->
+    <Style x:Key="Time6U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="6"/>
+        <Setter Property="Width" Value="72"/>
+    </Style>
+
+    <!-- Original repository template is TOTALIZER_U, D10.1 -->
+    <Style x:Key="TotalizerU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is TOTAL_ACTION_G, A1 -->
+    <Style x:Key="TotalActionG_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is TRACK2_INFO_U, A40 -->
+    <Style x:Key="Track2InfoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="40"/>
+        <Setter Property="Width" Value="480"/>
+    </Style>
+
+    <!-- Original repository template is TRANS_NO_D7_U, D7 -->
+    <Style x:Key="TransNoD7U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is TRANS_NO_U, D5 -->
+    <Style x:Key="TransNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is TRAN_NO_4_U, D4 -->
+    <Style x:Key="TranNo4U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is TRAN_NO_7, D7 -->
+    <Style x:Key="TranNo7_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is TRUCK_NO_U, D4 -->
+    <Style x:Key="TruckNoU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is TX_SCH_8_U, A8 -->
+    <Style x:Key="TxSch8U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is TX_SCH_PROD, A3 -->
+    <Style x:Key="TxSchProd_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is TX_SCH_PROD_9, A9 -->
+    <Style x:Key="TxSchProd9_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is TX_SCH_SCHED, A3 -->
+    <Style x:Key="TxSchSched_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is TX_SCH_ST_2, A2 -->
+    <Style x:Key="TxSchSt2_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="2"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <!-- Original repository template is TYPE_SALARY_P, A1 -->
+    <Style x:Key="TypeSalaryP_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is TYPE_U, A1 -->
+    <Style x:Key="TypeU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is UNITS, A3 -->
+    <Style x:Key="Units_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+    </Style>
+
+    <!-- Original repository template is UNITS_10, A10 -->
+    <Style x:Key="Units10_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+    <!-- Original repository template is USAGE, D9 -->
+    <Style x:Key="Usage_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is USER10_U, A10 -->
+    <Style x:Key="User10U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is USER_U, A3 -->
+    <Style x:Key="UserU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="3"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is USR_DEF_A_U, A20 -->
+    <Style x:Key="UsrDefAU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="20"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+
+    <!-- Original repository template is USR_DEF_DATE_U, D8 -->
+    <Style x:Key="UsrDefDateU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="8"/>
+        <Setter Property="Width" Value="96"/>
+    </Style>
+
+    <!-- Original repository template is USR_DEF_N0_U, D9 -->
+    <Style x:Key="UsrDefN0U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is USR_DEF_N2_U, D9.2 -->
+    <Style x:Key="UsrDefN2U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is USR_DEF_N5_U, D9.5 -->
+    <Style x:Key="UsrDefN5U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="11"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is VENDOR_ID_U, A12 -->
+    <Style x:Key="VendorIdU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="12"/>
+        <Setter Property="Width" Value="144"/>
+        <Setter Property="CharacterCasing" Value="Upper"/>
+    </Style>
+
+    <!-- Original repository template is VERSION, A15 -->
+    <Style x:Key="Version_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="15"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <!-- Original repository template is WEB_ADDR_U, A60 -->
+    <Style x:Key="WebAddrU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="60"/>
+        <Setter Property="Width" Value="720"/>
+    </Style>
+
+    <!-- Original repository template is WEB_COUNTER_U, D9 -->
+    <Style x:Key="WebCounterU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="9"/>
+        <Setter Property="Width" Value="108"/>
+    </Style>
+
+    <!-- Original repository template is WEEK, A5 -->
+    <Style x:Key="Week_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+
+    <!-- Original repository template is WEEK_FILE_VALUE, D7 -->
+    <Style x:Key="WeekFileValue_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="7"/>
+        <Setter Property="Width" Value="84"/>
+    </Style>
+
+    <!-- Original repository template is YEAR_U, D4 -->
+    <Style x:Key="YearU_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="4"/>
+        <Setter Property="Width" Value="48"/>
+    </Style>
+
+    <!-- Original repository template is Y_N, A1 -->
+    <Style x:Key="YN_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="1"/>
+        <Setter Property="Width" Value="12"/>
+    </Style>
+
+    <!-- Original repository template is ZIP_10_U, A10 -->
+    <Style x:Key="Zip10U_Style" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}" >
+        <Setter Property="MaxLength" Value="10"/>
+        <Setter Property="Width" Value="120"/>
+    </Style>
+
+</ResourceDictionary>

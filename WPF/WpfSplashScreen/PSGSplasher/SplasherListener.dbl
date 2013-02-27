@@ -1,0 +1,95 @@
+;;*****************************************************************************
+;;
+;; Class:        SplasherListener
+;;
+;; Author:       Steve Ives, Synergex Professional Services Group
+;;
+;; Date:         29th October 2010
+;;
+;;*****************************************************************************
+;;
+;; This code is supplied as seen and without warranty or support, and is used
+;; at your own risk. Neither the author or Synergex accept any responsability
+;; for any loss or damage which may result from the use of this code.
+;;
+;;*****************************************************************************
+;;
+import System
+import System.Windows
+
+namespace PSGSplasher
+
+	;;;<summary>
+	;;;Message listener, singlton pattern.
+	;;;Inherit from DependencyObject to implement DataBinding.
+	;;;</summary>
+	public class SplasherListener extends DependencyObject
+		
+		;;;<summary>
+		;;;Singleton pattern, so here's the static instance of this class
+		;;;</summary>
+		private static mInstance, @SplasherListener
+		
+		;;;<summary>
+		;;;Private constructor so that this class can only be instantiated
+		;;;by our "Instance" property
+		;;;</summary>
+		private method SplasherListener
+			endparams
+		proc
+		endmethod
+		
+		;;;<summary>
+		;;;Get MessageListener instance
+		;;;</summary>
+		public static property Instance, @SplasherListener
+			method get
+			proc
+				if (mInstance == ^null)
+					mInstance = new SplasherListener()
+				mreturn mInstance
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Receives a new message. The client application calls this method
+		;;;to update the message text displayed in the splash screen window.
+		;;;</summary>
+		;;;<param name="message"></param>
+		public method ShowMessage, void
+			msg, string
+			endparams
+		proc
+			Message = msg
+			DispatcherHelper.DoEvents()
+		endmethod
+		
+		;;;<summary>
+		;;;Get or set received message
+		;;;</summary>
+		public property Message, string
+			method get
+			proc
+				mreturn (string)GetValue(MessageProperty)
+			endmethod
+			method set
+			proc
+				SetValue(MessageProperty,value)
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;
+		;;;</summary>
+		public static MessageProperty, @DependencyProperty, 
+		&		DependencyProperty.Register(
+		&			"Message",
+		&			^typeof(string),
+		&			^typeof(SplasherListener),
+		&			new UIPropertyMetadata(^null)
+		&		)
+		
+	endclass
+
+endnamespace
+

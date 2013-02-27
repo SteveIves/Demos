@@ -1,0 +1,312 @@
+import System
+import System.ComponentModel
+import System.Windows.Input
+import DemoApp.DataAccess
+import DemoApp.Model
+import DemoApp.Properties
+
+namespace DemoApp.ViewModel
+
+	;;;<summary>
+	;;;A UI-friendly wrapper for a Customer object.
+	;;;</summary>
+	public class CustomerViewModel extends WorkspaceViewModel implements IDataErrorInfo
+
+		.region "Fields"
+
+		readonly mCustomer				,@Customer
+		readonly mCustomerRepository	,@CustomerRepository
+		mCustomerType					,string
+		mCustomerTypeOptions			,[#]string
+		mIsSelected						,boolean
+		mSaveCommand					,@RelayCommand
+		
+		.endregion ;;Fields
+
+		.region "Constructors"
+
+		public method CustomerViewModel
+			required in customer			,@Customer
+			required in customerRepository	,@CustomerRepository
+			endparams
+		proc
+			if (customer == ^null)
+				throw new ArgumentNullException("customer")
+			if (customerRepository == ^null)
+				throw new ArgumentNullException("customerRepository")
+			mCustomer = customer
+			mCustomerRepository = customerRepository
+			mCustomerType = Strings.CustomerViewModel_CustomerTypeOption_NotSpecified
+		endmethod
+		
+		.endregion ;;Constructors
+
+		.region "Customer properties"
+
+		public property Email, string
+			method get
+			proc
+				mreturn mCustomer.Email
+			endmethod
+			method set
+			proc
+				if (value != mCustomer.Email)
+				begin
+					mCustomer.Email = value
+					parent.OnPropertyChanged("Email")
+				end
+			endmethod
+		endproperty
+		
+		public property FirstName, string
+			method get
+			proc
+				mreturn mCustomer.FirstName
+			endmethod
+			method set
+			proc
+				if (value != mCustomer.FirstName)
+				begin
+					mCustomer.FirstName = value
+					parent.OnPropertyChanged("FirstName")
+				end
+			endmethod
+		endproperty
+		
+		public property IsCompany, boolean
+			method get
+			proc
+				mreturn mCustomer.IsCompany
+			endmethod
+		endproperty
+		
+		public property LastName, string
+			method get
+			proc
+				mreturn mCustomer.LastName
+			endmethod
+			method set
+			proc
+				if (value != mCustomer.LastName)
+				begin
+					mCustomer.LastName = value
+					parent.OnPropertyChanged("LastName")
+				end
+			endmethod
+		endproperty
+		
+		public property TotalSales, double
+			method get
+			proc
+				mreturn mCustomer.TotalSales
+			endmethod
+		endproperty
+		
+		.endregion ;;Customer properties
+
+		.region "Presentation properties"
+
+		;;;<summary>
+		;;;Gets/sets a value that indicates what type of customer this is.
+		;;;This property maps to the IsCompany property of the Customer class,
+		;;;but also has support for an 'unselected' state.
+		;;;</summary>
+		public property CustomerType, string
+			method get
+			proc
+				mreturn mCustomerType
+			endmethod
+			method set
+			proc
+				if ((value == mCustomerType)||(String.IsNullOrEmpty(value)))
+					mreturn		
+				mCustomerType = value
+				if (mCustomerType == Strings.CustomerViewModel_CustomerTypeOption_Company) then
+					mCustomer.IsCompany = true
+				else if (mCustomerType == Strings.CustomerViewModel_CustomerTypeOption_Person)
+					mCustomer.IsCompany = false
+				parent.OnPropertyChanged("CustomerType")
+				;;Since this ViewModel object has knowledge of how to translate
+				;a customer type (i.e. text) to a Customer object's IsCompany property,
+				;;it also must raise a property change notification when it changes
+				;;the value of IsCompany.  The LastName property is validated 
+				;;differently based on whether the customer is a company or not,
+				;;so the validation for the LastName property must execute now.
+				parent.OnPropertyChanged("LastName")
+
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Returns a list of strings used to populate the Customer Type selector.
+		;;;</summary>
+		public property CustomerTypeOptions, [#]string
+			method get
+				endparams
+			proc
+				if (mCustomerTypeOptions == ^null)
+					mCustomerTypeOptions =  new string[#] {
+					&	Strings.CustomerViewModel_CustomerTypeOption_NotSpecified,
+					&	Strings.CustomerViewModel_CustomerTypeOption_Person,
+					&	Strings.CustomerViewModel_CustomerTypeOption_Company
+					&	}
+				mreturn mCustomerTypeOptions
+			endmethod
+		endproperty
+		
+		public override property DisplayName, string
+			method get
+				endparams
+			proc
+				if (this.IsNewCustomer) then
+					mreturn Strings.CustomerViewModel_DisplayName
+				else if (mCustomer.IsCompany) then
+					mreturn mCustomer.FirstName
+				else
+					mreturn String.Format("{0}, {1}", mCustomer.LastName, mCustomer.FirstName)
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Gets/sets whether this customer is selected in the UI.
+		;;;</summary>
+		public property IsSelected, boolean
+			method get
+			proc
+				mreturn mIsSelected
+			endmethod
+			method set
+			proc
+				if (value != mIsSelected)
+				begin
+					mIsSelected = value
+					parent.OnPropertyChanged("IsSelected")
+				end
+			endmethod
+		endproperty
+
+		;;;<summary>
+		;;;Returns a command that saves the customer.
+		;;;</summary>
+		public property SaveCommand, @ICommand
+			method get
+			proc
+				if (mSaveCommand == ^null)
+					mSaveCommand = new RelayCommand(saveCommandImpl, canSaveCommandImpl)
+				mreturn mSaveCommand
+			endmethod
+		endproperty
+		
+		.endregion ;;Presentation properties
+
+		.region "Public methods"
+
+		;;;<summary>
+		;;;Saves the customer to the repository.  This method is invoked by the SaveCommand.
+		;;;</summary>
+		public method Save, void
+			endparams
+		proc
+			if (!mCustomer.IsValid)
+				throw new InvalidOperationException(Strings.CustomerViewModel_Exception_CannotSave)
+			if (this.IsNewCustomer)
+				mCustomerRepository.AddCustomer(mCustomer)
+			parent.OnPropertyChanged("DisplayName")
+		endmethod
+		
+		;This is a workaround because we dont have lambda functions
+		private method saveCommandImpl, void
+			parameter, @Object
+			endparams
+		proc
+			this.Save()
+		endmethod
+		
+		.endregion ;;Public methods
+
+		.region "Private helpers"
+
+		;;;<summary>
+		;;;Returns true if this customer was created by the user and it has not yet
+		;;;been saved to the customer repository.
+		;;;</summary>
+		private property IsNewCustomer, boolean
+			method get
+			proc
+				mreturn !mCustomerRepository.ContainsCustomer(mCustomer)
+			endmethod
+		endproperty
+		
+		;;;<summary>
+		;;;Returns true if the customer is valid and can be saved.
+		;;;</summary>
+		private property CanSave, Boolean
+			method get
+			proc
+				mreturn String.IsNullOrEmpty(this.ValidateCustomerType()) && mCustomer.IsValid
+			endmethod
+		endproperty
+		
+		;This is a workaround because we dont have lambda functions
+		private method canSaveCommandImpl, Boolean
+			parObject, @Object
+			endparams
+		proc
+			mreturn this.CanSave
+		endmethod
+		
+		.endregion ;;Private helpers
+
+		.region "IDataErrorInfo members"
+
+		public property IDataErrorInfo.Error, string
+			method get
+			proc
+				mreturn ((IDataErrorInfo)mCustomer).Error
+			endmethod
+		endproperty
+		
+		public property IDataErrorInfo.indexer, string
+			required in propertyName, string
+			method get
+				record
+					errtxt, string
+				endrecord
+			proc
+				errtxt = ^null
+				if (propertyName == "CustomerType") then
+				begin
+					;;The IsCompany property of the Customer class 
+					;;is Boolean, so it has no concept of being in
+					;;an "unselected" state.  The CustomerViewModel
+					;;class handles this mapping and validation.
+					errtxt = this.ValidateCustomerType()
+				end
+				else
+					errtxt = ((IDataErrorInfo)mCustomer)[propertyName]
+		
+				;;Dirty the commands registered with CommandManager,
+				;;such as our Save command, so that they are queried
+				;;to see if they can execute now.
+				CommandManager.InvalidateRequerySuggested()
+		
+				mreturn errtxt
+
+			endmethod
+		endproperty
+		
+		private method ValidateCustomerType, string
+			endparams
+		proc
+			if ((this.CustomerType == Strings.CustomerViewModel_CustomerTypeOption_Company)
+			& || (this.CustomerType == Strings.CustomerViewModel_CustomerTypeOption_Person))
+				mreturn ^null
+			mreturn Strings.CustomerViewModel_Error_MissingCustomerType
+		endmethod
+		
+		.endregion ;;IDataErrorInfo members
+
+	endclass
+
+endnamespace
+

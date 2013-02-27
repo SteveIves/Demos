@@ -1,0 +1,22 @@
+import System
+import System.ComponentModel
+
+namespace MvvmToolkit
+	
+	public abstract class ModelBase implements INotifyPropertyChanged
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected method NotifyPropertyChanged, void
+			property, @string 
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				PropertyChanged(this, new PropertyChangedEventArgs(property))
+		endmethod
+					
+	endclass
+					
+endnamespace
+					
+					

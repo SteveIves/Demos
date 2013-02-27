@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "PSGSplasher", "PSGSplasher\PSGSplasher.synproj", "{E8E7FFEA-5C42-4998-B1D0-A2E557E4CBFE}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "SplashScreenTestApp", "SplashScreenTestApp\SplashScreenTestApp.synproj", "{DA54E812-5252-4BF2-879A-9F43F4BE454C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8E7FFEA-5C42-4998-B1D0-A2E557E4CBFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8E7FFEA-5C42-4998-B1D0-A2E557E4CBFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8E7FFEA-5C42-4998-B1D0-A2E557E4CBFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E7FFEA-5C42-4998-B1D0-A2E557E4CBFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA54E812-5252-4BF2-879A-9F43F4BE454C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA54E812-5252-4BF2-879A-9F43F4BE454C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA54E812-5252-4BF2-879A-9F43F4BE454C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA54E812-5252-4BF2-879A-9F43F4BE454C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

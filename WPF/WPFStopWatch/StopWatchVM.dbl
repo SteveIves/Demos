@@ -1,0 +1,112 @@
+
+import System
+import System.Windows.Input
+
+namespace WPFStopWatch
+
+	public class StopWatchVM extends ViewModelBase
+		
+		mTicker			,@Ticker
+		mStartCommand	,@RelayCommand
+		mStopCommand	,@RelayCommand
+		mClearCommand	,@RelayCommand
+		
+		public method StopWatchVM
+			endparams
+		proc
+			mTicker = new Ticker()
+			mTicker.ValueChanged += new EventHandler(mTicker_ValueChanged)
+		endmethod
+		
+		public property Start, @ICommand
+			method get
+			proc
+				if (mStartCommand == ^null)
+					mStartCommand = new RelayCommand(doStart,canStart)
+				mreturn mStartCommand
+			endmethod
+		endproperty
+		
+		public property Stop, @ICommand
+			method get
+			proc
+				if (mStopCommand == ^null)
+					mStopCommand = new RelayCommand(doStop,canStop)
+				mreturn mStopCommand
+			endmethod
+		endproperty
+		
+		public property Clear, @ICommand
+			method get
+			proc
+				if (mClearCommand == ^null)
+					mClearCommand = new RelayCommand(doClear,canClear)
+				mreturn mClearCommand
+			endmethod
+		endproperty
+		
+		public property ElapsedTime, String
+			method get
+			proc
+				mreturn String.Format("{0:D2}:{1:D2}", mTicker.ElapsedTime.Minutes, mTicker.ElapsedTime.Seconds)
+			endmethod
+		endproperty
+		
+		.region "Private members"
+		
+		private method mTicker_ValueChanged, void
+			sender		,@Object 
+			e			,@EventArgs 
+			endparams
+		proc
+			NotifyPropertyChanged("ElapsedTime")
+			CommandManager.InvalidateRequerySuggested()
+		endmethod
+		
+		private method canStart, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn !mTicker.IsStarted
+		endmethod
+		
+		private method doStart, void
+			param, @Object
+			endparams
+		proc
+			mTicker.Start()
+		endmethod
+		
+		private method canStop, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn mTicker.IsStarted
+		endmethod
+		
+		private method doStop, void
+			param, @Object
+			endparams
+		proc
+			mTicker.Stop()
+		endmethod
+		
+		private method canClear, Boolean
+			param, @Object
+			endparams
+		proc
+			mreturn (mTicker.ElapsedTime.Ticks>0)
+		endmethod
+		
+		private method doClear, void
+			param, @Object
+			endparams
+		proc
+			mTicker.Clear()
+		endmethod
+		
+		.endregion
+		
+	endclass
+	
+endnamespace

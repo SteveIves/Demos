@@ -1,0 +1,7 @@
+
+
+namespace ContactBrowserWpf.Models
+	
+	.include "CUSTOMER" repository, structure = "strCustomer", end
+
+endnamespace

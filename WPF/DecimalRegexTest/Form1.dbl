@@ -1,0 +1,213 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Windows.Forms
+
+import System.Text.RegularExpressions
+
+namespace DecimalRegexTest
+	
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		private re, @Regex
+
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+		
+		private method Form1_Load, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			setRegEx()
+		endmethod
+		
+		private method numLength_ValueChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			if (numPrecision.Value>numLength.Value)
+				numPrecision.Value = numLength.Value
+			numPrecision.Maximum = numLength.Value
+			setRegEx()
+		endmethod
+		
+		private method numPrecision_ValueChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			chkAllowTrailingZeros.Enabled=(numPrecision.Value>0)
+			if (!chkAllowTrailingZeros.Enabled)
+				chkAllowTrailingZeros.Checked = false
+			setRegEx()
+		endmethod
+		
+		private method chkNegatives_CheckedChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			setRegEx()
+		endmethod
+		
+		private method chkAllowLeadingZeros_CheckedChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			setRegEx()
+		endmethod
+		
+		private method chkAllowTrailingZeros_CheckedChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			setRegEx()
+		endmethod
+		
+		
+		private method chkRequired_CheckedChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			setRegEx()
+		endmethod
+
+		private method setRegEx, void
+			endparams
+		proc
+			txtRegEx.Text = makeDecimalRegex(
+			&		(int)numLength.Value,
+			&		(int)numPrecision.Value,
+			&		chkNegatives.Checked,
+			&		chkAllowLeadingZeros.Checked,
+			&		chkAllowTrailingZeros.Checked,
+			&		chkRequired.Checked)
+			re = new Regex(txtRegEx.Text)
+			if (txtValueToTest.Text.Length>0) then
+				doValidate()
+			else
+				lblResult.Text = ""
+		endmethod
+		
+		private method makeDecimalRegex, String
+			required in aLength				,int
+			required in aPrecision			,int
+			required in aNegatives			,Boolean
+			required in aAllowLeadingZeros	,Boolean
+			required in aAllowTrailingZeros	,Boolean
+			required in aRequired			,Boolean
+			endparams
+		proc
+			
+			; For a D4.2 with no negatives:
+			;		^+?[0]*[0-9]{0,2}(\.[0-9]{0,2}[0]*)?$
+			;		
+			; For a D4.2 allowing negatives:
+			;      ^[+-]?[0]*[0-9]{0,2}(\.[0-9]{0,2}[0]*)?$
+			
+			data theRegEx, string
+			
+			;;From start of string
+			theRegEx = "^"
+			
+			;;Determine if a leading + or - are allowed
+			if (aNegatives) then
+				theRegEx = theRegEx + "[+-]?"
+			else
+				theRegEx = theRegEx + "[+]?"
+				
+			;;Allow any number of leading zero's
+			if (aAllowLeadingZeros) then
+				theRegEx = theRegEx + "[0]*"
+			else
+				theRegEx = theRegEx + "0?"
+			
+			;;Allow the appropriate number of numeric characters before the decimal point
+			if (aRequired) then
+			begin
+
+				if ((aLength-aPrecision)==1) then
+					theRegEx = theRegEx + "[1-9]"
+				else
+				begin
+					;TODO: this logic is not correct!
+					;It requires the final digit to be non-zero, but a value like 40 is also
+					;valid
+					theRegEx = theRegEx + "[0-9]{0," + string(aLength-aPrecision-1) + "}[1-9]"
+				end
+			end
+			else
+				theRegEx = theRegEx + "[0-9]{0," + string(aLength-aPrecision) + "}"
+
+			if (aPrecision>0)
+			begin
+				;TODO: this area needs work too. For required fields, if the
+				;value BEFORE the decimal point is zero, then the value AFTER the
+				;decimal point may not be zero.
+
+				;;Start sub-expression
+				theRegEx = theRegEx + "("
+				
+				;;Optional decimal point
+				theRegEx = theRegEx + "\."
+				
+				;;Allow the appropriate number of numeric characters after the decimal point
+				theRegEx = theRegEx + "[0-9]{0," + string(aPrecision) + "}"
+				
+				;;Allow any number of trailing zero's
+				if (aAllowTrailingZeros)
+					theRegEx = theRegEx + "[0]*"
+				
+				;;End sub-expression
+				theRegEx = theRegEx + ")?"
+			end
+			
+			;;End of string
+			theRegEx = theRegEx + "$"
+
+			mreturn theRegEx
+
+		endmethod
+		
+		private method txtValueToTest_TextChanged, void
+			sender, @object 
+			e, @System.EventArgs 
+			endparams
+		proc
+			doValidate()
+		endmethod
+		
+		private method doValidate, void
+			endparams
+		proc
+			if (txtValueToTest.Text.Length>0) then
+			begin
+				if (re.IsMatch(txtValueToTest.Text)) then
+				begin
+					lblResult.ForeColor = Color.Green
+					lblResult.Text = "Match"
+				end
+				else
+				begin
+					lblResult.ForeColor = Color.Red
+					lblResult.Text = "No match"
+				end
+			end
+			else
+				lblResult.Text = ""
+		endmethod
+		
+	endclass
+	
+endnamespace
+

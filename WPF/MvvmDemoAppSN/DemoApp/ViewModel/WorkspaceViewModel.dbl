@@ -1,0 +1,70 @@
+import System
+import System.Windows.Input
+
+namespace DemoApp.ViewModel
+
+	public class WorkspaceViewModel extends ViewModelBase
+
+		.region "Fields"
+
+		private mCloseCommand, @RelayCommand
+
+		.endregion ;;Fields
+		
+		.region "Constructors"
+
+		protected method WorkspaceViewModel
+			endparams
+		proc
+		endmethod
+		
+		.endregion ;;Constructors
+
+		.region "CloseCommand"
+
+		;;;<summary>
+		;;;Returns the command that, when invoked, attempts
+		;;;to remove this workspace from the user interface.
+		;;;</summary>
+		public property CloseCommand, @ICommand
+			method get
+			proc
+				if (mCloseCommand == ^null)
+					mCloseCommand = new RelayCommand(new RelayCommand.RelayCommandAction(onRequestCloseWrapper))
+				mreturn mCloseCommand
+			endmethod
+		endproperty
+		
+		.endregion ;;CloseCommand
+
+		.region "RequestClose [event]"
+
+		;-----------------------------------------------------------------------------------------
+		;This method is only present so that I can pass a delegate to the onRequestClose method 
+		;via RelayCommandAction, which requires an object parameter
+		private method onRequestCloseWrapper, void
+			required in par1, @*
+			endparams
+		proc
+			onRequestClose()
+		endmethod
+		;-----------------------------------------------------------------------------------------
+		
+		;;;<summary>
+		;;;Raised when this workspace should be removed from the UI.
+		;;;</summary>
+		public event RequestClose, @EventHandler
+			
+		private method onRequestClose, void
+			endparams
+		proc
+			if (RequestClose != ^null)
+				RequestClose(this, EventArgs.Empty)
+		endmethod
+			
+		.endregion ;;RequestClose [event]
+
+	endclass
+
+endnamespace
+
