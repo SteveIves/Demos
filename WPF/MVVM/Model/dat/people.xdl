@@ -1,0 +1,79 @@
+!	Synergy ISAM XDL File created Tue Feb 26 16:49:18 2013
+FILE
+	NAME		"people.ism"
+	ADDRESSING	32
+	NETWORK_ENCRYPT	no
+	KEYS		4
+
+RECORD
+	SIZE		300
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 7 byte record overhead
+	!Creation version 9.5.1a 
+	!File created on Fri Jul 08 14:04:30 2011
+	!50 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!8 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1
+	LENGTH		6
+	TYPE		alpha
+	ORDER		ascending
+	NAME		"PERSON_ID"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 51
+
+KEY 1
+	!Alternate key #1
+	START		27
+	LENGTH		20
+	TYPE		nocase
+	ORDER		ascending
+	NAME		"LAST_NAME"
+	DUPLICATES	yes
+	DUPLICATE_ORDER	fifo
+	MODIFIABLE	yes
+	DENSITY		50
+
+	!Root 0xc00, index depth 1
+	!Qualifier offset 1
+	!Minimum keys per block 18
+
+KEY 2
+	!Alternate key #2
+	START		47
+	LENGTH		50
+	TYPE		nocase
+	ORDER		ascending
+	NAME		"EMAIL"
+	DUPLICATES	no
+	MODIFIABLE	yes
+	DENSITY		50
+
+	!Root 0x1000, index depth 1
+	!Minimum keys per block 9
+
+KEY 3
+	!Alternate key #3
+	START		97
+	LENGTH		10
+	TYPE		alpha
+	ORDER		ascending
+	NAME		"DEPARTMENT"
+	DUPLICATES	yes
+	DUPLICATE_ORDER	fifo
+	MODIFIABLE	yes
+	DENSITY		50
+
+	!Root 0x1400, index depth 1
+	!Qualifier offset 4
+	!Minimum keys per block 30
