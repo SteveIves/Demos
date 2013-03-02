@@ -1,0 +1,955 @@
+;; Generated on 22-Jun-2011 10:26:37 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
+;; 
+;; The contents of this file are auto-generated. Only add modifications to the end of this file.
+;; Any modifications will be lost when the file is re-generated.
+;; 
+import System;
+import System.Text;
+import System.Runtime.Serialization;
+import System.ServiceModel;
+namespace xfpldemo
+ 
+;;; <summary>
+;;; Structural Interface Class InteropAssembly
+;;; </summary>
+	{DataContractAttribute}
+	{Serializable}
+	public class Contact
+	 
+		private f_Contact_id    ,int
+		 
+		;;; <summary>
+		;;; Contact ID
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Contact_id   ,int
+			method get
+			proc
+			    mreturn f_Contact_id
+			endmethod
+			method set
+			proc
+			    if(f_Contact_id != value) 
+			       m_changed = true 
+			    f_Contact_id = value
+			endmethod
+		endproperty
+		 
+		private f_Customer_id    ,int
+		 
+		;;; <summary>
+		;;; Customer ID
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Customer_id   ,int
+			method get
+			proc
+			    mreturn f_Customer_id
+			endmethod
+			method set
+			proc
+			    if(f_Customer_id != value) 
+			       m_changed = true 
+			    f_Customer_id = value
+			endmethod
+		endproperty
+		 
+		private f_Address_id    ,int
+		 
+		;;; <summary>
+		;;; Address ID
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Address_id   ,int
+			method get
+			proc
+			    mreturn f_Address_id
+			endmethod
+			method set
+			proc
+			    if(f_Address_id != value) 
+			       m_changed = true 
+			    f_Address_id = value
+			endmethod
+		endproperty
+		 
+		private f_Salutation    ,string
+		 
+		;;; <summary>
+		;;; Contact salutation
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Salutation   ,string
+			method get
+			proc
+			    mreturn f_Salutation
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Salutation)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Salutation.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Salutation = value
+			endmethod
+		endproperty
+		 
+		private f_First_name    ,string
+		 
+		;;; <summary>
+		;;; Contact first name
+		;;; </summary>
+		{DataMemberAttribute}
+		public property First_name   ,string
+			method get
+			proc
+			    mreturn f_First_name
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_First_name)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_First_name.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_First_name = value
+			endmethod
+		endproperty
+		 
+		private f_Last_name    ,string
+		 
+		;;; <summary>
+		;;; Contact last name
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Last_name   ,string
+			method get
+			proc
+			    mreturn f_Last_name
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Last_name)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Last_name.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Last_name = value
+			endmethod
+		endproperty
+		 
+		private f_Friendly_name    ,string
+		 
+		;;; <summary>
+		;;; Contact friendly/printable name
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Friendly_name   ,string
+			method get
+			proc
+			    mreturn f_Friendly_name
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Friendly_name)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Friendly_name.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Friendly_name = value
+			endmethod
+		endproperty
+		 
+		private f_Title    ,string
+		 
+		;;; <summary>
+		;;; Contact title
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Title   ,string
+			method get
+			proc
+			    mreturn f_Title
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Title)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Title.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Title = value
+			endmethod
+		endproperty
+		 
+		private f_Department    ,string
+		 
+		;;; <summary>
+		;;; Department name
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Department   ,string
+			method get
+			proc
+			    mreturn f_Department
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Department)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Department.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Department = value
+			endmethod
+		endproperty
+		 
+		private f_Work_phone    ,long
+		 
+		;;; <summary>
+		;;; Work phone
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Work_phone   ,long
+			method get
+			proc
+			    mreturn f_Work_phone
+			endmethod
+			method set
+			proc
+			    if(f_Work_phone != value) 
+			       m_changed = true 
+			    f_Work_phone = value
+			endmethod
+		endproperty
+		 
+		private f_Work_extension    ,int
+		 
+		;;; <summary>
+		;;; Work phone extension
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Work_extension   ,int
+			method get
+			proc
+			    mreturn f_Work_extension
+			endmethod
+			method set
+			proc
+			    if(f_Work_extension != value) 
+			       m_changed = true 
+			    f_Work_extension = value
+			endmethod
+		endproperty
+		 
+		private f_Mobile_phone    ,long
+		 
+		;;; <summary>
+		;;; Mobile phone
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Mobile_phone   ,long
+			method get
+			proc
+			    mreturn f_Mobile_phone
+			endmethod
+			method set
+			proc
+			    if(f_Mobile_phone != value) 
+			       m_changed = true 
+			    f_Mobile_phone = value
+			endmethod
+		endproperty
+		 
+		private f_Home_phone    ,long
+		 
+		;;; <summary>
+		;;; Home phone
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Home_phone   ,long
+			method get
+			proc
+			    mreturn f_Home_phone
+			endmethod
+			method set
+			proc
+			    if(f_Home_phone != value) 
+			       m_changed = true 
+			    f_Home_phone = value
+			endmethod
+		endproperty
+		 
+		private f_Fax    ,long
+		 
+		;;; <summary>
+		;;; Fax number
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Fax   ,long
+			method get
+			proc
+			    mreturn f_Fax
+			endmethod
+			method set
+			proc
+			    if(f_Fax != value) 
+			       m_changed = true 
+			    f_Fax = value
+			endmethod
+		endproperty
+		 
+		private f_Web_site    ,string
+		 
+		;;; <summary>
+		;;; Web site
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Web_site   ,string
+			method get
+			proc
+			    mreturn f_Web_site
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Web_site)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Web_site.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Web_site = value
+			endmethod
+		endproperty
+		 
+		private f_Email    ,string
+		 
+		;;; <summary>
+		;;; Email address
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Email   ,string
+			method get
+			proc
+			    mreturn f_Email
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Email)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Email.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Email = value
+			endmethod
+		endproperty
+		 
+		private f_Picture_file    ,string
+		 
+		;;; <summary>
+		;;; Path to contact image file
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Picture_file   ,string
+			method get
+			proc
+			    mreturn f_Picture_file
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Picture_file)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Picture_file.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Picture_file = value
+			endmethod
+		endproperty
+		 
+		private f_Management_contact    ,boolean
+		 
+		;;; <summary>
+		;;; Contact has a management role
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Management_contact   ,boolean
+			method get
+			proc
+			    mreturn f_Management_contact
+			endmethod
+			method set
+			proc
+			    if(f_Management_contact != value) 
+			       m_changed = true 
+			    f_Management_contact = value
+			endmethod
+		endproperty
+		 
+		private f_Technical_contact    ,boolean
+		 
+		;;; <summary>
+		;;; Contact has technical role
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Technical_contact   ,boolean
+			method get
+			proc
+			    mreturn f_Technical_contact
+			endmethod
+			method set
+			proc
+			    if(f_Technical_contact != value) 
+			       m_changed = true 
+			    f_Technical_contact = value
+			endmethod
+		endproperty
+		 
+		private f_Sales_contact    ,boolean
+		 
+		;;; <summary>
+		;;; Contact has a role in sales
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Sales_contact   ,boolean
+			method get
+			proc
+			    mreturn f_Sales_contact
+			endmethod
+			method set
+			proc
+			    if(f_Sales_contact != value) 
+			       m_changed = true 
+			    f_Sales_contact = value
+			endmethod
+		endproperty
+		 
+		private f_Billing_contact    ,boolean
+		 
+		;;; <summary>
+		;;; Contact for billing purposes
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Billing_contact   ,boolean
+			method get
+			proc
+			    mreturn f_Billing_contact
+			endmethod
+			method set
+			proc
+			    if(f_Billing_contact != value) 
+			       m_changed = true 
+			    f_Billing_contact = value
+			endmethod
+		endproperty
+		 
+		private f_General_contact    ,boolean
+		 
+		;;; <summary>
+		;;; This is a general contact
+		;;; </summary>
+		{DataMemberAttribute}
+		public property General_contact   ,boolean
+			method get
+			proc
+			    mreturn f_General_contact
+			endmethod
+			method set
+			proc
+			    if(f_General_contact != value) 
+			       m_changed = true 
+			    f_General_contact = value
+			endmethod
+		endproperty
+		 
+		private f_Replication_key    ,string
+		 
+		;;; <summary>
+		;;; SQL Replication Timestamp
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Replication_key   ,string
+			method get
+			proc
+			    mreturn f_Replication_key
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Replication_key)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Replication_key.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Replication_key = value
+			endmethod
+		endproperty
+		 
+		private f_Noname_001    ,string
+		 
+		;;; <summary>
+		;;; Filler
+		;;; </summary>
+		{DataMemberAttribute}
+		public property Noname_001   ,string
+			method get
+			proc
+			    mreturn f_Noname_001
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Noname_001)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Noname_001.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Noname_001 = value
+			endmethod
+		endproperty
+		 
+		;;; <summary>
+		;;; structure clone
+		;;; </summary>
+		public method Clone    ,@xfpldemo.Contact
+		endparams
+		record
+		    i      ,int
+		    tmp    ,@xfpldemo.Contact
+		endrecord
+		proc
+			tmp = new xfpldemo.Contact()
+			tmp.f_Contact_id = this.f_Contact_id
+			tmp.f_Customer_id = this.f_Customer_id
+			tmp.f_Address_id = this.f_Address_id
+			tmp.f_Salutation = this.f_Salutation
+			tmp.f_First_name = this.f_First_name
+			tmp.f_Last_name = this.f_Last_name
+			tmp.f_Friendly_name = this.f_Friendly_name
+			tmp.f_Title = this.f_Title
+			tmp.f_Department = this.f_Department
+			tmp.f_Work_phone = this.f_Work_phone
+			tmp.f_Work_extension = this.f_Work_extension
+			tmp.f_Mobile_phone = this.f_Mobile_phone
+			tmp.f_Home_phone = this.f_Home_phone
+			tmp.f_Fax = this.f_Fax
+			tmp.f_Web_site = this.f_Web_site
+			tmp.f_Email = this.f_Email
+			tmp.f_Picture_file = this.f_Picture_file
+			tmp.f_Management_contact = this.f_Management_contact
+			tmp.f_Technical_contact = this.f_Technical_contact
+			tmp.f_Sales_contact = this.f_Sales_contact
+			tmp.f_Billing_contact = this.f_Billing_contact
+			tmp.f_General_contact = this.f_General_contact
+			tmp.f_Replication_key = this.f_Replication_key
+			tmp.f_Noname_001 = this.f_Noname_001
+			mreturn tmp;
+		endmethod
+		private f_original    ,@xfpldemo.Contact
+		;;; <summary>
+		;;; Used to store a copy of the original structure
+		;;; </summary>
+		public property Original,  @xfpldemo.Contact
+			method get
+			proc
+				mreturn f_original
+			endmethod
+			method set
+			proc
+				f_original = value
+			endmethod
+			endproperty
+		;;; <summary>
+		;;; structure equals
+		;;; </summary>
+		public method Equals,   boolean
+			str    ,@xfpldemo.Contact
+		endparams
+		record
+			i     ,int
+			eql   ,boolean
+		endrecord
+		proc
+			eql = true;
+			if (this.Contact_id != str.Contact_id)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Customer_id != str.Customer_id)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Address_id != str.Address_id)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Salutation.Equals(str.Salutation))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.First_name.Equals(str.First_name))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Last_name.Equals(str.Last_name))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Friendly_name.Equals(str.Friendly_name))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Title.Equals(str.Title))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Department.Equals(str.Department))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Work_phone != str.Work_phone)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Work_extension != str.Work_extension)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Mobile_phone != str.Mobile_phone)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Home_phone != str.Home_phone)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Fax != str.Fax)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Web_site.Equals(str.Web_site))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Email.Equals(str.Email))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Picture_file.Equals(str.Picture_file))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Management_contact != str.Management_contact)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Technical_contact != str.Technical_contact)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Sales_contact != str.Sales_contact)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Billing_contact != str.Billing_contact)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.General_contact != str.General_contact)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Replication_key.Equals(str.Replication_key))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Noname_001.Equals(str.Noname_001))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			mreturn eql;
+		endmethod
+		;;; <summary>
+		;;; Constructor
+		;;; </summary>
+		public method Contact
+		endparams
+		proc
+		endmethod
+ 
+		private m_changed    ,boolean, false
+ 
+		;;; <summary>
+		;;; Structure Changed 
+		;;; </summary>
+		;;; <returns>true if structure has been changed</returns>
+		public property Changed    ,boolean
+			method get
+			proc
+			    mreturn m_changed
+		endmethod
+		endproperty
+ 
+		;;; <summary>
+		;;; Serialize a structure to a string
+		;;; </summary>
+		public method StructToString,    string 
+		endparams
+		record Tmp_Contact
+			Contact_id    ,i4
+			Customer_id    ,i4
+			Address_id    ,i4
+			Salutation    ,a5
+			First_name    ,a30
+			Last_name    ,a30
+			Friendly_name    ,a60
+			Title    ,a25
+			Department    ,a15
+			Work_phone    ,d12
+			Work_extension    ,d6
+			Mobile_phone    ,d12
+			Home_phone    ,d12
+			Fax    ,d12
+			Web_site    ,a50
+			Email    ,a50
+			Picture_file    ,a255
+			Management_contact    ,d1
+			Technical_contact    ,d1
+			Sales_contact    ,d1
+			Billing_contact    ,d1
+			General_contact    ,d1
+			Replication_key    ,a20
+			Noname_001    ,a80
+		endrecord
+		record
+			outString    ,string
+			hldString    ,string
+			i            ,i4
+		endrecord
+		proc
+			Tmp_Contact.Contact_id = this.Contact_id
+			Tmp_Contact.Customer_id = this.Customer_id
+			Tmp_Contact.Address_id = this.Address_id
+			Tmp_Contact.Salutation = this.Salutation
+			Tmp_Contact.First_name = this.First_name
+			Tmp_Contact.Last_name = this.Last_name
+			Tmp_Contact.Friendly_name = this.Friendly_name
+			Tmp_Contact.Title = this.Title
+			Tmp_Contact.Department = this.Department
+			Tmp_Contact.Work_phone = this.Work_phone
+			Tmp_Contact.Work_extension = this.Work_extension
+			Tmp_Contact.Mobile_phone = this.Mobile_phone
+			Tmp_Contact.Home_phone = this.Home_phone
+			Tmp_Contact.Fax = this.Fax
+			Tmp_Contact.Web_site = this.Web_site
+			Tmp_Contact.Email = this.Email
+			Tmp_Contact.Picture_file = this.Picture_file
+			Tmp_Contact.Management_contact = this.Management_contact
+			Tmp_Contact.Technical_contact = this.Technical_contact
+			Tmp_Contact.Sales_contact = this.Sales_contact
+			Tmp_Contact.Billing_contact = this.Billing_contact
+			Tmp_Contact.General_contact = this.General_contact
+			Tmp_Contact.Replication_key = this.Replication_key
+			Tmp_Contact.Noname_001 = this.Noname_001
+			outstring = Tmp_Contact
+			mreturn outstring
+		endmethod
+		;;; <summary>
+		;;; Serialize a string to a structure
+		;;; </summary>
+		public method StringToStruct,    void 
+			stringIn    ,string
+		endparams
+		record Tmp_Contact
+			Contact_id    ,i4
+			Customer_id    ,i4
+			Address_id    ,i4
+			Salutation    ,a5
+			First_name    ,a30
+			Last_name    ,a30
+			Friendly_name    ,a60
+			Title    ,a25
+			Department    ,a15
+			Work_phone    ,d12
+			Work_extension    ,d6
+			Mobile_phone    ,d12
+			Home_phone    ,d12
+			Fax    ,d12
+			Web_site    ,a50
+			Email    ,a50
+			Picture_file    ,a255
+			Management_contact    ,d1
+			Technical_contact    ,d1
+			Sales_contact    ,d1
+			Billing_contact    ,d1
+			General_contact    ,d1
+			Replication_key    ,a20
+			Noname_001    ,a80
+		endrecord
+		record
+			i          ,i4
+			len        ,i4
+			pos        ,i4
+			hldString  ,string
+		endrecord
+		proc
+			Tmp_Contact = stringIn
+			f_Contact_id = Tmp_Contact.Contact_id
+			f_Customer_id = Tmp_Contact.Customer_id
+			f_Address_id = Tmp_Contact.Address_id
+			f_Salutation = %atrim(Tmp_Contact.Salutation)
+			f_First_name = %atrim(Tmp_Contact.First_name)
+			f_Last_name = %atrim(Tmp_Contact.Last_name)
+			f_Friendly_name = %atrim(Tmp_Contact.Friendly_name)
+			f_Title = %atrim(Tmp_Contact.Title)
+			f_Department = %atrim(Tmp_Contact.Department)
+			f_Work_phone = Tmp_Contact.Work_phone
+			f_Work_extension = Tmp_Contact.Work_extension
+			f_Mobile_phone = Tmp_Contact.Mobile_phone
+			f_Home_phone = Tmp_Contact.Home_phone
+			f_Fax = Tmp_Contact.Fax
+			f_Web_site = %atrim(Tmp_Contact.Web_site)
+			f_Email = %atrim(Tmp_Contact.Email)
+			f_Picture_file = %atrim(Tmp_Contact.Picture_file)
+			f_Management_contact = Tmp_Contact.Management_contact
+			f_Technical_contact = Tmp_Contact.Technical_contact
+			f_Sales_contact = Tmp_Contact.Sales_contact
+			f_Billing_contact = Tmp_Contact.Billing_contact
+			f_General_contact = Tmp_Contact.General_contact
+			f_Replication_key = %atrim(Tmp_Contact.Replication_key)
+			f_Noname_001 = %atrim(Tmp_Contact.Noname_001)
+			mreturn
+		endmethod
+		;;; <summary>
+		;;; Serialize a Synergy structure to a .NET structure
+		;;; </summary>
+		public method SynergyToStruct,    void 
+			structIn    ,a
+		endparams
+		record Tmp_Contact
+			Contact_id    ,i4
+			Customer_id    ,i4
+			Address_id    ,i4
+			Salutation    ,a5
+			First_name    ,a30
+			Last_name    ,a30
+			Friendly_name    ,a60
+			Title    ,a25
+			Department    ,a15
+			Work_phone    ,d12
+			Work_extension    ,d6
+			Mobile_phone    ,d12
+			Home_phone    ,d12
+			Fax    ,d12
+			Web_site    ,a50
+			Email    ,a50
+			Picture_file    ,a255
+			Management_contact    ,d1
+			Technical_contact    ,d1
+			Sales_contact    ,d1
+			Billing_contact    ,d1
+			General_contact    ,d1
+			Replication_key    ,a20
+			Noname_001    ,a80
+		endrecord
+		record
+			i          ,i4
+			len        ,i4
+			pos        ,i4
+			hldString  ,string
+		endrecord
+		proc
+			Tmp_Contact = structIn
+			f_Contact_id = Tmp_Contact.Contact_id
+			f_Customer_id = Tmp_Contact.Customer_id
+			f_Address_id = Tmp_Contact.Address_id
+			f_Salutation = %atrim(Tmp_Contact.Salutation)
+			f_First_name = %atrim(Tmp_Contact.First_name)
+			f_Last_name = %atrim(Tmp_Contact.Last_name)
+			f_Friendly_name = %atrim(Tmp_Contact.Friendly_name)
+			f_Title = %atrim(Tmp_Contact.Title)
+			f_Department = %atrim(Tmp_Contact.Department)
+			f_Work_phone = Tmp_Contact.Work_phone
+			f_Work_extension = Tmp_Contact.Work_extension
+			f_Mobile_phone = Tmp_Contact.Mobile_phone
+			f_Home_phone = Tmp_Contact.Home_phone
+			f_Fax = Tmp_Contact.Fax
+			f_Web_site = %atrim(Tmp_Contact.Web_site)
+			f_Email = %atrim(Tmp_Contact.Email)
+			f_Picture_file = %atrim(Tmp_Contact.Picture_file)
+			f_Management_contact = Tmp_Contact.Management_contact
+			f_Technical_contact = Tmp_Contact.Technical_contact
+			f_Sales_contact = Tmp_Contact.Sales_contact
+			f_Billing_contact = Tmp_Contact.Billing_contact
+			f_General_contact = Tmp_Contact.General_contact
+			f_Replication_key = %atrim(Tmp_Contact.Replication_key)
+			f_Noname_001 = %atrim(Tmp_Contact.Noname_001)
+			mreturn
+		endmethod
+	endclass
+endnamespace

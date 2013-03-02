@@ -1,0 +1,31 @@
+;	Synergy ISAM PAR File created Sun Oct 09 15:31:32 2011
+customer.ism
+118	;Record size
+2	;Number of keys
+	;5ca5 magic, revision 4, 4 byte record overhead
+	;Shared index cache allowed
+	;Creation version 9.4.3  
+	;Update revision count 185
+	;File created on Wed Sep 29 12:52:46 2010
+	;43 byte longest key
+	;2 free index blocks, 0x4800 free list head
+	;185 records, 0 free
+CustomerID/type
+	;Primary key
+I	;Integer type
+4	;Key size
+1	;Start position
+N	;Duplicates allowed
+D	;Ascending/descending
+	;Root 0x1800, index depth 2
+	;Minimum keys per block 64
+Name/modify
+	;Alternate alpha key #1
+40	;Key size
+5	;Start position
+Y	;Duplicates allowed
+N	;Insert at front
+A	;Ascending/descending
+	;Root 0x1000, index depth 2
+	;Qualifier offset 1
+	;Minimum keys per block 10

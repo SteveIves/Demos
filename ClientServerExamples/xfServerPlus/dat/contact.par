@@ -1,0 +1,61 @@
+;	Synergy ISAM PAR File created Sun Oct 09 15:31:42 2011
+contact.ism, page=2048
+691	;Record size
+3	;Number of keys
+	;5ca5 magic, revision 4, 7 byte record overhead
+	;Shared index cache allowed
+	;Creation version 9.4.3  
+	;Update revision count 1367
+	;File created on Wed Sep 29 12:52:46 2010
+	;67 byte longest key
+	;2 free index blocks, 0x11000 free list head
+	;1295 records, 0 free
+ContactID/type
+	;Primary key
+I	;Integer type
+4	;Key size
+1	;Start position
+N	;Duplicates allowed
+D	;Ascending/descending
+	;Root 0x4000, index depth 2
+	;Minimum keys per block 128
+CustID_Last_Fir/modify/segmented/type
+	;Alternate key #1
+	;64 key size
+3	;Number of segments
+	;Segment #1
+I	;  Integer type
+4	;  Segment length
+5	;  Start position
+	;Segment #2
+N	;  Case insensitive type
+30	;  Segment length
+48	;  Start position
+	;Segment #3
+N	;  Case insensitive type
+30	;  Segment length
+18	;  Start position
+Y	;Duplicates allowed
+N	;Insert at front
+A	;Ascending/descending
+	;Root 0x2000, index depth 2
+	;Qualifier offset 1
+	;Minimum keys per block 14
+Last_First/modify/segmented/type
+	;Alternate key #2
+	;60 key size
+2	;Number of segments
+	;Segment #1
+N	;  Case insensitive type
+30	;  Segment length
+48	;  Start position
+	;Segment #2
+N	;  Case insensitive type
+30	;  Segment length
+18	;  Start position
+Y	;Duplicates allowed
+N	;Insert at front
+A	;Ascending/descending
+	;Root 0x3000, index depth 2
+	;Qualifier offset 4
+	;Minimum keys per block 15

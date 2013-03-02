@@ -1,0 +1,1247 @@
+﻿import System.Runtime.Serialization
+
+namespace spc2011
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.Runtime.Serialization"), ((string)"4.0.0.0"))}
+	{System.Runtime.Serialization.DataContractAttribute(Name = ((string)"Customer"), Namespace = ((string)"http://tempuri.org/"))}
+	public partial class Customer extends object implements System.Runtime.Serialization.IExtensibleDataObject
+		
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+		
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				begin
+					mreturn this.extensionDataField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.extensionDataField = value
+				end
+			endmethod
+		endproperty
+		
+		private Customer_idField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)}
+		public property Customer_id, int
+			method get
+			proc
+				begin
+					mreturn this.Customer_idField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Customer_idField = value
+				end
+			endmethod
+		endproperty
+		
+		private NameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false)}
+		public property Name, string
+			method get
+			proc
+				begin
+					mreturn this.NameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.NameField = value
+				end
+			endmethod
+		endproperty
+		
+		private Date_createdField, System.DateTime
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)}
+		public property Date_created, System.DateTime
+			method get
+			proc
+				begin
+					mreturn this.Date_createdField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Date_createdField = value
+				end
+			endmethod
+		endproperty
+		
+		private Date_modifiedField, System.DateTime
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 3)}
+		public property Date_modified, System.DateTime
+			method get
+			proc
+				begin
+					mreturn this.Date_modifiedField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Date_modifiedField = value
+				end
+			endmethod
+		endproperty
+		
+		private StatusField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)}
+		public property Status, string
+			method get
+			proc
+				begin
+					mreturn this.StatusField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.StatusField = value
+				end
+			endmethod
+		endproperty
+		
+		private Replication_keyField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)}
+		public property Replication_key, string
+			method get
+			proc
+				begin
+					mreturn this.Replication_keyField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Replication_keyField = value
+				end
+			endmethod
+		endproperty
+		
+		private Noname_001Field, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)}
+		public property Noname_001, string
+			method get
+			proc
+				begin
+					mreturn this.Noname_001Field
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Noname_001Field = value
+				end
+			endmethod
+		endproperty
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.Runtime.Serialization"), ((string)"4.0.0.0"))}
+	{System.Runtime.Serialization.DataContractAttribute(Name = ((string)"Contact"), Namespace = ((string)"http://tempuri.org/"))}
+	public partial class Contact extends object implements System.Runtime.Serialization.IExtensibleDataObject
+		
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+		
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				begin
+					mreturn this.extensionDataField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.extensionDataField = value
+				end
+			endmethod
+		endproperty
+		
+		private Contact_idField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)}
+		public property Contact_id, int
+			method get
+			proc
+				begin
+					mreturn this.Contact_idField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Contact_idField = value
+				end
+			endmethod
+		endproperty
+		
+		private Customer_idField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)}
+		public property Customer_id, int
+			method get
+			proc
+				begin
+					mreturn this.Customer_idField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Customer_idField = value
+				end
+			endmethod
+		endproperty
+		
+		private Address_idField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)}
+		public property Address_id, int
+			method get
+			proc
+				begin
+					mreturn this.Address_idField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Address_idField = value
+				end
+			endmethod
+		endproperty
+		
+		private SalutationField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)}
+		public property Salutation, string
+			method get
+			proc
+				begin
+					mreturn this.SalutationField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.SalutationField = value
+				end
+			endmethod
+		endproperty
+		
+		private First_nameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)}
+		public property First_name, string
+			method get
+			proc
+				begin
+					mreturn this.First_nameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.First_nameField = value
+				end
+			endmethod
+		endproperty
+		
+		private Last_nameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)}
+		public property Last_name, string
+			method get
+			proc
+				begin
+					mreturn this.Last_nameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Last_nameField = value
+				end
+			endmethod
+		endproperty
+		
+		private Friendly_nameField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)}
+		public property Friendly_name, string
+			method get
+			proc
+				begin
+					mreturn this.Friendly_nameField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Friendly_nameField = value
+				end
+			endmethod
+		endproperty
+		
+		private TitleField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)}
+		public property Title, string
+			method get
+			proc
+				begin
+					mreturn this.TitleField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.TitleField = value
+				end
+			endmethod
+		endproperty
+		
+		private DepartmentField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 8)}
+		public property Department, string
+			method get
+			proc
+				begin
+					mreturn this.DepartmentField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.DepartmentField = value
+				end
+			endmethod
+		endproperty
+		
+		private Work_phoneField, long
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 9)}
+		public property Work_phone, long
+			method get
+			proc
+				begin
+					mreturn this.Work_phoneField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Work_phoneField = value
+				end
+			endmethod
+		endproperty
+		
+		private Work_extensionField, int
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 10)}
+		public property Work_extension, int
+			method get
+			proc
+				begin
+					mreturn this.Work_extensionField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Work_extensionField = value
+				end
+			endmethod
+		endproperty
+		
+		private Mobile_phoneField, long
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 11)}
+		public property Mobile_phone, long
+			method get
+			proc
+				begin
+					mreturn this.Mobile_phoneField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Mobile_phoneField = value
+				end
+			endmethod
+		endproperty
+		
+		private Home_phoneField, long
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 12)}
+		public property Home_phone, long
+			method get
+			proc
+				begin
+					mreturn this.Home_phoneField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Home_phoneField = value
+				end
+			endmethod
+		endproperty
+		
+		private FaxField, long
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 13)}
+		public property Fax, long
+			method get
+			proc
+				begin
+					mreturn this.FaxField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.FaxField = value
+				end
+			endmethod
+		endproperty
+		
+		private Web_siteField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 14)}
+		public property Web_site, string
+			method get
+			proc
+				begin
+					mreturn this.Web_siteField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Web_siteField = value
+				end
+			endmethod
+		endproperty
+		
+		private EmailField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 15)}
+		public property Email, string
+			method get
+			proc
+				begin
+					mreturn this.EmailField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.EmailField = value
+				end
+			endmethod
+		endproperty
+		
+		private Picture_fileField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 16)}
+		public property Picture_file, string
+			method get
+			proc
+				begin
+					mreturn this.Picture_fileField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Picture_fileField = value
+				end
+			endmethod
+		endproperty
+		
+		private Management_contactField, boolean
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 17)}
+		public property Management_contact, boolean
+			method get
+			proc
+				begin
+					mreturn this.Management_contactField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Management_contactField = value
+				end
+			endmethod
+		endproperty
+		
+		private Technical_contactField, boolean
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 18)}
+		public property Technical_contact, boolean
+			method get
+			proc
+				begin
+					mreturn this.Technical_contactField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Technical_contactField = value
+				end
+			endmethod
+		endproperty
+		
+		private Sales_contactField, boolean
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 19)}
+		public property Sales_contact, boolean
+			method get
+			proc
+				begin
+					mreturn this.Sales_contactField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Sales_contactField = value
+				end
+			endmethod
+		endproperty
+		
+		private Billing_contactField, boolean
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 20)}
+		public property Billing_contact, boolean
+			method get
+			proc
+				begin
+					mreturn this.Billing_contactField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Billing_contactField = value
+				end
+			endmethod
+		endproperty
+		
+		private General_contactField, boolean
+		
+		{System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 21)}
+		public property General_contact, boolean
+			method get
+			proc
+				begin
+					mreturn this.General_contactField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.General_contactField = value
+				end
+			endmethod
+		endproperty
+		
+		private Replication_keyField, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 22)}
+		public property Replication_key, string
+			method get
+			proc
+				begin
+					mreturn this.Replication_keyField
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Replication_keyField = value
+				end
+			endmethod
+		endproperty
+		
+		private Noname_001Field, string
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 23)}
+		public property Noname_001, string
+			method get
+			proc
+				begin
+					mreturn this.Noname_001Field
+				end
+			endmethod
+			method set
+			proc
+				begin
+					this.Noname_001Field = value
+				end
+			endmethod
+		endproperty
+	endclass
+	
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.Runtime.Serialization"), ((string)"4.0.0.0"))}
+	{System.Runtime.Serialization.DataContractAttribute(Name = ((string)"Method_status"), Namespace = ((string)"http://tempuri.org/"))}
+	public enum Method_status
+		{System.Runtime.Serialization.EnumMemberAttribute()}
+		Success
+		{System.Runtime.Serialization.EnumMemberAttribute()}
+		Info_error
+		{System.Runtime.Serialization.EnumMemberAttribute()}
+		Fatal_error
+	endenum
+	
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = ((string)"spc2011.WebServiceSoap"))}
+	public interface WebServiceSoap
+		
+		;; CODEGEN: Generating message contract since element name GetAllCustomersResult from namespace http://tempuri.org/ is not marked nillable
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/GetAllCustomers"), ReplyAction = ((string)"*"))}
+		method GetAllCustomers, @spc2011.GetAllCustomersResponse
+			request, @spc2011.GetAllCustomersRequest 
+			endparams
+		endmethod
+		
+		;; CODEGEN: Generating message contract since element name GetCustomerContactsResult from namespace http://tempuri.org/ is not marked nillable
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/GetCustomerContacts"), ReplyAction = ((string)"*"))}
+		method GetCustomerContacts, @spc2011.GetCustomerContactsResponse
+			request, @spc2011.GetCustomerContactsRequest 
+			endparams
+		endmethod
+		
+		;; CODEGEN: Generating message contract since element name contact from namespace http://tempuri.org/ is not marked nillable
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/GetContactForUpdate"), ReplyAction = ((string)"*"))}
+		method GetContactForUpdate, @spc2011.GetContactForUpdateResponse
+			request, @spc2011.GetContactForUpdateRequest 
+			endparams
+		endmethod
+		
+		;; CODEGEN: Generating message contract since element name contact from namespace http://tempuri.org/ is not marked nillable
+		{System.ServiceModel.OperationContractAttribute(Action = ((string)"http://tempuri.org/UpdateContact"), ReplyAction = ((string)"*"))}
+		method UpdateContact, @spc2011.UpdateContactResponse
+			request, @spc2011.UpdateContactRequest 
+			endparams
+		endmethod
+	endinterface
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetAllCustomersRequest
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetAllCustomers"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetAllCustomersRequestBody
+		
+		public method GetAllCustomersRequest
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetAllCustomersRequest
+			Body, @spc2011.GetAllCustomersRequestBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute()}
+	public partial class GetAllCustomersRequestBody
+		
+		public method GetAllCustomersRequestBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetAllCustomersResponse
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetAllCustomersResponse"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetAllCustomersResponseBody
+		
+		public method GetAllCustomersResponse
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetAllCustomersResponse
+			Body, @spc2011.GetAllCustomersResponseBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class GetAllCustomersResponseBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)}
+		public GetAllCustomersResult, @System.Collections.Generic.List<spc2011.Customer>
+		
+		public method GetAllCustomersResponseBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetAllCustomersResponseBody
+			GetAllCustomersResult, @System.Collections.Generic.List<spc2011.Customer> 
+			endparams
+		proc
+			begin
+				this.GetAllCustomersResult = GetAllCustomersResult
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetCustomerContactsRequest
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetCustomerContacts"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetCustomerContactsRequestBody
+		
+		public method GetCustomerContactsRequest
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetCustomerContactsRequest
+			Body, @spc2011.GetCustomerContactsRequestBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class GetCustomerContactsRequestBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(Order = 0)}
+		public CustomerId, int
+		
+		public method GetCustomerContactsRequestBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetCustomerContactsRequestBody
+			CustomerId, int 
+			endparams
+		proc
+			begin
+				this.CustomerId = CustomerId
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetCustomerContactsResponse
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetCustomerContactsResponse"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetCustomerContactsResponseBody
+		
+		public method GetCustomerContactsResponse
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetCustomerContactsResponse
+			Body, @spc2011.GetCustomerContactsResponseBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class GetCustomerContactsResponseBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)}
+		public GetCustomerContactsResult, @System.Collections.Generic.List<spc2011.Contact>
+		
+		public method GetCustomerContactsResponseBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetCustomerContactsResponseBody
+			GetCustomerContactsResult, @System.Collections.Generic.List<spc2011.Contact> 
+			endparams
+		proc
+			begin
+				this.GetCustomerContactsResult = GetCustomerContactsResult
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetContactForUpdateRequest
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetContactForUpdate"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetContactForUpdateRequestBody
+		
+		public method GetContactForUpdateRequest
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetContactForUpdateRequest
+			Body, @spc2011.GetContactForUpdateRequestBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class GetContactForUpdateRequestBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(Order = 0)}
+		public customerId, int
+		{System.Runtime.Serialization.DataMemberAttribute(Order = 1)}
+		public contactId, int
+		
+		public method GetContactForUpdateRequestBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetContactForUpdateRequestBody
+			customerId, int 
+			contactId, int 
+			endparams
+		proc
+			begin
+				this.customerId = customerId
+				this.contactId = contactId
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class GetContactForUpdateResponse
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"GetContactForUpdateResponse"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.GetContactForUpdateResponseBody
+		
+		public method GetContactForUpdateResponse
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetContactForUpdateResponse
+			Body, @spc2011.GetContactForUpdateResponseBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class GetContactForUpdateResponseBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(Order = 0)}
+		public GetContactForUpdateResult, spc2011.Method_status
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)}
+		public contact, @spc2011.Contact
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)}
+		public grfa, [#]byte
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)}
+		public msg, string
+		
+		public method GetContactForUpdateResponseBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method GetContactForUpdateResponseBody
+			GetContactForUpdateResult, spc2011.Method_status 
+			contact, @spc2011.Contact 
+			grfa, [#]byte 
+			msg, string 
+			endparams
+		proc
+			begin
+				this.GetContactForUpdateResult = GetContactForUpdateResult
+				this.contact = contact
+				this.grfa = grfa
+				this.msg = msg
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class UpdateContactRequest
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"UpdateContact"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.UpdateContactRequestBody
+		
+		public method UpdateContactRequest
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method UpdateContactRequest
+			Body, @spc2011.UpdateContactRequestBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class UpdateContactRequestBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)}
+		public contact, @spc2011.Contact
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)}
+		public grfa, [#]byte
+		
+		public method UpdateContactRequestBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method UpdateContactRequestBody
+			contact, @spc2011.Contact 
+			grfa, [#]byte 
+			endparams
+		proc
+			begin
+				this.contact = contact
+				this.grfa = grfa
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.ServiceModel.MessageContractAttribute(IsWrapped = false)}
+	public partial class UpdateContactResponse
+		
+		{System.ServiceModel.MessageBodyMemberAttribute(Name = ((string)"UpdateContactResponse"), Namespace = ((string)"http://tempuri.org/"), Order = 0)}
+		public Body, @spc2011.UpdateContactResponseBody
+		
+		public method UpdateContactResponse
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method UpdateContactResponse
+			Body, @spc2011.UpdateContactResponseBody 
+			endparams
+		proc
+			begin
+				this.Body = Body
+			end
+		endmethod
+	endclass
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+	{System.Runtime.Serialization.DataContractAttribute(Namespace = ((string)"http://tempuri.org/"))}
+	public partial class UpdateContactResponseBody
+		
+		{System.Runtime.Serialization.DataMemberAttribute(Order = 0)}
+		public UpdateContactResult, spc2011.Method_status
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)}
+		public contact, @spc2011.Contact
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)}
+		public grfa, [#]byte
+		{System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)}
+		public msg, string
+		
+		public method UpdateContactResponseBody
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method UpdateContactResponseBody
+			UpdateContactResult, spc2011.Method_status 
+			contact, @spc2011.Contact 
+			grfa, [#]byte 
+			msg, string 
+			endparams
+		proc
+			begin
+				this.UpdateContactResult = UpdateContactResult
+				this.contact = contact
+				this.grfa = grfa
+				this.msg = msg
+			end
+		endmethod
+	endclass
+	
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	public interface WebServiceSoapChannel extends spc2011.WebServiceSoap, System.ServiceModel.IClientChannel
+	endinterface
+	
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute(((string)"System.ServiceModel"), ((string)"4.0.0.0"))}
+	public partial class WebServiceSoapClient extends System.ServiceModel.ClientBase<spc2011.WebServiceSoap> implements spc2011.WebServiceSoap
+		
+		public method WebServiceSoapClient
+			endparams
+		proc
+			begin
+			end
+		endmethod
+		
+		public method WebServiceSoapClient
+			endpointConfigurationName, string 
+			endparams
+			parent(endpointConfigurationName)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method WebServiceSoapClient
+			endpointConfigurationName, string 
+			remoteAddress, string 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method WebServiceSoapClient
+			endpointConfigurationName, string 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		public method WebServiceSoapClient
+			binding, @System.ServiceModel.Channels.Binding 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(binding, remoteAddress)
+		proc
+			begin
+			end
+		endmethod
+		
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method GetAllCustomers, @spc2011.GetAllCustomersResponse
+			request, @spc2011.GetAllCustomersRequest 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.GetAllCustomers(request)
+			end
+		endmethod
+		
+		public method GetAllCustomers, @System.Collections.Generic.List<spc2011.Customer>
+			endparams
+		proc
+			begin
+				data inValue, @spc2011.GetAllCustomersRequest, new spc2011.GetAllCustomersRequest()
+				inValue.Body = new spc2011.GetAllCustomersRequestBody()
+				data retVal, @spc2011.GetAllCustomersResponse, ((spc2011.WebServiceSoap)this).GetAllCustomers(inValue)
+				mreturn retVal.Body.GetAllCustomersResult
+			end
+		endmethod
+		
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method GetCustomerContacts, @spc2011.GetCustomerContactsResponse
+			request, @spc2011.GetCustomerContactsRequest 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.GetCustomerContacts(request)
+			end
+		endmethod
+		
+		public method GetCustomerContacts, @System.Collections.Generic.List<spc2011.Contact>
+			CustomerId, int 
+			endparams
+		proc
+			begin
+				data inValue, @spc2011.GetCustomerContactsRequest, new spc2011.GetCustomerContactsRequest()
+				inValue.Body = new spc2011.GetCustomerContactsRequestBody()
+				inValue.Body.CustomerId = CustomerId
+				data retVal, @spc2011.GetCustomerContactsResponse, ((spc2011.WebServiceSoap)this).GetCustomerContacts(inValue)
+				mreturn retVal.Body.GetCustomerContactsResult
+			end
+		endmethod
+		
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method GetContactForUpdate, @spc2011.GetContactForUpdateResponse
+			request, @spc2011.GetContactForUpdateRequest 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.GetContactForUpdate(request)
+			end
+		endmethod
+		
+		public method GetContactForUpdate, spc2011.Method_status
+			customerId, int 
+			contactId, int 
+			out contact, @spc2011.Contact 
+			out grfa, [#]byte 
+			out msg, string 
+			endparams
+		proc
+			begin
+				data inValue, @spc2011.GetContactForUpdateRequest, new spc2011.GetContactForUpdateRequest()
+				inValue.Body = new spc2011.GetContactForUpdateRequestBody()
+				inValue.Body.customerId = customerId
+				inValue.Body.contactId = contactId
+				data retVal, @spc2011.GetContactForUpdateResponse, ((spc2011.WebServiceSoap)this).GetContactForUpdate(inValue)
+				contact = retVal.Body.contact
+				grfa = retVal.Body.grfa
+				msg = retVal.Body.msg
+				mreturn retVal.Body.GetContactForUpdateResult
+			end
+		endmethod
+		
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method UpdateContact, @spc2011.UpdateContactResponse
+			request, @spc2011.UpdateContactRequest 
+			endparams
+		proc
+			begin
+				mreturn parent.Channel.UpdateContact(request)
+			end
+		endmethod
+		
+		public method UpdateContact, spc2011.Method_status
+			byref inout contact, @spc2011.Contact 
+			byref inout grfa, [#]byte 
+			out msg, string 
+			endparams
+		proc
+			begin
+				data inValue, @spc2011.UpdateContactRequest, new spc2011.UpdateContactRequest()
+				inValue.Body = new spc2011.UpdateContactRequestBody()
+				inValue.Body.contact = contact
+				inValue.Body.grfa = grfa
+				data retVal, @spc2011.UpdateContactResponse, ((spc2011.WebServiceSoap)this).UpdateContact(inValue)
+				contact = retVal.Body.contact
+				grfa = retVal.Body.grfa
+				msg = retVal.Body.msg
+				mreturn retVal.Body.UpdateContactResult
+			end
+		endmethod
+	endclass
+endnamespace

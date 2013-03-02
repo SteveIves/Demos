@@ -1,0 +1,7 @@
+
+.include "CUSTOMER" repository, structure="strCustomer"	,end
+.include "CONTACT"  repository, structure="strContact"	,end
+
+structure strChar
+	,a1
+endstructure

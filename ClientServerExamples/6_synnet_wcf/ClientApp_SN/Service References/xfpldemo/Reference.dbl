@@ -1,0 +1,678 @@
+import System
+import System.Runtime.Serialization
+
+.array 0
+namespace ClientApp.xfpldemo
+
+    {System.Diagnostics.DebuggerStepThroughAttribute()}
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+    {System.Runtime.Serialization.DataContractAttribute(Name = "Customer", Namespace = "http://schemas.datacontract.org/2004/07/xfpldemo")}
+    {System.SerializableAttribute()}
+    public partial class Customer extends object implements System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+        {System.NonSerializedAttribute()}
+        private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+        {System.ComponentModel.BrowsableAttribute(false)}
+        public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+            method get
+            proc
+                mreturn this.extensionDataField
+            endmethod
+            method set
+            proc
+                this.extensionDataField = value
+            endmethod
+        endproperty
+
+        public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+        protected method RaisePropertyChanged, void
+            propertyName, string 
+            endparams
+        proc
+            data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+            if ((propertyChanged != ^null))
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+        endmethod
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Customer_idField, int
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Customer_id, int
+            method get
+            proc
+                mreturn this.Customer_idField
+            endmethod
+            method set
+            proc
+                if ((this.Customer_idField.Equals(value) != true))
+                begin
+                    this.Customer_idField = value
+                    this.RaisePropertyChanged("Customer_id")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Date_createdField, System.DateTime
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Date_created, System.DateTime
+            method get
+            proc
+                mreturn this.Date_createdField
+            endmethod
+            method set
+            proc
+                if ((this.Date_createdField.Equals(value) != true))
+                begin
+                    this.Date_createdField = value
+                    this.RaisePropertyChanged("Date_created")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Date_modifiedField, System.DateTime
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Date_modified, System.DateTime
+            method get
+            proc
+                mreturn this.Date_modifiedField
+            endmethod
+            method set
+            proc
+                if ((this.Date_modifiedField.Equals(value) != true))
+                begin
+                    this.Date_modifiedField = value
+                    this.RaisePropertyChanged("Date_modified")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private NameField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Name, string
+            method get
+            proc
+                mreturn this.NameField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.NameField, value) != true))
+                begin
+                    this.NameField = value
+                    this.RaisePropertyChanged("Name")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private StatusField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Status, string
+            method get
+            proc
+                mreturn this.StatusField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.StatusField, value) != true))
+                begin
+                    this.StatusField = value
+                    this.RaisePropertyChanged("Status")
+                end
+            endmethod
+        endproperty
+    endclass
+
+    {System.Diagnostics.DebuggerStepThroughAttribute()}
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+    {System.Runtime.Serialization.DataContractAttribute(Name = "Contact", Namespace = "http://schemas.datacontract.org/2004/07/xfpldemo")}
+    {System.SerializableAttribute()}
+    public partial class Contact extends object implements System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+        {System.NonSerializedAttribute()}
+        private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+        {System.ComponentModel.BrowsableAttribute(false)}
+        public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+            method get
+            proc
+                mreturn this.extensionDataField
+            endmethod
+            method set
+            proc
+                this.extensionDataField = value
+            endmethod
+        endproperty
+
+        public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+        protected method RaisePropertyChanged, void
+            propertyName, string 
+            endparams
+        proc
+            data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+            if ((propertyChanged != ^null))
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+        endmethod
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Billing_contactField, System.Boolean
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Billing_contact, System.Boolean
+            method get
+            proc
+                mreturn this.Billing_contactField
+            endmethod
+            method set
+            proc
+                if ((this.Billing_contactField.Equals(value) != true))
+                begin
+                    this.Billing_contactField = value
+                    this.RaisePropertyChanged("Billing_contact")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Contact_idField, int
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Contact_id, int
+            method get
+            proc
+                mreturn this.Contact_idField
+            endmethod
+            method set
+            proc
+                if ((this.Contact_idField.Equals(value) != true))
+                begin
+                    this.Contact_idField = value
+                    this.RaisePropertyChanged("Contact_id")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Customer_idField, int
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Customer_id, int
+            method get
+            proc
+                mreturn this.Customer_idField
+            endmethod
+            method set
+            proc
+                if ((this.Customer_idField.Equals(value) != true))
+                begin
+                    this.Customer_idField = value
+                    this.RaisePropertyChanged("Customer_id")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private DepartmentField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Department, string
+            method get
+            proc
+                mreturn this.DepartmentField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.DepartmentField, value) != true))
+                begin
+                    this.DepartmentField = value
+                    this.RaisePropertyChanged("Department")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private EmailField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Email, string
+            method get
+            proc
+                mreturn this.EmailField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.EmailField, value) != true))
+                begin
+                    this.EmailField = value
+                    this.RaisePropertyChanged("Email")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private FaxField, long
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Fax, long
+            method get
+            proc
+                mreturn this.FaxField
+            endmethod
+            method set
+            proc
+                if ((this.FaxField.Equals(value) != true))
+                begin
+                    this.FaxField = value
+                    this.RaisePropertyChanged("Fax")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private First_nameField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property First_name, string
+            method get
+            proc
+                mreturn this.First_nameField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.First_nameField, value) != true))
+                begin
+                    this.First_nameField = value
+                    this.RaisePropertyChanged("First_name")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Friendly_nameField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Friendly_name, string
+            method get
+            proc
+                mreturn this.Friendly_nameField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.Friendly_nameField, value) != true))
+                begin
+                    this.Friendly_nameField = value
+                    this.RaisePropertyChanged("Friendly_name")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private General_contactField, System.Boolean
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property General_contact, System.Boolean
+            method get
+            proc
+                mreturn this.General_contactField
+            endmethod
+            method set
+            proc
+                if ((this.General_contactField.Equals(value) != true))
+                begin
+                    this.General_contactField = value
+                    this.RaisePropertyChanged("General_contact")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Home_phoneField, long
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Home_phone, long
+            method get
+            proc
+                mreturn this.Home_phoneField
+            endmethod
+            method set
+            proc
+                if ((this.Home_phoneField.Equals(value) != true))
+                begin
+                    this.Home_phoneField = value
+                    this.RaisePropertyChanged("Home_phone")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Last_nameField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Last_name, string
+            method get
+            proc
+                mreturn this.Last_nameField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.Last_nameField, value) != true))
+                begin
+                    this.Last_nameField = value
+                    this.RaisePropertyChanged("Last_name")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Management_contactField, System.Boolean
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Management_contact, System.Boolean
+            method get
+            proc
+                mreturn this.Management_contactField
+            endmethod
+            method set
+            proc
+                if ((this.Management_contactField.Equals(value) != true))
+                begin
+                    this.Management_contactField = value
+                    this.RaisePropertyChanged("Management_contact")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Mobile_phoneField, long
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Mobile_phone, long
+            method get
+            proc
+                mreturn this.Mobile_phoneField
+            endmethod
+            method set
+            proc
+                if ((this.Mobile_phoneField.Equals(value) != true))
+                begin
+                    this.Mobile_phoneField = value
+                    this.RaisePropertyChanged("Mobile_phone")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Sales_contactField, System.Boolean
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Sales_contact, System.Boolean
+            method get
+            proc
+                mreturn this.Sales_contactField
+            endmethod
+            method set
+            proc
+                if ((this.Sales_contactField.Equals(value) != true))
+                begin
+                    this.Sales_contactField = value
+                    this.RaisePropertyChanged("Sales_contact")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private SalutationField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Salutation, string
+            method get
+            proc
+                mreturn this.SalutationField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.SalutationField, value) != true))
+                begin
+                    this.SalutationField = value
+                    this.RaisePropertyChanged("Salutation")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Technical_contactField, System.Boolean
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Technical_contact, System.Boolean
+            method get
+            proc
+                mreturn this.Technical_contactField
+            endmethod
+            method set
+            proc
+                if ((this.Technical_contactField.Equals(value) != true))
+                begin
+                    this.Technical_contactField = value
+                    this.RaisePropertyChanged("Technical_contact")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private TitleField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Title, string
+            method get
+            proc
+                mreturn this.TitleField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.TitleField, value) != true))
+                begin
+                    this.TitleField = value
+                    this.RaisePropertyChanged("Title")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Web_siteField, string
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Web_site, string
+            method get
+            proc
+                mreturn this.Web_siteField
+            endmethod
+            method set
+            proc
+                if ((object.ReferenceEquals(this.Web_siteField, value) != true))
+                begin
+                    this.Web_siteField = value
+                    this.RaisePropertyChanged("Web_site")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Work_extensionField, int
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Work_extension, int
+            method get
+            proc
+                mreturn this.Work_extensionField
+            endmethod
+            method set
+            proc
+                if ((this.Work_extensionField.Equals(value) != true))
+                begin
+                    this.Work_extensionField = value
+                    this.RaisePropertyChanged("Work_extension")
+                end
+            endmethod
+        endproperty
+
+        {System.Runtime.Serialization.OptionalFieldAttribute()}
+        private Work_phoneField, long
+
+        {System.Runtime.Serialization.DataMemberAttribute()}
+        public property Work_phone, long
+            method get
+            proc
+                mreturn this.Work_phoneField
+            endmethod
+            method set
+            proc
+                if ((this.Work_phoneField.Equals(value) != true))
+                begin
+                    this.Work_phoneField = value
+                    this.RaisePropertyChanged("Work_phone")
+                end
+            endmethod
+        endproperty
+    endclass
+
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+    {System.Runtime.Serialization.DataContractAttribute(Name = "Method_status", Namespace = "http://schemas.datacontract.org/2004/07/xfpldemo")}
+    public enum Method_status
+        {System.Runtime.Serialization.EnumMemberAttribute()}
+        Success
+        {System.Runtime.Serialization.EnumMemberAttribute()}
+        Info_error
+        {System.Runtime.Serialization.EnumMemberAttribute()}
+        Fatal_error
+    endenum
+
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+    {System.ServiceModel.ServiceContractAttribute(ConfigurationName = "xfpldemo.ISynergyServer")}
+    public interface ISynergyServer
+
+        {System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/ISynergyServer/GetAllCustomers", ReplyAction = "http://tempuri.org/ISynergyServer/GetAllCustomersResponse")}
+        {ReturnType: System.ServiceModel.MessageParameterAttribute(Name = "a_customers")}
+        method GetAllCustomers, @System.Collections.Generic.List<ClientApp.xfpldemo.Customer>
+            endparams
+        endmethod
+
+        {System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/ISynergyServer/GetCustomerContacts", ReplyAction = "http://tempuri.org/ISynergyServer/GetCustomerContactsResponse")}
+        {ReturnType: System.ServiceModel.MessageParameterAttribute(Name = "a_contacts")}
+        method GetCustomerContacts, @System.Collections.Generic.List<ClientApp.xfpldemo.Contact>
+            a_customer_id, int 
+            endparams
+        endmethod
+
+        {System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/ISynergyServer/GetContactForUpdate", ReplyAction = "http://tempuri.org/ISynergyServer/GetContactForUpdateResponse")}
+        method GetContactForUpdate, ClientApp.xfpldemo.Method_status
+            out a_contact, @ClientApp.xfpldemo.Contact 
+            out a_grfa, [#]byte 
+            out a_message, string 
+            a_customer_id, int 
+            a_contact_id, int 
+            endparams
+        endmethod
+
+        {System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/ISynergyServer/UpdateContact", ReplyAction = "http://tempuri.org/ISynergyServer/UpdateContactResponse")}
+        method UpdateContact, ClientApp.xfpldemo.Method_status
+            byref inout a_contact, @ClientApp.xfpldemo.Contact 
+            byref inout a_grfa, [#]byte 
+            out a_message, string 
+            endparams
+        endmethod
+    endinterface
+
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+    public interface ISynergyServerChannel extends ClientApp.xfpldemo.ISynergyServer, System.ServiceModel.IClientChannel
+    endinterface
+
+    {System.Diagnostics.DebuggerStepThroughAttribute()}
+    {System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+    public partial class SynergyServerClient extends System.ServiceModel.ClientBase<ClientApp.xfpldemo.ISynergyServer> implements ClientApp.xfpldemo.ISynergyServer
+
+        public method SynergyServerClient
+            endparams
+        proc
+
+        endmethod
+
+        public method SynergyServerClient
+            endpointConfigurationName, string 
+            endparams
+            parent(endpointConfigurationName)
+        proc
+
+        endmethod
+
+        public method SynergyServerClient
+            endpointConfigurationName, string 
+            remoteAddress, string 
+            endparams
+            parent(endpointConfigurationName, remoteAddress)
+        proc
+
+        endmethod
+
+        public method SynergyServerClient
+            endpointConfigurationName, string 
+            remoteAddress, @System.ServiceModel.EndpointAddress 
+            endparams
+            parent(endpointConfigurationName, remoteAddress)
+        proc
+
+        endmethod
+
+        public method SynergyServerClient
+            binding, @System.ServiceModel.Channels.Binding 
+            remoteAddress, @System.ServiceModel.EndpointAddress 
+            endparams
+            parent(binding, remoteAddress)
+        proc
+
+        endmethod
+
+        public method GetAllCustomers, @System.Collections.Generic.List<ClientApp.xfpldemo.Customer>
+            endparams
+        proc
+            mreturn parent.Channel.GetAllCustomers()
+        endmethod
+
+        public method GetCustomerContacts, @System.Collections.Generic.List<ClientApp.xfpldemo.Contact>
+            a_customer_id, int 
+            endparams
+        proc
+            mreturn parent.Channel.GetCustomerContacts(a_customer_id)
+        endmethod
+
+        public method GetContactForUpdate, ClientApp.xfpldemo.Method_status
+            out a_contact, @ClientApp.xfpldemo.Contact 
+            out a_grfa, [#]byte 
+            out a_message, string 
+            a_customer_id, int 
+            a_contact_id, int 
+            endparams
+        proc
+            mreturn parent.Channel.GetContactForUpdate(a_contact, a_grfa, a_message, a_customer_id, a_contact_id)
+        endmethod
+
+        public method UpdateContact, ClientApp.xfpldemo.Method_status
+            byref inout a_contact, @ClientApp.xfpldemo.Contact 
+            byref inout a_grfa, [#]byte 
+            out a_message, string 
+            endparams
+        proc
+            mreturn parent.Channel.UpdateContact(a_contact, a_grfa, a_message)
+        endmethod
+    endclass
+endnamespace
+

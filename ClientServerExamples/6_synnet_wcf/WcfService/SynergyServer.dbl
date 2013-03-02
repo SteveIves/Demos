@@ -1,0 +1,163 @@
+import System
+import System.Collections.Generic
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Text
+import Synergex.SynergyDE.Select
+
+namespace xfpldemo
+	
+	public class SynergyServer implements ISynergyServer
+		
+		public method GetAllCustomers		,void
+			required out a_customers		,@List<Customer>
+			endparams
+			record 
+				c							,strCustomer
+			endrecord
+		proc
+			a_customers = new List<Customer>()
+			foreach c in new Select(new From("DAT:customer.ism",c),OrderBy.AscendingKey(1))
+				a_customers.Add(new Customer(c))
+		endmethod
+		
+		public method GetCustomerContacts	,void
+			required in  a_customer_id		,int
+			required out a_contacts			,@List<contact>
+			endparams
+			record 
+				c							,strContact
+			endrecord
+		proc
+			a_contacts = new List<Contact>()
+			foreach c in new Select(new From("DAT:contact.ism",c),(Where)c.customer_id==a_customer_id)
+			begin
+				locase c.email
+				a_contacts.Add(new Contact(c))
+			end
+		endmethod
+		
+		public method GetContactForUpdate   ,Method_status
+			required in  a_customer_id		,int
+			required in  a_contact_id		,int
+			required out a_contact			,@Contact
+			required out a_grfa				,[#]byte
+			required out a_message			,@String
+			endparams
+			stack record local_data
+				ch		,i4
+				c		,strContact
+				sts		,Method_status
+				grfa	,a10
+				ix		,int
+			endrecord
+		proc
+			init local_data
+			a_grfa = new byte[10]
+			c.customer_id = a_customer_id
+			c.contact_id  = a_contact_id
+			try
+			begin
+				open(ch,i:i,"DAT:contact.ism")
+				read(ch,c,keyval(ch,c,0),KEYNUM:0,GETRFA:grfa)
+				a_contact = new Contact(c)
+				for ix from 1 thru 10
+					a_grfa[ix] = ^i(grfa(ix:1))
+				sts = Method_status.Success
+				a_message = ""
+			end
+			catch (ex, @KeyNotSameException)
+			begin
+				a_contact = new Contact()
+				sts = Method_status.Info_error
+				a_message = "Contact not found!"
+			end
+			catch (ex, @EndOfFileException)
+			begin
+				a_contact = new Contact()
+				sts = Method_status.Info_error
+				a_message = "Contact not found!"
+			end
+			catch (ex)
+			begin
+				a_contact = new Contact()
+				sts = Method_status.Fatal_error
+				a_message = "A fatal error occurred!"
+			end
+			finally
+			begin
+				if (ch&&chopen(ch))
+					close ch		
+			end
+			endtry
+			mreturn sts
+		endmethod
+		
+		public method UpdateContact			,Method_status
+			required inout a_contact		,@Contact
+			required inout a_grfa			,[#]byte
+			required out   a_message		,@String
+			endparams
+			stack record local_data
+				ch			,i4
+				sts			,Method_status
+				c			,strContact
+				grfa		,a10
+				tmpGrfa		,a10
+				ix			,int
+			endrecord
+		proc
+			init local_data
+			
+			for ix from 1 thru 10
+				^i(grfa(ix:1)) = a_grfa[ix]
+			
+			try
+			begin
+				open(ch,u:i,"DAT:contact.ism")
+				
+				;;Use the original GRFA to lock the record
+				read(ch,c,,RFA:grfa,GETRFA:tmpGrfa)
+				
+				;;Update the record and get the new gRFA
+				write(ch,a_contact.Record,,GETRFA:grfa)
+
+				;;Return the new GRFA
+				for ix from 1 thru 10
+					a_grfa[ix] = ^i(grfa(ix:1))
+				
+				sts = Method_status.Success
+			end
+			catch (ex, @RecordNotSameException)
+			begin
+				;;Failed to lock the original record, it must have been changed
+				;;by another process since this user obtained it. We'll return
+				;;the new customer record and it's GRFA to the user
+				a_contact.Record = c
+				;;Return the new GRFA
+				for ix from 1 thru 10
+					a_grfa[ix] = ^i(tmpGrfa(ix:1))
+				sts = Method_status.Info_error
+				a_message = "The record has been changed by another user!"
+			end
+			catch (ex)
+			begin
+				a_contact = new Contact()
+				a_grfa = new Byte[10]
+				sts = Method_status.Fatal_error
+				a_message = "A fatal error occurred!"
+			end
+			finally
+			begin
+				if (ch&&chopen(ch))
+					close ch		
+			end
+			endtry
+			mreturn sts
+		endmethod
+		
+	endclass
+	
+endnamespace
+
+

@@ -1,0 +1,426 @@
+;; Generated on 22-Jun-2011 10:26:37 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
+;; 
+;; The contents of this file are auto-generated. Only add modifications to the end of this file.
+;; Any modifications will be lost when the file is re-generated.
+;; 
+import System;
+import System.Collections;
+import System.Collections.Generic;
+import System.Reflection;
+import System.Runtime.Serialization;
+import System.ServiceModel;
+namespace xfpldemo
+
+;;; <summary>
+;;; Procedural Interface Class InteropAssembly
+;;; </summary>
+	{ServiceContract()}
+	public partial class SynergyServer
+	
+		;;; <summary>
+		;;; constructor
+		;;; </summary>
+		public method SynergyServer
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; Returns an address record and current GRFA
+		;;; </summary>
+		;;; <param name="CustomerID">Passed customer ID</param>
+		;;; <param name="AddressID">Passed address ID</param>
+		;;; <param name="Address">Returned address structure</param>
+		;;; <param name="GRFA">Returned current GRFA</param>
+		;;; <param name="Message">Returned message text for non success status</param>
+		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		{OperationContract()}
+		public method GetAddressForUpdate   ,method_status
+			CustomerID    ,int
+			AddressID    ,int
+			out Address    ,@xfpldemo.address
+			out GRFA    ,[#]byte
+			out Message    ,string
+		endparams
+		record
+			i       ,int
+			ret   ,method_status
+			s_CustomerID    ,i4
+			s_AddressID    ,i4
+			s_Address    ,string
+			s3_Address    ,straddress
+			s_GRFA    ,i4
+			s_Message    ,string
+		endrecord
+		structure bd
+		    bdy      ,i1
+		endstructure
+		proc
+		  begin
+			s_CustomerID = CustomerID
+			s_AddressID = AddressID
+			Address = new xfpldemo.address()
+			s_GRFA = %mem_proc(DM_ALLOC, 1)
+			i = (int)%GetAddressForUpdate(s_CustomerID,s_AddressID,s3_Address,s_GRFA,s_Message)
+			ret = (method_status)i
+			Address.SynergyToStruct(s3_Address)
+			GRFA = new Byte[%mem_proc(DM_GETSIZE, s_GRFA)]
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      GRFA[i] = ^m(bd.bdy(i:1),s_GRFA)
+			  end
+			Message = s_Message
+			mreturn ret;
+		  end
+		endmethod
+		;;; <summary>
+		;;; Returns a collection of all customers
+		;;; </summary>
+		;;; <param name="Customers">Returned ArrayList of boxed customer structures</param>
+		{OperationContract()}
+		public method GetAllCustomers   ,void
+			out Customers    ,@List<xfpldemo.customer>
+		endparams
+		record
+			i       ,int
+			s_Customers    ,@ArrayList
+		endrecord
+		proc
+		  begin
+			Customers = new List<xfpldemo.customer>()
+			s_Customers = new ArrayList()
+			xcall GetAllCustomers(s_Customers)
+			for i from 1 thru s_Customers.Count by 1
+			begin
+			  data xfStr1    ,@xfpldemo.customer
+			  data tStr1    ,strcustomer
+			  data zStr1    ,string
+			  xfStr1 = new xfpldemo.customer()
+			  tStr1 = (@strcustomer)s_Customers[i-1]
+			  zStr1 = (string)tStr1
+			  xfStr1.StringToStruct(zStr1)
+			  Customers.Add(xfStr1)
+			end
+		  end
+		endmethod
+		;;; <summary>
+		;;; Returns a contact record and current GRFA
+		;;; </summary>
+		;;; <param name="CustomerID">Passed customer ID</param>
+		;;; <param name="ContactID">Passed contact ID</param>
+		;;; <param name="Contact">Returned contact structure</param>
+		;;; <param name="GRFA">Returned current GRFA</param>
+		;;; <param name="Message">Returned message text for non success status</param>
+		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		{OperationContract()}
+		public method GetContactForUpdate   ,method_status
+			CustomerID    ,int
+			ContactID    ,int
+			out Contact    ,@xfpldemo.contact
+			out GRFA    ,[#]byte
+			out Message    ,string
+		endparams
+		record
+			i       ,int
+			ret   ,method_status
+			s_CustomerID    ,i4
+			s_ContactID    ,i4
+			s_Contact    ,string
+			s3_Contact    ,strcontact
+			s_GRFA    ,i4
+			s_Message    ,string
+		endrecord
+		structure bd
+		    bdy      ,i1
+		endstructure
+		proc
+		  begin
+			s_CustomerID = CustomerID
+			s_ContactID = ContactID
+			Contact = new xfpldemo.contact()
+			s_GRFA = %mem_proc(DM_ALLOC, 1)
+			i = (int)%GetContactForUpdate(s_CustomerID,s_ContactID,s3_Contact,s_GRFA,s_Message)
+			ret = (method_status)i
+			Contact.SynergyToStruct(s3_Contact)
+			GRFA = new Byte[%mem_proc(DM_GETSIZE, s_GRFA)]
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      GRFA[i] = ^m(bd.bdy(i:1),s_GRFA)
+			  end
+			Message = s_Message
+			mreturn ret;
+		  end
+		endmethod
+		;;; <summary>
+		;;; Returns a collection of addresses for a customer
+		;;; </summary>
+		;;; <param name="CustomerID">Passed customer ID</param>
+		;;; <param name="Addresses">Returned ArrayList of boxed address structures</param>
+		{OperationContract()}
+		public method GetCustomerAddresses   ,void
+			CustomerID    ,int
+			out Addresses    ,@List<xfpldemo.address>
+		endparams
+		record
+			i       ,int
+			s_CustomerID    ,i4
+			s_Addresses    ,@ArrayList
+		endrecord
+		proc
+		  begin
+			s_CustomerID = CustomerID
+			Addresses = new List<xfpldemo.address>()
+			s_Addresses = new ArrayList()
+			xcall GetCustomerAddresses(s_CustomerID,s_Addresses)
+			for i from 1 thru s_Addresses.Count by 1
+			begin
+			  data xfStr2    ,@xfpldemo.address
+			  data tStr2    ,straddress
+			  data zStr2    ,string
+			  xfStr2 = new xfpldemo.address()
+			  tStr2 = (@straddress)s_Addresses[i-1]
+			  zStr2 = (string)tStr2
+			  xfStr2.StringToStruct(zStr2)
+			  Addresses.Add(xfStr2)
+			end
+		  end
+		endmethod
+		;;; <summary>
+		;;; Returns a collection of contacts for a customer
+		;;; </summary>
+		;;; <param name="CustomerID">Passed customer ID</param>
+		;;; <param name="Contacts">Returned ArrayList of boxed contact structures</param>
+		{OperationContract()}
+		public method GetCustomerContacts   ,void
+			CustomerID    ,int
+			out Contacts    ,@List<xfpldemo.contact>
+		endparams
+		record
+			i       ,int
+			s_CustomerID    ,i4
+			s_Contacts    ,@ArrayList
+		endrecord
+		proc
+		  begin
+			s_CustomerID = CustomerID
+			Contacts = new List<xfpldemo.contact>()
+			s_Contacts = new ArrayList()
+			xcall GetCustomerContacts(s_CustomerID,s_Contacts)
+			for i from 1 thru s_Contacts.Count by 1
+			begin
+			  data xfStr2    ,@xfpldemo.contact
+			  data tStr2    ,strcontact
+			  data zStr2    ,string
+			  xfStr2 = new xfpldemo.contact()
+			  tStr2 = (@strcontact)s_Contacts[i-1]
+			  zStr2 = (string)tStr2
+			  xfStr2.StringToStruct(zStr2)
+			  Contacts.Add(xfStr2)
+			end
+		  end
+		endmethod
+		;;; <summary>
+		;;; Returns a customer record and current GRFA
+		;;; </summary>
+		;;; <param name="CustomerID">Passed customer ID</param>
+		;;; <param name="Customer">Returned customer structure</param>
+		;;; <param name="GRFA">Returned current GRFA</param>
+		;;; <param name="Message">Returned message text for non success status</param>
+		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		{OperationContract()}
+		public method GetCustomerForUpdate   ,method_status
+			CustomerID    ,int
+			out Customer    ,@xfpldemo.customer
+			out GRFA    ,[#]byte
+			out Message    ,string
+		endparams
+		record
+			i       ,int
+			ret   ,method_status
+			s_CustomerID    ,i4
+			s_Customer    ,string
+			s2_Customer    ,strcustomer
+			s_GRFA    ,i4
+			s_Message    ,string
+		endrecord
+		structure bd
+		    bdy      ,i1
+		endstructure
+		proc
+		  begin
+			s_CustomerID = CustomerID
+			Customer = new xfpldemo.customer()
+			s_GRFA = %mem_proc(DM_ALLOC, 1)
+			i = (int)%GetCustomerForUpdate(s_CustomerID,s2_Customer,s_GRFA,s_Message)
+			ret = (method_status)i
+			Customer.SynergyToStruct(s2_Customer)
+			GRFA = new Byte[%mem_proc(DM_GETSIZE, s_GRFA)]
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      GRFA[i] = ^m(bd.bdy(i:1),s_GRFA)
+			  end
+			Message = s_Message
+			mreturn ret;
+		  end
+		endmethod
+		;;; <summary>
+		;;; Updated a contact record
+		;;; </summary>
+		;;; <param name="Contact">Contact structure</param>
+		;;; <param name="GRFA">Previous GRFA</param>
+		;;; <param name="Message">Returned message text for non success status</param>
+		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		{OperationContract()}
+		public method UpdateContact   ,method_status
+			inout  Contact    ,@xfpldemo.contact
+			inout  GRFA    ,[#]byte
+			out Message    ,string
+		endparams
+		record
+			i       ,int
+			ret   ,method_status
+			s_Contact    ,string
+			s1_Contact    ,strcontact
+			s_GRFA    ,i4
+			s_Message    ,string
+		endrecord
+		structure bd
+		    bdy      ,i1
+		endstructure
+		proc
+		  begin
+			s_Contact = Contact.StructToString()
+			s1_Contact = s_Contact
+			s_GRFA = %mem_proc(DM_ALLOC, GRFA.length, s_GRFA)
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      ^m(bd.bdy(i:1),s_GRFA) = GRFA[i]
+			  end
+			i = (int)%UpdateContact(s1_Contact,s_GRFA,s_Message)
+			ret = (method_status)i
+			Contact.SynergyToStruct(s1_Contact)
+			GRFA = new Byte[%mem_proc(DM_GETSIZE, s_GRFA)]
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      GRFA[i] = ^m(bd.bdy(i:1),s_GRFA)
+			  end
+			Message = s_Message
+			mreturn ret;
+		  end
+		endmethod
+		;;; <summary>
+		;;; Updated a customer record
+		;;; </summary>
+		;;; <param name="Customer">Customer structure</param>
+		;;; <param name="GRFA">Previous GRFA</param>
+		;;; <param name="Message">Returned message text for non success status</param>
+		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		{OperationContract()}
+		public method UpdateCustomer   ,method_status
+			inout  Customer    ,@xfpldemo.customer
+			inout  GRFA    ,[#]byte
+			out Message    ,string
+		endparams
+		record
+			i       ,int
+			ret   ,method_status
+			s_Customer    ,string
+			s1_Customer    ,strcustomer
+			s_GRFA    ,i4
+			s_Message    ,string
+		endrecord
+		structure bd
+		    bdy      ,i1
+		endstructure
+		proc
+		  begin
+			s_Customer = Customer.StructToString()
+			s1_Customer = s_Customer
+			s_GRFA = %mem_proc(DM_ALLOC, GRFA.length, s_GRFA)
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      ^m(bd.bdy(i:1),s_GRFA) = GRFA[i]
+			  end
+			i = (int)%UpdateCustomer(s1_Customer,s_GRFA,s_Message)
+			ret = (method_status)i
+			Customer.SynergyToStruct(s1_Customer)
+			GRFA = new Byte[%mem_proc(DM_GETSIZE, s_GRFA)]
+			for i from 1 thru GRFA.length by 1
+			  begin
+			      GRFA[i] = ^m(bd.bdy(i:1),s_GRFA)
+			  end
+			Message = s_Message
+			mreturn ret;
+		  end
+		endmethod
+		;  xfnlnet method stubs
+		;;; <summary>
+		;;; connect to xfServerPlus
+		;;; </summary>
+		public method connect   ,void
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; xfServerPlus four parameter connect
+		;;; </summary>
+		;;; <param name="hostIP">IP address</param>
+		;;; <param name="hostPort">port number</param>
+		;;; <param name="minPort">minport number</param>
+		;;; <param name="maxPort">maxport number</param>
+		public method connect   ,void
+		  hostIP     ,string
+		  hostPort   ,int
+		  minPort    ,int
+		  maxPort    ,int
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; xfServerPlus host and port connect
+		;;; </summary>
+		;;; <param name="hostIP">IP address</param>
+		;;; <param name="hostPort">port number</param>
+		public method connect   ,void
+		  hostIP     ,string
+		  hostPort   ,int
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; disconnect from xfServerPlus
+		;;; </summary>
+		public method disconnect   ,void
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; set the call timeout in seconds
+		;;; </summary>
+		;;; <param name="seconds">timeout in seconds</param>
+		public method setCallTimeout   ,void
+		  in seconds    ,int
+		endparams
+		proc
+		endmethod
+		;;; <summary>
+		;;; set the user string
+		;;; </summary>
+		;;; <param name="userString">The user string</param>
+		public method setUserString   ,void
+		  in userString    ,string
+		endparams
+		proc
+			xcall XFPL_LOG(userString)
+		endmethod
+		;;; <summary>
+		;;; get the user string 
+		;;; </summary>
+		;;; <returns>User String</returns>
+		public method getUserString   ,string
+		  out userString    ,string
+		endparams
+		proc
+			mreturn('')
+		endmethod
+	endclass
+endnamespace

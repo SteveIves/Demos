@@ -1,0 +1,370 @@
+import System
+import System.Collections
+import System.Collections.Generic
+import System.ComponentModel
+import System.Data
+import System.Drawing
+import System.Text
+import System.Windows.Forms
+
+.array 0
+namespace ClientApp
+	
+	public partial class Form1 extends System.Windows.Forms.Form
+		
+		svr				,@spc2011.WebServiceSoapClient, ^null
+		savedContact	,@spc2011.Contact
+		savedGrfa		,[#]byte
+		msg				,@String
+		
+		public method Form1
+			endparams
+		proc
+			this.InitializeComponent()
+			gridCustomers.AutoGenerateColumns = false
+			gridContacts.AutoGenerateColumns = false
+			svr = new spc2011.WebServiceSoapClient("WebServiceSoap")
+			savedGrfa = new byte[10] 
+		endmethod
+		
+		private method Form1_Load, void
+			sender	,@Object
+			e		,@EventArgs
+			endparams
+		proc
+			try
+			begin
+				data c, @List<spc2011.Customer>
+				c = svr.GetAllCustomers()
+				gridCustomers.DataSource = c
+				;; If we have customers then load the contacts for the one that is now selected
+				if (gridCustomers.SelectedRows.Count > 0)
+				begin
+					data tmpCustomer, @spc2011.Customer
+					tmpCustomer = (spc2011.Customer)gridCustomers.Rows[gridCustomers.SelectedRows[0].Index].DataBoundItem
+					loadContacts(tmpCustomer.Customer_id)
+				end
+			end
+			catch (ex, @Exception)
+			begin
+				MessageBox.Show(ex.Message)
+				this.Close()
+			end
+			endtry
+		endmethod
+		
+		private method gridCustomers_RowEnter, void
+			sender	,@Object 
+			e		,@DataGridViewCellEventArgs 
+			endparams
+		proc
+			if (gridCustomers.SelectedRows.Count > 0)
+			begin
+				displayBlankContact()
+				data cus, @List<spc2011.Customer>
+				data c, @spc2011.Customer
+				cus = (List<spc2011.Customer>)gridCustomers.DataSource
+				c = (spc2011.Customer)cus[gridCustomers.SelectedRows[0].Index]
+				loadContacts(c.Customer_id)
+			end
+		endmethod
+		
+		private method loadContacts, void
+			customer_id	,int 
+			endparams
+		proc
+			try
+			begin
+				data c, @List<spc2011.Contact>
+				c = svr.GetCustomerContacts(customer_id)
+				gridContacts.DataSource = c
+				;; If we have a selected contact then display it
+				if (gridContacts.SelectedRows.Count > 0)
+				begin
+					savedContact = (spc2011.Contact)gridContacts.Rows[gridContacts.SelectedRows[0].Index].DataBoundItem
+					try
+					begin
+						svr.GetContactForUpdate(savedContact.Customer_id, savedContact.Contact_id, savedContact, savedGrfa, msg)
+						displaySavedContact()
+					end
+					catch (ex, @Exception)
+					begin
+					end
+					endtry
+				end
+			end
+			catch (ex, @Exception)
+			begin
+				MessageBox.Show(ex.Message)
+			end
+			endtry
+		endmethod
+		
+		private method gridContacts_RowEnter, void
+			sender	,@Object 
+			e		,@DataGridViewCellEventArgs 
+			endparams
+		proc
+			if (gridContacts.SelectedRows.Count > 0)
+			begin
+				savedContact = (spc2011.Contact)gridContacts.Rows[e.RowIndex].DataBoundItem
+				;; Get the latest version of the contact, and it's current GRFA
+				data currentContact, @spc2011.Contact, new spc2011.Contact()
+				try
+				begin
+					svr.GetContactForUpdate(savedContact.Customer_id, savedContact.Contact_id, currentContact, savedGrfa, msg)
+					savedContact = currentContact
+					;; Update the contact in the grids datasource
+					data cts, @List<spc2011.Contact>
+					cts = (List<spc2011.Contact>)gridContacts.DataSource
+					cts[e.RowIndex] = currentContact
+					displaySavedContact()
+				end
+				catch (ex, @Exception)
+				begin
+					MessageBox.Show(ex.Message)
+					this.Close()
+				end
+				endtry
+			end
+		endmethod
+		
+		private method btnOK_Click, void
+			sender	,@Object 
+			e		,@EventArgs
+			endparams
+		proc
+			saveContact()
+		endmethod
+		
+		private method btnCancel_Click, void
+			sender	,@Object 
+			e		,@EventArgs 
+			endparams
+		proc
+			displaySavedContact()
+			allowSave = false
+		endmethod
+		
+		private method exitToolStripMenuItem_Click, void
+			sender	,@Object 
+			e		,@EventArgs 
+			endparams
+		proc
+			this.Close()
+		endmethod
+		
+		private method displaySavedContact, void
+			endparams
+		proc
+			txtFirstName.Text = savedContact.First_name
+			txtLastName.Text = savedContact.Last_name
+			txtFullName.Text = savedContact.Friendly_name
+			txtPrefix.Text = savedContact.Salutation
+			txtTitle.Text = savedContact.Title
+			txtDepartment.Text = savedContact.Department
+			if (savedContact.Work_phone != 0) then
+				txtWorkPhone.Text = savedContact.Work_phone.ToString()
+			else
+				txtWorkPhone.Text = ""
+			if (savedContact.Mobile_phone != 0) then
+				txtMobilePhone.Text = savedContact.Mobile_phone.ToString()
+			else
+				txtMobilePhone.Text = ""
+			if (savedContact.Home_phone != 0) then
+				txtHomePhone.Text = savedContact.Home_phone.ToString()
+			else
+				txtHomePhone.Text = ""
+			if (savedContact.Fax != 0) then
+				txtFax.Text = savedContact.Fax.ToString()
+			else
+				txtFax.Text = ""
+			txtWebSite.Text = savedContact.Web_site
+			txtEmail.Text = savedContact.Email
+			chkManagementContact.Checked = savedContact.Management_contact
+			chkBillingContact.Checked = savedContact.Billing_contact
+			chkSalesContact.Checked = savedContact.Sales_contact
+			chkTechnicalContact.Checked = savedContact.Technical_contact
+			chkGeneralContact.Checked = savedContact.General_contact
+			allowSave = false
+		endmethod
+		
+		private method saveContact, void
+			endparams
+		proc
+			if (!validateFormData())
+				mreturn
+			;; Save the new contact info locally
+			savedContact.First_name = txtFirstName.Text
+			savedContact.Last_name = txtLastName.Text
+			savedContact.Friendly_name = txtFullName.Text
+			savedContact.Salutation = txtPrefix.Text
+			savedContact.Title = txtTitle.Text
+			savedContact.Department = txtDepartment.Text
+			if (txtWorkPhone.Text.Length > 0) then
+				savedContact.Work_phone = long.Parse(txtWorkPhone.Text)
+			else
+				savedContact.Work_phone = 0
+			if (txtMobilePhone.Text.Length > 0) then
+				savedContact.Mobile_phone = long.Parse(txtMobilePhone.Text)
+			else
+				savedContact.Mobile_phone = 0
+			if (txtHomePhone.Text.Length > 0) then
+				savedContact.Home_phone = long.Parse(txtHomePhone.Text)
+			else
+				savedContact.Home_phone = 0
+			if (txtFax.Text.Length > 0) then
+				savedContact.Fax = long.Parse(txtFax.Text)
+			else
+				savedContact.Fax = 0
+			savedContact.Web_site = txtWebSite.Text
+			savedContact.Email = txtEmail.Text
+			savedContact.Management_contact = chkManagementContact.Checked
+			savedContact.Billing_contact = chkBillingContact.Checked
+			savedContact.Sales_contact = chkSalesContact.Checked
+			savedContact.Technical_contact = chkTechnicalContact.Checked
+			savedContact.General_contact = chkGeneralContact.Checked
+			;; Save the new data to the server
+			try
+			begin
+				svr.UpdateContact(savedContact, savedGrfa, msg)
+				;; Update the contact in the grids datasource
+				data cts, @List<spc2011.Contact>
+				cts = (List<spc2011.Contact>)gridContacts.DataSource
+				cts[gridContacts.SelectedRows[0].Index] = savedContact
+				gridContacts.Refresh()
+			end
+			catch (ex, @Exception)
+			begin
+				MessageBox.Show(ex.Message)
+				this.Close()
+			end
+			endtry
+			allowSave = false
+		endmethod
+		
+		private method validateFormData		,Boolean
+			endparams
+			record
+				retval			,Boolean	,true
+				errorMessage	,@String	,""
+			endrecord
+		proc
+			if (txtFirstName.Text.Length == 0)
+			begin
+				errorMessage = String.Format(("{0}/nFirst name cannot be blank"), errorMessage)
+				retval = false
+			end
+			if (txtLastName.Text.Length == 0)
+			begin
+				errorMessage = String.Format("{0}/nLast name cannot be blank", errorMessage)
+				retval = false
+			end
+			if (txtWorkPhone.Text.Length > 0)
+			begin
+				data tmpPhone, long
+				if (!long.TryParse(txtWorkPhone.Text, tmpPhone))
+				begin
+					errorMessage = String.Format("{0}\nWork phone must be numeric", errorMessage)
+					retval = false
+				end
+			end
+			if (txtMobilePhone.Text.Length > 0)
+			begin
+				data tmpPhone, long
+				if (!long.TryParse(txtMobilePhone.Text, tmpPhone))
+				begin
+					errorMessage = String.Format("{0}\nMobile phone must be numeric", errorMessage)
+					retval = false
+				end
+			end
+			if (txtHomePhone.Text.Length > 0)
+			begin
+				data tmpPhone, long
+				if (!long.TryParse(txtHomePhone.Text, tmpPhone))
+				begin
+					errorMessage = String.Format("{0}\nHome phone must be numeric", errorMessage)
+					retval = false
+				end
+			end
+			if (txtFax.Text.Length > 0)
+			begin
+				data tmpPhone, long
+				if (!long.TryParse(txtFax.Text, tmpPhone))
+				begin
+					errorMessage = String.Format("{0}\nFax number must be numeric", errorMessage)
+					retval = false
+				end
+			end
+			if (!retval)
+				MessageBox.Show(errorMessage, "Invalid data", MessageBoxButtons.OK, MessageBoxIcon.Information)
+			mreturn retval
+		endmethod
+		
+		private method displayBlankContact, void
+			endparams
+		proc
+			txtFirstName.Text = ""
+			txtLastName.Text = ""
+			txtFullName.Text = ""
+			txtPrefix.Text = ""
+			txtTitle.Text = ""
+			txtDepartment.Text = ""
+			txtWorkPhone.Text = ""
+			txtMobilePhone.Text = ""
+			txtHomePhone.Text = ""
+			txtFax.Text = ""
+			txtWebSite.Text = ""
+			txtEmail.Text = ""
+			chkManagementContact.Checked = false
+			chkBillingContact.Checked = false
+			chkSalesContact.Checked = false
+			chkTechnicalContact.Checked = false
+			chkGeneralContact.Checked = false
+		endmethod
+		
+		private m_allowSave, boolean
+		
+		private property allowSave, boolean
+			method get
+			proc
+				mreturn m_allowSave
+			endmethod
+			method set
+			proc
+				m_allowSave = value
+				btnOK.Enabled = m_allowSave
+				btnCancel.Enabled = m_allowSave
+			endmethod
+		endproperty
+		
+		private method txtFirstName_TextChanged, void
+			sender	,@Object
+			e		,@EventArgs
+			endparams
+		proc
+			txtFullName.Text = String.Format("{0} {1}", txtFirstName.Text, txtLastName.Text)
+			allowSave = true
+		endmethod
+		
+		private method txtLastName_TextChanged, void
+			sender	,@Object
+			e		,@EventArgs
+			endparams
+		proc
+			txtFullName.Text = String.Format("{0} {1}", txtFirstName.Text, txtLastName.Text)
+			allowSave = true
+		endmethod
+		
+		private method fieldChanged, void
+			sender	,@object
+			e		,@EventArgs 
+			endparams
+		proc
+			allowSave = true
+		endmethod
+	
+	endclass
+	
+endnamespace
+

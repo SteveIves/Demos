@@ -1,0 +1,85 @@
+import System
+import System.Runtime.Serialization
+import System.ServiceModel
+
+namespace xfpldemo
+ 
+	{DataContract}
+	public class Customer
+	 
+		private m_customer, strCustomer
+
+		public method Customer
+			endparams
+		proc
+		endmethod
+
+		public method Customer
+			required in a_customer, strCustomer
+			endparams
+		proc
+			m_customer = a_customer
+		endmethod
+		
+		{DataMember}
+		public property Customer_id, int
+			method get
+			proc
+			    mreturn m_customer.customer_id
+			endmethod
+			method set
+			proc
+			    m_customer.customer_id = value
+			endmethod
+		endproperty
+		 
+		{DataMember}
+		public property Name, @String
+			method get
+			proc
+			    mreturn atrim(m_customer.name)
+			endmethod
+			method set
+			proc
+				m_customer.name = value
+			endmethod
+		endproperty
+
+		{DataMember}
+		public property Date_created   ,DateTime
+			method get
+			proc
+			    mreturn Util.D8toDateTime(m_customer.date_created)
+			endmethod
+			method set
+			proc
+				m_customer.date_created = Util.DateTimeToD8(value)
+			endmethod
+		endproperty
+
+		{DataMember}
+		public property Date_modified   ,DateTime
+			method get
+			proc
+				mreturn Util.D8toDateTime(m_customer.date_modified)
+			endmethod
+			method set
+			proc
+				m_customer.date_modified = Util.DateTimeToD8(value)
+			endmethod
+		endproperty
+
+		{DataMember}
+		public property Status   ,@String
+			method get
+			proc
+			    mreturn atrim(m_customer.status)
+			endmethod
+			method set
+			proc
+				m_customer.status = value
+			endmethod
+		endproperty
+		 
+	endclass
+endnamespace

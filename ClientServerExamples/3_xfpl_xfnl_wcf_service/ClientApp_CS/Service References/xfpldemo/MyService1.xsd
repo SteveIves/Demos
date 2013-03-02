@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:42335/MyService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/xfpldemo" />
+  <xs:element name="GetAddressForUpdate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CustomerID" type="xs:int" />
+        <xs:element minOccurs="0" name="AddressID" type="xs:int" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Address" nillable="true" type="q1:Address" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAddressForUpdateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="GetAddressForUpdateResult" type="q2:Method_status" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Address" nillable="true" type="q3:Address" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllCustomers">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customers" nillable="true" type="q4:ArrayOfCustomer" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllCustomersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customers" nillable="true" type="q5:ArrayOfCustomer" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactForUpdate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CustomerID" type="xs:int" />
+        <xs:element minOccurs="0" name="ContactID" type="xs:int" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contact" nillable="true" type="q6:Contact" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactForUpdateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="GetContactForUpdateResult" type="q7:Method_status" />
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contact" nillable="true" type="q8:Contact" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerAddresses">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CustomerID" type="xs:int" />
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Addresses" nillable="true" type="q9:ArrayOfAddress" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerAddressesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Addresses" nillable="true" type="q10:ArrayOfAddress" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerContacts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CustomerID" type="xs:int" />
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contacts" nillable="true" type="q11:ArrayOfContact" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerContactsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contacts" nillable="true" type="q12:ArrayOfContact" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerForUpdate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CustomerID" type="xs:int" />
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customer" nillable="true" type="q13:Customer" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomerForUpdateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="GetCustomerForUpdateResult" type="q14:Method_status" />
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customer" nillable="true" type="q15:Customer" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateContact">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contact" nillable="true" type="q16:Contact" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateContactResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="UpdateContactResult" type="q17:Method_status" />
+        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Contact" nillable="true" type="q18:Contact" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customer" nillable="true" type="q19:Customer" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomerResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="UpdateCustomerResult" type="q20:Method_status" />
+        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/xfpldemo" minOccurs="0" name="Customer" nillable="true" type="q21:Customer" />
+        <xs:element minOccurs="0" name="GRFA" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

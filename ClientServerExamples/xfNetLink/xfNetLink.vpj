@@ -1,0 +1,92 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir="%wp">
+	<Config
+		Name="Release"
+		OutputFile=""
+		CompilerConfigName="">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Assembly"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildAssembly"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate C# Classes"
+				MenuCaption="Gener&amp;ate C# Classes"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateCSClasses"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.cs">
+			<F N="SynergyComponent/Address.cs"/>
+			<F N="SynergyComponent/Address_type.cs"/>
+			<F N="SynergyComponent/AssemblyInfo.cs"/>
+			<F N="SynergyComponent/Contact.cs"/>
+			<F N="SynergyComponent/Customer.cs"/>
+			<F N="SynergyComponent/ISynergyServer.cs"/>
+			<F N="SynergyComponent/Method_status.cs"/>
+			<F N="SynergyComponent/SynergyServer.cs"/>
+		</Folder>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%wp"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)xfServerPlus\exe"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)xfServerPlus\rps\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)xfServerPlus\rps\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)xfServerPlus\xfpl"/>
+	</Macro>
+</Project>

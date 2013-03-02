@@ -1,0 +1,27 @@
+;; Generated on 22-Jun-2011 10:26:37 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
+;; 
+;; The contents of this file are auto-generated. Only add modifications to the end of this file.
+;; Any modifications will be lost when the file is re-generated.
+;; 
+import System;
+import System.Text;
+namespace xfpldemo
+
+;;; <summary>
+;;; Enumeration InteropAssembly
+;;; </summary>
+	public enum Method_status
+		;;; <summary>
+		;;; Enumerator 
+		;;; </summary>
+		Success    ,0
+		;;; <summary>
+		;;; Enumerator 
+		;;; </summary>
+		Info_error    ,1
+		;;; <summary>
+		;;; Enumerator 
+		;;; </summary>
+		Fatal_error    ,2
+	endenum
+endnamespace

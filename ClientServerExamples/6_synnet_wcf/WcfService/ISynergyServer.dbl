@@ -1,0 +1,50 @@
+
+import System
+import System.Collections.Generic
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Text
+
+namespace xfpldemo
+
+	{ServiceContract}
+	public interface ISynergyServer
+		
+		{OperationContract()}
+		method GetAllCustomers				,void
+			required out a_customers		,@List<Customer>
+		endmethod
+		
+		{OperationContract()}
+		method GetCustomerContacts			,void
+			required in  a_customer_id		,int
+			required out a_contacts			,@List<contact>
+		endmethod
+		
+		{OperationContract()}
+		method GetContactForUpdate			,Method_status
+			required in  a_customer_id		,int
+			required in  a_contact_id		,int
+			required out a_contact			,@Contact
+			required out a_grfa				,[#]byte
+			required out a_message			,@String
+		endmethod
+		
+		{OperationContract()}
+		method UpdateContact				,Method_status
+			required inout a_contact		,@Contact
+			required inout a_grfa			,[#]byte
+			required out   a_message		,@String
+		endmethod
+		
+	endinterface
+	
+	public enum Method_status
+		Success			,0
+		Info_error		,1
+		Fatal_error		,2
+	endenum
+	
+endnamespace
+
+

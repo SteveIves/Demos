@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/xfpldemo" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/xfpldemo" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="Method_status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="Info_error" />
+      <xs:enumeration value="Fatal_error" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Method_status" nillable="true" type="tns:Method_status" />
+  <xs:complexType name="Address">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Active_date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address3" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Address_type" type="tns:Address_type" />
+      <xs:element minOccurs="0" name="Billing_address" type="xs:boolean" />
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Customer_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Mailing_address" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Main_address" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Postal_code" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Replication_key" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Satellite_office" type="xs:boolean" />
+      <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Zip" type="xs:int" />
+      <xs:element minOccurs="0" name="Zip_extend" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Address" nillable="true" type="tns:Address" />
+  <xs:simpleType name="Address_type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Business" />
+      <xs:enumeration value="Home" />
+      <xs:enumeration value="Other" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Address_type" nillable="true" type="tns:Address_type" />
+  <xs:complexType name="ArrayOfCustomer">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Customer" nillable="true" type="tns:Customer" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomer" nillable="true" type="tns:ArrayOfCustomer" />
+  <xs:complexType name="Customer">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Customer_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Date_created" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Date_modified" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Noname_001" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Replication_key" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Customer" nillable="true" type="tns:Customer" />
+  <xs:complexType name="Contact">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Address_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Billing_contact" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Contact_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Customer_id" type="xs:int" />
+      <xs:element minOccurs="0" name="Department" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Fax" type="xs:long" />
+      <xs:element minOccurs="0" name="First_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Friendly_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="General_contact" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Home_phone" type="xs:long" />
+      <xs:element minOccurs="0" name="Last_name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Management_contact" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Mobile_phone" type="xs:long" />
+      <xs:element minOccurs="0" name="Noname_001" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Picture_file" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Replication_key" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Sales_contact" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Salutation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Technical_contact" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Web_site" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Work_extension" type="xs:int" />
+      <xs:element minOccurs="0" name="Work_phone" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Contact" nillable="true" type="tns:Contact" />
+  <xs:complexType name="ArrayOfAddress">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Address" nillable="true" type="tns:Address" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAddress" nillable="true" type="tns:ArrayOfAddress" />
+  <xs:complexType name="ArrayOfContact">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Contact" nillable="true" type="tns:Contact" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContact" nillable="true" type="tns:ArrayOfContact" />
+</xs:schema>

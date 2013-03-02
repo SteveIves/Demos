@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>"InteropAssembly"</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4cc3d0b9-5344-4c4b-82c2-b92364c187f8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>xfpldemo</RootNamespace>
+    <AssemblyName>InteropAssembly</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetPlatform>v4</TargetPlatform>
+    <MainFile>Class.dbl</MainFile>
+    <XfplMigration>true</XfplMigration>
+    <DBL_qWarnLevel>3 - Don't display warnings levels higher than 3</DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -W3 -qstack</DBLCmdOptions>
+    <Language>Synergy</Language>
+    <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
+    <StartupObject>(Not set)</StartupObject>
+    <ApplicationIcon />
+    <ResourceType>Icon</ResourceType>
+    <ResourceName />
+    <ProjEnvVars>RPSMFIL=$(SolutionDir)..\xfServerPlus\rps\rpsmain.ism;RPSTFIL=$(SolutionDir)..\xfServerPlus\rps\rpstext.ism;DAT=$(SolutionDir)..\xfServerPlus\dat;</ProjEnvVars>
+    <XFPL_StrPubFlds>False</XFPL_StrPubFlds>
+    <XFPL_BinFldString>False</XFPL_BinFldString>
+    <XFPL_AltFldNme>False</XFPL_AltFldNme>
+    <XFPL_AltIntrface>False</XFPL_AltIntrface>
+    <XFPL_AltIntrfaceName />
+    <XFPL_Pool>False</XFPL_Pool>
+    <XFPL_PoolReturn>False</XFPL_PoolReturn>
+    <XFPL_OutParamType>False</XFPL_OutParamType>
+    <XFPL_WCFContracts>True</XFPL_WCFContracts>
+    <Install>True</Install>
+    <ApplicationVersion>1.0.0.*</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>False</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>False</UpdatePeriodically>
+    <UpdateRequired>False</UpdateRequired>
+    <MapFileExtensions>True</MapFileExtensions>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <UseApplicationTrust>False</UseApplicationTrust>
+    <BootstrapperEnabled>True</BootstrapperEnabled>
+    <XFPL_SupportMethods>True</XFPL_SupportMethods>
+    <NoWin32Manifest />
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Debug</DebugOptimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Release\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="synrnt">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GeneratedCode\Address.dbl" />
+    <Compile Include="GeneratedCode\Address_type.dbl" />
+    <Compile Include="GeneratedCode\Contact.dbl" />
+    <Compile Include="GeneratedCode\Customer.dbl" />
+    <Compile Include="GeneratedCode\Method_status.dbl" />
+    <Compile Include="GeneratedCode\SynergyServer.dbl" />
+    <Compile Include="Methods\DataDefinitions.dbl" />
+    <Compile Include="Methods\GetAddressForUpdate.dbl" />
+    <Compile Include="Methods\GetAllCustomers.dbl" />
+    <Compile Include="Methods\GetContactForUpdate.dbl" />
+    <Compile Include="Methods\GetCustomerAddresses.dbl" />
+    <Compile Include="Methods\GetCustomerContacts.dbl" />
+    <Compile Include="Methods\GetCustomerForUpdate.dbl" />
+    <Compile Include="Methods\UpdateContact.dbl" />
+    <Compile Include="Methods\UpdateCustomer.dbl" />
+    <Compile Include="SynergyRoutines.dbl" />
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GeneratedCode\" />
+    <Folder Include="Methods" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Install>True</Install>
+      <ProductName>Microsoft .NET Framework 4 Client Profile (x86 and x64)</ProductName>
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Install>False</Install>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Install>True</Install>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Visible>False</Visible>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+</Project>

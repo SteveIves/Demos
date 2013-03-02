@@ -1,0 +1,16 @@
+
+.include "contact" repository, record="contact"
+
+PROC
+	OPEN(1,I:I,"contact.ism")
+	open(2,U:I,"dev:[xfpldemo.dat]contact.ism@sivms")
+
+	repeat
+	begin
+		reads(1,contact,eof)
+		store(2,contact)
+	end
+eof,
+
+	close 2
+	close 1

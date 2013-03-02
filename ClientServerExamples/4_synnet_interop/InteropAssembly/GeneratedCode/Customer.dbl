@@ -1,0 +1,369 @@
+;; Generated on 27-Jun-2012 1:54:54 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
+;; 
+;; The contents of this file are auto-generated. Only add modifications to the end of this file.
+;; Any modifications will be lost when the file is re-generated.
+;; 
+import System;
+import System.Text;
+namespace xfpldemo
+ 
+;;; <summary>
+;;; Structural Interface Class InteropAssemblyTmp
+;;; </summary>
+	{Serializable}
+	public class Customer
+	 
+		private f_Customer_id    ,int
+		 
+		;;; <summary>
+		;;; Customer ID
+		;;; </summary>
+		public property Customer_id   ,int
+			method get
+			proc
+			    mreturn f_Customer_id
+			endmethod
+			method set
+			proc
+			    if(f_Customer_id != value) 
+			       m_changed = true 
+			    f_Customer_id = value
+			endmethod
+		endproperty
+		 
+		private f_Name    ,string
+		 
+		;;; <summary>
+		;;; Customer name
+		;;; </summary>
+		public property Name   ,string
+			method get
+			proc
+			    mreturn f_Name
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Name)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Name.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Name = value
+			endmethod
+		endproperty
+		 
+		private f_Date_created    ,DateTime
+		 
+		;;; <summary>
+		;;; Date customer was created
+		;;; </summary>
+		public property Date_created   ,DateTime
+			method get
+			proc
+			    mreturn f_Date_created
+			endmethod
+			method set
+			proc
+			    if(f_Date_created != value) 
+			       m_changed = true 
+			    f_Date_created = value
+			endmethod
+		endproperty
+		 
+		private f_Date_modified    ,DateTime
+		 
+		;;; <summary>
+		;;; Last modification date
+		;;; </summary>
+		public property Date_modified   ,DateTime
+			method get
+			proc
+			    mreturn f_Date_modified
+			endmethod
+			method set
+			proc
+			    if(f_Date_modified != value) 
+			       m_changed = true 
+			    f_Date_modified = value
+			endmethod
+		endproperty
+		 
+		private f_Status    ,string
+		 
+		;;; <summary>
+		;;; Company status
+		;;; </summary>
+		public property Status   ,string
+			method get
+			proc
+			    mreturn f_Status
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Status)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Status.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Status = value
+			endmethod
+		endproperty
+		 
+		private f_Replication_key    ,string
+		 
+		;;; <summary>
+		;;; SQL Replication Timestamp
+		;;; </summary>
+		public property Replication_key   ,string
+			method get
+			proc
+			    mreturn f_Replication_key
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Replication_key)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Replication_key.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Replication_key = value
+			endmethod
+		endproperty
+		 
+		private f_Noname_001    ,string
+		 
+		;;; <summary>
+		;;; Filler record
+		;;; </summary>
+		public property Noname_001   ,string
+			method get
+			proc
+			    mreturn f_Noname_001
+			endmethod
+			method set
+			proc
+			      if(String.IsNullOrEmpty(f_Noname_001)) then
+			       begin 
+			         m_changed = true 
+			       end 
+			      else
+			       begin 
+			        if(!f_Noname_001.Equals(value)) 
+			           m_changed = true 
+			       end 
+			      f_Noname_001 = value
+			endmethod
+		endproperty
+		 
+		;;; <summary>
+		;;; structure clone
+		;;; </summary>
+		public method Clone    ,@xfpldemo.Customer
+		endparams
+		record
+		    i      ,int
+		    tmp    ,@xfpldemo.Customer
+		endrecord
+		proc
+			tmp = new xfpldemo.Customer()
+			tmp.f_Customer_id = this.f_Customer_id
+			tmp.f_Name = this.f_Name
+			tmp.f_Date_created = this.f_Date_created
+			tmp.f_Date_modified = this.f_Date_modified
+			tmp.f_Status = this.f_Status
+			tmp.f_Replication_key = this.f_Replication_key
+			tmp.f_Noname_001 = this.f_Noname_001
+			mreturn tmp;
+		endmethod
+		private f_original    ,@xfpldemo.Customer
+		;;; <summary>
+		;;; Used to store a copy of the original structure
+		;;; </summary>
+		public property Original,  @xfpldemo.Customer
+			method get
+			proc
+				mreturn f_original
+			endmethod
+			method set
+			proc
+				f_original = value
+			endmethod
+			endproperty
+		;;; <summary>
+		;;; structure equals
+		;;; </summary>
+		public method Equals,   boolean
+			str    ,@xfpldemo.Customer
+		endparams
+		record
+			i     ,int
+			eql   ,boolean
+		endrecord
+		proc
+			eql = true;
+			if (this.Customer_id != str.Customer_id)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Name.Equals(str.Name))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Date_created != str.Date_created)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (this.Date_modified != str.Date_modified)
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Status.Equals(str.Status))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Replication_key.Equals(str.Replication_key))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			if (!this.Noname_001.Equals(str.Noname_001))
+			  begin
+				eql = false
+				mreturn eql
+			  end
+			mreturn eql;
+		endmethod
+		;;; <summary>
+		;;; Constructor
+		;;; </summary>
+		public method Customer
+		endparams
+		proc
+		endmethod
+ 
+		private m_changed    ,boolean, false
+ 
+		;;; <summary>
+		;;; Structure Changed 
+		;;; </summary>
+		;;; <returns>true if structure has been changed</returns>
+		public property Changed    ,boolean
+			method get
+			proc
+			    mreturn m_changed
+		endmethod
+		endproperty
+ 
+		;;; <summary>
+		;;; Serialize a structure to a string
+		;;; </summary>
+		public method StructToString,    string 
+		endparams
+		record Tmp_Customer
+			Customer_id    ,i4
+			Name    ,a40
+			Date_created    ,d8
+			Date_modified    ,d8
+			Status    ,a1
+			Replication_key    ,a20
+			Noname_001    ,a37
+		endrecord
+		record
+			outString    ,string
+			hldString    ,string
+			i            ,i4
+		endrecord
+		proc
+			Tmp_Customer.Customer_id = this.Customer_id
+			Tmp_Customer.Name = this.Name
+			Tmp_Customer.Date_created = %DateTimeToDec(f_Date_created, "YYYYMMDD")
+			Tmp_Customer.Date_modified = %DateTimeToDec(f_Date_modified, "YYYYMMDD")
+			Tmp_Customer.Status = this.Status
+			Tmp_Customer.Replication_key = this.Replication_key
+			Tmp_Customer.Noname_001 = this.Noname_001
+			outstring = Tmp_Customer
+			mreturn outstring
+		endmethod
+		;;; <summary>
+		;;; Serialize a string to a structure
+		;;; </summary>
+		public method StringToStruct,    void 
+			stringIn    ,string
+		endparams
+		record Tmp_Customer
+			Customer_id    ,i4
+			Name    ,a40
+			Date_created    ,d8
+			Date_modified    ,d8
+			Status    ,a1
+			Replication_key    ,a20
+			Noname_001    ,a37
+		endrecord
+		record
+			i          ,i4
+			len        ,i4
+			pos        ,i4
+			hldString  ,string
+		endrecord
+		proc
+			Tmp_Customer = stringIn
+			f_Customer_id = Tmp_Customer.Customer_id
+			f_Name = %atrim(Tmp_Customer.Name)
+			f_Date_created = new DateTime(%DecToDateTime(Tmp_Customer.Date_created, "YYYYMMDD"))
+			f_Date_modified = new DateTime(%DecToDateTime(Tmp_Customer.Date_modified, "YYYYMMDD"))
+			f_Status = %atrim(Tmp_Customer.Status)
+			f_Replication_key = %atrim(Tmp_Customer.Replication_key)
+			f_Noname_001 = %atrim(Tmp_Customer.Noname_001)
+			mreturn
+		endmethod
+		;;; <summary>
+		;;; Serialize a Synergy structure to a .NET structure
+		;;; </summary>
+		public method SynergyToStruct,    void 
+			structIn    ,a
+		endparams
+		record Tmp_Customer
+			Customer_id    ,i4
+			Name    ,a40
+			Date_created    ,d8
+			Date_modified    ,d8
+			Status    ,a1
+			Replication_key    ,a20
+			Noname_001    ,a37
+		endrecord
+		record
+			i          ,i4
+			len        ,i4
+			pos        ,i4
+			hldString  ,string
+		endrecord
+		proc
+			Tmp_Customer = structIn
+			f_Customer_id = Tmp_Customer.Customer_id
+			f_Name = %atrim(Tmp_Customer.Name)
+			f_Date_created = new DateTime(%DecToDateTime(Tmp_Customer.Date_created, "YYYYMMDD"))
+			f_Date_modified = new DateTime(%DecToDateTime(Tmp_Customer.Date_modified, "YYYYMMDD"))
+			f_Status = %atrim(Tmp_Customer.Status)
+			f_Replication_key = %atrim(Tmp_Customer.Replication_key)
+			f_Noname_001 = %atrim(Tmp_Customer.Noname_001)
+			mreturn
+		endmethod
+	endclass
+endnamespace

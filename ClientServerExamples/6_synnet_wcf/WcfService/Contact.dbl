@@ -1,0 +1,357 @@
+import System
+import System.Runtime.Serialization
+import System.ServiceModel
+
+namespace xfpldemo
+	
+	{DataContract}
+	public class Contact
+		
+		private	m_Contact_id			,int
+		private	m_Customer_id			,int
+		private	m_Address_id			,int
+		private	m_Salutation			,string
+		private	m_First_name			,string
+		private	m_Last_name				,string
+		private	m_Friendly_name			,string
+		private	m_Title					,string
+		private	m_Department			,string
+		private	m_Work_phone			,long
+		private	m_Work_extension		,int
+		private	m_Mobile_phone			,long
+		private	m_Home_phone			,long
+		private	m_Fax					,long
+		private	m_Web_site				,string
+		private	m_Email					,string
+		private	m_Picture_file			,string
+		private	m_Management_contact    ,boolean
+		private	m_Technical_contact		,boolean
+		private	m_Sales_contact			,boolean
+		private	m_Billing_contact		,boolean
+		private	m_General_contact		,boolean
+		
+		public method Contact
+			endparams
+		proc
+		endmethod
+		
+		public method Contact
+			required in a_contact, strContact
+			endparams
+		proc
+			loadContact(a_contact)
+		endmethod
+		
+		public property Record, strContact
+			method get
+			proc
+				mreturn unloadContact()
+			endmethod
+			method set
+			proc
+				loadContact(value)
+			endmethod
+		endproperty
+
+		private method loadContact, void
+			required in a_contact, strContact
+			endparams
+		proc
+			m_Contact_id		= a_contact.contact_id
+			m_Customer_id		= a_contact.customer_id
+			m_Address_id		= a_contact.address_id
+			m_Salutation		= a_contact.salutation
+			m_First_name		= a_contact.first_name
+			m_Last_name			= a_contact.last_name
+			m_Friendly_name		= a_contact.friendly_name
+			m_Title				= a_contact.title
+			m_Department		= a_contact.department
+			m_Work_phone		= a_contact.work_phone
+			m_Work_extension	= a_contact.work_extension
+			m_Mobile_phone		= a_contact.mobile_phone
+			m_Home_phone		= a_contact.home_phone
+			m_Fax				= a_contact.fax
+			m_Web_site			= a_contact.web_site
+			m_Email				= a_contact.email
+			m_Picture_file		= a_contact.picture_file
+			m_Management_contact= a_contact.management_contact
+			m_Technical_contact	= a_contact.technical_contact
+			m_Sales_contact		= a_contact.sales_contact
+			m_Billing_contact	= a_contact.billing_contact
+			m_General_contact	= a_contact.general_contact
+		endmethod
+		
+		private method unloadContact, strContact
+			endparams
+			record
+				tmpContact, strContact
+			endrecord
+		proc
+			tmpContact.contact_id			= m_Contact_id		
+			tmpContact.customer_id			= m_Customer_id		
+			tmpContact.address_id			= m_Address_id		
+			tmpContact.salutation			= m_Salutation		
+			tmpContact.first_name			= m_First_name		
+			tmpContact.last_name			= m_Last_name			
+			tmpContact.friendly_name		= m_Friendly_name		
+			tmpContact.title				= m_Title				
+			tmpContact.department			= m_Department		
+			tmpContact.work_phone			= m_Work_phone		
+			tmpContact.work_extension		= m_Work_extension	
+			tmpContact.mobile_phone			= m_Mobile_phone		
+			tmpContact.home_phone			= m_Home_phone		
+			tmpContact.fax					= m_Fax				
+			tmpContact.web_site				= m_Web_site			
+			tmpContact.email				= m_Email				
+			tmpContact.picture_file			= m_Picture_file		
+			tmpContact.management_contact	= m_Management_contact
+			tmpContact.technical_contact	= m_Technical_contact	
+			tmpContact.sales_contact		= m_Sales_contact		
+			tmpContact.billing_contact		= m_Billing_contact	
+			tmpContact.general_contact		= m_General_contact	
+			mreturn tmpContact
+		endmethod
+		
+
+		{DataMember}
+		public property Contact_id   ,int
+			method get
+			proc
+				mreturn m_contact_id
+			endmethod
+			method set
+			proc
+				m_contact_id = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Customer_id   ,int
+			method get
+			proc
+				mreturn m_customer_id
+			endmethod
+			method set
+			proc
+				m_customer_id = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Salutation   ,@String
+			method get
+			proc
+				mreturn atrim(m_salutation)
+			endmethod
+			method set
+			proc
+				m_salutation = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property First_name   ,@String
+			method get
+			proc
+				mreturn atrim(m_first_name)
+			endmethod
+			method set
+			proc
+				m_first_name = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Last_name   ,string
+			method get
+			proc
+				mreturn atrim(m_last_name)
+			endmethod
+			method set
+			proc
+				m_last_name = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Friendly_name   ,string
+			method get
+			proc
+				mreturn atrim(m_friendly_name)
+			endmethod
+			method set
+			proc
+				m_friendly_name = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Title   ,string
+			method get
+			proc
+				mreturn atrim(m_title)
+			endmethod
+			method set
+			proc
+				m_title = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Department   ,string
+			method get
+			proc
+				mreturn atrim(m_department)
+			endmethod
+			method set
+			proc
+				m_department = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Work_phone   ,long
+			method get
+			proc
+				mreturn m_work_phone
+			endmethod
+			method set
+			proc
+				m_work_phone = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Work_extension   ,int
+			method get
+			proc
+				mreturn m_work_extension
+			endmethod
+			method set
+			proc
+				m_work_extension = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Mobile_phone   ,long
+			method get
+			proc
+				mreturn m_mobile_phone
+			endmethod
+			method set
+			proc
+				m_mobile_phone = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Home_phone   ,long
+			method get
+			proc
+				mreturn m_home_phone
+			endmethod
+			method set
+			proc
+				m_home_phone = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Fax   ,long
+			method get
+			proc
+				mreturn m_fax
+			endmethod
+			method set
+			proc
+				m_fax = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Web_site   ,string
+			method get
+			proc
+				mreturn atrim(m_web_site)
+			endmethod
+			method set
+			proc
+				m_web_site = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Email   ,string
+			method get
+			proc
+				mreturn atrim(m_email)
+			endmethod
+			method set
+			proc
+				m_email = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Management_contact   ,boolean
+			method get
+			proc
+				mreturn m_management_contact
+			endmethod
+			method set
+			proc
+				m_management_contact = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Technical_contact   ,boolean
+			method get
+			proc
+				mreturn m_technical_contact
+			endmethod
+			method set
+			proc
+				m_technical_contact = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Sales_contact   ,boolean
+			method get
+			proc
+				mreturn m_sales_contact
+			endmethod
+			method set
+			proc
+				m_sales_contact = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property Billing_contact   ,boolean
+			method get
+			proc
+				mreturn m_billing_contact
+			endmethod
+			method set
+			proc
+				m_billing_contact = value
+			endmethod
+		endproperty
+		
+		{DataMember}
+		public property General_contact   ,boolean
+			method get
+			proc
+				mreturn m_general_contact
+			endmethod
+			method set
+			proc
+				m_general_contact = value
+			endmethod
+		endproperty
+		
+	endclass
+endnamespace

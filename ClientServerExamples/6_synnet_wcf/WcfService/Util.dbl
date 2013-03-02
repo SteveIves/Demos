@@ -1,0 +1,43 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+
+namespace xfpldemo
+
+	internal static class Util
+
+		internal static method D8toDateTime, DateTime
+			required in group a_date, d8
+				y	,d4
+				m	,d2
+				d	,d2
+			endgroup
+			endparams
+			record
+				dt, DateTime
+			endrecord
+		proc
+			mreturn new DateTime(integer(y),integer(m),integer(d))
+		endmethod
+		
+		internal static method DateTimeToD8, d8
+			required in dt, DateTime
+			endparams
+			record d8date
+				y	,d4
+				m	,d2
+				d	,d2
+			endrecord
+		proc
+			y = dt.Year
+			m = dt.Month
+			d = dt.Day
+			mreturn ^d(d8date)
+		endmethod
+
+	endclass
+
+endnamespace
+

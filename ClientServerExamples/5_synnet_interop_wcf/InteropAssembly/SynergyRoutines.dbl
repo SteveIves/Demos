@@ -1,0 +1,225 @@
+
+subroutine xfpl_log, resident
+	;
+	; Description:  Write to the log file
+	;
+	; Arguments:
+	in req a_text,	a				;Text to append to the log file
+	in  a_logmode,	n				;Optional logging mode
+proc
+	xreturn
+endsubroutine
+
+subroutine set_xfpl_timeout, resident
+	;
+	; Arguments:
+	in opt arg1,	n				; Minutes
+	in opt arg2,	n				; Seconds
+proc
+	xreturn
+endsubroutine
+
+function DateTimeToDec ,d
+	dt		,System.DateTime
+	fmt		,a14
+	endparams
+	record
+		rtn		,d14
+		val		,string
+	endrecord
+proc
+	rtn = 0
+	using fmt select
+	("YYYYMMDD"),
+	begin
+		val = dt.ToString("yyyyMMdd")
+		if (val.Equals("00010101"))
+			val = "00000000"
+	end
+	("YYYYMMDDHHMISS"),
+	begin
+		val = dt.ToString("yyyyMMddHHmmss")
+		if (val.Equals("00010101000000"))
+			val = "00000000000000"
+	end
+	("YYYYMMDDHHMMSS"),
+	begin
+		val = dt.ToString("yyyyMMddHHmmss")
+		if (val.Equals("00010101000000"))
+			val = "00000000000000"
+	end
+	("YYMMDD"),
+	begin
+		val = dt.ToString("yyMMdd")
+		if (val.Equals("010101"))
+			val = "000000"
+	end
+	("YYJJJ"),
+	begin
+		val = dt.ToString("yyMMdd")
+		val = val.Substring(0, 2)
+		if (dt.DayOfYear < 10) then
+			val = val + "00" + dt.DayOfYear.ToString()
+		else
+		begin
+			if (dt.DayOfYear < 100) then
+				val = val + "0" + dt.DayOfYear.ToString()
+			else
+				val = val + dt.DayOfYear.ToString()
+		end
+		if (val.Equals("01001"))
+			val = "00000"
+	end
+	("YYYYJJJ"),
+	begin
+		val = dt.ToString("yyyyMMdd")
+		val = val.Substring(0, 4)
+		if (dt.DayOfYear < 10) then
+			val = val + "00" + dt.DayOfYear.ToString()
+		else
+		begin
+			if (dt.DayOfYear < 100) then
+				val = val + "0" + dt.DayOfYear.ToString()
+			else
+				val = val + dt.DayOfYear.ToString()
+		end
+		if (val.Equals("0001001"))
+			val = "0000000"
+	end
+	("HHMM"),
+	begin
+		if (%size(%atrim(fmt)) .eq. 6) then
+			val = dt.ToString("HHmmss")
+		else
+			val = dt.ToString("HHmm")
+	end
+	endusing
+	rtn = val
+	freturn rtn
+end
+
+function DecToDateTime ,long
+	sdt			,d
+	fmt			,a14
+	endparams
+	record
+		rtn		,d14
+		val		,string
+		valstr	,string
+		dt		,System.Datetime
+		format	,@System.IFormatProvider
+		ticks	,long
+		yy		,int
+		mt		,int
+		dd		,int
+		jday	,double
+		hh		,int
+		mm		,int
+		ss		,int
+	endrecord
+proc
+	dt = new DateTime(1999, 4,12)
+	format = new System.Globalization.CultureInfo("en-US", true)
+	using fmt select
+	("YYYYMMDD"),
+	begin
+		valstr = %string(sdt,"XXXXXXXX")
+		if (valstr.Equals("00000000")) then
+		begin
+			dt = new DateTime()
+		end
+		else
+		begin
+			dt = DateTime.ParseExact(valstr,"yyyyMMdd",format)
+		end
+	end
+	("YYYYMMDDHHMISS"),
+	begin
+		valstr = %string(sdt,"XXXXXXXXXXXXXX")
+		yy = int.Parse(valstr.Substring(0,4))
+		mt = int.Parse(valstr.Substring(4,2))
+		dd = int.Parse(valstr.Substring(6,2))
+		hh = int.Parse(valstr.Substring(8,2))
+		mm = int.Parse(valstr.Substring(10,2))
+		ss = int.Parse(valstr.Substring(12,2))
+		dt = new DateTime(yy,mt,dd,hh,mm,ss)
+	end
+	("YYYYMMDDHHMMSS"),
+	begin
+		valstr = %string(sdt,"XXXXXXXXXXXXXX")
+		yy = int.Parse(valstr.Substring(0,4))
+		mt = int.Parse(valstr.Substring(4,2))
+		dd = int.Parse(valstr.Substring(6,2))
+		hh = int.Parse(valstr.Substring(8,2))
+		mm = int.Parse(valstr.Substring(10,2))
+		ss = int.Parse(valstr.Substring(12,2))
+		dt = new DateTime(yy,mt,dd,hh,mm,ss)
+	end
+	("YYMMDD"),
+	begin
+		valstr = %string(sdt,"XXXXXX")
+		if (valstr.Equals("000000")) then
+		begin
+			dt = new DateTime()
+		end
+		else
+		begin
+			if (valstr.Length == 5)
+				valstr = "0" + valstr
+			dt = DateTime.ParseExact(valstr,"yyMMdd",format)
+		end
+	end
+	("YYJJJ"),
+	begin
+		valstr = %string(sdt,"XXXXX")
+		yy = int.Parse(valstr.Substring(0,2))
+		if (yy <= 50) then
+			yy = yy + 2000
+		else
+			yy = yy + 1900
+		jday = double.Parse(valstr.Substring(2,3))
+		dt = new DateTime(yy,1,1)
+		dt.AddDays(jday-1)
+	end
+	("YYYYJJJ"),
+	begin
+		valstr = %string(sdt,"XXXXXXX")
+		if (valstr.Equals("0000000")) then
+		begin
+			dt = new DateTime()
+		end
+		else
+		begin
+			yy = int.Parse(valstr.Substring(0,4))
+			jday = double.Parse(valstr.Substring(4,3))
+			dt = new DateTime(yy,1,1)
+			dt.AddDays(jday-1)
+		end
+	end
+	("HHMM"),
+	begin
+		if (%size(%atrim(fmt)) .eq. 6) then
+		begin
+			valstr = %string(sdt,"XXXXXX")
+			dt = new DateTime()
+			hh = int.Parse(valstr.Substring(0,2))
+			mm = int.Parse(valstr.Substring(2,2))
+			ss = int.Parse(valstr.Substring(4,2))
+			dt = dt.AddHours(hh)
+			dt = dt.AddMinutes(mm)
+			dt = dt.AddSeconds(ss)
+		end
+		else
+		begin
+			valstr = %string(sdt,"XXXX")
+			dt = new DateTime()
+			hh = int.Parse(valstr.Substring(0,2))
+			mm = int.Parse(valstr.Substring(2,2))
+			dt = dt.AddHours(hh)
+			dt = dt.AddMinutes(mm)
+		end
+	end
+	endusing
+	ticks = dt.Ticks
+	freturn ticks
+end

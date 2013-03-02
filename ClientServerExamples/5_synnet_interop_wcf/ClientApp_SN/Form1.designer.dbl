@@ -1,0 +1,574 @@
+
+namespace ClientApp
+
+	public partial class Form1 extends System.Windows.Forms.Form
+
+		private colFriendlyName, @System.Windows.Forms.DataGridViewTextBoxColumn
+		private lblTitle, @System.Windows.Forms.Label
+		private txtWorkPhone, @System.Windows.Forms.TextBox
+		private lblHomePhone, @System.Windows.Forms.Label
+		private btnOK, @System.Windows.Forms.Button
+		private colName, @System.Windows.Forms.DataGridViewTextBoxColumn
+		private txtFax, @System.Windows.Forms.TextBox
+		private chkManagementContact, @System.Windows.Forms.CheckBox
+		private splitContainer1, @System.Windows.Forms.SplitContainer
+		private chkGeneralContact, @System.Windows.Forms.CheckBox
+		private panel1, @System.Windows.Forms.Panel
+		private txtTitle, @System.Windows.Forms.TextBox
+		private lblEmail, @System.Windows.Forms.Label
+		private lblFirstName, @System.Windows.Forms.Label
+		private txtHomePhone, @System.Windows.Forms.TextBox
+		private chkBillingContact, @System.Windows.Forms.CheckBox
+		private gridContacts, @System.Windows.Forms.DataGridView
+		private statusStrip1, @System.Windows.Forms.StatusStrip
+		private splitter1, @System.Windows.Forms.Splitter
+		private lblPrefix, @System.Windows.Forms.Label
+		private txtEmail, @System.Windows.Forms.TextBox
+		private txtFirstName, @System.Windows.Forms.TextBox
+		private btnCancel, @System.Windows.Forms.Button
+		private gridCustomers, @System.Windows.Forms.DataGridView
+		private lblMobilePhone, @System.Windows.Forms.Label
+		private lblWebSite, @System.Windows.Forms.Label
+		private chkTechnicalContact, @System.Windows.Forms.CheckBox
+		private lblFullName, @System.Windows.Forms.Label
+		private txtPrefix, @System.Windows.Forms.TextBox
+		private lblDepartment, @System.Windows.Forms.Label
+		private exitToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+		private lblLastName, @System.Windows.Forms.Label
+		private txtMobilePhone, @System.Windows.Forms.TextBox
+		private txtWebSite, @System.Windows.Forms.TextBox
+		private txtFullName, @System.Windows.Forms.TextBox
+		private txtDepartment, @System.Windows.Forms.TextBox
+		private fileToolStripMenuItem, @System.Windows.Forms.ToolStripMenuItem
+		private txtLastName, @System.Windows.Forms.TextBox
+		private lblWorkPhone, @System.Windows.Forms.Label
+		private menuStrip1, @System.Windows.Forms.MenuStrip
+		private lblFax, @System.Windows.Forms.Label
+		private chkSalesContact, @System.Windows.Forms.CheckBox
+
+		private method InitializeComponent, void
+			endparams
+		proc
+			begin
+				this.statusStrip1 = new System.Windows.Forms.StatusStrip()
+				this.menuStrip1 = new System.Windows.Forms.MenuStrip()
+				this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+				this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem()
+				this.panel1 = new System.Windows.Forms.Panel()
+				this.chkGeneralContact = new System.Windows.Forms.CheckBox()
+				this.chkBillingContact = new System.Windows.Forms.CheckBox()
+				this.chkSalesContact = new System.Windows.Forms.CheckBox()
+				this.chkTechnicalContact = new System.Windows.Forms.CheckBox()
+				this.chkManagementContact = new System.Windows.Forms.CheckBox()
+				this.lblEmail = new System.Windows.Forms.Label()
+				this.txtEmail = new System.Windows.Forms.TextBox()
+				this.lblWebSite = new System.Windows.Forms.Label()
+				this.txtWebSite = new System.Windows.Forms.TextBox()
+				this.lblFax = new System.Windows.Forms.Label()
+				this.txtFax = new System.Windows.Forms.TextBox()
+				this.lblHomePhone = new System.Windows.Forms.Label()
+				this.txtHomePhone = new System.Windows.Forms.TextBox()
+				this.lblMobilePhone = new System.Windows.Forms.Label()
+				this.txtMobilePhone = new System.Windows.Forms.TextBox()
+				this.lblWorkPhone = new System.Windows.Forms.Label()
+				this.txtWorkPhone = new System.Windows.Forms.TextBox()
+				this.txtDepartment = new System.Windows.Forms.TextBox()
+				this.lblDepartment = new System.Windows.Forms.Label()
+				this.lblTitle = new System.Windows.Forms.Label()
+				this.txtTitle = new System.Windows.Forms.TextBox()
+				this.txtPrefix = new System.Windows.Forms.TextBox()
+				this.lblPrefix = new System.Windows.Forms.Label()
+				this.btnCancel = new System.Windows.Forms.Button()
+				this.btnOK = new System.Windows.Forms.Button()
+				this.txtFullName = new System.Windows.Forms.TextBox()
+				this.txtLastName = new System.Windows.Forms.TextBox()
+				this.txtFirstName = new System.Windows.Forms.TextBox()
+				this.lblFullName = new System.Windows.Forms.Label()
+				this.lblLastName = new System.Windows.Forms.Label()
+				this.lblFirstName = new System.Windows.Forms.Label()
+				this.splitContainer1 = new System.Windows.Forms.SplitContainer()
+				this.gridCustomers = new System.Windows.Forms.DataGridView()
+				this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn()
+				this.splitter1 = new System.Windows.Forms.Splitter()
+				this.gridContacts = new System.Windows.Forms.DataGridView()
+				this.colFriendlyName = new System.Windows.Forms.DataGridViewTextBoxColumn()
+				this.menuStrip1.SuspendLayout()
+				this.panel1.SuspendLayout()
+				((System.ComponentModel.ISupportInitialize)this.splitContainer1).BeginInit()
+				this.splitContainer1.Panel1.SuspendLayout()
+				this.splitContainer1.Panel2.SuspendLayout()
+				this.splitContainer1.SuspendLayout()
+				((System.ComponentModel.ISupportInitialize)this.gridCustomers).BeginInit()
+				((System.ComponentModel.ISupportInitialize)this.gridContacts).BeginInit()
+				this.SuspendLayout()
+				;; 
+				;; statusStrip1
+				;; 
+				this.statusStrip1.Location = new System.Drawing.Point(0, 640)
+				this.statusStrip1.Name = ((string)"statusStrip1")
+				this.statusStrip1.Size = new System.Drawing.Size(884, 22)
+				this.statusStrip1.TabIndex = 8
+				this.statusStrip1.Text = ((string)"statusStrip1")
+				;; 
+				;; menuStrip1
+				;; 
+				this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[#] {this.fileToolStripMenuItem})
+				this.menuStrip1.Location = new System.Drawing.Point(0, 0)
+				this.menuStrip1.Name = ((string)"menuStrip1")
+				this.menuStrip1.Size = new System.Drawing.Size(884, 24)
+				this.menuStrip1.TabIndex = 11
+				this.menuStrip1.Text = ((string)"menuStrip1")
+				;; 
+				;; fileToolStripMenuItem
+				;; 
+				this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[#] {this.exitToolStripMenuItem})
+				this.fileToolStripMenuItem.Name = ((string)"fileToolStripMenuItem")
+				this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20)
+				this.fileToolStripMenuItem.Text = ((string)"&File")
+				;; 
+				;; exitToolStripMenuItem
+				;; 
+				this.exitToolStripMenuItem.Name = ((string)"exitToolStripMenuItem")
+				this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22)
+				this.exitToolStripMenuItem.Text = ((string)"E&xit")
+				addhandler(this.exitToolStripMenuItem.Click, exitToolStripMenuItem_Click)
+				;; 
+				;; panel1
+				;; 
+				this.panel1.Controls.Add(this.chkGeneralContact)
+				this.panel1.Controls.Add(this.chkBillingContact)
+				this.panel1.Controls.Add(this.chkSalesContact)
+				this.panel1.Controls.Add(this.chkTechnicalContact)
+				this.panel1.Controls.Add(this.chkManagementContact)
+				this.panel1.Controls.Add(this.lblEmail)
+				this.panel1.Controls.Add(this.txtEmail)
+				this.panel1.Controls.Add(this.lblWebSite)
+				this.panel1.Controls.Add(this.txtWebSite)
+				this.panel1.Controls.Add(this.lblFax)
+				this.panel1.Controls.Add(this.txtFax)
+				this.panel1.Controls.Add(this.lblHomePhone)
+				this.panel1.Controls.Add(this.txtHomePhone)
+				this.panel1.Controls.Add(this.lblMobilePhone)
+				this.panel1.Controls.Add(this.txtMobilePhone)
+				this.panel1.Controls.Add(this.lblWorkPhone)
+				this.panel1.Controls.Add(this.txtWorkPhone)
+				this.panel1.Controls.Add(this.txtDepartment)
+				this.panel1.Controls.Add(this.lblDepartment)
+				this.panel1.Controls.Add(this.lblTitle)
+				this.panel1.Controls.Add(this.txtTitle)
+				this.panel1.Controls.Add(this.txtPrefix)
+				this.panel1.Controls.Add(this.lblPrefix)
+				this.panel1.Controls.Add(this.btnCancel)
+				this.panel1.Controls.Add(this.btnOK)
+				this.panel1.Controls.Add(this.txtFullName)
+				this.panel1.Controls.Add(this.txtLastName)
+				this.panel1.Controls.Add(this.txtFirstName)
+				this.panel1.Controls.Add(this.lblFullName)
+				this.panel1.Controls.Add(this.lblLastName)
+				this.panel1.Controls.Add(this.lblFirstName)
+				this.panel1.Dock = System.Windows.Forms.DockStyle.Right
+				this.panel1.Location = new System.Drawing.Point(550, 24)
+				this.panel1.Name = ((string)"panel1")
+				this.panel1.Size = new System.Drawing.Size(334, 616)
+				this.panel1.TabIndex = 12
+				;; 
+				;; chkGeneralContact
+				;; 
+				this.chkGeneralContact.AutoSize = ((boolean)true)
+				this.chkGeneralContact.Location = new System.Drawing.Point(52, 389)
+				this.chkGeneralContact.Name = ((string)"chkGeneralContact")
+				this.chkGeneralContact.Size = new System.Drawing.Size(103, 17)
+				this.chkGeneralContact.TabIndex = 63
+				this.chkGeneralContact.Text = ((string)"General Contact")
+				this.chkGeneralContact.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.chkGeneralContact.CheckedChanged, fieldChanged)
+				;; 
+				;; chkBillingContact
+				;; 
+				this.chkBillingContact.AutoSize = ((boolean)true)
+				this.chkBillingContact.Location = new System.Drawing.Point(206, 366)
+				this.chkBillingContact.Name = ((string)"chkBillingContact")
+				this.chkBillingContact.Size = new System.Drawing.Size(93, 17)
+				this.chkBillingContact.TabIndex = 62
+				this.chkBillingContact.Text = ((string)"Billing Contact")
+				this.chkBillingContact.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.chkBillingContact.CheckedChanged, fieldChanged)
+				;; 
+				;; chkSalesContact
+				;; 
+				this.chkSalesContact.AutoSize = ((boolean)true)
+				this.chkSalesContact.Location = new System.Drawing.Point(52, 366)
+				this.chkSalesContact.Name = ((string)"chkSalesContact")
+				this.chkSalesContact.Size = new System.Drawing.Size(92, 17)
+				this.chkSalesContact.TabIndex = 61
+				this.chkSalesContact.Text = ((string)"Sales Contact")
+				this.chkSalesContact.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.chkSalesContact.CheckedChanged, fieldChanged)
+				;; 
+				;; chkTechnicalContact
+				;; 
+				this.chkTechnicalContact.AutoSize = ((boolean)true)
+				this.chkTechnicalContact.Location = new System.Drawing.Point(206, 343)
+				this.chkTechnicalContact.Name = ((string)"chkTechnicalContact")
+				this.chkTechnicalContact.Size = new System.Drawing.Size(113, 17)
+				this.chkTechnicalContact.TabIndex = 60
+				this.chkTechnicalContact.Text = ((string)"Technical Contact")
+				this.chkTechnicalContact.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.chkTechnicalContact.CheckedChanged, fieldChanged)
+				;; 
+				;; chkManagementContact
+				;; 
+				this.chkManagementContact.AutoSize = ((boolean)true)
+				this.chkManagementContact.Location = new System.Drawing.Point(52, 343)
+				this.chkManagementContact.Name = ((string)"chkManagementContact")
+				this.chkManagementContact.Size = new System.Drawing.Size(128, 17)
+				this.chkManagementContact.TabIndex = 59
+				this.chkManagementContact.Text = ((string)"Management Contact")
+				this.chkManagementContact.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.chkManagementContact.CheckedChanged, fieldChanged)
+				;; 
+				;; lblEmail
+				;; 
+				this.lblEmail.AutoSize = ((boolean)true)
+				this.lblEmail.Location = new System.Drawing.Point(21, 308)
+				this.lblEmail.Name = ((string)"lblEmail")
+				this.lblEmail.Size = new System.Drawing.Size(32, 13)
+				this.lblEmail.TabIndex = 58
+				this.lblEmail.Text = ((string)"Email")
+				;; 
+				;; txtEmail
+				;; 
+				this.txtEmail.Location = new System.Drawing.Point(108, 305)
+				this.txtEmail.MaxLength = 50
+				this.txtEmail.Name = ((string)"txtEmail")
+				this.txtEmail.Size = new System.Drawing.Size(211, 20)
+				this.txtEmail.TabIndex = 57
+				addhandler(this.txtEmail.TextChanged, fieldChanged)
+				;; 
+				;; lblWebSite
+				;; 
+				this.lblWebSite.AutoSize = ((boolean)true)
+				this.lblWebSite.Location = new System.Drawing.Point(21, 282)
+				this.lblWebSite.Name = ((string)"lblWebSite")
+				this.lblWebSite.Size = new System.Drawing.Size(51, 13)
+				this.lblWebSite.TabIndex = 56
+				this.lblWebSite.Text = ((string)"Web Site")
+				;; 
+				;; txtWebSite
+				;; 
+				this.txtWebSite.Location = new System.Drawing.Point(108, 279)
+				this.txtWebSite.MaxLength = 50
+				this.txtWebSite.Name = ((string)"txtWebSite")
+				this.txtWebSite.Size = new System.Drawing.Size(211, 20)
+				this.txtWebSite.TabIndex = 55
+				addhandler(this.txtWebSite.TextChanged, fieldChanged)
+				;; 
+				;; lblFax
+				;; 
+				this.lblFax.AutoSize = ((boolean)true)
+				this.lblFax.Location = new System.Drawing.Point(21, 256)
+				this.lblFax.Name = ((string)"lblFax")
+				this.lblFax.Size = new System.Drawing.Size(24, 13)
+				this.lblFax.TabIndex = 54
+				this.lblFax.Text = ((string)"Fax")
+				;; 
+				;; txtFax
+				;; 
+				this.txtFax.Location = new System.Drawing.Point(108, 253)
+				this.txtFax.MaxLength = 12
+				this.txtFax.Name = ((string)"txtFax")
+				this.txtFax.Size = new System.Drawing.Size(211, 20)
+				this.txtFax.TabIndex = 48
+				addhandler(this.txtFax.TextChanged, fieldChanged)
+				;; 
+				;; lblHomePhone
+				;; 
+				this.lblHomePhone.AutoSize = ((boolean)true)
+				this.lblHomePhone.Location = new System.Drawing.Point(21, 230)
+				this.lblHomePhone.Name = ((string)"lblHomePhone")
+				this.lblHomePhone.Size = new System.Drawing.Size(69, 13)
+				this.lblHomePhone.TabIndex = 53
+				this.lblHomePhone.Text = ((string)"Home Phone")
+				;; 
+				;; txtHomePhone
+				;; 
+				this.txtHomePhone.Location = new System.Drawing.Point(108, 227)
+				this.txtHomePhone.MaxLength = 12
+				this.txtHomePhone.Name = ((string)"txtHomePhone")
+				this.txtHomePhone.Size = new System.Drawing.Size(211, 20)
+				this.txtHomePhone.TabIndex = 47
+				addhandler(this.txtHomePhone.TextChanged, fieldChanged)
+				;; 
+				;; lblMobilePhone
+				;; 
+				this.lblMobilePhone.AutoSize = ((boolean)true)
+				this.lblMobilePhone.Location = new System.Drawing.Point(21, 204)
+				this.lblMobilePhone.Name = ((string)"lblMobilePhone")
+				this.lblMobilePhone.Size = new System.Drawing.Size(72, 13)
+				this.lblMobilePhone.TabIndex = 52
+				this.lblMobilePhone.Text = ((string)"Mobile Phone")
+				;; 
+				;; txtMobilePhone
+				;; 
+				this.txtMobilePhone.Location = new System.Drawing.Point(108, 201)
+				this.txtMobilePhone.MaxLength = 12
+				this.txtMobilePhone.Name = ((string)"txtMobilePhone")
+				this.txtMobilePhone.Size = new System.Drawing.Size(211, 20)
+				this.txtMobilePhone.TabIndex = 46
+				addhandler(this.txtMobilePhone.TextChanged, fieldChanged)
+				;; 
+				;; lblWorkPhone
+				;; 
+				this.lblWorkPhone.AutoSize = ((boolean)true)
+				this.lblWorkPhone.Location = new System.Drawing.Point(21, 178)
+				this.lblWorkPhone.Name = ((string)"lblWorkPhone")
+				this.lblWorkPhone.Size = new System.Drawing.Size(67, 13)
+				this.lblWorkPhone.TabIndex = 51
+				this.lblWorkPhone.Text = ((string)"Work Phone")
+				;; 
+				;; txtWorkPhone
+				;; 
+				this.txtWorkPhone.Location = new System.Drawing.Point(108, 175)
+				this.txtWorkPhone.MaxLength = 12
+				this.txtWorkPhone.Name = ((string)"txtWorkPhone")
+				this.txtWorkPhone.Size = new System.Drawing.Size(211, 20)
+				this.txtWorkPhone.TabIndex = 45
+				addhandler(this.txtWorkPhone.TextChanged, fieldChanged)
+				;; 
+				;; txtDepartment
+				;; 
+				this.txtDepartment.Location = new System.Drawing.Point(108, 149)
+				this.txtDepartment.MaxLength = 15
+				this.txtDepartment.Name = ((string)"txtDepartment")
+				this.txtDepartment.Size = new System.Drawing.Size(211, 20)
+				this.txtDepartment.TabIndex = 43
+				addhandler(this.txtDepartment.TextChanged, fieldChanged)
+				;; 
+				;; lblDepartment
+				;; 
+				this.lblDepartment.AutoSize = ((boolean)true)
+				this.lblDepartment.Location = new System.Drawing.Point(21, 152)
+				this.lblDepartment.Name = ((string)"lblDepartment")
+				this.lblDepartment.Size = new System.Drawing.Size(62, 13)
+				this.lblDepartment.TabIndex = 50
+				this.lblDepartment.Text = ((string)"Department")
+				;; 
+				;; lblTitle
+				;; 
+				this.lblTitle.AutoSize = ((boolean)true)
+				this.lblTitle.Location = new System.Drawing.Point(21, 126)
+				this.lblTitle.Name = ((string)"lblTitle")
+				this.lblTitle.Size = new System.Drawing.Size(27, 13)
+				this.lblTitle.TabIndex = 49
+				this.lblTitle.Text = ((string)"Title")
+				;; 
+				;; txtTitle
+				;; 
+				this.txtTitle.Location = new System.Drawing.Point(108, 123)
+				this.txtTitle.MaxLength = 25
+				this.txtTitle.Name = ((string)"txtTitle")
+				this.txtTitle.Size = new System.Drawing.Size(211, 20)
+				this.txtTitle.TabIndex = 42
+				addhandler(this.txtTitle.TextChanged, fieldChanged)
+				;; 
+				;; txtPrefix
+				;; 
+				this.txtPrefix.Location = new System.Drawing.Point(108, 97)
+				this.txtPrefix.MaxLength = 5
+				this.txtPrefix.Name = ((string)"txtPrefix")
+				this.txtPrefix.Size = new System.Drawing.Size(211, 20)
+				this.txtPrefix.TabIndex = 41
+				addhandler(this.txtPrefix.TextChanged, fieldChanged)
+				;; 
+				;; lblPrefix
+				;; 
+				this.lblPrefix.AutoSize = ((boolean)true)
+				this.lblPrefix.Location = new System.Drawing.Point(21, 100)
+				this.lblPrefix.Name = ((string)"lblPrefix")
+				this.lblPrefix.Size = new System.Drawing.Size(33, 13)
+				this.lblPrefix.TabIndex = 44
+				this.lblPrefix.Text = ((string)"Prefix")
+				;; 
+				;; btnCancel
+				;; 
+				this.btnCancel.Enabled = ((boolean)false)
+				this.btnCancel.Location = new System.Drawing.Point(244, 428)
+				this.btnCancel.Name = ((string)"btnCancel")
+				this.btnCancel.Size = new System.Drawing.Size(75, 23)
+				this.btnCancel.TabIndex = 7
+				this.btnCancel.Text = ((string)"&Cancel")
+				this.btnCancel.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.btnCancel.Click, btnCancel_Click)
+				;; 
+				;; btnOK
+				;; 
+				this.btnOK.Enabled = ((boolean)false)
+				this.btnOK.Location = new System.Drawing.Point(163, 428)
+				this.btnOK.Name = ((string)"btnOK")
+				this.btnOK.Size = new System.Drawing.Size(75, 23)
+				this.btnOK.TabIndex = 6
+				this.btnOK.Text = ((string)"&OK")
+				this.btnOK.UseVisualStyleBackColor = ((boolean)true)
+				addhandler(this.btnOK.Click, btnOK_Click)
+				;; 
+				;; txtFullName
+				;; 
+				this.txtFullName.Enabled = ((boolean)false)
+				this.txtFullName.Location = new System.Drawing.Point(108, 71)
+				this.txtFullName.Name = ((string)"txtFullName")
+				this.txtFullName.Size = new System.Drawing.Size(211, 20)
+				this.txtFullName.TabIndex = 5
+				addhandler(this.txtFullName.TextChanged, fieldChanged)
+				;; 
+				;; txtLastName
+				;; 
+				this.txtLastName.Location = new System.Drawing.Point(108, 45)
+				this.txtLastName.MaxLength = 30
+				this.txtLastName.Name = ((string)"txtLastName")
+				this.txtLastName.Size = new System.Drawing.Size(211, 20)
+				this.txtLastName.TabIndex = 4
+				addhandler(this.txtLastName.TextChanged, txtLastName_TextChanged)
+				;; 
+				;; txtFirstName
+				;; 
+				this.txtFirstName.Location = new System.Drawing.Point(108, 19)
+				this.txtFirstName.MaxLength = 30
+				this.txtFirstName.Name = ((string)"txtFirstName")
+				this.txtFirstName.Size = new System.Drawing.Size(211, 20)
+				this.txtFirstName.TabIndex = 3
+				addhandler(this.txtFirstName.TextChanged, txtFirstName_TextChanged)
+				;; 
+				;; lblFullName
+				;; 
+				this.lblFullName.AutoSize = ((boolean)true)
+				this.lblFullName.Location = new System.Drawing.Point(21, 74)
+				this.lblFullName.Name = ((string)"lblFullName")
+				this.lblFullName.Size = new System.Drawing.Size(54, 13)
+				this.lblFullName.TabIndex = 2
+				this.lblFullName.Text = ((string)"Full Name")
+				;; 
+				;; lblLastName
+				;; 
+				this.lblLastName.AutoSize = ((boolean)true)
+				this.lblLastName.Location = new System.Drawing.Point(21, 48)
+				this.lblLastName.Name = ((string)"lblLastName")
+				this.lblLastName.Size = new System.Drawing.Size(58, 13)
+				this.lblLastName.TabIndex = 1
+				this.lblLastName.Text = ((string)"Last Name")
+				;; 
+				;; lblFirstName
+				;; 
+				this.lblFirstName.AutoSize = ((boolean)true)
+				this.lblFirstName.Location = new System.Drawing.Point(21, 22)
+				this.lblFirstName.Name = ((string)"lblFirstName")
+				this.lblFirstName.Size = new System.Drawing.Size(57, 13)
+				this.lblFirstName.TabIndex = 0
+				this.lblFirstName.Text = ((string)"First Name")
+				;; 
+				;; splitContainer1
+				;; 
+				this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+				this.splitContainer1.Location = new System.Drawing.Point(0, 24)
+				this.splitContainer1.Name = ((string)"splitContainer1")
+				;; 
+				;; splitContainer1.Panel1
+				;; 
+				this.splitContainer1.Panel1.Controls.Add(this.gridCustomers)
+				;; 
+				;; splitContainer1.Panel2
+				;; 
+				this.splitContainer1.Panel2.Controls.Add(this.splitter1)
+				this.splitContainer1.Panel2.Controls.Add(this.gridContacts)
+				this.splitContainer1.Size = new System.Drawing.Size(550, 616)
+				this.splitContainer1.SplitterDistance = 241
+				this.splitContainer1.TabIndex = 13
+				;; 
+				;; gridCustomers
+				;; 
+				this.gridCustomers.AllowUserToAddRows = ((boolean)false)
+				this.gridCustomers.AllowUserToDeleteRows = ((boolean)false)
+				this.gridCustomers.AllowUserToResizeRows = ((boolean)false)
+				this.gridCustomers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+				this.gridCustomers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+				this.gridCustomers.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[#] {this.colName})
+				this.gridCustomers.Dock = System.Windows.Forms.DockStyle.Fill
+				this.gridCustomers.Location = new System.Drawing.Point(0, 0)
+				this.gridCustomers.MultiSelect = ((boolean)false)
+				this.gridCustomers.Name = ((string)"gridCustomers")
+				this.gridCustomers.ReadOnly = ((boolean)true)
+				this.gridCustomers.RowHeadersVisible = ((boolean)false)
+				this.gridCustomers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+				this.gridCustomers.Size = new System.Drawing.Size(241, 616)
+				this.gridCustomers.TabIndex = 0
+				addhandler(this.gridCustomers.RowEnter, gridCustomers_RowEnter)
+				;; 
+				;; colName
+				;; 
+				this.colName.DataPropertyName = ((string)"Name")
+				this.colName.HeaderText = ((string)"Customer Name")
+				this.colName.Name = ((string)"colName")
+				this.colName.ReadOnly = ((boolean)true)
+				;; 
+				;; splitter1
+				;; 
+				this.splitter1.Location = new System.Drawing.Point(0, 0)
+				this.splitter1.Name = ((string)"splitter1")
+				this.splitter1.Size = new System.Drawing.Size(3, 616)
+				this.splitter1.TabIndex = 1
+				this.splitter1.TabStop = ((boolean)false)
+				;; 
+				;; gridContacts
+				;; 
+				this.gridContacts.AllowUserToAddRows = ((boolean)false)
+				this.gridContacts.AllowUserToDeleteRows = ((boolean)false)
+				this.gridContacts.AllowUserToResizeRows = ((boolean)false)
+				this.gridContacts.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+				this.gridContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+				this.gridContacts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[#] {this.colFriendlyName})
+				this.gridContacts.Dock = System.Windows.Forms.DockStyle.Fill
+				this.gridContacts.Location = new System.Drawing.Point(0, 0)
+				this.gridContacts.MultiSelect = ((boolean)false)
+				this.gridContacts.Name = ((string)"gridContacts")
+				this.gridContacts.ReadOnly = ((boolean)true)
+				this.gridContacts.RowHeadersVisible = ((boolean)false)
+				this.gridContacts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+				this.gridContacts.Size = new System.Drawing.Size(305, 616)
+				this.gridContacts.TabIndex = 0
+				addhandler(this.gridContacts.RowEnter, gridContacts_RowEnter)
+				;; 
+				;; colFriendlyName
+				;; 
+				this.colFriendlyName.DataPropertyName = ((string)"Friendly_name")
+				this.colFriendlyName.HeaderText = ((string)"Contact Name")
+				this.colFriendlyName.Name = ((string)"colFriendlyName")
+				this.colFriendlyName.ReadOnly = ((boolean)true)
+				;; 
+				;; Form1
+				;; 
+				this.AutoScaleDimensions = new System.Drawing.SizeF(((float)6), ((float)13))
+				this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+				this.ClientSize = new System.Drawing.Size(884, 662)
+				this.Controls.Add(this.splitContainer1)
+				this.Controls.Add(this.panel1)
+				this.Controls.Add(this.menuStrip1)
+				this.Controls.Add(this.statusStrip1)
+				this.Name = ((string)"Form1")
+				this.Text = ((string)"Interop WCF Client Application (Synergy .NET)")
+				addhandler(this.Load, Form1_Load)
+				this.menuStrip1.ResumeLayout(((boolean)false))
+				this.menuStrip1.PerformLayout()
+				this.panel1.ResumeLayout(((boolean)false))
+				this.panel1.PerformLayout()
+				this.splitContainer1.Panel1.ResumeLayout(((boolean)false))
+				this.splitContainer1.Panel2.ResumeLayout(((boolean)false))
+				((System.ComponentModel.ISupportInitialize)this.splitContainer1).EndInit()
+				this.splitContainer1.ResumeLayout(((boolean)false))
+				((System.ComponentModel.ISupportInitialize)this.gridCustomers).EndInit()
+				((System.ComponentModel.ISupportInitialize)this.gridContacts).EndInit()
+				this.ResumeLayout(((boolean)false))
+				this.PerformLayout()
+			end
+		endmethod
+	endclass
+endnamespace
+
