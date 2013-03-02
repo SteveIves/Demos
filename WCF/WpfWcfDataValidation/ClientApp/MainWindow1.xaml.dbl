@@ -1,0 +1,45 @@
+import System
+import System.Collections
+import System.Collections.Generic
+import System.Diagnostics
+import System.Text
+import System.Windows
+import System.Windows.Controls
+import System.Windows.Data
+import System.Windows.Documents
+import System.Windows.Input
+import System.Windows.Shapes
+import System.Windows.Media
+import System.Windows.Media.Imaging
+import System.Windows.Navigation
+
+import ClientApp.ServiceReference1
+
+namespace ClientApp
+
+	public partial class MainWindow1 extends Window
+		
+		private data, @Person
+
+		public method MainWindow1
+			endparams
+		proc
+			this.InitializeComponent()
+		endmethod
+
+		private method Window_Loaded, void
+			sender, @object 
+			e, @System.Windows.RoutedEventArgs 
+			endparams
+		proc
+			data svc, @Service1Client
+			svc = new Service1Client()
+			data = svc.GetPerson()
+			svc.Close()
+			this.DataContext = data
+		endmethod
+
+	endclass
+
+endnamespace
+
