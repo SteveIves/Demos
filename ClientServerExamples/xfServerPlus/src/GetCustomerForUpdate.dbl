@@ -17,7 +17,7 @@ function GetCustomerForUpdate, METHOD_STATUS
     required out a_customer, strCustomer
 
     {xfParameter(name="GRFA",type=SynType.binaryhandle)}
-    required out a_grfa, i4
+    required out a_grfa, D_ADDR
 
     {xfParameter(name="Message")}
     required out a_message, string

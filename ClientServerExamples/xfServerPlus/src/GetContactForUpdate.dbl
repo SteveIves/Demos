@@ -21,7 +21,7 @@ function GetContactForUpdate, METHOD_STATUS
     required out a_contact, strContact
 
     {xfParameter(name="GRFA",type=SynType.binaryhandle)}
-    required out a_grfa, i4
+    required out a_grfa, D_ADDR
 
     {xfParameter(name="Message")}
     required out a_message, string

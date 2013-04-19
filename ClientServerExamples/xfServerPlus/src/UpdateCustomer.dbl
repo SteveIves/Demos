@@ -9,65 +9,65 @@
 
 function UpdateCustomer, METHOD_STATUS
 
-	{xfParameter(name="Customer")}
-	required inout a_customer, strCustomer
+    {xfParameter(name="Customer")}
+    required inout a_customer, strCustomer
 
-	{xfParameter(name="GRFA",type=SynType.binaryhandle)}
-	required inout a_grfa, i4
-	
-	{xfParameter(name="Message")}
-	required out a_message, string
+    {xfParameter(name="GRFA",type=SynType.binaryhandle)}
+    required inout a_grfa, D_ADDR
 
-	endparams
+    {xfParameter(name="Message")}
+    required out a_message, string
 
-	stack record local_data
-		ch			,int
-		sts			,METHOD_STATUS
-		tmpCustomer	,strCustomer
-		tmpGRFA		,a10
-	endrecord
+    endparams
+
+    stack record local_data
+        ch          ,int
+        sts         ,METHOD_STATUS
+        tmpCustomer ,strCustomer
+        tmpGRFA     ,a10
+    endrecord
 
 proc
-	
-	init local_data
 
-	try
-	begin
-		open(ch=syn_freechn(),u:i,"DAT:customer.ism")
+    init local_data
 
-		;;Use the original GRFA to lock the record
-		read(ch,tmpCustomer,,RFA:^m(a_grfa),GETRFA:tmpGRFA)
+    try
+    begin
+        open(ch=syn_freechn(),u:i,"DAT:customer.ism")
 
-		;;Update the record and get the new gRFA
-		write(ch,a_customer,,GETRFA:^m(a_grfa))
+        ;;Use the original GRFA to lock the record
+        read(ch,tmpCustomer,,RFA:^m(a_grfa),GETRFA:tmpGRFA)
 
-		;;Good to go!
-		sts = METHOD_STATUS.SUCCESS
-	end
-	catch (ex, @RecordNotSameException)
-	begin
-		;;Failed to lock the original record, it must have been changed
-		;;by another process since this user obtained it. We'll return
-		;;the new customer record and it's GRFA to the user
-		a_customer = tmpCustomer
-		^m(a_grfa) = tmpGRFA
-		sts = METHOD_STATUS.INFO_ERROR
-		a_message = "The record has been changed by another user!"
-	end
-	catch (ex)
-	begin
-		clear a_customer, ^m(a_grfa)
-		sts = METHOD_STATUS.FATAL_ERROR
-		a_message = "A fatal error occurred!"
-	end
-	finally
-	begin
-		if (ch&&chopen(ch))
-			close ch		
-	end
-	endtry
+        ;;Update the record and get the new gRFA
+        write(ch,a_customer,,GETRFA:^m(a_grfa))
 
-	freturn sts
-	
+        ;;Good to go!
+        sts = METHOD_STATUS.SUCCESS
+    end
+    catch (ex, @RecordNotSameException)
+    begin
+        ;;Failed to lock the original record, it must have been changed
+        ;;by another process since this user obtained it. We'll return
+        ;;the new customer record and it's GRFA to the user
+        a_customer = tmpCustomer
+        ^m(a_grfa) = tmpGRFA
+        sts = METHOD_STATUS.INFO_ERROR
+        a_message = "The record has been changed by another user!"
+    end
+    catch (ex)
+    begin
+        clear a_customer, ^m(a_grfa)
+        sts = METHOD_STATUS.FATAL_ERROR
+        a_message = "A fatal error occurred!"
+    end
+    finally
+    begin
+        if (ch&&chopen(ch))
+            close ch
+    end
+    endtry
+
+    freturn sts
+
 endfunction
 
