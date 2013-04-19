@@ -1,0 +1,34 @@
+!	Synergy ISAM XDL File created Wed Feb 15 23:46:07 2012
+FILE
+	NAME		"invgrp.ism"
+	ADDRESSING	32
+	NETWORK_ENCRYPT	no
+	KEYS		1
+
+RECORD
+	SIZE		50
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Shared index cache allowed
+	!Creation version 9.1.5b 
+	!File created on Tue Sep 15 11:13:27 2009
+	!Last re-indexed on Tue Sep 15 11:13:27 2009
+	!10 byte longest key
+	!0 free index blocks, 0x0 free list head
+	!10 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1
+	LENGTH		10
+	TYPE		alpha
+	ORDER		ascending
+	NAME		"group"
+	DUPLICATES	no
+	MODIFIABLE	no
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 36
