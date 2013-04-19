@@ -30,7 +30,7 @@
 ;*******************************************************************************
 ;Configure appropriate values for your database in this section
 ;
-.define DB_CONSTR   "VTX12_SQLNATIVE://SqlUpload/.\\SQLEXPRESS///Trusted_connection=yes"
+.define DB_CONSTR   "VTX12_SQLNATIVE://SqlUpload/.///Trusted_connection=yes"
 ;
 ;*******************************************************************************
 
