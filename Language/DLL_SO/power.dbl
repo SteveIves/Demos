@@ -1,4 +1,4 @@
-.main power
+main power
 
 record
     dll     ,D_ADDR
@@ -6,10 +6,11 @@ record
     xval    ,d4.1  ,10.2
     yval    ,d4.1  ,2.1
     result  ,d10.6
+
 .define tt 1
 .define power(a,b,c) dll_call(dll,DLL_TYPE_DBLCALL,"power",a,b,c)
 
-.proc
+proc
 
     open(tt,o,"tt:")
     xcall flags(7004020,1)
@@ -27,14 +28,20 @@ record
 
     xcall dll_close(dll)
 
+    begin
+        data tmpchr, a1
+        display(tt,13,10,"Press a key: ")
+        accept(tt,tmpchr)
+    end
+
     close tt
     stop
 
-.end
+endmain
 
-.subroutine sub1
-    a_result    ,n
-.proc
-    writes(tt, "DBL: Called from C, result is " + %string(a_result))
-    xreturn
-.end
+;subroutine sub1
+;    a_result    ,n
+;proc
+;    writes(tt, "DBL: Called from C, result is " + %string(a_result))
+;    xreturn
+;endsubroutine
