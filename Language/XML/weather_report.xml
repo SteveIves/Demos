@@ -1,10 +1,10 @@
 <?xml version='1.0'?>
-<WeatherReport date="20111212" time="112537" zone="PST">
+<WeatherReport date="20130419" time="105302" zone="PST">
   <Location>Sacramento, CA</Location>
-  <Temperature unit="farenheit">37</Temperature>
+  <Temperature unit="farenheit">105</Temperature>
   <Humidity unit="percent">25</Humidity>
   <Wind>
-    <Speed unit="mph">6</Speed>
-    <Direction>NE</Direction>
+    <Speed unit="mph">4</Speed>
+    <Direction>SE</Direction>
   </Wind>
 </WeatherReport>
