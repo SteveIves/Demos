@@ -33,6 +33,7 @@
     <ResourceType>Icon</ResourceType>
     <ResourceName />
     <TargetPlatform>v4</TargetPlatform>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
