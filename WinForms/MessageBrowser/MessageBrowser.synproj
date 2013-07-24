@@ -16,7 +16,6 @@
     <DBL_qWarn>True</DBL_qWarn>
     <DBLCmdOptions> -W3</DBLCmdOptions>
     <StartupObject>(Not set)</StartupObject>
-    <ApplicationIcon>(Default icon)</ApplicationIcon>
     <ResourceType>Icon</ResourceType>
     <SccProjectName>
     </SccProjectName>
