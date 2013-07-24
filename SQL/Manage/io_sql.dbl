@@ -50,7 +50,8 @@ stack record options        ;Database options
         if (sts=%ssc_init(iddb_channel=1,D_MAX_CUR,D_MAX_COL,D_BUFSIZ)
         &   .ne. SSQL_NORMAL) exit
 
-        connect_string="VTX12_SQLNATIVE://SqlManagement/.\\SQLEXPRESS///Trusted_connection=yes"
+        ;connect_string="VTX12_SQLNATIVE://SqlManagement/.\\SQLEXPRESS///Trusted_connection=yes"
+        connect_string="VTX12_SQLNATIVE://SqlManagement/.///Trusted_connection=yes"
 
         if (sts=%ssc_connect(iddb_channel,connect_string)
         &   .ne. SSQL_NORMAL) exit

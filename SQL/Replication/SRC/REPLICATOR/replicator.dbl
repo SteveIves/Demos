@@ -23,7 +23,8 @@ main Replicator
     ;Local system using SQL Native Driver (SQL Server 2008)
     ;                                   user              password            dbname         machine
     ;.define DB_CONSTR "VTX12_SQLNATIVE:ReplicationServer/ReplicationPassword/SqlReplication/LOCALHOST"
-    .define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.\\SQLEXPRESS///Trusted_connection=yes"
+    ;.define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.\\SQLEXPRESS///Trusted_connection=yes"
+	.define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.///Trusted_connection=yes"
     ;
     ;Steves PC from Steves Personal Alpha, using the ODBC driver and a DSN
     ;                       user              password            dsn            machine
