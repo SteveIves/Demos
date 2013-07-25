@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebVb", "..\WebVb", "{F0488B00-4BBA-4E91-9613-5B2EFB01A782}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
+		Debug.AspNetCompiler.VirtualPath = "/WebVb"
+		Debug.AspNetCompiler.PhysicalPath = "..\WebVb\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\WebVb\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/WebVb"
+		Release.AspNetCompiler.PhysicalPath = "..\WebVb\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\WebVb\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "2218"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0488B00-4BBA-4E91-9613-5B2EFB01A782}.Debug|.NET.ActiveCfg = Debug|.NET
+		{F0488B00-4BBA-4E91-9613-5B2EFB01A782}.Debug|.NET.Build.0 = Debug|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,80 @@
+;*******************************************************************************
+;
+; Title:        GetOrders.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of order records for a specific customer
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function GetOrders, ^VAL
+
+    required in a_customer, a
+    required inout a_mh, int
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    .include "order_header" repository, structure = "header"
+
+    stack record local_data
+        allocated       ,int
+        used            ,int
+    endrecord
+
+.proc
+
+    init local_data
+
+    ;Make sure we have at least one order for this customer
+    if (%io(IO_FIND,idf_order,1,,a_customer,IO_PARTIAL)==IO_OK)
+    begin
+
+        repeat
+        begin
+
+            ;Resize memory if necessary
+            if (used==allocated) 
+                a_mh=%mem_proc(DM_RESIZ+DM_BLANK,^size(header)*(allocated+=10),a_mh)
+
+            if ((%io(IO_READS,idf_order,,^m(header[used+=1],a_mh))!=IO_OK)
+            &   || (^m(header[used].customer,a_mh)!=a_customer))
+            begin
+                used-=1
+                exitloop
+            end
+
+        end
+
+        ;Resize memory handle to exact number of rows to return
+        a_mh=%mem_proc(DM_RESIZ+DM_BLANK,^size(header)*used,a_mh)
+
+    end
+
+    freturn used
+
+endfunction
+

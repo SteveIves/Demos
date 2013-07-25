@@ -1,0 +1,156 @@
+.igg_RedPlanetControl
+{
+	font-size:11px;
+	font-family: Verdana;
+	border:solid 1px #696969;
+}
+
+
+tbody.igg_RedPlanetItem tr td
+{
+	background-repeat:repeat-x;
+	background-position:bottom ;
+	background-image: url(images/igg_item.gif);
+	border-top:solid 1px #D8D8D8;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+	overflow:hidden;
+}
+
+
+tbody tr.igg_RedPlanetAlt td
+{
+	background-color:White;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+}
+
+
+.igg_RedPlanetHeader
+{
+	background-repeat:repeat-x;
+	background-image: url(images/igg_header.gif);
+	height: 40px;
+	color:White;
+}
+
+
+.igg_RedPlanetHeaderCaption
+{
+	padding-left:8px;
+	text-align:left;
+	overflow:hidden;
+}
+
+
+.igg_RedPlanetFooter
+{
+	background-color:Transparent;
+	height: 20px;
+}
+
+
+.igg_RedPlanetFooterCaption
+{
+	overflow:hidden;
+}
+
+
+.igg_RedPlanetPager
+{
+	background-repeat:repeat-x;
+	background-image: url(images/igg_footer.gif);
+	padding-right:10px;
+	padding-bottom:10px;
+	text-align:right;
+}
+
+
+.igg_RedPlanetPageLink
+{
+	margin-right:10px;
+	cursor:hand;
+	color:DimGray;
+	text-decoration:underline;
+}
+
+
+.igg_RedPlanetPageCurrent
+{
+	margin-right:10px;
+}
+
+
+.igg_RedPlanetEditCell
+{
+}
+
+
+.igg_RedPlanetActiveRow
+{
+}
+
+
+.igg_RedPlanetActiveColumn
+{
+}
+
+
+.igg_RedPlanetScrollbarIntersection
+{
+}
+
+
+.igg_RedPlanetSelectedRowSelector
+{
+}
+
+
+.igg_RedPlanetSelectedRowSelectorImage
+{
+}
+
+
+.igg_RedPlanetSelectedHeader
+{
+}
+
+
+tbody tr td.igg_RedPlanetActiveCell
+{
+}
+
+
+.igg_RedPlanetActiveRowSelectorImage
+{
+}
+
+
+.igg_RedPlanetRowSelector
+{
+	padding-top:1px;
+	width: 35px;
+	color:Black;
+	vertical-align:middle;
+}
+
+
+.igg_RedPlanetHeaderRowSelector
+{
+}
+
+
+.igg_RedPlanetFooterRowSelector
+{
+}
+
+
+tbody tr td.igg_RedPlanetSelectedCell
+{
+	background-image: url(images/igg_selected.gif);
+	color:White;
+}
+
+

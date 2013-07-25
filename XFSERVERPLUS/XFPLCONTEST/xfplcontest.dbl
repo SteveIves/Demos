@@ -1,0 +1,128 @@
+.main xfplcontest
+
+.include "DBLDIR:rxapi.def"
+
+record
+	.include "DBLDIR:rxerr.def"
+
+
+.align
+record
+	connection			,[1000]i4
+	count				,i4
+	status				,i4
+	current_connections	,i4
+	concount			,d3
+	ipaddress			,a20
+	ipport				,d5
+	timeout				,d3
+	tmpa				,a20
+
+.proc
+
+	open(1,i,"tt:")
+	xcall flags(7004020,1)
+
+	display(1,$scr_pos(2,1),"Press ENTER for default values")
+
+	;Get host name or IP address
+
+	display(1,$scr_pos(4,1),"Server host  [localhost]: ")
+	reads(1,ipaddress)
+	if (.not.ipaddress)
+	begin
+		display(1,$scr_pos(4,1),"Server host  [localhost]: localhost")
+		ipaddress = "localhost"
+	end
+
+	;Get port number
+
+ivport,
+	
+	display(1,$scr_pos(5,1),$scr_clr(eol),"Server port       [2356]: ")
+	reads(1,tmpa)
+	onerror ivport
+	ipport = tmpa
+	offerror
+	if (.not.ipport)
+	begin
+		display(1,$scr_pos(5,1),$scr_clr(eol),"Server port       [2356]: 2356")
+		ipport=2356
+	end
+
+	;Get connection timeout
+
+ivtmo,
+	
+	display(1,$scr_pos(6,1),$scr_clr(eol),"Connect timeout      [5]: ")
+	reads(1,tmpa)
+	onerror ivtmo
+	timeout = tmpa
+	offerror
+	if (.not.timeout) 
+	begin
+		display(1,$scr_pos(6,1),$scr_clr(eol),"Connect timeout      [5]: 5")
+		timeout = 5
+	end
+
+	;Process connections
+
+	display(1,$scr_pos(7,1))
+	clear tmpa
+
+
+	repeat
+	begin
+
+notnum,	if ((tmpa.eq."D") .or. (tmpa.eq."d"))
+			exitloop
+
+		display(1,13,10,"There are " + %string(current_connections) + " connections.")
+
+		display(1,13,10,"Connect how many sessions (D to disconnect) ? ")
+		reads(1,tmpa)
+
+		onerror notnum
+		concount = tmpa
+		offerror
+
+		if (concount) 
+		begin
+			writes(1,"Attempting to connect " + %string(concount) + " sessions...")
+
+			for count from 1 thru concount
+			begin
+				status = %rx_start_remote(connection[current_connections+=1],ipaddress,ipport,,timeout)
+				if (status.eq.RX_SUCCESS) then
+					writes(1,"Connected session " + %string(current_connections))
+				else
+				begin
+					current_connections-=1
+					writes(1,"Session " + %string(count) + " failed with status " + %string(status))
+					writes(1," -- System error " + %string(%syserr))
+				end
+
+			end
+		end
+	end
+
+	;Disconnect sessions before exiting
+
+	writes(1,"")
+
+	if (current_connections) 
+	begin
+		for count from 1 thru current_connections
+		begin
+			writes(1,"Disconnecting session " + %string(count))
+			xcall rx_shutdown_remote(connection[count])
+		end
+
+		display(1,13,10,"Press a key to exit: ")
+		accept(1,tmpa)
+	end
+
+	close 1
+	stop
+
+.end

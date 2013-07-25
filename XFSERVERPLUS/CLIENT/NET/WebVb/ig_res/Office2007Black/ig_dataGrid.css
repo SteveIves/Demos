@@ -1,0 +1,159 @@
+.igg_Office2007BlackControl
+{
+	background-color:#454545;
+	background-repeat:repeat-x;
+	font-size:11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border:solid 1px #3B5A82;
+}
+
+
+tbody.igg_Office2007BlackItem tr td
+{
+	background-color:#FCFCFC;
+	border-top:solid 1px #D8D8D8;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+	overflow:hidden;
+}
+
+
+tbody tr.igg_Office2007BlackAlt td
+{
+	background-color:#EAECF5;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007BlackHeader
+{
+	background-color:#D2D2D2;
+	background-image: url(images/igg_header.gif);
+	height: 40px;
+	color:WhiteSmoke;
+}
+
+
+.igg_Office2007BlackHeaderCaption
+{
+	border-top-width:0px;
+	padding-left:8px;
+	text-align:left;
+	overflow:hidden;
+}
+
+
+.igg_Office2007BlackFooter
+{
+	background-image: url(images/igg_footer.gif);
+	border-top:solid 1px #15428B;
+	height: 20px;
+}
+
+
+.igg_Office2007BlackFooterCaption
+{
+	overflow:hidden;
+}
+
+
+.igg_Office2007BlackPager
+{
+	padding-top:10px;
+	padding-bottom:10px;
+	text-align:right;
+}
+
+
+.igg_Office2007BlackPageLink
+{
+	margin-right:10px;
+	cursor:hand;
+	color:#C3C3C3;
+	text-decoration:underline;
+}
+
+
+.igg_Office2007BlackPageCurrent
+{
+	font-weight:bold;
+	padding-right:10px;
+	color:White;
+}
+
+
+.igg_Office2007BlackEditCell
+{
+}
+
+
+.igg_Office2007BlackActiveRow
+{
+}
+
+
+.igg_Office2007BlackActiveColumn
+{
+}
+
+
+.igg_Office2007BlackScrollbarIntersection
+{
+}
+
+
+.igg_Office2007BlackSelectedRowSelector
+{
+}
+
+
+.igg_Office2007BlackSelectedRowSelectorImage
+{
+}
+
+
+.igg_Office2007BlackSelectedHeader
+{
+}
+
+
+tbody tr td.igg_Office2007BlackActiveCell
+{
+}
+
+
+.igg_Office2007BlackActiveRowSelectorImage
+{
+}
+
+
+.igg_Office2007BlackRowSelector
+{
+	padding-top:1px;
+	width: 35px;
+	color:Black;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007BlackHeaderRowSelector
+{
+}
+
+
+.igg_Office2007BlackFooterRowSelector
+{
+}
+
+
+tbody tr td.igg_Office2007BlackSelectedCell
+{
+	background-color:White;
+	border:solid 2px DimGray;
+	color:White;
+}
+
+

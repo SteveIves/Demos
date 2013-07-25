@@ -1,0 +1,51 @@
+;*******************************************************************************
+;
+; Title:        DownloadFile.dbl
+;
+; Type:         Method
+;
+; Description:  Downloads a named local file to the client
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function DownloadFile ,^val
+
+    required in a_file, a                        ;File name to load
+    required out a_mh, int                       ;Memory handle
+    endparams
+
+    stack record ivars
+        retval, int
+    endrecord
+
+proc
+
+    clear ^i(ivars)
+
+    retval = %FileToHandle(a_file,a_mh)
+
+    freturn retval
+
+endfunction
+

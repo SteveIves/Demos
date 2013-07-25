@@ -1,0 +1,68 @@
+;*******************************************************************************
+;
+; Title:        GetAllProductsV8.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of all product records via dynamic memory.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+    .function GetAllProductsV8, ^VAL
+    
+        Products    ,i4     ;Returned collection
+    
+        .include "INC:remote.def"
+        .include "INC:io.def"
+        .include "product" repository, structure="strProduct"
+        .include "product" repository, stack record="Product"
+    
+        stack record localIntData
+            arraySize   ,i4
+            arrayCount  ,i4
+        endrecord
+        
+    .proc
+    
+        clear ^i(localIntData)
+        if (%io(IO_FIRST,idf_product,1)==IO_OK)
+        begin
+            while (%io(IO_READS,idf_product,,Product)==IO_OK)
+            begin
+                if (arrayCount==arraySize)
+                begin
+                    arraySize+=100
+                    Products = %mem_proc(DM_RESIZ,^size(strProduct)*(arraySize),Products)
+                end
+                incr arrayCount
+                ^m(strProduct[arrayCount],Products) = Product
+            end
+            if (arrayCount<arraySize)
+                Products = %mem_proc(DM_RESIZ,^size(strProduct)*(arrayCount),Products)
+        end
+    
+        freturn arrayCount
+    
+    .end
+

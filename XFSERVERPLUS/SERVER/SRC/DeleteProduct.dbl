@@ -1,0 +1,93 @@
+;*******************************************************************************
+;
+; Title:        DeleteProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Deletes a specific product record
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+.include "product" repository, structure="strProduct", end
+
+function DeleteProduct, ^VAL
+
+    required inout a_product, strProduct
+    required out a_errtxt, a
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    .include "product" repository, stack record="product"
+
+    stack record
+        retval, int
+    endrecord
+
+proc
+            
+    clear retval
+    
+    if (^passed(a_errtxt))
+        clear a_errtxt
+    
+    if (%io(IO_READ,idf_product,0,product,a_product.sku,,1)==IO_OK) then
+    begin
+        if (product==a_product) then
+        begin
+            if (%io(IO_DELETE,idf_group)==IO_OK) then
+            begin
+                if (^passed(a_errtxt))
+                    a_errtxt = "Product has been deleted."
+                clear a_product
+            end
+            else
+            begin
+                retval=3
+                if (^passed(a_errtxt))
+                    a_errtxt = "Failed to delete product."
+            end
+
+        end
+        else
+        begin
+            unlock idf_product
+            retval=2
+            if (^passed(a_errtxt))
+                a_errtxt = "Product has been changed by another user!"
+            a_product = product
+        end
+            
+    end
+    else
+    begin
+        retval=1
+        if (^passed(a_errtxt))
+            a_errtxt = "Failed to lock product prior to deletion!"
+    end
+
+    freturn retval
+
+endfunction

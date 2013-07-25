@@ -1,0 +1,18 @@
+[COMPONENT INFORMATION]
+Component_Name=xfpldemo
+Component_Directory=D:\Dev\Demos\XFSERVERPLUS\COMPONENT\JAVA
+Generate_Javadoc=1
+Use_Alternate_Field_Names=0
+Repository_Main_File=D:\Dev\Demos\XFSERVERPLUS\SERVER\RPS\rpsmain.ism
+Repository_Text_File=D:\Dev\Demos\XFSERVERPLUS\SERVER\RPS\rpstext.ism
+Error_Tag=
+SMC_Directory=D:\Dev\Demos\XFSERVERPLUS\SERVER\XFPL
+Package_Name=xfpldemo
+
+[GLOBAL]
+syn_version=6
+Synergy=JAVA
+
+[SMC Interfaces]
+Interface_0=utils:
+

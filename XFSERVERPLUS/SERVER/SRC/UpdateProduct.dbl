@@ -1,0 +1,62 @@
+;*******************************************************************************
+;
+; Title:        UpdateProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Locks and updates a product record.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+.include "product" repository, structure="strProduct", end
+
+function UpdateProduct, ^VAL
+
+    required in a_product, strProduct
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    .include "product" repository, stack record="product"
+
+    stack record
+        retval, int                              ;Function return value
+    endrecord
+
+proc
+
+    clear retval
+
+    if (%io(IO_READ,idf_product,0,product,,,1).ne.IO_OK) then
+        retval=1                                 ;Failed to read/lock product
+    else
+    begin
+        if (%io(IO_WRITE,idf_product,,a_product).ne.IO_OK)
+            retval=2                             ;Failed to update product
+    end
+
+    freturn retval
+
+endfunction

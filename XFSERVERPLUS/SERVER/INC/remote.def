@@ -1,0 +1,24 @@
+
+.ifdef REMOTE_DATA_INIT
+global data section REMOTE_DATA, INIT
+.undefine REMOTE_DATA_INIT
+.else
+global data section REMOTE_DATA
+.endc
+
+record
+	idf_user		,i4
+	idf_customer	,i4
+	idf_group		,i4
+	idf_product		,i4
+	idf_order		,i4
+	idf_orderline	,i4
+
+	;Dynamic memory used to propagate date between paired methods
+	
+	mh				,i4		;Dynamic memory handle
+	ms				,i4		;Size of dynamic memory array (items)
+	mc				,i4		;Number of items currently occupied
+
+endglobal
+

@@ -1,0 +1,90 @@
+!	Synergy ISAM XDL File created Mon Jun 22 20:06:45 2009
+FILE
+	NAME		"order.ism"
+	ADDRESSING	32
+	KEYS		5
+
+RECORD
+	SIZE		200
+	FORMAT		fixed
+	COMPRESS_DATA	no
+	STATIC_RFA	no
+
+	!5ca5 magic, revision 4, 1 byte record overhead
+	!Shared index cache allowed
+	!Creation version 9.1.2f 
+	!File created on Tue Jan 29 17:37:53 2008
+	!Last cleared on Mon Dec 01 15:36:35 2008
+	!36 byte longest key
+	!2 free index blocks, 0x3c00 free list head
+	!61 records, 0 free
+
+KEY 0
+	!Primary key
+	START		1
+	LENGTH		8
+	TYPE		alpha
+	ORDER		ascending
+	NAME		"A0_ORDER"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x800, index depth 1
+	!Minimum keys per block 42
+
+KEY 1
+	!Alternate key #1
+	START		26:17:1
+	LENGTH		8:1:8
+	TYPE		alpha:alpha:alpha
+	ORDER		ascending:ascending:ascending
+	NAME		"A1_CUSTOMER"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x2c00, index depth 2
+	!Minimum keys per block 24
+
+KEY 2
+	!Alternate key #2
+	START		17:1
+	LENGTH		1:8
+	TYPE		alpha:alpha
+	ORDER		ascending:ascending
+	NAME		"A2_STATUS"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x1000, index depth 1
+	!Minimum keys per block 39
+
+KEY 3
+	!Alternate key #3
+	START		26:42:1
+	LENGTH		8:20:8
+	TYPE		alpha:alpha:alpha
+	ORDER		ascending:ascending:ascending
+	NAME		"A3_CUSREF"
+	DUPLICATES	no
+	MODIFIABLE	no
+	DENSITY		50
+
+	!Root 0x1c00, index depth 2
+	!Minimum keys per block 12
+
+KEY 4
+	!Alternate key #4
+	START		26:9:1
+	LENGTH		8:8:8
+	TYPE		alpha:alpha:alpha
+	ORDER		ascending:ascending:ascending
+	NAME		"A4_CUSTOMER_DAT"
+	DUPLICATES	no
+	MODIFIABLE	yes
+	DENSITY		50
+
+	!Root 0x2400, index depth 2
+	!Minimum keys per block 18

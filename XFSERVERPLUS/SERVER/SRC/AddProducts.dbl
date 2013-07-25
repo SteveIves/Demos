@@ -1,0 +1,59 @@
+;*******************************************************************************
+;
+; Title:        AddProducts.dbl
+;
+; Type:         Method
+;
+; Description:  Creates multiple new products
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+.include "product_group" repository, structure="strProductGroup", end
+
+subroutine AddProducts
+
+    required in a_product, [*]strProductGroup
+    endparams
+
+    .include "INC:remote.def"
+    
+    stack record
+        ix, int
+    endrecord
+
+.proc
+
+    for ix from 1 thru ^argdim(1,1)
+    begin
+        try 
+            store(idf_product,a_product[ix])
+        catch (ex, @Exception)
+            nop
+        endtry
+    end
+    
+    xreturn
+
+endsubroutine
+

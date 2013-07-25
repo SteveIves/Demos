@@ -1,0 +1,78 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%rp..\..\SERVER\"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
+		<ExecMacro CmdLine="syn_set INC=%(ROOT)INC"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
+		<ExecMacro CmdLine="syn_set LIB=%(ROOT)LIB"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
+		<ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)XFPL"/>
+	</Macro>
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Type Library"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildTLB"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Type Library Files"
+			Filters="*.tlb">
+			<F N="xfpldemo.tlb"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</Files>
+</Project>

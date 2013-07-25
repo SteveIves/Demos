@@ -1,0 +1,52 @@
+
+main test
+
+    record 
+        tt      ,int    
+        ordnum  ,d8
+    endrecord
+
+    .include "ORDER_HEADER" repository, record="h"
+    .include "ORDER_LINE" repository, record="l"
+    
+    external function 
+        xsubr   ,^val
+    endexternal
+
+proc
+    open(tt=%syn_freechn,i,"tt:")
+;   openelb("server.elb")
+    
+    if (%xsubr("initialize"))
+    begin
+        writes(tt,"Initialize failed")
+        goto done
+    end
+    
+    h.Order_date = %datetime
+    h.Ship_date = %datetime
+    h.Delivery_date = %datetime
+    h.Status = "O"
+    h.Customer = "SYN001"
+    h.Customer_order_ref = "MyOrder"
+    h.Goods_value = 10
+    h.Tax_value = 1
+    h.Shipping_value = 2
+    h.Gift_wrap = 1
+    h.Gift_message = "Happy Birthday"
+    
+    l.Sku = "0307001164"
+    l.Description = "101 Dalmations"
+    l.Price = 10
+    l.Qty_ordered = 1
+    l.Line_value = 10
+
+    ordnum = %xsubr("CreateOrder",h,l)
+    
+    writes(tt,"Return value from CreateOrder was " + %string(ordnum))
+    
+done,
+    close tt
+    stop
+
+endmain

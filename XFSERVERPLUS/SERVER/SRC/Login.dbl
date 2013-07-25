@@ -1,0 +1,88 @@
+;*******************************************************************************
+;
+; Title:        Login.dbl
+;
+; Type:         Method
+;
+; Description:  Validates a user login
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+.include "user" repository, structure="strUser", end
+
+function Login, ^VAL
+
+    required in a_username      ,a               ;Username
+    required in a_password      ,a               ;Password
+    required out a_errmsg        ,a              ;Error text
+    required out a_user         ,strUser         ;User record
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    stack record local_data
+        retval          ,int                     ;Function return value
+        password        ,a40
+    endrecord
+
+proc
+
+    clear retval, a_errmsg
+
+    if (!(a_username.and.a_password)) then
+    begin
+        retval=1
+        a_errmsg = "Missing username or password"
+    end
+    else
+    begin
+
+        password = a_password
+        upcase password
+
+        clear a_user
+        a_user.username = a_username
+        upcase a_user.username
+
+        if (%io(IO_READ,idf_user,0,a_user).ne.IO_OK) then
+        begin
+            retval=2
+            a_errmsg = "No such user!"
+            clear a_user
+        end
+        else
+        begin
+            if (password.ne.a_user.password)
+            begin
+                retval=3
+                a_errmsg = "Invalid password"
+                clear a_user
+            end
+        end
+    end
+
+    freturn retval
+
+endfunction

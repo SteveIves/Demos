@@ -1,0 +1,158 @@
+.igg_Office2007SilverControl
+{
+	background-color:#D2D2D2;
+	background-repeat:repeat-x;
+	font-size:11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border:solid 1px #ACAFB7;
+}
+
+
+tbody.igg_Office2007SilverItem tr td
+{
+	background-color:#FCFCFC;
+	border-top:solid 1px #D8D8D8;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+	overflow:hidden;
+}
+
+
+tbody tr.igg_Office2007SilverAlt td
+{
+	background-color:#EAECF5;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007SilverHeader
+{
+	background-color:#D2D2D2;
+	background-image: url(images/igg_header.gif);
+	height: 40px;
+}
+
+
+.igg_Office2007SilverHeaderCaption
+{
+	border-top-width:0px;
+	padding-left:8px;
+	text-align:left;
+	overflow:hidden;
+}
+
+
+.igg_Office2007SilverFooter
+{
+	background-image: url(images/igg_footer.gif);
+	border-top:solid 1px #15428B;
+	height: 20px;
+}
+
+
+.igg_Office2007SilverFooterCaption
+{
+	overflow:hidden;
+}
+
+
+.igg_Office2007SilverPager
+{
+	padding-top:10px;
+	padding-bottom:10px;
+	text-align:right;
+}
+
+
+.igg_Office2007SilverPageLink
+{
+	margin-right:10px;
+	cursor:hand;
+	color:#15428B;
+	text-decoration:underline;
+}
+
+
+.igg_Office2007SilverPageCurrent
+{
+	font-weight:bold;
+	margin-right:10px;
+	color:DimGray;
+}
+
+
+.igg_Office2007SilverEditCell
+{
+}
+
+
+.igg_Office2007SilverActiveRow
+{
+}
+
+
+.igg_Office2007SilverActiveColumn
+{
+}
+
+
+.igg_Office2007SilverScrollbarIntersection
+{
+}
+
+
+.igg_Office2007SilverSelectedRowSelector
+{
+}
+
+
+.igg_Office2007SilverSelectedRowSelectorImage
+{
+}
+
+
+.igg_Office2007SilverSelectedHeader
+{
+}
+
+
+tbody tr td.igg_Office2007SilverActiveCell
+{
+}
+
+
+.igg_Office2007SilverActiveRowSelectorImage
+{
+}
+
+
+.igg_Office2007SilverRowSelector
+{
+	padding-top:1px;
+	width: 35px;
+	color:Black;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007SilverHeaderRowSelector
+{
+}
+
+
+.igg_Office2007SilverFooterRowSelector
+{
+}
+
+
+tbody tr td.igg_Office2007SilverSelectedCell
+{
+	background-color:White;
+	background-image: url(images/igg_selected.gif);
+	color:White;
+}
+
+

@@ -1,0 +1,77 @@
+;*******************************************************************************
+;
+; Title:        GetOrderItems.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of order item records for a specific order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function GetOrderItems, ^val
+
+    required in a_order ,n
+    required inout a_mh ,int
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+    
+    .include "order_line" repository, structure="line"
+    
+    stack record ivars
+        allocated       ,int
+        used            ,int
+    endrecord
+
+proc
+
+    init ivars
+
+    if (%io(IO_FIND,idf_orderline,0,,a_order,IO_PARTIAL)==IO_OK)
+    begin
+    
+        repeat
+        begin
+            
+            if (used==allocated)
+                a_mh=%mem_proc(DM_RESIZ+DM_BLANK,^size(line)*(allocated+=5),a_mh)
+            
+            if ((%io(IO_READS,idf_orderline,,^m(line[used+=1],a_mh))!=IO_OK)
+            &   ||  (^m(line[used].order,a_mh)!=a_order))
+            begin
+                used-=1
+                exitloop
+            end
+
+        end
+
+        a_mh=%mem_proc(DM_RESIZ,^size(line)*used,a_mh)
+
+    end
+
+    freturn used
+
+endfunction
+

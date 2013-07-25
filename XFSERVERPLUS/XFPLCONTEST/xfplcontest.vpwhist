@@ -1,0 +1,30 @@
+[Global]
+CurrentProject=xfplcontest.vpj
+[ProjectDates]
+xfplcontest.vpj=20080123220145140
+[TreeExpansion2]
+- xfplcontest.vpj
+  - Source Files
+  + Header Files
+  + Toolkit Script Files
+  + Other Files
+scroll:0
+[State]
+SCREEN: 1400 1050 66 87 1050 742 0 0 M 0 0 0 0 1121 573
+CWD: ..\XFPLCONTEST
+BUFFER: BN="xfplcontest.dbl"
+BI: MA=1 74 1  TABS=1 5  WWS=0 IWT=1 ST=0 IN=2 BW=0 US=32000 RO=0 SE=1 SN=0 BIN=0 MN=DBL	HM=0 MF=0 TL=0 MLL=0 ASE=0 LNL=6 LCF=0 CAPS=0 E=0 ESBU2=-1
+VIEW: LN=.166 CL=19 LE=0 CX=18 CY=7 WI=5 BI=121 HT=0 HN=0 HF=0 HC=4
+WINDOW: 22 29 989 399 -1 -1 M  WF=0 WT=1 "Default Fixed Font,10,0,1"
+BUFFER: BN="xfplcontest.dbl"
+VIEW: LN=.276 CL=1 LE=0 CX=0 CY=13 WI=524 BI=121 HT=0 HN=0 HF=0 HC=4
+FILEHIST: 9
+\tkapp.dbl
+\Program Files\Synergex\SPC2006 Sample Code\Tutorials\UI\WIN\tkapp.dbl_nosort
+\Program Files\Synergex\SPC2006 Sample Code\Tutorials\UI\WIN\axlsort.dbl
+\Program Files\Synergex\SPC2006 Sample Code\Tutorials\UI\WIN\axlsort.def
+\Program Files\Synergex\SPC2006 Sample Code\Tutorials\UI\WIN\tkapp.dbl
+..\..\LANGUAGE\COPY_HANDLE\ReadMe.txt
+..\..\ACTIVEX\EXCEL_AUTOMATION\SynExcel.vpwhist
+..\..\LANGUAGE\COPY_HANDLE\CopyHandle.dbl
+xfplcontest.dbl

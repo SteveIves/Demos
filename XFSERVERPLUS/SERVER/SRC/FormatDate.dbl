@@ -1,0 +1,53 @@
+;*******************************************************************************
+;
+; Title:        FormatDate.dbl
+;
+; Type:         Function
+;
+; Description:  Formats a YYYYMMDD and returns MM/DD/YYYY
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function FormatDate ;,a
+
+    required in group a_date, d
+      a_year        ,a4
+      a_month       ,a2
+      a_day         ,a2
+    endgroup
+    endparams
+
+    stack record
+        strdate         ,a10
+    endrecord
+
+proc
+
+    xcall s_bld(strdate,,"%a/%a/%a",a_month,a_day,a_year)
+
+    freturn strdate
+
+endfunction
+
+

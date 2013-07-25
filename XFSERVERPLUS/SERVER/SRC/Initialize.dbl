@@ -1,0 +1,78 @@
+;*******************************************************************************
+;
+; Title:        Initialize.dbl
+;
+; Type:         Method
+;
+; Description:  Initializes a server-side environment
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function Initialize, ^VAL
+
+    endparams
+    
+    .define REMOTE_DATA_INIT
+    .include "INC:remote.def"
+    
+    stack record
+        error, int                               ;Function return value
+    endrecord
+
+proc
+
+    try 
+    begin
+        error=1
+        open(idf_user=%syn_freechn,"u:i","DAT:user.ism")
+
+        error=2
+        open(idf_customer=%syn_freechn,"u:i","DAT:customer.ism")
+
+        error=3
+        open(idf_group=%syn_freechn,"u:i","DAT:group.ism")
+
+        error=4
+        open(idf_product=%syn_freechn,"u:i","DAT:product.ism")
+
+        error=5
+        open(idf_order=%syn_freechn,"u:i","DAT:order.ism")
+
+        error=6
+        open(idf_orderline=%syn_freechn,"u:i","DAT:orderline.ism")
+
+        error=7
+        xcall openelb("DBLDIR:synxml")
+
+        clear error
+    end
+    catch (ex, @Exception)
+    begin
+        nop
+    end
+    endtry
+
+    freturn error
+
+endfunction

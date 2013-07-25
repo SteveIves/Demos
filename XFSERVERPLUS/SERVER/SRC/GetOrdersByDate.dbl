@@ -1,0 +1,112 @@
+;*******************************************************************************
+;
+; Title:        GetOrdersByDate.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of order headre records in a specified
+;               date range for a specific customer
+;               
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+import System.Collections
+
+.include "order_header" repository, structure = "strOrderHeader", end
+
+function GetOrdersByDate, boolean
+
+    required in  CustomerId, a
+    required in  FromDate, d
+    required in  ToDate, d
+    required out Orders, @ArrayList
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    stack record
+        Order, strOrderHeader
+        Result, boolean
+    endrecord
+
+    stack record date_key
+        cust, a8
+        odate, d8
+    endrecord
+    
+
+.proc
+
+    Result = true
+    
+    ;Position to first order in range
+    try 
+    begin
+        if (FromDate) then
+        begin
+            date_key.cust = CustomerId
+            date_key.odate = FromDate
+            find(idf_order,,date_key,KEYNUM:4,MATCH:Q_GEQ)
+        end
+        else
+            find(idf_order,,atrim(CustomerId),KEYNUM:4)
+    end
+    catch (ex, @KeyNotSameException)
+        nop
+    catch (ex, @EndOfFileException)
+        result = false
+    endtry
+
+    if (result) 
+    begin
+        repeat
+        begin
+
+            ;Get next order
+            try 
+                reads(idf_order,Order,,LOCK:Q_NO_LOCK)
+            catch (ex, @EndOfFileException)
+                exitloop
+            endtry
+
+            ;Make sure it belongs to this customer
+            if (Order.customer!=CustomerId)
+                exitloop
+
+            ;If we have an end date then make sure we're still in range
+            if (ToDate&&(Order.Order_date>ToDate))
+                exitloop
+
+            ;We got a keeper
+            Orders.Add((@strOrderHeader)Order)
+
+        end
+        
+    end
+    
+    freturn Result
+
+endfunction
+

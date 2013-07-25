@@ -1,0 +1,108 @@
+;*******************************************************************************
+;
+; Title:        CreateOrder.dbl
+;
+; Type:         Method
+;
+; Description:  Creates a new order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function CreateOrder, ^VAL
+
+    required inout a_order_header, a
+    required in a_order_line, [*]a
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+    .include "order_header" repository, record='order_header'
+    .include "order_line" repository, record='order_line'
+
+    .define D_SALES_TAX 7.5
+    
+    stack record local_data
+        elements        ,int
+        count           ,int
+        ordernum        ,int
+        errnum          ,int
+    endrecord
+
+proc
+
+    errnum = 0
+
+    ;Need an orer number, last one used is stored in order_date for order 99999999!!!
+    
+    order_header.order=99999999
+    if (%io(IO_READ, idf_order, 0, order_header,,,1)==IO_OK)
+    then
+    begin
+        incr order_header.order_date
+        errnum=%io(IO_WRITE, idf_order,, order_header)
+        ordernum=order_header.order_date
+    end
+    else
+    begin
+        order_header.order=99999999
+        set ordernum, order_header.order_date=1
+        errnum=%io(IO_STORE, idf_order,, order_header)
+    end
+
+    if (errnum) 
+        freturn -errnum
+    
+    elements = (^size(a_order_line[]) / ^size(a_order_line))
+
+    clear order_header
+    order_header=a_order_header
+    order_header.order=ordernum
+    upcase order_header.customer
+    
+    for count from 1 thru elements
+    begin
+        order_line = a_order_line[count]
+        order_header.goods_value += (order_line.qty_ordered * order_line.price)
+        order_header.tax_value = ((order_header.goods_value/100)*D_SALES_TAX)
+    end
+    
+    order_header.shipping_value=10.99
+
+    if (%io(IO_STORE, idf_order,, order_header)==IO_OK)
+    begin
+        ;create the order lines
+        for count from 1 thru elements
+        begin
+            order_line = a_order_line[count]
+            order_line.order=order_header.order
+            order_line.line_number = count
+            if (%io(IO_STORE, idf_orderline,, order_line)!=IO_OK)
+                exitloop
+        end
+    end
+
+    freturn order_header.order
+
+endfunction
+

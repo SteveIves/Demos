@@ -1,0 +1,254 @@
+;*******************************************************************************
+;
+; Title:        io.dbl
+;
+; Type:         Function
+;
+; Description:  Generic file I/O utility
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function io, ^val
+
+    required in a_operation ,n                   ;Operation
+    required in a_channel   ,n                   ;Channel number
+    required in a_keynum    ,n                   ;Key number
+    optional inout a_record ,a                   ;Data area
+    optional in a_keyval    ,a                   ;Key value (FIND/READ)
+    optional in a_partial   ,n                   ;Partial key match (FIND/READ)
+    optional in a_lock      ,n                   ;Lock the record (READ/READS)
+    endparams
+
+    .include "INC:io.def"
+
+    record
+        status              ,int                 ;Return status (0=OK)
+        lock                ,int                 ;Record lock mode
+    endrecord
+
+proc
+
+    status=IO_OK
+
+    using a_operation select
+    (IO_FIND),      call Find
+    (IO_FIRST),     call FindFirst
+    (IO_DELETE),    call Delete
+    (IO_READ),      call Read
+    (IO_READS),     call Reads
+    (IO_STORE),     call Store
+    (IO_WRITE),     call Write
+    endusing
+
+    freturn status
+
+Find,
+
+    if (^passed(a_keyval)) then
+    begin
+        if (^passed(a_partial).and.a_partial) then
+        begin
+            find(a_channel,,%atrim(a_keyval),KEYNUM:a_keynum)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+        else
+        begin
+            find(a_channel,,a_keyval,KEYNUM:a_keynum)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+    end
+    else
+    begin
+        if (^passed(a_partial).and.a_partial) then
+        begin
+            find(a_channel,,%atrim(%keyval(a_channel,a_record,a_keynum)),KEYNUM:a_keynum)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+        else
+        begin
+            find(a_channel,,%keyval(a_channel,a_record,a_keynum),KEYNUM:a_keynum)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+    end     
+
+    return
+
+FindFirst,
+
+    find(a_channel,,^FIRST,KEYNUM:a_keynum)
+    &   [
+    &       $ERR_LOCKED = Locked,
+    &       $ERR_TOOBIG = TooBig,
+    &       $ERR_EOF    = Eof,
+    &       $ERR_KEYNOT = KeyNot
+    &   ]
+
+    return
+
+Read,
+
+    if (^passed(a_lock)) then
+        lock = a_lock
+    else
+        lock = Q_NO_LOCK
+
+    if (^passed(a_keyval)) then
+    begin
+        if (^passed(a_partial).and.a_partial) then
+        begin
+            read(a_channel,a_record,%atrim(a_keyval),KEYNUM:a_keynum,LOCK:lock)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+        else
+        begin
+            read(a_channel,a_record,a_keyval,KEYNUM:a_keynum,LOCK:lock)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+    end
+    else
+    begin
+        if (^passed(a_partial).and.a_partial) then
+        begin
+            read(a_channel,a_record,%atrim(%keyval(a_channel,a_record,a_keynum)),KEYNUM:a_keynum,LOCK:lock)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+        else
+        begin
+            read(a_channel,a_record,%keyval(a_channel,a_record,a_keynum),KEYNUM:a_keynum,LOCK:lock)
+            &   [
+            &       $ERR_LOCKED = Locked,
+            &       $ERR_TOOBIG = TooBig,
+            &       $ERR_EOF    = Eof,
+            &       $ERR_KEYNOT = KeyNot
+            &   ]
+        end
+    end
+
+    return
+
+Reads,
+
+    if (^passed(a_lock)) then
+        lock = a_lock
+    else
+        lock = Q_NO_LOCK
+
+    reads(a_channel,a_record,,LOCK:lock)
+    &   [
+    &       $ERR_LOCKED = Locked,
+    &       $ERR_TOOBIG = TooBig,
+    &       $ERR_EOF    = Eof
+    &   ]
+    return
+
+Store,
+    store(a_channel,a_record)
+    &   [
+    &       $ERR_IRCSIZ = IrcSiz,
+    &       $ERR_NODUPS = NoDups,
+    &       $ERR_EOF    = Eof
+    &   ]
+    return
+
+Write,
+    write(a_channel,a_record)
+    &   [
+    &       $ERR_NOCURR = NoCurr,
+    &       $ERR_KEYNOT = KeyNot
+    &   ]
+    return
+
+Delete,
+    delete(a_channel)
+    &   [
+    &       $ERR_NOCURR = NoCurr
+    &   ]
+    return
+
+Locked,
+    status=IO_LOCKED
+    return
+
+TooBig,
+    status=IO_TOOBIG
+    return
+
+Eof,
+    status=IO_EOF
+    return
+
+KeyNot,
+    status=IO_KEYNOT
+    return
+
+IrcSiz,
+    status=IO_IRCSIZ
+    return
+
+NoDups,
+    status=IO_NODUPS
+    return
+
+NoCurr,
+    status=IO_NOCURR
+    return
+
+endfunction
+
+

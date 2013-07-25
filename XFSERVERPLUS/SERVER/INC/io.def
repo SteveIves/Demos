@@ -1,0 +1,30 @@
+;	Title:			io.def
+;	Author:			Steve Ives (Synergex)
+;	Description:	Provides environment for %io function
+
+external function
+	io				,^VAL
+
+
+.ifndef IO_READ
+;Defines for argument 1 (file access mode)
+.define IO_READ		,1
+.define IO_READS 	,2
+.define IO_STORE	,3
+.define IO_WRITE	,4
+.define IO_FIND		,5
+.define IO_FIRST	,6
+.define IO_DELETE	,7
+
+.define IO_PARTIAL	,1
+
+;Defines for return status
+.define IO_OK		,0
+.define IO_LOCKED	,40
+.define IO_TOOBIG	,23
+.define IO_EOF		,1
+.define IO_KEYNOT	,53
+.define IO_IRCSIZ	,316
+.define IO_NODUPS	,54
+.define IO_NOCURR	,61
+.endc

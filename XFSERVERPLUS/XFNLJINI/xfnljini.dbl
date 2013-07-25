@@ -1,0 +1,756 @@
+;******************************************************************************
+;
+; Title:		xfnljini.dbl
+;
+; Author:		Steve Ives (Synergex Professional Services Group)
+;
+; Date:			22nd September 2005
+;
+; Description:	A utility program used to create and manage xfNetLink Java
+;				settings in the xfNetLnk.ini file.
+;
+; Platforms:	All platforms
+;
+; Versions:		Synergy/DE V7.5.1 and higher
+;
+; $Log$
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code.
+;
+;
+;Default name of INI file is xfNetLnk.ini.  If this name is used, and the file
+;is placed in the appropriate location, which depends on the application type,
+;then xfNetLink Java will find the INI file automatically.  If you name the file
+;in some other way, or place it in some other location, then you will need to
+;use one of the alternate constructors when instantiating procedural classes in
+; order to specify the INI file name and location.
+;
+;The settings supported in the INI file are as follows:
+;
+;	xf_RemoteHostName=hostname|ipaddress
+;	xf_RemotePort=n						(1025 - 65534)
+;	xf_LocalMinPort=n					(1025 - 65534)
+;	xf_LocalMaxPort=n					(1025 - 65534)
+;	xf_DebugOutput=true|false
+;	xf_LogFile=filename					(e.g. C://directory//file.ext)
+;	xf_SessionRequestTimeout=n			(seconds, default is 120)
+;	xf_SessionConnectTimeout=n			(seconds, default is 120)
+;	xf_DebugSessionConnectTimeout=n		(seconds, default is 600)
+;	xf_SessionLingerTimeout=n			(seconds, default is 1800)
+;
+;******************************************************************************
+.ifdef XFNLJINI_DATA ;START OF SHARED DATA
+;******************************************************************************
+.undefine XFNLJINI_DATA
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "WND:inpctl.def"
+
+.ifndef XFNLJINI_DEFINES
+.define XFNLJINI_DEFINES
+
+.define APP_TITLE		"xfNetLink Java Settings"
+
+.ifdef DBLV83
+.define D_MB_WARNING	D_MOK+D_MICONEXCLAM+D_MCENTER
+.define D_MB_YESNO_YES	D_MYESNO+D_MICONQUESTION+D_MCENTER
+.define D_MB_YESNO_NO	D_MYESNO+D_MICONQUESTION+D_MDEFBUTTON2+D_MCENTER
+.define D_GF_OPEN		D_OFN_CENTER
+.define D_GF_SAVEAS		D_OFN_SAVEAS|D_OFN_CENTER
+.define D_SHELL_OPT		D_NOWINDOW|D_NOWAIT
+.else
+.define D_MB_WARNING	D_MOK+D_MICONEXCLAM
+.define D_MB_YESNO_YES	D_MYESNO+D_MICONQUESTION
+.define D_MB_YESNO_NO	D_MYESNO+D_MICONQUESTION+D_MDEFBUTTON2
+.define D_GF_OPEN
+.define D_GF_SAVEAS		D_OFN_SAVEAS
+.define D_SHELL_OPT		D_NOCONSOLE|D_NOWAIT
+.endc ;DBLV83
+
+.ifdef D_GUI
+.define D_KEY_ADDEV		F62_KEY
+.define D_KEY_REMEV		F63_KEY
+.else
+.define D_KEY_ADDEV		F42_KEY
+.define D_KEY_REMEV		F43_KEY
+.endc ;D_GUI
+
+.define REPORT_ERROR(x)	xcall u_msgbox(x,D_MB_WARNING,"Error",selcol)
+.define YESNO_YES(x,y)	%u_msgbox(x,D_MB_YESNO_YES,y,selcol)
+.define YESNO_NO(x,y)	%u_msgbox(x,D_MB_YESNO_NO,y,selcol)
+
+.endc ;XFNLJINI_DEFINES
+
+.ifdef XFNLJINI_INIT
+global data section XFNLJINI, init
+.undefine XFNLJINI_INIT
+.else
+global data section XFNLJINI
+.endc
+
+.align
+record
+
+	;Menu columns
+	filecol				,i4		;File menu column ID
+	editcol				,i4		;Edit menu column ID
+	toolcol				,i4		;Tools menu column ID
+	inpcol				,i4		;Input column ID
+	selcol				,i4		;Select column ID
+	lstcol				,i4		;List column ID
+
+	;Input windows
+	inpid				,i4		;Input window ID
+
+	;Window events
+	closebox			,i4		;Window events
+
+	;Runtime version information
+	version				,a10	;UI Toolkit runtime version (X.Y.Z) 
+	ver_major			,d2		; - Major version X
+	ver_minor			,d2		; - Minor version Y
+	ver_revision		,d2		; - Revision Z
+
+.align
+record inidata					;Record containing settings from INI file
+
+	host				,a30
+	port				,d5		;1025 - 65534
+	minport				,d5		;1025 - 65534, < maxport
+	maxport				,d5		;1025 - 65534, > minport
+	debug				,d1		;(true/false)
+	logfile				,a256	;(e.g. C://directory//file.ext)
+	request_timeout		,d4		;def 120
+	connect_timeout		,d4		;def 120
+	debug_timeout		,d4		;def 600
+	call_timeout		,d4		;def 1800
+
+endglobal
+
+;******************************************************************************
+.else ;END OF SHARED DATA, START OF PROGRAM CODE
+;******************************************************************************
+.main xfnljini
+
+.define XFNLJINI_INIT
+.define XFNLJINI_DATA
+.include "xfnljini.dbl"
+
+.align
+record avars
+	buffer				,a256	;Input buffer
+	param_name			,a80	;Parameter name (data to left of =)
+	param_value			,a80	;Parameter value (data to right of =)
+
+.align
+record ivars
+	eqpos				,i4		;Position of = in input buffer
+	count				,i4		;Local loop counter
+	exitapp				,i4		;Exit from application
+
+.align
+record
+	inichn				,i4		;Channel number of open INI file
+	inicreate			,i4		;INI file create mode
+	file_name			,a256	;Name of file being maintained
+
+	savinidata			,a^size(inidata)
+	new_file_name		,a^size(inidata)
+
+.proc
+
+	xcall u_start(,1,0,,,,,,,,"xfnljini_setup")
+
+	do
+	begin
+		xcall m_process
+
+		using g_entnam select
+		("NEW"),
+			call new_file
+		("OPEN"),
+			call open_file
+		("EXIT"),
+			exitloop
+		endusing
+
+	end
+	until exitapp
+
+	xcall u_finish
+	stop
+
+;------------------------------------------------------------------------------
+;Prepare to gather settings for a new INI ifle
+;
+new_file,
+
+	clear inidata, file_name
+
+	port			= 2356
+	request_timeout = 120
+	connect_timeout = 120
+	debug_timeout	= 600
+	call_timeout	= 1800
+
+	inicreate = TRUE
+	call process_input
+
+	return
+
+;------------------------------------------------------------------------------
+;Open an existing INI file
+;
+open_file,
+
+	if (%u_getfilename(file_name,"Open xfNetLnk.ini",1,
+	&	"xfNetLink Java INI files (xfNetLnk.ini)","xfNetLnk.ini",,"ini",
+	&	inpcol,selcol,lstcol,,D_GF_OPEN))
+	begin
+		open(inichn=%syn_freechn,"i:s",file_name) [ERR=opnerr]
+		call parse_file
+		close inichn
+
+		inicreate = FALSE
+		call process_input
+		exit
+
+opnerr,	REPORT_ERROR("Failed to open file.")
+		exit
+	end
+
+	return
+
+;------------------------------------------------------------------------------
+;Parse the contents of an INI file
+;
+parse_file,
+
+	clear avars, ^i(ivars), inidata
+
+	repeat
+	begin
+		reads(inichn,buffer,eof)
+
+		;Skip blank lines and comments
+		if ((!buffer) || (buffer=="#"))
+			nextloop
+
+		;All INI file records should have an = in them
+		if (!(eqpos = %instr(1,buffer,"=")))
+		begin
+			REPORT_ERROR("Invalid record: "+%atrim(buffer))
+			nextloop
+		end
+
+		;Extract setting name and value
+		param_name = buffer(1,eqpos-1)
+		param_value = buffer(eqpos+1,%trim(buffer))
+
+		;Trim leading spaces from param_value
+		if (param_value && !param_value(1:1))
+		begin
+			repeat
+			begin
+				if (param_value(1:1)) then
+					exitloop
+				else
+					param_value = param_value - " "
+			end
+		end
+
+		using param_name select
+
+		("xf_RemoteHostName"),
+			host = param_value
+
+		("xf_RemotePort"),
+			port = param_value
+
+		("xf_LocalMinPort"),
+			minport = param_value
+
+		("xf_LocalMaxPort"),
+			maxport = param_value
+
+		("xf_DebugOutput"),
+			using param_value select
+			("true"),
+				debug = 1
+			("false"),
+				nop
+			(),
+				REPORT_ERROR("Invalid xf_DebugOutput value. Set to false.")
+			endusing
+
+		("xf_LogFile"),
+			logfile = param_value
+
+		("xf_SessionRequestTimeout"),
+			request_timeout = param_value
+
+		("xf_SessionConnectTimeout"),
+			connect_timeout = param_value
+
+		("xf_DebugSessionConnectTimeout"),
+			debug_timeout = param_value
+
+		("xf_SessionLingerTimeout"),
+			call_timeout = param_value
+
+		;Something we didn't expect
+		(),
+		begin
+			;Report the error and ignore it.  Whatever it is, it won't be
+			;saved to the INI file if the user subsequently saves the file!
+			REPORT_ERROR("Invalid xfNetLnk.ini record: "+%atrim(buffer))
+			nextloop
+		end
+
+		endusing
+	
+	end
+eof,
+
+	return
+
+;------------------------------------------------------------------------------
+;Allow the user to view and modify the INI file settings
+;
+process_input,
+
+	xcall e_enter
+
+	;Setup the UI for view/amend
+	xcall m_disable(D_LIST,filecol,"CLOSED")
+	xcall m_enable(D_LIST,filecol,"OPEN")
+
+	.ifdef D_GUI
+	xcall m_enable(D_LIST,editcol,"INPUT")
+	.endc
+
+	;Set the window title
+	if (inicreate) then
+		xcall w_brdr(inpid,WB_TITLE,"New File (not saved)")
+	else
+		xcall w_brdr(inpid,WB_TITLE,%atrim(file_name))
+
+	;Put the data into the settings form
+	xcall i_display(inpid,,inidata)
+	xcall i_next(inpid,,"*FRST*")
+
+	xcall u_window(D_PLACE,inpid,3,2)
+
+	;Save the initial data so we can later detect if it has changed
+	savinidata = inidata
+
+	;Process the form
+	repeat
+	begin
+
+		xcall i_input(inpid,,inidata,inpcol,selcol,,D_NOTERM)
+
+		if (g_select) then
+		begin
+
+			using g_entnam select
+
+			;Save the data to a different INI file
+			("SAVEAS"),
+			begin
+				inicreate = TRUE
+				call save_file
+			end
+
+			;Save the data to the INI file
+			("SAVE"),
+				call save_file
+
+			;Cancel out
+			("CLOSE","EXIT"),
+			begin
+
+				;Has the data changed?
+				if (inidata == savinidata)
+				begin
+					;No, we're out of here!
+					if (g_entnam == "EXIT")
+						exitapp = TRUE
+					exitloop
+				end
+
+				;Yes, the data has changed.  Ask the user if they want to save it
+				if (YESNO_YES("Save changes?","Settings have changed")==D_MIDYES)
+					call save_file
+
+				;If the user picked exit from the menu, make sure we back them
+				;all the way put of the program
+				if (g_entnam == "EXIT")
+					exitapp = TRUE
+
+				exitloop
+			end
+
+			endusing
+
+		end
+		else
+			xcall i_next(inpid,,"*FRST*")
+	end
+
+	xcall e_exit
+
+	return
+
+;------------------------------------------------------------------------------
+;Save the data to an INI file
+;
+save_file,
+
+	;Are we creating a new file?
+	if (inicreate)
+	begin
+		;Yes, get the location to save the file in
+		repeat
+		begin
+			if (!%u_getfilename(file_name,"Save As...",1,
+			&	"xfNetLink Java INI files (xfNetLnk.ini)","xfNetLnk.ini",
+			&	"xfNetLnk.ini","ini",inpcol,selcol,lstcol,,D_GF_SAVEAS))
+				return
+
+			;See if the file already exists
+			open(inichn=%syn_freechn,"i:s",file_name) [ERR=notexist]
+			close inichn
+
+			;Yes, ask if they want to overwrite it
+			if (YESNO_NO("Replace existing file?","Confirm")==D_MIDYES)
+				exitloop
+
+			nextloop
+
+notexist,   exitloop
+		end
+	end
+
+	;Save the settings to the file
+
+	open(inichn=%syn_freechn,"o:s",file_name)
+
+	if (host) 
+		writes(inichn,"xf_RemoteHostName="+%atrim(host))
+
+	if (port)
+		writes(inichn,"xf_RemotePort="+%string(port))
+
+	if (minport)
+		writes(inichn,"xf_LocalMinPort="+%string(minport))
+
+	if (maxport)
+		writes(inichn,"xf_LocalMaxPort="+%string(maxport))
+
+	if (debug)
+		writes(inichn,"xf_DebugOutput=true")
+
+	if (logfile)
+		writes(inichn,"xf_LogFile="+%atrim(logfile))
+
+	if (request_timeout)
+		writes(inichn,"xf_SessionRequestTimeout="+%string(request_timeout))
+
+	if (connect_timeout)
+		writes(inichn,"xf_SessionConnectTimeout="+%string(connect_timeout))
+
+	if (debug_timeout)
+		writes(inichn,"xf_DebugSessionConnectTimeout="+%string(debug_timeout))
+
+	if (call_timeout)
+		writes(inichn,"xf_SessionLingerTimeout="+%string(call_timeout))
+
+	close inichn
+
+	;Update the window title
+	xcall w_brdr(inpid,WB_TITLE,%atrim(file_name))
+
+	;Make the saved data match the current data, so we won't prompt to
+	;save on cancel unless the data changes again
+	savinidata = inidata
+	clear inicreate
+
+	return
+
+ .end
+
+;==============================================================================
+;Setup the Toolkit environment and create UI objects
+;
+.subroutine xfnljini_setup
+
+.define XFNLJINI_DATA
+.include "xfnljini.dbl"
+
+.ifdef D_GUI
+.include "DBLDIR:activex.def"
+.align
+record
+	axctrl				,i4		;ActiveX control ID
+.endc
+
+.align
+record
+	bldid				,i4		;Input window build ID
+	start				,i4		;Start position in a string
+	pos					,i4		;Position in a string
+	count				,i4		;Loop counter
+	mbuff				,a1024	;Menu build buffer
+	rb_oca				,[3]a8,	"None","Critical","All"
+	rb_debug			,[3]a8,	"None","Basic","Extended"
+
+.proc
+
+	;Setup title and other environment options
+	xcall e_sect(APP_TITLE,D_HEADER,D_CENTER)
+	xcall e_state(D_ON,D_RETURNBTN,D_VALSTCHG)
+	xcall e_method(D_METH_ENTRST,"xfnljini_entrst_method",
+	&			   D_METH_UTILS, "xfnljini_eutils")
+
+	xcall u_version(version)
+	;Remove any trailing patch letter from the version number
+	if ((%decml(version(%trim(version):1))<48) 
+	&	|| (%decml(version(%trim(version):1))>57))
+		version(%trim(version):1) = " "
+
+	pos = %instr(start=1,version,".")
+	ver_major = version(start,pos-1)
+	start = pos+1
+	pos = %instr(start,version,".")
+	ver_minor = version(start,pos-1)
+	start = pos + 1
+	ver_revision = version(start,%trim(version))
+
+	.ifdef D_GUI
+	closebox = %u_wndevents(D_CREATE,,D_EVENT_CLOSE,"xfnljini_close_box")
+	.endc
+
+	;Build file menu column
+	xcall mb_column(mbuff,"FILE","File",D_GLOBAL,,,,"F")
+	xcall mb_entry(mbuff,"NEW","New...")
+	xcall mb_entry(mbuff,"OPEN","Open...",CTRL_O_KEY)
+	xcall mb_entry(mbuff,"CLOSE","Close",F3_KEY,,,,1)
+	xcall mb_line(mbuff)
+	xcall mb_entry(mbuff,"SAVE","Save",CTRL_S_KEY,,,,1)
+	xcall mb_entry(mbuff,"SAVEAS","Save As...",,,,,1)
+	xcall mb_line(mbuff)
+	xcall mb_entry(mbuff,"U_ABOUT","About...")
+	xcall mb_line(mbuff)
+	xcall mb_entry(mbuff,"EXIT","Exit",F4_KEY)
+	xcall mb_list(mbuff,"CLOSED",2,"NEW","OPEN")
+	xcall mb_list(mbuff,"OPEN",3,"CLOSE","SAVE","SAVEAS")
+	xcall mb_end(mbuff,filecol)
+
+	;Build edit menu column
+	xcall mb_column(mbuff,"EDIT","Edit",D_GLOBAL,,,,"E")
+	xcall mb_entry(mbuff,"E_CUT","Cut",CTRL_X_KEY,,"T",,1)
+	xcall mb_entry(mbuff,"E_COPY","Copy",CTRL_C_KEY,,"C",,1)
+	xcall mb_entry(mbuff,"E_PASTE","Paste",CTRL_V_KEY,,"P",,1)
+	xcall mb_list(mbuff,"INPUT",3,"E_CUT","E_COPY","E_PASTE")
+	xcall mb_end(mbuff,editcol)
+
+	;Build tools menu column
+	xcall mb_column(mbuff,"TOOLS","Tools",D_GLOBAL,,,,"T")
+	xcall mb_entry(mbuff,"U_MDU","Method Definistion Utility",F9_KEY)
+	.ifdef D_GUI
+	xcall mb_entry(mbuff,"U_SYNCONF","Synergy Configuration Utility",F10_KEY)
+	.endc
+	xcall mb_end(mbuff,toolcol)
+
+	;Build input menu column
+	xcall mb_column(mbuff,"INPCOL","Input",,D_NOPLC,,,"I")
+	xcall mb_entry(mbuff,"I_PREV","Previous field",UP_KEY)
+	xcall mb_entry(mbuff,"I_NEXT","Next field",DOWN_KEY)
+	xcall mb_end(mbuff,inpcol)
+
+	;Build selection menu column
+	xcall mb_column(mbuff,"SELCOL","Select",,D_NOPLC,,,"S")
+	xcall mb_entry(mbuff,"S_UP","Up",UP_KEY)
+	xcall mb_entry(mbuff,"S_DOWN","Down",DOWN_KEY)
+	xcall mb_entry(mbuff,"S_LEFT","Left",LEFT_KEY)
+	xcall mb_entry(mbuff,"S_RIGHT","Right",RIGHT_KEY)
+	xcall mb_end(mbuff,selcol)
+
+	;Build list menu column
+	xcall mb_column(mbuff,"LSTCOL","List",,D_NOPLC,,,"L")
+	xcall mb_entry(mbuff,"S_UP","Previous entry",UP_KEY)
+	xcall mb_entry(mbuff,"S_DOWN","Next entry",DOWN_KEY)
+	xcall mb_end(mbuff,lstcol)
+
+	;No default pulled-down column on Windows
+	.ifdef D_GUI
+	xcall m_defcol(0)
+	.endc
+
+	;Build the settings input window
+	xcall ib_input(bldid,"INIWND",15,78)
+	xcall ib_field(bldid,"HOST",
+	&			   D_FLD_TYPE,		D_ALPHA,
+	&			   D_FLD_SIZE,		30,
+	&			   D_FLD_PROMPT,	"Server name or IP",
+	&			   D_FLD_POS,		2,2,
+	&			   D_FLD_FPOS,		2,21)
+	xcall ib_field(bldid,"PORT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		5,
+	&			   D_FLD_PROMPT,	"Server port number",
+	&			   D_FLD_POS,		4,2,
+	&			   D_FLD_FPOS,		4,21,
+	&			   D_FLD_RANGE,		1025,65534,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"MINPORT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		5,
+	&			   D_FLD_PROMPT,	"Client port range",
+	&			   D_FLD_POS,		6,2,
+	&			   D_FLD_FPOS,		6,21,
+	&			   D_FLD_RANGE,		1025,65534,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"MAXPORT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		5,
+	&			   D_FLD_PROMPT,	"to",
+	&			   D_FLD_POS,		6,28,
+	&			   D_FLD_FPOS,		6,31,
+	&			   D_FLD_RANGE,		1025,65534,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"DEBUG",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		1,
+	&			   D_FLD_PROMPT,	"Enable debug output",
+	&			   D_FLD_FPOS,		6,56,
+	&			   D_FLD_CHECKBOX)
+	xcall ib_field(bldid,"LOG_FILE",
+	&			   D_FLD_TYPE,		D_ALPHA,
+	&			   D_FLD_SIZE,		256,
+	&			   D_FLD_PROMPT,	"Client log file",
+	&			   D_FLD_POS,		8,2,
+	&			   D_FLD_FPOS,		8,21,
+	&			   D_FLD_VIEWLEN,	56)
+	xcall ib_field(bldid,"REQUEST_TIMEOUT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		4,
+	&			   D_FLD_PROMPT,	"Session request timeout",
+	&			   D_FLD_POS,		11,21,
+	&			   D_FLD_FPOS,		11,45,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"CONNECT_TIMEOUT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		4,
+	&			   D_FLD_PROMPT,	"Session connect timeout",
+	&			   D_FLD_POS,		13,21,
+	&			   D_FLD_FPOS,		13,45,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"DEBUG_TIMEOUT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		4,
+	&			   D_FLD_PROMPT,	"Debug connect timeout",
+	&			   D_FLD_POS,		11,51,
+	&			   D_FLD_FPOS,		11,73,
+	&			   D_FLD_BZRO)
+	xcall ib_field(bldid,"CALL_TIMEOUT",
+	&			   D_FLD_TYPE,		D_DECIMAL,
+	&			   D_FLD_SIZE,		4,
+	&			   D_FLD_PROMPT,	"Method call timeout",
+	&			   D_FLD_POS,		13,51,
+	&			   D_FLD_FPOS,		13,73,
+	&			   D_FLD_BZRO)
+	.ifdef D_GUI
+	xcall ib_button(bldid,"SAVE",DSB_TEXT,"Save",,,"S")
+	xcall ib_button(bldid,"CLOSE",DSB_TEXT,"Close",,,"C")
+	xcall ib_buttonset(bldid,,,DSB_END)
+	.endc
+	xcall ib_end(bldid,inpid)
+
+	.ifdef D_GUI
+	xcall u_wndevents(d_assign,closebox,inpid)
+	.else
+	xcall w_brdr(inpid, WB_ON,WB_TATTR,ATTR_SET+ATTR_RVRS,
+	&			 WB_TPOS,WBT_TOP,WBT_CENTER)
+	.endc
+
+	xreturn
+
+.end
+
+;==============================================================================
+;Preserve field contents when unterminated fields lose focus
+;
+.subroutine xfnljini_entrst_method
+
+	a_nomod		,n		;field is not modified
+	a_reset		,n		;field does not need resetting
+
+.define XFNLJINI_DATA
+.include "xfnljini.dbl"
+
+.proc
+	
+	if (!a_nomod)
+	  a_reset = FALSE
+
+	xreturn
+
+.end
+
+;==============================================================================
+;If the user clicks a windows close box simulate a close (cancel)
+;
+.subroutine xfnljini_close_box
+
+.define XFNLJINI_DATA
+.include "xfnljini.dbl"
+
+.proc
+
+	xcall m_signal("CLOSE")
+	xreturn
+
+.end
+
+;==============================================================================
+;Utility processing
+;
+.subroutine xfnljini_eutils
+
+.define XFNLJINI_DATA
+.include "xfnljini.dbl"
+
+.proc
+
+	using g_entnam select
+
+	;Display "About" dialog
+	("U_ABOUT"),
+		xcall u_about(APP_TITLE, version, %datecompiled) 
+
+	;Synergy Configuration Utility
+	("U_SYNCONF"),
+		xcall shell(,"synconfig.exe",D_SHELL_OPT)
+
+	("U_MDU"),
+		xcall shell(,"dbr DBLDIR:mdu.dbr",D_SHELL_OPT)
+
+	endusing
+	
+	clear g_select
+
+	xreturn
+
+.end
+
+;******************************************************************************
+.endc ;END OF PROGRAM CODE
+;******************************************************************************
+

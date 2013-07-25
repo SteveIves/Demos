@@ -1,0 +1,65 @@
+;*******************************************************************************
+;
+; Title:        GetProductsV8.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a collection of product records for a specified group,
+;               via a dynamic memory handle.
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+function GetProductsV8, ^VAL
+
+    a_group     ,a      ;Passed product group
+    a_mh       ,i4      ;Returned collection
+    ;End of arguments
+
+.include "INC:remote.def"
+.include "INC:io.def"
+.include "product" repository, structure="strProduct"
+
+proc
+
+    clear mc, ms
+
+    if (%io(IO_FIND,idf_product,1,,a_group,IO_PARTIAL)==IO_OK)
+    begin
+        repeat
+        begin
+            if (mc==ms)
+                a_mh = %mem_proc(DM_RESIZ,(^size(strProduct)*(ms+=10)),a_mh)
+            if (%io(IO_READS,idf_product,,^m(strProduct[mc+=1],a_mh))!=IO_OK) ||
+            &           (^m(strProduct[mc].group,a_mh)!=a_group)
+            begin
+                a_mh = %mem_proc(DM_RESIZ,(^size(strProduct)*(mc-=1)),a_mh)
+                exitloop
+            end
+        end
+    end
+
+    freturn mc
+
+end
+

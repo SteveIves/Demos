@@ -1,0 +1,158 @@
+.igg_Office2007BlueControl
+{
+	background-color:#BFDBFF;
+	background-repeat:repeat-x;
+	font-size:11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border:solid 1px #3B5A82;
+}
+
+
+tbody.igg_Office2007BlueItem tr td
+{
+	background-color:#FCFCFC;
+	border-top:solid 1px #D8D8D8;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+	overflow:hidden;
+}
+
+
+tbody tr.igg_Office2007BlueAlt td
+{
+	background-color:#EAECF5;
+	padding:5px 8px 5px 8px;
+	text-align:left;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007BlueHeader
+{
+	background-color:#D2D2D2;
+	background-image: url(images/igg_header.gif);
+	height: 40px;
+}
+
+
+.igg_Office2007BlueHeaderCaption
+{
+	border-top-width:0px;
+	padding-left:8px;
+	text-align:left;
+	overflow:hidden;
+}
+
+
+.igg_Office2007BlueFooter
+{
+	background-image: url(images/igg_footer.gif);
+	border-top:solid 1px #15428B;
+	height: 20px;
+}
+
+
+.igg_Office2007BlueFooterCaption
+{
+	overflow:hidden;
+}
+
+
+.igg_Office2007BluePager
+{
+	padding-top:10px;
+	padding-bottom:10px;
+	text-align:right;
+}
+
+
+.igg_Office2007BluePageLink
+{
+	margin-right:10px;
+	cursor:hand;
+	color:#15428B;
+	text-decoration:underline;
+}
+
+
+.igg_Office2007BluePageCurrent
+{
+	font-weight:bold;
+	padding-right:10px;
+	color:DimGray;
+}
+
+
+.igg_Office2007BlueEditCell
+{
+}
+
+
+.igg_Office2007BlueActiveRow
+{
+}
+
+
+.igg_Office2007BlueActiveColumn
+{
+}
+
+
+.igg_Office2007BlueScrollbarIntersection
+{
+}
+
+
+.igg_Office2007BlueSelectedRowSelector
+{
+}
+
+
+.igg_Office2007BlueSelectedRowSelectorImage
+{
+}
+
+
+.igg_Office2007BlueSelectedHeader
+{
+}
+
+
+tbody tr td.igg_Office2007BlueActiveCell
+{
+}
+
+
+.igg_Office2007BlueActiveRowSelectorImage
+{
+}
+
+
+.igg_Office2007BlueRowSelector
+{
+	padding-top:1px;
+	width: 35px;
+	color:Black;
+	vertical-align:middle;
+}
+
+
+.igg_Office2007BlueHeaderRowSelector
+{
+}
+
+
+.igg_Office2007BlueFooterRowSelector
+{
+}
+
+
+tbody tr td.igg_Office2007BlueSelectedCell
+{
+	background-color:White;
+	background-image: url(images/igg_selected.gif);
+	color:White;
+}
+
+

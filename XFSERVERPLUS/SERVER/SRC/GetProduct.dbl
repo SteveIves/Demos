@@ -1,0 +1,59 @@
+;*******************************************************************************
+;
+; Title:        GetProduct.dbl
+;
+; Type:         Method
+;
+; Description:  Returns a specific prodct record
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+.include "product" repository, structure="strProduct", end
+
+function GetProduct, ^VAL
+
+    required inout a_product, strProduct
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+    
+    stack record
+        retval, int
+    endrecord
+
+.proc
+
+    clear retval
+    
+    if (%io(IO_READ,idf_product,0,a_product)!=IO_OK)
+    begin
+        retval=1
+        clear a_product
+    end
+
+    freturn retval
+
+.end
+

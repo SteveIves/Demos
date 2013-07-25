@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarlyBindingCS", "EarlyBindingCS\EarlyBindingCS.csproj", "{E9F97CE9-8DD1-4A43-B411-C648A141DCD4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EarlyBindingVB", "EarlyBindingVB\EarlyBindingVB.vbproj", "{1D0B2FDF-C528-4880-973D-B14D5C7B7F22}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E9F97CE9-8DD1-4A43-B411-C648A141DCD4}.Debug.ActiveCfg = Debug|.NET
+		{E9F97CE9-8DD1-4A43-B411-C648A141DCD4}.Debug.Build.0 = Debug|.NET
+		{E9F97CE9-8DD1-4A43-B411-C648A141DCD4}.Release.ActiveCfg = Release|.NET
+		{E9F97CE9-8DD1-4A43-B411-C648A141DCD4}.Release.Build.0 = Release|.NET
+		{1D0B2FDF-C528-4880-973D-B14D5C7B7F22}.Debug.ActiveCfg = Debug|.NET
+		{1D0B2FDF-C528-4880-973D-B14D5C7B7F22}.Debug.Build.0 = Debug|.NET
+		{1D0B2FDF-C528-4880-973D-B14D5C7B7F22}.Release.ActiveCfg = Release|.NET
+		{1D0B2FDF-C528-4880-973D-B14D5C7B7F22}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

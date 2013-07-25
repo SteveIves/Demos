@@ -1,0 +1,43 @@
+﻿<%@ Master Language="VB" CodeFile="LoggedOutMaster.master.vb" Inherits="LoggedOutMaster" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+		<table id="Table1" cellspacing="0" cellpadding="0" border="0" style="background-color:White;width:800px;height:100%" align="center">
+		<!-- Heading, page title and logout button -->
+		<tr style="height:94px">
+			<td style="width:168px">
+				<asp:image id="imgLogo" runat="server" height="94" width="168" imageurl="~/images/synergyde.gif" alternatetext="Site logo" />
+			</td>
+			<td>
+				<p align="center" style="font:Verdana;font-size:large">
+					<asp:label id="PageTitleLabel" runat="server" Width="90%" />
+					
+				</p>
+			</td>
+			<td style="width:100px">
+				<p align="center">
+					&nbsp;
+				</p>
+			</td>
+		</tr>
+		<!-- Main content -->
+		<tr style="height:100%">
+			<td colspan="3" style="height:100%">
+				<div>
+                    <asp:ContentPlaceHolder id="ContentPlaceHolder2" runat="server">
+                    </asp:ContentPlaceHolder>
+				</div>
+			</td>
+		</tr>
+		</table>
+    </form>
+</body>
+</html>

@@ -1,0 +1,100 @@
+;*******************************************************************************
+;
+; Title:        GetOrder.dbl
+;
+; Type:         Method
+;
+; Description:  Returns order header and items for a specific order
+;
+; Author:       Steve Ives, Synergex Professional Services Group
+;
+; Copyright:    ©Synergex International Inc.  All rights reserved.
+;
+; WARNING:      If you were given this code by a Synergex employee then you may
+;               use and modify it freely within your own applications. However,
+;               you may not under any circumstances distribute this code, or
+;               any modified version of this code, to any third party without
+;               first obtaining written permission to do so from Synergex.
+;               In using this code you accept that it is provided as is, and
+;               without support or warranty.  Neither Synergex or the author
+;               accept any responsibility for any losses or damages of any
+;               nature which may arise from the use of this code.  This header
+;               information must remain unaltered in the code at all times.
+;               Possession of this code, or any modified version of this code,
+;               indicates your acceptance of these terms.
+;
+; $Revision: $
+;
+; $Date: $
+;
+;*******************************************************************************
+;
+import System.Collections
+
+.include "order_header" repository, structure = "strOrderHeader", end
+.include "order_line"   repository, structure = "strOrderItem", end
+
+function GetOrder, boolean
+
+    required in  OrderNumber, d
+    required out OrderHeader, strOrderHeader
+    required out OrderItems, @ArrayList
+    endparams
+
+    .include "INC:remote.def"
+    .include "INC:io.def"
+
+    stack record
+        Result, boolean
+        OrderItem, strOrderItem
+    endrecord
+
+.proc
+
+    Result = true
+    
+    ;Read the order header
+    try 
+    begin
+        read(idf_order,OrderHeader,OrderNumber,KEYNUM:0,LOCK:Q_NO_LOCK)
+    end
+    catch (ex, @Exception)
+    begin
+        init OrderHeader
+        result = false
+    end
+    endtry
+
+    if (result) 
+    begin
+        ;Position to the first order item
+        try 
+            find(idf_orderline,,%string(OrderNumber,"XXXXXXXX"),KEYNUM:0)
+        catch (ex, @Exception)
+            exit ;Order has no items
+        endtry
+
+        repeat
+        begin
+            ;Get next item
+            try 
+                reads(idf_orderline,OrderItem,,LOCK:Q_NO_LOCK)
+            catch (ex, @EndOfFileException)
+                exitloop
+            endtry
+
+            ;Make sure it belongs to this order
+            if (OrderItem.Order!=OrderNumber)
+                exitloop
+
+            ;We got a keeper
+            OrderItems.Add((@strOrderItem)OrderItem)
+
+        end
+        
+    end
+    
+    freturn Result
+
+endfunction
+

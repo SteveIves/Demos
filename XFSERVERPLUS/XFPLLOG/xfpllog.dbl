@@ -1,0 +1,1700 @@
+.define APP_TITLE 	"xfServerPlus Log Analysis"
+.define APP_VERSION "1.7"
+
+.main xfpllog
+
+.include "WND:tools.def"
+.include "WND:windows.def"
+.include "WND:inpctl.def"
+
+.align
+record
+	cid_file	,i4				;File menu column
+	cid_edit	,i4				;Edit menu column
+	cid_search	,i4				;Search menu column
+	cid_log		,i4				;Log menu column
+	cid_sort	,i4				;Sort menu column
+	cid_list	,i4				;List menu column
+	cid_help	,i4				;Help menu column
+	
+	iid_bldid	,i4				;Input window build ID
+	iid_log		,i4				;Log list input window
+	
+	class1		,i4				;List class for log file list
+	lid_log		,i4				;Log list
+	
+	fid_log		,i4				;Log file channel
+
+	mh			,i4				;Memory handle for current list data
+	ms			,i4				;Size
+	mc			,i4				;Content
+
+	mhs			,i4				;Memory handle for saved full log data
+	mcs			,i4				;Content
+	
+	mht			,i4
+	mct			,i4
+	
+	logopen		,i4				;Do we have a log file open?
+	ok			,i4				;OK to continue
+	error		,i4				;Error flag
+	req			,i4				;List request flag
+	quitapp		,i4
+	atbottom	,i4				;At bottom of list?
+	itemdeleted	,i4				;Current item was deleted
+	count		,i4
+	skip		,i4
+	itemnum		,i4				;Current list item number
+	list_width	,i4	,80
+
+	srch_dir	,i4				;Search direction
+	srch_wrap	,i4				;Search wrap at end
+	srch_case	,i4				;Search case sensitivity
+	srch_curr	,i4				;Search current item
+
+	sort_pid	,i4				;Sorted by PID
+	pid			,a8				;Process ID
+
+	logfile		,a256			;Log file name
+	newfile		,a256			;Log file name (save as)
+	temp		,a256
+	srchtxt		,a60
+
+	mctrl		,a1400			;Buffer for building menu columns
+	
+	filter_ext	,2a5    ,"*.log"
+	&					,"*.*"
+	filter_txt	,2a17   ,"Log Files (*.log)"
+	&					,"All Files (*.*)"
+
+global common
+	app_rows	,i4	,24
+	app_columns	,i4	,80
+
+structure logln
+		logseq	,i4
+		dspseq	,i4
+		logtxt	,a256
+		logpid	,a8 @logtxt
+
+record
+	nwdata			,a^size(logln)
+
+.define log_sequence(x)			^m(logln[x].logseq,mh)
+.define	display_sequence(x)		^m(logln[x].dspseq,mh)
+.define	logdata(x)				^m(logln[x].logtxt,mh)
+.define log_process(x)			^m(logln[x].logpid,mh)
+.define logline(x)				^m(logln[x],mh)
+.define logsave(x)				^m(logln[x],mhs)
+.define logtemp(x)				^m(logln[x],mht)
+
+.define create_main_array		mh = %mem_proc(DM_ALLOC,^size(logln)*(ms=1000))
+.define extend_main_array		mh = %mem_proc(DM_RESIZ,^size(logln)*(ms+=1000),mh)
+.define trim_main_array			mh = %mem_proc(DM_RESIZ,^size(logln)*(ms=mc),mh)
+.define reduce_main_array		mh = %mem_proc(DM_RESIZ,^size(logln)*(ms=(mc=mct)),mh)
+.define restore_main_array		mh = %mem_proc(DM_RESIZ,^size(logln)*(ms=(mc=mcs)),mh)
+.define decrement_main_array	mh = %mem_proc(DM_RESIZ,^size(logln)*(ms=(mc-=1)),mh)
+.define delete_main_array		mh = %mem_proc(DM_FREE,mh)
+
+.define create_save_array		mhs = %mem_proc(DM_ALLOC,^size(logln)*(ms=1000))
+.define extend_save_array		mhs = %mem_proc(DM_RESIZ,^size(logln)*(ms),mhs)
+.define trim_save_array			mhs = %mem_proc(DM_RESIZ,^size(logln)*(mcs=mc),mhs)
+.define reduce_save_array		mhs = %mem_proc(DM_RESIZ,^size(logln)*(mcs=mc),mhs)
+.define delete_save_array		mhs = %mem_proc(DM_FREE,mhs)
+
+.define create_temp_array		mht = %mem_proc(DM_ALLOC,^size(logln)*mc)
+.define trim_temp_array			mht = %mem_proc(DM_RESIZ,^size(logln)*mct,mht)
+.define delete_temp_array		mct = (mht = %mem_proc(DM_FREE,mht))
+
+.ifdef D_GUI
+external function
+	utm_toggle	,^val
+	utm_check	,^val
+.endc
+
+.proc
+
+	xcall u_start(,1,0)
+	
+	xcall e_state(D_ON,D_LOWER)
+	xcall e_sect(APP_TITLE,D_HEADER)
+	xcall e_sect("No open file.",D_INFO,D_LEFT,D_CLEAR)
+	
+	.ifdef D_GUI
+	xcall e_method(D_METH_APPSIZE,"eappsize_method",
+	&			   D_METH_UTILS,  "eutils_method")
+	xcall w_proc(WP_STATE,WID_CONTAINER,WPS_MAXIMIZED)
+	.else
+	xcall e_method(D_METH_UTILS,  "eutils_method")
+	.endc
+
+	;Create "file" menu column
+	xcall mb_column(mctrl,"FILE","File")
+	xcall mb_entry(mctrl,"OPEN","Open...",CTRL_O_KEY,,"O")
+	xcall mb_entry(mctrl,"CLOSE","Close",F3_KEY,,"C",,1)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"SAVELOG","Save",CTRL_S_KEY,,"S",,1)
+	xcall mb_entry(mctrl,"SAVEAS","Save As...",,,"A",,1)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"EXIT","Exit",,,"X")
+	xcall mb_end(mctrl,cid_file)
+
+	.ifdef D_GUI
+	;Create "edit" menu column
+	xcall mb_column(mctrl,"EDIT","Edit",,,1)
+	xcall mb_entry(mctrl,"E_CUT","Cut",CTRL_X_KEY,,"T",,1)
+	xcall mb_entry(mctrl,"E_COPY","Copy",CTRL_C_KEY,,"C",,1)
+	xcall mb_entry(mctrl,"E_PASTE","Paste",CTRL_V_KEY,,"P",,1)
+	xcall mb_end(mctrl,cid_edit)
+	.endc
+
+	;Create "search" menu column
+	xcall mb_column(mctrl,"SEARCH","Search",,,1)
+	xcall mb_entry(mctrl,"S_FIND","Find...",CTRL_F_KEY,,"F")
+	xcall mb_entry(mctrl,"S_FINDNEXT","Find Next",CTRL_G_KEY,,"N")
+	xcall mb_entry(mctrl,"FORWARD","Forward",,,"A")
+	xcall mb_entry(mctrl,"REVERSE","Reverse",,,"R")
+	xcall mb_entry(mctrl,"CASE","Case Sensitive",,,"C")
+	xcall mb_entry(mctrl,"CURRITM","Current Item",,,"I")
+	xcall mb_entry(mctrl,"WRAP","Wrap at End",,,"W")
+	xcall mb_end(mctrl,cid_search)
+
+	;Create "log" menu column
+	xcall mb_column(mctrl,"LOG","Log",,,1)
+	xcall mb_entry(mctrl,"DELINI","Remove INI File Logging",F5_KEY)
+	xcall mb_entry(mctrl,"DELSMC","Remove SMC Logging",F6_KEY)
+	xcall mb_entry(mctrl,"DELPACKET","Remove Packet Logging",F7_KEY)
+	xcall mb_entry(mctrl,"DELSESDBG","Remove Session Debug Logging",F8_KEY)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"DELPARDATA","Remove Parameter Data")
+	xcall mb_entry(mctrl,"DELINPAR","Remove Incoming Parameters")
+	xcall mb_entry(mctrl,"DELOUTPAR","Remove Outgoing Parameters")
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"DELLINE","Remove Current Record",F63_KEY)
+	xcall mb_entry(mctrl,"DELPRC","Remove Current Process",CTRL_P_KEY)
+	xcall mb_entry(mctrl,"DELWORD","Remove Records Containing...",CTRL_R_KEY)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"PROCESS","View Process")
+	xcall mb_entry(mctrl,"VIEWWORD","View Records Containing...")
+	xcall mb_entry(mctrl,"STARTUP","View Session Startup Log")
+	xcall mb_entry(mctrl,"SHUTDOWN","View Session Shutdown Log")
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"FULLLOG","Restore Full Log",F9_KEY,,,,1)
+	xcall mb_end(mctrl,cid_log)
+
+	;Create "sort" menu column
+	xcall mb_column(mctrl,"SORT","Sort",,,1)
+	xcall mb_entry(mctrl,"SORTTIME","By Time")
+	xcall mb_entry(mctrl,"SORTPID","By Process ID")
+	xcall mb_end(mctrl,cid_sort)
+	
+	.ifndef D_GUI
+	;Create "list" menu column
+	xcall mb_column(mctrl,"LIST","List",,,1)
+	xcall mb_entry(mctrl,"S_UP","Previous Item",UP_KEY)
+	xcall mb_entry(mctrl,"S_DOWN","Next Item",DOWN_KEY)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"S_LEFT","Scroll Left",LEFT_KEY)
+	xcall mb_entry(mctrl,"S_RIGHT","Scroll Right",RIGHT_KEY)
+	xcall mb_line(mctrl)
+	xcall mb_entry(mctrl,"S_PGUP","Previous Page",F45_KEY)
+	xcall mb_entry(mctrl,"S_PGDN","Next Page",F46_KEY)
+	xcall mb_entry(mctrl,"S_TOP","Beginning of List",CTRL_B_KEY)
+	xcall mb_entry(mctrl,"S_BOTTOM","End of List",CTRL_E_KEY)
+	xcall mb_end(mctrl,cid_list)
+	.endc
+
+	;Create "Help" menu column
+	xcall mb_column(mctrl,"HELP","Help")
+	xcall mb_entry(mctrl,"U_ABOUT","About")
+	xcall mb_end(mctrl,cid_help)
+
+	.ifdef D_GUI
+	xcall m_defcol(0)
+	list_width = app_columns-3
+	.else
+	xcall m_defcol(3)
+	.endc
+
+	;Create input window for main log list
+	xcall ib_input(iid_bldid,"INP_LOGLIST",1,256)
+	xcall ib_dsp_area(iid_bldid,1,1,1,list_width)
+	xcall ib_field(iid_bldid,"logrec1",
+	&			   D_FLD_TYPE,	D_ALPHA,
+	&			   D_FLD_SIZE,	64,
+	&			   D_FLD_FPOS,	1,1)
+	xcall ib_field(iid_bldid,"logrec2",
+	&			   D_FLD_TYPE,	D_ALPHA,
+	&			   D_FLD_SIZE,	64,
+	&			   D_FLD_FPOS,	1,65)
+	xcall ib_field(iid_bldid,"logrec3",
+	&			   D_FLD_TYPE,	D_ALPHA,
+	&			   D_FLD_SIZE,	64,
+	&			   D_FLD_FPOS,	1,129)
+	xcall ib_field(iid_bldid,"logrec4",
+	&			   D_FLD_TYPE,	D_ALPHA,
+	&			   D_FLD_SIZE,	64,
+	&			   D_FLD_FPOS,	1,193)
+	xcall ib_end(iid_bldid,iid_log)
+	xcall w_brdr(iid_log,WB_OFF)
+
+	;Create main log list
+	xcall l_class(class1,"CLASS1",1,1,app_rows-3,0,0,0,0,,,"load_logfile","NOACTIVAX,NOCELLHBAR,NOCELLVBAR")
+	xcall l_create(lid_log,iid_log,nwdata,,"CLASS1",,,D_NOPLC)
+	xcall l_border(lid_log,D_OFF)
+	
+	srch_dir	= D_LFND_FRWD
+	srch_case	= D_LFND_NOCASE
+	srch_curr	= D_LFND_NOCURR
+	srch_wrap	= D_LFND_WRAP
+	
+	call setup_list_find
+	
+	xcall utm_check("Search/Forward",1)
+	xcall utm_check("Search/Wrap at End",1)
+	xcall utm_check("Sort/By Time",1)
+	
+	do
+	begin
+		xcall m_process
+
+		using (g_entnam) select
+		("OPEN"),
+		begin
+			call open_log
+			if (logopen)
+				call show_log
+		end
+		("EXIT"),
+			exitloop
+		endusing
+
+	end
+	until quitapp
+
+	if (logopen)
+		call close_log
+
+	xcall u_finish
+	
+	stop
+
+;-------------------------------------------------------------------------------
+
+open_log,
+
+	ok = TRUE
+
+	if (logopen)
+	begin
+		if (%u_msgbox("Close current log file?",D_MYESNO+D_MICONQUESTION,"Confirm") == D_MIDYES) then
+			call close_log
+		else
+			clear ok
+	end
+
+	if (ok)
+	begin
+		if (%u_getfilename(logfile,"Open Log File",2,filter_txt,filter_ext))
+		begin
+			xcall u_open(fid_log,"i:s",logfile,,,error)
+			if (!error) then
+			begin
+				logopen = TRUE
+				xcall e_sect(APP_TITLE + " - [" + %atrim(logfile) + "]",D_HEADER,D_CLEAR,D_LEFT)
+				xcall m_disable(D_ENTRY,cid_file,"OPEN")
+				xcall m_enable(D_ENTRY,cid_file,"CLOSE")
+				xcall m_enable(D_ENTRY,cid_file,"SAVEAS")
+				call load_log
+			end
+			else
+				xcall u_msgbox("Failed to open log file,",D_MOK+D_MICONEXCLAM,"Error")
+		end
+	end
+
+	return
+
+load_log,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_main_array
+	create_save_array
+
+	clear mc
+	repeat
+	begin
+		;Get the next record
+		reads(fid_log,logdata(mc+=1),eof)
+
+		;Make sure it's not an extended data record
+		temp = logdata(mc)
+		if (temp(9:2) != ": ")
+		begin
+			mc-=1
+			nextloop
+		end
+
+		;Assign the log and display sequence numbers for the sort functions
+		log_sequence(mc) = mc
+		display_sequence(mc) = mc
+
+		;Add data to full log save array
+		logsave(mc) = logline(mc)
+
+		;Check 
+		if (mc == ms)
+		begin
+			extend_main_array
+			extend_save_array
+		end
+	end
+eof,
+	xcall u_close(fid_log)
+	xcall w_proc(WP_HOURGLASS_OFF)
+	
+	mc-=1
+	if (mc) then
+	begin
+		;Resize arrays to actual size required
+		trim_main_array
+		trim_save_array
+		xcall e_sect(%string(mc)+" records",D_INFO,D_LEFT,D_CLEAR)
+	end
+	else
+	begin
+		xcall u_msgbox("Log file is empty",D_MOK+D_MICONINFO,"Information")
+		call close_log
+	end
+	
+	return
+
+close_log,
+
+	if (logopen)
+	begin
+		
+		delete_main_array
+		delete_save_array
+		
+		xcall e_sect(APP_TITLE,D_HEADER,D_CLEAR,D_LEFT)
+		xcall e_sect("No open file.",D_INFO,D_LEFT,D_CLEAR)
+		
+		xcall m_enable(D_ENTRY,cid_file,"OPEN")
+		xcall m_disable(D_ENTRY,cid_file,"CLOSE")
+		xcall m_disable(D_ENTRY,cid_file,"SAVELOG")
+		xcall m_disable(D_ENTRY,cid_file,"SAVEAS")
+		
+		xcall m_enable(D_ENTRY,cid_log,"PROCESS")
+		xcall m_enable(D_ENTRY,cid_log,"DELSMC")
+		xcall m_enable(D_ENTRY,cid_log,"DELINI")
+		xcall m_enable(D_ENTRY,cid_log,"DELINPAR")
+		xcall m_enable(D_ENTRY,cid_log,"DELOUTPAR")
+		xcall m_enable(D_ENTRY,cid_log,"DELPARDATA")
+		xcall m_enable(D_ENTRY,cid_log,"DELPACKET")
+		xcall m_enable(D_ENTRY,cid_log,"DELSESDBG")
+		
+		xcall utm_check("Sort/By Time",1)
+		xcall utm_check("Sort/By Process ID",0)
+		clear sort_pid
+
+		clear logopen
+
+	end
+
+	return
+
+;-------------------------------------------------------------------------------
+
+show_log,
+
+	xcall e_enter
+	
+	;Load the new log file into the list
+	xcall l_restart(lid_log,1,mc)
+	
+	xcall l_place(lid_log)
+
+	.ifdef D_GUI
+	xcall m_enable(D_COLUMN,cid_edit,cid_search,cid_log,cid_sort)
+	.else
+	xcall m_enable(D_COLUMN,cid_search,cid_log,cid_sort,cid_list)
+	.endc
+
+	req = D_LNOP
+	repeat
+	begin
+		xcall l_select(lid_log,req,nwdata,,,,,,,,,,,,,mh,mc)
+
+		if (g_select) then
+		begin
+			using (g_entnam) select
+			("EXIT"),
+			begin
+				quitapp = TRUE
+				exitloop
+			end
+			("CLOSE"),	
+				exitloop
+			("PROCESS"),
+				call extract_process
+			("DELPRC"),
+				call delete_process
+			("FULLLOG"),
+				call full_log
+			("DELSMC"),
+				call remove_smc_data
+			("DELINI"),
+				call remove_ini_data
+			("DELINPAR"),
+				call remove_inpar
+			("DELOUTPAR"),
+				call remove_outpar
+			("DELPARDATA"),
+				call remove_pardata
+			("DELPACKET"),
+				call remove_packet
+			("DELSESDBG"),
+				call remove_sesdbg
+			("SORTPID"),
+				call sort_list_pid
+			("SORTTIME"),
+				call sort_list_time
+			("SAVELOG"),
+				call save_log
+			("SAVEAS"),
+				call save_as
+			("FORWARD"),
+				call search_forward
+			("REVERSE"),
+				call search_reverse
+			("CASE"),
+				call search_case
+			("CURRITM"),
+				call search_current
+			("WRAP"),
+				call search_wrap
+			("STARTUP"),
+				call session_startup_log
+			("SHUTDOWN"),
+				call session_shutdown_log
+			("DELLINE"),
+				call remove_line
+			("DELWORD"),
+				call remove_word
+			("VIEWWORD"),
+				call view_word
+			endusing
+		end
+		else
+			if (mc)
+                if (%u_msgbox("Display only this process?",
+				&	D_MYESNO+D_MICONQUESTION,"Apply Filter") == D_MIDYES)
+					call extract_process
+	end
+
+	xcall e_exit
+
+	call close_log
+
+	return
+
+;-------------------------------------------------------------------------------
+
+search_forward,
+
+	if (srch_dir == D_LFND_RVRS)
+	begin
+		srch_dir = D_LFND_FRWD
+		call setup_list_find
+		xcall utm_check("Search/Forward",1)
+		xcall utm_check("Search/Reverse",0)
+	end
+
+	return
+
+search_reverse,
+
+	if (srch_dir == D_LFND_FRWD)
+	begin
+		srch_dir = D_LFND_RVRS
+		call setup_list_find
+		xcall utm_check("Search/Forward",0)
+		xcall utm_check("Search/Reverse",1)
+	end
+	
+	return
+
+search_case,
+
+	srch_case = !srch_case
+	xcall utm_toggle("Search/Case Sensitive")
+	call setup_list_find
+
+	return
+
+search_current,
+
+	srch_curr = !srch_curr
+	xcall utm_toggle("Search/Current Item")
+	call setup_list_find
+	
+	return
+
+search_wrap,
+
+	srch_wrap = !srch_wrap
+	xcall utm_toggle("Search/Wrap at End")
+	call setup_list_find
+	
+	return
+
+setup_list_find,
+	
+	xcall l_findspec(lid_log,,1,256,srch_dir,srch_case,,srch_curr,srch_wrap,D_LFND_DISPLAY)
+
+	return
+
+;-------------------------------------------------------------------------------
+
+remove_line,
+
+	;Get the current item number in the list
+	xcall l_status(lid_log,D_LCURITM,itemnum)
+
+	;Delete the corresponding item from the array
+	for count from itemnum thru mc-1
+		logline(count) = logline(count+1)
+
+	if (mc > 1) then
+	begin
+		;Resize the array
+		decrement_main_array
+		call need_save
+	end
+	else
+		call no_more_data
+
+	;Delete the item from the list
+	req = D_LDELITEM
+
+	return
+
+;-------------------------------------------------------------------------------
+
+remove_word,
+
+	clear srchtxt
+	xcall u_dialog(srchtxt,,,,"Remove all records containing: ")
+
+	if (srchtxt)
+	begin
+		xcall w_proc(WP_HOURGLASS_ON)
+
+		locase srchtxt
+
+		create_temp_array
+
+		;Copy the log data from the main segment to the temporary segment, filtering
+		;out messages containing the entered text
+		for count from 1 thru mc
+		begin
+
+			temp = logdata(count)
+			locase temp
+
+			if (%instr(1,temp,%atrim(srchtxt)))
+				nextloop
+
+			logtemp(mct+=1) = logline(count)
+		end
+
+		call move_data
+
+	end
+
+	return
+
+view_word,
+
+	clear srchtxt
+	xcall u_dialog(srchtxt,,,,"View only records containing: ")
+
+	if (srchtxt)
+	begin
+		xcall w_proc(WP_HOURGLASS_ON)
+
+		locase srchtxt
+
+		create_temp_array
+
+		;Copy the log data from the main segment to the temporary segment, filtering
+		;out messages containing the entered text
+		for count from 1 thru mc
+		begin
+
+			temp = logdata(count)
+			locase temp
+
+			if (!%instr(1,temp,%atrim(srchtxt)))
+				nextloop
+
+			logtemp(mct+=1) = logline(count)
+		end
+
+		call move_data
+
+	end
+
+	return
+
+remove_smc_data,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		
+		if (temp(9:26) == ": **Method Catalog Entry**")
+			nextloop
+
+		if (temp(9:7) == ": c_id=")
+			nextloop
+		
+		if (temp(9:9) == ": c_type=")
+			nextloop
+
+		if (temp(9:13) == ": c_funcname=")
+			nextloop
+
+		if (temp(9:15) == ": c_returntype=")
+			nextloop
+
+		if (temp(9:14) == ": c_returnlen=")
+			nextloop
+
+		if (temp(9:13) == ": c_maxparms=")
+			nextloop
+
+		if (temp(9:13) == ": c_minparms=")
+			nextloop
+
+		if (temp(9:9) == ": c_date=")
+			nextloop
+
+		if (temp(9:12) == ": c_elbname=")
+			nextloop
+
+		if (temp(9:16) == ": cmpdt record #")
+			nextloop
+
+		if (temp(9:8) == ":   cmp_")
+			nextloop
+
+		if (temp(9:15) == ": cmp_return  =")
+			nextloop
+		
+		if (temp(9:38) == ": *** No cdt file read - same compid =")
+			nextloop
+
+		if (temp(9:47) == ": *** No SMC file read - retrieved from cache =")
+			nextloop
+		
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELSMC")
+
+	return
+
+remove_ini_data,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+	
+	;Copy the log data from the main segment to the temporary segment, omitting INI stuff
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		if (temp(9:7) == ": ini: ")
+			nextloop
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELINI")
+	
+	return
+
+remove_inpar,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, omitting
+	;input parameter stuff
+	clear skip
+	for count from 1 thru mc
+	begin
+		
+		temp = logdata(count)
+
+		if (skip) then
+		begin
+			if (temp(9:38) == ": **** End of Incoming Parameters ****")
+				skip = FALSE
+			nextloop
+		end
+		else
+		begin
+			if (temp(9:31) == ": **** Incoming Parameters ****")
+			begin
+				skip = TRUE
+				nextloop
+			end
+		end
+
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELINPAR")
+
+	return
+
+remove_outpar,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, omitting
+	;output parameter stuff
+	clear skip
+	for count from 1 thru mc
+	begin
+		
+		temp = logdata(count)
+
+		if (skip) then
+		begin
+			if (temp(9:38) == ": **** End of Outgoing Parameters ****")
+				skip = FALSE
+			nextloop
+		end
+		else
+		begin
+			if (temp(9:31) == ": **** Outgoing Parameters ****")
+			begin
+				skip = TRUE
+				nextloop
+			end
+		end
+
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELOUTPAR")
+
+	return
+
+remove_pardata,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+	
+	;Copy the log data from the main segment to the temporary segment, omitting
+	;parameter data stuff
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		if (temp(9:8) == ": Data [")
+			nextloop
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELPARDATA")
+	
+	return
+
+remove_packet,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, omitting
+	;packet data stuff
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		
+		if ((temp(9:12) == ": Packet = {") || ((%instr(11,temp,"^") && %instr(11,temp,"#") && %instr(11,temp,";") && %instr(11,temp,"%"))))
+			nextloop
+
+		if (temp(9:27) == ": Peek to get packet length")
+			nextloop
+
+		if (temp(9:11) == ": receive: ")
+			nextloop
+
+		if (temp(9:16) == ": Receive packet")
+			nextloop
+
+		if (temp(9:17) == ": Receive status ")
+			nextloop
+
+		if (temp(9:23) == ": Send packet length = ")
+			nextloop
+
+		if (temp(9:14) == ": Send status ")
+			nextloop
+
+		if (temp(9:20) == ": Response status = ")
+			nextloop
+
+		if (temp(9:21) == ": Stream returned at ")
+			nextloop
+
+		if (%instr(1,temp,";") && ((%instr(1,temp,"AL") || %instr(1,temp,"DE"))) && %instr(1,temp,"#"))
+			nextloop			
+
+		if %instr(10,temp,"~") && %instr(10,temp,"#")
+			nextloop		
+
+		if temp(9,^size(temp)) .eqs. ":"	;Empty data lines
+			nextloop
+
+		if (!temp(13:2))
+			nextloop
+
+		if (%trim(temp) < 15)					;Very short data lines
+			nextloop
+
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELPACKET")
+
+	return
+
+remove_sesdbg,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, omitting
+	;extensed session debugging data
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		
+		if (temp(9:18) == ": Command line = {")
+			nextloop
+		
+		if (temp(9:25) == ": xfNetLink ip address = ")
+			nextloop
+		
+		if (temp(9:19) == ": xfNetLink port = ")
+			nextloop
+		
+		if (temp(9:19) == ": web ip address = ")
+			nextloop
+		
+		if (temp(9:10) == ": Domain: ")
+			nextloop
+		
+		if (temp(9:40) == ": xfServerPlusRemoteSession connected to")
+			nextloop
+		
+		if (temp(9:12) == ": Function: ")
+			nextloop
+		
+		if (temp(9:7) == ": ELB: ")
+			nextloop
+		
+		if (temp(9:9) == ": size = ")
+			nextloop
+
+		if (temp(9:13) == ": os_flags = ")
+			nextloop
+
+		if (temp(9:18) == ": Response client ")
+			nextloop
+
+		if (temp(9:21) == ": Setting up argument")
+			nextloop
+
+		if (temp(9:41) == ": Calling a function with return type of ")
+			nextloop
+
+		if (temp(9:21) == ": rcb_setfunc call { ")
+			nextloop
+
+		if (temp(9:20) == ": Creating rcb with ")
+			nextloop
+
+		if (temp(9:27) == ": Received shutdown message")
+			nextloop
+
+		if (temp(9:10) == ": Setting ")
+			nextloop
+
+		if (temp(9:20) == ": First parameter = ")
+			nextloop
+
+		if (temp(9:21) == ": Second parameter = ")
+			nextloop
+
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"DELSESDBG")
+
+	return
+
+extract_process,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;Get the process ID for the current list item
+	xcall l_status(lid_log,D_LCURITM,itemnum)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, filtering
+	;by the process ID of the current log entry
+	for count from 1 thru mc
+	begin
+		;Compare process ID's
+		if (log_process(count) != log_process(itemnum))
+			nextloop
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"PROCESS")
+	xcall m_disable(D_ENTRY,cid_log,"DELPRC")
+
+	return
+
+delete_process,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;Get the process ID for the current list item
+	xcall l_status(lid_log,D_LCURITM,itemnum)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, excluding
+	;records for the current process
+	for count from 1 thru mc
+	begin
+		;Compare process ID's
+		if (log_process(count) == log_process(itemnum))
+			nextloop
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_enable(D_ENTRY,cid_log,"FULLLOG")
+
+	return
+
+session_startup_log,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, filtering
+	;for session startup messages
+	for count from 1 thru mc
+	begin
+		temp = logdata(count)
+		if (!((temp(9:28) == ": xfServerPlusRemoteSession ") && %instr(40,temp," started: ")))
+			nextloop
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"PROCESS")
+	xcall m_disable(D_ENTRY,cid_log,"DELPRC")
+	xcall m_disable(D_ENTRY,cid_log,"DELSMC")
+	xcall m_disable(D_ENTRY,cid_log,"DELINI")
+	xcall m_disable(D_ENTRY,cid_log,"DELINPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELOUTPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELPARDATA")
+	xcall m_disable(D_ENTRY,cid_log,"DELPACKET")
+	xcall m_disable(D_ENTRY,cid_log,"DELSESDBG")
+	xcall m_disable(D_ENTRY,cid_log,"STARTUP")
+	xcall m_disable(D_ENTRY,cid_log,"SHUTDOWN")
+	
+	return
+
+session_shutdown_log,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	create_temp_array
+
+	;Copy the log data from the main segment to the temporary segment, filtering
+	;for session startup messages
+	for count from 1 thru mc
+	begin
+
+		temp = logdata(count)
+
+		if (!((temp(9:28) == ": xfServerPlusRemoteSession ") && %instr(40,temp," stopped: ")))
+			nextloop
+
+		logtemp(mct+=1) = logline(count)
+	end
+
+	call move_data
+
+	xcall m_disable(D_ENTRY,cid_log,"PROCESS")
+	xcall m_disable(D_ENTRY,cid_log,"DELPRC")
+	xcall m_disable(D_ENTRY,cid_log,"DELSMC")
+	xcall m_disable(D_ENTRY,cid_log,"DELINI")
+	xcall m_disable(D_ENTRY,cid_log,"DELINPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELOUTPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELPARDATA")
+	xcall m_disable(D_ENTRY,cid_log,"DELPACKET")
+	xcall m_disable(D_ENTRY,cid_log,"DELSESDBG")
+	xcall m_disable(D_ENTRY,cid_log,"STARTUP")
+	xcall m_disable(D_ENTRY,cid_log,"SHUTDOWN")
+
+	return
+
+move_data,
+
+	;Has anything changed?
+	if (mct != mc)
+	begin
+		if (mct) then
+		begin
+			;Resize the temporary and main arrays down to the exact size of the
+			;remaining data
+			trim_temp_array
+			reduce_main_array
+
+			;Move the data back to the original segment
+			for count from 1 thru mc
+				logline(count) = logtemp(count)
+		end
+		else
+			call no_more_data
+
+		;Setup a list find to reposition to the correct place in the list after
+		;the restart
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;		xcall l_findspec(lid_log,%string(),4,4)
+		
+		;Restart the list
+		xcall l_restart(lid_log,1,mc)
+		req = D_LNOP
+
+		call need_save
+
+	end
+
+	;Deallocate the temporary segment
+	delete_temp_array
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	return
+
+no_more_data,
+
+	xcall u_message("No data remaining")
+	xcall m_disable(D_ENTRY,cid_file,"SAVELOG")
+	xcall m_disable(D_ENTRY,cid_file,"SAVEAS")
+	xcall m_disable(D_ENTRY,cid_log,"PROCESS")
+	xcall m_disable(D_ENTRY,cid_log,"DELPRC")
+	xcall m_disable(D_ENTRY,cid_log,"DELSMC")
+	xcall m_disable(D_ENTRY,cid_log,"DELINI")
+	xcall m_disable(D_ENTRY,cid_log,"DELINPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELOUTPAR")
+	xcall m_disable(D_ENTRY,cid_log,"DELPARDATA")
+	xcall m_disable(D_ENTRY,cid_log,"DELPACKET")
+	xcall m_disable(D_ENTRY,cid_log,"DELSESDBG")
+	xcall m_disable(D_ENTRY,cid_log,"STARTUP")
+	xcall m_disable(D_ENTRY,cid_log,"SHUTDOWN")
+	xcall m_disable(D_ENTRY,cid_log,"DELLINE")
+	clear mc
+
+	return
+
+;-------------------------------------------------------------------------------
+
+full_log,
+
+	;Revert the log back to the saved full log
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	;Resize the main array
+	restore_main_array
+
+	;Move the data from the save array to the main array
+	for count from 1 thru mcs
+		logline(count) = logsave(count)
+
+	;Restart the list
+	xcall l_restart(lid_log,1,mc)
+	req = D_LNOP
+
+	xcall e_sect(APP_TITLE + " - [" + %atrim(logfile) + "]",D_HEADER,D_CLEAR,D_LEFT)
+	xcall e_sect(%string(mc)+" records",D_INFO,D_LEFT,D_CLEAR)
+
+	xcall m_enable(D_ENTRY,cid_log,"PROCESS")
+	xcall m_enable(D_ENTRY,cid_log,"DELPRC")
+	xcall m_enable(D_ENTRY,cid_log,"DELSMC")
+	xcall m_enable(D_ENTRY,cid_log,"DELINI")
+	xcall m_enable(D_ENTRY,cid_log,"DELINPAR")
+	xcall m_enable(D_ENTRY,cid_log,"DELOUTPAR")
+	xcall m_enable(D_ENTRY,cid_log,"DELPARDATA")
+	xcall m_enable(D_ENTRY,cid_log,"DELPACKET")
+	xcall m_enable(D_ENTRY,cid_log,"DELSESDBG")
+	xcall m_enable(D_ENTRY,cid_log,"STARTUP")
+	xcall m_enable(D_ENTRY,cid_log,"SHUTDOWN")
+
+	xcall utm_check("Sort/By Time",1)
+	xcall utm_check("Sort/By Process ID",0)
+	clear sort_pid
+
+	xcall m_disable(D_ENTRY,cid_log,"FULLLOG")
+
+	xcall m_disable(D_ENTRY,cid_file,"SAVELOG")
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	return
+
+;-------------------------------------------------------------------------------
+
+sort_list_pid,
+
+	if (!sort_pid)
+	begin
+		sort_pid = !sort_pid
+		call do_sort
+	end
+
+	return
+
+sort_list_time,
+
+	if (sort_pid)
+	begin
+		sort_pid = !sort_pid
+		call do_sort
+	end
+
+	return
+
+do_sort,
+
+	xcall w_proc(WP_HOURGLASS_ON)
+
+	if (sort_pid) then
+		xcall qsort(logline(1),mc,"qsort_pid")
+	else
+		xcall qsort(logline(1),mc,"qsort_time")
+
+	;Reassign the display sequence numbers based on the new sorted sequence
+	for count from 1 thru mc
+		display_sequence(count) = count
+
+	xcall utm_toggle("Sort/By Process ID")
+	xcall utm_toggle("Sort/By Time")
+
+	;Restart the list
+	xcall l_restart(lid_log,1,mc)
+	req = D_LNOP
+
+	call need_save
+
+	xcall w_proc(WP_HOURGLASS_OFF)
+
+	return
+
+need_save,
+
+	;Reset application title and footer
+	xcall e_sect(APP_TITLE + " - [" + %atrim(logfile) + " *]",D_HEADER,D_CLEAR,D_LEFT)
+	xcall e_sect(%string(mc)+" records",D_INFO,D_LEFT,D_CLEAR)
+
+	if (mc)
+		xcall m_enable(D_ENTRY,cid_file,"SAVELOG")
+
+	xcall m_enable(D_ENTRY,cid_log,"FULLLOG")
+
+	return
+
+;-------------------------------------------------------------------------------
+
+save_log,
+
+	using (%u_msgbox("Overwrite " + %atrim(logfile) + " ?",D_MYESNOCANCEL+D_MICONQUESTION+D_MDEFBUTTON3,"Save Log File")) select
+	(D_MIDYES),
+	begin
+		xcall u_open(fid_log,"o:s",logfile,,,error)
+		if (error) then
+			xcall u_msgbox("Failed to open log file for write",D_MOK+D_MICONEXCLAM,"Warning")
+		else
+		begin
+			;Resize the save array to the size of the current main array
+			reduce_save_array
+
+			;Save the array out to disk and move it to the new save array
+			for count  from 1 thru mc
+			begin
+				writes(fid_log,%atrim(logdata(count)))
+				logsave(count) = logline(count)
+			end
+			xcall u_close(fid_log)
+
+			;Reset the application titles etc
+			xcall e_sect(APP_TITLE + " - [" + %atrim(logfile) + "]",D_HEADER,D_CLEAR,D_LEFT)
+			xcall e_sect(%string(mc)+" records",D_INFO,D_LEFT,D_CLEAR)
+		end
+	end
+	(D_MIDNO),
+		call save_as
+	(D_MIDCANCEL),
+		nop
+	endusing
+	
+	return
+
+save_as,
+
+
+	if (%u_getfilename(newfile,"Save Log File As",2,filter_txt,filter_ext,,,,,,,D_OFN_SAVEAS))
+	begin
+		
+		;Check for a file extension, and if not found default to .log
+		if (!%instr(1,newfile,"."))
+			newfile = %atrim(newfile) + ".log"
+		
+		xcall u_open(fid_log,"i:s",newfile,,,error)
+		using (error) select
+		(18),	;File not found
+			call do_save_as
+		(0),	;No error - file exists
+		begin
+			xcall u_close(fid_log)
+			if (%u_msgbox("Overwrite " + %atrim(newfile) + " ?",D_MYESNO+D_MICONQUESTION+D_MDEFBUTTON2,"Save Log File") == D_MIDYES)
+				call do_save_as
+		end
+		(),		;Some other error - file exists
+			xcall u_message("Can't save to this existing file.")
+		endusing
+	end
+
+	return
+
+do_save_as,
+
+	xcall u_open(fid_log,"o:s",newfile,,,error)
+	if (error) then
+		xcall u_msgbox("Failed to open log file for write",D_MOK+D_MICONEXCLAM,"Warning")
+	else
+	begin
+		;Resize the save array to the size of the current main array
+		reduce_save_array
+
+		;Save the array out to disk and move it to the new save array
+		for count  from 1 thru mc
+		begin
+			writes(fid_log,%atrim(logdata(count)))
+			logsave(count) = logline(count)
+		end
+		xcall u_close(fid_log)
+
+		logfile = newfile
+
+		;Reset the application titles etc
+		xcall e_sect(APP_TITLE + " - [" + %atrim(logfile) + "]",D_HEADER,D_CLEAR,D_LEFT)
+		xcall e_sect(%string(mc)+" records",D_INFO,D_LEFT,D_CLEAR)
+
+	end
+
+	return
+
+.end
+
+;------------------------------------------------------------------------------
+;Routine:		load_logfile
+;Description:	Load method for main log file list
+;Author:		Steve Ives
+;Date:			27/11/2002 (11:00:23)
+;
+.subroutine load_logfile
+
+    ;Argument list
+    a_listid           ,n
+    a_request          ,n
+    a_data				,a
+    a_inpid            ,n
+    a_disabled         ,n      ;optional
+    a_itemindex        ,n
+
+	;Method data
+	mh		      		,n
+	mc		      		,n
+
+	;End of argument list
+
+.include "WND:tools.def"
+
+structure logln
+	logseq	,i4
+	dspseq	,i4
+	logtxt	,a256
+	logpid	,a8 @logtxt
+
+.proc
+
+	if (a_itemindex <= mc) then
+		xcall i_display(a_inpid,,a_data=logdata(a_itemindex))
+	else
+		a_request = D_LEOF
+
+	xreturn
+
+.end
+
+;------------------------------------------------------------------------------
+;Routine:		EAPPSIZE_METHOD
+;Description:	Application window resize method
+;Author:		Steve Ives
+;Date:			27/11/2002 (11:35:19)
+;
+.function EAPPSIZE_METHOD ,^VAL
+
+    ;Argument list
+    a_columns          ,n
+    a_rows             ,n
+    a_width            ,n
+    a_height           ,n
+    ;End of argument list
+
+.include "WND:tools.def"
+
+external common
+	app_rows	,i4
+	app_columns	,i4
+
+.proc
+
+	app_rows = a_rows
+	app_columns = a_columns
+
+	xcall u_resize(a_rows,a_columns)
+
+	freturn 1
+
+.end
+
+;------------------------------------------------------------------------------
+;Routine:		EUTILS_METHOD
+;Description:	Utility procesing
+;Author:		Steve Ives
+;Date:			03/12/2002 (14:42:07)
+;
+.subroutine EUTILS_METHOD
+
+    ;Argument list
+    a_record           ,a      ;(optional)
+    ;End of argument list
+
+.include "WND:tools.def"
+
+.proc
+
+	clear g_select
+
+	using (g_entnam) select
+	("U_ABOUT"),
+		xcall u_about(APP_TITLE,APP_VERSION,%datecompiled)
+	endusing
+
+	xreturn
+
+.end
+
+;------------------------------------------------------------------------------
+.function qsort_pid, ^val
+	
+	group a_g1 ,a
+	  logseq	,i4
+	  dspseq	,i4
+	  pid		,a8
+	  txt		,a248
+	endgroup
+
+	group a_g2 ,a
+	  logseq	,i4
+	  dspseq	,i4
+	  pid		,a8
+	  txt		,a248
+	endgroup
+
+.proc
+
+	if (a_g1.pid < a_g2.pid)
+		freturn(-1)
+	
+	if (a_g1.pid > a_g2.pid)
+		freturn(1)
+
+	if (a_g1.logseq < a_g2.logseq)
+		freturn(-1)
+	
+	if (a_g1.logseq > a_g2.logseq)
+		freturn(1)
+
+	freturn(0)
+
+.end
+
+;------------------------------------------------------------------------------
+.function qsort_time, ^val
+	
+	group a_g1 ,a
+	  logseq	,i4
+	  dspseq	,i4
+	  pid		,a8
+	  txt		,a248
+	endgroup
+
+	group a_g2 ,a
+	  logseq	,i4
+	  dspseq	,i4
+	  pid		,a8
+	  txt		,a248
+	endgroup
+
+.proc
+
+	if (a_g1.logseq < a_g2.logseq)
+		freturn(-1)
+	
+	if (a_g1.logseq > a_g2.logseq)
+		freturn(1)
+
+	freturn(0)
+
+.end
+
+
+;------------------------------------------------------------------------------
+;
+.function utm_toggle	,^val, reentrant
+;
+; Description:  Toggle the check on a menu entry
+;
+; Arguments:
+;
+	a_mnustrng	,a	;Path to menu item "Column/Entry/Subentry..."
+;
+; Return value:  Previous state of the check
+;
+external function
+	utm_check	,^val
+
+.proc
+	.ifdef D_GUI
+		freturn (%utm_check(a_mnustrng,(!%utm_check(a_mnustrng))))
+	.else
+		freturn 0
+	.endc
+.end
+
+;------------------------------------------------------------------------------
+;
+.function utm_check	,^val, reentrant
+;
+; Description:  Set/Unset/Retrieve menu item check mark
+;
+; Arguments:
+;
+	a_mnustrng	,a	;Path to menu item "Column/Entry/Subentry..."
+
+	a_check		,n	;(Optional) new value of check (TRUE/FALSE)
+;
+; Return value:	Previous state of check on entry, or -1 if entry not found
+;
+
+.define MF_BYPOSITION	,^x(00000400)
+.define MF_CHECKED	,^x(00000008)
+.define MF_UNCHECKED	,^x(00000000)
+
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	hmenu		,i4	;Handle to menu
+	itmno		,i4	;Item number (base 0)
+	options		,i4	;Options for CheckMenuItem
+	rval		,i4	;Returned value
+
+external function
+	utm_getitem	,^val	;Find handle and item number of a menu entry
+
+.proc
+	.ifdef D_GUI
+   	user32 = %dll_open("user32")
+	clear hmenu
+	itmno = %utm_getitem(hmenu, a_mnustrng)	;Get the menu handle and item number
+	if (hmenu) then
+	  begin
+	    options = MF_BYPOSITION
+	    ;
+	    ; Get the current state of the check
+	    ;
+	    rval = (%dll_call(user32,DLL_TYPE_WINAPI,"GetMenuState", hmenu, itmno, options) & MF_CHECKED)
+	    ;
+	    ; If we're changing it...
+	    ;
+	    if (^passed(a_check) && (a_check != rval))
+	      begin
+		if (a_check) then    	;Checked?
+		  options = options | MF_CHECKED
+		else			; or unchecked?
+		  options = options | MF_UNCHECKED
+		xcall dll_call(user32,DLL_TYPE_WINAPI,"CheckMenuItem", hmenu, itmno, options)
+	      end
+	  end
+	else
+	  rval = -1			;Not a valid menu entry
+	xcall dll_close(user32)
+	freturn rval
+	.else
+	freturn 0
+	.endc
+.end
+
+;------------------------------------------------------------------------------
+;
+.function utm_getitem	,^val, reentrant
+;
+; Description:	Find the handle and item number of a menu entry
+;
+; Arguments:
+;
+    	a_hmenu		,n	;Handle to menu, or 0 for menu bar
+
+	a_mnustrng	,a	;Menu string (entry/subentry/...)
+;
+; Return value:	Item number (base 0)
+;
+; Notes:	a_hmenu may be returned modified.  If the entry is on
+;		a submenu, then a_hmenu will be the handle to that submenu.
+;		If the entry is not found, a_hmenu is returned 0.
+;
+.include "DBLDIR:windows.def"
+
+.align
+stack record
+	user32		,i4	;Handle to user32.dll
+	itmno		,i4	;Item number
+	count		,i4	;Count of items in the menu
+	ptr		,i4	;Index of "/" in a_mnustrng
+	ptr2		,i4	;Index of ampersand or null
+	text		,a84	;Menu item text
+
+.proc
+	.ifdef D_GUI
+	user32 = %dll_open("user32")
+	itmno = -1
+	if (!a_hmenu)	;We start at the menu bar if no handle passed
+	  a_hmenu = %dll_call(user32,DLL_TYPE_WINAPI,"GetMenu",%w_info(WIF_HWND,WID_CONTAINER))
+	if (a_hmenu)		;Got one?
+	  begin
+	    ptr = %instr(1, a_mnustrng, "/")
+	    if (!ptr)	;Find the delimiter
+	      ptr = %trimz(a_mnustrng) + 1	;Past the end if not one
+	    if (ptr <= 1) then
+	      clear a_hmenu	; / at the beginning, or no text at all
+	    else
+	      begin
+		;Get the number of items in this menu
+		count = %dll_call(user32,DLL_TYPE_WINAPI,"GetMenuItemCount", a_hmenu)
+		;Search through them for the one we're after
+		for itmno from 0 thru (count - 1)
+		  begin
+	    	xcall dll_call(user32,DLL_TYPE_WINAPI,"GetMenuStringA",a_hmenu,itmno,text,%integer(^size(text)-1),MF_BYPOSITION)
+			
+			if (ptr2 = %instr(1, text, %char(0)))
+		      clear text(ptr2,^size(text))	;Un-null terminate
+
+			if (ptr2 = %instr(1, text, %char(9)))
+			  clear text(ptr2,^size(text))	;Un-null terminate
+
+			ptr2 = 1
+		    
+			;Strip out single &'s (used for select character)
+		    while (ptr2 = %instr(ptr2, text, "&"))
+		      begin
+				text(ptr2,^size(text)) = text(ptr2+1,^size(text))
+				incr ptr2	;Avoid removing second in pair (&&)
+		      end
+		    while (!text(1:1))
+		      text = text(2,^size(text))	;Trim leading spaces
+		    if (text == a_mnustrng(1,ptr-1))	;Does it match?
+		      exitloop
+		  end
+		if (itmno >= count) then		;Off the end
+		  begin
+		    clear a_hmenu
+		    itmno = -1
+		  end
+		else					;Got one
+		  begin
+		    if (ptr < %trimz(a_mnustrng))	;Submenu requested?
+		      begin
+			;Get the handle to the submenu
+			a_hmenu = %dll_call(user32,DLL_TYPE_WINAPI,"GetSubMenu", a_hmenu, itmno)
+			if (a_hmenu) then		;If we have one, recurse
+			  itmno = %utm_getitem(a_hmenu, a_mnustrng(ptr+1,^size(a_mnustrng)))
+			else	;No submenu, didn't find what we wanted
+			  itmno = -1
+		      end
+		  end
+	      end
+	  end
+	xcall dll_close(user32)		;Deaccess user32.dll
+	freturn itmno
+	.else
+	freturn -1
+	.endc
+.end
+
+
+
