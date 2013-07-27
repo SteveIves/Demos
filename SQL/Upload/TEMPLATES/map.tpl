@@ -28,10 +28,6 @@
 ;//               modified version of this code, indicates your acceptance of
 ;//               these terms.
 ;//
-;// $Revision: 1 $
-;//
-;// $Date: 2012-02-15 23:52:19-06:00 $
-;//
 ;;*****************************************************************************
 ;;
 ;; Routine:     <structure_name>_map
@@ -39,8 +35,6 @@
 ;; Author:      <AUTHOR> (<ENV:USERNAME>)
 ;;
 ;; Company:     <COMPANY>
-;;
-;; Created:     <DATE> at <TIME>
 ;;
 ;;*****************************************************************************
 ;;
