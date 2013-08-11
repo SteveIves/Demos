@@ -1,31 +1,6 @@
-[CurrentProject]
-curproj=tkexamp.vpj
-[ProjectDates]
-tkexamp.vpj=20000523083501539
-[ProjectFiles]
-tkexamp.vpj
-[State]
-SCREEN: 1280 1024 194 42 1051 927 0 0 N 0 0 0 0 770 611
-CWD: M:\toolkit\examples\source
-BUFFER: BN="M:\toolkit\examples\README.TXT"
-BI: MA=1 74 1  TABS=1 9  WWS=1 IWT=0 ST=0 IN=1 BW=0 US=32000 RO=1 SE=1 SN=0 BIN=0 MN=Fundamental	HM=0 MF=0 TL=0 MLL=0 ASE=0
-VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=5 BI=25 HT=0 HN=0 HF=0 HC=4
-BUFFER: BN="M:\toolkit\examples\source\cb.bat"
-BI: MA=1 74 1  TABS=1 4  WWS=1 IWT=0 ST=0 IN=2 BW=0 US=32000 RO=1 SE=1 SN=0 BIN=0 MN=Batch	HM=0 MF=0 TL=0 MLL=0 ASE=0
-VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=5 BI=26 HT=0 HN=0 HF=0 HC=4
-WINDOW: 22 22 572 413 -1 -1 N  WF=0 WT=2 "OEM Fixed Font,10,0,1"
-BUFFER: BN="M:\toolkit\examples\README.TXT"
-VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=131 BI=25 HT=0 HN=0 HF=0 HC=4
-WINDOW: 44 44 572 413 -1 -1 M  WF=0 WT=1 "OEM Fixed Font,10,0,1"
-BUFFER: BN="M:\toolkit\examples\source\cb.bat"
-VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=237 BI=26 HT=0 HN=0 HF=0 HC=4
-FILEHIST: 9
-C:\SynergyDE\workbench\wbconfig\project.slk
-d:\dev\MSDEV\VC98\include\CTYPE.H
-D:\dbl\inc\utl\lminc.h
-N:\ics\rptlib\rptexe.dbl
-N:\ics\rptlib\rptexe.old
-D:\wrkbnch\src\dblparse\dblparse.cpp
-c:\synergyde\workbench\rel_wb.txt
-M:\toolkit\examples\readme.txt
-M:\toolkit\examples\source\cb.bat
+<!DOCTYPE Workspace SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpw.dtd">
+<Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.1.1a">
+	<Projects>
+		<Project File="tkexamp.vpj" />
+	</Projects>
+</Workspace>

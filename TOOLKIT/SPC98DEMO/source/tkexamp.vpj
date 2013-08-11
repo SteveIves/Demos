@@ -1,36 +1,174 @@
-[COMPILER]
-FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
-FILTERPATTERN=*.dbl\n*.def\n*.wsc\n*.*\n
-FILTERASSOCIATEFILETYPES=0 0 0 0
-FILTEREXPANSION=1
-Synergy=DBL
-compile=concur|capture|:Compile:&Compile,%(DBLDIR)\bin\dbl %(SYN_DBG) -XT "%p%n%e"
-make=concur|capture|:Build:&Build,%(DBLDIR)\bin\dblink %(SYN_DBG) %n WND:tklib.elb DBLDIR:axlib.elb
-rebuild=concur|capture|:Rebuild:&Rebuild,
-debug=:Debug:&Debug,%(DBLDIR)\bin\dbr -d %n
-execute=:Execute:E&xecute,%(DBLDIR)\bin\dbr %(SYN_DBG) %n
-user1=hide|:User 1:User 1,
-user2=hide|:User 2:User 2,
-workingdir=.
-includedirs=
-reffile=
-MACRO=\n
-[FILES]
-about.dbl
-add_line.dbl
-convert_spc_wizard.dbl
-demoprog.dbl
-demoprog.def
-demoprog.wsc
-file_io.dbl
-help_system.dbl
-i_disable_set.dbl
-i_enable_set.dbl
-io.def
-print_quote.dbl
-progress.dbl
-sendmail.dbl
-webbrowser.dbl
-who_details.dbl
-wizard_setup.dbl
-[ASSOCIATION]
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine='%(DBLDIR)\bin\dbl %(SYN_DBG) -XT "%p%n%e"'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine="%(DBLDIR)\bin\dblink %(SYN_DBG) %n WND:tklib.elb DBLDIR:axlib.elb"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine="%(DBLDIR)\bin\dbr -d %n"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				SaveOption="SaveCurrent">
+				<Exec CmdLine="%(DBLDIR)\bin\dbr %(SYN_DBG) %n"/>
+			</Target>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -T -qalign -qstrict "%p%n%e"'/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="1"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="1"/>
+			<SynSetting
+				Name="compile_single"
+				Value="0"/>
+			<SynSetting
+				Name="object_name"
+				Value=""/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o %n.dbr %n"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+		</SynSettings>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl;*.tpl;*.dbc">
+			<F N="about.dbl"/>
+			<F N="add_line.dbl"/>
+			<F N="convert_spc_wizard.dbl"/>
+			<F N="demoprog.dbl"/>
+			<F N="file_io.dbl"/>
+			<F N="help_system.dbl"/>
+			<F N="i_disable_set.dbl"/>
+			<F N="i_enable_set.dbl"/>
+			<F N="print_quote.dbl"/>
+			<F N="progress.dbl"/>
+			<F N="sendmail.dbl"/>
+			<F N="webbrowser.dbl"/>
+			<F N="who_details.dbl"/>
+			<F N="wizard_setup.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh">
+			<F N="demoprog.def"/>
+			<F N="io.def"/>
+		</Folder>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc">
+			<F N="demoprog.wsc"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+</Project>
