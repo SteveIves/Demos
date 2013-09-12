@@ -165,6 +165,15 @@
 	</Config>
 	<Files>
 		<Folder
+			Name="Templates"
+			Filters="*.tpl">
+			<F N="TEMPLATES/DatabaseTable.tpl"/>
+			<F N="TEMPLATES/DatabaseTableBase.tpl"/>
+			<F N="TEMPLATES/DatabaseTableConnection.tpl"/>
+			<F N="TEMPLATES/DatabaseTableMapped.tpl"/>
+			<F N="TEMPLATES/DatabaseTableTest.tpl"/>
+		</Folder>
+		<Folder
 			Name="Source Files"
 			Filters="*.dbl">
 			<F N="SRC/CustomerTable.dbl"/>
@@ -182,15 +191,6 @@
 		<Folder
 			Name="Toolkit Script Files"
 			Filters="*.wsc"/>
-		<Folder
-			Name="Templates"
-			Filters="*.tpl">
-			<F N="TEMPLATES/DatabaseTable.tpl"/>
-			<F N="TEMPLATES/DatabaseTableBase.tpl"/>
-			<F N="TEMPLATES/DatabaseTableConnection.tpl"/>
-			<F N="TEMPLATES/DatabaseTableMapped.tpl"/>
-			<F N="TEMPLATES/DatabaseTableTest.tpl"/>
-		</Folder>
 		<Folder
 			Name="Other Files"
 			Filters="">
