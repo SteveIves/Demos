@@ -1,0 +1,70 @@
+main FileNameDialogs
+
+record 
+        filename        ,a256
+        filters         ,string
+endrecord
+        
+proc
+        open(1,o,"tt:")                 ;;You won't need this
+        xcall w_init(1,1,5,24,80)       ;;You won't need this
+        
+        filters = "Text Files (*.txt)"+%char(0)+"*.txt"+%char(0)+"All Files (*.*)"+%char(0)+"*.*"+%char(0)
+	
+	if (%OpenFileDialog("Pick a file",filters,filename)) then
+		writes(1,%atrim(filename))      
+	else
+		writes(1,"No file selected")
+	
+	if (%SaveFileDialog("Select file to save",filters,filename)) then
+		writes(1,%atrim(filename))      
+	else
+		writes(1,"No file selected")
+
+        xcall w_exit                    ;;You won't need this
+        close 1                         ;;You won't need this
+        stop                            ;;You won't need this
+                
+endmain
+
+function OpenFileDialog		,^val
+	optional in title	,string
+	optional in filters	,string
+	required out filename	,a
+	endparams
+
+	.define D_DEFINES_ONLY          ;;Make syre you use D_DEFINES_ONLY like this
+	.include "WND:tools.def"        ;;otherwise you'll wind up with 4NB of toolkit
+	.undefine D_DEFINES_ONLY        ;;global data in your app!!!
+
+	record 
+		status		,int
+	endrecord
+	
+proc
+	if (!(status=%synmsw_getfilename(filename,title,filters,,,D_OFN_CENTER)))
+		filename=""
+	freturn status
+endfunction
+
+function SaveFileDialog		,^val
+	optional in title	,string
+	optional in filters	,string
+	required out filename	,a
+	endparams
+
+	.define D_DEFINES_ONLY          ;;Make syre you use D_DEFINES_ONLY like this
+	.include "WND:tools.def"        ;;otherwise you'll wind up with 4NB of toolkit
+	.undefine D_DEFINES_ONLY        ;;global data in your app!!!
+
+	record 
+		status		,int
+	endrecord
+	
+proc
+	if (!(status=%synmsw_getfilename(filename,title,filters,,,D_OFN_CENTER|D_OFN_SAVEAS)))
+		filename=""
+	freturn status
+endfunction
+
+
