@@ -1,0 +1,42 @@
+import System
+import System.Collections.Generic
+import System.ServiceModel
+import System.Text
+import WcfServiceLibrary
+
+namespace ServiceHost
+	
+	;;; <summary>
+	;;; The main entry point for the application.
+	;;; </summary>
+	main
+
+	proc
+		data address, String, "http://localhost:56565"
+		
+		data svcHost, @ServiceHost, new ServiceHost(^typeof(PartsService), new Uri(address))
+		
+		try
+		begin
+			;;Open the service host to accept incoming calls
+			svcHost.Open()
+			
+			;;The service can now be accessed.
+			Console.WriteLine("The service is ready at " + address)
+			Console.Write("Press a key to terminate the service: ")
+			Console.ReadKey()
+			
+			;;Close the ServiceHostBase to shutdown the service.
+			svcHost.Close() 
+		end
+		catch (ex, @CommunicationException)
+		begin
+			Console.WriteLine("There was a communication problem. " + ex.Message)
+			Console.Read()
+		end
+		endtry
+		
+	endmain
+
+endnamespace
+

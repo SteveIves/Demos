@@ -1,0 +1,42 @@
+
+import System
+import System.ServiceModel
+import System.ServiceModel.Channels
+import System.ServiceModel.Dispatcher
+
+namespace WcfServiceLibrary
+
+	public class ServiceInstanceProvider implements IInstanceProvider
+		
+		public method GetInstance, @object
+			instanceContext, @InstanceContext 
+			message, @Message 
+			endparams
+		proc
+			data instanceAppDomain, @AppDomain, AppDomain.CreateDomain(Guid.NewGuid().ToString())
+			data service, @PartsService, (@PartsService)instanceAppDomain.CreateInstanceAndUnwrap(^typeof(PartsService).Assembly.FullName, ^typeof(PartsService).FullName)
+			service.ServiceDispatcher = BackgroundDispatcher.AllocateDispatcher()
+			mreturn service
+		endmethod
+		
+		public method GetInstance, @object
+			instanceContext, @InstanceContext 
+			endparams
+		proc
+			mreturn this.GetInstance(instanceContext, ^null)
+		endmethod
+		
+		public method ReleaseInstance, void
+			instanceContext, @InstanceContext 
+			instance, @object 
+			endparams
+		proc
+			data instanceAppDomain = ((@IsolatableServiceBase)instance).GetAppDomain()
+			BackgroundDispatcher.DeallocateDispatcher(((@IsolatableServiceBase)instance).ServiceDispatcher)
+			AppDomain.Unload(instanceAppDomain)
+		endmethod
+	
+	endclass
+
+endnamespace
+

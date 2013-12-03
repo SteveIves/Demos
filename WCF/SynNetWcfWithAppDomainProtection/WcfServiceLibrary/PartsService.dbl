@@ -1,0 +1,29 @@
+
+import System
+import System.Collections.ObjectModel
+import System.Threading.Tasks
+import PartsSystem
+
+namespace WcfServiceLibrary
+	
+	public class PartsService extends IsolatableServiceBase implements IPartsService
+		
+		public method GetAllParts, @ObservableCollection<Part>
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<ObservableCollection<Part>>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystem, new PartsSystem()
+				completionSource.SetResult(api.GetAllParts())
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			mreturn completionSource.Task.Result
+		endmethod
+		
+	endclass
+
+endnamespace
+
+

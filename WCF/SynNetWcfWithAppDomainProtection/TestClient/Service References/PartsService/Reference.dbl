@@ -1,0 +1,269 @@
+import System
+import System.Runtime.Serialization
+
+.array 0
+namespace TestClient.PartsService
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "Part", Namespace = "http://schemas.datacontract.org/2004/07/PartsSystem")}
+	{System.SerializableAttribute()}
+	public partial class Part inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private CostPriceField, System.Decimal
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property CostPrice, System.Decimal
+			method get
+			proc
+				mreturn this.CostPriceField
+			endmethod
+			method set
+			proc
+				if ((this.CostPriceField == value) != true)
+				begin
+					this.CostPriceField = value
+					this.RaisePropertyChanged("CostPrice")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private DescriptionField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Description, string
+			method get
+			proc
+				mreturn this.DescriptionField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.DescriptionField, value) != true)
+				begin
+					this.DescriptionField = value
+					this.RaisePropertyChanged("Description")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GroupidField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Groupid, string
+			method get
+			proc
+				mreturn this.GroupidField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GroupidField, value) != true)
+				begin
+					this.GroupidField = value
+					this.RaisePropertyChanged("Groupid")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private IdField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Id, string
+			method get
+			proc
+				mreturn this.IdField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.IdField, value) != true)
+				begin
+					this.IdField = value
+					this.RaisePropertyChanged("Id")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private QuantityField, int
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Quantity, int
+			method get
+			proc
+				mreturn this.QuantityField
+			endmethod
+			method set
+			proc
+				if ((this.QuantityField == value) != true)
+				begin
+					this.QuantityField = value
+					this.RaisePropertyChanged("Quantity")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private SpareField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Spare, string
+			method get
+			proc
+				mreturn this.SpareField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.SpareField, value) != true)
+				begin
+					this.SpareField = value
+					this.RaisePropertyChanged("Spare")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private SupplieridField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Supplierid, string
+			method get
+			proc
+				mreturn this.SupplieridField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.SupplieridField, value) != true)
+				begin
+					this.SupplieridField = value
+					this.RaisePropertyChanged("Supplierid")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private TechnicalInfoField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property TechnicalInfo, string
+			method get
+			proc
+				mreturn this.TechnicalInfoField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.TechnicalInfoField, value) != true)
+				begin
+					this.TechnicalInfoField = value
+					this.RaisePropertyChanged("TechnicalInfo")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = "PartsService.IPartsService", SessionMode = System.ServiceModel.SessionMode.Required)}
+	public interface IPartsService
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/GetAllParts", ReplyAction = "http://tempuri.org/IPartsService/GetAllPartsResponse")}
+		method GetAllParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/GetAllParts", ReplyAction = "http://tempuri.org/IPartsService/GetAllPartsResponse")}
+		method GetAllPartsAsync, @System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>>
+			endparams
+		endmethod
+	endinterface
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public interface IPartsServiceChannel extends TestClient.PartsService.IPartsService, System.ServiceModel.IClientChannel
+	endinterface
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	public partial class PartsServiceClient inherits System.ServiceModel.ClientBase<TestClient.PartsService.IPartsService>, TestClient.PartsService.IPartsService
+
+		public method PartsServiceClient
+			endparams
+		proc
+
+		endmethod
+
+		public method PartsServiceClient
+			endpointConfigurationName, string 
+			endparams
+			parent(endpointConfigurationName)
+		proc
+
+		endmethod
+
+		public method PartsServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, string 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method PartsServiceClient
+			endpointConfigurationName, string 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(endpointConfigurationName, remoteAddress)
+		proc
+
+		endmethod
+
+		public method PartsServiceClient
+			binding, @System.ServiceModel.Channels.Binding 
+			remoteAddress, @System.ServiceModel.EndpointAddress 
+			endparams
+			parent(binding, remoteAddress)
+		proc
+
+		endmethod
+
+		public method GetAllParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+			endparams
+		proc
+			mreturn parent.Channel.GetAllParts()
+		endmethod
+
+		public method GetAllPartsAsync, @System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>>
+			endparams
+		proc
+			mreturn parent.Channel.GetAllPartsAsync()
+		endmethod
+	endclass
+endnamespace
+

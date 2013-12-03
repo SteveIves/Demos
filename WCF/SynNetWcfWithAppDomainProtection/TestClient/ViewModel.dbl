@@ -1,0 +1,31 @@
+
+import System
+import System.Collections.ObjectModel
+import System.Linq
+import System.Text
+import System.Threading.Tasks
+import TestClient.PartsService
+
+namespace TestClient
+
+	public class ViewModel
+		
+		private mParts, @ObservableCollection<Part>
+		
+		public property Parts, @ObservableCollection<Part>
+			method get
+			proc
+				if (mParts == ^null)
+				begin
+					data client, @PartsServiceClient , new PartsServiceClient()
+					mparts = client.GetAllParts()
+					client.Close()
+				end
+				mreturn mParts
+			endmethod
+		endproperty
+
+	endclass
+
+endnamespace
+

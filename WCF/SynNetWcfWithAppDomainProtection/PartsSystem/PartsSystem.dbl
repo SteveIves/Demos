@@ -1,0 +1,22 @@
+
+import System
+import System.Collections.ObjectModel
+import Synergex.SynergyDE.Select
+
+namespace PartsSystem
+	
+	public class PartsSystem
+		
+		public method GetAllParts,	@ObservableCollection<Part>
+		proc
+			data partCollection, @ObservableCollection<Part>, new ObservableCollection<Part>()
+			data partRec, strPart				
+			foreach partRec in new Select(new From("DAT:parts.ism",partRec))
+				partCollection.Add(new Part((String)partRec))
+			mreturn partCollection
+		endmethod
+		
+	endclass
+	
+endnamespace
+

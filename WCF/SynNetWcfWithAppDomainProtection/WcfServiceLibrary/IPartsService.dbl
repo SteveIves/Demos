@@ -1,0 +1,24 @@
+
+import System
+import System.Collections.ObjectModel
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Threading.Tasks
+import PartsSystem
+
+namespace WcfServiceLibrary
+
+	{ServiceContract(SessionMode = SessionMode.Required)}
+	{SingletonBehaviorAttribute()}
+	public interface IPartsService
+		
+		{OperationContract}
+		method GetAllParts, @ObservableCollection<Part>
+			
+		endmethod
+
+	endinterface
+
+endnamespace
+
+
