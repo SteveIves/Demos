@@ -7,10 +7,7 @@ Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "WcfServiceLibrary", "WcfSer
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F6CB391-E519-433D-A341-FD00E1D7A31B}"
 	ProjectSection(SolutionItems) = preProject
-		develop.bat = develop.bat
-		develop.cmd = develop.cmd
 		regen.bat = regen.bat
-		RunService.bat = RunService.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{66C67D32-B695-4B7B-AFE2-6BFB59C29DC8}"
