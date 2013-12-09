@@ -21,7 +21,6 @@ namespace WcfServiceLibrary
 			parameters, @BindingParameterCollection 
 			endparams
 		proc
-			mreturn
 		endmethod
 		
 		public method ApplyClientBehavior, void
@@ -30,7 +29,6 @@ namespace WcfServiceLibrary
 			clientRuntime, @ClientRuntime 
 			endparams
 		proc
-			mreturn
 		endmethod
 		
 		public method ApplyDispatchBehavior, void

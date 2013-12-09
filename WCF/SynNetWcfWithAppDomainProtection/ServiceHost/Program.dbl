@@ -23,7 +23,7 @@ namespace ServiceHost
 			
 			;;The service can now be accessed.
 			Console.WriteLine("The service is ready at " + address)
-			Console.Write("Press a key to terminate the service: ")
+			Console.WriteLine("Press a key to terminate the service")
 			Console.ReadKey()
 			
 			;;Close the ServiceHostBase to shutdown the service.

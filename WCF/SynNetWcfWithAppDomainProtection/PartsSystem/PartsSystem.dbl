@@ -16,6 +16,34 @@ namespace PartsSystem
 			mreturn partCollection
 		endmethod
 		
+		public method GetPart, Boolean
+			required in aPartId, a
+			required out aPart, @Part
+			endparams
+		proc
+			data retval, boolean, true
+			data chan, i4
+			data partRec, strPart
+			try
+			begin
+				open(chan=0,I:I,"DAT:parts.ism")
+				read(chan,partRec,aPartId)
+				aPart = new Part((string)partRec)
+			end
+			catch (e, @Exception)
+			begin
+				aPart = new Part()
+				retval = false
+			end
+			finally
+			begin
+				if (chan&&%chopen(chan))
+					close chan
+			end
+			endtry
+			mreturn retval
+		endmethod
+
 	endclass
 	
 endnamespace
