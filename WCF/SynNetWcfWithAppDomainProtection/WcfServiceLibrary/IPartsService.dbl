@@ -1,6 +1,6 @@
 
 import System
-import System.Collections.ObjectModel
+import System.Collections.Generic
 import System.Runtime.Serialization
 import System.ServiceModel
 import System.Threading.Tasks
@@ -13,10 +13,15 @@ namespace WcfServiceLibrary
 	public interface IPartsService
 		
 		{OperationContract}
-		method GetAllParts, @ObservableCollection<Part>
+		method GetAllParts, @List<Part>
 			
 		endmethod
 
+		{OperationContract}
+		method GetPart, @Part
+			required in partId, String
+		endmethod
+		
 	endinterface
 
 endnamespace

@@ -1,15 +1,15 @@
 
 import System
-import System.Collections.ObjectModel
+import System.Collections.Generic
 import Synergex.SynergyDE.Select
 
 namespace PartsSystem
 	
 	public class PartsSystem
 		
-		public method GetAllParts,	@ObservableCollection<Part>
+		public method GetAllParts,	@List<Part>
 		proc
-			data partCollection, @ObservableCollection<Part>, new ObservableCollection<Part>()
+			data partCollection, @List<Part>, new List<Part>()
 			data partRec, strPart				
 			foreach partRec in new Select(new From("DAT:parts.ism",partRec))
 				partCollection.Add(new Part((String)partRec))
