@@ -1,5 +1,5 @@
 <CODEGEN_FILENAME><StructureName>Wrapper.dbl</CODEGEN_FILENAME>
-<PROCESS_TEMPLATE>DataUtil</PROCESS_TEMPLATE>
+<PROCESS_TEMPLATE>DataUtils</PROCESS_TEMPLATE>
 ;;******************************************************************************
 ;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
 ;;******************************************************************************
@@ -54,7 +54,7 @@ namespace <NAMESPACE>
         ;;; <summary>
         ;;; <FIELD_DESC> (<FIELD_NAME>, <FIELD_SPEC>)
         ;;; </summary>
-        public property <FieldSqlName>, <FIELD_CSTYPE>
+        public property <FieldNetName>, <FIELD_SNTYPE>
             method get
             proc
                 <IF ALPHA>
