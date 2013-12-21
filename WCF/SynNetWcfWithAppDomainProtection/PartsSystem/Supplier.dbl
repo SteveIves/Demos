@@ -9,31 +9,31 @@ namespace PartsSystem
 
     {DataContract}
   	{Serializable}
-    public cls class Part
+    public cls class Supplier
 
         {IgnoreDataMember}
-        private wrapper, @PartWrapper
+        private wrapper, @SupplierWrapper
 
         ;;; <summary>
-        ;;; Construct an empty Part object
+        ;;; Construct an empty Supplier object
         ;;; </summary>
-        public method Part
+        public method Supplier
             endparams
         proc
-            wrapper = new PartWrapper()
+            wrapper = new SupplierWrapper()
         endmethod
 
         ;;; <summary>
-        ;;; Construct a Part object containing the data from a PART record
+        ;;; Construct a Supplier object containing the data from a SUPPLIER record
         ;;; </summary>
-        ;;; <param name="aPart">Passed Part record</param>
-        internal method Part
-            required in aPart, String
+        ;;; <param name="aSupplier">Passed Supplier record</param>
+        internal method Supplier
+            required in aSupplier, String
             endparams
             this()
         proc
             ;;Save the record
-            wrapper.Record = aPart
+            wrapper.Record = aSupplier
         endmethod
 
         internal property Record, String
@@ -46,122 +46,122 @@ namespace PartsSystem
         ;;Expose the fields in the Synergy record as properties, using .NET types
 
         ;;; <summary>
-        ;;; part ID
-        ;;; </summary>
-        {DataMember}
-        public property Id, String
-            method get
-            proc
-                mreturn wrapper.Id
-            endmethod
-            method set
-            proc
-                wrapper.Id = value
-            endmethod
-        endproperty
-
-        ;;; <summary>
-        ;;; Group ID
-        ;;; </summary>
-        {DataMember}
-        public property Groupid, String
-            method get
-            proc
-                mreturn wrapper.Groupid
-            endmethod
-            method set
-            proc
-                wrapper.Groupid = value
-            endmethod
-        endproperty
-
-        ;;; <summary>
         ;;; supplier id
         ;;; </summary>
         {DataMember}
-        public property Supplierid, String
+        public property SupplierId, String
             method get
             proc
-                mreturn wrapper.Supplierid
+                mreturn wrapper.SupplierId
             endmethod
             method set
             proc
-                wrapper.Supplierid = value
+                wrapper.SupplierId = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; Description
+        ;;; supplier name
         ;;; </summary>
         {DataMember}
-        public property Description, String
+        public property Name, String
             method get
             proc
-                mreturn wrapper.Description
+                mreturn wrapper.Name
             endmethod
             method set
             proc
-                wrapper.Description = value
+                wrapper.Name = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; Technical info
+        ;;; addrss line 1
         ;;; </summary>
         {DataMember}
-        public property TechnicalInfo, String
+        public property Address1, String
             method get
             proc
-                mreturn wrapper.TechnicalInfo
+                mreturn wrapper.Address1
             endmethod
             method set
             proc
-                wrapper.TechnicalInfo = value
+                wrapper.Address1 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; quantity in stock
+        ;;; address line 2
         ;;; </summary>
         {DataMember}
-        public property Quantity, int
+        public property Address2, String
             method get
             proc
-                mreturn wrapper.Quantity
+                mreturn wrapper.Address2
             endmethod
             method set
             proc
-                wrapper.Quantity = value
+                wrapper.Address2 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; cost price
+        ;;; address line 3
         ;;; </summary>
         {DataMember}
-        public property CostPrice, decimal
+        public property Address3, String
             method get
             proc
-                mreturn wrapper.CostPrice
+                mreturn wrapper.Address3
             endmethod
             method set
             proc
-                wrapper.CostPrice = value
+                wrapper.Address3 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;;
+        ;;; city
         ;;; </summary>
         {DataMember}
-        public property Spare, String
+        public property City, String
             method get
             proc
-                mreturn wrapper.Spare
+                mreturn wrapper.City
             endmethod
             method set
             proc
-                wrapper.Spare = value
+                wrapper.City = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; post code
+        ;;; </summary>
+        {DataMember}
+        public property PostalCode, String
+            method get
+            proc
+                mreturn wrapper.PostalCode
+            endmethod
+            method set
+            proc
+                wrapper.PostalCode = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; web address
+        ;;; </summary>
+        {DataMember}
+        public property WebAddress, String
+            method get
+            proc
+                mreturn wrapper.WebAddress
+            endmethod
+            method set
+            proc
+                wrapper.WebAddress = value
             endmethod
         endproperty
 

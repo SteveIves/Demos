@@ -1,3 +1,6 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;******************************************************************************
 
 import System
 import System.ServiceModel
@@ -9,8 +12,8 @@ namespace WcfServiceLibrary
 	public class ServiceInstanceProvider implements IInstanceProvider
 		
 		public method GetInstance, @object
-			instanceContext, @InstanceContext 
-			message, @Message 
+			instanceContext, @InstanceContext
+			message, @Message
 			endparams
 		proc
 			data instanceAppDomain, @AppDomain, AppDomain.CreateDomain(Guid.NewGuid().ToString())
@@ -20,15 +23,15 @@ namespace WcfServiceLibrary
 		endmethod
 		
 		public method GetInstance, @object
-			instanceContext, @InstanceContext 
+			instanceContext, @InstanceContext
 			endparams
 		proc
 			mreturn this.GetInstance(instanceContext, ^null)
 		endmethod
 		
 		public method ReleaseInstance, void
-			instanceContext, @InstanceContext 
-			instance, @object 
+			instanceContext, @InstanceContext
+			instance, @object
 			endparams
 		proc
 			data instanceAppDomain = ((@IsolatableServiceBase)instance).GetAppDomain()
@@ -39,4 +42,3 @@ namespace WcfServiceLibrary
 	endclass
 
 endnamespace
-

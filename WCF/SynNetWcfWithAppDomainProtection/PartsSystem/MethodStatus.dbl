@@ -1,0 +1,15 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;******************************************************************************
+
+import System
+
+namespace PartsSystem
+
+    public enum MethodStatus
+        Success
+        Fail
+        FatalError
+    endenum
+	
+endnamespace

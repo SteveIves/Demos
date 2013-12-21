@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/PartsSystem" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/PartsSystem" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:complexType name="ArrayOfPart">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Part" nillable="true" type="tns:Part" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfPart" nillable="true" type="tns:ArrayOfPart" />
   <xs:complexType name="Part">
     <xs:sequence>
       <xs:element minOccurs="0" name="CostPrice" type="xs:decimal" />
@@ -19,4 +13,18 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Part" nillable="true" type="tns:Part" />
+  <xs:simpleType name="MethodStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="Fail" />
+      <xs:enumeration value="FatalError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="MethodStatus" nillable="true" type="tns:MethodStatus" />
+  <xs:complexType name="ArrayOfPart">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Part" nillable="true" type="tns:Part" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPart" nillable="true" type="tns:ArrayOfPart" />
 </xs:schema>

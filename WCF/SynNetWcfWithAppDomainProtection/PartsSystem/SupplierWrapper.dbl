@@ -7,26 +7,26 @@ import System.Runtime.Serialization
 
 namespace PartsSystem
 
-    .include "PART" repository, structure="strPart", end
+    .include "SUPPLIER" repository, structure="strSupplier", end
 
     {Serializable}
-    public class PartWrapper extends MarshalByRefObject implements ISerializable
+    public class SupplierWrapper extends MarshalByRefObject implements ISerializable
 		
-        internal mPart, strPart
+        internal mSupplier, strSupplier
 
-        public method PartWrapper
+        public method SupplierWrapper
 			      endparams
         proc
-            init mPart
+            init mSupplier
         endmethod
 
-        public method PartWrapper
+        public method SupplierWrapper
             info, @SerializationInfo
             context, StreamingContext
             endparams
             this()
         proc
-            throw new System.NotImplementedException("This PartWrapper constructor should never be called!")
+            throw new System.NotImplementedException("This SupplierWrapper constructor should never be called!")
         endmethod
 		
         public method GetObjectData, void
@@ -34,129 +34,129 @@ namespace PartsSystem
             context, StreamingContext
             endparams
         proc
-            throw new System.NotImplementedException("PartWrapper.GetObjectData should never be called!")
+            throw new System.NotImplementedException("SupplierWrapper.GetObjectData should never be called!")
         endmethod
 
         public property Record, String
             method get
             proc
-                mreturn (String)mPart
+                mreturn (String)mSupplier
             endmethod
             method set
             proc
-                mPart = value
+                mSupplier = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; part ID (ID, A20)
+        ;;; supplier id (SUPPLIER_ID, A20)
         ;;; </summary>
-        public property Id, String
+        public property SupplierId, String
             method get
             proc
-                mreturn %atrim(mPart.id)
+                mreturn %atrim(mSupplier.supplier_id)
             endmethod
             method set
             proc
-                mPart.id = value
+                mSupplier.supplier_id = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; Group ID (GROUPID, A20)
+        ;;; supplier name (NAME, A50)
         ;;; </summary>
-        public property Groupid, String
+        public property Name, String
             method get
             proc
-                mreturn %atrim(mPart.groupid)
+                mreturn %atrim(mSupplier.name)
             endmethod
             method set
             proc
-                mPart.groupid = value
+                mSupplier.name = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; supplier id (SUPPLIERID, A20)
+        ;;; addrss line 1 (ADDRESS_1, A50)
         ;;; </summary>
-        public property Supplierid, String
+        public property Address1, String
             method get
             proc
-                mreturn %atrim(mPart.supplierid)
+                mreturn %atrim(mSupplier.address_1)
             endmethod
             method set
             proc
-                mPart.supplierid = value
+                mSupplier.address_1 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; Description (DESCRIPTION, A50)
+        ;;; address line 2 (ADDRESS_2, A50)
         ;;; </summary>
-        public property Description, String
+        public property Address2, String
             method get
             proc
-                mreturn %atrim(mPart.description)
+                mreturn %atrim(mSupplier.address_2)
             endmethod
             method set
             proc
-                mPart.description = value
+                mSupplier.address_2 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; Technical info (TECHNICAL_INFO, A500)
+        ;;; address line 3 (ADDRESS_3, A50)
         ;;; </summary>
-        public property TechnicalInfo, String
+        public property Address3, String
             method get
             proc
-                mreturn %atrim(mPart.technical_info)
+                mreturn %atrim(mSupplier.address_3)
             endmethod
             method set
             proc
-                mPart.technical_info = value
+                mSupplier.address_3 = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; quantity in stock (QUANTITY, I4)
+        ;;; city (CITY, A30)
         ;;; </summary>
-        public property Quantity, int
+        public property City, String
             method get
             proc
-                mreturn mPart.quantity
+                mreturn %atrim(mSupplier.city)
             endmethod
             method set
             proc
-                mPart.quantity = value
+                mSupplier.city = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; cost price (COST_PRICE, D10.2)
+        ;;; post code (POSTAL_CODE, A10)
         ;;; </summary>
-        public property CostPrice, decimal
+        public property PostalCode, String
             method get
             proc
-                mreturn mPart.cost_price
+                mreturn %atrim(mSupplier.postal_code)
             endmethod
             method set
             proc
-                mPart.cost_price = value
+                mSupplier.postal_code = value
             endmethod
         endproperty
 
         ;;; <summary>
-        ;;; (SPARE, A76)
+        ;;; web address (WEB_ADDRESS, A78)
         ;;; </summary>
-        public property Spare, String
+        public property WebAddress, String
             method get
             proc
-                mreturn %atrim(mPart.spare)
+                mreturn %atrim(mSupplier.web_address)
             endmethod
             method set
             proc
-                mPart.spare = value
+                mSupplier.web_address = value
             endmethod
         endproperty
 

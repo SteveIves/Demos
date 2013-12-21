@@ -46,10 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataUtils.dbl" />
+    <Compile Include="MethodStatus.dbl" />
     <Compile Include="Part.dbl" />
-    <Compile Include="PartsSystem.dbl" />
+    <Compile Include="PartsSystemAPI_Part.dbl" />
+    <Compile Include="PartsSystemAPI_ProductGroup.dbl" />
+    <Compile Include="PartsSystemAPI_Supplier.dbl" />
     <Compile Include="PartWrapper.dbl" />
+    <Compile Include="ProductGroup.dbl" />
+    <Compile Include="ProductGroupWrapper.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
+    <Compile Include="Supplier.dbl" />
+    <Compile Include="SupplierWrapper.dbl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

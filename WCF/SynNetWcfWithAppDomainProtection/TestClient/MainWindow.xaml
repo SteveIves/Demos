@@ -7,7 +7,7 @@
         <local:ViewModel />
     </Window.DataContext>
     <Grid>
-        <DataGrid ItemsSource="{Binding Parts}" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid ItemsSource="{Binding Parts}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Part ID" Binding="{Binding Id}" />
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" />

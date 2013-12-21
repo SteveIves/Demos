@@ -18,7 +18,8 @@ namespace TestClient
 				if (mParts == ^null)
 				begin
 					data client, @PartsServiceClient , new PartsServiceClient()
-					mparts = client.GetAllParts()
+					if (client.ReadAllParts(mParts)!=MethodStatus.Success)
+						mParts = new ObservableCollection<Part>()
 					client.Close()
 				end
 				mreturn mParts

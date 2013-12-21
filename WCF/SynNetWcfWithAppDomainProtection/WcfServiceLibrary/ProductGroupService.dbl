@@ -1,0 +1,119 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;******************************************************************************
+
+import System
+import System.Collections.Generic
+import System.Threading.Tasks
+import PartsSystem
+
+namespace WcfServiceLibrary
+	
+	public partial class PartsService extends IsolatableServiceBase implements IPartsService
+		
+		public method CreateProductGroup, MethodStatus
+			required in aProductGroup, @ProductGroup
+		proc
+			data completionSource = new TaskCompletionSource<MethodStatus>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				completionSource.SetResult(api.CreateProductGroup(aProductGroup))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			mreturn completionSource.Task.Result
+		endmethod
+		
+		public method ReadProductGroup, MethodStatus
+      required in  aGroupId, string
+			required out aProductGroup, @ProductGroup
+			required out aGrfa, String
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,ProductGroup,String>>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				data tmpProductGroup, @ProductGroup
+				data tmpGrfa, String
+				completionSource.SetResult(Tuple.Create(api.ReadProductGroup(aGroupId,tmpProductGroup,tmpGrfa),tmpProductGroup,tmpGrfa))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			aProductGroup = completionSource.Task.Result.Item2
+			aGrfa = completionSource.Task.Result.Item3
+			mreturn completionSource.Task.Result.Item1
+		endmethod
+
+    public method ReadAllProductGroups, MethodStatus
+			required out aProductGroups, @List<ProductGroup>
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,List<ProductGroup>>>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				data tmpProductGroups, @List<ProductGroup>
+				completionSource.SetResult(Tuple.Create(api.ReadAllProductGroups(tmpProductGroups),tmpProductGroups))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			aProductGroups = completionSource.Task.Result.Item2
+			mreturn completionSource.Task.Result.Item1
+		endmethod
+
+		public method UpdateProductGroup, MethodStatus
+			required inout aProductGroup, @ProductGroup
+			required inout aGrfa, String
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,ProductGroup,String>>()
+			data tmpProductGroup, @ProductGroup, aProductGroup
+			data tmpGrfa, String, aGrfa
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				completionSource.SetResult(Tuple.Create(api.UpdatePart(tmpProductGroup,tmpGrfa),tmpProductGroup,tmpGrfa))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			aPart = completionSource.Task.Result.Item2
+			aGrfa = completionSource.Task.Result.Item3
+			mreturn completionSource.Task.Result.Item1
+		endmethod
+
+		public method DeleteProductGroup, MethodStatus
+			required in aGrfa, String
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<MethodStatus>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				completionSource.SetResult(api.DeleteProductGroup(aGrfa))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			mreturn completionSource.Task.Result
+		endmethod
+
+
+		public method ProductGroupExists, MethodStatus
+      required in aGroupId, string
+			endparams
+		proc
+			data completionSource = new TaskCompletionSource<MethodStatus>()
+			lambda curryParams()
+			begin
+				data api, @PartsSystemAPI, new PartsSystemAPI()
+				completionSource.SetResult(api.ProductGroupExists(aGroupId))
+			end
+			this.ServiceDispatcher.Dispatch(curryParams)
+			completionSource.Task.Wait()
+			mreturn completionSource.Task.Result
+		endmethod
+		
+	endclass
+
+endnamespace

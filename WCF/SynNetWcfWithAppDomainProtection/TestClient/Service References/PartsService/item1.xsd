@@ -1,15 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:56565/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/PartsSystem" />
-  <xs:element name="GetAllParts">
+  <xs:element name="CreatePart">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aPart" nillable="true" type="q1:Part" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreatePartResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="CreatePartResult" type="q2:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadPart">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadPartResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadPartResult" type="q3:MethodStatus" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aPart" nillable="true" type="q4:Part" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadAllParts">
     <xs:complexType>
       <xs:sequence />
     </xs:complexType>
   </xs:element>
-  <xs:element name="GetAllPartsResponse">
+  <xs:element name="ReadAllPartsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="GetAllPartsResult" nillable="true" type="q1:ArrayOfPart" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadAllPartsResult" type="q5:MethodStatus" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aParts" nillable="true" type="q6:ArrayOfPart" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdatePart">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aPart" nillable="true" type="q7:Part" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdatePartResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="UpdatePartResult" type="q8:MethodStatus" />
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aPart" nillable="true" type="q9:Part" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePart">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePartResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="DeletePartResult" type="q10:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PartExists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PartExistsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="PartExistsResult" type="q11:MethodStatus" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

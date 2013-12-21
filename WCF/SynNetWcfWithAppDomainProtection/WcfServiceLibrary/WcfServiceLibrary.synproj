@@ -49,12 +49,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundDispatcher.dbl" />
+    <Compile Include="IPartService.dbl" />
+    <Compile Include="IProductGroupService.dbl" />
     <Compile Include="IsolatableServiceBase.dbl" />
+    <Compile Include="ISupplierService.dbl" />
+    <Compile Include="PartService.dbl" />
+    <Compile Include="ProductGroupService.dbl" />
     <Compile Include="ServiceInstanceProvider.dbl" />
     <Compile Include="SingletonBehaviorAttribute.dbl" />
-    <Compile Include="PartsService.dbl" />
-    <Compile Include="IPartsService.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
+    <Compile Include="SupplierService.dbl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

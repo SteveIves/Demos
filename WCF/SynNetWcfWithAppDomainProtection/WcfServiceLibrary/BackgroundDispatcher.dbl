@@ -1,3 +1,6 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;******************************************************************************
 
 import System
 import System.Collections.Generic
@@ -17,7 +20,7 @@ namespace WcfServiceLibrary
 		;;; <summary>
 		;;;
 		;;; </summary>
-		public static property UtilityBackgroundDispatcher	,@BackgroundDispatcher
+		public static property UtilityBackgroundDispatcher, @BackgroundDispatcher
 			method get
 			proc
 				if (mActiveDispatcherList.Count == 0)
@@ -39,17 +42,17 @@ namespace WcfServiceLibrary
 		
 		;;define the structure of live dispatchers
 		class DispatcherItem
-			public referenceCount	,int
-			public BDitem			,@BackgroundDispatcher
+			public referenceCount, int
+			public BDitem, @BackgroundDispatcher
 		endclass
 		
 		;;store a list of active dispatcher super channels
-		private static mActiveDispatcherList	,@List<DispatcherItem>	,new List<DispatcherItem>()
+		private static mActiveDispatcherList, @List<DispatcherItem>, new List<DispatcherItem>()
 		
 		public static method AllocateDispatcher	,@BackgroundDispatcher
 			endparams
 		proc
-			data item	,@DispatcherItem
+			data item, @DispatcherItem
 			foreach item in mActiveDispatcherList
 			begin
 				;;have we got room
@@ -68,11 +71,11 @@ namespace WcfServiceLibrary
 			mreturn item.BDitem
 		endmethod
 		
-		public static method DeallocateDispatcher	,void
-			in req	disp							,@BackgroundDispatcher
+		public static method DeallocateDispatcher, void
+			in req	disp, @BackgroundDispatcher
 			endparams
 		proc
-			data item	,@DispatcherItem
+			data item, @DispatcherItem
 			foreach item in mActiveDispatcherList
 			begin
 				;;find the passd dispatcher object in our list
@@ -92,11 +95,11 @@ namespace WcfServiceLibrary
 			
 		endmethod
 		
-		public static method ShutdownDispatcher	,void
+		public static method ShutdownDispatcher, void
 			endparams
 		proc
 			
-			data item	,@DispatcherItem
+			data item, @DispatcherItem
 			foreach item in mActiveDispatcherList
 			begin
 				if (item.BDitem != ^null)
@@ -121,7 +124,7 @@ namespace WcfServiceLibrary
 		
 		;;create and run a new dispatcher
 		private method runDispatcher, void
-			sender					,@Object
+			sender, @Object
 			endparams
 		proc
 			data dispatcherTask = ^as(sender, TaskCompletionSource<Dispatcher>)
@@ -143,8 +146,8 @@ namespace WcfServiceLibrary
 			end
 		endmethod
 		
-		internal method Dispatch	,void
-			operation				,@AppDomainDispatcherHelper
+		internal method Dispatch, void
+			operation, @AppDomainDispatcherHelper
 			endparams
 		proc
 			;;call the invokeHelper mether to execute the "operation" code and return the completion status
@@ -155,9 +158,9 @@ namespace WcfServiceLibrary
 				mDispatcher.Result.BeginInvoke((Action<AppDomainDispatcherHelper>)invokeHelper, new Object[#] {operation})
 		endmethod
 		
-		;;actually perform the required task/operation.  completionSource reutns the status
-		private method invokeHelper	,void
-			operation				,@AppDomainDispatcherHelper
+		;;actually perform the required task/operation. completionSource reutns the status
+		private method invokeHelper, void
+			operation, @AppDomainDispatcherHelper
 			endparams
 		proc
 			try
@@ -177,8 +180,8 @@ namespace WcfServiceLibrary
 	public static class BackgroundDispatcherExtension
 
 		public static extension method Dispatch	,@Task
-			theDispatcher		,@BackgroundDispatcher
-			operation			,@Action
+			theDispatcher, @BackgroundDispatcher
+			operation, @Action
 			endparams
 		proc
 
@@ -195,12 +198,12 @@ namespace WcfServiceLibrary
 
 	public class AppDomainDispatcherHelper extends MarshalByRefObject
 		
-		private theAction			,@Action
-		private completionSource	,@TaskCompletionSource<Boolean>
+		private theAction, @Action
+		private completionSource, @TaskCompletionSource<Boolean>
 		
 		public method AppDomainDispatcherHelper
-			required in anAction			,@Action
-			required in theCompletionSource	,@TaskCompletionSource<Boolean>
+			required in anAction, @Action
+			required in theCompletionSource, @TaskCompletionSource<Boolean>
 			endparams
 		proc
 			theAction = anAction

@@ -1,3 +1,6 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;******************************************************************************
 
 import System
 import System.ServiceModel.Channels
@@ -16,33 +19,33 @@ namespace WcfServiceLibrary
 		endproperty
 		
 		public method AddBindingParameters, void
-			description, @ContractDescription 
-			endpoint, @ServiceEndpoint 
-			parameters, @BindingParameterCollection 
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			parameters, @BindingParameterCollection
 			endparams
 		proc
 		endmethod
 		
 		public method ApplyClientBehavior, void
-			description, @ContractDescription 
-			endpoint, @ServiceEndpoint 
-			clientRuntime, @ClientRuntime 
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			clientRuntime, @ClientRuntime
 			endparams
 		proc
 		endmethod
 		
 		public method ApplyDispatchBehavior, void
-			description, @ContractDescription 
-			endpoint, @ServiceEndpoint 
-			dispatch, @DispatchRuntime 
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			dispatch, @DispatchRuntime
 			endparams
 		proc
 			dispatch.InstanceProvider = new ServiceInstanceProvider()
 		endmethod
 		
 		public method Validate, void
-			description, @ContractDescription 
-			endpoint, @ServiceEndpoint 
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
 			endparams
 		proc
 		endmethod
@@ -50,4 +53,3 @@ namespace WcfServiceLibrary
 	endclass
 	
 endnamespace
-
