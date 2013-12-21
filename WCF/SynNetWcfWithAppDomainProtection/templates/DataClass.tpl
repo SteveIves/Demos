@@ -52,14 +52,14 @@ namespace <NAMESPACE>
         ;;; <FIELD_DESC>
         ;;; </summary>
         {DataMember}
-        public property <FieldSqlName>, <FIELD_CSTYPE>
+        public property <FieldNetName>, <FIELD_SNTYPE>
             method get
             proc
-                mreturn wrapper.<FieldSqlName>
+                mreturn wrapper.<FieldNetName>
             endmethod
             method set
             proc
-                wrapper.<FieldSqlName> = value
+                wrapper.<FieldNetName> = value
             endmethod
         endproperty
 
