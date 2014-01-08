@@ -1,119 +1,119 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:23 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
 import System.Collections.Generic
+import System.ServiceModel
 import System.Threading.Tasks
 import PartsSystem
 
 namespace WcfServiceLibrary
-	
-	public partial class PartsService extends IsolatableServiceBase implements IPartsService
-		
-		public method CreateSupplier, MethodStatus
-			required in aSupplier, @Supplier
-		proc
-			data completionSource = new TaskCompletionSource<MethodStatus>()
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				completionSource.SetResult(api.CreateSupplier(aSupplier))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			mreturn completionSource.Task.Result
-		endmethod
-		
-		public method ReadSupplier, MethodStatus
-      required in  aSupplierId, string
-			required out aSupplier, @Supplier
-			required out aGrfa, String
-			endparams
-		proc
-			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Supplier,String>>()
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				data tmpSupplier, @Supplier
-				data tmpGrfa, String
-				completionSource.SetResult(Tuple.Create(api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa),tmpSupplier,tmpGrfa))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			aSupplier = completionSource.Task.Result.Item2
-			aGrfa = completionSource.Task.Result.Item3
-			mreturn completionSource.Task.Result.Item1
-		endmethod
 
-    public method ReadAllSuppliers, MethodStatus
-			required out aSuppliers, @List<Supplier>
-			endparams
-		proc
-			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,List<Supplier>>>()
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				data tmpSuppliers, @List<Supplier>
-				completionSource.SetResult(Tuple.Create(api.ReadAllSuppliers(tmpSuppliers),tmpSuppliers))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			aSuppliers = completionSource.Task.Result.Item2
-			mreturn completionSource.Task.Result.Item1
-		endmethod
+    public partial class PartsService
 
-		public method UpdateSupplier, MethodStatus
-			required inout aSupplier, @Supplier
-			required inout aGrfa, String
-			endparams
-		proc
-			data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Supplier,String>>()
-			data tmpSupplier, @Supplier, aSupplier
-			data tmpGrfa, String, aGrfa
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				completionSource.SetResult(Tuple.Create(api.UpdatePart(tmpSupplier,tmpGrfa),tmpSupplier,tmpGrfa))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			aPart = completionSource.Task.Result.Item2
-			aGrfa = completionSource.Task.Result.Item3
-			mreturn completionSource.Task.Result.Item1
-		endmethod
+        public method CreateSupplier, MethodStatus
+            required in aSupplier, @Supplier
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.CreateSupplier(aSupplier))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
 
-		public method DeleteSupplier, MethodStatus
-			required in aGrfa, String
-			endparams
-		proc
-			data completionSource = new TaskCompletionSource<MethodStatus>()
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				completionSource.SetResult(api.DeleteSupplier(aGrfa))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			mreturn completionSource.Task.Result
-		endmethod
+        public method ReadSupplier, MethodStatus
+            required in  aSupplierId, string
+            required out aSupplier, @Supplier
+            required out aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Supplier,String>>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data tmpSupplier, @Supplier
+                data tmpGrfa, String
+                completionSource.SetResult(Tuple.Create(api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa),tmpSupplier,tmpGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aSupplier = completionSource.Task.Result.Item2
+            aGrfa = completionSource.Task.Result.Item3
+            mreturn completionSource.Task.Result.Item1
+        endmethod
 
+        public method ReadAllSuppliers, MethodStatus
+            required out aSuppliers, @List<Supplier>
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,List<Supplier>>>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data tmpSuppliers, @List<Supplier>
+                completionSource.SetResult(Tuple.Create(api.ReadAllSuppliers(tmpSuppliers),tmpSuppliers))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aSuppliers = completionSource.Task.Result.Item2
+            mreturn completionSource.Task.Result.Item1
+        endmethod
 
-		public method SupplierExists, MethodStatus
-      required in aSupplierId, string
-			endparams
-		proc
-			data completionSource = new TaskCompletionSource<MethodStatus>()
-			lambda curryParams()
-			begin
-				data api, @PartsSystemAPI, new PartsSystemAPI()
-				completionSource.SetResult(api.SupplierExists(aSupplierId))
-			end
-			this.ServiceDispatcher.Dispatch(curryParams)
-			completionSource.Task.Wait()
-			mreturn completionSource.Task.Result
-		endmethod
-		
-	endclass
+        public method UpdateSupplier, MethodStatus
+            required inout aSupplier, @Supplier
+            required inout aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Supplier,String>>()
+            data tmpSupplier, @Supplier, aSupplier
+            data tmpGrfa, String, aGrfa
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(Tuple.Create(api.UpdateSupplier(tmpSupplier,tmpGrfa),tmpSupplier,tmpGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aSupplier = completionSource.Task.Result.Item2
+            aGrfa = completionSource.Task.Result.Item3
+            mreturn completionSource.Task.Result.Item1
+        endmethod
+
+        public method DeleteSupplier, MethodStatus
+            required in aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.DeleteSupplier(aGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
+
+        public method SupplierExists, MethodStatus
+            required in aSupplierId, string
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.SupplierExists(aSupplierId))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
+
+    endclass
 
 endnamespace
