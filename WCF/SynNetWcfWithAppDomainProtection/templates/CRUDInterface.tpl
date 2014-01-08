@@ -14,51 +14,51 @@ import <API_NAMESPACE>
 
 namespace <NAMESPACE>
 
-	{ServiceContract(SessionMode = SessionMode.Required)}
-	{SingletonBehaviorAttribute()}
-	public partial interface I<WCF_SERVICE>
-		
-		{OperationContract}
-		method Create<StructureName>, MethodStatus
-			required in a<StructureName>, @<StructureName>
-		endmethod
-			
-    <PRIMARY_KEY>
-		{OperationContract}
-		method Read<StructureName>, MethodStatus
-      <SEGMENT_LOOP>
-      required in  a<SegmentName>, <SEGMENT_CSTYPE>
-      </SEGMENT_LOOP>
-			required out a<StructureName>, @<StructureName>
-			required out aGrfa, String
-		endmethod
-    </PRIMARY_KEY>
+    {ServiceContract(SessionMode = SessionMode.Required)}
+    {SingletonBehaviorAttribute()}
+    public partial interface I<WCF_SERVICE>
 
-		{OperationContract}
-		method ReadAll<StructureName>s, MethodStatus
-			required out a<StructureName>s, @List<<StructureName>>
-		endmethod
+        {OperationContract}
+        method Create<StructureName>, MethodStatus
+            required in a<StructureName>, @<StructureName>
+        endmethod
 
-		{OperationContract}
-		method Update<StructureName>, MethodStatus
-			required inout a<StructureName>, @<StructureName>
-			required inout aGrfa, String
-		endmethod
+        <PRIMARY_KEY>
+        {OperationContract}
+        method Read<StructureName>, MethodStatus
+            <SEGMENT_LOOP>
+            required in  a<SegmentName>, <SEGMENT_CSTYPE>
+            </SEGMENT_LOOP>
+            required out a<StructureName>, @<StructureName>
+            required out aGrfa, String
+        endmethod
+        </PRIMARY_KEY>
 
-		{OperationContract}
-		method Delete<StructureName>, MethodStatus
-			required in aGrfa, String
-		endmethod
-		
-    <PRIMARY_KEY>
-		{OperationContract}
-		method <StructureName>Exists, MethodStatus
-      <SEGMENT_LOOP>
-      required in a<SegmentName>, <SEGMENT_CSTYPE>
-      </SEGMENT_LOOP>
-		endmethod
-    </PRIMARY_KEY>
-		
-	endinterface
-		
+        {OperationContract}
+        method ReadAll<StructureName>s, MethodStatus
+            required out a<StructureName>s, @List<<StructureName>>
+        endmethod
+
+        {OperationContract}
+        method Update<StructureName>, MethodStatus
+            required inout a<StructureName>, @<StructureName>
+            required inout aGrfa, String
+        endmethod
+
+        {OperationContract}
+        method Delete<StructureName>, MethodStatus
+            required in aGrfa, String
+        endmethod
+
+        <PRIMARY_KEY>
+        {OperationContract}
+        method <StructureName>Exists, MethodStatus
+            <SEGMENT_LOOP>
+            required in a<SegmentName>, <SEGMENT_CSTYPE>
+            </SEGMENT_LOOP>
+        endmethod
+        </PRIMARY_KEY>
+
+    endinterface
+
 endnamespace

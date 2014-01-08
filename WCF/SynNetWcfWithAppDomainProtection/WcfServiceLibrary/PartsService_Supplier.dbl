@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 15:23 on 01/08/2014 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
@@ -12,6 +12,7 @@ namespace WcfServiceLibrary
 
     public partial class PartsService
 
+        {OperationContract}
         public method CreateSupplier, MethodStatus
             required in aSupplier, @Supplier
         proc
@@ -26,6 +27,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result
         endmethod
 
+        {OperationContract}
         public method ReadSupplier, MethodStatus
             required in  aSupplierId, string
             required out aSupplier, @Supplier
@@ -47,6 +49,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method ReadAllSuppliers, MethodStatus
             required out aSuppliers, @List<Supplier>
             endparams
@@ -64,6 +67,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method UpdateSupplier, MethodStatus
             required inout aSupplier, @Supplier
             required inout aGrfa, String
@@ -84,6 +88,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method DeleteSupplier, MethodStatus
             required in aGrfa, String
             endparams
@@ -99,6 +104,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result
         endmethod
 
+        {OperationContract}
         public method SupplierExists, MethodStatus
             required in aSupplierId, string
             endparams

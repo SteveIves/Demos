@@ -1,27 +1,26 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
 
 namespace WcfServiceLibrary
 
-	public class IsolatableServiceBase extends MarshalByRefObject
-		
-		public method GetAppDomain, @AppDomain
-			endparams
-		proc
-			mreturn AppDomain.CurrentDomain
-		endmethod
+    public class IsolatableServiceBase extends MarshalByRefObject
 
-		public property ServiceDispatcher, @BackgroundDispatcher
-			method get
-			endmethod
-			method set
-			endmethod
-		endproperty
-		
+        public method GetAppDomain, @AppDomain
+            endparams
+        proc
+            mreturn AppDomain.CurrentDomain
+        endmethod
 
-	endclass
+        public property ServiceDispatcher, @BackgroundDispatcher
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
 
 endnamespace

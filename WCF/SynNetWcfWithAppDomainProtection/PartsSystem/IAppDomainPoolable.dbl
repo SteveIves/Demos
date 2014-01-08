@@ -1,0 +1,28 @@
+;;******************************************************************************
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
+;;******************************************************************************
+
+import System
+
+namespace PartsSystem
+
+    public interface IAppDomainPoolable
+
+        method Initialize, boolean
+        endmethod
+
+        method Activate, void
+        endmethod
+
+        method Deactivate, void
+        endmethod
+
+        method CanBePooled, boolean
+        endmethod
+
+        method Cleanup, void
+        endmethod
+
+    endinterface
+
+endnamespace

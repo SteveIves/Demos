@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
@@ -8,7 +8,7 @@ import System.Runtime.Serialization
 namespace PartsSystem
 
     {DataContract}
-  	{Serializable}
+    {Serializable}
     public cls class Supplier
 
         {IgnoreDataMember}

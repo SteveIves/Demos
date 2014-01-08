@@ -13,11 +13,11 @@ namespace <NAMESPACE>
 
     {Serializable}
     public class <StructureName>Wrapper extends MarshalByRefObject implements ISerializable
-		    
+
         internal m<StructureName>, str<StructureName>
 
         public method <StructureName>Wrapper
-			      endparams
+            endparams
         proc
             init m<StructureName>
         endmethod
@@ -30,7 +30,7 @@ namespace <NAMESPACE>
         proc
             throw new System.NotImplementedException("This <StructureName>Wrapper constructor should never be called!")
         endmethod
-		
+
         public method GetObjectData, void
             info, @SerializationInfo 
             context, StreamingContext 
@@ -107,8 +107,6 @@ namespace <NAMESPACE>
 
         </FIELD_LOOP>
 
-	endclass
+    endclass
 
 endnamespace
-
-                

@@ -2,20 +2,22 @@
 <REQUIRES_USERTOKEN>WCF_SERVICE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_NAMESPACE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_CLASS</REQUIRES_USERTOKEN>
-<PROCESS_TEMPLATE>CRUDInterface</PROCESS_TEMPLATE>
+<PROCESS_TEMPLATE>CRUDServiceBaseNoInterface</PROCESS_TEMPLATE>
 ;;******************************************************************************
 ;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
 ;;******************************************************************************
 
 import System
 import System.Collections.Generic
+import System.ServiceModel
 import System.Threading.Tasks
 import <API_NAMESPACE>
 
 namespace <NAMESPACE>
 
-    public partial class <WCF_SERVICE> extends IsolatableServiceBase implements I<WCF_SERVICE>
-        
+    public partial class <WCF_SERVICE>
+
+        {OperationContract}
         public method Create<StructureName>, MethodStatus
             required in a<StructureName>, @<StructureName>
         proc
@@ -31,6 +33,7 @@ namespace <NAMESPACE>
         endmethod
 
         <PRIMARY_KEY>
+        {OperationContract}
         public method Read<StructureName>, MethodStatus
             <SEGMENT_LOOP>
             required in  a<SegmentName>, <SEGMENT_CSTYPE>
@@ -55,6 +58,7 @@ namespace <NAMESPACE>
         endmethod
         </PRIMARY_KEY>
 
+        {OperationContract}
         public method ReadAll<StructureName>s, MethodStatus
             required out a<StructureName>s, @List<<StructureName>>
             endparams
@@ -72,6 +76,7 @@ namespace <NAMESPACE>
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method Update<StructureName>, MethodStatus
             required inout a<StructureName>, @<StructureName>
             required inout aGrfa, String
@@ -92,6 +97,7 @@ namespace <NAMESPACE>
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method Delete<StructureName>, MethodStatus
             required in aGrfa, String
             endparams
@@ -108,6 +114,7 @@ namespace <NAMESPACE>
         endmethod
 
         <PRIMARY_KEY>
+        {OperationContract}
         public method <StructureName>Exists, MethodStatus
             <SEGMENT_LOOP>
             required in a<SegmentName>, <SEGMENT_CSTYPE>

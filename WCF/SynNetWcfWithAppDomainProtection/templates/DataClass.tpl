@@ -10,7 +10,7 @@ import System.Runtime.Serialization
 namespace <NAMESPACE>
 
     {DataContract}
-  	{Serializable}
+    {Serializable}
     public cls class <StructureName>
 
         {IgnoreDataMember}
@@ -68,5 +68,3 @@ namespace <NAMESPACE>
     endclass
 
 endnamespace
-
-                

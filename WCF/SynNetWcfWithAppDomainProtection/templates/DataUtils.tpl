@@ -188,4 +188,3 @@ namespace <NAMESPACE>
     endclass
 
 endnamespace
-

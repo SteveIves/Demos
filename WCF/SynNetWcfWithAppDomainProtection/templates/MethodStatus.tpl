@@ -12,5 +12,5 @@ namespace <NAMESPACE>
         Fail
         FatalError
     endenum
-	
+
 endnamespace

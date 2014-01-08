@@ -7,23 +7,21 @@ import System
 
 namespace <NAMESPACE>
 
-	public class IsolatableServiceBase extends MarshalByRefObject
-		
-		public method GetAppDomain, @AppDomain
-			endparams
-		proc
-			mreturn AppDomain.CurrentDomain
-		endmethod
+    public class IsolatableServiceBase extends MarshalByRefObject
+        
+        public method GetAppDomain, @AppDomain
+            endparams
+        proc
+            mreturn AppDomain.CurrentDomain
+        endmethod
 
-		public property ServiceDispatcher, @BackgroundDispatcher
-			method get
-			endmethod
-			method set
-			endmethod
-		endproperty
-		
+        public property ServiceDispatcher, @BackgroundDispatcher
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
 
-	endclass
+    endclass
 
 endnamespace
-

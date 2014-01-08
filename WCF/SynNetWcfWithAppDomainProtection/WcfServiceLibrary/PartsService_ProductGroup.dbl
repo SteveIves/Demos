@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 15:23 on 01/08/2014 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
@@ -12,6 +12,7 @@ namespace WcfServiceLibrary
 
     public partial class PartsService
 
+        {OperationContract}
         public method CreateProductGroup, MethodStatus
             required in aProductGroup, @ProductGroup
         proc
@@ -26,6 +27,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result
         endmethod
 
+        {OperationContract}
         public method ReadProductGroup, MethodStatus
             required in  aGroupId, string
             required out aProductGroup, @ProductGroup
@@ -47,6 +49,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method ReadAllProductGroups, MethodStatus
             required out aProductGroups, @List<ProductGroup>
             endparams
@@ -64,6 +67,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method UpdateProductGroup, MethodStatus
             required inout aProductGroup, @ProductGroup
             required inout aGrfa, String
@@ -84,6 +88,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result.Item1
         endmethod
 
+        {OperationContract}
         public method DeleteProductGroup, MethodStatus
             required in aGrfa, String
             endparams
@@ -99,6 +104,7 @@ namespace WcfServiceLibrary
             mreturn completionSource.Task.Result
         endmethod
 
+        {OperationContract}
         public method ProductGroupExists, MethodStatus
             required in aGroupId, string
             endparams

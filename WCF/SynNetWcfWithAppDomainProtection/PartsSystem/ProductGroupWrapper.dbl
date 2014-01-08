@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 16:50 on 12/20/2013 by steve.ives@synergex.com
+;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
 ;;******************************************************************************
 
 import System
@@ -11,11 +11,11 @@ namespace PartsSystem
 
     {Serializable}
     public class ProductGroupWrapper extends MarshalByRefObject implements ISerializable
-		
+
         internal mProductGroup, strProductGroup
 
         public method ProductGroupWrapper
-			      endparams
+            endparams
         proc
             init mProductGroup
         endmethod
@@ -28,7 +28,7 @@ namespace PartsSystem
         proc
             throw new System.NotImplementedException("This ProductGroupWrapper constructor should never be called!")
         endmethod
-		
+
         public method GetObjectData, void
             info, @SerializationInfo
             context, StreamingContext
@@ -77,6 +77,6 @@ namespace PartsSystem
         endproperty
 
 
-	endclass
+    endclass
 
 endnamespace
