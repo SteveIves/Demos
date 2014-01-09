@@ -2,7 +2,7 @@
 <REQUIRES_USERTOKEN>WCF_SERVICE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_NAMESPACE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_CLASS</REQUIRES_USERTOKEN>
-<PROCESS_TEMPLATE>CRUDServiceBaseNoInterface</PROCESS_TEMPLATE>
+<PROCESS_TEMPLATE>CRUDServiceBase</PROCESS_TEMPLATE>
 ;;******************************************************************************
 ;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
 ;;******************************************************************************

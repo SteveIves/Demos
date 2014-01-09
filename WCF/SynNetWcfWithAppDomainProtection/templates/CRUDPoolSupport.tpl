@@ -4,6 +4,8 @@
 ;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
 ;;******************************************************************************
 
+import AppDomainProtection
+
 namespace <NAMESPACE>
 
     ;;; <summary>

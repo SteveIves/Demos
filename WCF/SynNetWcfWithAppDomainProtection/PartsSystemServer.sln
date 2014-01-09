@@ -13,11 +13,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{66C67D32-B695-4B7B-AFE2-6BFB59C29DC8}"
 	ProjectSection(SolutionItems) = preProject
 		templates\CRUD.tpl = templates\CRUD.tpl
-		templates\CRUDInterface.tpl = templates\CRUDInterface.tpl
 		templates\CRUDPoolSupport.tpl = templates\CRUDPoolSupport.tpl
 		templates\CRUDService.tpl = templates\CRUDService.tpl
-		templates\CRUDServiceBaseNoInterface.tpl = templates\CRUDServiceBaseNoInterface.tpl
-		templates\CRUDServiceNoInterface.tpl = templates\CRUDServiceNoInterface.tpl
+		templates\CRUDServiceBase.tpl = templates\CRUDServiceBase.tpl
 		templates\DataClass.tpl = templates\DataClass.tpl
 		templates\DataUtils.tpl = templates\DataUtils.tpl
 		templates\DataWrapper.tpl = templates\DataWrapper.tpl
