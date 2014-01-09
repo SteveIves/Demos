@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 17:01 on 01/08/2014 by steve.ives@synergex.com
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import System
@@ -12,8 +12,39 @@ import PartsSystem
 namespace WcfServiceLibrary
 
     {ServiceContract(SessionMode = SessionMode.Required)}
-    {SingletonBehaviorAttribute()}
-    public partial class PartsService extends IsolatableServiceBase
+    {SingletonBehaviorAttribute(^typeof(PartsService))}
+    public partial class PartsService extends IsolatableServiceBase implements IAppDomainPoolable
+
+        public method Initialize, void
+            endparams
+        proc
+            ;TODO: Need to add code to call into the API class's method!
+        endmethod
+
+        public method Activate, void
+            endparams
+        proc
+            ;TODO: Need to add code to call into the API class's method!
+        endmethod
+
+        public method Deactivate, void
+            endparams
+        proc
+            ;TODO: Need to add code to call into the API class's method!
+        endmethod
+
+		public method CanBeReused, boolean
+            endparams
+        proc
+            ;TODO: Need to add code to call into the API class's method!
+            mreturn true
+        endmethod
+
+        public method Cleanup, void
+            endparams
+        proc
+            ;TODO: Need to add code to call into the API class's method!
+        endmethod
 
     endclass
 

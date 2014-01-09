@@ -4,7 +4,7 @@
 <PROCESS_TEMPLATE>MethodStatus</PROCESS_TEMPLATE>
 <PROCESS_TEMPLATE>DataClass</PROCESS_TEMPLATE>
 ;;******************************************************************************
-;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import System.Collections.Generic

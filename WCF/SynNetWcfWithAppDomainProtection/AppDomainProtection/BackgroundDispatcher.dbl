@@ -1,8 +1,46 @@
-;;******************************************************************************
-;;* WARNING: Code generated at 15:34 on 01/08/2014 by steve.ives@synergex.com
-;;******************************************************************************
+;;*****************************************************************************
+;;
+;; Title:       BackgroundDispatcher.dbl
+;;
+;; Type:        Class
+;;
+;; Description: Controls processing of background tasks on different threads.
+;;
+;; Date:        9th January 2014
+;;
+;; Authors:     Steve Ives       Synergex Professional Services Group
+;;              Jeff Greene      Synergex Development
+;;                               http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
 
-import System
 import System.Collections.Generic
 import System.Text
 import System.Threading
@@ -17,8 +55,38 @@ namespace AppDomainProtection
     ;;; </summary>
     public class BackgroundDispatcher implements IDisposable extends MarshalByRefObject
 
-        ;;; <summary>
-        ;;;
+		.define CONST_MaxReferenceCount	,10
+		
+		;; Private memebers
+		private mThread	,@Thread
+		private mDispatcher	,@Task<Dispatcher>
+		;;store a list of active dispatcher super channels
+		private static mActiveDispatcherList, @List<DispatcherItem>, new List<DispatcherItem>()
+		
+		;;; <summary>
+		;;; Definse the structure of live dispatchers.
+		;;; </summary>
+		class DispatcherItem
+			public referenceCount, int
+			public BDitem, @BackgroundDispatcher
+		endclass
+		
+		;;; <summary>
+		;;; Constructs a new BackgroundDispatcher object.
+		;;; </summary>
+		public method BackgroundDispatcher
+			endparams
+		proc
+			;;create a thread to run logic on
+			data dispatcherTask = new TaskCompletionSource<Dispatcher>()
+			mDispatcher = dispatcherTask.Task
+			mThread = new Thread(runDispatcher)
+			mThread.IsBackground = true
+			mThread.Start(dispatcherTask)
+		endmethod
+		
+		;;; <summary>
+        ;;; 
         ;;; </summary>
         public static property UtilityBackgroundDispatcher, @BackgroundDispatcher
             method get
@@ -34,22 +102,11 @@ namespace AppDomainProtection
             endmethod
         endproperty
 
-        .define CONST_MaxReferenceCount	,10
-
-        ;;private memebers
-        private mThread	,@Thread
-        private mDispatcher	,@Task<Dispatcher>
-
-        ;;define the structure of live dispatchers
-        class DispatcherItem
-            public referenceCount, int
-            public BDitem, @BackgroundDispatcher
-        endclass
-
-        ;;store a list of active dispatcher super channels
-        private static mActiveDispatcherList, @List<DispatcherItem>, new List<DispatcherItem>()
-
-        public static method AllocateDispatcher	,@BackgroundDispatcher
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <returns></returns>
+		public static method AllocateDispatcher	,@BackgroundDispatcher
             endparams
         proc
             data item, @DispatcherItem
@@ -62,8 +119,8 @@ namespace AppDomainProtection
                     mreturn item.BDitem
                 end
             end
-
-            ;;if we are here then either no active dispatcher items or they are all full
+			;; If we are here then either we have no active dispatcher items
+			;; or they are all full.
             item = new DispatcherItem()
             item.BDitem = new BackgroundDispatcher()
             item.referenceCount = 1
@@ -71,15 +128,19 @@ namespace AppDomainProtection
             mreturn item.BDitem
         endmethod
 
-        public static method DeallocateDispatcher, void
-            in req	disp, @BackgroundDispatcher
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aDispatcher"></param>
+		public static method DeallocateDispatcher, void
+            in req aDispatcher, @BackgroundDispatcher
             endparams
         proc
             data item, @DispatcherItem
             foreach item in mActiveDispatcherList
             begin
                 ;;find the passd dispatcher object in our list
-                if (item.BDitem == disp)
+				if (item.BDitem == aDispatcher)
                 begin
                     ;;found it, so remove it!!
                     decr item.referenceCount
@@ -92,10 +153,12 @@ namespace AppDomainProtection
                     end
                 end
             end
-
         endmethod
 
-        public static method ShutdownDispatcher, void
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		public static method ShutdownDispatcher, void
             endparams
         proc
 
@@ -111,123 +174,150 @@ namespace AppDomainProtection
             mActiveDispatcherList.Clear()
         endmethod
 
-        public method BackgroundDispatcher
-            endparams
-        proc
-            ;;create a thread to run logic on
-            data dispatcherTask = new TaskCompletionSource<Dispatcher>()
-            mDispatcher = dispatcherTask.Task
-            mThread = new Thread(runDispatcher)
-            mThread.IsBackground = true
-            mThread.Start(dispatcherTask)
-        endmethod
+.region "IDisposable members"
 
-        ;;create and run a new dispatcher
-        private method runDispatcher, void
-            sender, @Object
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		public method Dispose, void
+			endparams
+		proc
+			if (mDispatcher != ^null)
+			begin
+				mDispatcher.Wait()
+				mDispatcher.Result.InvokeShutdown()
+			end
+		endmethod
+
+.endregion
+		
+		;;; <summary>
+		;;; Create and run a new dispatcher
+		;;; </summary>
+		;;; <param name="aSender"></param>
+		private method runDispatcher, void
+            aSender, @Object
             endparams
         proc
-            data dispatcherTask = ^as(sender, TaskCompletionSource<Dispatcher>)
+			data dispatcherTask = ^as(aSender, TaskCompletionSource<Dispatcher>)
             xcall s_server_thread_init()
             dispatcherTask.SetResult(Dispatcher.CurrentDispatcher)
             Dispatcher.Run()
         endmethod
 
-        ;;; <summary>
-        ;;;
-        ;;; </summary>
-        public method Dispose, void
-            endparams
-        proc
-            if (mDispatcher != ^null)
-            begin
-                mDispatcher.Wait()
-                mDispatcher.Result.InvokeShutdown()
-            end
-        endmethod
-
-        internal method Dispatch, void
-            operation, @AppDomainDispatcherHelper
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aOperation"></param>
+		internal method Dispatch, void
+			aOperation, @AppDomainDispatcherHelper
             endparams
         proc
             ;;call the invokeHelper mether to execute the "operation" code and return the completion status
             mDispatcher.Wait()
             if (mDispatcher.Result.CheckAccess() == true) then
-                invokeHelper(operation)
+				invokeHelper(aOperation)
             else
-                mDispatcher.Result.BeginInvoke((Action<AppDomainDispatcherHelper>)invokeHelper, new Object[#] {operation})
+				mDispatcher.Result.BeginInvoke((Action<AppDomainDispatcherHelper>)invokeHelper, new Object[#] {aOperation})
         endmethod
 
-        ;;actually perform the required task/operation. completionSource reutns the status
-        private method invokeHelper, void
-            operation, @AppDomainDispatcherHelper
+		;;; <summary>
+		;;; Perform the required task/operation. completionSource reutns the status.
+		;;; </summary>
+		;;; <param name="aOperation"></param>
+		private method invokeHelper, void
+            aOperation, @AppDomainDispatcherHelper
             endparams
         proc
             try
             begin
-                operation.RunAction()
-                operation.SetResult(true)
+				aOperation.RunAction()
+				aOperation.SetResult(true)
             end
-            catch (e, @Exception)
+            catch (ex, @Exception)
             begin
-                operation.SetException(e)
+				aOperation.SetException(ex)
             end
             endtry
         endmethod
 
     endclass
 
-    public static class BackgroundDispatcherExtension
+	;;; <summary>
+	;;; 
+	;;; </summary>
+	public static class BackgroundDispatcherExtension
 
-        public static extension method Dispatch	,@Task
-            theDispatcher, @BackgroundDispatcher
-            operation, @Action
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aDispatcher"></param>
+		;;; <param name="aOperation"></param>
+		;;; <returns></returns>
+		public static extension method Dispatch	,@Task
+			aDispatcher, @BackgroundDispatcher
+            aOperation, @Action
             endparams
         proc
-
-            ;;create a handle to let things know when the task is complete (and it's sucess)
+            ;; Create a handle to let things know when the task is complete (and it's sucess)
             data completionSource = new TaskCompletionSource<Boolean>()
-
-            theDispatcher.Dispatch(new AppDomainDispatcherHelper(operation,completionSource))
-
+			aDispatcher.Dispatch(new AppDomainDispatcherHelper(aOperation,completionSource))
             mreturn completionSource.Task
-
         endmethod
 
     endclass
 
-    public class AppDomainDispatcherHelper extends MarshalByRefObject
+	;;; <summary>
+	;;; 
+	;;; </summary>
+	public class AppDomainDispatcherHelper extends MarshalByRefObject
 
-        private theAction, @Action
-        private completionSource, @TaskCompletionSource<Boolean>
+        private mAction, @Action
+        private mCompletionSource, @TaskCompletionSource<Boolean>
 
-        public method AppDomainDispatcherHelper
-            required in anAction, @Action
-            required in theCompletionSource, @TaskCompletionSource<Boolean>
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aAction"></param>
+		;;; <param name="aCompletionSource"></param>
+		public method AppDomainDispatcherHelper
+            required in aAction, @Action
+            required in aCompletionSource, @TaskCompletionSource<Boolean>
             endparams
         proc
-            theAction = anAction
-            completionSource = theCompletionSource
+			mAction = aAction
+			mCompletionSource = aCompletionSource
         endmethod
 
-        public method RunAction, void
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		public method RunAction, void
             endparams
         proc
-            theAction()
+			mAction()
         endmethod
 
-        public method SetResult, void
-            theResult, boolean
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aResult"></param>
+		public method SetResult, void
+            aResult, boolean
             endparams
         proc
-            completionSource.SetResult(theResult)
+			mCompletionSource.SetResult(aResult)
         endmethod
 
-        public method SetException, void
-            theException, @Exception
+		;;; <summary>
+		;;; 
+		;;; </summary>
+		;;; <param name="aException"></param>
+		public method SetException, void
+            aException, @Exception
             endparams
         proc
-            completionSource.SetException(theException)
+			mCompletionSource.SetException(aException)
         endmethod
 
     endclass

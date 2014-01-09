@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 17:01 on 01/08/2014 by steve.ives@synergex.com
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import AppDomainProtection
@@ -13,12 +13,11 @@ namespace PartsSystem
     ;;; </summary>
     public partial class PartsSystemAPI implements IAppDomainPoolable
 
-        public method Initialize, boolean
+        public method Initialize, void
             endparams
         proc
             ;TODO: Add code that you want to be executed only once
             ;      when a brand new instance of this class is created
-            mreturn true
         endmethod
 
         public method Activate, void
@@ -39,7 +38,7 @@ namespace PartsSystem
             ;      known initial values.
         endmethod
 
-        public method CanBePooled, boolean
+		public method CanBeReused, boolean
             endparams
         proc
             ;TODO: Add code that you want to be executed as an instance of this

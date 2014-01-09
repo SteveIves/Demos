@@ -4,7 +4,7 @@
 <REQUIRES_USERTOKEN>API_CLASS</REQUIRES_USERTOKEN>
 <PROCESS_TEMPLATE>CRUDServiceBase</PROCESS_TEMPLATE>
 ;;******************************************************************************
-;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import System

@@ -1,7 +1,7 @@
 <CODEGEN_FILENAME><MAIN_CLASS>.dbl</CODEGEN_FILENAME>
 <REQUIRES_USERTOKEN>MAIN_CLASS</REQUIRES_USERTOKEN>
 ;;******************************************************************************
-;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import AppDomainProtection
@@ -15,12 +15,11 @@ namespace <NAMESPACE>
     ;;; </summary>
     public partial class <MAIN_CLASS> implements IAppDomainPoolable
 
-        public method Initialize, boolean
+        public method Initialize, void
             endparams
         proc
             ;TODO: Add code that you want to be executed only once
             ;      when a brand new instance of this class is created
-            mreturn true
         endmethod
 
         public method Activate, void
@@ -41,7 +40,7 @@ namespace <NAMESPACE>
             ;      known initial values.
         endmethod
 
-        public method CanBePooled, boolean
+        public method CanBeReused, boolean
             endparams
         proc
             ;TODO: Add code that you want to be executed as an instance of this

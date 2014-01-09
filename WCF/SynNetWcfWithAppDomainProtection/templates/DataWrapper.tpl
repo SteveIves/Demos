@@ -1,7 +1,7 @@
 <CODEGEN_FILENAME><StructureName>Wrapper.dbl</CODEGEN_FILENAME>
 <PROCESS_TEMPLATE>DataUtils</PROCESS_TEMPLATE>
 ;;******************************************************************************
-;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import System

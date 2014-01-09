@@ -1,5 +1,5 @@
 ;;******************************************************************************
-;;* WARNING: Code generated at 17:01 on 01/08/2014 by steve.ives@synergex.com
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
 import System.Collections.Generic

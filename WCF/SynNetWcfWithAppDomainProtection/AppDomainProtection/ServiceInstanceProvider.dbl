@@ -1,5 +1,49 @@
+;;*****************************************************************************
+;;
+;; Title:       ServiceInstanceProvider.dbl
+;;
+;; Type:        Class
+;;
+;; Description: This class implements a custom provider that will be called
+;;              by WCF whenever a new instance of the WCF service is required.
+;;              This functionality is implemented by attributing your WCF
+;;              service class or interface with SingletonBehaviorAttribute.
+;;
+;; Date:        9th January 2014
+;;
+;; Authors:     Steve Ives       Synergex Professional Services Group
+;;              Jeff Greene      Synergex Development
+;;                               http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
 
-import System
 import System.ServiceModel
 import System.ServiceModel.Channels
 import System.ServiceModel.Dispatcher
@@ -10,6 +54,10 @@ namespace AppDomainProtection
 
 		private mTargetType, @Type
 
+		;;; <summary>
+		;;; Constructs a new ServiceInstanceProvider object.
+		;;; </summary>
+		;;; <param name="targetType">The type of the class or interface that defines the WCF service contract.</param>
 		public method ServiceInstanceProvider
 			targetType, @Type
 			endparams
@@ -17,66 +65,102 @@ namespace AppDomainProtection
 			mTargetType = targetType
 		endmethod
 
-        public method GetInstance, @object
-            instanceContext, @InstanceContext
-            message, @Message
+.region "IInstanceProvider members"
+
+		;;; <summary>
+		;;; Use the GetInstance(InstanceContext, Message) method to control the exact service
+		;;; object that a WCF service receives when it attempts to create a new one.
+		;;; </summary>
+		;;; <param name="context">The current InstanceContext object.</param>
+		;;; <param name="msg">The message that triggered the creation of a service object.</param>
+		public method GetInstance, @object
+            context, @InstanceContext
+            msg, @Message
             endparams
 		proc
+			;;Get an AppDomain to host the service instance
 			data isNew, boolean
 			data instanceAppDomain, @AppDomain, AppDomainPoolManager.Allocate(isNew)
+
+			;;Load a new instance of the WCF service into the AppDomain
 			data service, @IsolatableServiceBase, (@IsolatableServiceBase)instanceAppDomain.CreateInstanceAndUnwrap(mTargetType.Assembly.FullName, mTargetType.FullName)
 
-
-			data poolable, @IAppDomainPoolable
-			poolable =  ^as((@object)service,@IAppDomainPoolable)
+			;;Does the service implement IAppDomainPoolable?
+			data poolable, @IAppDomainPoolable, ^as((@object)service,@IAppDomainPoolable)
 			if(poolable != ^null)
 			begin
+				;;If this is a brand new AppDomain (not an existing one from the pool) then call the Initialize method
 				if(isNew)
-				begin
 					poolable.Initialize()
-				end
-				
+				;;Call the Activate method
 				poolable.Activate()
 			end
 
+			;;Hook up the custom dispatcher for multi-threading protection
             service.ServiceDispatcher = BackgroundDispatcher.AllocateDispatcher()
-            mreturn service
-        endmethod
+			
+			mreturn service
+		
+		endmethod
 
-        public method GetInstance, @object
-            instanceContext, @InstanceContext
+		;;; <summary>
+		;;; Use the GetInstance(InstanceContext) method to control the exact service object
+		;;; that a WCF service receives when it attempts to create a new one.
+		;;; </summary>
+		;;; <param name="context">The current InstanceContext object.</param>
+		public method GetInstance, @object
+            context, @InstanceContext
             endparams
         proc
-            mreturn this.GetInstance(instanceContext, ^null)
+			mreturn this.GetInstance(context, ^null)
         endmethod
 
-        public method ReleaseInstance, void
-            instanceContext, @InstanceContext
+		;;; <summary>
+		;;; Use the ReleaseInstance method to perform some custom resource disposal or
+		;;; other recycling customization when a service recycles a service object.
+		;;; </summary>
+		;;; <param name="context">The service's instance context.</param>
+		;;; <param name="instance">The service object to be recycled.</param>
+		public method ReleaseInstance, void
+            context, @InstanceContext
             instance, @object
             endparams
 		proc
+			;;Get a handle on the service instances AppDomain
 			data instanceAppDomain = ((@IsolatableServiceBase)instance).GetAppDomain()
+
+			;;Deallocate the custom dispatcher
 			BackgroundDispatcher.DeallocateDispatcher(((@IsolatableServiceBase)instance).ServiceDispatcher)
+
+			;;Does the service implement IAppDomainPoolable?
 			data poolable, @IAppDomainPoolable, ^as(instance, @IAppDomainPoolable)
-			if(poolable != ^null)
+			if(poolable != ^null) then
 			begin
+				;;Call the Deactivate method
 				poolable.Deactivate()
-
-
-				if(poolable.CanBePooled()) then
+				;;Does the service instance indicate that it can be returned to the pool for reuse?
+				if(poolable.CanBeReused()) then
 				begin
-					;;return it
-					AppDomainPoolManager.Release(instanceAppDomain)
+					;;Yes, return the instance AppDomain to the AppDomain pool
+					AppDomainPoolManager.ReturnToPool(instanceAppDomain)
 				end
 				else
 				begin
+					;;No, call the Cleanup method and then unload the AppDomain
 					poolable.Cleanup()
 					AppDomain.Unload(instanceAppDomain)
 				end
-
+			end
+			else
+			begin
+				;;If the service instance does not implement IAppDomainPoolable then we'll
+				;;throw away the AppDomain rather than re-using it.
+				AppDomain.Unload(instanceAppDomain)
 			end
 			
         endmethod
+
+.endregion
 
     endclass
 
