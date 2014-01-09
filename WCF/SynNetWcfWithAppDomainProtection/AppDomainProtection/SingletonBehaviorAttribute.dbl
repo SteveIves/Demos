@@ -1,0 +1,61 @@
+
+import System
+import System.ServiceModel.Channels
+import System.ServiceModel.Description
+import System.ServiceModel.Dispatcher
+
+namespace AppDomainProtection
+
+	public class SingletonBehaviorAttribute extends Attribute implements IContractBehaviorAttribute, IContractBehavior
+
+		private mTargetType, @Type
+
+		public method SingletonBehaviorAttribute
+			targetType, @Type
+			endparams
+		proc
+			mTargetType = targetType
+		endmethod
+
+        public property TargetContract, @Type
+            method get
+            proc
+				mreturn mTargetType
+            endmethod
+        endproperty
+
+        public method AddBindingParameters, void
+            description, @ContractDescription
+            endpoint, @ServiceEndpoint
+            parameters, @BindingParameterCollection
+            endparams
+        proc
+        endmethod
+
+        public method ApplyClientBehavior, void
+            description, @ContractDescription
+            endpoint, @ServiceEndpoint
+            clientRuntime, @ClientRuntime
+            endparams
+        proc
+        endmethod
+
+        public method ApplyDispatchBehavior, void
+            description, @ContractDescription
+            endpoint, @ServiceEndpoint
+            dispatch, @DispatchRuntime
+            endparams
+        proc
+			dispatch.InstanceProvider = new ServiceInstanceProvider(mTargetType)
+        endmethod
+
+        public method Validate, void
+            description, @ContractDescription
+            endpoint, @ServiceEndpoint
+            endparams
+        proc
+        endmethod
+
+    endclass
+
+endnamespace

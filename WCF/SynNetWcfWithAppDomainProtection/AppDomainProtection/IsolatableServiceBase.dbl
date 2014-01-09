@@ -1,0 +1,23 @@
+
+import System
+
+namespace AppDomainProtection
+
+    public class IsolatableServiceBase extends MarshalByRefObject
+
+        public method GetAppDomain, @AppDomain
+            endparams
+        proc
+            mreturn AppDomain.CurrentDomain
+        endmethod
+
+        public property ServiceDispatcher, @BackgroundDispatcher
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+endnamespace

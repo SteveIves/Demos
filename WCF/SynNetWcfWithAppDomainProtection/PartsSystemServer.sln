@@ -33,6 +33,8 @@ Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ServiceHost", "ServiceHost\
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "PartsSystem", "PartsSystem\PartsSystem.synproj", "{EC5ADE07-8B6A-461A-98BB-F5C09874FF40}"
 EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "AppDomainProtection", "AppDomainProtection\AppDomainProtection.synproj", "{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{EC5ADE07-8B6A-461A-98BB-F5C09874FF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC5ADE07-8B6A-461A-98BB-F5C09874FF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC5ADE07-8B6A-461A-98BB-F5C09874FF40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

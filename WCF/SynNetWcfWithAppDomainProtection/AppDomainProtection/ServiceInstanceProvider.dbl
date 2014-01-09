@@ -1,0 +1,83 @@
+
+import System
+import System.ServiceModel
+import System.ServiceModel.Channels
+import System.ServiceModel.Dispatcher
+
+namespace AppDomainProtection
+	
+	public class ServiceInstanceProvider implements IInstanceProvider
+
+		private mTargetType, @Type
+
+		public method ServiceInstanceProvider
+			targetType, @Type
+			endparams
+		proc
+			mTargetType = targetType
+		endmethod
+
+        public method GetInstance, @object
+            instanceContext, @InstanceContext
+            message, @Message
+            endparams
+		proc
+			data isNew, boolean
+			data instanceAppDomain, @AppDomain, AppDomainPoolManager.Allocate(isNew)
+			data service, @IsolatableServiceBase, (@IsolatableServiceBase)instanceAppDomain.CreateInstanceAndUnwrap(mTargetType.Assembly.FullName, mTargetType.FullName)
+
+
+			data poolable, @IAppDomainPoolable
+			poolable =  ^as((@object)service,@IAppDomainPoolable)
+			if(poolable != ^null)
+			begin
+				if(isNew)
+				begin
+					poolable.Initialize()
+				end
+				
+				poolable.Activate()
+			end
+
+            service.ServiceDispatcher = BackgroundDispatcher.AllocateDispatcher()
+            mreturn service
+        endmethod
+
+        public method GetInstance, @object
+            instanceContext, @InstanceContext
+            endparams
+        proc
+            mreturn this.GetInstance(instanceContext, ^null)
+        endmethod
+
+        public method ReleaseInstance, void
+            instanceContext, @InstanceContext
+            instance, @object
+            endparams
+		proc
+			data instanceAppDomain = ((@IsolatableServiceBase)instance).GetAppDomain()
+			BackgroundDispatcher.DeallocateDispatcher(((@IsolatableServiceBase)instance).ServiceDispatcher)
+			data poolable, @IAppDomainPoolable, ^as(instance, @IAppDomainPoolable)
+			if(poolable != ^null)
+			begin
+				poolable.Deactivate()
+
+
+				if(poolable.CanBePooled()) then
+				begin
+					;;return it
+					AppDomainPoolManager.Release(instanceAppDomain)
+				end
+				else
+				begin
+					poolable.Cleanup()
+					AppDomain.Unload(instanceAppDomain)
+				end
+
+			end
+			
+        endmethod
+
+    endclass
+
+endnamespace

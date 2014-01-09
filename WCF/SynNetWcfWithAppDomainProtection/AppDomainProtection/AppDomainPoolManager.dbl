@@ -1,0 +1,67 @@
+
+import System
+import System.Collections.Generic
+import System.Threading
+
+namespace AppDomainProtection
+
+    public static class AppDomainPoolManager
+    
+        private static pool, @List<AppDomain>
+
+        static method AppDomainPoolManager
+            endparams
+        proc
+            pool = new List<AppDomain>()
+        endmethod
+
+		public static method Allocate, @AppDomain
+			inout isNew, boolean
+            endparams
+        proc
+            data ad, @AppDomain
+			try
+			begin
+				Monitor.Enter(^typeof(AppDomainPoolManager))
+				if (pool.Count>0)
+				begin
+					isNew = false
+					ad = pool[0]
+					pool.RemoveAt(0)
+				end
+			end
+			finally
+			begin
+				Monitor.Exit(^typeof(AppDomainPoolManager))
+			end
+			endtry
+			if (ad==^null)
+			begin
+				isNew = true
+				ad = AppDomain.CreateDomain(Guid.NewGuid().ToString())
+			end
+
+			mreturn ad
+        endmethod
+
+        public static method Release, void
+            required inout ad, @AppDomain
+            endparams
+        proc
+			try
+			begin
+				Monitor.Enter(^typeof(AppDomainPoolManager))
+				pool.Add(ad)
+				ad = ^null
+			end
+			finally
+			begin
+				Monitor.Exit(^typeof(AppDomainPoolManager))
+			end
+			endtry
+        endmethod
+
+    endclass
+
+endnamespace
+

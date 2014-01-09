@@ -1,0 +1,25 @@
+
+import System
+
+namespace AppDomainProtection
+
+    public interface IAppDomainPoolable
+
+        method Initialize, boolean
+        endmethod
+
+        method Activate, void
+        endmethod
+
+        method Deactivate, void
+        endmethod
+
+        method CanBePooled, boolean
+        endmethod
+
+        method Cleanup, void
+        endmethod
+
+    endinterface
+
+endnamespace
