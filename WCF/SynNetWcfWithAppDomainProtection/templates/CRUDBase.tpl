@@ -1,4 +1,4 @@
-<CODEGEN_FILENAME><MAIN_CLASS>_PoolSupport.dbl</CODEGEN_FILENAME>
+<CODEGEN_FILENAME><MAIN_CLASS>.dbl</CODEGEN_FILENAME>
 <REQUIRES_USERTOKEN>MAIN_CLASS</REQUIRES_USERTOKEN>
 ;;******************************************************************************
 ;;* WARNING: Code generated at <TIME> on <DATE> by <AUTHOR>
