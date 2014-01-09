@@ -10,6 +10,7 @@ import System
 import System.Collections.Generic
 import System.ServiceModel
 import System.Threading.Tasks
+import AppDomainProtection
 import <API_NAMESPACE>
 
 namespace <NAMESPACE>

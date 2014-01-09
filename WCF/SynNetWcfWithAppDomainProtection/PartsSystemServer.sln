@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{66C67D32-B695-4B7B-AFE2-6BFB59C29DC8}"
 	ProjectSection(SolutionItems) = preProject
-		templates\BackgroundDispatcher.tpl = templates\BackgroundDispatcher.tpl
 		templates\CRUD.tpl = templates\CRUD.tpl
 		templates\CRUDInterface.tpl = templates\CRUDInterface.tpl
 		templates\CRUDPoolSupport.tpl = templates\CRUDPoolSupport.tpl
@@ -22,11 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		templates\DataClass.tpl = templates\DataClass.tpl
 		templates\DataUtils.tpl = templates\DataUtils.tpl
 		templates\DataWrapper.tpl = templates\DataWrapper.tpl
-		templates\IAppDomainPoolable.tpl = templates\IAppDomainPoolable.tpl
-		templates\IsolatableServiceBase.tpl = templates\IsolatableServiceBase.tpl
 		templates\MethodStatus.tpl = templates\MethodStatus.tpl
-		templates\ServiceInstanceProvider.tpl = templates\ServiceInstanceProvider.tpl
-		templates\SingletonBehaviorAttribute.tpl = templates\SingletonBehaviorAttribute.tpl
 	EndProjectSection
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ServiceHost", "ServiceHost\ServiceHost.synproj", "{4BC136BC-6707-4222-B156-1554E244B4EF}"

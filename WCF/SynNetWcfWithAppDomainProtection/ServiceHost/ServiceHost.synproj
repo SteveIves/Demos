@@ -57,6 +57,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppDomainProtection\AppDomainProtection.synproj">
+      <Name>AppDomainProtection</Name>
+      <Project>{730cac09-e5cf-441c-80d0-f0623ed1adbb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\WcfServiceLibrary\WcfServiceLibrary.synproj">
       <Name>WcfServiceLibrary</Name>
       <Project>{200a4015-8bf6-4e25-a80e-d0c5f1b1c61e}</Project>
