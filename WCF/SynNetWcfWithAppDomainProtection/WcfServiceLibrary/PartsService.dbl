@@ -11,7 +11,7 @@ import PartsSystem
 namespace WcfServiceLibrary
 
     {ServiceContract(SessionMode = SessionMode.Required)}
-    {SingletonBehaviorAttribute()}
+    {SingletonBehaviorAttribute(^typeof(PartsService))}
     public partial class PartsService extends IsolatableServiceBase
 
     endclass
