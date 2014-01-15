@@ -89,4 +89,180 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="CreateProductGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroup" nillable="true" type="q12:ProductGroup" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateProductGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="CreateProductGroupResult" type="q13:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadProductGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aGroupId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadProductGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadProductGroupResult" type="q14:MethodStatus" />
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroup" nillable="true" type="q15:ProductGroup" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadAllProductGroups">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadAllProductGroupsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadAllProductGroupsResult" type="q16:MethodStatus" />
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroups" nillable="true" type="q17:ArrayOfProductGroup" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateProductGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroup" nillable="true" type="q18:ProductGroup" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateProductGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="UpdateProductGroupResult" type="q19:MethodStatus" />
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroup" nillable="true" type="q20:ProductGroup" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteProductGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteProductGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="DeleteProductGroupResult" type="q21:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProductGroupExists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aGroupId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ProductGroupExistsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ProductGroupExistsResult" type="q22:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateSupplier">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q23="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSupplier" nillable="true" type="q23:Supplier" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateSupplierResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="CreateSupplierResult" type="q24:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadSupplier">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aSupplierId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadSupplierResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadSupplierResult" type="q25:MethodStatus" />
+        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSupplier" nillable="true" type="q26:Supplier" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadAllSuppliers">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReadAllSuppliersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="ReadAllSuppliersResult" type="q27:MethodStatus" />
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSuppliers" nillable="true" type="q28:ArrayOfSupplier" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSupplier">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSupplier" nillable="true" type="q29:Supplier" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSupplierResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="UpdateSupplierResult" type="q30:MethodStatus" />
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSupplier" nillable="true" type="q31:Supplier" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteSupplier">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteSupplierResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="DeleteSupplierResult" type="q32:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SupplierExists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="aSupplierId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SupplierExistsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="SupplierExistsResult" type="q33:MethodStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

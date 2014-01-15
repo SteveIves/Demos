@@ -27,4 +27,36 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfPart" nillable="true" type="tns:ArrayOfPart" />
+  <xs:complexType name="ProductGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GroupId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProductGroup" nillable="true" type="tns:ProductGroup" />
+  <xs:complexType name="ArrayOfProductGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductGroup" nillable="true" type="tns:ProductGroup" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProductGroup" nillable="true" type="tns:ArrayOfProductGroup" />
+  <xs:complexType name="Supplier">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Address3" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PostalCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SupplierId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WebAddress" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Supplier" nillable="true" type="tns:Supplier" />
+  <xs:complexType name="ArrayOfSupplier">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Supplier" nillable="true" type="tns:Supplier" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSupplier" nillable="true" type="tns:ArrayOfSupplier" />
 </xs:schema>
