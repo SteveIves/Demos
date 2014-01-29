@@ -40,11 +40,9 @@
 ;;
 ;; Routine:     <structure_noalias>_io
 ;;
-;; Author:      <AUTHOR>
+;; Author:      Steve Ives
 ;;
-;; Company:     <COMPANY>
-;;
-;; Created:     <DATE> at <TIME>
+;; Company:     Synergex
 ;;
 ;;*****************************************************************************
 ;;
@@ -79,10 +77,6 @@ function <structure_noalias>_io ,^val
         keyval              ,a255   ;;Hold original key
         .include "<STRUCTURE_NOALIAS>" repository, group="tmp_<structure_noalias>"
     endrecord
-
-    <TAG_FIELD_DEFINE>
-    <TAG_VALUE_DEFINE>
-    <TAG_END_DEFINE>
 
 proc
 
