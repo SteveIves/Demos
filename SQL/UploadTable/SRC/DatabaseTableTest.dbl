@@ -25,7 +25,8 @@ import SqlUploadDemo
 
 main DatabaseTableTest
 
-    .define DB_CONSTR   "VTX12_SQLNATIVE://SqlUploadTable/.///Trusted_connection=yes"
+     .define DB_CONSTR "VTX12_SQLNATIVE://SqlUploadTable/.///Trusted_connection=yes"
+	 ;.define DB_CONSTR "NET:SqlUpload/SqlUploadPassword/SqlUpload@localhost!VTX12_SQLNATIVE"
 
     record
         tt              ,i4                     ;;Terminal channel
