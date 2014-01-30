@@ -30,9 +30,9 @@
 ;;
 ;; Routine:     <structure_name>_load
 ;;
-;; Author:      <AUTHOR> (<ENV:USERNAME>)
+;; Author:      Steve Ives
 ;;
-;; Company:     <COMPANY>
+;; Company:     Synergex Professional Services Group
 ;;
 ;;*****************************************************************************
 ;;

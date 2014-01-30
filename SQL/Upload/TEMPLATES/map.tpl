@@ -32,9 +32,9 @@
 ;;
 ;; Routine:     <structure_name>_map
 ;;
-;; Author:      <AUTHOR> (<ENV:USERNAME>)
+;; Author:      Steve Ives
 ;;
-;; Company:     <COMPANY>
+;; Company:     Synergex Professional Services Group
 ;;
 ;;*****************************************************************************
 ;;

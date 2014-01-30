@@ -28,9 +28,9 @@
 ;;
 ;; Routine:      <structure_name>_drop
 ;;
-;; Author:       <AUTHOR> (<ENV:USERNAME>)
+;; Author:      Steve Ives
 ;;
-;; Company:      <COMPANY>
+;; Company:     Synergex Professional Services Group
 ;;
 ;;*****************************************************************************
 ;;
