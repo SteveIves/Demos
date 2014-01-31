@@ -138,7 +138,7 @@ proc
 	if (ok)
 	begin
 		writes(tt,"Loading table ... ")
-		;;Don't pass rowcount (or set it to 0) to load the full file!
+		;;Set rowcount to 0 to load the full file!
 		rowcount = 100
 		;table.CleanData = true
 		;table.EmptyAlphaNull = true
