@@ -1,7 +1,6 @@
 ﻿<Window x:Class="Calculator.Views.CalculatorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="clr-namespace:Calculator.Commands"
     xmlns:local="clr-namespace:Calculator.ViewModels"
     Title="WPF Calculator" Height="290" Width="425" 
     ResizeMode="CanMinimize" >
