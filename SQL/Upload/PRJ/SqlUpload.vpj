@@ -1,864 +1,857 @@
 <!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
 <Project
-    Version="10.0"
-    VendorName="SlickEdit"
-    WorkingDir=".">
-    <Config
-        Name="Debug32"
-        OutputFile=""
-        CompilerConfigName="">
-        <Menu>
-            <Target
-                Name="Prototype"
-                MenuCaption="&amp;Prototype"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynPrototype"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile"
-                MenuCaption="&amp;Compile"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompile"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile All"
-                MenuCaption="Compile &amp;All"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileAll"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Link"
-                MenuCaption="&amp;Link"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynLink"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Build"
-                MenuCaption="&amp;Build"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynBuild"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Debug"
-                MenuCaption="&amp;Debug"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr -d %rn.dbr"/>
-            </Target>
-            <Target
-                Name="Execute"
-                MenuCaption="E&amp;xecute"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:%rn.dbr"/>
-            </Target>
-            <Target
-                Name="Synergy/DE Options"
-                MenuCaption="&amp;Synergy/DE Options"
-                SaveOption="SaveNone"
-                RunFromDir="%rw"
-                Dialog="_synergyde_options_form Prototype">
-                <Exec
-                    CmdLine="SynShowSynDEOpts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts"
-                MenuCaption="Co&amp;mpile Scripts"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts Setup"
-                MenuCaption="Compile Scripts Set&amp;up..."
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynSetupCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Regenerate Code"
-                MenuCaption="&amp;Regenerate Code"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="regen.bat"/>
-            </Target>
-            <Target
-                Name="Delete Generated Files"
-                MenuCaption="&amp;Delete Generated Files"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="delgen.com"/>
-            </Target>
-            <Target
-                Name="Clean Environment"
-                MenuCaption="&amp;Clean Environment"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="clean.bat"/>
-            </Target>
-            <Target
-                Name="Reload ISAM File Data"
-                MenuCaption="&amp;Reload ISAM File Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-        </Menu>
-        <SynSettings>
-            <SynSetting
-                Name="compile_all_folder"
-                Value="Source Files"/>
-            <SynSetting
-                Name="config64"
-                Value="0"/>
-            <SynSetting
-                Name="proto_command_line"
-                Value="dblproto %p%n%e"/>
-            <SynSetting
-                Name="compile_command_line"
-                Value='dbl -T -d -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
-            <SynSetting
-                Name="linklibr_command_line"
-                Value="dblink -d -o EXE:%rn.dbr OBJ:%rn.dbo"/>
-            <SynSetting
-                Name="proto_clear_dbh"
-                Value="1"/>
-            <SynSetting
-                Name="build_prototype"
-                Value="0"/>
-            <SynSetting
-                Name="proto_first_run"
-                Value="0"/>
-            <SynSetting
-                Name="compile_single"
-                Value="1"/>
-            <SynSetting
-                Name="object_name"
-                Value="%rn.dbo"/>
-            <SynSetting
-                Name="proto_namespace_sequence"
-                Value="namespace1.namespace2.namespace3"/>
-            <SynSetting
-                Name="gen_batch"
-                Value="0"/>
-            <SynSetting
-                Name="batch_file"
-                Value=""/>
-            <SynSetting
-                Name="qvariant"
-                Value=""/>
-            <SynSetting
-                Name="qrelax_end"
-                Value="1"/>
-            <SynSetting
-                Name="object_dir"
-                Value="OBJ:"/>
-        </SynSettings>
-    </Config>
-    <Files>
-        <Folder
-            Name="Templates"
-            Filters="*.tpl">
-            <F N="../TEMPLATES/clear.tpl"/>
-            <F N="../TEMPLATES/create.tpl"/>
-            <F N="../TEMPLATES/delete_row.tpl"/>
-            <F N="../TEMPLATES/drop.tpl"/>
-            <F N="../TEMPLATES/exists.tpl"/>
-            <F N="../TEMPLATES/insert_row.tpl"/>
-            <F N="../TEMPLATES/insert_rows.tpl"/>
-            <F N="../TEMPLATES/load_mapped.tpl"/>
-            <F N="../TEMPLATES/map.tpl"/>
-            <F N="../TEMPLATES/select_row.tpl"/>
-            <F N="../TEMPLATES/select_rows.tpl"/>
-        </Folder>
-        <Folder
-            Name="Source Files"
-            Filters="*.dbl">
-            <F N="../SRC/GENERATED/customer_clear.dbl"/>
-            <F N="../SRC/GENERATED/customer_create.dbl"/>
-            <F N="../SRC/GENERATED/customer_delete_row.dbl"/>
-            <F N="../SRC/GENERATED/customer_drop.dbl"/>
-            <F N="../SRC/GENERATED/customer_exists.dbl"/>
-            <F N="../SRC/GENERATED/customer_insert_row.dbl"/>
-            <F N="../SRC/GENERATED/customer_insert_rows.dbl"/>
-            <F N="../SRC/GENERATED/customer_load.dbl"/>
-            <F N="../SRC/GENERATED/customer_map.dbl"/>
-            <F N="../SRC/GENERATED/customer_select_row.dbl"/>
-            <F N="../SRC/GENERATED/customer_select_rows.dbl"/>
-            <F N="../SRC/SUB/D10ToPhone.dbl"/>
-            <F N="../SRC/SUB/IsNumeric.dbl"/>
-            <F N="../SRC/SUB/MixedCase.dbl"/>
-            <F N="../SRC/GENERATED/order_header_clear.dbl"/>
-            <F N="../SRC/GENERATED/order_header_create.dbl"/>
-            <F N="../SRC/GENERATED/order_header_delete_row.dbl"/>
-            <F N="../SRC/GENERATED/order_header_drop.dbl"/>
-            <F N="../SRC/GENERATED/order_header_exists.dbl"/>
-            <F N="../SRC/GENERATED/order_header_insert_row.dbl"/>
-            <F N="../SRC/GENERATED/order_header_insert_rows.dbl"/>
-            <F N="../SRC/GENERATED/order_header_load.dbl"/>
-            <F N="../SRC/GENERATED/order_header_map.dbl"/>
-            <F N="../SRC/GENERATED/order_header_select_row.dbl"/>
-            <F N="../SRC/GENERATED/order_header_select_rows.dbl"/>
-            <F N="../SRC/GENERATED/order_line_clear.dbl"/>
-            <F N="../SRC/GENERATED/order_line_create.dbl"/>
-            <F N="../SRC/GENERATED/order_line_delete_row.dbl"/>
-            <F N="../SRC/GENERATED/order_line_drop.dbl"/>
-            <F N="../SRC/GENERATED/order_line_exists.dbl"/>
-            <F N="../SRC/GENERATED/order_line_insert_row.dbl"/>
-            <F N="../SRC/GENERATED/order_line_insert_rows.dbl"/>
-            <F N="../SRC/GENERATED/order_line_load.dbl"/>
-            <F N="../SRC/GENERATED/order_line_map.dbl"/>
-            <F N="../SRC/GENERATED/order_line_select_row.dbl"/>
-            <F N="../SRC/GENERATED/order_line_select_rows.dbl"/>
-            <F N="../SRC/GENERATED/product_clear.dbl"/>
-            <F N="../SRC/GENERATED/product_create.dbl"/>
-            <F N="../SRC/GENERATED/product_delete_row.dbl"/>
-            <F N="../SRC/GENERATED/product_drop.dbl"/>
-            <F N="../SRC/GENERATED/product_exists.dbl"/>
-            <F N="../SRC/GENERATED/product_group_clear.dbl"/>
-            <F N="../SRC/GENERATED/product_group_create.dbl"/>
-            <F N="../SRC/GENERATED/product_group_delete_row.dbl"/>
-            <F N="../SRC/GENERATED/product_group_drop.dbl"/>
-            <F N="../SRC/GENERATED/product_group_exists.dbl"/>
-            <F N="../SRC/GENERATED/product_group_insert_row.dbl"/>
-            <F N="../SRC/GENERATED/product_group_insert_rows.dbl"/>
-            <F N="../SRC/GENERATED/product_group_load.dbl"/>
-            <F N="../SRC/GENERATED/product_group_map.dbl"/>
-            <F N="../SRC/GENERATED/product_group_select_row.dbl"/>
-            <F N="../SRC/GENERATED/product_group_select_rows.dbl"/>
-            <F N="../SRC/GENERATED/product_insert_row.dbl"/>
-            <F N="../SRC/GENERATED/product_insert_rows.dbl"/>
-            <F N="../SRC/GENERATED/product_load.dbl"/>
-            <F N="../SRC/GENERATED/product_map.dbl"/>
-            <F N="../SRC/GENERATED/product_select_row.dbl"/>
-            <F N="../SRC/GENERATED/product_select_rows.dbl"/>
-            <F N="../SRC/sqltest.dbl"/>
-        </Folder>
-        <Folder
-            Name="Header Files"
-            Filters="*.def;*.dbh"/>
-        <Folder
-            Name="Toolkit Script Files"
-            Filters="*.wsc"/>
-        <Folder
-            Name="Batch Files"
-            Filters="*.bat">
-            <F N="../BAT/clean.bat"/>
-            <F N="../BAT/delfile.bat"/>
-            <F N="../BAT/delgen.bat"/>
-            <F N="../BAT/load_data.bat"/>
-            <F N="../BAT/prep.bat"/>
-            <F N="../BAT/regen.bat"/>
-            <F N="../BAT/rps_export.bat"/>
-            <F N="../BAT/rps_import.bat"/>
-        </Folder>
-        <Folder
-            Name="Other Files"
-            Filters="">
-            <F N="../DAT/cusmas.seq"/>
-            <F N="../DAT/invgrp.seq"/>
-            <F N="../DAT/invmas.seq"/>
-            <F N="../DAT/ordhdr.seq"/>
-            <F N="../DAT/ordlin.seq"/>
-        </Folder>
-    </Files>
-    <Config
-        Name="Debug64"
-        OutputFile=""
-        CompilerConfigName="">
-        <Menu>
-            <Target
-                Name="Prototype"
-                MenuCaption="&amp;Prototype"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynPrototype"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile"
-                MenuCaption="&amp;Compile"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompile"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile All"
-                MenuCaption="Compile &amp;All"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileAll"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Link"
-                MenuCaption="&amp;Link"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynLink"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Build"
-                MenuCaption="&amp;Build"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynBuild"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Debug"
-                MenuCaption="&amp;Debug"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr -d %rn.dbr"/>
-            </Target>
-            <Target
-                Name="Execute"
-                MenuCaption="E&amp;xecute"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:%rn.dbr"/>
-            </Target>
-            <Target
-                Name="Synergy/DE Options"
-                MenuCaption="&amp;Synergy/DE Options"
-                SaveOption="SaveNone"
-                RunFromDir="%rw"
-                Dialog="_synergyde_options_form Prototype">
-                <Exec
-                    CmdLine="SynShowSynDEOpts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts"
-                MenuCaption="Co&amp;mpile Scripts"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts Setup"
-                MenuCaption="Compile Scripts Set&amp;up..."
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynSetupCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Regenerate Code"
-                MenuCaption="&amp;Regenerate Code"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="regen.bat"/>
-            </Target>
-            <Target
-                Name="Delete Generated Files"
-                MenuCaption="&amp;Delete Generated Files"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="delgen.com"/>
-            </Target>
-            <Target
-                Name="Clean Environment"
-                MenuCaption="&amp;Clean Environment"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="clean.bat"/>
-            </Target>
-            <Target
-                Name="Reload ISAM File Data"
-                MenuCaption="&amp;Reload ISAM File Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-        </Menu>
-        <SynSettings>
-            <SynSetting
-                Name="compile_all_folder"
-                Value="Source Files"/>
-            <SynSetting
-                Name="config64"
-                Value="1"/>
-            <SynSetting
-                Name="proto_command_line"
-                Value="dblproto %p%n%e"/>
-            <SynSetting
-                Name="compile_command_line"
-                Value='dbl -T -d -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
-            <SynSetting
-                Name="linklibr_command_line"
-                Value="dblink -d -o EXE:%rn.dbr OBJ:%rn.dbo"/>
-            <SynSetting
-                Name="proto_clear_dbh"
-                Value="1"/>
-            <SynSetting
-                Name="build_prototype"
-                Value="0"/>
-            <SynSetting
-                Name="proto_first_run"
-                Value="0"/>
-            <SynSetting
-                Name="compile_single"
-                Value="1"/>
-            <SynSetting
-                Name="object_name"
-                Value="%rn.dbo"/>
-            <SynSetting
-                Name="proto_namespace_sequence"
-                Value="namespace1.namespace2.namespace3"/>
-            <SynSetting
-                Name="gen_batch"
-                Value="0"/>
-            <SynSetting
-                Name="batch_file"
-                Value=""/>
-            <SynSetting
-                Name="qvariant"
-                Value=""/>
-            <SynSetting
-                Name="qrelax_end"
-                Value="1"/>
-            <SynSetting
-                Name="object_dir"
-                Value="OBJ:"/>
-        </SynSettings>
-    </Config>
-    <Config
-        Name="Release32"
-        OutputFile=""
-        CompilerConfigName="">
-        <Menu>
-            <Target
-                Name="Prototype"
-                MenuCaption="&amp;Prototype"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynPrototype"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile"
-                MenuCaption="&amp;Compile"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompile"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile All"
-                MenuCaption="Compile &amp;All"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileAll"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Link"
-                MenuCaption="&amp;Link"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynLink"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Build"
-                MenuCaption="&amp;Build"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynBuild"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Debug"
-                MenuCaption="&amp;Debug"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr -d %rn.dbr"/>
-            </Target>
-            <Target
-                Name="Execute"
-                MenuCaption="E&amp;xecute"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:%rn.dbr"/>
-            </Target>
-            <Target
-                Name="Synergy/DE Options"
-                MenuCaption="&amp;Synergy/DE Options"
-                SaveOption="SaveNone"
-                RunFromDir="%rw"
-                Dialog="_synergyde_options_form Prototype">
-                <Exec
-                    CmdLine="SynShowSynDEOpts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts"
-                MenuCaption="Co&amp;mpile Scripts"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts Setup"
-                MenuCaption="Compile Scripts Set&amp;up..."
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynSetupCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Regenerate Code"
-                MenuCaption="&amp;Regenerate Code"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="regen.bat"/>
-            </Target>
-            <Target
-                Name="Delete Generated Files"
-                MenuCaption="&amp;Delete Generated Files"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="delgen.com"/>
-            </Target>
-            <Target
-                Name="Clean Environment"
-                MenuCaption="&amp;Clean Environment"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="clean.bat"/>
-            </Target>
-            <Target
-                Name="Reload ISAM File Data"
-                MenuCaption="&amp;Reload ISAM File Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-        </Menu>
-        <SynSettings>
-            <SynSetting
-                Name="compile_all_folder"
-                Value="Source Files"/>
-            <SynSetting
-                Name="config64"
-                Value="0"/>
-            <SynSetting
-                Name="proto_command_line"
-                Value="dblproto %p%n%e"/>
-            <SynSetting
-                Name="compile_command_line"
-                Value='dbl -T -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
-            <SynSetting
-                Name="linklibr_command_line"
-                Value="dblink -o EXE:%rn.dbr OBJ:%rn.dbo"/>
-            <SynSetting
-                Name="proto_clear_dbh"
-                Value="1"/>
-            <SynSetting
-                Name="build_prototype"
-                Value="0"/>
-            <SynSetting
-                Name="proto_first_run"
-                Value="0"/>
-            <SynSetting
-                Name="compile_single"
-                Value="1"/>
-            <SynSetting
-                Name="object_name"
-                Value="%rn.dbo"/>
-            <SynSetting
-                Name="proto_namespace_sequence"
-                Value="namespace1.namespace2.namespace3"/>
-            <SynSetting
-                Name="gen_batch"
-                Value="0"/>
-            <SynSetting
-                Name="batch_file"
-                Value=""/>
-            <SynSetting
-                Name="qvariant"
-                Value=""/>
-            <SynSetting
-                Name="qrelax_end"
-                Value="1"/>
-            <SynSetting
-                Name="object_dir"
-                Value="OBJ:"/>
-        </SynSettings>
-    </Config>
-    <Config
-        Name="Release64"
-        OutputFile=""
-        CompilerConfigName="">
-        <Menu>
-            <Target
-                Name="Prototype"
-                MenuCaption="&amp;Prototype"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynPrototype"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile"
-                MenuCaption="&amp;Compile"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompile"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile All"
-                MenuCaption="Compile &amp;All"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileAll"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Link"
-                MenuCaption="&amp;Link"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynLink"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Build"
-                MenuCaption="&amp;Build"
-                SaveOption="SaveWorkspaceFiles"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynBuild"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Debug"
-                MenuCaption="&amp;Debug"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr -d %rn.dbr"/>
-            </Target>
-            <Target
-                Name="Execute"
-                MenuCaption="E&amp;xecute"
-                SaveOption="SaveCurrent"
-                RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:%rn.dbr"/>
-            </Target>
-            <Target
-                Name="Synergy/DE Options"
-                MenuCaption="&amp;Synergy/DE Options"
-                SaveOption="SaveNone"
-                RunFromDir="%rw"
-                Dialog="_synergyde_options_form Prototype">
-                <Exec
-                    CmdLine="SynShowSynDEOpts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts"
-                MenuCaption="Co&amp;mpile Scripts"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Compile Scripts Setup"
-                MenuCaption="Compile Scripts Set&amp;up..."
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll"
-                RunFromDir="%rw">
-                <Exec
-                    CmdLine="SynSetupCompileScripts"
-                    Type="Slick-C"/>
-            </Target>
-            <Target
-                Name="Regenerate Code"
-                MenuCaption="&amp;Regenerate Code"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="regen.bat"/>
-            </Target>
-            <Target
-                Name="Delete Generated Files"
-                MenuCaption="&amp;Delete Generated Files"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="delgen.com"/>
-            </Target>
-            <Target
-                Name="Clean Environment"
-                MenuCaption="&amp;Clean Environment"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1"
-                SaveOption="SaveAll">
-                <Exec CmdLine="clean.bat"/>
-            </Target>
-            <Target
-                Name="Reload ISAM File Data"
-                MenuCaption="&amp;Reload ISAM File Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                ClearProcessBuffer="1">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-        </Menu>
-        <SynSettings>
-            <SynSetting
-                Name="compile_all_folder"
-                Value="Source Files"/>
-            <SynSetting
-                Name="config64"
-                Value="1"/>
-            <SynSetting
-                Name="proto_command_line"
-                Value="dblproto %p%n%e"/>
-            <SynSetting
-                Name="compile_command_line"
-                Value='dbl -T -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
-            <SynSetting
-                Name="linklibr_command_line"
-                Value="dblink -o EXE:%rn.dbr OBJ:%rn.dbo"/>
-            <SynSetting
-                Name="proto_clear_dbh"
-                Value="1"/>
-            <SynSetting
-                Name="build_prototype"
-                Value="0"/>
-            <SynSetting
-                Name="proto_first_run"
-                Value="0"/>
-            <SynSetting
-                Name="compile_single"
-                Value="1"/>
-            <SynSetting
-                Name="object_name"
-                Value="%rn.dbo"/>
-            <SynSetting
-                Name="proto_namespace_sequence"
-                Value="namespace1.namespace2.namespace3"/>
-            <SynSetting
-                Name="gen_batch"
-                Value="0"/>
-            <SynSetting
-                Name="batch_file"
-                Value=""/>
-            <SynSetting
-                Name="qvariant"
-                Value=""/>
-            <SynSetting
-                Name="qrelax_end"
-                Value="1"/>
-            <SynSetting
-                Name="object_dir"
-                Value="OBJ:"/>
-        </SynSettings>
-    </Config>
-    <Macro>
-        <ExecMacro CmdLine="syn_set ROOT=%wp"/>
-        <ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
-        <ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
-        <ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
-        <ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
-        <ExecMacro CmdLine="syn_set XDL=%(ROOT)XDL"/>
-        <ExecMacro CmdLine="syn_set BAT=%(ROOT)BAT"/>
-        <ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
-        <ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
-        <ExecMacro CmdLine="syn_set CODEGEN_EXE=D:\Dev\CodeGen\EXE"/>
-        <ExecMacro CmdLine="syn_set CODEGEN_TPLDIR=%(ROOT)TEMPLATES"/>
-        <ExecMacro CmdLine="syn_set CODEGEN_OUTDIR=%(ROOT)SRC\GENERATED"/>
-        <ExecMacro CmdLine='syn_set CODEGEN_AUTHOR="Steve Ives"'/>
-        <ExecMacro CmdLine='syn_set CODEGEN_COMPANY="Synergex"'/>
-        <ExecMacro CmdLine="syn_set PATH=%(BAT);D:\Dev\CodeGen\BAT;%(PATH)\"/>
-        <ExecMacro CmdLine=""/>
-        <ExecMacro CmdLine="syn_set CODEGEN_NOCATCH=1"/>
-    </Macro>
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir="../">
+	<Config
+		Name="Debug32"
+		OutputFile=""
+		CompilerConfigName="">
+		<Menu>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompile"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuild"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d %rn.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:%rn.dbr"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Regenerate Code"
+				MenuCaption="&amp;Regenerate Code"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="regen.bat"/>
+			</Target>
+			<Target
+				Name="Delete Generated Files"
+				MenuCaption="&amp;Delete Generated Files"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="delgen.com"/>
+			</Target>
+			<Target
+				Name="Clean Environment"
+				MenuCaption="&amp;Clean Environment"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="clean.bat"/>
+			</Target>
+			<Target
+				Name="Reload ISAM File Data"
+				MenuCaption="&amp;Reload ISAM File Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -T -d -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -d -o EXE:%rn.dbr OBJ:%rn.dbo"/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="0"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="0"/>
+			<SynSetting
+				Name="compile_single"
+				Value="1"/>
+			<SynSetting
+				Name="object_name"
+				Value="%rn.dbo"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+			<SynSetting
+				Name="gen_batch"
+				Value="0"/>
+			<SynSetting
+				Name="batch_file"
+				Value=""/>
+			<SynSetting
+				Name="qvariant"
+				Value=""/>
+			<SynSetting
+				Name="qrelax_end"
+				Value="1"/>
+			<SynSetting
+				Name="object_dir"
+				Value="OBJ:"/>
+		</SynSettings>
+	</Config>
+	<Files>
+		<Folder
+			Name="Templates"
+			Filters="*.tpl">
+			<F N="../TEMPLATES/clear.tpl"/>
+			<F N="../TEMPLATES/create.tpl"/>
+			<F N="../TEMPLATES/delete_row.tpl"/>
+			<F N="../TEMPLATES/drop.tpl"/>
+			<F N="../TEMPLATES/exists.tpl"/>
+			<F N="../TEMPLATES/insert_row.tpl"/>
+			<F N="../TEMPLATES/insert_rows.tpl"/>
+			<F N="../TEMPLATES/load_mapped.tpl"/>
+			<F N="../TEMPLATES/map.tpl"/>
+			<F N="../TEMPLATES/select_row.tpl"/>
+			<F N="../TEMPLATES/select_rows.tpl"/>
+		</Folder>
+		<Folder
+			Name="Source Files"
+			Filters="*.dbl">
+			<F N="../SRC/GENERATED/customer_clear.dbl"/>
+			<F N="../SRC/GENERATED/customer_create.dbl"/>
+			<F N="../SRC/GENERATED/customer_delete_row.dbl"/>
+			<F N="../SRC/GENERATED/customer_drop.dbl"/>
+			<F N="../SRC/GENERATED/customer_exists.dbl"/>
+			<F N="../SRC/GENERATED/customer_insert_row.dbl"/>
+			<F N="../SRC/GENERATED/customer_insert_rows.dbl"/>
+			<F N="../SRC/GENERATED/customer_load.dbl"/>
+			<F N="../SRC/GENERATED/customer_map.dbl"/>
+			<F N="../SRC/GENERATED/customer_select_row.dbl"/>
+			<F N="../SRC/GENERATED/customer_select_rows.dbl"/>
+			<F N="../SRC/SUB/D10ToPhone.dbl"/>
+			<F N="../SRC/SUB/IsNumeric.dbl"/>
+			<F N="../SRC/SUB/MixedCase.dbl"/>
+			<F N="../SRC/GENERATED/order_header_clear.dbl"/>
+			<F N="../SRC/GENERATED/order_header_create.dbl"/>
+			<F N="../SRC/GENERATED/order_header_delete_row.dbl"/>
+			<F N="../SRC/GENERATED/order_header_drop.dbl"/>
+			<F N="../SRC/GENERATED/order_header_exists.dbl"/>
+			<F N="../SRC/GENERATED/order_header_insert_row.dbl"/>
+			<F N="../SRC/GENERATED/order_header_insert_rows.dbl"/>
+			<F N="../SRC/GENERATED/order_header_load.dbl"/>
+			<F N="../SRC/GENERATED/order_header_map.dbl"/>
+			<F N="../SRC/GENERATED/order_header_select_row.dbl"/>
+			<F N="../SRC/GENERATED/order_header_select_rows.dbl"/>
+			<F N="../SRC/GENERATED/order_line_clear.dbl"/>
+			<F N="../SRC/GENERATED/order_line_create.dbl"/>
+			<F N="../SRC/GENERATED/order_line_delete_row.dbl"/>
+			<F N="../SRC/GENERATED/order_line_drop.dbl"/>
+			<F N="../SRC/GENERATED/order_line_exists.dbl"/>
+			<F N="../SRC/GENERATED/order_line_insert_row.dbl"/>
+			<F N="../SRC/GENERATED/order_line_insert_rows.dbl"/>
+			<F N="../SRC/GENERATED/order_line_load.dbl"/>
+			<F N="../SRC/GENERATED/order_line_map.dbl"/>
+			<F N="../SRC/GENERATED/order_line_select_row.dbl"/>
+			<F N="../SRC/GENERATED/order_line_select_rows.dbl"/>
+			<F N="../SRC/GENERATED/product_clear.dbl"/>
+			<F N="../SRC/GENERATED/product_create.dbl"/>
+			<F N="../SRC/GENERATED/product_delete_row.dbl"/>
+			<F N="../SRC/GENERATED/product_drop.dbl"/>
+			<F N="../SRC/GENERATED/product_exists.dbl"/>
+			<F N="../SRC/GENERATED/product_group_clear.dbl"/>
+			<F N="../SRC/GENERATED/product_group_create.dbl"/>
+			<F N="../SRC/GENERATED/product_group_delete_row.dbl"/>
+			<F N="../SRC/GENERATED/product_group_drop.dbl"/>
+			<F N="../SRC/GENERATED/product_group_exists.dbl"/>
+			<F N="../SRC/GENERATED/product_group_insert_row.dbl"/>
+			<F N="../SRC/GENERATED/product_group_insert_rows.dbl"/>
+			<F N="../SRC/GENERATED/product_group_load.dbl"/>
+			<F N="../SRC/GENERATED/product_group_map.dbl"/>
+			<F N="../SRC/GENERATED/product_group_select_row.dbl"/>
+			<F N="../SRC/GENERATED/product_group_select_rows.dbl"/>
+			<F N="../SRC/GENERATED/product_insert_row.dbl"/>
+			<F N="../SRC/GENERATED/product_insert_rows.dbl"/>
+			<F N="../SRC/GENERATED/product_load.dbl"/>
+			<F N="../SRC/GENERATED/product_map.dbl"/>
+			<F N="../SRC/GENERATED/product_select_row.dbl"/>
+			<F N="../SRC/GENERATED/product_select_rows.dbl"/>
+			<F N="../SRC/sqltest.dbl"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.def;*.dbh"/>
+		<Folder
+			Name="Toolkit Script Files"
+			Filters="*.wsc"/>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat">
+			<F N="../BAT/clean.bat"/>
+			<F N="../BAT/delfile.bat"/>
+			<F N="../BAT/delgen.bat"/>
+			<F N="../BAT/load_data.bat"/>
+			<F N="../BAT/prep.bat"/>
+			<F N="../BAT/regen.bat"/>
+			<F N="../BAT/rps_export.bat"/>
+			<F N="../BAT/rps_import.bat"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+			<F N="../DAT/cusmas.seq"/>
+			<F N="../DAT/invgrp.seq"/>
+			<F N="../DAT/invmas.seq"/>
+			<F N="../DAT/ordhdr.seq"/>
+			<F N="../DAT/ordlin.seq"/>
+		</Folder>
+	</Files>
+	<Config
+		Name="Debug64"
+		OutputFile=""
+		CompilerConfigName="">
+		<Menu>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompile"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuild"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d %rn.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:%rn.dbr"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Regenerate Code"
+				MenuCaption="&amp;Regenerate Code"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="regen.bat"/>
+			</Target>
+			<Target
+				Name="Delete Generated Files"
+				MenuCaption="&amp;Delete Generated Files"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="delgen.com"/>
+			</Target>
+			<Target
+				Name="Clean Environment"
+				MenuCaption="&amp;Clean Environment"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="clean.bat"/>
+			</Target>
+			<Target
+				Name="Reload ISAM File Data"
+				MenuCaption="&amp;Reload ISAM File Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="1"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -T -d -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -d -o EXE:%rn.dbr OBJ:%rn.dbo"/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="0"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="0"/>
+			<SynSetting
+				Name="compile_single"
+				Value="1"/>
+			<SynSetting
+				Name="object_name"
+				Value="%rn.dbo"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+			<SynSetting
+				Name="gen_batch"
+				Value="0"/>
+			<SynSetting
+				Name="batch_file"
+				Value=""/>
+			<SynSetting
+				Name="qvariant"
+				Value=""/>
+			<SynSetting
+				Name="qrelax_end"
+				Value="1"/>
+			<SynSetting
+				Name="object_dir"
+				Value="OBJ:"/>
+		</SynSettings>
+	</Config>
+	<Config
+		Name="Release32"
+		OutputFile=""
+		CompilerConfigName="">
+		<Menu>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompile"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuild"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d %rn.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:%rn.dbr"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Regenerate Code"
+				MenuCaption="&amp;Regenerate Code"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="regen.bat"/>
+			</Target>
+			<Target
+				Name="Delete Generated Files"
+				MenuCaption="&amp;Delete Generated Files"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="delgen.com"/>
+			</Target>
+			<Target
+				Name="Clean Environment"
+				MenuCaption="&amp;Clean Environment"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="clean.bat"/>
+			</Target>
+			<Target
+				Name="Reload ISAM File Data"
+				MenuCaption="&amp;Reload ISAM File Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="0"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -T -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o EXE:%rn.dbr OBJ:%rn.dbo"/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="0"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="0"/>
+			<SynSetting
+				Name="compile_single"
+				Value="1"/>
+			<SynSetting
+				Name="object_name"
+				Value="%rn.dbo"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+			<SynSetting
+				Name="gen_batch"
+				Value="0"/>
+			<SynSetting
+				Name="batch_file"
+				Value=""/>
+			<SynSetting
+				Name="qvariant"
+				Value=""/>
+			<SynSetting
+				Name="qrelax_end"
+				Value="1"/>
+			<SynSetting
+				Name="object_dir"
+				Value="OBJ:"/>
+		</SynSettings>
+	</Config>
+	<Config
+		Name="Release64"
+		OutputFile=""
+		CompilerConfigName="">
+		<Menu>
+			<Target
+				Name="Prototype"
+				MenuCaption="&amp;Prototype"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynPrototype"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompile"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile All"
+				MenuCaption="Compile &amp;All"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileAll"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynLink"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuild"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr -d %rn.dbr"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine="dbr EXE:%rn.dbr"/>
+			</Target>
+			<Target
+				Name="Synergy/DE Options"
+				MenuCaption="&amp;Synergy/DE Options"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				Dialog="_synergyde_options_form Prototype">
+				<Exec
+					CmdLine="SynShowSynDEOpts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts"
+				MenuCaption="Co&amp;mpile Scripts"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Compile Scripts Setup"
+				MenuCaption="Compile Scripts Set&amp;up..."
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynSetupCompileScripts"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Regenerate Code"
+				MenuCaption="&amp;Regenerate Code"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="regen.bat"/>
+			</Target>
+			<Target
+				Name="Delete Generated Files"
+				MenuCaption="&amp;Delete Generated Files"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="delgen.com"/>
+			</Target>
+			<Target
+				Name="Clean Environment"
+				MenuCaption="&amp;Clean Environment"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				SaveOption="SaveAll">
+				<Exec CmdLine="clean.bat"/>
+			</Target>
+			<Target
+				Name="Reload ISAM File Data"
+				MenuCaption="&amp;Reload ISAM File Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+		</Menu>
+		<SynSettings>
+			<SynSetting
+				Name="compile_all_folder"
+				Value="Source Files"/>
+			<SynSetting
+				Name="config64"
+				Value="1"/>
+			<SynSetting
+				Name="proto_command_line"
+				Value="dblproto %p%n%e"/>
+			<SynSetting
+				Name="compile_command_line"
+				Value='dbl -T -qrelaxed:deprecate:end:extf:local:param:path -qalign -o OBJ:%rn.dbo "%p%n%e"'/>
+			<SynSetting
+				Name="linklibr_command_line"
+				Value="dblink -o EXE:%rn.dbr OBJ:%rn.dbo"/>
+			<SynSetting
+				Name="proto_clear_dbh"
+				Value="1"/>
+			<SynSetting
+				Name="build_prototype"
+				Value="0"/>
+			<SynSetting
+				Name="proto_first_run"
+				Value="0"/>
+			<SynSetting
+				Name="compile_single"
+				Value="1"/>
+			<SynSetting
+				Name="object_name"
+				Value="%rn.dbo"/>
+			<SynSetting
+				Name="proto_namespace_sequence"
+				Value="namespace1.namespace2.namespace3"/>
+			<SynSetting
+				Name="gen_batch"
+				Value="0"/>
+			<SynSetting
+				Name="batch_file"
+				Value=""/>
+			<SynSetting
+				Name="qvariant"
+				Value=""/>
+			<SynSetting
+				Name="qrelax_end"
+				Value="1"/>
+			<SynSetting
+				Name="object_dir"
+				Value="OBJ:"/>
+		</SynSettings>
+	</Config>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%wp"/>
+		<ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
+		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
+		<ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
+		<ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
+		<ExecMacro CmdLine="syn_set XDL=%(ROOT)XDL"/>
+		<ExecMacro CmdLine="syn_set BAT=%(ROOT)BAT"/>
+		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
+		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+		<ExecMacro CmdLine="syn_set PATH=%(BAT);%(PATH)"/>
+	</Macro>
 </Project>
