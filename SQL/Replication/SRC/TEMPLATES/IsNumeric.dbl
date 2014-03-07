@@ -1,12 +1,11 @@
-;*******************************************************************************
-;
-; Title:        IsNumeric.dbl
-;
-; Description:  Validates a numeric value
-;
-; Author:       Steve Ives (Synergex Professional Services Group)
-;
-;
+;;*****************************************************************************
+;;
+;; Title:       IsNumeric.dbl
+;;
+;; Description: Validates a numeric value
+;;
+;;*****************************************************************************
+;;
 function IsNumeric, ^val
 
     a_number        ,a

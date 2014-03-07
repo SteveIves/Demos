@@ -7,7 +7,7 @@
 ;;              can then be used on subsequent update operations to determine
 ;;              if a record has been updated since it was read and locked.
 ;;
-;; Author:      Steve Ives, Synergex Professional Services Group
+;;*****************************************************************************
 ;;
 subroutine ChannelCacheInit
 

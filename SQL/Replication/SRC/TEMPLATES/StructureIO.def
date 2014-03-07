@@ -1,6 +1,3 @@
-;
-;General I/O defines for generates structure-specific IO routines
-;
 
 .ifndef IO_OPEN_INP
 

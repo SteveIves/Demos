@@ -1,12 +1,12 @@
-;*******************************************************************************
-;
-; Title:        replicate.dbl
-;
-; Description:  Adds a new transaction record to the replication servers
-;               transaction file
-;
-; Author:       Richard Morris
-;
+;;*****************************************************************************
+;;
+;; Title:       replicate.dbl
+;;
+;; Description: Adds a new transaction record to the replication servers
+;;              transaction file
+;;
+;;*****************************************************************************
+;;
 .include "REPLICATION_INSTRUCTION" repository, enum, end
 
 subroutine replicate
