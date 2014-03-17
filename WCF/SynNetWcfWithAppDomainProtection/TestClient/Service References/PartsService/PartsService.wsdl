@@ -324,6 +324,44 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
+  <wsp:Policy wsu:Id="wsHttpEndpoint_ReadSupplierParts_Input_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <sp:Body />
+          <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
+        </sp:SignedParts>
+        <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <sp:Body />
+        </sp:EncryptedParts>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="wsHttpEndpoint_ReadSupplierParts_output_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <sp:Body />
+          <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
+          <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
+        </sp:SignedParts>
+        <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <sp:Body />
+        </sp:EncryptedParts>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
   <wsp:Policy wsu:Id="wsHttpEndpoint_CreateProductGroup_Input_policy">
     <wsp:ExactlyOne>
       <wsp:All>
@@ -823,6 +861,12 @@
   <wsdl:message name="PartsService_PartExists_OutputMessage">
     <wsdl:part name="parameters" element="tns:PartExistsResponse" />
   </wsdl:message>
+  <wsdl:message name="PartsService_ReadSupplierParts_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReadSupplierParts" />
+  </wsdl:message>
+  <wsdl:message name="PartsService_ReadSupplierParts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReadSupplierPartsResponse" />
+  </wsdl:message>
   <wsdl:message name="PartsService_CreateProductGroup_InputMessage">
     <wsdl:part name="parameters" element="tns:CreateProductGroup" />
   </wsdl:message>
@@ -919,6 +963,10 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="PartExists">
       <wsdl:input wsaw:Action="http://tempuri.org/PartsService/PartExists" message="tns:PartsService_PartExists_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/PartsService/PartExistsResponse" message="tns:PartsService_PartExists_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="ReadSupplierParts">
+      <wsdl:input wsaw:Action="http://tempuri.org/PartsService/ReadSupplierParts" message="tns:PartsService_ReadSupplierParts_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/PartsService/ReadSupplierPartsResponse" message="tns:PartsService_ReadSupplierParts_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="CreateProductGroup">
       <wsdl:input wsaw:Action="http://tempuri.org/PartsService/CreateProductGroup" message="tns:PartsService_CreateProductGroup_InputMessage" />
@@ -1035,6 +1083,17 @@
       </wsdl:input>
       <wsdl:output>
         <wsp:PolicyReference URI="#wsHttpEndpoint_PartExists_output_policy" />
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReadSupplierParts">
+      <soap12:operation soapAction="http://tempuri.org/PartsService/ReadSupplierParts" style="document" />
+      <wsdl:input>
+        <wsp:PolicyReference URI="#wsHttpEndpoint_ReadSupplierParts_Input_policy" />
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <wsp:PolicyReference URI="#wsHttpEndpoint_ReadSupplierParts_output_policy" />
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>

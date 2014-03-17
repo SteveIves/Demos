@@ -535,6 +535,19 @@ namespace TestClient.PartsService
 			endparams
 		endmethod
 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierPartsResponse")}
+		method ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
+			request, @TestClient.PartsService.ReadSupplierPartsRequest 
+			endparams
+		endmethod
+
+;; CODEGEN: Generating message contract since the operation has multiple return values.
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierPartsResponse")}
+		method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
+			request, @TestClient.PartsService.ReadSupplierPartsRequest 
+			endparams
+		endmethod
+
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreateProductGroup", ReplyAction = "http://tempuri.org/PartsService/CreateProductGroupResponse")}
 		method CreateProductGroup, TestClient.PartsService.MethodStatus
 			aProductGroup, @TestClient.PartsService.ProductGroup 
@@ -829,6 +842,54 @@ namespace TestClient.PartsService
 			this.UpdatePartResult = UpdatePartResult
 			this.aPart = aPart
 			this.aGrfa = aGrfa
+		endmethod
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplierParts", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
+	public partial class ReadSupplierPartsRequest
+
+		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
+		public aSupplierId, string
+
+		public method ReadSupplierPartsRequest
+			endparams
+		proc
+
+		endmethod
+
+		public method ReadSupplierPartsRequest
+			aSupplierId, string 
+			endparams
+		proc
+			this.aSupplierId = aSupplierId
+		endmethod
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplierPartsResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
+	public partial class ReadSupplierPartsResponse
+
+		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
+		public ReadSupplierPartsResult, TestClient.PartsService.MethodStatus
+		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
+		public aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+
+		public method ReadSupplierPartsResponse
+			endparams
+		proc
+
+		endmethod
+
+		public method ReadSupplierPartsResponse
+			ReadSupplierPartsResult, TestClient.PartsService.MethodStatus 
+			aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
+			endparams
+		proc
+			this.ReadSupplierPartsResult = ReadSupplierPartsResult
+			this.aParts = aParts
 		endmethod
 	endclass
 
@@ -1296,6 +1357,33 @@ namespace TestClient.PartsService
 			endparams
 		proc
 			mreturn parent.Channel.PartExistsAsync(aId)
+		endmethod
+
+		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
+		public method TestClient.PartsService.PartsService.ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
+			request, @TestClient.PartsService.ReadSupplierPartsRequest 
+			endparams
+		proc
+			mreturn parent.Channel.ReadSupplierParts(request)
+		endmethod
+
+		public method ReadSupplierParts, TestClient.PartsService.MethodStatus
+			aSupplierId, string 
+			out aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
+			endparams
+		proc
+			data inValue, @TestClient.PartsService.ReadSupplierPartsRequest, new TestClient.PartsService.ReadSupplierPartsRequest()
+			inValue.aSupplierId = aSupplierId
+			data retVal, @TestClient.PartsService.ReadSupplierPartsResponse, ((@TestClient.PartsService.PartsService)this).ReadSupplierParts(inValue)
+			aParts = retVal.aParts
+			mreturn retVal.ReadSupplierPartsResult
+		endmethod
+
+		public method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
+			request, @TestClient.PartsService.ReadSupplierPartsRequest 
+			endparams
+		proc
+			mreturn parent.Channel.ReadSupplierPartsAsync(request)
 		endmethod
 
 		public method CreateProductGroup, TestClient.PartsService.MethodStatus

@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="PartsService.dbl" />
     <Compile Include="PartsService_Part.dbl" />
+    <Compile Include="PartsService_Part_Custom.dbl" />
     <Compile Include="PartsService_ProductGroup.dbl" />
     <Compile Include="PartsService_Supplier.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />

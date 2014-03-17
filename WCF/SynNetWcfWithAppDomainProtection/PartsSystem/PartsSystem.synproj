@@ -50,6 +50,7 @@
     <Compile Include="Part.dbl" />
     <Compile Include="PartsSystemAPI.dbl" />
     <Compile Include="PartsSystemAPI_Part.dbl" />
+    <Compile Include="PartsSystemAPI_Part_Custom.dbl" />
     <Compile Include="PartsSystemAPI_ProductGroup.dbl" />
     <Compile Include="PartsSystemAPI_Supplier.dbl" />
     <Compile Include="PartWrapper.dbl" />
