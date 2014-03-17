@@ -33,7 +33,7 @@ namespace WcfServiceLibrary
             ;TODO: Need to add code to call into the API class's method!
         endmethod
 
-		public method CanBeReused, boolean
+        public method CanBeReused, boolean
             endparams
         proc
             ;TODO: Need to add code to call into the API class's method!

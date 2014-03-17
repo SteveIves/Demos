@@ -127,7 +127,7 @@ namespace AppDomainProtection
             endparams
 		proc
 			;;Get a handle on the service instances AppDomain
-			data instanceAppDomain = ((@IsolatableServiceBase)instance).GetAppDomain()
+			data instanceAppDomain, @AppDomain, ((@IsolatableServiceBase)instance).GetAppDomain()
 
 			;;Deallocate the custom dispatcher
 			BackgroundDispatcher.DeallocateDispatcher(((@IsolatableServiceBase)instance).ServiceDispatcher)

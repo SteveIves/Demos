@@ -38,7 +38,7 @@ namespace PartsSystem
             ;      known initial values.
         endmethod
 
-		public method CanBeReused, boolean
+        public method CanBeReused, boolean
             endparams
         proc
             ;TODO: Add code that you want to be executed as an instance of this
