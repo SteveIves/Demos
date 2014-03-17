@@ -79,7 +79,6 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="ViewModel.dbl" />
-    <Compile Include="ViewModelBase.dbl" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

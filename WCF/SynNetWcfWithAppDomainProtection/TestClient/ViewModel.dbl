@@ -1,24 +1,40 @@
 
 import System
 import System.Collections.ObjectModel
-import System.Linq
+import System.ComponentModel
 import System.ServiceModel
-import System.Text
 import System.Threading.Tasks
 import System.Windows.Input
 import TestClient.PartsService
 
 namespace TestClient
 
-	public class ViewModel extends ViewModelBase
+	public class ViewModel implements INotifyPropertyChanged
 
-		private mSuppliers, @ObservableCollection<Supplier>
+.region "Constructors"
+
+		public method ViewModel
+			endparams
+		proc
+			getSuppliers()
+		endmethod
+
+.endregion
+
+.region "Backing storage for properties"
+
+		private mSuppliers,			@ObservableCollection<Supplier>
+		private mSelectedSupplier,	@Supplier
+		private mParts,				@ObservableCollection<Part>
+		private mSelectedPart,		@Part
+
+.endregion
+
+.region "Bindable Properties"
 
 		public property Suppliers, @ObservableCollection<Supplier>
 			method get
 			proc
-				if (mSuppliers==^null)
-					getSuppliers()
 				mreturn mSuppliers
 			endmethod
 			method set
@@ -28,6 +44,47 @@ namespace TestClient
 			endmethod
 		endproperty
 		
+		public property SelectedSupplier, @Supplier
+			method get
+			proc
+				mreturn mSelectedSupplier
+			endmethod
+			method set
+			proc
+				mSelectedSupplier = value
+				NotifyPropertyChanged("SelectedSupplier")
+				getSupplierParts()
+			endmethod
+		endproperty
+		
+		public property Parts, @ObservableCollection<Part>
+			method get
+			proc
+				mreturn mParts
+			endmethod
+			method set
+			proc
+				mParts = value
+				NotifyPropertyChanged("Parts")
+			endmethod
+		endproperty
+		
+		public property SelectedPart, @Part
+			method get
+			proc
+				mreturn mSelectedPart
+			endmethod
+			method set
+			proc
+				mSelectedPart = value
+				NotifyPropertyChanged("SelectedPart")
+			endmethod
+		endproperty
+
+.endregion
+
+.region "Logic"
+
 		private method getSuppliers, void
 			endparams
 		proc
@@ -50,27 +107,12 @@ namespace TestClient
 			endtry
 			
 			Suppliers = newSuppliersCollection
-
+			
 			if (Suppliers.Count > 0)
 				SelectedSupplier = Suppliers[0]
-
+				
 		endmethod
 
-		private mSelectedSupplier, @Supplier
-
-		public property SelectedSupplier, @Supplier
-			method get
-			proc
-				mreturn mSelectedSupplier
-			endmethod
-			method set
-			proc
-				mSelectedSupplier = value
-				NotifyPropertyChanged("SelectedSupplier")
-				getSupplierParts()
-			endmethod
-		endproperty
-		
 		private method getSupplierParts, void
 			endparams
 		proc
@@ -99,33 +141,9 @@ namespace TestClient
 
 		endmethod
 
-		private mParts, @ObservableCollection<Part>
-		
-		public property Parts, @ObservableCollection<Part>
-			method get
-			proc
-				mreturn mParts
-			endmethod
-			method set
-			proc
-				mParts = value
-				NotifyPropertyChanged("Parts")
-			endmethod
-		endproperty
+.endregion
 
-		private mSelectedPart, @Part
-
-		public property SelectedPart, @Part
-			method get
-			proc
-				mreturn mSelectedPart
-			endmethod
-			method set
-			proc
-				mSelectedPart = value
-				NotifyPropertyChanged("SelectedPart")
-			endmethod
-		endproperty
+.region "ErrorMessage"
 
 		private mErrorMessage, String
 
@@ -141,7 +159,22 @@ namespace TestClient
 			endmethod
 		endproperty
 		
+.endregion
 
+.region "INotifyPropertyChanged"
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected method NotifyPropertyChanged, void
+			required in propertyName, String
+			endparams
+		proc
+			if (PropertyChanged!=^null)
+				raiseevent(PropertyChanged,this,new PropertyChangedEventArgs(propertyName))
+		endmethod
+		
+.endregion
+		
 	endclass
 
 endnamespace
