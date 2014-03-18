@@ -51,11 +51,11 @@ import System.ServiceModel.Description
 import System.ServiceModel.Dispatcher
 
 namespace AppDomainProtection
-
+	
 	public class SingletonBehaviorAttribute extends Attribute implements IContractBehaviorAttribute, IContractBehavior
-
+		
 		private mTargetType, @Type
-
+		
 		;;; <summary>
 		;;; Constructs a new SingletonBehaviorAttribute object.
 		;;; </summary>
@@ -66,23 +66,23 @@ namespace AppDomainProtection
 		proc
 			mTargetType = targetType
 		endmethod
-
+		
 .region "IContractBehaviorAttribute members"
-
+		
 		;;; <summary>
 		;;; Gets the type of the contract to which the contract behavior is applicable.
 		;;; </summary>
 		public property TargetContract, @Type
-            method get
-            proc
+			method get
+			proc
 				mreturn mTargetType
-            endmethod
-        endproperty
-
+			endmethod
+		endproperty
+		
 .endregion
-
+		
 .region "IContractBehavior members"
-
+		
 		;;; <summary>
 		;;; Configures any binding elements to support the contract behavior.
 		;;; Implement the AddBindingParameters method to provide binding elements with the extra objects they require to support the contract behavior.
@@ -92,14 +92,14 @@ namespace AppDomainProtection
 		;;; <param name="endpoint">The endpoint to modify.</param>
 		;;; <param name="parameters">The objects that binding elements require to support the behavior.</param>
 		public method AddBindingParameters, void
-            description, @ContractDescription
-            endpoint, @ServiceEndpoint
-            parameters, @BindingParameterCollection
-            endparams
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			parameters, @BindingParameterCollection
+			endparams
 		proc
-
-        endmethod
-
+			
+		endmethod
+		
 		;;; <summary>
 		;;; Implements a modification or extension of the client across a contract.
 		;;; </summary>
@@ -107,14 +107,14 @@ namespace AppDomainProtection
 		;;; <param name="endpoint">The endpoint.</param>
 		;;; <param name="runtime">The client runtime.</param>
 		public method ApplyClientBehavior, void
-            description, @ContractDescription
-            endpoint, @ServiceEndpoint
-            runtime, @ClientRuntime
-            endparams
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			runtime, @ClientRuntime
+			endparams
 		proc
-
-        endmethod
-
+			
+		endmethod
+		
 		;;; <summary>
 		;;; Implements a modification or extension of the client across a contract. Implement the
 		;;; ApplyDispatchBehavior to view, modify, or add custom extensions to the service runtime
@@ -134,15 +134,15 @@ namespace AppDomainProtection
 		;;; <param name="endpoint">The endpoint that exposes the contract.</param>
 		;;; <param name="dispatch">The dispatch runtime that controls service execution.</param>
 		public method ApplyDispatchBehavior, void
-            description, @ContractDescription
-            endpoint, @ServiceEndpoint
-            dispatch, @DispatchRuntime
-            endparams
-        proc
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			dispatch, @DispatchRuntime
+			endparams
+		proc
 			;;We'll provide a custom service instance provider.
 			dispatch.InstanceProvider = new ServiceInstanceProvider(mTargetType)
-        endmethod
-
+		endmethod
+		
 		;;; <summary>
 		;;; Confirms that the contract and endpoint can support the contract behavior. Implement the
 		;;; Validate method to confirm that the contract description is sufficient to support the
@@ -153,15 +153,15 @@ namespace AppDomainProtection
 		;;; <param name="description">The contract to validate.</param>
 		;;; <param name="endpoint">The endpoint to validate.</param>
 		public method Validate, void
-            description, @ContractDescription
-            endpoint, @ServiceEndpoint
-            endparams
-        proc
-		
+			description, @ContractDescription
+			endpoint, @ServiceEndpoint
+			endparams
+		proc
+			
 		endmethod
-
+		
 .endregion
-
-    endclass
-
+		
+	endclass
+	
 endnamespace
