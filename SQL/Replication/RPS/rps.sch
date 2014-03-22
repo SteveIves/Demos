@@ -1,16 +1,22 @@
  
 ;  SYNERGY DATA LANGUAGE OUTPUT
 ;
-;  REPOSITORY     : C:\Development\Demos\Sql\Replication\RPS\rpsmain.ism
-;                 : C:\Development\Demos\Sql\Replication\RPS\rpstext.ism
+;  REPOSITORY     : D:\Dev\Demos\SQL\Replication\RPS\rpsmain.ism
+;                 : D:\Dev\Demos\SQL\Replication\RPS\rpstext.ism
 ;                 : Version 8.1.7
 ;
-;  GENERATED      : 01-MAR-2009, 18:42:26
-;                 : Version 9.1.5a
-;  EXPORT OPTIONS : [ALL-K-R-A] 
+;  GENERATED      : 22-MAR-2014, 10:31:47
+;                 : Version 10.1.1c
+;  EXPORT OPTIONS : [ALL] 
  
  
 Format PHONE   Type NUMERIC   "(XXX) XXX-XXXX"   Justify LEFT
+ 
+Enumeration REPLICATION_INSTRUCTION
+   Description "SQL Replication Instruction"
+   Members CREATE_ROW 1, UPDATE_ROW 2, DELETE_ROW 3, CREATE_TABLE 4,
+          LOAD_TABLE 5, CREATE_AND_LOAD_TABLE 6, DELETE_ALL_ROWS 7,
+          DELETE_TABLE 8, SHUTDOWN 9
  
 Template DEPARTMENT_ID   Type ALPHA   Size 15
    Description "Department ID"
@@ -86,9 +92,9 @@ Field EMP_HOME_OK   Type DECIMAL   Size 1
    Info Line "Is it OK to call this employee at home"   Checkbox
    Default "1"   Automatic
  
-Field SQL_TIMESTAMP   Type ALPHA   Size 20   Script Noview   Report Noview
+Field REPLICATION_KEY   Type ALPHA   Size 20   Script Noview   Report Noview
    Web Noview   Nonamelink
-   Description "SQL replication time stamp"
+   Description "SQL replication key (timestamp)"
  
 Field NONAME_001   Type ALPHA   Size 59   Language Noview   Script Noview
    Report Noview   Nonamelink
@@ -107,24 +113,9 @@ Key EMP_LAST_NAME   ACCESS   Order ASCENDING   Dups YES   Insert END
    Description "Last name"
    Segment FIELD   EMP_LAST_NAME
  
-Key SQL_TIMESTAMP   ACCESS   Order ASCENDING   Dups NO
+Key REPLICATION_KEY   ACCESS   Order ASCENDING   Dups NO   Krf 003
    Description "SQL replication timestamp"
-   Segment FIELD   SQL_TIMESTAMP  SegType ALPHA  SegOrder ASCENDING
- 
-Structure ACTION   DBL ISAM
-   Description "SDMS action file"
- 
-Field UNIQUE_KEY_VALUE   Type ALPHA   Size 20
-   Description "a unique key value, sequential"
- 
-Field SDMS_ACTION   Type DECIMAL   Size 1
-   Description "the SDM action flag"
- 
-Field STRUCTURE_NAME   Type ALPHA   Size 32
-   Description "the SDMS structure name"
- 
-Field STRUCTURE_KEY   Type ALPHA   Size 20
-   Description "unique structure key value"
+   Segment FIELD   REPLICATION_KEY  SegType ALPHA  SegOrder ASCENDING
  
 Structure DEPARTMENT   DBL ISAM
    Description "Department Master File"
@@ -177,17 +168,36 @@ Field FIELD2   Template DEPARTMENT_ID
    Noprompt
    Norequired
  
-File ACTION   DBL ISAM   "DAT:action.ism"
-   Description "SQL replication action file"
-   Assign ACTION
+Structure REPLICATION   DBL ISAM
+   Description "Replication request queue"
  
-File DEPARTMENT   DBL ISAM   "DAT:department.ism"
+Field TRANSACTION_ID   Type ALPHA   Size 20
+   Description "Unique transaction ID (timestamp)"
+ 
+Field SDMS_ACTION   Type DECIMAL   Size 1
+   Description "the SDM action flag"
+ 
+Field STRUCTURE_NAME   Type ALPHA   Size 32
+   Description "the SDMS structure name"
+ 
+Field STRUCTURE_KEY   Type ALPHA   Size 20
+   Description "unique structure key value"
+ 
+Key TRANSACTION_ID   ACCESS   Order ASCENDING   Dups NO
+   Description "Transaction ID (timestamp)"
+   Segment FIELD   TRANSACTION_ID
+ 
+File DEPARTMENT   DBL ISAM   "DAT:DEPARTMENT.ISM"
    Description "Department master file"
    Compress
    Assign DEPARTMENT
  
-File EMPLOYEE   DBL ISAM   "DAT:employee.ism"
+File EMPLOYEE   DBL ISAM   "DAT:EMPLOYEE.ISM"
    Description "Employee master file"
    Compress
    Assign EMPLOYEE
+ 
+File REPLICATION   DBL ISAM   "DAT:REPLICATION.ISM"
+   Description "SQL replication request queue file"
+   Assign REPLICATION
  
