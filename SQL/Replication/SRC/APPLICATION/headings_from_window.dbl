@@ -21,62 +21,37 @@
 ;               times.  Posession of this code, or any modified version of this
 ;               code, indicates your acceptance of these terms.
 ;
-; $Revision: 1 $
-;
-; $Date: 2012-02-15 23:57:38-06:00 $
-;
 ;*******************************************************************************
-;
-; Revision log:
-;
-; $History: /Demos/SQL/Replication/SRC/APPLICATION/headings_from_window.dbl $
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2012-02-15   Time: 23:57:38-06:00 
-;; Updated in: /Demos/SQL/Replication/SRC/APPLICATION 
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2009-03-01   Time: 19:25:58-08:00 
-;; Updated in: /Development/Demos/Sql/Replication/SRC/TKLIB 
-;
-;*****************  Version 2  *****************
-;User: Stevei       Date: 4/03/07    Time: 10:01a
-;Updated in $/Synergy Projects/Code Generator/SUB
-;Added file header
-;
-;*******************************************************************************
-;
-.subroutine headings_from_window
 
+subroutine headings_from_window
 	a_window_id			,n	;input window
-
 	a_headings			,a	;Returned headings
+	endparams
 
-	;End of arguments
+	.include 'WND:system.def'
+	.include 'WND:setinf.def'
+	.include 'WND:windows.def'
+	.include 'DBLDIR:activex.def'
 
-.include 'WND:system.def'
-.include 'WND:setinf.def'
-.include 'WND:windows.def'
-.include 'DBLDIR:activex.def'
+	stack record local_data
+		win_area,		8d3
+		  num_row,		d3 @win_area + 6
+		  num_col,		d3 @win_area + 9
+		window_text,	a1000
+	endrecord
 
-.align
-stack record local_data
-	win_area,		8d3
-	num_row,		d3@win_area + 6
-	num_col,		d3@win_area + 9
-	window_text,	a1000
+proc
 
-.proc
-
-	clear local_data
+	init local_data
 
 	xcall w_info(WI_AREAS, a_window_id, win_area)
 	xcall w_info(WI_XFR, a_window_id, WIX_DGET, window_text)
 
 	if num_row.eq.1
 	begin
+		;No header lines found (window only 1 high)!
 		clear a_headings
-		xreturn		;no header lines found (window only 1 high)!
+		xreturn		
 	end
 
 	a_headings = %atrim(window_text(num_col+1:num_col))
@@ -87,5 +62,5 @@ stack record local_data
 
 	xreturn
 
-.end
+endsubroutine
 

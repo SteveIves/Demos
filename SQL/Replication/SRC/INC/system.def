@@ -26,43 +26,43 @@ record
 	idc_apps				,i4			;Applications menu column ID
 	idc_tools				,i4			;Tools menu column ID
 	idc_help				,i4			;Help menu column ID
-	idc_input				,i4		;
-	idc_list				,i4		;
-	idc_select				,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
+	idc_input				,i4			;
+	idc_list				,i4			;
+	idc_select				,i4			;
+	idc_replicator			,i4			;Replicator control menu column ID
+							,i4			;
+							,i4			;
+							,i4			;
 
 	;Window event method sets
 
-	wndevent_close			,i4		;
-							,i4		;
-							,i4		;
-	sysmenu_exit			,i4		;
+	wndevent_close			,i4;
+							,i4			;
+							,i4			;
+	sysmenu_exit			,i4			;
 
 	;Main channels
 
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
-							,i4		;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
+							,i4			;
 
 endglobal
 

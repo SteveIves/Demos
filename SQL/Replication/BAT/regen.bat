@@ -14,7 +14,7 @@ rem being used are structures that have been created for this purpose. They
 rem have different names and field names to the original structures, and
 rem may have various field data manipulations that take place.
 
-codegen -s EMPLOYEE   -t synioreplicate sqlio  -r -v
-codegen -s DEPARTMENT -t synio                 -r -v
+codegen -s EMPLOYEE   -t SqlIO -r -v
+codegen -s DEPARTMENT -t SynIO -r -v
 
 endlocal

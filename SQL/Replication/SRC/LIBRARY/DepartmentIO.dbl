@@ -81,13 +81,13 @@ proc
 
     (IO_OPEN_INP),
     begin
-        open(a_channel=%syn_freechn,i:i,"DAT:DEPARTMENT.ISM")
+        open(a_channel=0,i:i,"DAT:DEPARTMENT.ISM")
         &   [ERR=openError]
     end
 
     (IO_OPEN_UPD),
     begin
-        open(a_channel=%syn_freechn,u:i,"DAT:DEPARTMENT.ISM")
+        open(a_channel=0,u:i,"DAT:DEPARTMENT.ISM")
         &   [ERR=openError]
     end
 
@@ -312,10 +312,4 @@ openError,
 
     freturn IO_FATAL
 
-endfunction
-
-function department_length ,^val
-    endparams
-proc
-    freturn 71
 endfunction

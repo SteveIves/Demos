@@ -26,10 +26,10 @@ proc
 
     ;Do we need to open the replication transaction file?
     if (!io_transaction_chn)
-        open(io_transaction_chn = %syn_freechn,"U:I","DAT:replication.ism")
+        open(io_transaction_chn=0,"U:I","DAT:replication.ism")
 
     ;Populate the new transaction record
-    transaction.sdms_action = (i)a_transaction_type
+    transaction.instruction = (i)a_transaction_type
     transaction.structure_name = a_structure
     transaction.structure_key = a_strkey
 

@@ -224,9 +224,9 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
                 ;;(create/update/delete) then skip the file and
                 ;;table checks and go straight to the code
                 if (
-                &   (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.CREATE_ROW)
-                &   || (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.UPDATE_ROW)
-                &   || (transaction.sdms_action==(i)REPLICATION_INSTRUCTION.DELETE_ROW)
+                &   (   transaction.instruction==(i)REPLICATION_INSTRUCTION.CREATE_ROW)
+                &   || (transaction.instruction==(i)REPLICATION_INSTRUCTION.UPDATE_ROW)
+                &   || (transaction.instruction==(i)REPLICATION_INSTRUCTION.DELETE_ROW)
                 &   )
                 begin
                     ;;Check if we already have the file open
@@ -243,7 +243,7 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
 
                 ;;Execute the transaction
 
-                using (transaction.sdms_action) select
+                using (transaction.instruction) select
 
                 ;;"Routine" processing requests
 
@@ -273,6 +273,13 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
                 (REPLICATION_INSTRUCTION.DELETE_TABLE),
                     call DoDeleteTable
 
+                (REPLICATION_INSTRUCTION.SHUTDOWN),
+                begin
+                    delete(tch)
+                    xcall ReplicatorShutdown
+                    stop
+                end
+
                 endusing
 
                 ;;Delete the transaction file record
@@ -283,14 +290,6 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
             ;;Go back to first record in transaction file and start over
             find(tch,,^FIRST) [ERR=notrans]
 notrans,
-
-            ;;Check for instruction to exit
-            xcall getlog("REPLICATOR_SHUTDOWN",shutdownCommand="",length)
-            if ((length==3)&&(shutdownCommand=="YES"))
-            begin
-                xcall ReplicatorShutdown
-                stop
-            end
 
         end
 
@@ -380,10 +379,13 @@ OpenFile,
     status= %xsubr(function_name,IO_OPEN_INP,structure_data.structure_chan,,,,,,dberrtxt)
     offerror
     if (status==IO_OK) then
+	begin
+		debuglog(" - File opened")
         call CheckTable
+	end
     else
     begin
-        debuglog("Failed to open file")
+        debuglog(" - Failed to open file!")
         clear structure_data.structure_chan
         call FunctionError
     end
@@ -402,9 +404,12 @@ CheckTable,
     offerror
     using status select
     (1),;Yes
-        nop
+		debuglog(" - Table exists")
     (0),;No
+	begin
+		debuglog(" - Table not found!")
         call CreateTable
+	end
     (<0),;Error
         call FunctionError
     endusing
@@ -416,14 +421,17 @@ CheckTable,
 ;;
 CreateTable,
 
-    debuglog("Creating table " + %atrim(transaction.structure_name))
+    debuglog("Create table " + %atrim(transaction.structure_name))
 
     function_name = %atrim(transaction.structure_name)+"_CREATE"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
     if (status) then
+	begin
+		debuglog(" - Table created")
         call LoadTable
+	end
     else
         call FunctionError
 
@@ -434,7 +442,7 @@ CreateTable,
 ;;
 LoadTable,
 
-    debuglog("Performing full load of table " + %atrim(transaction.structure_name))
+    debuglog("Load data to table " + %atrim(transaction.structure_name))
 
     function_name = %atrim(transaction.structure_name)+"_LOAD"
     onerror FunctionFail
@@ -458,12 +466,12 @@ DoInsert,
 
     if (switchMode) then
     begin
-        debuglog(" - INSERT row in table " + %atrim(transaction.structure_name))
+        debuglog(" - Insert row in table " + %atrim(transaction.structure_name))
         switchMode = false
     end
     else
     begin
-        debuglog("INSERT row in table " + %atrim(transaction.structure_name))
+        debuglog("Insert row in table " + %atrim(transaction.structure_name))
         call ReadSynergyRecord
     end
 
@@ -478,7 +486,10 @@ DoInsert,
         (0),
             call FunctionError
         (1),
+		begin
+			debuglog(" - Row inserted")
             inserts+=1
+		end
         (2),
         begin
             debuglog(" - Row already exists, switching to UPDATE")
@@ -498,12 +509,12 @@ DoUpdate,
 
     if (switchMode) then
     begin
-        debuglog(" - UPDATE row in table " + %atrim(transaction.structure_name))
+        debuglog(" - Update row in table " + %atrim(transaction.structure_name))
         switchMode = false
     end
     else
     begin
-        debuglog("UPDATE row in table " + %atrim(transaction.structure_name))
+        debuglog("Update row in table " + %atrim(transaction.structure_name))
         call ReadSynergyRecord
     end
 
@@ -519,7 +530,10 @@ DoUpdate,
         if (status) then
         begin
             if (rows) then
+			begin
+				debuglog(" - Row updated")
                 updates+=1
+			end
             else
             begin
                 debuglog(" - Row not found, switching to INSERT")
@@ -540,7 +554,7 @@ DoUpdate,
 ;;
 DoDelete,
 
-    debuglog("DELETE row in table " + %atrim(transaction.structure_name))
+    debuglog("Delete row from table " + %atrim(transaction.structure_name))
     if (logKeys)
         debugLog(" - Replication key: [" + transaction.structure_key + "]")
 
@@ -549,10 +563,13 @@ DoDelete,
     status= %xsubr(function_name,db,transaction.structure_key,dberrtxt)
     offerror
     if (status) then
+	begin
+		debuglog(" - Row deleted")
         deletes+=1
+	end
     else
     begin
-        debuglog(dberrtxt)
+        debuglog(" - " + dberrtxt)
         call FunctionError
     end
 
@@ -566,8 +583,31 @@ DoCreateTable,
     ;;Create a new table (only)
     ;;If the table already exists, do nothing
 
+	debuglog("Create table " + %atrim(transaction.structure_name))
 
-
+    debuglog(" - Checking if table already exists")
+    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
+    using status select
+    (1),;Yes
+		debuglog(" - Table already exists!")
+    (0),;No
+    begin
+        debuglog(" - Creating table")
+        function_name = %atrim(transaction.structure_name)+"_CREATE"
+        onerror FunctionFail
+        status= %xsubr(function_name,db,dberrtxt)
+        offerror
+		if (status) then 
+			debuglog(" - Table created")
+		else
+            call FunctionError
+    end
+    (<0),;Error
+	call FunctionError
+    endusing
 
     return
 
@@ -579,9 +619,28 @@ DoLoadTable,
     ;;Do a full load of an existing table with new data
     ;;Delete all existing data before loading new data
 
+    debuglog("Reload existing table " + %atrim(transaction.structure_name) + " exists")
 
+	debuglog(" - Checking if table exists")
 
+    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    onerror FunctionFail
+    status= %xsubr(function_name,db,dberrtxt)
+    offerror
 
+    using status select
+    (1),;Yes
+    begin
+        call DoDeleteAllRows
+        call LoadTable
+    end
+    (0),;No
+    begin
+	    debuglog(" - Table does not exist!")
+    end
+    (<0),;Error
+	call FunctionError
+    endusing
 
     return
 
@@ -593,6 +652,7 @@ DoCreateAndLoadTable,
     ;;Create a new table, do nothing if the table already exists
     ;;We create the table, then do a full load of data
 
+    call CheckTable
 
     return
 
@@ -601,14 +661,16 @@ DoCreateAndLoadTable,
 ;;
 DoDeleteAllRows,
 
-    debuglog("TRUNCATE TABLE " + %atrim(transaction.structure_name))
+    debuglog("Deleting all rows from table " + %atrim(transaction.structure_name))
 
     function_name = %atrim(transaction.structure_name)+"_CLEAR"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
 
-    if (!status)
+	if (status) then 
+		debuglog(" - All rows were deleted")
+	else
         call FunctionError
 
     return
@@ -633,14 +695,16 @@ DoDeleteTable,
         xcall nspc_delete(nsid,nsptr)
     end
 
-    debuglog("DELETE TABLE " + %atrim(transaction.structure_name))
+    debuglog("Deleting table " + %atrim(transaction.structure_name))
 
     function_name = %atrim(transaction.structure_name)+"_DROP"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
 
-    if (!status)
+	if (status) then 
+		debuglog(" - Table was deleted")
+	else
         call FunctionError
 
     return
@@ -804,6 +868,9 @@ proc
         clear tch
     end
 
+    log("Replicator will close in 10 seconds")
+    sleep 10
+    
     xreturn
 
 endsubroutine

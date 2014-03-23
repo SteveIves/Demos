@@ -24,32 +24,9 @@
 ;               times.  Posession of this code, or any modified version of this
 ;               code, indicates your acceptance of these terms.
 ;
-; $Revision: 1 $
-;
-; $Date: 2012-02-15 23:57:38-06:00 $
-;
 ;*******************************************************************************
-;
-; Revision log:
-;
-; $History: /Demos/SQL/Replication/SRC/APPLICATION/display_local_fields.dbl $
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2012-02-15   Time: 23:57:38-06:00 
-;; Updated in: /Demos/SQL/Replication/SRC/APPLICATION 
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2009-03-01   Time: 19:25:58-08:00 
-;; Updated in: /Development/Demos/Sql/Replication/SRC/TKLIB 
-;
-;*****************  Version 2  *****************
-;User: Stevei       Date: 4/03/07    Time: 9:57a
-;Updated in $/Synergy Projects/Code Generator/SUB
-;Updated file header
-;
-;*******************************************************************************
-;
-.subroutine display_local_fields, REENTRANT
+
+subroutine display_local_fields, REENTRANT
 
 	;Argument list
 	a_wndid			,n	;Window id
@@ -77,35 +54,34 @@
 	methdat19		,a
 	methdat20		,a
 
-	;End of argument list
+	endparams
 
-.include "WND:system.def"
-.include "WND:tools.def"
-.include "WND:setinf.def"
-.include "WND:fldinf.def"
+	.include "WND:system.def"
+	.include "WND:tools.def"
+	.include "WND:setinf.def"
+	.include "WND:fldinf.def"
 
-.align
-stack record
-.include 'WND:inpinf.def'
+	stack record
+	.include 'WND:inpinf.def'
+	endrecord
+	
+	stack record
+		count			,i4		;Field counter
+		pendsts			,i4		;Pending status for change methods
+		set_number		,i4		;Ordinal set number
+		fld_number		,i4		;Field number
+		save_data		,i4		;Dynamic memory handle
+		fld_name		,a30	;Name of input field
+	endrecord
+	
+	global data section DISPLAY_LOCAL_FIELDS_DATA ,init
+		record
+			dlf_dispfld	,a30	;Used to propagate current field name between this
+								;routine and generated change methods
+		endrecord
+	endglobal
 
-.align
-stack record
-	count			,i4		;Field counter
-	pendsts			,i4		;Pending status for change methods
-
-stack record
-	set_number		,i4		;Ordinal set number
-	fld_number		,i4		;Field number
-	save_data		,i4		;Dynamic memory handle
-	fld_name		,a30	;Name of input field
-
-global data section DISPLAY_LOCAL_FIELDS_DATA ,init
-record
-	dlf_dispfld	,a30		;Used to propagate current field name between this
-							;routine and generated change methods
-endglobal
-
-.proc
+proc
 
 	clear set_number, ^i(inputinfo)
 
@@ -150,7 +126,7 @@ endglobal
 				&			methdat11, methdat12, methdat13, methdat14, methdat15,
 				&			methdat16, methdat17, methdat18, methdat19, methdat20)
 
-			if FALSE
+			if (false)
 no_routine,		offerror
 
 			;Turn the change method back on
@@ -167,7 +143,6 @@ no_routine,		offerror
 
 	xreturn
 
-.end
-;
-;*******************************************************************************
+endsubroutine
+
 

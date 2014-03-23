@@ -2,7 +2,7 @@
 <Project
 	Version="10.0"
 	VendorName="SlickEdit"
-	WorkingDir="%wp">
+	WorkingDir="../">
 	<Config
 		Name="Debug32"
 		OutputFile=""
@@ -155,7 +155,6 @@
 		<Folder
 			Name="Source Files"
 			Filters="*.dbl;*.tpl;*.dbc">
-			<F N="../SRC/APPLICATION/dd_createfile.dbl"/>
 			<F N="../SRC/APPLICATION/department_change.dbl"/>
 			<F N="../SRC/APPLICATION/department_drill.dbl"/>
 			<F N="../SRC/APPLICATION/department_lookup.dbl"/>
@@ -166,14 +165,14 @@
 			<F N="../SRC/APPLICATION/i_checkdata.dbl"/>
 			<F N="../SRC/APPLICATION/menu.dbl"/>
 			<F N="../SRC/APPLICATION/position_window.dbl"/>
-			<F N="../SRC/APPLICATION/print_list.dbl"/>
-			<F N="../SRC/APPLICATION/tidy_string.dbl"/>
-			<F N="../SRC/APPLICATION/ViewReport.dbl"/>
+			<F N="../SRC/APPLICATION/ReplicatorControl.dbl"/>
 			<F N="../SRC/APPLICATION/wndevent_close.dbl"/>
 		</Folder>
 		<Folder
 			Name="Header Files"
-			Filters="*.def;*.dbh"/>
+			Filters="*.def;*.dbh">
+			<F N="../SRC/INC/system.def"/>
+		</Folder>
 		<Folder
 			Name="Toolkit Script Files"
 			Filters="*.wsc">

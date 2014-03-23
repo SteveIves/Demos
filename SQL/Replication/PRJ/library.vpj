@@ -124,6 +124,9 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Files>
@@ -280,6 +283,9 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -403,6 +409,9 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -526,6 +535,9 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Macro>

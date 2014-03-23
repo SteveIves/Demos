@@ -21,37 +21,11 @@
 ;               times.  Posession of this code, or any modified version of this
 ;               code, indicates your acceptance of these terms.
 ;
-; $Revision: 1 $
-;
-; $Date: 2012-02-15 23:57:38-06:00 $
-;
 ;*******************************************************************************
 ;
-; Revision log:
-;
-; $History: /Demos/SQL/Replication/SRC/APPLICATION/wndevent_close.dbl $
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2012-02-15   Time: 23:57:38-06:00 
-;; Updated in: /Demos/SQL/Replication/SRC/APPLICATION 
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2009-03-01   Time: 19:25:58-08:00 
-;; Updated in: /Development/Demos/Sql/Replication/SRC/TKLIB 
-;
-;*****************  Version 2  *****************
-;User: Stevei       Date: 4/03/07    Time: 9:35a
-;Updated in $/Synergy Projects/Code Generator/SUB
-;Added file header
-;
-;*******************************************************************************
-;
-.subroutine wndevent_close
-
-.proc
-
+subroutine wndevent_close
+	endparams
+proc
 	xcall m_signal("CLOSEWND")
-
 	xreturn
-
-.end
+endsubroutine

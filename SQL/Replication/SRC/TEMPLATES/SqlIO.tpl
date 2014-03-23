@@ -1,4 +1,5 @@
 <CODEGEN_FILENAME><StructureName>SqlIO.dbl</CODEGEN_FILENAME>
+<PROCESS_TEMPLATE>SynIOReplicate</PROCESS_TEMPLATE>
 <PROVIDE_FILE>IsNumeric.dbl</PROVIDE_FILE>
 ;//*****************************************************************************
 ;//
@@ -1097,6 +1098,7 @@ function <structure_name>_load ,^val
     .include "CONNECTDIR:ssql.def"
     .include "<STRUCTURE_NOALIAS>" repository, structure="<structure_name>"
     .include "<STRUCTURE_NOALIAS>" repository, stack record="tmprec"
+    .include "GENSRC:StructureIO.def"
 
     .define BUFFER_ROWS 1000
     .define EXCEPTION_BUFSZ 100
@@ -1123,10 +1125,9 @@ proc
     ok = true
 
     ;;Open the data file associated with the structure
+    if (%<structure_noalias>_io(IO_OPEN_INP,filechn)!=IO_OK)
     begin
-        open(filechn=%syn_freechn,i:i,"<FILE_NAME>") [ERR=fnf]
-        exit
-fnf,    ok = false
+        ok = false
         errtxt = "Failed to open file <FILE_NAME>"
         clear filechn
     end
@@ -1134,15 +1135,19 @@ fnf,    ok = false
     if (ok)
     begin
 
+        ;;Position to the first record (needed incase the structure has a tag)
+        if (%<structure_noalias>_io(IO_FIND_FIRST,filechn)!=IO_OK)
+            exit
+
         ;;Allocate memory buffer for the database rows
         mh = %mem_proc(DM_ALLOC,^size(<structure_name>)*(ms=BUFFER_ROWS))
 
         ;;Read records from the input file
         repeat
         begin
-
             ;;Get the next record from the input file
-            reads(filechn,tmprec,eof)
+            if (%<structure_noalias>_io(IO_READ_NEXT,filechn,,,tmprec)!=IO_OK)
+                exitloop
 
             ;;Got one, load it into or buffer
             ^m(<structure_name>[mc+=1],mh) = tmprec
@@ -1156,7 +1161,6 @@ fnf,    ok = false
 
         end
 
-eof,    ;;Any data waiting to be written?
         if (mc)
         begin
             mh = %mem_proc(DM_RESIZ,^size(<structure_name>)*mc,mh)
@@ -1170,7 +1174,7 @@ eof,    ;;Any data waiting to be written?
 
     ;;Close the file
     if (filechn)
-        close filechn
+        xcall <structure_noalias>_io(IO_CLOSE,filechn)
 
     ;;Close the exceptions log file
     if (ex_ch)
@@ -1207,7 +1211,7 @@ insert_data,
             begin
                 ;;Open the log file
                 if (!ex_ch)
-                    open(ex_ch=%syn_freechn,o:s,"<structure_name>_data_exceptions.log")
+                    open(ex_ch=0,o:s,"<structure_name>_data_exceptions.log")
                 ;;Log the exceptions
                 for cnt from 1 thru ex_mc
                     writes(ex_ch,^m(<structure_name>[cnt],ex_mh))

@@ -22,46 +22,43 @@
 ;
 ;*******************************************************************************
 ;
-.function department_change ,^val ,reentrant
-
-    ;Argument list
-
+function department_change ,^val ,reentrant
     a_data_entered      ,a
     a_data_stored       ,a
     a_pending_status    ,n
     .include "WND:inpinf.def"
     a_inprec            ,a
+	endparams
 
-    ;End of argument list
+	.include "WND:tools.def"
+	.include "WND:system.def"
+	.include "WND:fldinf.def"
+	.include "GENSRC:StructureIO.def"
 
-.include "WND:tools.def"
-.include "WND:system.def"
-.include "WND:fldinf.def"
-.include "GENSRC:StructureIO.def"
+	external function
+		department_io      ,^val
+	endexternal
 
-external function
-    department_io      ,^val
+	.include "DEPARTMENT" repository, stack record="department"
 
-.include "DEPARTMENT" repository, stack record="department"
+	stack record local_data
+		io_error            ,i4     ;An io error occurred
+		retval              ,i4     ;Function return value
+		count               ,i4     ;Loop counter
+		fieldnumber         ,i4     ;Field number of display field
+		idf_department_i    ,i4     ;Local channel number for master file
+		fieldname           ,a30    ;Name of extended display field
+	endrecord
+	
+	global data section DISPLAY_LOCAL_FIELDS_DATA
+		record
+			dlf_dispfld ,a30        ;Used to propagate current field name from
+                                    ;the DISPLAY_LOCAL_FIELDS routine.
+		endrecord
+	endglobal
 
-stack record ivars
-    io_error            ,i4     ;An io error occurred
-    retval              ,i4     ;Function return value
-    count               ,i4     ;Loop counter
-    fieldnumber         ,i4     ;Field number of display field
-    idf_department_i   ,i4     ;Local channel number for master file
-
-stack record avars
-    fieldname           ,a30    ;Name of extended display field
-
-global data section DISPLAY_LOCAL_FIELDS_DATA
-record
-    dlf_dispfld ,a30        ;Used to propagate current field name from
-                            ;the DISPLAY_LOCAL_FIELDS routine.
-endglobal
-
-.proc
-    clear ^i(ivars), avars
+proc
+    init local_data
     retval = a_pending_status
 
     if (retval==D_OK)
@@ -106,6 +103,5 @@ endglobal
 
     freturn retval
 
-.end
-
+endfunction
 

@@ -37,8 +37,8 @@
 ; routine presents a second tab set containing multiple pages allowing them
 ; to maintain the record.
 ;
-; The routine also supports creating new records, deleting records and printing
-; a master file listing.  These functions can all be supressed if not required.
+; The routine also supports creating new records, deleting records.  These
+; functions can all be supressed if not required.
 ;
 ; The routine requires several windows to be present in the window library
 ; referred to by g_utlib. The names of those windows are constructed using a
@@ -139,105 +139,95 @@
 ;
 ;*******************************************************************************
 ;
-.subroutine employee_maint_tab
+subroutine employee_maint_tab
+    required in a_base_title	,a	;Base text for tabset titles (e.g."Customer")
+    optional in a_channel       ,n  ;Master file update mode channel
+    optional in a_lst_header    ,a  ;Search list column headers
+    optional in a_lst_footer    ,a  ;Search list footer
+    optional in a_icon          ,a  ;Icon file name
+    optional in a_no_amend      ,n  ;Suppress "Amend" (view obly)
+    optional in a_no_create     ,n  ;Suppress "New" button
+    optional in a_no_delete     ,n  ;Suppress "Delete" button
+    optional in a_no_help       ,n  ;Suppress "Help" button
+	endparams
 
-    ;Required arguments
-    a_base_title        ,a      ;Base text for tabset titles (e.g."Customer")
+	.include "WND:tools.def"
+	.include "WND:fldinf.def"
+	.include "WND:setinf.def"
+	.include "WND:windows.def"
+	.include "DBLDIR:activex.def"
+	.include "INC:system.def"
+	.include "GENSRC:StructureIO.def"
 
-    ;Optional arguments
-    a_channel           ,n      ;Master file update mode channel
-    a_lst_header        ,a      ;Search list column headers
-    a_lst_footer        ,a      ;Search list footer
-    a_icon              ,a      ;Icon file name
-    a_no_amend          ,n      ;Suppress "Amend" (view obly)
-    a_no_create         ,n      ;Suppress "New" button
-    a_no_delete         ,n      ;Suppress "Delete" button
-    a_no_print          ,n      ;Suppress "Print" button
-    a_no_help           ,n      ;Suppress "Help" button
+	;Main data buffers
+	.include "EMPLOYEE" repository, stack record="employee", nofields
+	.include "EMPLOYEE" repository, stack record="employee_save", nofields
+	.include "EMPLOYEE_INPUT" repository, stack record="employee_input", nofields
+	.include "EMPLOYEE_CRITERIA" repository, stack record="criteria", nofields
+	.include "EMPLOYEE_CRITERIA" repository, stack record="last_criteria", nofields
+	
+	stack record local_data
+		ok              ,i4     ;OK to continue
+		error           ,i4     ;An error was detected
+	
+		channel         ,i4     ;Master file channel
+	
+		idi_criteria    ,i4     ;Search criteria input window
+		idi_results     ,i4     ;Search list input window ID
+		clsid           ,i4     ;Search list class
+		idl_results     ,i4     ;Search results list
+		req             ,i4     ;List processor request flag
+		control         ,i4     ;Search results list AX control ID
+		idt_search      ,i4     ;Search criteria / results tabset
+		headers         ,i4     ;# of search list header lines
+		footers         ,i4     ;# of search list footer lines
+	
+		idi_maint       ,[10]i4 ;Maintenance window ID's
+		idt_maint       ,i4     ;Maintenance tabset ID
+	
+		count           ,i4     ;Local counter
+		tabcount        ,i4     ;Number of pages in tabset
+		nullitem        ,i4     ;Current list item is null
+	
+		rows            ,i4     ;Height of window
+		maxrows         ,i4     ;Maximum height of any window
+	
+		cols            ,i4     ;Width of window
+		maxcols         ,i4     ;Maximum width of any window
+	
+		creating        ,i4     ;Creating a new record
+	
+		set_number      ,i4     ;Input set number
+	
+		no_amend        ,i4     ;Suppress "Amend" (view only)
+		no_create       ,i4     ;Suppress "New" button
+		no_delete       ,i4     ;Suppress "Delete" button
+		no_help         ,i4     ;Suppress "Help" button
 
-    ;End of arguments
+		wndname         ,a15    ;Window name
+		setname         ,a5     ;Name of current input set
+		wintitle        ,a50    ;Window title
+		keynums         ,[10]d2 @wintitle   ;Array of search key numbers extracted from window title
+		keynum          ,d2     ;Current key to use
+		keyval          ,a80    ;Key value to match on
+		winattr         ,2d3    ;Window title attributes
+		keyfldname      ,a30    ;Input field name
+		msgtext         ,a80    ;Message text
 
-.include "WND:tools.def"
-.include "WND:fldinf.def"
-.include "WND:setinf.def"
-.include "WND:windows.def"
-.include "DBLDIR:activex.def"
-.include "INC:system.def"
-.include "GENSRC:StructureIO.def"
+	endrecord
 
-;Main data buffers
-.include "EMPLOYEE" repository, stack record="employee", nofields
-.include "EMPLOYEE" repository, stack record="employee_save", nofields
-.include "EMPLOYEE_INPUT" repository, stack record="employee_input", nofields
-.include "EMPLOYEE_CRITERIA" repository, stack record="criteria", nofields
-.include "EMPLOYEE_CRITERIA" repository, stack record="last_criteria", nofields
-
-stack record ivars
-
-    ok              ,i4     ;OK to continue
-    error           ,i4     ;An error was detected
-
-    channel         ,i4     ;Master file channel
-
-    idi_criteria    ,i4     ;Search criteria input window
-    idi_results     ,i4     ;Search list input window ID
-    clsid           ,i4     ;Search list class
-    idl_results     ,i4     ;Search results list
-    req             ,i4     ;List processor request flag
-    control         ,i4     ;Search results list AX control ID
-    idt_search      ,i4     ;Search criteria / results tabset
-    headers         ,i4     ;# of search list header lines
-    footers         ,i4     ;# of search list footer lines
-
-    idi_maint       ,[10]i4 ;Maintenance window ID's
-    idt_maint       ,i4     ;Maintenance tabset ID
-
-    count           ,i4     ;Local counter
-    tabcount        ,i4     ;Number of pages in tabset
-    nullitem        ,i4     ;Current list item is null
-
-    rows            ,i4     ;Height of window
-    maxrows         ,i4     ;Maximum height of any window
-
-    cols            ,i4     ;Width of window
-    maxcols         ,i4     ;Maximum width of any window
-
-    creating        ,i4     ;Creating a new record
-
-    set_number      ,i4     ;Input set number
-
-    no_amend        ,i4     ;Suppress "Amend" (view only)
-    no_create       ,i4     ;Suppress "New" button
-    no_delete       ,i4     ;Suppress "Delete" button
-    no_print        ,i4     ;Suppress "Print" button
-    no_help         ,i4     ;Suppress "Help" button
-
-stack record avars
-
-    wndname         ,a15    ;Window name
-    setname         ,a5     ;Name of current input set
-    wintitle        ,a50    ;Window title
-    keynums         ,[10]d2 @wintitle   ;Array of search key numbers extracted from window title
-    keynum          ,d2     ;Current key to use
-    keyval          ,a80    ;Key value to match on
-    winattr         ,2d3    ;Window title attributes
-    keyfldname      ,a30    ;Input field name
-    msgtext         ,a80    ;Message text
-
-.proc
+proc
 
     ;Initialize data
-    clear employee, employee_save, employee_input
-    clear criteria, last_criteria
-    clear ^i(ivars), avars
+    clear employee, employee_save, employee_input, criteria, last_criteria
+	init local_data
     ok=true
 
     ;Validate required parameters
 
     if ((!^passed(a_base_title))||(!a_base_title))
     begin
-        xcall u_msgbox("Parameter 1 (base window title) was not passed or was blank.",
-        &              D_MOK+D_MICONSTOP,"Error")
+        xcall u_msgbox("Parameter 1 (base window title) was not passed or was blank.",D_MOK+D_MICONSTOP,"Error")
         clear ok
     end
 
@@ -257,9 +247,6 @@ stack record avars
 
         if (^passed(a_no_delete)&&a_no_delete)
             no_delete = TRUE
-
-        if (^passed(a_no_print)&&a_no_print)
-            no_print = TRUE
 
         if (^passed(a_no_help)&&a_no_help)
             no_help = TRUE
@@ -406,9 +393,6 @@ stack record avars
 
             if (!no_delete)
                 xcall ts_tabset(DTS_BUTTON,idt_search,"DELETE",DSB_TEXT,"Delete")
-
-            if (!no_print)
-                xcall ts_tabset(DTS_BUTTON,idt_search,"PRINT", DSB_TEXT,"Print")
 
             if (!no_help)
                 xcall ts_tabset(DTS_BUTTON,idt_search,"O_HELP",DSB_TEXT,"Help")
@@ -565,7 +549,7 @@ stack record avars
 
             xcall ts_process(idt_search,idt_search,channel,criteria,
             &                employee,keynums,keynum,keyval,last_criteria,
-            &                no_create,no_delete,no_print)
+            &                no_create,no_delete)
 
             using g_entnam select
             ("SEARCH"),
@@ -593,14 +577,10 @@ stack record avars
                 if (!nullitem)
                     call delete
             end
-            ("PRINT"),
-            begin
-                call check_null
-                if (!nullitem)
-                    call print_search_results
-            end
             ("CANCEL"),
                 exitloop
+			("R_"),
+				xcall ReplicatorMenuItem(g_entnam)
             endusing
 
         end
@@ -728,6 +708,9 @@ maintain,
                 exitloop
             end
 
+			("R_"),
+				xcall ReplicatorMenuItem(g_entnam)
+
             endusing
 
         end
@@ -828,65 +811,36 @@ delete,
 
     return
 
-print_search_results,
-
-    ;Force list to completely load then position to top
-    xcall w_proc(WP_HOURGLASS_ON)
-    xcall u_update
-    xcall u_update(FALSE)
-    xcall l_queue(idl_results,D_LBOTTOM)
-    xcall l_process(idl_results,req=D_LBOTTOM,employee,,channel,keynum,keyval)
-    xcall w_proc(WP_HOURGLASS_OFF)
-    xcall u_update(TRUE)
-
-    ;Print the list contents
-    xcall s_bld(msgtext,,"%a Search Results",a_base_title)
-    xcall print_list(idl_results,employee,"TEMP:employee.smf",msgtext,,1)
-
-    return
-
-.end
+endsubroutine
 
 ;===================================================================================================
 ;
-.subroutine employee_mntcta
+subroutine employee_mntcta
+    required in    a_inpid          ,n      ;Criteria input window ID
+    required in    a_tabset         ,n      ;Tabset ID
+    required in    a_channel        ,n      ;Master file channel
+    required inout a_criteria       ,a      ;Criteria record
+    required in    a_employee       ,a      ;Selected master file record
+    required in    a_keynums        ,[*]n   ;Array of key numbers
+    required inout a_keynum         ,n      ;Key number to use
+    required inout a_keyval         ,a      ;Key value to match
+    required inout a_last_criteria  ,a      ;Last used criteria
+    required in    a_no_create      ,n      ;Supress "New" button
+    required in    a_no_delete      ,n      ;Supress "Delete" button
+	endparams
 
-    ;Arguments
-    a_inpid             ,n      ;Criteria input window ID
+	.include "WND:tools.def"
+	.include "WND:fldinf.def"
 
-    ;Method data
-    a_tabset            ,n      ;Tabset ID
-    a_channel           ,n      ;Master file channel
-    a_criteria          ,a      ;Criteria record
-    a_employee       ,a      ;Selected master file record
-    a_keynums           ,[*]n   ;Array of key numbers
-    a_keynum            ,n      ;Key number to use
-    a_keyval            ,a      ;Key value to match
-    a_last_criteria     ,a      ;Last used criteria
-    a_no_create         ,n      ;Supress "New" button
-    a_no_delete         ,n      ;Supress "Delete" button
-    a_no_print          ,n      ;Supress "Print" button
-
-    ;End of arguments
-
-.include "WND:tools.def"
-.include "WND:fldinf.def"
-
-.proc
+proc
 
     ;Setup UI for criteria window processing
-
-    ;xcall ui_edit(D_ON)
-    ;xcall ui_okcancel(D_ON)
 
     xcall b_enable(a_tabset,"SEARCH")
     xcall b_disable(a_tabset,"AMEND")
 
     if (!a_no_delete)
         xcall b_disable(a_tabset,"DELETE")
-
-    if (!a_no_print)
-        xcall b_disable(a_tabset,"PRINT")
 
     xcall b_buttonset(a_tabset,,,,"SEARCH")
 
@@ -902,11 +856,6 @@ print_search_results,
 
     end
 
-    ;Reset UI
-
-    ;xcall ui_edit(D_OFF)
-    ;xcall ui_okcancel(D_OFF)
-
     ;Set current key number
     a_keynum = a_keynums[^d(a_criteria(1:1))]
 
@@ -916,7 +865,7 @@ print_search_results,
 
     xreturn
 
-.end
+endsubroutine
 
 ;===================================================================================================
 ;This is the change method for the search mode field on the criteria page
@@ -924,24 +873,22 @@ print_search_results,
 ;method on the required MODE field.  The routine enables and disables the
 ;appropriate filter field for the currently selected search mode (key).
 
-.function employee_mntmode ,^val ,reentrant
-
-    ;Arguments
+function employee_mntmode ,^val ,reentrant
     a_data_entered      ,a      ;Data as entered by the user.
     a_data_stored       ,a      ;Data as stroed in variable
     a_pending_status    ,n      ;Result of Toolkit's field validations.
     .include "WND:inpinf.def"   ;Input information structure
     a_criteria          ,a      ;Input data area
-    ;End of arguments
+    endparams
 
-.include "WND:tools.def"
+	.include "WND:tools.def"
 
-.align
-stack record
-    status              ,i4
-    newfield            ,a10
+	stack record
+		status          ,i4
+		newfield        ,a10
+	endrecord
 
-.proc
+proc
 
     status = a_pending_status
 
@@ -961,38 +908,32 @@ stack record
 
     freturn status
 
-.end
+endfunction
 
 ;===================================================================================================
 ;This routine processes the list on the search results tab.
 ;
-.subroutine employee_mntlst
+subroutine employee_mntlst
+    required in    a_lstid          ,n      ;Search results list ID
+    required in    a_tabset         ,n      ;Tabset ID
+    required in    a_channel        ,n      ;Master file channel
+    required in    a_criteria       ,a      ;Criteria record
+    required in    a_employee       ,a      ;Selected master file record
+    required in    a_keynums        ,[*]n   ;Array of key numbers
+    required in    a_keynum         ,n      ;Key number to use
+    required in    a_keyval         ,a      ;Key value to match
+    required inout a_last_criteria  ,a      ;Last used criteria
+    required in    a_no_create      ,n      ;Supress "New" button
+    required in    a_no_delete      ,n      ;Supress "Delete" button
+	endparams
 
-    ;Arguments
-    a_lstid             ,n      ;Search results list ID
+	.include "WND:tools.def"
 
-    ;Method data
-    a_tabset            ,n      ;Tabset ID
-    a_channel           ,n      ;Master file channel
-    a_criteria          ,a      ;Criteria record
-    a_employee       ,a      ;Selected master file record
-    a_keynums           ,[*]n   ;Array of key numbers
-    a_keynum            ,n      ;Key number to use
-    a_keyval            ,a      ;Key value to match
-    a_last_criteria     ,a      ;Last used criteria
-    a_no_create         ,n      ;Supress "New" button
-    a_no_delete         ,n      ;Supress "Delete" button
-    a_no_print          ,n      ;Supress "Print" button
+	stack record
+		req                 ,i4     ;List processor request
+	endrecord
 
-    ;End of arguments
-
-
-.include "WND:tools.def"
-
-stack record
-    req                 ,i4     ;List processor request
-
-.proc
+proc
 
     ;Configure UI for search results list processing
 
@@ -1003,9 +944,6 @@ stack record
 
     if (!a_no_delete)
         xcall b_enable(a_tabset,"DELETE")
-
-    if (!a_no_print)
-        xcall b_enable(a_tabset,"PRINT")
 
     xcall b_buttonset(a_tabset,,,,"AMEND")
 
@@ -1025,12 +963,12 @@ stack record
 
     xreturn
 
-.end
+endsubroutine
 
 ;===================================================================================================
 ;This is the load method for the search results list.
 ;
-.subroutine employee_mntload
+subroutine employee_mntload
 
     ;Arguments
     a_listid        ,n      ;Search results list ID
@@ -1045,12 +983,12 @@ stack record
     a_keynum        ,n      ;Key number to use
     a_keyval        ,a      ;Key value to match
 
-    ;End of arguments
+    endparams
 
-.include "WND:tools.def"
-.include "GENSRC:StructureIO.def"
+	.include "WND:tools.def"
+	.include "GENSRC:StructureIO.def"
 
-.proc
+proc
 
     ;If it's the first record, position to the correct starting position in
     ;the master file
@@ -1115,26 +1053,20 @@ stack record
 
     xreturn
 
-.end
+endsubroutine
 
 ;===================================================================================================
 ;This is the input processor for the maintenance tab pages.
 ;
-.subroutine employee_mntinp
+subroutine employee_mntinp
 
-    inp_wndid           ,n      ;ID of input window on current tab page
-    a_employee_input ,a      ;Input record
+    inp_wndid			,n	;ID of input window on current tab page
+    a_employee_input 	,a  ;Input record
+	endparams
+	
+	.include "WND:tools.def"
 
-.include "WND:tools.def"
-
-.proc
-
-    ;Enable menu and toolbar options for input processing
-
-    ;xcall ui_edit(D_ON)
-    ;xcall ui_okcancel(D_ON)
-    ;xcall ui_lookup(D_ON)
-    ;xcall ui_print(D_ON)
+proc
 
     ;Process the input window on the current tab page
 
@@ -1149,15 +1081,7 @@ stack record
 
     end
 
-    ;Reset menu and toolbar options
-
-    ;xcall ui_print(D_OFF)
-    ;xcall ui_lookup(D_OFF)
-    ;xcall ui_okcancel(D_OFF)
-    ;xcall ui_edit(D_OFF)
-
     xreturn
 
-.end
-
+endsubroutine
 

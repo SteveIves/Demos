@@ -17,9 +17,9 @@ function employee_io ,^val
 
     required in    a_mode       ,n  ;;Access type
     required inout a_channel    ,n  ;;Channel
-    required in    a_key        ,a  ;;Key value
-    required in    a_keynum     ,n  ;;Key number
-    .include "EMPLOYEE" repository, required inout group="employee"
+    optional in    a_key        ,a  ;;Key value
+    optional in    a_keynum     ,n  ;;Key number
+    .include "EMPLOYEE" repository, optional inout group="employee"
     optional in    a_lock       ,n  ;;If passed and TRUE, lock record
     optional in    a_partial    ,n  ;;Do a partial key lookup
     optional out   a_errtxt     ,a  ;;Returned error text
@@ -39,6 +39,7 @@ function employee_io ,^val
         keyval              ,a255   ;;Hold original key
         .include "EMPLOYEE" repository, group="tmp_employee"
     endrecord
+
 
 proc
 
@@ -80,38 +81,32 @@ proc
     using a_mode select
 
     (IO_OPEN_INP),
-    begin
-        open(a_channel=%syn_freechn,i:i,"DAT:EMPLOYEE.ISM")
-        &   [ERR=openError]
-    end
+        open(a_channel=0,i:i,"DAT:EMPLOYEE.ISM") [ERR=openError]
 
     (IO_OPEN_UPD),
     begin
-        open(a_channel=%syn_freechn,u:i,"DAT:EMPLOYEE.ISM")
-        &   [ERR=openError]
+        open(a_channel=0,u:i,"DAT:EMPLOYEE.ISM") [ERR=openError]
         xcall ChannelCacheInit(a_channel)
     end
 
     (IO_FIND),
-    begin
-        find(a_channel,,keyval(1:keylen),KEYNUM:keyno)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-    end
+        find(a_channel,,keyval(1:keylen),KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
 
     (IO_FIND_FIRST),
     begin
-        find(a_channel,,^FIRST,KEYNUM:keyno)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .else
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .endc
     end
 
     (IO_READ_FIRST),
     begin
-        .ifdef TAG_FIELD
-        read(a_channel,employee,TAG_VALUE,KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .else
-        read(a_channel,employee,^FIRST,KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,employee)
@@ -119,45 +114,48 @@ proc
 
     (IO_READ),
     begin
-        read(a_channel,employee,keyval(1:keylen),KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        read(a_channel,employee,keyval(1:keylen),KEYNUM:keyno,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,employee)
     end
 
     (IO_READ_NEXT),
     begin
-        reads(a_channel,employee,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        reads(a_channel,employee,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        if (TAG_NO_MATCH)
+        begin
+            unlock a_channel
+            goto endOfFile
+        end
+        .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,employee)
     end
 
     (IO_READ_PREV),
     begin
-        reads(a_channel, employee,,REVERSE,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        reads(a_channel, employee,,REVERSE,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        if (TAG_NO_MATCH)
+        begin
+            unlock a_channel
+            goto endOfFile
+        end
+        .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,employee)
     end
 
     (IO_READ_LAST),
     begin
-        .ifdef TAG_FIELD
-        begin
-            read(a_channel,employee,TAG_ENDVALUE,KEYNUM:keyno,LOCK:lock)
-            &   [$ERR_EOF=readLastTag,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=readLastTag]
-            ;;Now read the perious one!
-            if (FALSE) then
-readLastTag,    read(a_channel,employee,^LAST,KEYNUM:keyno,LOCK:lock)
-                &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-            else
-                reads(a_channel,employee,,REVERSE,LOCK:lock)
-                &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-        end
+        .ifdef TAG_VALUE
+        ;TODO: Needs implementing!
+        if (^passed(a_errtxt))
+            a_errtxt = "Read last with a tag is not supported yet!"
+        freturn IO_FATAL
         .else
-        read(a_channel,employee,^LAST, KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        read(a_channel,employee,^LAST, KEYNUM:keyno,LOCK:lock)  	 [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,employee)
@@ -165,9 +163,6 @@ readLastTag,    read(a_channel,employee,^LAST,KEYNUM:keyno,LOCK:lock)
 
     (IO_CREATE),
     begin
-        .ifdef TAG_FIELD
-        employee.TAG_FIELD = TAG_VALUE
-        .endc
         ;;Make sure zero decimals contain zeros not spaces
         if (!employee.emp_id)
             clear employee.emp_id
@@ -183,37 +178,29 @@ readLastTag,    read(a_channel,employee,^LAST,KEYNUM:keyno,LOCK:lock)
             clear employee.emp_paid
         if (!employee.emp_home_ok)
             clear employee.emp_home_ok
-		;;Populate the replication key field with a unique value
-		employee.replication_key = %datetime
-		;;Store the new record
-        store(a_channel,employee)
-        &   [$ERR_NODUPS=duplicateKey]
-        xcall replicate(REPLICATION_INSTRUCTION.CREATE_ROW,
-        &   'EMPLOYEE',employee.replication_key)
-    end
-
-    (IO_DELETE),
-    begin
-        delete(a_channel)
-        &   [$ERR_NOCURR=noCurrentRecord]
-        xcall ChannelCacheRetrieve(a_channel,tmp_employee)
-        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ROW,
-        &   'EMPLOYEE',tmp_employee.replication_key)
+        ;;Populate the replication key field with a unique value
+        employee.replication_key = %datetime
+        ;;Store the new record
+        store(a_channel,employee) [$ERR_NODUPS=duplicateKey]
+        xcall replicate(REPLICATION_INSTRUCTION.CREATE_ROW,"EMPLOYEE",employee.replication_key)
     end
 
     (IO_UPDATE),
     begin
-        write(a_channel,employee)
-        &   [$ERR_NOCURR=noCurrentRecord]
+        write(a_channel,employee) [$ERR_NOCURR=noCurrentRecord]
         if (%ChannelCacheCompare(a_channel,employee))
-            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,
-            &   'EMPLOYEE',employee.replication_key)
+            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"EMPLOYEE",employee.replication_key)
+    end
+
+    (IO_DELETE),
+    begin
+        delete(a_channel) [$ERR_NOCURR=noCurrentRecord]
+        xcall ChannelCacheRetrieve(a_channel,tmp_employee)
+        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ROW,"EMPLOYEE",tmp_employee.replication_key)
     end
 
     (IO_UNLOCK),
-    begin
         unlock a_channel
-    end
 
     (IO_CLOSE),
     begin
@@ -222,37 +209,21 @@ readLastTag,    read(a_channel,employee,^LAST,KEYNUM:keyno,LOCK:lock)
             close a_channel
             clear a_channel
         end
-        end
+    end
 
     (IO_READ_SQL),
-    begin
-        read(a_channel,employee,keyval(1:keylen),KEYNUM:"REPLICATION_KEY")
-        &   [$ERR_EOF=endOfFile,$ERR_KEYNOT=keyNotFound]
-    end
+        read(a_channel,employee,keyval(1:keylen),KEYNUM:"REPLICATION_KEY") [$ERR_EOF=endOfFile,$ERR_KEYNOT=keyNotFound]
 
     (),
     begin
         if (^passed(a_errtxt))
             a_errtxt = "Invalid file access mode"
+        freturn IO_FATAL
     end
 
     endusing
 
     offerror
-
-    ;;If we have a tag, chek it here
-    .ifdef TAG_FIELD
-    if (^passed(employee))
-    begin
-        if (^a(employee.TAG_FIELD)!=TAG_VALUE)
-        begin
-            if (!^passed(a_lock) || (^passed(a_lock) && !a_lock))
-                if (a_channel && %chopen(a_channel))
-                    unlock a_channel
-            freturn IO_EOF
-        end
-    end
-    .endc
 
     if (!^passed(a_lock) || (^passed(a_lock) && !a_lock))
         if (a_channel && %chopen(a_channel))

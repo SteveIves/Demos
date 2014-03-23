@@ -4,14 +4,14 @@
 <PROVIDE_FILE>ChannelCache.dbl</PROVIDE_FILE>
 ;//*****************************************************************************
 ;//
-;// Title:        SynIOReplicate.tpl
+;// Title:       SynIOReplicate.tpl
 ;//
-;// Description:  This template generates a Synergy function which performs
-;//               file IO for a specific structure / file defined in repository.
+;// Description: This template generates a Synergy function which performs
+;//              file IO for a specific structure / file defined in repository.
 ;//
-;// Author:       Richard Morris, Synergex Professional Services Group
+;// Author:      Steve Ives, Synergex Professional Services Group
 ;//
-;// Copyright   © 2009 Synergex International Corporation.  All rights reserved.
+;// Copyright    ©2009 Synergex International Corporation.  All rights reserved.
 ;//
 ;// WARNING:    All content constituting or related to this code ("Code") is the
 ;//             property of Synergex International Corporation ("Synergex") and
@@ -55,9 +55,9 @@ function <structure_noalias>_io ,^val
 
     required in    a_mode       ,n  ;;Access type
     required inout a_channel    ,n  ;;Channel
-    required in    a_key        ,a  ;;Key value
-    required in    a_keynum     ,n  ;;Key number
-    .include "<STRUCTURE_NOALIAS>" repository, required inout group="<structure_noalias>"
+    optional in    a_key        ,a  ;;Key value
+    optional in    a_keynum     ,n  ;;Key number
+    .include "<STRUCTURE_NOALIAS>" repository, optional inout group="<structure_noalias>"
     optional in    a_lock       ,n  ;;If passed and TRUE, lock record
     optional in    a_partial    ,n  ;;Do a partial key lookup
     optional out   a_errtxt     ,a  ;;Returned error text
@@ -77,6 +77,14 @@ function <structure_noalias>_io ,^val
         keyval              ,a255   ;;Hold original key
         .include "<STRUCTURE_NOALIAS>" repository, group="tmp_<structure_noalias>"
     endrecord
+
+    <TAG_LOOP>
+    <IF FIRST_TAG>
+    .define TAG_VALUE "<TAGLOOP_TAG_VALUE>"
+    .define TAG_MATCH <structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>
+    .define TAG_NO_MATCH !(<structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>)
+    </IF FIRST_TAG>
+    </TAG_LOOP>
 
 proc
 
@@ -118,38 +126,32 @@ proc
     using a_mode select
 
     (IO_OPEN_INP),
-    begin
-        open(a_channel=%syn_freechn,i:i,"<FILE_NAME>")
-        &   [ERR=openError]
-    end
+        open(a_channel=0,i:i,"<FILE_NAME>") [ERR=openError]
 
     (IO_OPEN_UPD),
     begin
-        open(a_channel=%syn_freechn,u:i,"<FILE_NAME>")
-        &   [ERR=openError]
+        open(a_channel=0,u:i,"<FILE_NAME>") [ERR=openError]
         xcall ChannelCacheInit(a_channel)
     end
 
     (IO_FIND),
-    begin
-        find(a_channel,,keyval(1:keylen),KEYNUM:keyno)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-    end
+        find(a_channel,,keyval(1:keylen),KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
 
     (IO_FIND_FIRST),
     begin
-        find(a_channel,,^FIRST,KEYNUM:keyno)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .else
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .endc
     end
 
     (IO_READ_FIRST),
     begin
-        .ifdef TAG_FIELD
-        read(a_channel,<structure_name>,TAG_VALUE,KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .else
-        read(a_channel,<structure_name>,^FIRST,KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,<structure_name>)
@@ -157,45 +159,48 @@ proc
 
     (IO_READ),
     begin
-        read(a_channel,<structure_name>,keyval(1:keylen),KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        read(a_channel,<structure_name>,keyval(1:keylen),KEYNUM:keyno,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,<structure_name>)
     end
 
     (IO_READ_NEXT),
     begin
-        reads(a_channel,<structure_name>,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        reads(a_channel,<structure_name>,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        if (TAG_NO_MATCH)
+        begin
+            unlock a_channel
+            goto endOfFile
+        end
+        .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,<structure_name>)
     end
 
     (IO_READ_PREV),
     begin
-        reads(a_channel, <structure_name>,,REVERSE,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        reads(a_channel, <structure_name>,,REVERSE,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        if (TAG_NO_MATCH)
+        begin
+            unlock a_channel
+            goto endOfFile
+        end
+        .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,<structure_name>)
     end
 
     (IO_READ_LAST),
     begin
-        .ifdef TAG_FIELD
-        begin
-            read(a_channel,<structure_name>,TAG_ENDVALUE,KEYNUM:keyno,LOCK:lock)
-            &   [$ERR_EOF=readLastTag,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=readLastTag]
-            ;;Now read the perious one!
-            if (FALSE) then
-readLastTag,    read(a_channel,<structure_name>,^LAST,KEYNUM:keyno,LOCK:lock)
-                &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-            else
-                reads(a_channel,<structure_name>,,REVERSE,LOCK:lock)
-                &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-        end
+        .ifdef TAG_VALUE
+        ;TODO: Needs implementing!
+        if (^passed(a_errtxt))
+            a_errtxt = "Read last with a tag is not supported yet!"
+        freturn IO_FATAL
         .else
-        read(a_channel,<structure_name>,^LAST, KEYNUM:keyno,LOCK:lock)
-        &   [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        read(a_channel,<structure_name>,^LAST, KEYNUM:keyno,LOCK:lock)  	 [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
         .endc
         if (lock==Q_AUTO_LOCK)
             xcall ChannelCacheUpdate(a_channel,<structure_name>)
@@ -203,9 +208,6 @@ readLastTag,    read(a_channel,<structure_name>,^LAST,KEYNUM:keyno,LOCK:lock)
 
     (IO_CREATE),
     begin
-        .ifdef TAG_FIELD
-        <structure_name>.TAG_FIELD = TAG_VALUE
-        .endc
         ;;Make sure zero decimals contain zeros not spaces
         <FIELD_LOOP>
         <IF DECIMAL>
@@ -221,37 +223,29 @@ readLastTag,    read(a_channel,<structure_name>,^LAST,KEYNUM:keyno,LOCK:lock)
             clear <field_path>
         </IF>
         </FIELD_LOOP>
-		;;Populate the replication key field with a unique value
-		<structure_name>.replication_key = %datetime
-		;;Store the new record
-        store(a_channel,<structure_name>)
-        &   [$ERR_NODUPS=duplicateKey]
-        xcall replicate(REPLICATION_INSTRUCTION.CREATE_ROW,
-        &   '<STRUCTURE_NAME>',<structure_name>.replication_key)
-    end
-
-    (IO_DELETE),
-    begin
-        delete(a_channel)
-        &   [$ERR_NOCURR=noCurrentRecord]
-        xcall ChannelCacheRetrieve(a_channel,tmp_<structure_name>)
-        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ROW,
-        &   '<STRUCTURE_NAME>',tmp_<structure_name>.replication_key)
+        ;;Populate the replication key field with a unique value
+        <structure_name>.replication_key = %datetime
+        ;;Store the new record
+        store(a_channel,<structure_name>) [$ERR_NODUPS=duplicateKey]
+        xcall replicate(REPLICATION_INSTRUCTION.CREATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
     end
 
     (IO_UPDATE),
     begin
-        write(a_channel,<structure_name>)
-        &   [$ERR_NOCURR=noCurrentRecord]
+        write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
         if (%ChannelCacheCompare(a_channel,<structure_name>))
-            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,
-            &   '<STRUCTURE_NAME>',<structure_name>.replication_key)
+            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
+    end
+
+    (IO_DELETE),
+    begin
+        delete(a_channel) [$ERR_NOCURR=noCurrentRecord]
+        xcall ChannelCacheRetrieve(a_channel,tmp_<structure_name>)
+        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ROW,"<STRUCTURE_NAME>",tmp_<structure_name>.replication_key)
     end
 
     (IO_UNLOCK),
-    begin
         unlock a_channel
-    end
 
     (IO_CLOSE),
     begin
@@ -260,37 +254,21 @@ readLastTag,    read(a_channel,<structure_name>,^LAST,KEYNUM:keyno,LOCK:lock)
             close a_channel
             clear a_channel
         end
-        end
+    end
 
     (IO_READ_SQL),
-    begin
-        read(a_channel,<structure_name>,keyval(1:keylen),KEYNUM:"REPLICATION_KEY")
-        &   [$ERR_EOF=endOfFile,$ERR_KEYNOT=keyNotFound]
-    end
+        read(a_channel,<structure_name>,keyval(1:keylen),KEYNUM:"REPLICATION_KEY") [$ERR_EOF=endOfFile,$ERR_KEYNOT=keyNotFound]
 
     (),
     begin
         if (^passed(a_errtxt))
             a_errtxt = "Invalid file access mode"
+        freturn IO_FATAL
     end
 
     endusing
 
     offerror
-
-    ;;If we have a tag, chek it here
-    .ifdef TAG_FIELD
-    if (^passed(<structure_name>))
-    begin
-        if (^a(<structure_name>.TAG_FIELD)!=TAG_VALUE)
-        begin
-            if (!^passed(a_lock) || (^passed(a_lock) && !a_lock))
-                if (a_channel && %chopen(a_channel))
-                    unlock a_channel
-            freturn IO_EOF
-        end
-    end
-    .endc
 
     if (!^passed(a_lock) || (^passed(a_lock) && !a_lock))
         if (a_channel && %chopen(a_channel))

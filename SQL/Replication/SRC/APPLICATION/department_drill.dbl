@@ -22,20 +22,15 @@
 ;
 ;*******************************************************************************
 ;
-.subroutine department_drill ,reentrant
-
-    ;Drill method parameters
+subroutine department_drill ,reentrant
     .include "WND:inpinf.def"
     a_inprec        ,a
+	endparams
 
-    ;Method data parameters
+	.include "WND:tools.def"
+	.include "DEPARTMENT" repository, stack record="department"
 
-    ;End of parameters
-
-.include "WND:tools.def"
-.include "DEPARTMENT" repository, stack record="department"
-
-.proc
+proc
 
     clear department
 
@@ -46,5 +41,5 @@
 
     xreturn
 
-.end
+endsubroutine
 

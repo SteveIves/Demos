@@ -22,49 +22,26 @@
 ;               times.  Posession of this code, or any modified version of this
 ;               code, indicates your acceptance of these terms.
 ;
-; $Revision: 1 $
-;
-; $Date: 2012-02-15 23:57:38-06:00 $
-;
 ;*******************************************************************************
-;
-; Revision log:
-;
-; $History: /Demos/SQL/Replication/SRC/APPLICATION/position_window.dbl $
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2012-02-15   Time: 23:57:38-06:00 
-;; Updated in: /Demos/SQL/Replication/SRC/APPLICATION 
-;; 
-;; ****************** Version 1 ****************** 
-;; User: Steve Ives   Date: 2009-03-01   Time: 19:25:58-08:00 
-;; Updated in: /Development/Demos/Sql/Replication/SRC/TKLIB 
-;
-;*****************  Version 2  *****************
-;User: Stevei       Date: 4/03/07    Time: 10:08a
-;Updated in $/Synergy Projects/Code Generator/SUB
-;Updated file header
-;
-;*******************************************************************************
-;
-.subroutine position_window
 
+subroutine position_window
     a_object_id			,n   ;ID of window to place
     a_islist			,n   ;Window to place is a list
     a_relative_to_id	,n   ;Position window relative to this window
     a_row_offset		,n   ;Row offset from relative window
     a_col_offset		,n   ;Column offset from relative window
+    endparams
 
-.include "WND:tools.def"
-.include "WND:windows.def"
+	.include "WND:tools.def"
+	.include "WND:windows.def"
 
-.align
-stack record
-    wndid,          i4
-    row,            i4
-    col,            i4
+	stack record
+		wndid,          i4
+		row,            i4
+		col,            i4
+	endrecord
 
-.proc
+proc
 
     if (^passed(a_relative_to_id)&&a_relative_to_id) then
     begin
@@ -109,5 +86,5 @@ stack record
 
     xreturn
 
-.end
+endsubroutine
 

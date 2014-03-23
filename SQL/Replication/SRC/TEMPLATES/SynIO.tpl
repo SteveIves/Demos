@@ -117,13 +117,13 @@ proc
 
     (IO_OPEN_INP),
     begin
-        open(a_channel=%syn_freechn,i:i,"<FILE_NAME>")
+        open(a_channel=0,i:i,"<FILE_NAME>")
         &   [ERR=openError]
     end
 
     (IO_OPEN_UPD),
     begin
-        open(a_channel=%syn_freechn,u:i,"<FILE_NAME>")
+        open(a_channel=0,u:i,"<FILE_NAME>")
         &   [ERR=openError]
     end
 
@@ -360,11 +360,5 @@ openError,
 
     freturn IO_FATAL
 
-endfunction
-
-function <structure_noalias>_length ,^val
-    endparams
-proc
-    freturn <STRUCTURE_SIZE>
 endfunction
 

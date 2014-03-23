@@ -1,0 +1,113 @@
+
+.include "REPLICATION_INSTRUCTION" repository, enum, end
+
+subroutine ReplicatorMenuItem
+	required in menuItem, a
+	endparams
+	.include "REPLICATION" repository, record="replication"
+proc
+
+	init replication
+	replication.transaction_id = %datetime
+
+	using menuItem select
+	("R_CREATE"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.CREATE_TABLE
+		replication.structure_name = "EMPLOYEE"
+		call writeInstruction
+	end
+	("R_LOAD"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE
+		replication.structure_name = "EMPLOYEE"
+		call writeInstruction
+	end
+	("R_DELETE"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.DELETE_TABLE
+		replication.structure_name = "EMPLOYEE"
+		call writeInstruction
+	end
+	("R_RELOAD"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.LOAD_TABLE
+		replication.structure_name = "EMPLOYEE"
+		call writeInstruction
+	end
+	("R_TRUNCATE"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.DELETE_ALL_ROWS
+		replication.structure_name = "EMPLOYEE"
+		call writeInstruction
+	end
+	("R_STOP"),
+	begin
+		replication.instruction = (i)REPLICATION_INSTRUCTION.SHUTDOWN
+		call writeInstruction
+	end
+	("R_START"),
+	begin
+		data sts, i4
+		xcall setlog("REPLICATOR_INTERVAL","5",sts)
+		xcall setlog("REPLICATOR_FULL_LOG","YES",sts)
+		xcall setlog("REPLICATOR_LOG_KEYS","YES",sts)
+		xcall spawn("dbr EXE:replicator.dbr",D_NOWINDOW|D_NOWAIT)
+	end
+	("R_CLEAR"),
+	begin
+		data tmpch, i4
+		try 
+		begin
+			open(tmpch=0,u:i,"DAT:REPLICATION.ISM")
+			repeat
+			begin
+				reads(tmpch,replication)
+				delete(tmpch)
+			end
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			nop
+		end
+		catch (ex)
+		begin
+			xcall u_message("Failed to clear replicator instructions!")
+		end
+		finally
+		begin
+			if (tmpch&&%chopen(tmpch))
+				close tmpch
+		end
+		endtry
+	end
+	endusing
+	
+	xreturn
+	
+writeInstruction,
+	
+	begin
+		data ch, i4, 0
+		try 
+		begin
+			open(ch,u:i,"DAT:REPLICATION.ISM")
+			store(ch,replication)
+		end
+		catch (ex)
+		begin
+			xcall u_message("Failed to write replicator instruction! Error was " + ex.Message)
+		end
+		finally
+		begin
+			if (ch&&%chopen(ch))
+				close ch
+		end
+		endtry
+		close(ch)
+	end
+
+	return
+	
+endsubroutine
+
