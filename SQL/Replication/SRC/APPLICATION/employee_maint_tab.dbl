@@ -148,7 +148,6 @@ subroutine employee_maint_tab
     optional in a_no_amend      ,n  ;Suppress "Amend" (view obly)
     optional in a_no_create     ,n  ;Suppress "New" button
     optional in a_no_delete     ,n  ;Suppress "Delete" button
-    optional in a_no_help       ,n  ;Suppress "Help" button
 	endparams
 
 	.include "WND:tools.def"
@@ -202,7 +201,6 @@ subroutine employee_maint_tab
 		no_amend        ,i4     ;Suppress "Amend" (view only)
 		no_create       ,i4     ;Suppress "New" button
 		no_delete       ,i4     ;Suppress "Delete" button
-		no_help         ,i4     ;Suppress "Help" button
 
 		wndname         ,a15    ;Window name
 		setname         ,a5     ;Name of current input set
@@ -247,9 +245,6 @@ proc
 
         if (^passed(a_no_delete)&&a_no_delete)
             no_delete = TRUE
-
-        if (^passed(a_no_help)&&a_no_help)
-            no_help = TRUE
 
         if (^passed(a_no_amend)&&a_no_amend)
         begin
@@ -383,19 +378,16 @@ proc
 
             xcall ts_tabset(DTS_BUTTON,idt_search,"SEARCH",DSB_TEXT,"Search")
 
+			if (!no_create)
+				xcall ts_tabset(DTS_BUTTON,idt_search,"CREATE",DSB_TEXT,"Create")
+
             if (no_amend) then
                 xcall ts_tabset(DTS_BUTTON,idt_search,"AMEND", DSB_TEXT,"View")
             else
                 xcall ts_tabset(DTS_BUTTON,idt_search,"AMEND", DSB_TEXT,"Amend")
 
-            if (!no_create)
-                xcall ts_tabset(DTS_BUTTON,idt_search,"CREATE",DSB_TEXT,"Create")
-
             if (!no_delete)
                 xcall ts_tabset(DTS_BUTTON,idt_search,"DELETE",DSB_TEXT,"Delete")
-
-            if (!no_help)
-                xcall ts_tabset(DTS_BUTTON,idt_search,"O_HELP",DSB_TEXT,"Help")
 
             xcall ts_tabset(DTS_BUTTON,idt_search,"CANCEL",DSB_TEXT,"Close")
             xcall ts_tabset(DTS_BUTTONSET,idt_search,,,DSB_END,"SEARCH")
@@ -517,7 +509,6 @@ proc
             ;Add buttons
             xcall ts_tabset(DTS_BUTTON,idt_maint,"OK",DSB_TEXT,"OK")
             xcall ts_tabset(DTS_BUTTON,idt_maint,"CANCEL",DSB_TEXT,"Cancel")
-            xcall ts_tabset(DTS_BUTTON,idt_maint,"O_HELP",DSB_TEXT,"Help")
             xcall ts_tabset(DTS_BUTTONSET,idt_maint,,,DSB_END)
 
             ;Set title

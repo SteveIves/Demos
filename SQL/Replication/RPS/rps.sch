@@ -5,7 +5,7 @@
 ;                 : D:\Dev\Demos\SQL\Replication\RPS\rpstext.ism
 ;                 : Version 8.1.7
 ;
-;  GENERATED      : 22-MAR-2014, 16:38:26
+;  GENERATED      : 22-MAR-2014, 19:46:59
 ;                 : Version 10.1.1c
 ;  EXPORT OPTIONS : [ALL] 
  
@@ -174,8 +174,8 @@ Structure REPLICATION   DBL ISAM
 Field TRANSACTION_ID   Type ALPHA   Size 20
    Description "Unique transaction ID (timestamp)"
  
-Field INSTRUCTION   Type DECIMAL   Size 2
-   Description "Replicator instruction"
+Field ACTION   Type DECIMAL   Size 2
+   Description "Replicator action"
  
 Field STRUCTURE_NAME   Type ALPHA   Size 32
    Description "the SDMS structure name"

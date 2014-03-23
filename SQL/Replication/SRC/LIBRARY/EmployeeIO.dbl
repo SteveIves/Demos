@@ -133,34 +133,6 @@ proc
             xcall ChannelCacheUpdate(a_channel,employee)
     end
 
-    (IO_READ_PREV),
-    begin
-        reads(a_channel, employee,,REVERSE,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-        .ifdef TAG_VALUE
-        if (TAG_NO_MATCH)
-        begin
-            unlock a_channel
-            goto endOfFile
-        end
-        .endc
-        if (lock==Q_AUTO_LOCK)
-            xcall ChannelCacheUpdate(a_channel,employee)
-    end
-
-    (IO_READ_LAST),
-    begin
-        .ifdef TAG_VALUE
-        ;TODO: Needs implementing!
-        if (^passed(a_errtxt))
-            a_errtxt = "Read last with a tag is not supported yet!"
-        freturn IO_FATAL
-        .else
-        read(a_channel,employee,^LAST, KEYNUM:keyno,LOCK:lock)  	 [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-        .endc
-        if (lock==Q_AUTO_LOCK)
-            xcall ChannelCacheUpdate(a_channel,employee)
-    end
-
     (IO_CREATE),
     begin
         ;;Make sure zero decimals contain zeros not spaces
@@ -296,23 +268,13 @@ fatalIoError,
 
     if (^passed(a_errtxt))
     begin
-        call getErrorText
+		xcall error(err,line)
+		xcall ertxt(err,errmsg)
+		xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
         a_errtxt = message
     end
 
     freturn IO_FATAL
-
-;;-----------------------------------------------------------------------------
-
-getErrorText,
-
-    xcall error(err,line)
-    xcall ertxt(err,errmsg)
-
-    xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
-
-    return
-
 
 ;;-----------------------------------------------------------------------------
 

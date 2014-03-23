@@ -4,46 +4,46 @@
 subroutine ReplicatorMenuItem
 	required in menuItem, a
 	endparams
-	.include "REPLICATION" repository, record="replication"
+	.include "REPLICATION" repository, record="instruction"
 proc
 
-	init replication
-	replication.transaction_id = %datetime
+	init instruction
+	instruction.transaction_id = %datetime
 
 	using menuItem select
 	("R_CREATE"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.CREATE_TABLE
-		replication.structure_name = "EMPLOYEE"
+		instruction.action = (i)REPLICATION_INSTRUCTION.CREATE_TABLE
+		instruction.structure_name = "EMPLOYEE"
 		call writeInstruction
 	end
 	("R_LOAD"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE
-		replication.structure_name = "EMPLOYEE"
+		instruction.action = (i)REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE
+		instruction.structure_name = "EMPLOYEE"
 		call writeInstruction
 	end
 	("R_DELETE"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.DELETE_TABLE
-		replication.structure_name = "EMPLOYEE"
+		instruction.action = (i)REPLICATION_INSTRUCTION.DELETE_TABLE
+		instruction.structure_name = "EMPLOYEE"
 		call writeInstruction
 	end
 	("R_RELOAD"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.LOAD_TABLE
-		replication.structure_name = "EMPLOYEE"
+		instruction.action = (i)REPLICATION_INSTRUCTION.LOAD_TABLE
+		instruction.structure_name = "EMPLOYEE"
 		call writeInstruction
 	end
 	("R_TRUNCATE"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.DELETE_ALL_ROWS
-		replication.structure_name = "EMPLOYEE"
+		instruction.action = (i)REPLICATION_INSTRUCTION.DELETE_ALL_ROWS
+		instruction.structure_name = "EMPLOYEE"
 		call writeInstruction
 	end
 	("R_STOP"),
 	begin
-		replication.instruction = (i)REPLICATION_INSTRUCTION.SHUTDOWN
+		instruction.action = (i)REPLICATION_INSTRUCTION.SHUTDOWN
 		call writeInstruction
 	end
 	("R_START"),
@@ -62,7 +62,7 @@ proc
 			open(tmpch=0,u:i,"DAT:REPLICATION.ISM")
 			repeat
 			begin
-				reads(tmpch,replication)
+				reads(tmpch,instruction)
 				delete(tmpch)
 			end
 		end
@@ -92,7 +92,7 @@ writeInstruction,
 		try 
 		begin
 			open(ch,u:i,"DAT:REPLICATION.ISM")
-			store(ch,replication)
+			store(ch,instruction)
 		end
 		catch (ex)
 		begin

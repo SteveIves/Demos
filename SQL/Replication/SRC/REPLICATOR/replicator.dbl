@@ -16,24 +16,12 @@
 
 main Replicator
 
-    ;Local system using the ODBC driver and a DSN
-    ;                             user              password            dsn            machine
-    ;.define DB_CONSTR "VTX12_ODBC:ReplicationServer/ReplicationPassword/SqlReplication@LOCALHOST"
-
-    ;Local system using SQL Native Driver (SQL Server 2008)
-    ;                                   user              password            dbname         machine
-    ;.define DB_CONSTR "VTX12_SQLNATIVE:ReplicationServer/ReplicationPassword/SqlReplication/LOCALHOST"
-    ;.define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.\\SQLEXPRESS///Trusted_connection=yes"
 	.define DB_CONSTR "VTX12_SQLNATIVE://SqlReplication/.///Trusted_connection=yes"
-    ;
-    ;Steves PC from Steves Personal Alpha, using the ODBC driver and a DSN
-    ;                       user              password            dsn            machine
-    ;.define DB_CONSTR "net:ReplicationServer/ReplicationPassword/SqlReplication@192.168.128.1!VTX12_ODBC"
 
     .include "CONNECTDIR:ssql.def"
     .include "DBLDIR:namspc.def"
     .include "GENSRC:StructureIO.def"
-    .include "REPLICATION" repository, record="transaction", end
+    .include "REPLICATION" repository, record="instruction", end
 
     .define D_MAX_CUR       20
     .define D_MAX_COL       200
@@ -49,7 +37,7 @@ main Replicator
     global common
         db                  ,i4                 ;;Database channel
         nsid                ,i4                 ;;Name space id
-        tch                 ,i4                 ;;Transaction file channel
+        tch                 ,i4                 ;;Instruction file channel
         logch               ,i4                 ;;Log file channel
         inserts             ,i4                 ;;Number of create operations completed
         updates             ,i4                 ;;Number of update operations completed
@@ -114,49 +102,53 @@ proc
         xcall getlog("REPLICATOR_LOGFILE",databuffer,length)
         if (length) then
         begin
-            ;;Yes - use it
+            ;;Yes, use it
             log_file = databuffer
         end
         else
         begin
-            ;;No - create one in the current directory
+            ;;No, create one in the current directory
             log_file = "REPLICATOR.LOG"
         end
         log_mode = "o:s"
     end
 
+	;;Open the log file
+	begin
+		open(logch=%syn_freechn,log_mode,log_file) [ERR=logerr]
+		exit
+logerr, xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Replicator failed to open log file " + %atrim(log_file)+". Error number " + %string(%ernum))
+		error=1
+	end
+
+	;;Set the sleep time between processing runs
     sleep_time = D_SLEEP_TIME
     xcall getlog("REPLICATOR_INTERVAL",databuffer,length)
     if ((length>0)&&%IsNumeric(%atrim(databuffer)))
         sleep_time = %integer(%atrim(databuffer))
 
+	;;Set the logging level
     xcall getlog("REPLICATOR_FULL_LOG",databuffer,length)
     if ((length>0)&&(databuffer.eq."YES"))
         fullLogging = 1
 
+	;;Should we log keys?
     xcall getlog("REPLICATOR_LOG_KEYS",databuffer,length)
     if ((length>0)&&(databuffer.eq."YES"))
         logKeys = true
 
-    ;;Open the log file
-    begin
-        open(logch=%syn_freechn,log_mode,log_file) [ERR=logerr]
-        exit
-logerr, xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Replicator failed to open log file " + %atrim(log_file)+". Error number " + %string(%ernum))
-        error=1
-    end
-
+	;;Report configuration
     if (!error)
     begin
         log("------------------------------------------------------------")
         log("SQL Replicator")
         log("")
-        log("Transaction file : " + D_TRANS_FILE)
+        log("Instruction file : " + D_TRANS_FILE)
         log("Sleep interval   : " + %string(sleep_time) + " seconds.")
         log("")
     end
 
-    ;;Open the transaction file
+    ;;Open the instructions file
     if (!error)
     begin
         open(tch=%syn_freechn,U:I,D_TRANS_FILE) [ERR=tferr]
@@ -184,14 +176,13 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
     ;;Connect to the database
     if (!error)
     begin
-        debuglog("Connecting to database, connect string is:")
-        debuglog(DB_CONSTR)
+        debuglog("Connecting to database")
         if (%ssc_connect(db,DB_CONSTR)==SSQL_FAILURE)
         begin
             xcall ssc_getemsg(db,dberrtxt,length)
-            log("ERROR: Failed to connect to SQL Server")
-            log("Connect string: " + DB_CONSTR)
-            log("Error message : " + dberrtxt(1,length))
+            log("ERROR: Failed to connect to database")
+            log(" -     Connect string: " + DB_CONSTR)
+            log(" -     Error message : " + dberrtxt(1,length))
             error=1
         end
     end
@@ -202,15 +193,15 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
         ;;Create a namespace to record information about Synergy data files that we have opened.
         nsid = %nspc_open(,%size(structure_data))
 
-        log("Ready to process transactions...")
+        log("Ready to process instructions...")
         log("------------------------------------------------------------")
 
         ;;Main loop
         repeat
         begin
 
-            ;;Check for outstanding transactions
-            call GetTransaction
+            ;;Check for outstanding instructions
+            call GetInstruction
 
             if (eof) then
             begin
@@ -224,9 +215,9 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
                 ;;(create/update/delete) then skip the file and
                 ;;table checks and go straight to the code
                 if (
-                &   (   transaction.instruction==(i)REPLICATION_INSTRUCTION.CREATE_ROW)
-                &   || (transaction.instruction==(i)REPLICATION_INSTRUCTION.UPDATE_ROW)
-                &   || (transaction.instruction==(i)REPLICATION_INSTRUCTION.DELETE_ROW)
+                &   (   instruction.action==(i)REPLICATION_INSTRUCTION.CREATE_ROW)
+                &   || (instruction.action==(i)REPLICATION_INSTRUCTION.UPDATE_ROW)
+                &   || (instruction.action==(i)REPLICATION_INSTRUCTION.DELETE_ROW)
                 &   )
                 begin
                     ;;Check if we already have the file open
@@ -241,9 +232,9 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
                     end
                 end
 
-                ;;Execute the transaction
+                ;;Execute the instruction
 
-                using (transaction.instruction) select
+                using (instruction.action) select
 
                 ;;"Routine" processing requests
 
@@ -282,55 +273,53 @@ tferr,  log("ERROR: Failed to open " + D_TRANS_FILE)
 
                 endusing
 
-                ;;Delete the transaction file record
+                ;;Delete the instruction from the instruction file
                 delete(tch)
 
             end
 
-            ;;Go back to first record in transaction file and start over
+            ;;Go back to first record in instruction file and start over
             find(tch,,^FIRST) [ERR=notrans]
 notrans,
-
         end
-
     end
 
     ;;Close the database
     if (db)
         xcall ssc_release(db)
 
-    ;;Release the name space.
+    ;;Release the name space
     if (nsid)
         xcall nspc_close(nsid)
 
-    ;;Close the transaction file
-    if (tch)
+    ;;Close the instructions file
+    if (tch&&%chopen(tch))
         close tch
 
-    ;;If logging to tt: then pause so messages can be read
+    ;;If logging to tt: pause so messages can be read
     if (log_file == "tt:")
         sleep 10
 
-    ;;We're done
+    ;;All done
     stop
 
 ;;-----------------------------------------------------------------------------
-;; Look for a pending transaction record in the transaction file
+;; Look for a pending instruction
 ;;
-GetTransaction,
+GetInstruction,
 
     clear eof
 
     repeat
     begin
-        reads(tch,transaction,eof,LOCK:Q_AUTO_LOCK) [$err_locked=TrLocked]
-        if (!transaction)
+        reads(tch,instruction,eof,LOCK:Q_AUTO_LOCK) [$err_locked=InsLocked]
+        if (!instruction)
             nextloop
         if (0)
         begin
 eof,        eof=1
             exitloop
-TrLocked,   sleep D_ERROR_TIME
+InsLocked,  sleep D_ERROR_TIME
             nextloop
         end
         exitloop
@@ -339,13 +328,11 @@ TrLocked,   sleep D_ERROR_TIME
     return
 
 ;;-----------------------------------------------------------------------------
-;; Does this file already have an entry in the namespace?
+;; Does a file already have an entry in the namespace?
 ;;
 CheckFileTable,
 
-    if (nsptr=%nspc_find(nsid,transaction.structure_name,structure_data)) then
-        nop
-    else
+    if (!(nsptr=%nspc_find(nsid,instruction.structure_name,structure_data)))
     begin
         ;;No, open the file and make sure it worked
         call OpenFile
@@ -353,16 +340,16 @@ CheckFileTable,
             exit
 
         ;;Get the record size of the file
-        function_name = %atrim(transaction.structure_name)+"_LENGTH"
+        function_name = %atrim(instruction.structure_name)+"_LENGTH"
         onerror FunctionFail
         structure_data.structure_size = %xsubr(function_name)
         offerror
 
         ;;And save the structure name
-        structure_data.structure_name = transaction.structure_name
+        structure_data.structure_name = instruction.structure_name
 
         ;;Record the new open file in the namespace
-        nsptr=%nspc_add(nsid,transaction.structure_name,structure_data)
+        nsptr=%nspc_add(nsid,instruction.structure_name,structure_data)
     end
 
     return
@@ -372,9 +359,9 @@ CheckFileTable,
 ;;
 OpenFile,
 
-    debuglog("Opening file " + %atrim(transaction.structure_name))
+    debuglog("Opening file " + %atrim(instruction.structure_name))
 
-    function_name = %atrim(transaction.structure_name)+"_IO"
+    function_name = %atrim(instruction.structure_name)+"_IO"
     onerror FunctionFail
     status= %xsubr(function_name,IO_OPEN_INP,structure_data.structure_chan,,,,,,dberrtxt)
     offerror
@@ -392,13 +379,13 @@ OpenFile,
     return
 
 ;;-----------------------------------------------------------------------------
-;; Find out if the corresponding table exists in the SQL database
+;; Find out if a table exists in the SQL database. If not create and load it.
 ;;
 CheckTable,
 
-    debuglog("Checking if table " + %atrim(transaction.structure_name) + " exists")
+    debuglog("Checking if table " + %atrim(instruction.structure_name) + " exists")
 
-    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    function_name = %atrim(instruction.structure_name)+"_EXISTS"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -417,13 +404,13 @@ CheckTable,
     return
 
 ;;-----------------------------------------------------------------------------
-;; Create a new table in the SQL database
+;; Create and load a new table in the SQL database
 ;;
 CreateTable,
 
-    debuglog("Create table " + %atrim(transaction.structure_name))
+    debuglog("Create table " + %atrim(instruction.structure_name))
 
-    function_name = %atrim(transaction.structure_name)+"_CREATE"
+    function_name = %atrim(instruction.structure_name)+"_CREATE"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -442,9 +429,9 @@ CreateTable,
 ;;
 LoadTable,
 
-    debuglog("Load data to table " + %atrim(transaction.structure_name))
+    debuglog("Load data to table " + %atrim(instruction.structure_name))
 
-    function_name = %atrim(transaction.structure_name)+"_LOAD"
+    function_name = %atrim(instruction.structure_name)+"_LOAD"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt,,,success_count,fail_count)
     offerror
@@ -466,18 +453,18 @@ DoInsert,
 
     if (switchMode) then
     begin
-        debuglog(" - Insert row in table " + %atrim(transaction.structure_name))
+        debuglog(" - Insert row in table " + %atrim(instruction.structure_name))
         switchMode = false
     end
     else
     begin
-        debuglog("Insert row in table " + %atrim(transaction.structure_name))
+        debuglog("Insert row in table " + %atrim(instruction.structure_name))
         call ReadSynergyRecord
     end
 
     if ((status==IO_OK)&&(databuffer))
     begin
-        function_name = %atrim(transaction.structure_name) + '_INSERT_ROW'
+        function_name = %atrim(instruction.structure_name) + '_INSERT_ROW'
         onerror FunctionFail
         status = %xsubr(function_name,db,databuffer(1,structure_data.structure_size),dberrtxt)
         offerror
@@ -509,21 +496,21 @@ DoUpdate,
 
     if (switchMode) then
     begin
-        debuglog(" - Update row in table " + %atrim(transaction.structure_name))
+        debuglog(" - Update row in table " + %atrim(instruction.structure_name))
         switchMode = false
     end
     else
     begin
-        debuglog("Update row in table " + %atrim(transaction.structure_name))
+        debuglog("Update row in table " + %atrim(instruction.structure_name))
         call ReadSynergyRecord
     end
 
     ;; Check that a record was returned before calling update because the record
-    ;; may have been deleted since. If so just ignore the transaction.
+    ;; may have been deleted since. If so just ignore the instruction.
 
     if ((status==IO_OK)&&(databuffer))
     begin
-        function_name = %atrim(transaction.structure_name) + '_UPDATE_ROW'
+        function_name = %atrim(instruction.structure_name) + '_UPDATE_ROW'
         onerror FunctionFail
         status = %xsubr(function_name,db,databuffer(1,structure_data.structure_size),rows,dberrtxt)
         offerror
@@ -554,13 +541,13 @@ DoUpdate,
 ;;
 DoDelete,
 
-    debuglog("Delete row from table " + %atrim(transaction.structure_name))
+    debuglog("Delete row from table " + %atrim(instruction.structure_name))
     if (logKeys)
-        debugLog(" - Replication key: [" + transaction.structure_key + "]")
+        debugLog(" - Replication key: [" + instruction.structure_key + "]")
 
-    function_name = %atrim(transaction.structure_name) + '_DELETE_ROW'
+    function_name = %atrim(instruction.structure_name) + '_DELETE_ROW'
     onerror FunctionFail
-    status= %xsubr(function_name,db,transaction.structure_key,dberrtxt)
+    status= %xsubr(function_name,db,instruction.structure_key,dberrtxt)
     offerror
     if (status) then
 	begin
@@ -583,10 +570,10 @@ DoCreateTable,
     ;;Create a new table (only)
     ;;If the table already exists, do nothing
 
-	debuglog("Create table " + %atrim(transaction.structure_name))
+	debuglog("Create table " + %atrim(instruction.structure_name))
 
     debuglog(" - Checking if table already exists")
-    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    function_name = %atrim(instruction.structure_name)+"_EXISTS"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -596,7 +583,7 @@ DoCreateTable,
     (0),;No
     begin
         debuglog(" - Creating table")
-        function_name = %atrim(transaction.structure_name)+"_CREATE"
+        function_name = %atrim(instruction.structure_name)+"_CREATE"
         onerror FunctionFail
         status= %xsubr(function_name,db,dberrtxt)
         offerror
@@ -619,11 +606,11 @@ DoLoadTable,
     ;;Do a full load of an existing table with new data
     ;;Delete all existing data before loading new data
 
-    debuglog("Reload existing table " + %atrim(transaction.structure_name) + " exists")
+    debuglog("Reload existing table " + %atrim(instruction.structure_name) + " exists")
 
 	debuglog(" - Checking if table exists")
 
-    function_name = %atrim(transaction.structure_name)+"_EXISTS"
+    function_name = %atrim(instruction.structure_name)+"_EXISTS"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -661,9 +648,9 @@ DoCreateAndLoadTable,
 ;;
 DoDeleteAllRows,
 
-    debuglog("Deleting all rows from table " + %atrim(transaction.structure_name))
+    debuglog("Deleting all rows from table " + %atrim(instruction.structure_name))
 
-    function_name = %atrim(transaction.structure_name)+"_CLEAR"
+    function_name = %atrim(instruction.structure_name)+"_CLEAR"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -681,7 +668,7 @@ DoDeleteAllRows,
 DoDeleteTable,
 
     ;;Is the file in the file table?
-    if (nsptr=%nspc_find(nsid,transaction.structure_name,structure_data))
+    if (nsptr=%nspc_find(nsid,instruction.structure_name,structure_data))
     begin
 
         ;Yes - close the file
@@ -695,9 +682,9 @@ DoDeleteTable,
         xcall nspc_delete(nsid,nsptr)
     end
 
-    debuglog("Deleting table " + %atrim(transaction.structure_name))
+    debuglog("Deleting table " + %atrim(instruction.structure_name))
 
-    function_name = %atrim(transaction.structure_name)+"_DROP"
+    function_name = %atrim(instruction.structure_name)+"_DROP"
     onerror FunctionFail
     status= %xsubr(function_name,db,dberrtxt)
     offerror
@@ -711,16 +698,16 @@ DoDeleteTable,
 
 ;;-----------------------------------------------------------------------------
 ;; This routine reads the full record associated with the unique key retrieved
-;; from the transaction file.  It uses the special IO_READ_SQL mode, which knows
+;; from the instruction file.  It uses the special IO_READ_SQL mode, which knows
 ;; which key is the REPLICATION_KEY key for that file.
 ;;
 ReadSynergyRecord,
 
     ;;Find the master record details
-    function_name = %atrim(transaction.structure_name)+"_IO"
+    function_name = %atrim(instruction.structure_name)+"_IO"
     onerror FunctionFail
     status= %xsubr(function_name,IO_READ_SQL,structure_data.structure_chan,
-    &   transaction.structure_key,,databuffer(1,structure_data.structure_size),,,dberrtxt)
+    &   instruction.structure_key,,databuffer(1,structure_data.structure_size),,,dberrtxt)
     offerror
 
     using status select
@@ -729,7 +716,7 @@ ReadSynergyRecord,
         if (logKeys)
         begin
             primaryKey = %keyval(structure_data.structure_chan,databuffer(1,structure_data.structure_size),0)
-            debugLog(" - Replication key: [" + transaction.structure_key + "] Primary key: [" + primaryKey + "]")
+            debugLog(" - Replication key: [" + instruction.structure_key + "] Primary key: [" + primaryKey + "]")
         end
     end
     (IO_NOT_FOUND,IO_EOF),
@@ -748,9 +735,7 @@ FunctionFail,
 
     offerror
     xcall ertxt(error=%error,dberrtxt)
-    log("ERROR: Error calling %"+%atrim(function_name)
-    &   +". Error "+%string(error)+" "+%atrim(dberrtxt))
-
+    log("ERROR: Error calling %"+%atrim(function_name)+". Error "+%string(error)+" "+%atrim(dberrtxt))
     return
 
 ;;-----------------------------------------------------------------------------
@@ -759,9 +744,7 @@ FunctionFail,
 ;;
 FunctionError,
 
-    log("ERROR: %"+%atrim(function_name)+" failed with status "
-    &   +%string(status)+" "+%atrim(dberrtxt))
-
+    log("ERROR: %"+%atrim(function_name)+" failed with status "+%string(status)+" "+%atrim(dberrtxt))
     return
 
 endmain
@@ -802,7 +785,7 @@ subroutine ReplicatorShutdown
     external common
         db                  ,i4                 ;;Database channel
         nsid                ,i4                 ;;Name space id
-        tch                 ,i4                 ;;Transaction file channel
+        tch                 ,i4                 ;;Instruction file channel
         logch               ,i4                 ;;Log file channel
         inserts             ,i4                 ;;Number of create operations completed
         updates             ,i4                 ;;Number of update operations completed
@@ -861,7 +844,7 @@ proc
 
     end
 
-    ;;Close the transaction file
+    ;;Close the instructions file
     if (tch)
     begin
         close tch

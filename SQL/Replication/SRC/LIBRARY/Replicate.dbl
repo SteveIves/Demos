@@ -1,44 +1,44 @@
-;*******************************************************************************
-;
-; Title:        replicate.dbl
-;
-; Description:  Adds a new transaction record to the replication servers
-;               transaction file
-;
-; Author:       Richard Morris
-;
+;;*****************************************************************************
+;;
+;; Title:       replicate.dbl
+;;
+;; Description: Adds a new transaction record to the replication servers
+;;              transaction file
+;;
+;;*****************************************************************************
+;;
 .include "REPLICATION_INSTRUCTION" repository, enum, end
 
 subroutine replicate
 
-    required in a_transaction_type  ,REPLICATION_INSTRUCTION
-    required in a_structure         ,a  ;Structure name
-    required in a_strkey            ,a  ;Unique key of record affected
+    required in a_action    ,REPLICATION_INSTRUCTION
+    required in a_structure ,a  ;Structure name
+    required in a_strkey    ,a  ;Unique key of record affected
     endparams
 
-    .include "REPLICATION" repository, local record = "transaction"
+    .include "REPLICATION" repository, local record = "instruction"
 
     static record
-        io_transaction_chn,      i4
+        chn ,i4
     endrecord
 
 proc
 
     ;Do we need to open the replication transaction file?
-    if (!io_transaction_chn)
-        open(io_transaction_chn=0,"U:I","DAT:replication.ism")
+    if (!chn)
+        open(chn=0,"U:I","DAT:REPLICATION.ISM")
 
     ;Populate the new transaction record
-    transaction.instruction = (i)a_transaction_type
-    transaction.structure_name = a_structure
-    transaction.structure_key = a_strkey
+    instruction.action = (i)a_action
+    instruction.structure_name = a_structure
+    instruction.structure_key = a_strkey
 
-    ;And add it to the transaction log
+    ;And add it to the instructions file
     repeat
     begin
-        ;Give the transaction a unique and time sequenced primary key
-        transaction.transaction_id = %datetime
-        store(io_transaction_chn,transaction) [$ERR_NODUPS=duplicate_key]
+        ;Give the instruction a unique and time sequenced primary key
+        instruction.transaction_id = %datetime
+        store(chn,instruction) [$ERR_NODUPS=duplicate_key]
         exitloop
 duplicate_key,
         sleep 0.1
