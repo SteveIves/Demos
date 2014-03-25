@@ -34,15 +34,20 @@ proc
     instruction.structure_key = a_strkey
 
     ;And add it to the instructions file
-    repeat
-    begin
-        ;Give the instruction a unique and time sequenced primary key
-        instruction.transaction_id = %datetime
-        store(chn,instruction) [$ERR_NODUPS=duplicate_key]
-        exitloop
-duplicate_key,
-        sleep 0.1
-    end
+	repeat
+	begin
+		try 
+		begin
+			instruction.transaction_id = %datetime
+			store(chn,instruction)
+			exitloop
+		end
+		catch (ex, @DuplicateException)
+		begin
+			sleep 0.1
+		end
+		endtry
+	end
 
     xreturn
 

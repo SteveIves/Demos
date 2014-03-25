@@ -2,10 +2,10 @@
 ;;
 ;; Routine:     ChannelCacheInit
 ;;
-;; Description:	Initializes and resizes a dynamic memory array which is used to
-;;              cache the last record read and locked on a channel.  The cache
-;;              can then be used on subsequent update operations to determine
-;;              if a record has been updated since it was read and locked.
+;; Description:	Initializes and resizes an array of dynamic memory handles which
+;;              are used to cache the last record read and locked on a channel.
+;;              The cache can then be used on subsequent update operations to
+;;              determine if a record has been updated since it was read.
 ;;
 ;;*****************************************************************************
 ;;
@@ -65,14 +65,14 @@ endsubroutine
 
 ;;*****************************************************************************
 ;;
-;; Routine:     ChannelCacheCompare
+;; Routine:     ChannelCacheChanged
 ;;
 ;; Description: Compares a record to the last record stored in the channel
 ;;              cache in order to determine if the record has changed.
 ;;
 ;; Author:      Steve Ives, Synergex Professional Services Group
 ;;
-function ChannelCacheCompare, ^val
+function ChannelCacheChanged, ^val
 
 	required in a_channel	,n			;;Channel number
     required in a_data		,a			;;Data buffer
@@ -84,10 +84,7 @@ function ChannelCacheCompare, ^val
 
 proc
 
-    if (^m(cc$cache[a_channel])==a_data) then
-        freturn 0
-    else
-        freturn 1
+    freturn (a_data != ^m(cc$cache[a_channel]))
 
 endfunction
 

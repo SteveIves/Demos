@@ -204,9 +204,13 @@ proc
 
     (IO_UPDATE),
     begin
-        write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
-        if (%ChannelCacheCompare(a_channel,<structure_name>))
-            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
+		if (%ChannelCacheChanged(a_channel,<structure_name>)) then
+		begin
+			write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
+			xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
+		end
+		else
+			unlock a_channel
     end
 
     (IO_DELETE),
