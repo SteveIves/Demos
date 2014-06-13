@@ -66,77 +66,49 @@ import <NAMESPACE>
 
 namespace <NAMESPACE>
 
+	.include "CONNECTDIR:ssql.def"
+
     public class DatabaseConnection
 
-        private mConnectString, string
-        private mConnected, boolean, false
-        private mChannel, int
+		private mChannel, 		int
+        private mConnectString,	string
+        private mConnected, 	boolean, false
+
+		private mMaxCursors, 	int
+		private mMaxColumns, 	int
+		private mBufferSize, 	int
+		private mDbCursors,		int
+		
+		public method DatabaseConnection
+			endparams
+		proc
+			;;Set default values for other properties
+			mMaxCursors = 128
+			mMaxColumns = 254
+			mBufferSize = 32768
+			mDbCursors = mMaxCursors
+
+			;Initialize SQL Connection
+			begin
+				data sts, int
+				.ifdef OS_VMS
+				xcall init_ssql
+				.else
+				sts=%option(48,1)
+				.endc
+			end
+
+		endmethod
 
         public method DatabaseConnection
             required in aChannel, int
             required in aConnectString, string
-            optional in aMaxCursors, int
-            optional in aMaxColumns, int
-            optional in aBufferSize, int
-            optional in aDbCursors, int
             endparams
-            .include "CONNECTDIR:ssql.def"
-            record
-                maxCursors, int
-                maxColumns, int
-                bufferSize, int
-                dbCursors, int
-            endrecord
+			this()
         proc
-
+			;;Save away the channel and connect string
             mChannel = aChannel
             mConnectString = aConnectString
-
-            if (^passed(aMaxCursors)&&aMaxCursors) then
-                maxCursors = aMaxCursors
-            else
-                maxCursors = 128
-
-            if (^passed(aMaxColumns)&&aMaxColumns) then
-                maxColumns = aMaxColumns
-            else
-                maxColumns = 254
-
-            if (^passed(aBufferSize)&&aBufferSize) then
-                bufferSize = aBufferSize
-            else
-                bufferSize = 32768
-
-            if (^passed(aDbCursors)&&aDbCursors) then
-                dbCursors = aDbCursors
-            else
-                dbCursors = maxCursors
-
-            ;Initialize SQL Connection
-            begin
-                data sts, int
-                .ifdef OS_VMS
-                xcall init_ssql
-                .else
-                sts=%option(48,1)
-                .endc
-            end
-
-            ;Initialize a database channel
-            if (ssc_init(mChannel,maxCursors,maxColumns,bufferSize,dbCursors)==SSQL_FAILURE)
-                throw new Exception("Failed to initialize database channel")
-
-            ;Connect to the database
-            if (ssc_connect(mChannel,mConnectString)==SSQL_FAILURE)
-            begin
-                data errtxt, a512
-                data tmpLen, int
-                ssc_getemsg(mChannel,errtxt,tmpLen)
-                throw new Exception("Failed to connect to database. Error was: "+errtxt(1:tmpLen))
-            end
-
-            mConnected = true
-
         endmethod
 
         method ~DatabaseConnection
@@ -145,28 +117,113 @@ namespace <NAMESPACE>
             if (mConnected)
                 this.Disconnect()
         endmethod
+		
+		public method Connect, void
+			endparams
+		proc
 
-        public property ConnectString, string
-            method get
-            proc
-                mreturn mConnectString
-            endmethod
-        endproperty
+            ;Initialize the database channel
+            if (ssc_init(mChannel,maxCursors,maxColumns,bufferSize,dbCursors)==SSQL_FAILURE)
+                throw new ApplicationException("Failed to initialize database channel")
 
+            ;Connect to the database
+            if (ssc_connect(mChannel,mConnectString)==SSQL_FAILURE)
+            begin
+                data errtxt, a512
+                data tmpLen, int
+                ssc_getemsg(mChannel,errtxt,tmpLen)
+                throw new ApplicationException("Failed to connect to database. Error was: "+errtxt(1:tmpLen))
+            end
+
+            mConnected = true
+
+		endmethod
+		
         public method Disconnect, void
             endparams
         proc
             if (mConnected)
+			begin
                 ssc_release(mChannel)
+				mConnected = false
+			end
         endmethod
+		
+		;;Public properties
+		
+		public property Channel, int
+			method get
+			proc
+				mreturn mChannel
+			endmethod
+			method set
+			proc
+				mChannel = value
+			endmethod
+		endproperty
 
-        public property Channel, int
-            method get
-            proc
-                mreturn mChannel
-            endmethod
-        endproperty
+		public property ConnectString, string
+			method get
+			proc
+				mreturn mConnectString
+			endmethod
+			method set
+			proc
+				mConnectString = value
+			endmethod
+		endproperty
 
+		public property Connected, boolean
+			method get
+			proc
+				mreturn mConnected
+			endmethod
+		endproperty
+
+		public property MaxCursors, int
+			method get
+			proc
+				mreturn mMaxCursors
+			endmethod
+			method set
+			proc
+				mMaxCursors = value
+			endmethod
+		endproperty
+
+		public property MaxColumns, int
+			method get
+			proc
+				mreturn mMaxColumns
+			endmethod
+			method set
+			proc
+				mMaxColumns = value
+			endmethod
+		endproperty
+
+		public property BufferSize, int
+			method get
+			proc
+				mreturn mBufferSize
+			endmethod
+			method set
+			proc
+				mBufferSize = value
+			endmethod
+		endproperty
+
+		public property DbCursors, int
+			method get
+			proc
+				mreturn mDbCursors
+			endmethod
+			method set
+			proc
+				mDbCursors = value
+			endmethod
+		endproperty
+		
     endclass
 
 endnamespace
