@@ -1,0 +1,10 @@
+
+subroutine cant_delete_changed_record
+	required in description, string
+	endparams
+	.include "WND:tools.def"
+proc
+	xcall u_msgbox("The "+description+" was changed by another user.\Updated information will be displayed.",
+		&	D_MCENTER|D_MOK|D_MICONINFO,"Record Changed")
+	xreturn
+endsubroutine

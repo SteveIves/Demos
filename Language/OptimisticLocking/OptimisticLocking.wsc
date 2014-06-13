@@ -1,0 +1,44 @@
+.script
+.date_generated "07/25/2013, 21:55"
+.version "10.1.1a"
+
+.column FILE, "File"
+.entry I_OK, "Save", key(f4), disable
+.entry O_ABANDON, "Cancel", key(ESC), disable
+.entry DELETE, "Delete", key(DEL), disable
+.line
+.entry CLOSE_APP, "Exit"
+.list OK_CANCEL=I_OK,O_ABANDON
+.end
+
+.column MAINTAIN, "Maintain"
+.entry CUSMNT, "Customers"
+.end
+
+.input CUSTOMER_MAINT, 9, 57
+.title "Customer Maintenance"
+.repository_structure CUSTOMER
+.field CUSTOMER_ID, pos(2, 4), fpos(2, 17), nochange_method
+.field COMPANY, pos(4, 4), fpos(4, 17)
+.field STREET, pos(6, 4), fpos(6, 17)
+.field CITY, pos(7, 4), fpos(7, 17)
+.field STATE, pos(8, 4), fpos(8, 17)
+.field ZIP, pos(8, 28), fpos(8, 37)
+.button I_OK, text("OK")
+.button O_ABANDON, text("Cancel")
+.button DELETE, text("Delete")
+.button_set end
+.set ALL, CUSTOMER, CUSTOMER_ID, COMPANY, STREET, CITY, STATE, ZIP
+.set KEY, CUSTOMER, CUSTOMER_ID
+.set DATA, CUSTOMER, COMPANY, STREET, CITY, STATE, ZIP
+.end
+
+.input CUSTOMER_LIST, 1, 67
+.border on, dragbar(on)
+.repository_structure CUSTOMER
+.field CUSTOMER_ID, noprompt, fpos(1, 1), nochange_method, -
+     nodrill_method
+.field COMPANY, noprompt, fpos(1, 8)
+.field CITY, noprompt, fpos(1, 39)
+.field STATE, noprompt, fpos(1, 65)
+.end

@@ -1,0 +1,14 @@
+
+function ask_delete, boolean
+	required in description, string
+	endparams
+	.include "WND:tools.def"
+proc
+	using %u_msgbox("Would you like to delete this "+description+"?",
+		&	D_MCENTER|D_MYESNO|D_MICONQUESTION|D_MDEFBUTTON2,"Confirm Delete") select
+	(D_MIDYES),
+		freturn true
+	(),
+		freturn false
+	endusing
+endfunction

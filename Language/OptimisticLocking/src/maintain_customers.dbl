@@ -1,0 +1,262 @@
+
+subroutine maintain_customers
+	endparams
+
+	.include "WND:tools.def"
+	.include "SRC:system.def"
+
+	record 
+		inp_customer		,i4
+		ch_customer			,i4
+		amendMode			,boolean
+		createMode			,boolean
+		editChangedRecord	,boolean
+		customer			,strCustomer
+		save_customer_id	,d^size(customer.customer_id)
+		grfa				,a10
+	endrecord
+	
+proc
+	
+	xcall e_enter
+
+	xcall m_column(D_REMOVE,D_LOCAL)
+	xcall e_state(D_ON,D_RETURNBTN)
+	
+	xcall u_open(ch_customer,"u:i","DAT:customer.ism")
+	
+	xcall m_enable(D_LIST,col_file,"OK_CANCEL")
+	xcall i_ldinp(inp_customer,,"CUSTOMER_MAINT")
+	xcall u_wndevents(D_ASSIGN,mset_close,inp_customer)
+	xcall i_disable(D_SET,inp_customer,"DATA")
+	xcall b_disable(inp_customer,"DELETE")
+	
+	do
+	begin
+		xcall i_input(inp_customer,"ALL",customer,,,,D_NOTERM)
+		
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE_APP"),
+				exitApplication = true
+			("DELETE"),
+				call delete_customer
+			("O_ABANDON"),
+			begin
+				if (createMode||amendMode) then 
+					call cancel_edit
+				else
+					exitloop
+			end
+			endusing
+		end
+		else
+		begin
+			if (createMode||amendMode) then
+				call save_customer
+			else
+				call load_customer
+		end
+	end
+	until (exitApplication)
+	
+	xcall e_exit
+	xreturn
+	
+load_customer,
+	
+	save_customer_id = customer.customer_id
+	amendMode = false
+	createMode = false
+
+	try 
+	begin
+		read(ch_customer,customer,customer.customer_id,LOCK:Q_NO_LOCK,GETRFA:grfa)
+		xcall i_display(inp_customer,,customer)
+		amendMode = true
+	end
+	catch (ex, @KeyNotSameException)
+	begin
+		createMode = %ask_create("Customer")
+		customer.customer_id = save_customer_id
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		createMode = %ask_create("Customer")
+		customer.customer_id = save_customer_id
+	end
+	endtry
+	
+	if (createMode||amendMode) then
+	begin
+		xcall i_disable(D_SET,inp_customer,"KEY")
+		xcall i_enable(D_SET,inp_customer,"DATA")
+		xcall i_next(inp_customer,,"*FRST*")
+		if (amendMode)
+		begin
+			xcall m_enable(D_ENTRY,col_file,"DELETE")
+			xcall b_enable(inp_customer,"DELETE")
+		end
+	end
+	else
+		xcall i_init(inp_customer,"KEY",customer)
+	
+	return
+	
+save_customer,
+
+	editChangedRecord = false
+
+	if (amendMode) then 
+		call amend_customer
+	else
+		call create_customer
+
+	if (!editChangedRecord)
+		call cancel_edit
+
+	return
+	
+cancel_edit,
+
+	xcall i_init(inp_customer,,customer)
+	xcall i_disable(D_SET,inp_customer,"DATA")
+	xcall i_enable(D_SET,inp_customer,"KEY")
+	xcall i_next(inp_customer,,"*FRST*")
+	amendMode = false
+	createMode = false
+	xcall m_disable(D_ENTRY,col_file,"DELETE")
+	xcall b_disable(inp_customer,"DELETE")
+
+	return
+	
+create_customer,
+	
+	try 
+	begin
+		store(ch_customer,customer)
+	end
+	catch (ex, @Exception)
+	begin
+		xcall u_message(ex.Message)
+	end
+	endtry
+	
+	return
+	
+amend_customer,
+	
+	repeat
+	begin
+		data tmpCustomer, strCustomer
+		data quitWaiting, boolean, false
+		try 
+		begin
+			;Re-read the record by GRFA to lock
+			read(ch_customer,tmpCustomer,customer.customer_id,RFA:grfa,GETRFA:grfa)
+			;And update the record
+			write(ch_customer,customer)
+			exitloop
+		end
+		catch (ex, @RecordNotSameException)
+		begin
+			;Record was changed by another user
+			if (editChangedRecord=%ask_edit_new_record("Customer"))
+			begin
+				customer = tmpCustomer
+				xcall i_display(inp_customer,,customer)
+				xcall i_next(inp_customer,,"*FRST*")
+			end
+			exitloop
+		end
+		catch (ex, @DeletedRecordException)
+		begin
+			;Record was deleted by another user
+			if (%ask_recreate_deleted("Customer"))
+			begin
+				amendMode = false
+				createMode = true
+				call create_customer
+			end
+			exitloop
+		end
+		catch (ex, @RecordLockedException)
+		begin
+			;Record is locked by another user
+			if (%ask_wait_for_unlock("customer")) then 
+			begin
+				sleep 5
+				nextloop
+			end
+			else
+				quitWaiting = true
+		end
+		endtry
+		if (quitWaiting)
+			call cancel_edit
+	end
+	
+	return
+	
+delete_customer,
+	
+	repeat
+	begin
+		if (%ask_delete("customer")) then
+		begin
+			data tmpCustomer, strCustomer
+			data recordDeleted, boolean, false
+			data quitWaiting, boolean, false
+			try 
+			begin
+				;Re-read the record by GRFA to lock
+				read(ch_customer,tmpCustomer,customer.customer_id,RFA:grfa,GETRFA:grfa)
+				;And delete the record
+				delete(ch_customer)
+				recordDeleted = true
+			end
+			catch (ex, @RecordNotSameException)
+			begin
+				;The record was changed by another user
+				xcall cant_delete_changed_record("customer")
+				customer = tmpCustomer
+				xcall i_display(inp_customer,,customer)
+				xcall i_next(inp_customer,,"*FRST*")
+				exitloop
+			end
+			catch (ex, @DeletedRecordException)
+			begin
+				;The record was deleted by another user
+				xcall already_deleted("customer")
+				call cancel_edit
+				exitloop
+			end
+			catch (ex, @RecordLockedException)
+			begin
+				;Record is locked by another user
+				if (%ask_wait_for_unlock("customer")) then 
+				begin
+					sleep 5
+					nextloop
+				end
+				else
+				begin
+					call cancel_edit
+					exitloop
+				end
+			end
+			endtry
+			if (recordDeleted)
+			begin
+				call cancel_edit
+				exitloop
+			end
+		end
+		else
+			exitloop
+	end
+
+	return
+	
+endsubroutine

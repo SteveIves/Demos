@@ -1,0 +1,10 @@
+
+subroutine already_deleted
+	required in description, string
+	endparams
+	.include "WND:tools.def"
+proc
+	xcall u_msgbox("The "+description+" was already deleted by another user!",
+		&	D_MCENTER|D_MOK|D_MICONINFO,"Already Deleted")
+	xreturn
+endsubroutine

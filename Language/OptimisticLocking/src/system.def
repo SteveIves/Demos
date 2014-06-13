@@ -1,0 +1,11 @@
+
+common
+	col_file		,i4
+	col_maint		,i4
+
+	exitProgram		,boolean
+	exitApplication	,boolean
+
+	mset_close		,i4
+	
+endcommon

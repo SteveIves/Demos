@@ -1,0 +1,33 @@
+main OriginalApp
+
+	.include "WND:tools.def"
+	.include "SRC:system.def"
+	
+proc
+	xcall u_start("EXE:OptimisticLocking.ism",1,0,,24,132)
+	xcall u_resize(24,80)
+	
+	xcall e_sect("Original Application",D_CAPTION)
+	
+	mset_close = %u_wndevents(D_CREATE,,D_EVENT_CLOSE,"close_box")
+	
+	xcall m_ldcol(col_file,,"FILE",,,,D_GLOBAL)
+	xcall m_ldcol(col_maint,,"MAINTAIN")
+	
+	do
+	begin
+		xcall m_process
+		
+		using g_entnam select
+		("CLOSE_APP"),
+			exitApplication = true
+		("CUSMNT"),
+			xcall maintain_customers
+		endusing
+	end
+	until (exitApplication)
+	
+	xcall u_finish
+	stop
+	
+endmain

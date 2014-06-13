@@ -1,0 +1,14 @@
+
+function ask_recreate_deleted, boolean
+	required in description, string
+	endparams
+	.include "WND:tools.def"
+proc
+	using %u_msgbox(description+" was deleted by another user. Would you like to recreate the record?",
+		&	D_MCENTER|D_MYESNO|D_MICONQUESTION|D_MDEFBUTTON2,"Record Deleted") select
+	(D_MIDYES),
+		freturn true
+	(),
+		freturn false
+	endusing
+endfunction

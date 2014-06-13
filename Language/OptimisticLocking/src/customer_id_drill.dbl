@@ -1,0 +1,78 @@
+;******************************************************************************
+;
+; File:         customer_id_drill.dbl
+;
+; Type:         Input field drill method (IDRILL_METHOD)
+;
+; Description:  Drill method for Customer ID
+;
+; Author:       Steve Ives (stevei)
+;
+; Created:      7/25/2013
+;
+;*******************************************************************************
+
+subroutine customer_id_drill
+
+    .include "WND:inpinf.def"           ;Input information record
+    required inout  a_inprec    ,a      ;Current input record
+	optional        a_mdata1    ,any    ;Up to 20 method data arguments
+    endparams
+
+	.include "WND:tools.def"
+	.include "SRC:system.def"
+
+	stack record 
+		inpwnd                  ,i4
+		lstclass				,i4
+		lst						,i4
+		customer				,strCustomer
+		req						,i4
+	endrecord
+	
+proc
+
+	xcall e_enter
+	
+	;Load list input window
+	xcall i_ldinp(inpwnd,,"CUSTOMER_LIST",D_NOPLC)
+	
+	;Create listclass
+	xcall l_class(lstclass,"CUSTLIST",5,10,15,1,0,0,0,,,"CUSTOMER_ID_LOAD","ACTIVEX")
+	
+	;Create list
+	xcall l_create(lst,inpwnd,customer,,"CUSTLIST")
+	xcall l_method(lst,D_LWNDEVENT,mset_close)
+	xcall l_sect(lst,"Customer Search",D_TITLE)
+	xcall l_sect(lst,"ID|Company|City|State|",D_HEADER)
+	xcall l_button(lst,DSB_ADD,"O_ABANDON",DSB_TEXT,"Close")
+	xcall l_buttonset(lst,DSB_BOTTOM,,DSB_END)
+	
+	;Process list
+	do
+	begin
+		xcall l_select(lst,req=D_LNOP,customer)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("O_ABANDON"),
+				exitloop
+			("CLOSE_APP"),
+				exitApplication = true
+			endusing
+		end
+		else
+		begin
+			xcall i_putfld(inp_wndid,,a_inprec,"CUSTOMER_ID",customer.customer_id)
+			exitloop
+		end		
+	end
+	until (exitApplication)
+
+	xcall e_exit
+	clear g_select
+	
+    xreturn
+
+endsubroutine

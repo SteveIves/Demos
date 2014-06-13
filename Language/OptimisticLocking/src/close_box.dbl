@@ -1,0 +1,7 @@
+
+subroutine close_box
+	endparams
+proc
+	xcall m_signal("O_ABANDON")
+	xreturn
+endsubroutine

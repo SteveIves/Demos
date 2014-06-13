@@ -1,0 +1,52 @@
+;******************************************************************************
+;
+; File:         customer_id_load.dbl
+;
+; Type:         List processing load method (LLOAD_METHOD)
+;
+; Description:  Load method for customer list
+;
+; Author:       Steve Ives (stevei)
+;
+; Created:      7/25/2013
+;
+;*******************************************************************************
+
+subroutine customer_id_load
+
+    required in     a_listid    ,n      ;List ID
+    required inout  a_request   ,n      ;Request flag
+    optional out    a_itemdata  ,a      ;List item data
+    required in     a_inpid     ,n      ;List input window ID
+    optional inout  a_disabled  ,n      ;Item disabled flag
+    required in     a_itemindex ,n      ;Index of list item
+	optional        a_mdata1    ,any    ;Up to 20 method data arguments
+    endparams
+
+	.include "WND:tools.def"
+
+	static record 
+		ch			,int, 0
+	endrecord
+	
+proc
+
+	if (!ch)
+		xcall u_open(ch,"i:i","DAT:customer.ism")
+	
+	try 
+	begin
+		reads(ch,a_itemdata)
+		xcall i_display(a_inpid,,a_itemdata)
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		a_request = D_LEOF
+		xcall u_close(ch)
+		clear ch
+	end
+	endtry
+
+    xreturn
+
+endsubroutine
