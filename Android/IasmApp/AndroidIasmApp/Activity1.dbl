@@ -1,0 +1,65 @@
+﻿import System
+import Android.App
+import Android.Content
+import Android.Runtime
+import Android.Views
+import Android.Widget
+import Android.OS
+
+namespace AndroidIasmApp
+
+	structure strPerson
+		id,			i8
+		firstName,	a50
+		lastName,	a50
+	endstructure
+
+	{Activity (Label = "AndroidIasmApp", MainLauncher = true, Icon = "@drawable/icon")}
+	public class Activity1 extends Activity
+
+		protected override method OnCreate, void
+			bundle, @Bundle 
+		proc
+			parent.OnCreate (bundle)
+
+			;; Set our view from the "main" layout resource
+			SetContentView (Resource.Layout.Main)
+
+			;; Get our button from the layout resource,
+			;; and attach an event to it
+			data createButton = FindViewById<Button> (Resource.Id.CreateButton)
+			data textDisplay = FindViewById<TextView> (Resource.id.textDisplay)
+
+			lambda createButtonClick(sender, args)
+			begin
+				data fileSpec, String, String.Format("{0}/people.ism",System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal))
+				xcall isamc(fileSpec,^size(strPerson),1,"START=1,LENGTH=8,NAME=ID,TYPE=SEQUENCE")
+
+				data ch, int
+				data person, strPerson
+				person.firstName = "Steve"
+				person.lastName = "Ives"
+				
+				open(ch=0,u:i,fileSpec)
+				store(ch,person)
+
+				init person
+				person.id = 1
+
+				read(ch,person,person.id)
+
+				textDisplay.Text = %atrim(person.firstName) + " " + %atrim(person.lastName)
+
+				close ch
+				xcall delet(fileSpec)
+
+
+			end
+			createButton.Click += createButtonClick
+		endmethod
+
+
+	endclass
+
+endnamespace
+

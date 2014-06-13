@@ -1,0 +1,37 @@
+The steps to get this WindowsPhone UI working are:
+
+1. Add a reference to your Core PCL project
+2. Create a Setup.dbl file
+3. Change App.Xaml.dbl so that it creates a 'new Setup(RootFrame)' during its constructor 
+
+    data setup, @Setup, new Setup(RootFrame)
+    setup.Initialize()
+
+4. Change App.Xaml.dbl so that it intercepts the first navigation:
+
+    private method Application_Launching, void
+        sender, @Object 
+        e, @LaunchingEventArgs 
+        endparams
+    proc
+        RootFrame.Navigating += RootFrameOnNavigating
+    endmethod
+
+    private method RootFrameOnNavigating, void
+        sender, @Object 
+        args, @NavigatingCancelEventArgs 
+        endparams
+    proc
+        args.Cancel = true
+        RootFrame.Navigating -= RootFrameOnNavigating
+        lambda lambda1()
+        begin
+            Cirrious.CrossCore.Mvx.Resolve<Cirrious.MvvmCross.ViewModels.IMvxAppStart>().Start()
+        end
+        RootFrame.Dispatcher.BeginInvoke(lambda1)
+    endmethod
+	
+
+5. Add a Views folder - it must be called "Views" - and in this place a view - xaml.dbl and .xaml
+  - Change the inheritance of this Page to MvxPhonePage in both the Xaml and the Xaml.dbl files
+  - Add some XAML for the content pane - e.g. <TextBlock Text="{Binding Hello}" />

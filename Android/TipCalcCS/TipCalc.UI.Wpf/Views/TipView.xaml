@@ -1,0 +1,39 @@
+﻿<views:MvxWpfView x:Class="TipCalc.UI.Wpf.Views.TipView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                  xmlns:views="clr-namespace:Cirrious.MvvmCross.Wpf.Views;assembly=Cirrious.MvvmCross.Wpf"
+                  xmlns:converters="clr-namespace:TipCalc.UI.Wpf.Converters"
+                  mc:Ignorable="d" 
+                  d:DesignHeight="400" d:DesignWidth="250"
+                  Background="Black">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:DoubleCurrencyValueConverter x:Key="doubleCurrencyConverter" />
+            <converters:IntPercentageValueConverter x:Key="intPercentageConverter" />
+            <Style x:Key="Prompt" TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Margin" Value="0,0,0,5" />
+            </Style>
+            <Style x:Key="Value" TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="Margin" Value="0,0,0,5" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel Margin="20">
+        <TextBlock Text="Bill Amount" Style="{StaticResource Prompt}" />
+        <TextBox   Text="{Binding SubTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,20" />
+        <TextBlock Text="Generosity" Style="{StaticResource Prompt}" />
+        <Slider    Value="{Binding Generosity, Mode=TwoWay}" SmallChange="1" LargeChange="10" Minimum="0" Maximum="40" Margin="0,0,0,20" />
+        <TextBlock Text="Tip Percentage" Style="{StaticResource Prompt}" />
+        <TextBlock Text="{Binding Generosity,Converter={StaticResource intPercentageConverter}}" Style="{StaticResource Value}" />
+        <TextBlock Text="Tip to Leave" Style="{StaticResource Prompt}" />
+        <TextBlock Text="{Binding Tip,Converter={StaticResource doubleCurrencyConverter}}" Style="{StaticResource Value}" />
+        <TextBlock Text="Total Amount to Pay" Style="{StaticResource Prompt}" />
+        <TextBlock Text="{Binding Total,Converter={StaticResource doubleCurrencyConverter}}" Style="{StaticResource Value}" />
+    </StackPanel>
+</views:MvxWpfView>

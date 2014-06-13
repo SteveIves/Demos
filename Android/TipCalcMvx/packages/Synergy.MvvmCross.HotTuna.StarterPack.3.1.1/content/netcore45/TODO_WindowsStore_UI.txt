@@ -1,0 +1,49 @@
+The steps to get this Store UI working are:
+
+1. Add a reference to your Core PCL project
+2. Create a Setup.dbl file
+3. Change App.Xaml.dbl so that it creates a 'new Setup(RootFrame)' during its OnLaunched:
+
+    protected override method OnLaunched, void
+        args, @LaunchActivatedEventArgs 
+        endparams
+    proc
+        data rootFrame, @Frame, ^as(Window.Current.Content, Frame)
+        
+        ;; Do not repeat app initialization when the Window already has content,
+        ;; just ensure that the window is active
+        if (rootFrame == ^null)
+        begin
+            ;; Create a Frame to act as the navigation context and navigate to the first page
+            rootFrame = new Frame()
+            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            begin
+                ;; TODO: Load state from previously suspended application
+            end
+            
+            ;;  Place the frame in the current Window
+            Window.Current.Content = rootFrame
+        end
+        
+        if (rootFrame.Content == ^null)
+        begin
+            ;; When the navigation stack isn't restored navigate to the first page,
+            ;; configuring the new page by passing required information as a navigation
+            ;; parameter
+            data setup, @Setup, new Setup(rootFrame)
+            setup.Initialize()
+            
+            data start = Cirrious.CrossCore.Mvx.Resolve<Cirrious.MvvmCross.ViewModels.IMvxAppStart>()
+            start.Start()
+        end
+        
+        ;; Ensure the current window is active
+        Window.Current.Activate()
+        
+    endmethod
+
+
+4. Add a views folder and a view - xaml.dbl and .xaml based on BasicPage - this will add 5 files to the Common folder. 
+  - Change the Common/LayoutAwarePage.dbl inheritance to Cirrious.MvvmCross.WindowsStore.Views.MvxStorePage
+  - Change the Common/LayoutAwarePage.dbl - remove the OnNavigatedTo and OnNavigatedFrom handlers
+  - Add some content for your Xaml - e.g. <TextBlock Grid.Row="1" Text="{Binding Hello}" />

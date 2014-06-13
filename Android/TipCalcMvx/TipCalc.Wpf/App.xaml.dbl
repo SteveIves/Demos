@@ -1,0 +1,40 @@
+﻿
+import System.Windows
+import Cirrious.CrossCore
+import Cirrious.MvvmCross.ViewModels
+import Cirrious.MvvmCross.Wpf.Views
+
+.array 0
+namespace TipCalc.Wpf
+	
+	;;;  <summary>
+	;;;  Interaction logic for App.xaml
+	;;;  </summary>
+	public partial class App extends Application
+		
+		private mSetupComplete, boolean, false
+		
+		private method DoSetup, void
+			endparams
+		proc
+			data presenter, @MvxSimpleWpfViewPresenter, new MvxSimpleWpfViewPresenter(MainWindow)
+			data setup, @Setup, new Setup(Dispatcher, presenter)
+			setup.Initialize()
+			data start = Mvx.Resolve<IMvxAppStart>()
+			start.Start()
+			mSetupComplete = true
+		endmethod
+		
+		protected override method OnActivated, void
+			e, @System.EventArgs 
+			endparams
+		proc
+			if (!mSetupComplete)
+				DoSetup()
+			parent.OnActivated(e)
+		endmethod
+
+	endclass
+
+endnamespace
+

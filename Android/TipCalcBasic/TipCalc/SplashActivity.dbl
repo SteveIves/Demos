@@ -1,0 +1,28 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Text
+import System.Threading
+import Android.App
+import Android.Content
+import Android.OS
+import Android.Runtime
+import Android.Views
+import Android.Widget
+
+namespace TipCalc
+
+    {Activity(Label = "TipCalc (Basic)", MainLauncher=true, Theme="@style/Theme.Splash", NoHistory=true)}
+    public class SplashActivity extends Activity
+
+        protected override method OnCreate, void
+            bundle, @Bundle 
+            endparams
+        proc
+			parent.OnCreate(bundle)
+			StartActivity(^typeof(TipCalcActivity))
+        endmethod
+	
+	endclass
+
+endnamespace

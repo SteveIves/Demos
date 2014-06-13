@@ -1,0 +1,54 @@
+﻿import System
+import Android.App
+import Android.Content
+import Android.Runtime
+import Android.Views
+import Android.Widget
+import Android.OS
+
+namespace DatePicker
+	{Activity (Label = "DatePicker", MainLauncher = true, Icon = "@drawable/icon")}
+	public class Activity1 extends Activity
+
+		private theDate, DateTime, DateTime.Today
+		private button, @Button
+		
+		protected override method OnCreate, void
+			bundle, @Bundle 
+		proc
+			parent.OnCreate (bundle)
+
+			;; Set our view from the "main" layout resource
+			SetContentView (Resource.Layout.Main)
+
+			button = FindViewById<Button> (Resource.Id.MyButton)
+
+			lambda clickHandler(sender, args)
+			begin
+				ShowDialog (0)
+			end
+
+			button.Click += clickHandler
+
+		endmethod
+
+		protected override method OnCreateDialog, @Dialog
+			id, int
+		proc
+			mreturn new DatePickerDialog (this, handleDateSet, theDate.Year, theDate.Month - 1, theDate.Day)
+		endmethod
+
+		;;Fires when the Set button is clicked in the DatePickerDialog		
+		private method handleDateSet , void
+			sender, @Object
+			e, @DatePickerDialog.DateSetEventArgs
+		proc
+			theDate = e.Date
+			button.Text = theDate.ToString("d")
+		endmethod
+
+
+	endclass
+
+endnamespace
+

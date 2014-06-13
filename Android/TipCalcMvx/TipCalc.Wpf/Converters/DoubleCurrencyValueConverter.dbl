@@ -1,0 +1,40 @@
+
+import System
+import System.Windows.Data
+
+.array 0
+namespace TipCalc.Wpf.Converters
+
+	;; Unfortunately we have to implement different converters for WPF. This is because in their wisdom (not!)
+	;; Microsoft devided to make IValueConverter inconsistent across platforms. This means we have to implement
+	;; a native (WPF) version here, but we'll just make it use the existing converter from the Core assembly
+	;; (which can be used as-is on several (non-Microsoft) platforms.
+	
+	class DoubleCurrencyValueConverter implements IValueConverter
+		
+		public method Convert, @object
+			value, @object 
+			targetType, @System.Type 
+			parameter, @object 
+			culture, @System.Globalization.CultureInfo 
+			endparams
+		proc
+			;; Use the Core's converter
+			data c, @TipCalc.Core.Converters.DoubleCurrencyValueConverter, new TipCalc.Core.Converters.DoubleCurrencyValueConverter()
+			mreturn c.Convert(value, targetType, parameter, culture)
+		endmethod
+		
+		public method ConvertBack, @object
+			value, @object 
+			targetType, @System.Type 
+			parameter, @object 
+			culture, @System.Globalization.CultureInfo 
+			endparams
+		proc
+			throw new System.NotImplementedException()
+		endmethod
+
+	endclass
+
+endnamespace
+

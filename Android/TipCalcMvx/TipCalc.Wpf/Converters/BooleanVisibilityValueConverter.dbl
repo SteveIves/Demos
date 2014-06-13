@@ -1,0 +1,36 @@
+
+import System
+import System.Windows
+import System.Windows.Data
+
+namespace TipCalc.Wpf.Converters
+
+	public class BooleanVisibilityValueConverter implements IValueConverter
+		
+		public virtual method Convert, @Object
+			value, @Object 
+			targetType, @Type 
+			parameter, @Object 
+			culture, @System.Globalization.CultureInfo 
+			endparams
+		proc
+			if ((Boolean)value) then
+				mreturn Visibility.Visible
+			else
+				mreturn Visibility.Hidden
+		endmethod
+		
+		public virtual method ConvertBack, @Object
+			value, @Object 
+			targetType, @Type 
+			parameter, @Object 
+			culture, @System.Globalization.CultureInfo 
+			endparams
+		proc
+			throw new System.NotImplementedException()
+		endmethod
+		
+		
+	endclass
+
+endnamespace

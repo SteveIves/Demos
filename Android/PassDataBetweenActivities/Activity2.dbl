@@ -1,0 +1,40 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Text
+import Android.App
+import Android.Content
+import Android.OS
+import Android.Runtime
+import Android.Views
+import Android.Widget
+
+namespace PassDataBetweenActivities
+
+    {Activity(Label = "My Activity")}
+    public class Activity2 extends Activity
+
+        protected override method OnCreate, void
+            bundle, @Bundle 
+            endparams
+        proc
+            parent.OnCreate(bundle)
+			
+			SetContentView (Resource.Layout.SecondView)
+			
+			;;Get a handle on the TextView to display the data we received
+			data textDisplay, @TextView, FindViewById<TextView> (Resource.Id.textView2)
+
+			;;Receive data from previous activity
+			data receivedData, String, Intent.GetStringExtra("MyData")
+			if (receivedData == ^null)
+				receivedData = ""
+
+			;;Display the data
+			textDisplay.Text = receivedData
+
+        endmethod
+
+	endclass
+
+endnamespace

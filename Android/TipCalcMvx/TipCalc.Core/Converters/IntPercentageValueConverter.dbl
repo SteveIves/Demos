@@ -1,0 +1,23 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+import Cirrious.CrossCore.Converters
+
+namespace TipCalc.Core.Converters
+
+	public class IntPercentageValueConverter extends MvxValueConverter<int, String>
+	
+		protected override method Convert, String
+			valueToConvert, int
+			targetType, @Type
+			parameter, @Object
+			culture, @System.Globalization.CultureInfo
+			endparams
+		proc
+			mreturn string.Format("{0}%", valueToConvert)
+		endmethod
+
+	endclass
+
+endnamespace

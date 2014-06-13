@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="BillAmountPrompt">Bill Amount</string>
+  <string name="GenerosityPrompt">Generosity</string>
+  <string name="TipPercentPrompt">Percentage</string>
+  <string name="TipToLeavePrompt">Tip</string>
+  <string name="TotalPrompt">Total</string>
+  <string name="SplitPrompt">Split How Many Ways</string>
+  <string name="PeoplePrompt">Split</string>
+  <string name="PerPersonPrompt">Total Each</string>
+</resources>

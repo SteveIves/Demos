@@ -1,0 +1,176 @@
+﻿import System
+import Android.App
+import Android.Content
+import Android.Runtime
+import Android.Views
+import Android.Widget
+import Android.OS
+
+namespace TipCalc
+
+	{Activity (Label = "Tip Calc", Icon = "@drawable/icon", Theme="@style/Theme.MainView")}
+	public class TipCalcActivity extends Activity
+
+		private uiSubTotal,				@EditText
+		private uiGenerositySlider,		@SeekBar
+		private uiGenerosityDisplay,	@TextView
+		private uiTipToLeave,			@TextView
+		private uiTotal,				@TextView
+		private uiSplitSlider,			@SeekBar
+		private uiPeoplePrompt,			@TextView
+		private uiPeople,				@TextView
+		private uiPerPersonPrompt,		@TextView
+		private uiPerPersonTotal,		@TextView
+		
+		protected override method OnCreate, void
+		bundle, @Bundle 
+		proc
+			parent.OnCreate (bundle)
+
+			;; Set our view from the "main" layout resource
+			SetContentView (Resource.Layout.TipView)
+
+			;;Find our UI elements
+			uiSubTotal = FindViewById<EditText> (Resource.Id.SubTotal)
+			uiGenerositySlider = FindViewById<SeekBar> (Resource.Id.GenerositySlider)
+			uiGenerosityDisplay = FindViewById<TextView> (Resource.Id.GenerosityDisplay)
+			uiTipToLeave = FindViewById<TextView> (Resource.Id.TipToLeave)
+			uiTotal = FindViewById<TextView> (Resource.Id.Total)
+			uiSplitSlider = FindViewById<SeekBar> (Resource.Id.SplitSlider)
+			uiPeoplePrompt = FindViewById<TextView> (Resource.Id.PeoplePrompt)
+			uiPeople = FindViewById<TextView> (Resource.Id.People)
+			uiPerPersonPrompt = FindViewById<TextView> (Resource.Id.PerPersonPrompt)
+			uiPerPersonTotal = FindViewById<TextView> (Resource.Id.PerPersonTotal)
+			
+			;;Wire up event handlers
+			uiSubTotal.TextChanged += subTotalChanged
+			uiGenerositySlider.ProgressChanged += sliderChanged
+			uiSplitSlider.ProgressChanged += sliderChanged
+
+			;;Set default values
+			uiGenerositySlider.Progress = 18
+			uiSplitSlider.Progress = 0
+
+			recalculate()
+
+		endmethod
+
+		private method subTotalChanged, void
+			sender, @Object
+			args, @Android.Text.TextChangedEventArgs
+			endparams
+		proc
+			recalculate()
+		endmethod
+		
+		private method sliderChanged, void
+			sender, @Object
+			args, @SeekBar.ProgressChangedEventArgs
+			endparams
+		proc
+			uiGenerosityDisplay.Text = string.Format("{0}%",uiGenerositySlider.Progress)
+			recalculate()
+		endmethod
+		
+		private method recalculate, void
+			endparams
+		proc
+			data subTotal, decimal
+			data tip, decimal
+			data total, decimal
+			data perPerson, decimal
+
+			if (uiSubTotal.Text.Length>0) then
+			begin
+				;;Make sure we have a valid decimal sub total
+				if (Decimal.TryParse(uiSubTotal.Text,subTotal))
+				begin
+					;;Calculate the tip and total
+					tip = ((subTotal / 100) * uiGenerositySlider.Progress)
+					total = subTotal + tip
+					perPerson = total / (uiSplitSlider.Progress + 1)
+				end
+			end
+			else
+			begin
+				tip = 0
+				total = 0
+				perPerson = 0
+			end
+
+			;;Update the UI
+			showHideSplitFields()
+			uiTipToLeave.Text = String.Format("{0:C}",tip)
+			uiTotal.Text = String.Format("{0:C}",total)
+			uiPeople.Text = String.Format("{0} ways",uiSplitSlider.Progress + 1)
+			uiPerPersonTotal.Text = String.Format("{0:C}",perPerson)
+
+		endmethod
+
+		private method showHideSplitFields, void
+		proc
+			data visibleState, ViewStates
+			if (uiSplitSlider.Progress>0) then
+				visibleState = ViewStates.Visible
+			else
+				visibleState = ViewStates.Invisible
+			uiPeoplePrompt.Visibility = visibleState
+			uiPeople.Visibility = visibleState
+			uiPerPersonPrompt.Visibility = visibleState
+			uiPerPersonTotal.Visibility = visibleState
+		endmethod
+		
+		protected override method OnPause, void
+		proc
+			parent.OnPause()
+
+			;;Save the current generosity value so we can restore it next time
+			data settingsFile, String, String.Format("{0}/settings.txt",System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal))
+			data channel, int, 0
+			try
+			begin
+				open(channel,o:s,settingsFile)
+				writes(channel,%string(uiGenerositySlider.Progress))
+			end
+			catch (e, @Exception)
+			begin
+				nop
+			end
+			finally
+			begin
+				if (channel)
+					close channel
+			end
+			endtry
+		endmethod
+
+		protected override method OnResume, void
+		proc
+			parent.OnResume()
+
+			;;Restore any saved generosity setting
+			data settingsFile, String, String.Format("{0}/settings.txt",System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal))
+			data channel, int, 0
+			try
+			begin
+				data tmpbuf, a20
+				open(channel,i:s,settingsFile)
+				reads(channel,tmpbuf)
+				uiGenerositySlider.Progress = %integer(%atrim(tmpbuf))
+			end
+			catch (e, @Exception)
+			begin
+				nop
+			end
+			finally
+			begin
+				if (channel)
+					close channel
+			end
+			endtry
+		endmethod
+
+	endclass
+
+endnamespace
+

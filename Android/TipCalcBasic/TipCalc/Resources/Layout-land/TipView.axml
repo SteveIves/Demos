@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingTop="5dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:gravity="center_horizontal">
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/TipPercentPrompt"
+                android:paddingRight="10dp" />
+            <TextView
+                android:id="@+id/GenerosityDisplay"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:textSize="20sp" />
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/BillAmountPrompt"
+                android:paddingRight="10dp" />
+            <EditText
+                android:id="@+id/SubTotal"
+                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:inputType="numberDecimal" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/TipToLeavePrompt"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp" />
+            <TextView
+                android:id="@+id/TipToLeave"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:textSize="20sp"
+                android:paddingTop="20dp" />
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/GenerosityPrompt"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp" />
+            <SeekBar
+                android:id="@+id/GenerositySlider"
+                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:max="40"
+                android:paddingTop="20dp" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/TotalPrompt"
+                android:paddingRight="10dp" />
+            <TextView
+                android:id="@+id/Total"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:textSize="20sp" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/PeoplePrompt"
+                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:text="@string/PeoplePrompt"
+                android:layout_column="0"
+                android:paddingTop="20dp"
+                android:paddingRight="10dp" />
+            <TextView
+                android:id="@+id/People"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:textSize="20sp"
+                android:paddingTop="20dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/SplitPrompt"
+                android:paddingTop="20dp"
+                android:paddingRight="10dp" />
+            <SeekBar
+                android:id="@+id/SplitSlider"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:max="9"
+                android:paddingTop="20dp" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/PerPersonPrompt"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/PerPersonPrompt"
+                android:paddingRight="10dp" />
+            <TextView
+                android:id="@+id/PerPersonTotal"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:textSize="20sp" />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
