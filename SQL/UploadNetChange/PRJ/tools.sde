@@ -1,0 +1,10 @@
+[GLOBAL]
+syn_version=7
+Synergy=DBL
+Subtype=APP
+
+[COMPILE SCRIPTS]
+Library_Name=\Conference\2014\RelationalDatabases\Demos\UploadNetChange\EXE\tkapp.ism
+Overwrite=1
+Files=<ALL>,\Conference\2014\RelationalDatabases\Demos\UploadNetChange\SRC\TOOLS\EmployeeMaintTab.wsc
+

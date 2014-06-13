@@ -1,0 +1,54 @@
+import System.Collections
+import IsamTools
+
+main EmployeeShowSnapshots
+	record
+		tt, int
+	endrecord
+proc
+
+	open(tt=0,i,"tt:")
+	xcall flags(7004020,1)
+	
+	;;Check change tracking is enabled
+	
+	if (!ChangeTracking.IsEnabled("DAT:employee.ism")) then
+		writes(tt,"ERROR: Change tracking is not enabled for DAT:employee.ism")
+	else
+	begin
+		;Get snapshot details from the file
+		data snapshots, @ArrayList, new ArrayList()
+		if (!ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)) then
+			writes(tt,"ERROR: Failed to retrieve snapshots for DAT:employee.ism")
+		else
+		begin
+			if (snapshots.Count==0) then
+				writes(tt,"No snapshots exist in DAT:employee.ism")
+			else
+			begin
+				data snapshot, @Snapshot
+				writes(tt,"Snapshot details for DAT:employee.ism")
+				writes(tt,"")
+				foreach snapshot in snapshots
+				begin
+					writes(tt," Shapshot: "+%string(snapshot.SnapshotNumber)+" taken "+%string(snapshot.DateTimeTaken,"XXXX-XX-XX XX:XX:XX"))
+					writes(tt,"  Changes: "+%string(snapshot.Changes))
+					writes(tt,"  Inserts: "+%string(snapshot.Inserts))
+					writes(tt,"  Updates: "+%string(snapshot.Updates))
+					writes(tt,"  Deletes: "+%string(snapshot.Deletes))
+					writes(tt," Unlinked: "+%string(snapshot.Unlinked))
+					writes(tt,"")
+				end
+			end
+		end
+	end
+	
+	begin
+		data char, a1
+		display(tt,"Press a key to exit: ")
+		accept(tt,char)
+	end
+
+	stop
+	
+endmain

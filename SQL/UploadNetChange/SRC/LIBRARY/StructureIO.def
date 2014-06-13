@@ -1,0 +1,58 @@
+
+.ifndef IO_OPEN_INP
+
+;Operations
+.define IO_OPEN_INP         ,-1     ;open the file
+.define IO_OPEN_UPD         ,-2
+.define IO_FIND             ,1
+.define IO_READ_FIRST       ,2
+.define IO_READ             ,3
+.define IO_READ_NEXT        ,4
+.define IO_CREATE           ,5
+.define IO_DELETE           ,6
+.define IO_UPDATE           ,7
+.define IO_UNLOCK           ,8
+.define IO_CLOSE            ,9
+.define IO_READ_PREV        ,10
+.define IO_READ_LAST        ,11
+.define IO_SHOWERR          ,12
+.define IO_FIND_FIRST       ,13
+.define IO_READ_SQL         ,14
+
+;Options
+.define IO_LOCK             ,1
+.define IO_PARTIAL          ,1
+
+;Return values
+.define IO_OK               ,1
+.define IO_NOT_FOUND        ,-1
+.define IO_DUP_KEY          ,-2
+.define IO_NO_CUR_REC       ,-3
+.define IO_EOF              ,-4
+.define IO_LOCKED           ,-5
+.define IO_FATAL            ,-9
+
+;Error message display options
+.define D_DISPLAY_ERR       ,1      ;Display I/O error messages
+.define D_NODISPLAY_ERR     ,0      ;Don't display I/O error messages
+
+;Record locked processing options
+.define D_DISPLAY_LOCKERR   ,100    ;Display record lock errors
+.define D_NODISPLAY_LOCKERR ,200    ;Don't display record lock error
+.define D_ASK_LOCKERR       ,300    ;Ask to retry on record locked
+.define D_RETURN_LOCKERR    ,400    ;Return a record locked error
+
+;Key definitions
+.define D_PRIMKEY           ,0
+.define D_ALTKEY1           ,1
+
+;Replication server action flags
+.define D_ACTION_STORE      ,1
+.define D_ACTION_UPDATE     ,2
+.define D_ACTION_DELETE     ,3
+
+;Encryption password
+.define D_ENCRYPTION_PASSWORD "p@ssw0rd"
+
+.endc
+

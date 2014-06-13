@@ -1,0 +1,21 @@
+function MonthNumber, a2
+	required in monthName, a
+	endparams
+proc
+	using monthName select
+	("Jan"),	freturn "01"
+	("Feb"),	freturn "02"
+	("Mar"),	freturn "03"
+	("Apr"),	freturn "04"
+	("May"),	freturn "05"
+	("Jun"),	freturn "06"
+	("Jul"),	freturn "07"
+	("Aug"),	freturn "08"
+	("Sep"),	freturn "09"
+	("Oct"),	freturn "10"
+	("Nov"),	freturn "11"
+	("Dec"),	freturn "12"
+	endusing
+endfunction
+
+
