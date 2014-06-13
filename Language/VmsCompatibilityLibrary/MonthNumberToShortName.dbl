@@ -1,0 +1,21 @@
+
+function MonthNumberToShortName ,a
+	required in monthNumber	,n
+proc
+	using monthNumber select
+	(1),	freturn "JAN"
+	(2),	freturn "FEB"
+	(3),	freturn "MAR"
+	(4),	freturn "APR"
+	(5),	freturn "MAY"
+	(6),	freturn "JUN"
+	(7),	freturn "JUL"
+	(8),	freturn "AUG"
+	(9),	freturn "SEP"
+	(10),	freturn "OCT"
+	(11),	freturn "NOV"
+	(12),	freturn "DEC"
+	(),	freturn ""
+	endusing
+endfunction
+

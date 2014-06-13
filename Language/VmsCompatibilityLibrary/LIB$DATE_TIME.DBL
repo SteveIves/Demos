@@ -1,0 +1,46 @@
+
+subroutine lib$date_time
+	required out retDate		,a
+        endparams
+
+	external function 
+		MonthNumberToShortName	,a
+	endexternal
+	
+        record
+                tmpDateTime     ,a20
+		group vmsDateTime, a
+			dd      ,a2
+				,a1     ,"-"
+			mmm     ,a3
+				,a1     ,"-"
+			yyyy    ,a4
+				,a1
+			hh      ,a2
+				,a1     ,":"
+			mm      ,a2
+				,a1     ,":"
+			ss      ,a2
+				,a1     ,"."
+			pp      ,a2
+		endgroup
+        endrecord
+
+proc
+
+        tmpDateTime = %datetime
+
+        dd = tmpDateTime(7:2)
+	mmm = %MonthNumberToShortName(%integer(tmpDateTime(5:2)))
+        yyyy = tmpDateTime(1:4)
+
+        hh = tmpDateTime(9:2)
+        mm = tmpDateTime(11:2)
+        ss = tmpDateTime(13:2)
+        pp = tmpDateTime(15:2)
+
+	retDate = vmsDateTime
+	
+        xreturn
+
+endsubroutine

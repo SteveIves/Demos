@@ -1,0 +1,40 @@
+
+function lib$day_of_week,	^val
+	%ref(i8Date)		,i8
+	%ref(dayNumber) 	,i4
+	endparams
+
+	external function 
+	  MonthShortNameToNumber,^val
+	endexternal
+
+	record 
+		vmsDate		,a11
+		group d8Date	,d
+			year	,a4
+			month	,d2
+			day	,a2
+		endgroup
+	endrecord
+proc
+
+	xcall sys$asctim(,vmsDate,i8Date)
+	
+	year = vmsDate(8,11)
+	month = %MonthShortNameToNumber(vmsDate(4,6))
+	day = ^d(vmsDate(1,2)),"XX"
+	
+	;;Map the %WKDAY values to a LIB$DAY_OF_WEEK value
+	using %wkday(d8Date) select
+	(1),	dayNumber = 7 
+	(2),	dayNumber = 1
+	(3),	dayNumber = 2
+	(4),	dayNumber = 3
+	(5),	dayNumber = 4
+	(6),	dayNumber = 5
+	(7),	dayNumber = 6
+	endusing
+		
+	freturn 1
+	
+endfunction

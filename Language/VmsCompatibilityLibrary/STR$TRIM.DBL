@@ -1,0 +1,29 @@
+
+subroutine str$trim
+	destination	,a
+	source		,a
+	%ref(length)	,i
+	record 
+		ix	,i4
+		doAll	,i4
+	endrecord
+proc
+	clear destination, length, doAll
+
+	if (source)
+	begin
+		for ix from %trim(source) thru 1 by -1
+		begin
+			if ((source(ix:1).ne." ").and.(source(ix:1).ne.%char(9)))
+			begin
+				length = ix
+				exitloop
+			end
+		end
+		if (length)
+			destination = source(1:length)
+	end
+	
+	xreturn
+	
+endsubroutine

@@ -1,0 +1,11 @@
+
+subroutine lib$put_common
+        valuetoPut      ,a
+        record
+                status  ,i4
+        endrecord
+proc
+        xcall setlog("COMMON_DATA_STORE",%atrim(valueToPut),status)
+        xreturn
+endsubroutine
+

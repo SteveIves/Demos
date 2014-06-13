@@ -1,0 +1,12 @@
+
+subroutine lib$stop
+        required in condition, i
+        endparams
+proc
+
+        if (condition) then
+                stop D_EXIT_FAILURE
+        else
+                stop D_EXIT_SUCCESS
+
+endsubroutine

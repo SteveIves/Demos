@@ -1,0 +1,21 @@
+
+subroutine DBL$SETKRF
+	required in aChannel	,n
+	required in aKeyOfRef	,n
+	endparams
+proc
+	try 
+	begin
+		find(aChannel,KEYNUM:aKeyOfRef,POSITION:Q_BOF)
+	end
+	catch (ex, @Synergex.synergyde.SynException)
+	begin
+		xcall exite(ex.Errno)
+	end
+	endtry
+
+	xreturn
+	
+endsubroutine
+	
+

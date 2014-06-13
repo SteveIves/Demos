@@ -1,0 +1,11 @@
+
+function lib$add_times, 	^val
+	%ref(firstTime)		,i8
+	%ref(secondTime)	,i8
+	%ref(resultingTime)	,i8
+	endparams
+proc
+	;One of firstTime or secondTime MUST be a delta time
+	resultingTime = firstTime + secondTime
+	freturn 1
+endfunction

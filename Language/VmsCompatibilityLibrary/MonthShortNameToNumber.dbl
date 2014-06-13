@@ -1,0 +1,27 @@
+
+function MonthShortNameToNumber, ^val
+	monthName	,a
+	record 
+		name	,a3
+	endrecord
+proc
+	name = monthName
+	upcase name
+
+	using name select
+	("JAN"),	freturn 1 
+	("FEB"),	freturn 2
+	("MAR"),	freturn 3
+	("APR"),	freturn 4
+	("MAY"),	freturn 5
+	("JUN"),	freturn 6
+	("JUL"),	freturn 7
+	("AUG"),	freturn 8
+	("SEP"),	freturn 9
+	("OCT"),	freturn 10
+	("NOV"),	freturn 11
+	("DEC"),	freturn 12
+	(),		freturn 0
+	endusing
+endfunction
+

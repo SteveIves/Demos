@@ -1,0 +1,14 @@
+
+subroutine lib$get_common
+        valuetoGet      ,a
+        record
+                length  ,i4
+        endrecord
+proc
+        xcall getlog("COMMON_DATA_STORE",valuetoGet,length)
+        if (.not.length)
+                clear valueToGet
+        xreturn
+endsubroutine
+
+

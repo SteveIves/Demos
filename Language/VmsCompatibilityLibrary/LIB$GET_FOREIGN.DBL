@@ -1,0 +1,45 @@
+;;
+;; *** NOTE *** THIS ROUTINE WON'T WORK FOR PROGRAMS STARTED WITH DBS.EXE!!!
+;;
+subroutine lib$get_foreign
+	params	,a
+	record 
+		tmpvar, a256
+		pos, i4
+	endrecord
+proc
+	clear params
+	
+	xcall cmdln(tmpvar)
+	upcase tmpvar
+	
+;       ;;Strip off the DBR.EXE part of the command
+;       ;;Might be a path there, .exe may or mat not be there
+;       ;;Might have spaces in
+;       if (pos=%instr(1,tmpvar,"DBR.EXE ")) then
+;       begin
+;       	;;Found "DBR.EXE "
+;       	tmpvar = tmpvar(pos+8,^size(tmpvar))
+;       end
+;       else if (pos=%instr(1,tmpvar,"DBR "))
+;       begin
+;       	;;Found "DBR "
+;       	tmpvar = tmpvar(pos+4,^size(tmpvar))
+;       end
+;
+;       ;;Now lose the program name. We have to assume no spaces in the program name!
+;       pos = %instr(1,tmpvar," ")
+;       tmpvar = tmpvar(pos+1,^size(tmpvar))
+		
+	if (%instr(1,tmpvar,"RUN.DBR"))
+		clear tmpvar
+
+	if (%instr(1,tmpvar,"MENU.DBR"))
+		clear tmpvar
+	
+	params = tmpvar
+	
+	xreturn
+	
+endsubroutine
+

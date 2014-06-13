@@ -1,0 +1,15 @@
+
+subroutine str$concat
+	retbuf	,a
+record 
+	ix	,i4
+	result	,string
+endrecord
+proc
+	result = ""
+	for ix from 2 thru %numargs
+		result = result + ^arga(ix)
+	retbuf = result
+	xreturn
+endsubroutine
+

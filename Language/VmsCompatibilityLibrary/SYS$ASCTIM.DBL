@@ -1,0 +1,89 @@
+
+function sys$asctim			,^val
+	length				,i
+	stringDate			,a
+	%ref(i8BinTime)			,i	;TODO: This should be %REF!!!
+	cvtflag				,i
+
+	external function 
+		MonthNumbertoShortName	,a
+	endexternal
+	
+	record 
+		fullDays		,i4
+		remainingIntervals	,i8
+		group theDate		,d
+		  year			,d4
+		  month			,d2
+		  day			,d2
+		endgroup
+		group vmsDate		,a
+			day		,d2
+					,a1	,"-"
+			month		,a3
+					,a1	,"-"
+			year		,d4
+					,a1	," "
+			hour		,d2
+					,a1	,":"
+			min		,d2
+					,a1	,":"
+			sec		,d2
+					,a1	,"."
+			xx		,d2
+		endgroup
+	endrecord
+
+	;1 sec = 1000000000 nanoseconds
+	;1 sec = 10000000   100 nanosecond intervals
+	.define INTERVALS_IN_SECOND	10000000
+        .define INTERVALS_IN_MINUTE	600000000
+        .define INTERVALS_IN_HOUR	36000000000
+        .define INTERVALS_IN_DAY	864000000000
+proc
+	
+	;;Do we have more than one day here?
+	if (i8BinTime>INTERVALS_IN_DAY) then
+	begin
+		;;Deal with the full days
+		fullDays = (i8BinTime/INTERVALS_IN_DAY)
+		
+		;;Figure out the date from the number of full days
+		theDate = %ndate(%jperiod(18581117)+fullDays)
+		vmsDate.day = theDate.day
+		vmsDate.month = %MonthNumberToShortName(theDate.month)
+		vmsDate.year = theDate.year
+		
+		;;Remove the full days from the binary time
+		remainingIntervals = i8BinTime - (fullDays*INTERVALS_IN_DAY)		
+	end
+	else
+		remainingIntervals = i8BinTime		
+		
+	;;How many hours?
+	vmsDate.hour = (remainingIntervals/INTERVALS_IN_HOUR)
+	remainingIntervals = remainingIntervals - (vmsDate.hour*INTERVALS_IN_HOUR)
+	
+	;;How many minutes?
+	vmsDate.min = (remainingIntervals/INTERVALS_IN_MINUTE)
+	remainingIntervals = remainingIntervals - (vmsDate.min*INTERVALS_IN_MINUTE)
+	
+	;;How many seconds?
+	vmsDate.sec = (remainingIntervals/INTERVALS_IN_SECOND)
+	remainingIntervals = remainingIntervals - (vmsDate.sec*INTERVALS_IN_SECOND)
+	
+	;;How many partial seconds?
+	vmsDate.xx = (remainingIntervals*100)/INTERVALS_IN_SECOND
+	;bintim = bintim + ((vmsString.vsXX / 100.0) * INTERVALS_IN_SECOND)
+	
+	;;Return the data
+	stringDate = vmsDate
+	
+	;;Return the length if passed
+	if (^passed(length))
+		length = ^size(vmsDate)
+	
+	freturn 1
+
+endfunction
+

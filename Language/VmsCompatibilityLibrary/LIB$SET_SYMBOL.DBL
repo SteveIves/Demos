@@ -1,0 +1,13 @@
+
+subroutine lib$set_symbol
+        required in symbol      ,a
+        required in value       ,a
+        required in table       ,n	;Has no meaning other than on VMS
+        endparams
+        stack record
+                status          ,i4
+        endrecord
+proc
+        xcall setlog(symbol,value,status)
+        xreturn
+endsubroutine

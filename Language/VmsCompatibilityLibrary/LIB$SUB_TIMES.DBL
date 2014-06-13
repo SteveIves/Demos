@@ -1,0 +1,10 @@
+
+function lib$sub_times, 	^val
+	%ref(laterTime)		,i8
+	%ref(earlierTime)	,i8
+	%ref(deltaTime)		,i8
+	endparams
+proc
+	deltaTime = laterTime - earlierTime
+	freturn 1
+endfunction

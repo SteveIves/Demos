@@ -1,0 +1,13 @@
+
+subroutine lib$set_logical
+        required in logicalName ,a
+        required in valueToSet  ,a
+        endparams
+        stack record
+                status          ,i4
+        endrecord
+proc
+        xcall setlog(logicalName,valueToSet,status)
+        xreturn
+endsubroutine
+
