@@ -1,0 +1,1435 @@
+import System.collections
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.include 'INC:genxml_tokens.def'
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Create documentation file from MDU/GENXML XML file
+;;; </summary>
+;;; <param name="aXmlFilename">XML filename</param>
+;;; <param name="aOutFilename">Otput filename</param>
+;;; <param name="aInterfaceName">Optional interface name</param>
+;;; <returns>
+;;; 0 = ok
+;;; else Synergy error number
+;;; </returns>
+
+function createDocFromXml       ,i4
+req in  aXmlFilename            ,a255   ;; XML filename
+req in  aOutFilename            ,a255   ;; output filename
+opt in  aInterfaceName          ,a30    ;; selected interface (or blank)
+endparams
+
+.include 'DBLDIR:synxml.def'
+
+external function
+    process_interfaces  ,i
+endexternal
+
+record clr
+    aval                ,a80                    ;; alpha value
+endrecord
+
+record clr_i
+    fstatus             ,i4                     ;; return status
+    sts                 ,i4                     ;; status
+    chan                ,i4                     ;; Channel for XML file
+    dom                 ,D_ADDR                 ;; document object model id
+    doc                 ,XML_DOC_TYPE           ;; document id
+    rootNode            ,XML_DOC_TYPE           ;; root id
+    ifaceNode           ,XML_ELEMLIST_TYPE      ;; list of interfaces
+endrecord
+
+proc
+
+    clear clr, ^i(clr_i)
+
+    if (aXmlFilename) then
+        call process_xml_file
+    else
+        fstatus = $ERR_FILSPC
+
+    freturn fstatus
+
+;; --------------------------------------------------------------------------
+
+process_xml_file,
+
+    sts = %xml_option('ENCODE', SYNESCAPE_UNESCAPE)
+
+    try
+    begin
+        ;; create an instance of the DOM parser
+        dom = %xml_parser_create()
+
+        ;; call the dom parser to parse the xml file
+        if (dom && (doc = %xml_parser_parseFile(dom, aXmlFilename))) then
+        begin
+            ;; get root id for document
+            if(rootNode = %xml_doc_getRoot(doc)) then
+            begin
+                ;; get interfaces from the xml document
+                ifaceNode = %xml_elem_getElementsByName(rootNode, D_XML_INTER)
+            end
+            else
+                clear ifaceNode
+
+            ;; MUST have some interfaces
+            if(ifaceNode) then
+            begin
+                fstatus = %process_interfaces(ifaceNode, aOutFilename, aInterfaceName)
+
+                ;; delete list of interfaces
+                xml_elemlist_delete(ifaceNode)
+                clear ifaceNode
+            end
+            else
+                fstatus = -1
+
+            ;; delete document created by xml_parser_parsefile
+            xml_doc_delete(doc)
+            clear doc
+        end
+        else
+        begin
+            ;; else return the dom parser error
+            xml_parser_error(dom, aval)
+            fstatus = -2
+        end
+    end
+    catch (ex, @Exception)
+    begin
+        fstatus = %error
+    end
+    finally
+    begin
+        if(dom)
+        begin
+            ;; release the dom parser
+            xml_parser_delete(dom)
+            clear dom
+        end
+    end
+    endtry
+
+    return
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+;; outputText mode defines
+.define D_OUT_LINE          -1
+.define D_OUT_INDENT        -2
+.define D_OUT_OPEN          -3
+.define D_OUT_CLOSE         -4
+.define D_OUT_PURGE         -5
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Output text with desired indentation
+;;; </summary>
+;;; <param name="aMode">
+;;; Optional: Number of indents or
+;;; D_OUT_LINE          -1
+;;; D_OUT_INDENT        -2
+;;; D_OUT_OPEN          -3
+;;; D_OUT_CLOSE         -4
+;;; D_OUT_PURGE         -5
+;;; </param>
+;;; <param name="aText">
+;;; Text to output
+;;; </param>
+
+subroutine outputText
+req in  aMode           ,n              ;; mode +ve = #indents / -ve = D_OUT_*
+opt in  aText           ,a              ;; text
+endparams
+
+literal
+    spaces              ,a80 ,' '       ;; maximum indent
+endliteral
+
+static record
+    ch                  ,i4             ;; output channel
+    indentSize          ,i4             ;; size of each indent (spaces)
+    indentMax           ,i4             ;; maximum number of indents allowed
+    indents             ,i4             ;; number of indents
+endrecord
+
+record
+    textLen             ,i4             ;; length of aText
+endrecord
+
+proc
+
+    if(!indentSize)
+    begin
+        indentSize = 4
+        indentMax = %trunc(^size(spaces) / indentSize)
+    end
+
+    if(^passed(aText)) then
+        textLen = %trimz(aText)
+    else
+        textLen = 0
+
+    using aMode select
+    (D_OUT_LINE),
+    begin
+        if(textLen) then
+        begin
+            if(indents > 0) then
+                writes(ch, spaces(1:indents*indentSize) + aText(1:textLen))
+            else
+                writes(ch, aText(1:textLen))
+        end
+        else
+            forms(ch, 1)
+    end
+    (D_OUT_INDENT),
+    begin
+        using aText(1:1) select
+        ('+'),
+        begin
+            if(indents < indentMax)
+                indents += 1
+        end
+        ('-'),
+        begin
+            if(indents > 0)
+                indents -= 1
+        end
+        ('0' thru '9'),
+        begin
+            try
+            begin
+                indents = aText(1:textLen)
+                if(indents > indentMax)
+                    indents = indentMax
+            end
+            catch (ex ,@Exception)
+                indents = 0
+            endtry
+        end
+        (),
+            indents = 0
+        endusing
+    end
+    (>= 0),
+    begin
+        if(textLen)
+        begin
+            data localIndents ,i4
+            if(aMode > indentMax) then
+                localIndents = indentMax
+            else
+                localIndents = aMode
+            if(localIndents > 0) then
+                display(ch, spaces(1:localIndents*indentSize) + aText(1:textLen))
+            else
+                display(ch, aText(1:textLen))
+        end
+    end
+    (D_OUT_OPEN),
+    begin
+        if(ch > 0 && ch <= 1024 && %chopen(ch))
+            purge ch
+        ch = %syn_freechn()
+        open(ch, O, aText(1:textLen), TEMPFILE)
+    end
+    (D_OUT_CLOSE),
+    begin
+        if(ch > 0 && ch <= 1024 && %chopen(ch))
+            close ch
+        clear ch
+    end
+    (D_OUT_PURGE),
+    begin
+        if(ch > 0 && ch <= 1024 && %chopen(ch))
+            purge ch
+        clear ch
+    end
+    endusing
+
+    xreturn
+
+endsubroutine
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Process interfaces
+;;; </summary>
+;;; <param name="aIfaceNode">Interface node in XML document</param>
+;;; <param name="aOutFilename">Output filename</param>
+;;; <param name="aInterfaceName">Optional interface name to process</param>
+;;; <returns>
+;;; 0 = ok
+;;; else Synergy error number
+;;; </returns>
+
+function process_interfaces ,i
+req in  aIfaceNode          ,XML_ELEMLIST_TYPE      ;; list of interfaces
+req in  aOutFilename        ,a                      ;; output filename
+opt in  aInterfaceName      ,a                      ;; interface name
+endparams
+
+.include 'DBLDIR:synxml.def'
+
+external function
+    xml_elem_getAttribute       ,^val
+    xml_elem_getElementsByName  ,^val
+    xml_elemlist_item           ,^val
+    xml_elemlist_delete         ,^val
+    xml_elemlist_count          ,^val
+
+    locase              ,a
+    getAttributeText    ,a
+    getxfType           ,a
+endexternal
+
+.define D_MAX_COMMENT_LINES 6                   ;; number of comment lines in SMC
+.define D_MAX_COMMENT_SIZE  50                  ;; size of comment lines in SMC
+
+literal
+    includeRpsStructure ,a* ,'.include "%a" REPOSITORY ,structure="%a" ,end'
+    includeRpsEnum      ,a* ,'.include "%a" REPOSITORY ,public ENUM'
+endliteral
+
+record appParameters
+    indentCode          ,i4                     ;; number of indents for procedure division
+    indentParams        ,i4                     ;; number of indents for routine parameters
+    indentData          ,i4                     ;; number of indents for data division
+    offsetFieldType     ,i4                     ;; offset for data type (cols)
+    offsetComment       ,i4                     ;; offset for comments (cols)
+    sComment            ,string                 ;; comment character(s)
+    sCommentDoc         ,string                 ;; doc comment character(s)
+    sCommentLine        ,string                 ;; comment line
+    sHandleType         ,string                 ;; string for D_HANDLE
+    sArrayListNS        ,string                 ;; string for ArrayList namespace
+    sDefaultParamMod    ,string                 ;; default parameter modifier (req/opt)
+    sDefaultParamDir    ,string                 ;; default parameter direction (in/out/inout)
+endrecord
+
+record clr
+    reqInterface        ,a50                    ;; required interface
+    interfaceName       ,a50                    ;; interface
+    retType             ,a50                    ;; return type
+    rpsName             ,a30                    ;; general purpose rps name field
+    aval                ,a40                    ;; alpha value
+    group comments      ,a
+     comment_array       ,[D_MAX_COMMENT_LINES]a D_MAX_COMMENT_SIZE
+    endgroup
+    methodType          ,a10                    ;; subroutine / function text
+    methodName          ,a31                    ;; method name
+    outbuf              ,a512                   ;; output buffer
+endrecord
+
+record clr_i
+    fstatus             ,i4                     ;; return status
+    attributes_required ,i4                     ;; are attributes required
+    ctr                 ,i4                     ;; counter
+    ctr2                ,i4                     ;; counter2
+    ctr3                ,i4                     ;; counter3
+    ctr4                ,i4                     ;; counter4
+    iface               ,XML_ELEM_TYPE          ;; inteface id
+    meths               ,XML_ELEMLIST_TYPE      ;; list of methods for interface
+    meth                ,XML_ELEM_TYPE          ;; method id
+    methrs              ,XML_ELEMLIST_TYPE      ;; list of method results for method
+    methr               ,XML_ELEM_TYPE          ;; method id
+    params              ,XML_ELEMLIST_TYPE      ;; list of parameters for method
+    param               ,XML_ELEM_TYPE          ;; parameter id
+endrecord
+
+record
+    strctArray          ,@System.Collections.ArrayList
+    enumArray           ,@System.Collections.ArrayList
+    alphaObj            ,@a
+    found               ,boolean
+    outputInterface     ,boolean
+endrecord
+
+proc
+
+    clear clr, ^i(clr_i)
+
+    ;; the following fields (from appParameters record) can be modifed to adjust the output generated
+    sComment = ';; '
+    sCommentDoc = ';;; '
+    sCommentLine = ';; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+    indentCode = 0
+    indentParams = 0
+    indentData = 0
+    offsetFieldType = 24
+    offsetComment = 48
+    sHandleType = 'D_HANDLE'
+    sArrayListNS = 'System.Collections'
+    sDefaultParamMod = 'req'
+    sDefaultParamDir = 'in'
+
+
+    ;; what interface to process (or all)
+    if(^passed(aInterfaceName))
+        reqInterface = aInterfaceName
+
+    ;; create output source file
+    outputText(D_OUT_OPEN, aOutFilename)
+
+    ;; output any required namespaces
+    outputText(D_OUT_LINE, "import " + sArrayListNS)
+
+    ;; not output any interface information (yet)
+    outputInterface = false
+
+    enumArray = new ArrayList()
+    strctArray = new ArrayList()
+
+    ;; iterate through the interfaces, looking for global structures / enums
+    for ctr from 1 thru %xml_elemlist_count(aIfaceNode)
+    begin
+        iface = %xml_elemlist_item(aIfaceNode, ctr)
+
+        xml_elem_getAttribute(iface, D_XML_NAME, interfaceName)
+
+        if(!reqInterface || interfaceName == reqInterface)
+        begin
+            meths = %xml_elem_getElementsByName(iface, D_XML_METHOD)
+
+            if(meths)
+            begin
+                ;; iterate through the methods for this interface
+                for ctr2 from 1 thru %xml_elemlist_count(meths)
+                begin
+                    meth = %xml_elemlist_item(meths, ctr2)
+
+                    call get_method_globals
+                end
+            end
+
+            ;; delete method list
+            xml_elemlist_delete(meths)
+            clear meths
+        end
+    end
+
+    outputText(D_OUT_LINE) ;; blank line
+
+    call write_method_globals
+    clear strctArray, enumArray
+
+    outputText(D_OUT_LINE) ;; blank line
+
+    ;; indent all interface code
+    for ctr4 from 1 thru indentCode
+        outputText(D_OUT_INDENT, '+')
+
+    ;; iterate through the interfaces
+    for ctr from 1 thru %xml_elemlist_count(aIfaceNode)
+    begin
+        iface = %xml_elemlist_item(aIfaceNode, ctr)
+
+        xml_elem_getAttribute(iface, D_XML_NAME, interfaceName)
+
+        if(!reqInterface || interfaceName == reqInterface)
+        begin
+            meths = %xml_elem_getElementsByName(iface, D_XML_METHOD)
+
+            if(meths)
+            begin
+                outputInterface = true
+
+                ;; iterate through the methods for this interface
+                for ctr2 from 1 thru %xml_elemlist_count(meths)
+                begin
+                    meth = %xml_elemlist_item(meths, ctr2)
+
+                    outputText(D_OUT_LINE, sCommentLine)
+                    outputText(D_OUT_LINE) ;; blank line
+
+                    call write_doc_comments
+
+                    call write_delegate
+
+                    outputText(D_OUT_LINE) ;; blank line
+                    outputText(D_OUT_LINE, sCommentLine)
+                end
+
+                outputText(D_OUT_LINE) ;; blank line
+            end
+
+            ;; delete method list
+            xml_elemlist_delete(meths)
+            clear meths
+        end
+    end
+
+    if(outputInterface == true) then
+        outputText(D_OUT_CLOSE)
+    else
+    begin
+        outputText(D_OUT_PURGE)
+        fstatus = -1
+    end
+
+    freturn fstatus
+
+;; --------------------------------------------------------------------------
+
+get_method_globals,
+
+    if(methrs = %xml_elem_getElementsByName(meth, D_XML_METHRES))
+    begin
+        methr = %xml_elemlist_item(methrs, 1)
+
+        using %locase(%getAttributeText(methr, D_XML_TYPE)) select
+        (D_XML_RET_ENUM),
+        begin
+            rpsName = %getAttributeText(methr, D_XML_ENUMNAME)
+            if(rpsName)
+            begin
+                found = 0
+                foreach alphaObj in enumArray
+                begin
+                    if((a)alphaObj == %locase(rpsName))
+                        found = 1
+                end
+                if(found == 0)
+                begin
+                    foreach alphaObj in enumArray
+                    begin
+                        if((a)alphaObj < %locase(rpsName))
+                            found += 1
+                    end
+                    enumArray.insert(found, (@a)%locase(rpsName))
+                end
+            end
+        end
+        endusing
+    end
+
+    if(params = %xml_elem_getElementsByName(meth, D_XML_PARAM))
+    begin
+        ;; iterate through the parameters for this method
+        for ctr3 from 1 thru %xml_elemlist_count(params)
+        begin
+            param = %xml_elemlist_item(params, ctr3)
+            if(!param)
+                nextloop
+
+            using %locase(%getAttributeText(param, D_XML_TYPE)) select
+            (D_XML_FLD_STRUCT),
+            begin
+                rpsName = %getAttributeText(param, D_XML_STRNAME)
+                if(rpsName)
+                begin
+                    found = 0
+                    foreach alphaObj in strctArray
+                    begin
+                        if(%upcase((a)alphaObj) == %upcase(rpsName))
+                            found = 1
+                    end
+                    if(found == 0)
+                    begin
+                        foreach alphaObj in strctArray
+                        begin
+                            if(%upcase((a)alphaObj) < %upcase(rpsName))
+                                found += 1
+                        end
+                        strctArray.insert(found, (@a)rpsName)
+                    end
+                end
+            end
+            (D_XML_FLD_ENUM),
+            begin
+                rpsName = %getAttributeText(param, D_XML_ENUMNAME)
+                if(rpsName)
+                begin
+                    found = 0
+                    foreach alphaObj in enumArray
+                    begin
+                        if(%upcase((a)alphaObj) == %upcase(rpsName))
+                            found = 1
+                    end
+                    if(found == 0)
+                    begin
+                        foreach alphaObj in enumArray
+                        begin
+                            if(%upcase((a)alphaObj) < %upcase(rpsName))
+                                found += 1
+                        end
+                        enumArray.insert(found, (@a)rpsName)
+                    end
+                end
+            end
+            endusing
+        end
+
+        ;; delete parameters list
+        xml_elemlist_delete(params)
+        clear params
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+write_method_globals,
+
+    foreach alphaObj in enumArray
+    begin
+        rpsName = (a)alphaObj
+        s_bld(outbuf,, includeRpsEnum, %upcase(rpsName))
+        outputText(D_OUT_LINE, outbuf)
+    end
+
+    foreach alphaObj in strctArray
+    begin
+        rpsName = (a)alphaObj
+        s_bld(outbuf,, includeRpsStructure, %upcase(rpsName), rpsName)
+        outputText(D_OUT_LINE, outbuf)
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+write_doc_comments,
+
+    ;; process method comments
+
+    outputText(D_OUT_LINE, sCommentDoc + "<summary>")
+
+    comments = %getComments(meth)
+    for ctr4 from 1 thru D_MAX_COMMENT_LINES
+        if(comment_array[ctr4])
+            outputText(D_OUT_LINE, sCommentDoc + comment_array[ctr4])
+
+    outputText(D_OUT_LINE, sCommentDoc + "</summary>")
+
+    if(methrs = %xml_elem_getElementsByName(meth, D_XML_METHRES))
+    begin
+        outputText(D_OUT_LINE, sCommentDoc + "<returns>")
+
+        methr = %xml_elemlist_item(methrs, 1)
+        comments = %getComments(methr)
+        for ctr4 from 1 thru D_MAX_COMMENT_LINES
+            if(comment_array[ctr4])
+                outputText(D_OUT_LINE, sCommentDoc + comment_array[ctr4])
+
+        outputText(D_OUT_LINE, sCommentDoc + "</returns>")
+    end
+
+    ;; process parameter comments
+
+    if(params = %xml_elem_getElementsByName(meth, D_XML_PARAM))
+    begin
+        ;; iterate through the parameters for this method
+        for ctr3 from 1 thru %xml_elemlist_count(params)
+        begin
+            param = %xml_elemlist_item(params, ctr3)
+            if(!param)
+                nextloop
+
+            outputText(D_OUT_LINE, sCommentDoc + '<param name="' + %getAttributeText(param, D_XML_NAME) + '">')
+
+            ;; process parameter comments
+            comments = %getComments(param)
+            for ctr4 from 1 thru D_MAX_COMMENT_LINES
+                if(comment_array[ctr4])
+                    outputText(D_OUT_LINE, sCommentDoc + comment_array[ctr4])
+
+            outputText(D_OUT_LINE, sCommentDoc + '</param>')
+        end
+    end
+
+    outputText(D_OUT_LINE) ;; blank line
+
+    return
+
+;; --------------------------------------------------------------------------
+
+write_delegate,
+
+;; {xfMethod(name="",interface="",elb="",id="",length=0,precision=0,
+;; format=xfFormat.XX,cType=xfType.XX,nullable=true,encrypt=true)}
+
+    attributes_required = (interfaceName != ' ')
+
+    if(methrs = %xml_elem_getElementsByName(meth, D_XML_METHRES)) then
+        methodType = 'function'
+    else
+        methodType = 'subroutine'
+
+    methodName = %getAttributeText(meth, D_XML_ROUTINE)
+    if(methodName == ' ')
+        methodName = %getAttributeText(meth, D_XML_NAME)
+
+    if(attributes_required)
+    begin
+        outbuf = '{xfMethod('
+
+        outbuf = %atrim(outbuf) + 'interface="' + %atrim(interfaceName) + '"'
+        outbuf = %atrim(outbuf) + ',name="' + %atrim(methodName) + '"'
+        outbuf = %atrim(outbuf) + ',elb="' + %getAttributeText(meth, D_XML_ELB) + '"'
+        outbuf = %atrim(outbuf) + ',id="' + %getAttributeText(meth, D_XML_ID) + '"'
+        if(%locase(%getAttributeText(meth, D_XML_ENCRYPT))==D_XML_TRUE)
+            outbuf = %atrim(outbuf) + ',encrypt="true"'
+        ;if(%locase(%getAttributeText(meth, D_XML_LINQ))==D_XML_TRUE)
+        ;    outbuf = %atrim(outbuf) + ',linq="true"'
+
+        ;; get methodresults
+        if(methrs = %xml_elem_getElementsByName(meth, D_XML_METHRES))
+        begin
+            methr = %xml_elemlist_item(methrs, 1)
+
+            if(aval=%getxfType(methr))
+                outbuf = %atrim(outbuf) + ',cType=xfType.' + %atrim(aval)
+
+            begin
+                using %locase(%getAttributeText(methr, D_XML_DTFORMAT)) select
+                (D_XML_DT14),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.yyyymmddhhmiss'
+                (D_XML_DTYYYYMMDD),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.yyyymmdd'
+                (D_XML_DTYYMMDD),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.yymmdd'
+                (D_XML_DTYYYYJJJ),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.yyyyjjj'
+                (D_XML_DTYYJJJ),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.yyjjj'
+                (D_XML_DTHHMMSS),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.hhmmss'
+                (D_XML_DTHHMM),
+                    outbuf = %atrim(outbuf) + ',format=xfFormat.hhmm'
+                endusing
+            end
+        end
+
+        outbuf = %atrim(outbuf) + ')}'
+
+        outputText(D_OUT_LINE, outbuf)
+
+        outputText(D_OUT_LINE) ;; blank line
+    end
+
+
+    outbuf = %atrim(methodType) + ' ' + methodName
+
+    ;; get methodresults
+    if(methrs = %xml_elem_getElementsByName(meth, D_XML_METHRES)) then
+    begin
+        methr = %xml_elemlist_item(methrs, 1)
+
+        using %locase(%getAttributeText(methr, D_XML_TYPE)) select
+        (D_XML_RET_ALPHA),
+            retType = 'a' + %getAttributeText(methr, D_XML_SIZE)
+        (D_XML_RET_DEC, D_XML_RET_IMPDEC),
+        begin
+            retType = 'd' + %getAttributeText(methr, D_XML_SIZE)
+            if(%getAttributeText(methr, D_XML_PREC))
+                retType = %atrim(retType) + '.' + %getAttributeText(methr, D_XML_PREC)
+        end
+        (D_XML_RET_INT),
+            retType = 'i' + %getAttributeText(methr, D_XML_SIZE)
+        (D_XML_RET_VAL),
+            retType = '^val'
+        (D_XML_RET_STRING),
+            retType = 'string'
+        (D_XML_RET_ENUM),
+            retType = %getAttributeText(methr, D_XML_ENUMNAME)
+        endusing
+
+        ctr4 = %trim(outBuf)
+        if(ctr4 >= offsetFieldType) then
+            ctr4 += 1
+        else
+            ctr4 = offsetFieldType
+        outbuf = outbuf(1:ctr4) + ',' + %atrim(retType)
+
+        if(retType == '^val')
+            retType = 'i4'
+    end
+    else
+    begin
+        clear retType
+    end
+
+    outputText(D_OUT_LINE, outbuf)
+
+    outputText(D_OUT_LINE) ;; blank line
+
+    ;; indent parameters
+    for ctr4 from 1 thru indentParams
+        outputText(D_OUT_INDENT, '+')
+
+    if(params = %xml_elem_getElementsByName(meth, D_XML_PARAM))
+    begin
+        ;; iterate through the parameters for this method
+        for ctr3 from 1 thru %xml_elemlist_count(params)
+        begin
+            param = %xml_elemlist_item(params, ctr3)
+            if(!param)
+                nextloop
+
+            if(attributes_required)
+            begin
+;; {xfParameter(name="",type=SynType.XX,length=0,precision=0,structure="",
+;; format=xfFormat.XX,cType=xfType.XX,collectionType=xfCollectType.XX,
+;; dataTable=true,nullable=true)}
+
+                outbuf = '{xfParameter('
+
+                if(%getAttributeText(param, D_XML_ALTNAME)) then
+                    outbuf = %atrim(outbuf) + 'name="' + %getAttributeText(param, D_XML_ALTNAME) + '"'
+                else
+                    outbuf = %atrim(outbuf) + 'name="' + %getAttributeText(param, D_XML_NAME) + '"'
+
+                using %locase(%getAttributeText(param, D_XML_TYPE)) select
+                (D_XML_FLD_ALPHA),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.alpha'
+                    (D_XML_SYSAL),
+                    begin
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.alpha'
+                        &                       + ',length=' + %getAttributeText(param, D_XML_SIZE)
+                    end
+                    endusing
+                end
+                (D_XML_FLD_DEC, D_XML_FLD_IMPDEC),
+                begin
+                     ;; is this an array list collection
+                     using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                     (D_XML_ARRAYLIST),
+                         outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.decimal'
+                     (D_XML_SYSAL),
+                     begin
+                         outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.decimal'
+                         &                       + ',length=' + %getAttributeText(param, D_XML_SIZE)
+                     end
+                     endusing
+                end
+                (D_XML_FLD_INT),
+                begin
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.integer'
+                    (D_XML_SYSAL),
+                    begin
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.integer'
+                        &                       + ',length=' + %getAttributeText(param, D_XML_SIZE)
+                    end
+                    endusing
+                end
+                (D_XML_FLD_STRUCT),
+                begin
+                    outbuf = %atrim(outbuf) + ',structure="' + %getAttributeText(param, D_XML_STRNAME) + '"'
+
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.structure'
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.structure'
+                    endusing
+
+                    ;; is this an data table
+                    using %getAttributeText(param, D_XML_DATATABLE) select
+                    (D_XML_TRUE),
+                        outbuf = %atrim(outbuf) + ',dataTable=true'
+                    (D_XML_FALSE),
+                        outbuf = %atrim(outbuf) + ',dataTable=false'
+                    endusing
+                end
+                (D_XML_FLD_STRING),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.string'
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + ',collectionType=xfCollectType.string'
+                    (),
+                        outbuf = %atrim(outbuf) + ',type=SynType.handle'
+                    endusing
+                end
+                (D_XML_FLD_HANDLE),
+                    outbuf = %atrim(outbuf) + ',type=SynType.handle'
+                (D_XML_FLD_BINARY),
+                    outbuf = %atrim(outbuf) + ',type=SynType.binaryhandle'
+                (D_XML_FLD_ENUM),
+                    nop
+                endusing
+
+                if(aval=%getxfType(param))
+                begin
+                    outbuf = %atrim(outbuf) + ',cType=xfType.' + %atrim(aval)
+
+                    if(aval=='datetime')
+                    begin
+                        using %getAttributeText(param, D_XML_NULLABLE) select
+                        (D_XML_YES),
+                            outbuf = %atrim(outbuf) + ',nullable="true"'
+                        (D_XML_NO),
+                            outbuf = %atrim(outbuf) + ',nullable="false"'
+                        endusing
+                    end
+                end
+
+                outbuf = %atrim(outbuf) + ')}'
+
+                outputText(D_OUT_LINE, outbuf)
+            end
+
+            ;; define Synergy parameter
+
+            clear outbuf
+
+            if(%getAttributeText(param, D_XML_NAME) == '.include ') then
+                begin
+                    ;; if an include file, just output name
+                    outbuf = %getAttributeText(param, D_XML_NAME)
+                end
+            else
+            begin
+                using %locase(%getAttributeText(param, D_XML_REQD)) select
+                (D_XML_YES),
+                    outbuf = 'req'
+                (D_XML_NO),
+                    outbuf = 'opt'
+                (),
+                begin
+                    if(sDefaultParamMod.Length > 0)
+                        outbuf = sDefaultParamMod
+                end
+                endusing
+                ctr4 = 4
+
+                using %locase(%getAttributeText(param, D_XML_DIR)) select
+                (D_XML_DIR_INOUT),
+                    outbuf = outbuf(1:ctr4) + 'inout'
+                (D_XML_DIR_OUT),
+                    outbuf = outbuf(1:ctr4) + 'out'
+                (D_XML_DIR_IN),
+                    outbuf = outbuf(1:ctr4) + 'in'
+                (),
+                begin
+                    if(sDefaultParamDir.Length > 0)
+                        outbuf = outbuf(1:ctr4) + sDefaultParamDir
+                end
+                endusing
+                ctr4 += 8
+
+                using %getAttributeText(param, D_XML_PASSBY) select
+                (D_XML_PASSBY_VAL),
+                    outbuf = outbuf(1:ctr4) + '^VAL(' + %getAttributeText(param, D_XML_NAME) + ')'
+                (D_XML_PASSBY_REF),
+                    outbuf = outbuf(1:ctr4) + '^REF(' + %getAttributeText(param, D_XML_NAME) + ')'
+                (),
+                    outbuf = outbuf(1:ctr4) + %getAttributeText(param, D_XML_NAME)
+                endusing
+
+                ;; output parameter type
+                ctr4 = %trim(outBuf)
+                if(ctr4 >= offsetFieldType) then
+                    ctr4 += 1
+                else
+                    ctr4 = offsetFieldType
+                outbuf = outbuf(1:ctr4) + ','
+
+                ctr4 = ^d(%getAttributeText(param, D_XML_DIM))
+                if(ctr4)
+                begin
+                    outbuf = %atrim(outbuf) + '['
+                    while(ctr4 > 1)
+                    begin
+                        outbuf = %atrim(outbuf) + '*,'
+                        ctr4 -= 1
+                    end
+                    outbuf = %atrim(outbuf) + '*]'
+                end
+
+                using %locase(%getAttributeText(param, D_XML_TYPE)) select
+                (D_XML_FLD_ALPHA),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + '@' + sArrayListNS + '.ArrayList'
+                    (),
+                        outbuf = %atrim(outbuf) + 'a' + %getAttributeText(param, D_XML_SIZE)
+                    endusing
+                end
+                (D_XML_FLD_DEC, D_XML_FLD_IMPDEC),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + '@' + sArrayListNS + '.ArrayList'
+                    (),
+                    begin
+                        outbuf = %atrim(outbuf) + 'd' + %getAttributeText(param, D_XML_SIZE)
+                        ctr4 = ^d(%getAttributeText(param, D_XML_PREC))
+                        if(ctr4)
+                            outbuf = %atrim(outbuf) + '.' + %getAttributeText(param, D_XML_PREC)
+                    end
+                    endusing
+                end
+                (D_XML_FLD_INT),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + '@' + sArrayListNS + '.ArrayList'
+                    (),
+                        outbuf = %atrim(outbuf) + 'i' + %getAttributeText(param, D_XML_SIZE)
+                    endusing
+                end
+                (D_XML_FLD_STRUCT),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + '@' + sArrayListNS + '.ArrayList'
+                    (),
+                        outbuf = %atrim(outbuf) + %getAttributeText(param, D_XML_STRNAME)
+                    endusing
+                end
+                (D_XML_FLD_STRING),
+                begin
+                    ;; is this an array list collection
+                    using %locase(%getAttributeText(param, D_XML_COLLECTION)) select
+                    (D_XML_ARRAYLIST),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    (D_XML_SYSAL),
+                        outbuf = %atrim(outbuf) + '@' + sArrayListNS + '.ArrayList'
+                    (),
+                        outbuf = %atrim(outbuf) + sHandleType
+                    endusing
+                end
+                (D_XML_FLD_ENUM),
+                    outbuf = %atrim(outbuf) + %getAttributeText(param, D_XML_ENUMNAME)
+                (D_XML_FLD_HANDLE),
+                    outbuf = %atrim(outbuf) + sHandleType
+                (D_XML_FLD_BINARY),
+                    outbuf = %atrim(outbuf) + sHandleType
+                endusing
+            end
+
+            if(true)
+            begin
+                ctr4 = %trim(outBuf)
+                if(ctr4 >= offsetComment) then
+                    ctr4 += 1
+                else
+                    ctr4 = offsetComment
+                outbuf = outbuf(1:ctr4) + sComment
+
+                ;; process parameter comments
+                comments = %getComments(param)
+                for ctr4 from 1 thru D_MAX_COMMENT_LINES
+                    if(comment_array[ctr4])
+                        outbuf = %atrim(outbuf) + %atrim(comment_array[ctr4]) + ' '
+            end
+
+            outputText(D_OUT_LINE, outbuf)
+
+            outputText(D_OUT_LINE) ;; blank line
+        end
+
+        ;; delete parameters list
+        xml_elemlist_delete(params)
+        clear params
+    end
+
+    outputText(D_OUT_LINE, 'endparams')
+    outputText(D_OUT_LINE) ;; blank line
+
+    ;; indent parameters
+    for ctr4 from 1 thru indentCode
+        outputText(D_OUT_INDENT, '-')
+
+    ;; indent data
+    for ctr4 from 1 thru indentData
+        outputText(D_OUT_INDENT, '+')
+
+
+    if(retType)
+    begin
+        outputText(D_OUT_LINE, 'record localVars')
+
+        outputText(D_OUT_INDENT, '+')
+
+        outbuf = 'retVal'
+        ctr4 = %trim(outBuf)
+        if(ctr4 >= offsetFieldType) then
+            ctr4 += 1
+        else
+            ctr4 = offsetFieldType
+        outbuf = outbuf(1:ctr4) + ',' + %atrim(retType)
+        ctr4 = %trim(outBuf)
+        if(ctr4 >= offsetComment) then
+            ctr4 += 1
+        else
+            ctr4 = offsetComment
+        outbuf = outbuf(1:ctr4) + sComment + 'function return value'
+        outputText(D_OUT_LINE, outbuf)
+
+        outputText(D_OUT_INDENT, '-')
+
+        outputText(D_OUT_LINE, 'endrecord')
+        outputText(D_OUT_LINE) ;; blank line
+    end
+
+
+    ;; indent data
+    for ctr4 from 1 thru indentData
+        outputText(D_OUT_INDENT, '-')
+
+
+    outputText(D_OUT_LINE, 'proc')
+    outputText(D_OUT_LINE) ;; blank line
+
+    outputText(D_OUT_INDENT, '+')
+
+    if(retType) then
+    begin
+        outputText(D_OUT_LINE, 'init localVars')
+        outputText(D_OUT_LINE)
+        outputText(D_OUT_LINE)
+        outputText(D_OUT_LINE)
+        outputText(D_OUT_LINE, 'freturn retVal')
+    end
+    else
+    begin
+        outputText(D_OUT_LINE)
+        outputText(D_OUT_LINE)
+        outputText(D_OUT_LINE, 'xreturn')
+    end
+
+    outputText(D_OUT_INDENT, '-')
+
+    outputText(D_OUT_LINE) ;; blank line
+    outputText(D_OUT_LINE, 'end' + methodType)
+
+    return
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get xfType value for coerced data
+;;; </summary>
+;;; <param name="aXmlNode">XML node that may have coersion attribute</param>
+;;; <returns>
+;;; xfType value (in correct case) or spaces
+;;; </returns>
+
+function getxfType      ,a
+req in  aXmlNode        ,XML_ELEM_TYPE  ;; XML node
+endparams
+
+external function
+    locase              ,a
+endexternal
+
+proc
+
+    using %locase(%getAttributeText(aXmlNode, D_XML_COERCE)) select
+    (D_XML_COERCE_BOOLEAN),
+    begin
+        using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+        (D_XML_RET_INT, D_XML_RET_DEC),
+            freturn 'Boolean'
+        endusing
+    end
+    (D_XML_COERCE_INT),
+    begin
+        using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+        (D_XML_RET_INT, D_XML_RET_DEC),
+            freturn 'int'
+        endusing
+    end
+    (D_XML_COERCE_BYTE),
+    begin
+        using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+        (D_XML_RET_INT, D_XML_RET_DEC),
+            freturn 'byte'
+        endusing
+    end
+    (D_XML_COERCE_SHORT),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'short'
+          endusing
+      end
+    (D_XML_COERCE_LONG),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'long'
+          endusing
+      end
+    (D_XML_COERCE_SBYTE),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'sbyte'
+          endusing
+      end
+    (D_XML_COERCE_UINT),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'uint'
+          endusing
+      end
+    (D_XML_COERCE_USHORT),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'ushort'
+          endusing
+      end
+    (D_XML_COERCE_ULONG),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_INT, D_XML_RET_DEC),
+              freturn 'ulong'
+          endusing
+      end
+    (D_XML_COERCE_DECIMAL),
+    begin
+        using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+        (D_XML_RET_IMPDEC),
+            freturn 'decimal'
+        endusing
+    end
+    (D_XML_COERCE_DOUBLE),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_IMPDEC),
+              freturn 'double'
+          endusing
+      end
+    (D_XML_COERCE_FLOAT),
+      begin
+          using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+          (D_XML_RET_IMPDEC),
+              freturn 'float'
+          endusing
+      end
+    (D_XML_COERCE_DATETIME),
+    begin
+        using %locase(%getAttributeText(aXmlNode, D_XML_TYPE)) select
+        (D_XML_RET_DEC),
+            freturn 'DateTime'
+        endusing
+    end
+    endusing
+
+    freturn ' '
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get comments from provided XML node
+;;; </summary>
+;;; <param name="aNode">XML node that may have comment node(s)</param>
+;;; <returns>
+;;; Array of comments (6a50)
+;;; </returns>
+
+function getComments    ,a
+req in  aNode           ,XML_ELEM_TYPE          ;; XML node with child comments
+endparams
+
+external function
+    xml_elem_children           ,^val
+    xml_elem_getName            ,^val
+    xml_elem_getText            ,^val
+    xml_elemlist_count          ,^val
+    xml_elemlist_findtag        ,^val
+endexternal
+
+record
+    group comments      ,a
+     comment_array       ,[D_MAX_COMMENT_LINES]a D_MAX_COMMENT_SIZE
+    endgroup
+    param               ,XML_ELEM_TYPE          ;; parameter id
+    cmnts               ,XML_ELEMLIST_TYPE      ;; list of comments for method
+    cmnt                ,XML_ELEM_TYPE          ;; comment id
+    cmntls              ,XML_ELEMLIST_TYPE      ;; list of comment lines for comment
+    cmntl               ,XML_ELEM_TYPE          ;; comment line id
+    cmntl_cnt           ,i4                     ;; comment elemlist counter
+    comment_num         ,i4                     ;; comment array element number
+    length              ,i4                     ;; comment length
+    aval                ,a80                    ;; dummy alpha field
+endrecord
+
+proc
+
+    clear comments
+    if(cmnts = %xml_elem_children(aNode))
+    begin
+        cmnt = %xml_elemlist_findtag(cmnts, D_XML_COMMENT)
+        if(cmntls = %xml_elem_children(cmnt))
+        begin
+            for cmntl_cnt from 1 thru %xml_elemlist_count(cmntls)
+            begin
+                cmntl = %xml_elemlist_item(cmntls, cmntl_cnt)
+
+                xml_elem_getName(cmntl, aval)
+                using aval select
+                (D_XML_LINE),
+                begin
+                    using aval(%trim(D_XML_LINE)+1:1) select
+                    ('1' thru '9'),
+                    begin
+                        comment_num = aval(%trim(D_XML_LINE)+1:1)
+                        xml_elem_getText(cmntl, comment_array[comment_num], length)
+                    end
+                    endusing
+                end
+                endusing
+            end
+        end
+    end
+
+    freturn comments
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get attribute text for provided XML element
+;;; </summary>
+;;; <param name="aXmlNode">XML node that may have attribute</param>
+;;; <param name="aAttribute">XML attribute to get text</param>
+;;; <returns>
+;;; Trimmed attribute text
+;;; </returns>
+
+function getAttributeText   ,a
+req in  aXmlNode            ,XML_ELEM_TYPE      ;; XML node
+req in  aAttribute          ,a                  ;; attribute name
+endparams
+
+external function
+    xml_elem_getAttribute   ,^val
+endexternal
+
+record
+    attrValue           ,a512           ;; attribute value
+endrecord
+
+proc
+
+    xml_elem_getAttribute(aXmlNode, aAttribute, attrValue)
+
+    freturn attrValue(1:%trim(attrValue))
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Lowercase passed text
+;;; </summary>
+;;; <param name="a_text">Text to lowercase</param>
+;;; <returns>
+;;; Lowercase string
+;;; </returns>
+
+function locase         ,a
+req in      a_text      ,a              ;; text
+endparams
+
+record
+    handle              ,D_HANDLE
+endrecord
+
+proc
+
+    if(^size(a_text) < 1)
+        freturn ''
+
+    handle = %mem_proc(DM_ALLOC, ^size(a_text))
+
+    ^m(handle) = a_text
+    locase ^m(handle)
+
+    freturn ^m(handle)
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Uppercase passed text
+;;; </summary>
+;;; <param name="a_text">Text to upper case</param>
+;;; <returns>
+;;; Uppercase string
+;;; </returns>
+
+function upcase         ,a
+req in      a_text      ,a              ;; text
+endparams
+
+record
+    handle              ,D_HANDLE
+endrecord
+
+proc
+
+    if(^size(a_text) < 1)
+        freturn ''
+
+    handle = %mem_proc(DM_ALLOC, ^size(a_text))
+
+    ^m(handle) = a_text
+    upcase ^m(handle)
+
+    freturn ^m(handle)
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+;;; <summary>
+;;; log text to debug log file
+;;; </summary>
+;;; <param name="aText">Debug logg text</param>
+
+subroutine debugLog
+req in  aText           ,a              ;; text to log
+endparams
+
+record
+    chan                ,i4             ;; log channel
+endrecord
+
+proc
+
+    open(chan=%syn_freechn(), A, 'debug.log')
+    writes(chan, aText)
+    close chan
+    xreturn
+
+endsubroutine
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

@@ -1,0 +1,381 @@
+main ;createDoc
+
+.define D_VERSION   "1.2"
+
+external function
+    createDocFromXml    ,i
+    createDocFromSrc    ,i
+    openTT              ,i
+endexternal
+
+;; parameters
+record
+    xmlFilename         ,a256
+    outFilename         ,a256
+    interfaceName       ,a50
+    srcFilename         ,a256
+    elbName             ,a256
+endrecord
+
+record
+    exitStatus          ,i4
+    chTT                ,i4
+    sts                 ,i4
+    errorSource         ,a20
+    debugMode           ,boolean    ,false
+endrecord
+
+proc
+
+    exitStatus = D_EXIT_FAILURE
+
+    call decodeCommandline
+
+    if(xmlFilename && outFilename) then
+    begin
+        if(interfaceName && srcFilename && elbName) then
+        begin
+            errorSource = 'createXmlFromSrc'
+            sts = %createXmlFromSrc(srcFilename, interfaceName, elbName, xmlFilename)
+            if(!sts)
+            begin
+                errorSource = 'createDocFromXml'
+                sts = %createDocFromXml(xmlFilename, outFilename, interfaceName)
+            end
+        end
+        else
+        begin
+            errorSource = 'createDocFromXml'
+            sts = %createDocFromXml(xmlFilename, outFilename, interfaceName)
+        end
+
+        using sts select
+        (0),
+            exitStatus = D_EXIT_SUCCESS
+        (-1),
+        begin
+            if(!chTT)
+                chTT = %openTT()
+            writes(chTT,"Interface "+%atrim(interfaceName)+" does not exist, or has no methods")
+        end
+        (>0),
+        begin
+            data errorText  ,a45
+            ertxt(sts, errorText)
+            if(!chTT)
+                chTT = %openTT()
+            writes(chTT,"Error "+%string(sts)+" ("+%atrim(errorText)+") occurred in "+%atrim(errorSource))
+        end
+        (),
+        begin
+            if(!chTT)
+                chTT = %openTT()
+            writes(chTT,"Error "+%string(sts)+" occurred in "+%atrim(errorSource))
+        end
+        endusing
+    end
+    else
+    begin
+        if(!chTT)
+            chTT = %openTT()
+        if(!xmlFilename)
+            writes(chTT,"Command line parameter -x is missing")
+        if(!outFilename)
+            writes(chTT,"Command line parameter -o is missing")
+        writes(chTT,"")
+        showHelp(chTT)
+    end
+
+;; ----------------------------------------------------------------------------
+
+exitProg,
+
+    if(chTT > 0)
+    begin
+        writes(chTT,"")
+        display(chTT,"Press return to terminate ")
+        begin
+            data ichar ,i4
+            accept(chTT, ichar, WAIT:10) [ERR=done]
+        end
+    end
+
+done,
+
+    if(chTT > 0)
+        close chTT
+    flags(7000000, 1)
+    stop exitStatus
+
+;; ----------------------------------------------------------------------------
+
+decodeCommandLine,
+
+    clear xmlFilename, outFilename, interfaceName, srcFilename, elbName
+
+.define MAX_ARGS        20
+
+    try
+    begin
+        data cmdlin     ,a1024
+        data num_args   ,i4
+        data argPos     ,[MAX_ARGS]i4
+        data argLen     ,[MAX_ARGS]i4
+        data pos        ,i4
+
+        cmdln(cmdlin, num_args, argPos, argLen)
+
+        if(%instr(1, cmdlin, ' -h ') || %instr(1, cmdlin, ' -? '))
+        begin
+            exitStatus = D_EXIT_SUCCESS
+            showHelp(chTT)
+            goto exitProg
+        end
+
+        pos = 0
+        while(pos < num_args)
+        begin
+            pos += 1
+            using (cmdlin(argPos[pos]:argLen[pos])+' ') select
+            ('-x '),
+            begin
+                data chIN   ,i4
+
+                pos += 1
+                if(pos > MAX_ARGS || argPos[pos] < 1 || argLen[pos] < 1)
+                    throw new applicationException("Missing -x parameter")
+                if(cmdlin(argPos[pos]:argLen[pos]) == '-')
+                    throw new applicationException("Missing -x parameter")
+
+                xmlFilename = cmdlin(argPos[pos]:argLen[pos])
+            end
+            ('-o '),
+            begin
+                pos += 1
+                if(pos > MAX_ARGS || argPos[pos] < 1 || argLen[pos] < 1)
+                    throw new applicationException("Missing -o parameter")
+                if(cmdlin(argPos[pos]:argLen[pos]) == '-')
+                    throw new applicationException("Missing -o parameter")
+
+                outFilename = cmdlin(argPos[pos]:argLen[pos])
+                begin
+                    data ext    ,a10
+                    parse(outFilename,1,,,,,ext)
+                    if(!ext)
+                        outFilename = %atrim(outFilename) + '.dbl'
+                end
+            end
+            ('-s '),
+            begin
+                data chIN   ,i4
+
+                pos += 1
+                if(pos > MAX_ARGS || argPos[pos] < 1 || argLen[pos] < 1)
+                    throw new applicationException("Missing -s parameter [srcFilename]")
+                if(cmdlin(argPos[pos]:argLen[pos]) == '-')
+                    throw new applicationException("Missing -s parameter [srcFilename]")
+
+                srcFilename = cmdlin(argPos[pos]:argLen[pos])
+
+                try
+                begin
+                    open(chIN=%syn_freechn(), I, srcFilename)
+                    close chIN
+                end
+                catch(excp)
+                begin
+                    throw new applicationException("Cannot open file "+srcFilename)
+                    clear xmlFilename
+                end
+                endtry
+
+                pos += 1
+                if(pos > MAX_ARGS || argPos[pos] < 1 || argLen[pos] < 1)
+                    throw new applicationException("Missing -s parameter [elbName]")
+                if(cmdlin(argPos[pos]:argLen[pos]) == '-')
+                    throw new applicationException("Missing -s parameter [elbName]")
+
+                elbName = cmdlin(argPos[pos]:argLen[pos])
+            end
+            ('-i '),
+            begin
+                pos += 1
+                if(pos > MAX_ARGS || argPos[pos] < 1 || argLen[pos] < 1)
+                    throw new applicationException("Missing -i parameter")
+                if(cmdlin(argPos[pos]:argLen[pos]) == '-')
+                    throw new applicationException("Missing -i parameter")
+
+                interfaceName = cmdlin(argPos[pos]:argLen[pos])
+            end
+            endusing
+        end
+
+        ;; check logicals to fill in missing info (used for testing purposes)
+        if(debugMode == true)
+        begin
+            if(!srcFilename)
+            begin
+                getlog('CREATEDOC_SRCFILE', srcFilename, sts)
+                if(sts)
+                begin
+                    try
+                    begin
+                        data chIN   ,i4
+                        open(chIN=%syn_freechn(), I, srcFilename)
+                        close chIN
+                    end
+                    catch(excp)
+                    begin
+                        if(!chTT)
+                            chTT = %openTT()
+                        writes(chTT, "Cannot open file "+srcFilename)
+                        clear srcFilename
+                    end
+                    endtry
+                end
+            end
+
+            if(!xmlFilename)
+            begin
+                getlog('CREATEDOC_XMLFILE', xmlFilename, sts)
+                if(sts && !srcFilename)
+                begin
+                    try
+                    begin
+                        data chIN   ,i4
+                        open(chIN=%syn_freechn(), I, xmlFilename)
+                        close chIN
+                    end
+                    catch(excp)
+                    begin
+                        if(!srcFilename)
+                        begin
+                            if(!chTT)
+                                chTT = %openTT()
+                            writes(chTT, "Cannot open file "+xmlFilename)
+                            clear xmlFilename
+                        end
+                    end
+                    endtry
+                end
+            end
+
+            if(!elbName)
+            begin
+                getlog('CREATEDOC_ELBFILE', elbName, sts)
+            end
+
+            if(!interfaceName)
+            begin
+                getlog('CREATEDOC_INTERFACE', interfaceName, sts)
+            end
+
+            if(!outFilename)
+            begin
+                getlog('CREATEDOC_OUTFILE', outFilename, sts)
+            end
+        end
+
+        if(xmlFilename)
+        begin
+            data reThrow ,boolean, false
+            try
+            begin
+                data chIN ,i4
+                open(chIN=%syn_freechn(), I, xmlFilename)
+                close chIN
+                if(srcFilename)
+                begin
+                    reThrow = true
+                    throw new applicationException("XML file "+%atrim(xmlFilename)+" already exists")
+                end
+            end
+            catch(excp)
+            begin
+                if(reThrow)
+                    throw new applicationException(excp.Message)
+                if(!srcFilename)
+                begin
+                    throw new applicationException("Error opening file "+%atrim(xmlFilename)+" "+excp.Message)
+                end
+            end
+            endtry
+        end
+
+        if(outFilename)
+        begin
+            data reThrow ,boolean, false
+            try
+            begin
+                data chIN ,i4
+                open(chIN=%syn_freechn(), I, outFilename)
+                close chIN
+                reThrow = true
+                throw new applicationException("Output file "+%atrim(outFilename)+" already exists")
+            end
+            catch(excp ,@Synergex.SynergyDE.NoFileFoundException)
+            begin
+                nop
+            end
+            catch(excp)
+            begin
+                if(reThrow)
+                    throw new applicationException(excp.Message)
+                if(!srcFilename)
+                begin
+                    throw new applicationException("Error opening file "+%atrim(outFilename)+" "+excp.Message)
+                end
+            end
+            endtry
+        end
+
+    end
+    catch (e)
+    begin
+        if(!chTT)
+            chTT = %openTT()
+        writes(chTT, e.Message)
+    end
+    endtry
+
+    return
+
+endmain
+
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+subroutine showHelp
+    req inout   chTT    ,i
+    endparams
+proc
+    if(!chTT)
+        chTT = %openTT()
+    writes(chTT, "dbr createDoc -x <xmlFile> -o <outFile> [-s <dblFile> <elbName>] [-i <interface>]")
+    writes(chTT, "")
+    writes(chTT, " -x <xmlFile>           = XML filename")
+    writes(chTT, " -o <outFile>           = Output filename")
+    writes(chTT, " -s <dblFile> <elbName> = DBL source file & ELB name")
+    writes(chTT, " -i <interface>         = Process specified interface or all interfaces")
+    writes(chTT, "")
+
+    xreturn
+endsubroutine
+
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;; open TT and return the channel
+
+function openTT         ,i
+    endparams
+record
+    chTT                ,i4
+endrecord
+proc
+    chTT = %syn_freechn()
+    open(chTT, O, 'TT:')
+    writes(chTT, "createDoc Version "+D_VERSION)
+    writes(chTT, "")
+    freturn chTT
+endfunction
+
+;;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

@@ -1,0 +1,2899 @@
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;
+;; logicals used
+;;
+;;  COMMENT_COPYRIGHT
+;;  copyright comments must be enclosed in comment lines
+;;  that precede and follow copyright messages at top of source file
+;;
+;;  COMMENT_RESET
+;;  whenever a comment_reset is found, subroutine comments are cleared
+;;  this is the beginning of a comment line that seperates external subroutines
+;;   in the same source file
+;;
+;;  COMMENT_EOP
+;;  comment that mimics ENDPARAMS
+;;
+;;  APP_INCLUDES
+;;  pipe delimited list of application include files (used to indicate ENDPARAMS)
+;;  e.g. APP_INCLUDES=incname|incname2|
+;;
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.include 'INC:genxml_tokens.def'
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Create MDU/GENXML XML file from Synergy source file
+;;; </summary>
+;;; <param name="aSrcFilename">Source filename</param>
+;;; <param name="aInterfaceName">Interface name to use</param>
+;;; <param name="aElbName">ELB filename</param>
+;;; <param name="aXmlFilename">XML filename to create</param>
+;;; <returns>
+;;; 0 = ok
+;;; else Synergy error number
+;;; </returns>
+
+function createXmlFromSrc   ,i4
+req in  aSrcFilename        ,a255       ;; source filename to document
+req in  aInterfaceName      ,a30        ;; interface
+req in  aElbName            ,a255       ;; elb name
+req in  aXmlFilename        ,a255       ;; generated xml filename (GENXML format)
+endparams
+
+.define TOKEN_NONE          0
+.define TOKEN_IDENTIFIER    1
+.define TOKEN_PAREN         2
+.define TOKEN_BRACKET       3
+.define TOKEN_OPERATOR      4
+.define TOKEN_INVALID       -1          ;; Invalid tokens are <= this token
+.define TOKEN_NEXT_INVALID  -1
+.define TOKEN_CURR_INVALID  -2
+
+.define D_UNKNOWN_DEC       '?'
+.define D_UNKNOWN_ALP       '?'
+
+.define D_COMMENT           ';'
+
+.define D_MAX_COMMENT_SIZE  50
+.define D_MAX_COMMENT_LINES 6
+
+.include 'DBLDIR:synxml.def'
+
+external function
+    calcGroupSize       ,i
+    end_of_params       ,boolean
+    nextToken           ,i
+    nextTokenIsType     ,boolean
+    stripLeadingSpaces  ,a
+    stripSpaces         ,a
+endexternal
+
+structure cline                         ;; comment line
+    comment             ,a D_MAX_COMMENT_SIZE * D_MAX_COMMENT_LINES
+endstructure
+
+.define numResetTokens  5
+.define numRoutineTokens 5
+
+literal
+    resetToken      ,[numResetTokens]a16
+    &   ,'endfunction     '
+    &   ,'endsubroutine   '
+    &   ,'endmethod       '
+    &   ,'.end            '
+    &   ,'endmain         '
+    routineToken    ,[numRoutineTokens]a16
+    &   ,'function        '
+    &   ,'subroutine      '
+    &   ,'method          '
+    &   ,'.function       '
+    &   ,'.subroutine     '
+endliteral
+
+record read_buff_vars
+    in_ch               ,i4             ;; in channel
+    buff                ,a512           ;; current read buffer
+    buff_lc             ,a512           ;; lowercase copy of current read buffer
+    buff_len            ,i4             ;; length of buff
+    next_buff           ,a512           ;; next read buffer
+    next_buff_lc        ,a512           ;; lowercase copy of next read buffer
+    next_len            ,i4             ;; length of next_buff
+endrecord
+
+record clr_i
+    fstatus             ,i4             ;; function return status
+    sts                 ,i4             ;; status
+    out_ch              ,i4             ;; output channel (data)
+    errnum              ,i4             ;; error number
+    in_proc             ,i4             ;; in procedure division
+    eop_flag            ,i4             ;; end of parameters flag
+    cmt_hdl             ,i4             ;; comment handle
+    cmt_size            ,i4             ;; comment handle array size
+    pos                 ,i4             ;; position in loop
+    got_next            ,i4             ;; already got next source line
+    pnumber             ,i4             ;; parameter number
+    pgroupfld           ,i4             ;; processing parameter group field
+    pstrong_proto       ,i4             ;; parameter is strongly prototyped
+    tokenCtr            ,i4             ;; token counter
+    ctr                 ,i4             ;; general purpose counter
+    commentCopyrightLen ,i4             ;; comment enclosing copyright message
+    commentResetLen     ,i4             ;; comment signalling routine break
+endrecord
+
+record clr
+    filename            ,a256           ;; source filename
+    commentCopyright    ,a80            ;; comment enclosing copyright message
+                                        ;;  at top of source file
+    commentReset        ,a80            ;; comment signalling routine break
+
+    rname               ,a32            ;; routine name
+    rtype               ,a10            ;; routine type (function / subroutine)
+    roptions            ,a40            ;; routine options (return type, ^val, reentrant, etc)
+
+    pname               ,a80            ;; parameter name (can also be .include filename)
+    ptype               ,a80            ;; parameter data type
+    pcomment            ,a1024          ;; parameter comment
+    prequired           ,a1             ;; parameter required  (Y/N)
+    pdir                ,a5             ;; parameter direction (IN/OUT/INOUT)
+    pinclude            ,a80            ;; parameter is include (RPS/ENUM/.include/space)
+    pRPSstructure       ,a30            ;; parameter RPS structure name
+    psize               ,a8             ;; parameter size
+    pdim                ,a8             ;; parameter dimension (array) info
+endrecord
+
+record
+    doc                 ,XML_DOC_TYPE   ;; XML document
+    rootNode            ,XML_ELEM_TYPE  ;; XML Root node
+    ifaceNode           ,XML_ELEM_TYPE  ;; XML interface node
+    methNode            ,XML_ELEM_TYPE  ;; method node
+    paramNode           ,XML_ELEM_TYPE  ;; parameter node
+endrecord
+
+proc
+
+    clear clr, ^i(clr_i)
+    init read_buff_vars
+
+    filename = aSrcFilename
+
+    ;; COPYRIGHT comments are assumed to start/stop
+    ;;  with a copyright comment line
+    getlog('commentCopyright', commentCopyright, commentCopyrightLen)
+    if(!commentCopyrightLen)
+    begin
+        commentCopyright = ';; @@@@@@@@@@'
+        commentCopyrightLen = %trim(commentCopyright)
+    end
+
+    ;; Everytime a COMMENTRESET line is encountered,
+    ;; all comments are reset.  Comments for a subroutine/function
+    ;; should be after a COMMENTRESET, and before the routine
+    getlog('commentReset', commentReset, commentResetLen)
+    if(!commentResetLen)
+    begin
+        commentReset = ';; ++++++++++'
+        commentResetLen = %trim(commentReset)
+    end
+
+    xcall xml_option("ENCODE", SYNESCAPE_ESCAPE)
+
+    call start_xml_doc
+
+    if(!fstatus)
+    begin
+        call doc_source_file
+
+        call finish_xml_doc
+    end
+
+    freturn fstatus
+
+;; --------------------------------------------------------------------------
+
+doc_source_file,
+
+    try
+    begin
+        open(in_ch, 'I', %atrim(filename))
+    end
+    catch (e)
+    begin
+        writes(out_ch, "Error "+%string(%error)+" opening source file")
+        fstatus = %error
+        return
+    end
+    endtry
+
+    ;; read first buffer
+    read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+
+    call new_routine
+    repeat
+    begin
+        if(!got_next)
+            read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+        clear got_next
+        using buff_len select
+        (0),
+            nextloop
+        (<0),
+            goto eof_src
+        endusing
+
+        ;; end of routine tokens
+        for tokenCtr from 1 thru numResetTokens
+        begin
+            if(buff_lc == %atrim(resetToken[tokenCtr]))
+            begin
+                if(%nextToken(resetToken[tokenCtr], buff_lc) != TOKEN_NONE)
+                    exitloop
+                call new_routine
+                call clear_comments
+                nextloop
+            end
+        end
+
+        ;; start of routine tokens
+        for tokenCtr from 1 thru numRoutineTokens
+        begin
+            if(buff_lc == %atrim(routineToken[tokenCtr]))
+            begin
+                if(%nextToken(routineToken[tokenCtr], buff_lc) != TOKEN_IDENTIFIER)
+                    exitloop
+                call new_routine
+                call check_parameters
+                nextloop
+            end
+        end
+
+        using buff_lc select
+        (D_COMMENT),
+        begin
+            if(!in_proc && !eop_flag)
+                call check_comments
+        end
+        ('begin'),
+        begin
+            if(%nextToken('begin', buff_lc) != TOKEN_NONE)
+                exit
+            if(in_proc > 0)
+                in_proc += 1
+        end
+        ('end'),
+        begin
+            if(%nextToken('end', buff_lc) != TOKEN_NONE)
+                exit
+            if(in_proc > 0)
+                in_proc -= 1
+            if(!in_proc)
+            begin
+                call new_routine
+                call clear_comments
+            end
+        end
+        ('main'),
+        begin
+            using %nextToken('main', buff_lc) select
+            (TOKEN_NONE, TOKEN_IDENTIFIER),
+            begin
+                call new_routine
+                call check_parameters
+            end
+            endusing
+        end
+        ('proc'),
+        begin
+            using %nextToken('proc', buff_lc) select
+            (TOKEN_NONE),
+                in_proc = 1
+            (TOKEN_PAREN),
+                if(in_proc == 0)
+                    in_proc = 1
+            endusing
+        end
+        ('.proc'),
+        begin
+            using %nextToken('.proc', buff_lc) select
+            (TOKEN_NONE),
+                in_proc = 1
+            (TOKEN_PAREN),
+                if(in_proc == 0)
+                    in_proc = 1
+            endusing
+        end
+        endusing
+    end
+
+eof_src,
+
+    close in_ch
+    clear in_ch
+
+    return
+
+;; --------------------------------------------------------------------------
+
+new_routine,
+
+    clear in_proc, eop_flag
+    return
+
+;; --------------------------------------------------------------------------
+
+clear_comments,
+
+    if(cmt_hdl)
+        cmt_hdl = %mem_proc(DM_FREE, cmt_hdl)
+    clear cmt_size
+    return
+
+;; --------------------------------------------------------------------------
+
+check_comments,
+
+    if(in_proc)
+        return
+
+    if(%end_of_params(buff_lc, in_proc))
+    begin
+        eop_flag = TRUE
+        return
+    end
+
+    if(commentResetLen && buff_lc == commentReset(1:commentResetLen))
+    begin
+        call clear_comments
+        return
+    end
+
+    ;;  get thru the copyright section
+    if (commentCopyrightLen && buff_lc == commentCopyright(1:commentCopyrightLen))
+    begin
+        repeat
+        begin
+            read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+            using buff_len select
+            (0),
+                nextloop
+            (<0),
+                goto eof_cc
+            endusing
+
+            using buff_lc select
+            (commentCopyright(1:commentCopyrightLen)),
+                exitloop
+            (D_COMMENT),
+                nextloop
+            (),
+            begin
+                got_next = 1
+                return
+            end
+            endusing
+        end
+
+        ;; skip blank lines
+        repeat
+        begin
+            read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+            using buff_len select
+            (0),
+                nextloop
+            (<0),
+                goto eof_cc
+            endusing
+
+            if(commentResetLen && buff_lc == commentReset(1:commentResetLen))
+            begin
+                call clear_comments
+                return
+            end
+
+            using buff_lc select
+            (commentCopyright(1:commentCopyrightLen)),
+            begin
+                call clear_comments
+                return
+            end
+            (D_COMMENT),
+            begin
+                if(buff_len == 1)
+                    nextloop
+                exitloop
+            end
+            (),
+            begin
+                got_next = 1
+                return
+            end
+            endusing
+        end
+
+        if(FALSE)
+        begin
+eof_cc,
+            ;; clear this to force error on next read
+            clear got_next
+            clear buff, buff_lc, buff_len
+            return
+        end
+    end
+
+    call add_comment
+
+    return
+
+;; --------------------------------------------------------------------------
+
+add_comment,
+
+    if(cmt_hdl) then
+    begin
+        cmt_size += 1
+        cmt_hdl = %mem_proc(DM_RESIZ, cmt_size*^size(cline), cmt_hdl)
+    end
+    else
+    begin
+        cmt_size = 1
+        cmt_hdl = %mem_proc(DM_ALLOC, ^size(cline))
+    end
+
+    buff_len = ^size(buff_lc)
+    ;; remove leading comment characters
+    while(buff_lc == D_COMMENT)
+        buff_lc = buff_lc(^size(D_COMMENT)+1, buff_len)
+
+    ;; now remove leading spaces
+    if(buff_lc)
+        buff_lc = %stripLeadingSpaces(buff_lc)
+    buff_len = %trim(buff_lc)
+    ^m(cline[cmt_size].comment, cmt_hdl) = buff_lc(1:buff_len)
+
+    return
+
+;; --------------------------------------------------------------------------
+
+check_parameters,
+
+    ;; skip past FUNCTION / SUBROUTINE verb
+    pos = 1
+    while(buff_lc(pos:1))
+        pos += 1
+
+    ;; skip past spaces
+    while(!buff_lc(pos:1) && pos < buff_len)
+        pos += 1
+    if(pos > 1 && pos <= buff_len)
+        buff_lc = buff_lc(pos, buff_len)
+
+    ;; now name is at start of string
+    pos = 1
+    while(buff_lc(pos:1) != ' ' &&
+    &     buff_lc(pos:1) != ',' &&
+    &     buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+        pos += 1
+
+    if(pos == 1)
+        return
+
+    ;; routine name
+    rname = %getOriginal(buff, %atrim(buff_lc(1:pos-1)))
+
+    clear rtype, roptions, pnumber
+
+    if(buff_lc(pos:1) == ' ' || buff_lc(pos:1) == ',')
+    begin
+        buff_len = %trim(buff_lc)
+        ;; find next non-space (and non-comma) character
+        while(pos <= buff_len &&
+        &  (buff_lc(pos:1) == ' ' || buff_lc(pos:1) == ','))
+            pos += 1
+        if(pos <= buff_len)
+        begin
+            buff_lc = buff_lc(pos, buff_len)
+            buff_len = %trim(buff_lc)
+            ;; find comment
+            pos = 1
+            while(pos <= buff_len && buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+                pos += 1
+            if(pos > 1)
+            begin
+                if(pos <= buff_len) then
+                    roptions = buff_lc(1, pos-1)
+                else
+                    roptions = buff_lc(1:^size(roptions))
+            end
+        end
+    end
+
+    ;; rebuild buff_lc from buff
+    gen_buff_lc(buff, buff_lc, buff_len)
+
+    using buff_lc select
+    ('.function', 'function'),
+    begin
+        rtype = 'function'
+        call output_method
+    end
+    ('.subroutine', 'subroutine'),
+    begin
+        rtype = 'subroutine'
+        call output_method
+    end
+    ('method'),
+    begin
+        rtype = 'method'
+        call output_method
+    end
+    endusing
+
+    repeat
+    begin
+        read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+        using buff_len select
+        (0),
+            nextloop
+        (<0),
+            goto eof_cp
+        endusing
+
+        using buff_lc select
+        (D_COMMENT),
+        begin
+            if(!in_proc && !eop_flag)
+            begin
+                if(%end_of_params(buff_lc, in_proc))
+                begin
+                    eop_flag = TRUE
+                    exitloop
+                end
+                if(!pnumber)
+                begin
+                    call add_comment
+                    nextloop
+                end
+                ;; todo - add comment to previous parameter
+            end
+        end
+        ('proc ', '.proc '),
+        begin
+            in_proc = 1
+            exitloop
+        end
+        ('common ', 'global ' 'external '),
+            exitloop
+        ('record ', 'static ', 'stack ' 'local '),
+            exitloop
+        (' '),
+            nextloop
+        (),
+        begin
+            if(%end_of_params(buff_lc, in_proc))
+            begin
+                eop_flag = TRUE
+                exitloop
+            end
+            if(cmt_hdl && !pnumber)
+                addComment(methNode, ^m(cmt_hdl), D_MAX_COMMENT_SIZE, D_MAX_COMMENT_LINES)
+
+            pnumber += 1
+            call decode_parameter
+            if(pnumber < 0 || eop_flag == true)
+                exitloop
+            call output_parameter
+        end
+        endusing
+    end
+
+eof_cp,
+
+    if(cmt_hdl && !pnumber)
+        addComment(methNode, ^m(cmt_hdl), D_MAX_COMMENT_SIZE, D_MAX_COMMENT_LINES)
+
+    return
+
+;; --------------------------------------------------------------------------
+
+decode_parameter,
+
+    clear pname, pdim, ptype, psize, pcomment, pstrong_proto, pRPSstructure, pgroupfld
+
+    pinclude = ' '                  ;; not include
+    prequired = 'Y'                 ;; required
+    pdir = 'INOUT'                  ;; in/out/inout
+
+    if(buff_lc == '.include ') then
+        call process_parameter_include
+    else
+        call process_parameter
+
+    while(next_buff_lc == D_COMMENT && !%end_of_params(next_buff_lc, in_proc))
+    begin
+        read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+        if(buff_len >= 2)
+            pcomment = %atrim(pcomment) + ' ' + buff_lc(2, buff_len)
+    end
+
+    if(pcomment)
+    begin
+        while(pcomment == D_COMMENT)
+            pcomment = pcomment(^size(D_COMMENT)+1,^size(pcomment))
+        while(pcomment == ' ')
+            pcomment = pcomment(2,^size(pcomment))
+    end
+
+    ;; parse comments to see if we can determine any strong prototyping info
+    if(pcomment && !pstrong_proto)
+    begin
+        using pcomment select
+        ('required'),
+        begin
+            prequired = 'Y'
+            pcomment = pcomment(10, ^size(pcomment))
+        end
+        ('optional'),
+        begin
+            prequired = 'N'
+            pcomment = pcomment(10, ^size(pcomment))
+        end
+        ('req'),
+        begin
+            prequired = 'Y'
+            pcomment = pcomment(5, ^size(pcomment))
+        end
+        ('opt'),
+        begin
+            prequired = 'N'
+            pcomment = pcomment(5, ^size(pcomment))
+        end
+        endusing
+
+        using pcomment select
+        ('inout'),
+        begin
+            pdir = 'INOUT'
+            pcomment = pcomment(7, ^size(pcomment))
+        end
+        ('in'),
+        begin
+            pdir = 'IN'
+            pcomment = pcomment(4, ^size(pcomment))
+        end
+        ('out'),
+        begin
+            pdir = 'OUT'
+            pcomment = pcomment(5, ^size(pcomment))
+        end
+        endusing
+
+        while(pcomment &&
+        &     (pcomment == ':' || pcomment == '-' || pcomment == ' '))
+            pcomment = pcomment(2, ^size(pcomment))
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+process_parameter_include,
+
+    buff_lc = buff_lc - '.include '
+    pos = %instr(1, buff_lc, D_COMMENT)
+    if(pos)
+    begin
+        if(pos < buff_len)
+            pcomment = buff_lc(pos+^size(D_COMMENT), buff_len)
+        if(pos <= buff_len)
+            clear buff_lc(pos, buff_len)
+    end
+    pos = %instr(1, buff_lc, ' repository ')
+    if(!pos)
+        pos = %instr(1, buff_lc, ' repository,')
+    if(pos) then
+    begin
+        pinclude = 'RPS'
+        pRPSstructure = buff_lc(1:pos-1)
+        buff_lc = buff_lc(pos+12,^size(buff_lc))
+
+        ;; remove quotes
+        for pos from 1 thru ^size(pRPSstructure)
+            using pRPSstructure(pos:1) select
+            ('"', "'"),
+                clear pRPSstructure(pos:1)
+            endusing
+
+        pRPSstructure = %stripLeadingSpaces(pRPSstructure)
+        buff_lc = %stripLeadingSpaces(buff_lc)
+
+        if(%instr(1, buff_lc, ' enum ')) then
+        begin
+            pinclude = 'ENUM'
+        end
+        else
+        begin
+            call check_strong_prototyping_dir
+            call check_strong_prototyping_req
+            call check_strong_prototyping_dir ;; just in case
+
+            ;; get parameter name
+            pos = %instr(1, buff_lc, 'group=')
+            if(!pos)
+                pos = %instr(1, buff_lc, 'group =')
+            if(!pos)
+                pos = %instr(1, buff_lc, 'structure=')
+            if(!pos)
+                pos = %instr(1, buff_lc, 'structure =')
+            if(pos)
+            begin
+                pos = %instr(1, buff_lc, '=')
+                buff_lc = buff_lc(pos+1,^size(buff_lc))
+                while(buff_lc != '   ' &&
+                &   (buff_lc == ' ' || buff_lc == '='))
+                    buff_lc = buff_lc(2,^size(buff_lc))
+                pname = buff_lc(1:%trim(buff_lc))
+
+                ;; remove quotes
+                for pos from 1 thru ^size(pname)
+                    using pname(pos:1) select
+                    ('"', "'"),
+                        clear pname(pos:1)
+                    endusing
+                pname = %stripLeadingSpaces(pname)
+            end
+        end
+        pRPSstructure = %getOriginal(buff, %atrim(pRPSstructure))
+    end
+    else
+    begin
+        pinclude = '.include ' + %getOriginal(buff, %atrim(buff_lc))
+        clear prequired, pdir
+
+        pname = buff_lc(1:^size(pname))
+        ;; remove quotes
+        for pos from 1 thru ^size(pname)
+            using pname(pos:1) select
+            ('"', "'"),
+                clear pname(pos:1)
+            endusing
+        pname = %stripLeadingSpaces(pname)
+
+        ;; check to see if the contents of the include file is a group
+        if(!%isGroupInclude(pname))
+            eop_flag = true
+    end
+    clear buff_lc
+
+    ;; parameter name
+    pname = %getOriginal(buff, %atrim(pname))
+
+    ptype = 'A'
+    return
+
+;; --------------------------------------------------------------------------
+
+process_parameter,
+
+    buff_lc = %stripLeadingSpaces(buff_lc)
+
+    call check_strong_prototyping_dir
+    call check_strong_prototyping_req
+    call check_strong_prototyping_dir ;; just in case
+
+    ;; if this is a group, reposition to group name
+    if(buff_lc == 'group ' && !%nextTokenIsType(buff_lc))
+    begin
+        pgroupfld = 1
+        buff_lc = buff_lc(7, ^size(buff_lc))
+    end
+
+    buff_lc = %stripLeadingSpaces(buff_lc)
+
+    pos = 1
+    while(pos <= buff_len &&
+    &    buff_lc(pos:1) != ' ' &&
+    &    buff_lc(pos:1) != ',' &&
+    &    buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+        pos += 1
+
+    ;; no parameter name
+    if(pos == 1)
+        return
+
+    ;; parameter name
+    pname = %getOriginal(buff, %atrim(buff_lc(1,pos-1)))
+    buff_lc = buff_lc(pos, ^size(buff_lc))
+
+    ;; now find comma / comment
+    pos = 1
+    while(pos < buff_len &&
+    &    buff_lc(pos:1) != ',' &&
+    &    buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+        pos += 1
+
+    if(buff_lc(pos:1) == ',')
+    begin
+        ;; skip comma
+        pos += 1
+
+        ;; skip any whitespace before parameter type
+        while(pos <= buff_len && !buff_lc(pos:1))
+            pos += 1
+
+        ;; remove the stuff we have processed
+        buff_lc = buff_lc(pos, ^size(buff_lc))
+        buff_len = %trim(buff_lc)
+
+        ;; find comment
+        pos = 1
+        while(pos <= buff_len && buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+            pos += 1
+    end
+
+    if(buff_lc(pos:^size(D_COMMENT)) == D_COMMENT)
+    begin
+        ;; clear comment character(s)
+        while(pos <= buff_len && buff_lc(pos:^size(D_COMMENT)) == D_COMMENT)
+        begin
+            clear buff_lc(pos:^size(D_COMMENT))
+            pos += ^size(D_COMMENT)
+        end
+
+        ;; skip spaces
+        while(pos <= buff_len && buff_lc(pos:1) == ' ')
+            pos += 1
+
+        if(pos <= buff_len)
+        begin
+            pcomment = buff_lc(pos, buff_len)
+            clear buff_lc(pos, buff_len)
+        end
+    end
+
+    ;; whatever is left, is the parameter type
+    buff_len = %trimz(buff_lc)
+    ptype = %stripSpaces(buff_lc(1:^size(ptype)))
+    upcase ptype
+
+    ;; remove parameter array info
+    if(ptype == '[')
+    begin
+        ctr = %instr(2, ptype, ']')
+        if(ctr)
+        begin
+            ptype = ptype(ctr+1,^size(ptype))
+            pdim = '1'
+        end
+    end
+
+    ;; get parameter size info
+    using ptype select
+    ('INT ','INTEGER '),
+        psize = 4
+    ('BOOL ','BOOLEAN '),
+        psize = 4
+    ('@'),
+        nop
+    ('STRING '),
+        nop
+    ('A', 'D', 'I'),
+    begin
+        using ptype(2:1) select
+        ('0' thru '9'),
+        begin
+            ;; see if the parameter has a size
+            ctr = 2
+            while((ptype(ctr:1) >= '0' && ptype(ctr:1) <= '9') || ptype(ctr:1) == '.')
+                ctr += 1
+            if(ctr > 2)
+            begin
+                psize = ptype(2,ctr-1)
+                ptype = ptype(1:1)
+            end
+        end
+        endusing
+    end
+    endusing
+
+    if(pgroupfld)
+    begin
+        pgroupfld = %calcGroupSize(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+        if(!psize)
+            psize = pgroupfld [LEFT]
+        if(!ptype)
+            ptype = 'A' ;; assume alpha
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+check_strong_prototyping_dir,
+
+    using buff_lc select
+    ('in '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        pdir = 'IN'
+        buff_lc = buff_lc - 'in '
+    end
+    ('out '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        pdir = 'OUT'
+        buff_lc = buff_lc - 'out '
+    end
+    ('inout '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        pdir = 'INOUT'
+        buff_lc = buff_lc - 'inout '
+    end
+    endusing
+
+    return
+
+;; --------------------------------------------------------------------------
+
+check_strong_prototyping_req,
+
+    using buff_lc select
+    ('req '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        prequired = 'Y'
+        buff_lc = buff_lc - 'req '
+    end
+    ('opt '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        prequired = 'N'
+        buff_lc = buff_lc - 'opt '
+    end
+    ('required '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        prequired = 'Y'
+        buff_lc = buff_lc - 'required '
+    end
+    ('optional '),
+    begin
+        if(%nextTokenIsType(buff_lc))
+            exit
+        pstrong_proto = 1
+        prequired = 'N'
+        buff_lc = buff_lc - 'optional '
+    end
+    endusing
+
+    return
+
+;; --------------------------------------------------------------------------
+
+output_method,
+
+    methNode = %xml_elem_create
+    xcall xml_elem_setname(methNode, D_XML_METHOD)
+    xcall xml_elem_setattribute(methNode, D_XML_NAME, %atrim(rname))
+    xcall xml_elem_setattribute(methNode, D_XML_ROUTINE, %atrim(rname))
+    upcase rname
+    xcall xml_elem_setattribute(methNode, D_XML_ID, %atrim(rname))
+    xcall xml_elem_setattribute(methNode, D_XML_ELB, %atrim(aElbName))
+
+    using rtype select
+    ('function'),
+    begin
+        data methresNode ,XML_ELEM_TYPE
+
+        methresNode = %xml_elem_create
+        xcall xml_elem_setname(methresNode, D_XML_METHRES)
+
+        if(%instr(1,roptions,'^val')) then
+        begin
+            xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_VAL)
+            xcall xml_elem_setattribute(methresNode, D_XML_SIZE, '4')
+        end
+        else
+        begin
+            data sizeStart ,i4 ,0
+            using roptions select
+            ('a'),
+            begin
+                xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_ALPHA)
+                sizeStart = 2
+            end
+            ('d'),
+            begin
+                xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_DEC)
+                sizeStart = 2
+            end
+            ('i'),
+            begin
+                xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_INT)
+                sizeStart = 2
+            end
+            ('string'),
+            begin
+                xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_STRING)
+            end
+            ;('enum'),
+            ;begin
+            ;    xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_ENUM)
+            ;end
+            (),
+            begin
+                ;; assume it's a ^VAL, if no function return type specified
+                xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_VAL)
+                xcall xml_elem_setattribute(methresNode, D_XML_SIZE, '4')
+            end
+            endusing
+
+            ;; see if the return type has a size
+            if(sizeStart)
+            begin
+                data gotSize ,boolean ,false
+                ctr = sizeStart
+                while((roptions(ctr:1) >= '0' && roptions(ctr:1) <= '9') || roptions(ctr:1) == '.')
+                begin
+                    if(roptions(ctr:1) == '.')
+                    begin
+                        gotSize = true
+                        xcall xml_elem_setattribute(methresNode, D_XML_TYPE, D_XML_RET_IMPDEC)
+                        if(sizeStart < ctr)
+                        begin
+                            xcall xml_elem_setattribute(methresNode, D_XML_SIZE, roptions(sizeStart,ctr-1))
+                            sizeStart = ctr+1
+                        end
+                    end
+                    ctr += 1
+                end
+                if(gotSize == true) then
+                begin
+                    if(ctr > sizeStart) then
+                        xcall xml_elem_setattribute(methresNode, D_XML_PREC, roptions(sizeStart,ctr-1))
+                    else
+                        xcall xml_elem_setattribute(methresNode, D_XML_SIZE, D_UNKNOWN_DEC)
+                end
+                else
+                begin
+                    if(ctr > sizeStart) then
+                        xcall xml_elem_setattribute(methresNode, D_XML_SIZE, roptions(sizeStart,ctr-1))
+                    else
+                        xcall xml_elem_setattribute(methresNode, D_XML_SIZE, D_UNKNOWN_DEC)
+                end
+            end
+        end
+
+        xcall xml_elem_addchild(methNode, methresNode)
+    end
+    endusing
+
+    xcall xml_elem_addchild(ifaceNode, methNode)
+
+    return
+
+;; --------------------------------------------------------------------------
+
+output_parameter,
+
+    if(pinclude == 'RPS')
+    begin
+        call add_structure
+        ;; also sets variable psize
+    end
+    ;if(pinclude == 'ENUM')
+    ;begin
+    ;    call add_enum
+    ;end
+
+    paramNode = %xml_elem_create
+    xcall xml_elem_setname(paramNode, D_XML_PARAM)
+    xcall xml_elem_setattribute(paramNode, D_XML_NAME, %atrim(pname))
+
+    using pinclude select
+    ('RPS'),
+    begin
+        xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_STRUCT)
+        xcall xml_elem_setattribute(paramNode, D_XML_STRNAME, %atrim(pRPSstructure))
+    end
+    ;('ENUM'),
+    ;    xcall xml_elem_setattribute(paramNode, D_XML_FLD_ENUM, %atrim(pRPSstructure))
+    ('.'),
+    begin
+        xcall xml_elem_setattribute(paramNode, D_XML_NAME, %atrim(pinclude))
+        xcall xml_elem_setattribute(paramNode, D_XML_ALTNAME, %getGroupNameFromFile(pname))
+    end
+        ;;xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_ALPHA)
+    (),
+    begin
+        using ptype select
+        ('A'),
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_ALPHA)
+        ('D'),
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_DEC)
+        ('I'),
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_INT)
+        ('N'),
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_DEC)
+        ('STRING'),
+        begin
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_STRING)
+            psize = '~'
+        end
+        ('D_HANDLE'),
+        begin
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_HANDLE)
+            psize = '4'
+        end
+        ('XML_', 'D_ADDR'),
+        begin
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, D_XML_FLD_INT)
+            psize = '4'
+        end
+        (),
+            xcall xml_elem_setattribute(paramNode, D_XML_TYPE, %atrim(ptype))
+        endusing
+        if(psize != '~')
+        begin
+            if(!psize)
+                psize = D_UNKNOWN_DEC
+            if(pos=%instr(1,psize,'.')) then
+            begin
+                if(pos > 1) then
+                    xcall xml_elem_setattribute(paramNode, D_XML_SIZE, %atrim(psize(1,pos-1)))
+                else
+                    xcall xml_elem_setattribute(paramNode, D_XML_SIZE, D_UNKNOWN_DEC)
+                if(pos+1 <= %trim(psize)) then
+                    xcall xml_elem_setattribute(paramNode, D_XML_PREC, %atrim(psize(pos+1,%trim(psize))))
+                else
+                    xcall xml_elem_setattribute(paramNode, D_XML_PREC, D_UNKNOWN_DEC)
+            end
+            else
+                xcall xml_elem_setattribute(paramNode, D_XML_SIZE, %atrim(psize))
+            if(pdim)
+                xcall xml_elem_setattribute(paramNode, D_XML_DIM, %atrim(pdim))
+        end
+    end
+    endusing
+
+    using prequired select
+    ('Y'),
+        xcall xml_elem_setattribute(paramNode, D_XML_REQD, D_XML_YES)
+    ('N'),
+        xcall xml_elem_setattribute(paramNode, D_XML_REQD, D_XML_NO)
+    endusing
+
+    using pdir select
+    ('OUT'),
+        xcall xml_elem_setattribute(paramNode, D_XML_DIR, D_XML_DIR_OUT)
+    ('INOUT'),
+        xcall xml_elem_setattribute(paramNode, D_XML_DIR, D_XML_DIR_INOUT)
+    ('IN'),
+        xcall xml_elem_setattribute(paramNode, D_XML_DIR, D_XML_DIR_IN)
+    endusing
+
+    if(pcomment)
+        addComment(paramNode, pcomment, D_MAX_COMMENT_SIZE, D_MAX_COMMENT_LINES)
+
+    xcall xml_elem_addchild(methNode, paramNode)
+
+    return
+
+;; --------------------------------------------------------------------------
+;; add structure node to root node (if it doesn't already exist
+
+add_structure,
+
+    begin
+        data rootCount      ,i4
+        data rootChildren   ,XML_ELEMLIST_TYPE
+        data rootChild      ,XML_ELEM_TYPE
+        data rootName       ,a30
+        data foundStruct    ,boolean    ,false
+
+        rootChildren = %xml_elem_children(rootNode)
+        for rootCount from 1 thru %xml_elemlist_count(rootChildren)
+        begin
+            rootChild = %xml_elemlist_item(rootChildren, rootCount)
+            xcall xml_elem_getname(rootChild, rootName)
+            if(rootName == D_XML_STRUCT)
+            begin
+                if(%xml_elem_getAttribute(rootChild, D_XML_NAME, rootName) == XML_SUCCESS)
+                begin
+                    if(%upcase(pRPSstructure) .eqs. %upcase(rootName))
+                    begin
+                        data str_size   ,a6
+                        foundStruct = true
+                        if(%xml_elem_getAttribute(rootChild, D_XML_SIZE, str_size) != XML_SUCCESS)
+                            psize = str_size
+                        exitloop
+                    end
+                end
+            end
+        end
+        if(foundStruct != true)
+        begin
+            psize = %string(%addStructure(rootNode, pRPSstructure))
+        end
+    end
+    return
+
+;; --------------------------------------------------------------------------
+
+start_xml_doc,
+
+    doc = %xml_doc_create
+
+    ;; Name the root element and add attributes
+    rootNode = %xml_doc_getroot(doc)
+    xml_elem_setname(rootNode, D_XML_COMP)
+    ;xcall xml_elem_setattribute(rootNode, D_XML_RPS, D_UNKNOWN_ALP)
+    ;xcall xml_elem_setattribute(rootNode, D_XML_SMC, D_UNKNOWN_ALP)
+    xcall xml_elem_setattribute(rootNode, D_XML_SMCREV, "5")
+
+    ifaceNode = %xml_elem_create
+    xml_elem_setname(ifaceNode, D_XML_INTER)
+    xml_elem_setattribute(ifaceNode, D_XML_NAME, %atrim(aInterfaceName))
+    xml_elem_addchild(rootNode, ifaceNode)
+
+    ;; spoof GENXML documentation comment
+    begin
+        data timeNow    ,d6
+        data version    ,a40    ,%versn
+        pos = %instr(1, version, 'Version')
+        if(pos && pos+8 <= %trim(version)) then
+            version = 'v'+version(pos+8,%trim(version))
+        else
+            version = 'v9.5.1'
+        time(timeNow)
+        xml_doc_setcomment(doc, "<!--Generated by genxml "+%atrim(version)+" on "+%date+" "+%string(timeNow,"XX:XX:XX")+"-->")
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+finish_xml_doc,
+
+    ;; Get the XML for the auth request into a handle
+    sts = %xml_doc_tofile(doc, aXmlFilename)
+    xml_doc_delete(doc)
+
+    return
+
+;; --------------------------------------------------------------------------
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get group name from source file
+;;; </summary>
+;;; <param name="aFileName">Source filename</param>
+;;; <returns>
+;;; Group name
+;;; </returns>
+
+function getGroupNameFromFile   ,a
+    req in      aFileName       ,a255           ;; filename
+    endparams
+
+record read_buff_vars
+    in_ch               ,i4             ;; in channel
+    buff                ,a512           ;; current read buffer
+    buff_lc             ,a512           ;; lowercase copy of current read buffer
+    buff_len            ,i4             ;; length of buff
+    next_buff           ,a512           ;; next read buffer
+    next_buff_lc        ,a512           ;; lowercase copy of next read buffer
+    next_len            ,i4             ;; length of next_buff
+endrecord
+
+record
+    groupName           ,a32            ;; group name
+    pos                 ,i4             ;; position
+endrecord
+
+proc
+
+    groupName = aFileName
+
+    try
+    begin
+        open(in_ch, 'I', %atrim(aFileName))
+
+        ;; read first buffer
+        read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+
+        repeat
+        begin
+            read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+            using buff_len select
+            (0),
+                nextloop
+            (<0),
+                goto eof_src
+            endusing
+
+            using buff_lc select
+            (D_COMMENT),
+                nextloop
+            ('group ', 'structure '),
+            begin
+                pos = %instr(1, buff_lc, ' ')
+                while(buff_lc(pos:1) == ' ' && pos <= %trim(buff_lc))
+                    pos += 1
+                if(pos <= %trim(buff_lc))
+                begin
+                    buff_lc = buff_lc(pos, %trim(buff_lc))
+                    pos = 1
+                    while(buff_lc(pos:1) != ' ' && buff_lc(pos:1) != ',' && pos <= %trim(buff_lc))
+                        pos += 1
+                    groupName = %getOriginal(buff, buff_lc(1,pos-1))
+                end
+                exitloop
+            end
+            (),
+                exitloop
+            endusing
+        end
+
+eof_src,
+    end
+    catch (e)
+    begin
+        ;; ignore any errors
+    end
+    finally
+    begin
+        if(in_ch && %chopen(in_ch))
+            close in_ch
+    end
+    endtry
+
+    freturn %atrim(groupName)
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Calculate group size from source file
+;;; </summary>
+;;; <param name="in_ch">Input channel</param>
+;;; <param name="buff">
+;;; Buff must contain the "group" line,
+;;; and will exit on the "endgroup" line
+;;; </param>
+;;; <param name="buff_lc">
+;;; Lowercase version of BUFF
+;;; </param>
+;;; <param name="buff_len">
+;;; Length of BUFF
+;;; </param>
+;;; <param name="next_buff">
+;;; Next source line
+;;; </param>
+;;; <param name="next_buff_lc">
+;;; Lowercase version of next source line
+;;; </param>
+;;; <param name="next_len">
+;;; Length of next source line
+;;; </param>
+;;; <returns>
+;;; Group size (int)
+;;; </returns>
+
+function calcGroupSize          ,i      ,reentrant
+    req in      in_ch           ,i4             ;; in channel
+    req inout   buff            ,a512           ;; current read buffer
+    req inout   buff_lc         ,a512           ;; lowercase copy of current read buffer
+    req inout   buff_len        ,i4             ;; length of buff
+    req inout   next_buff       ,a512           ;; next read buffer
+    req inout   next_buff_lc    ,a512           ;; lowercase copy of next read buffer
+    req inout   next_len        ,i4             ;; length of next_buff
+    endparams
+
+stack record lcl_vars
+    groupStatement          ,i4
+    grpSize                 ,i4
+    grpDim                  ,i4
+
+    fldSize                 ,i4
+    fldDim                  ,i4
+    fldType                 ,a20
+
+    pos                     ,i4
+    ctr                     ,i4
+endrecord
+
+proc
+
+    init lcl_vars
+
+    ;; get next line
+    read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+
+    ;; go until we get an ENDGROUP
+    while(!(buff_lc == 'endgroup' && !%nextTokenIsType(buff_lc)))
+    begin
+        if(buff_lc == 'group ' && !%nextTokenIsType(buff_lc))
+            groupStatement = 1
+        call getFieldSize
+        if(groupStatement)
+        begin
+            groupStatement = %calcGroupSize(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+            IF(!fldSize)
+            begin
+                if(fldDim > 0) then
+                    fldSize = fldDim * groupStatement
+                else
+                    fldSize = groupStatement
+            end
+        end
+
+        grpSize += fldSize
+        groupStatement = false
+
+        ;; get next line
+        read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+    end
+
+    freturn grpSize
+
+;; --------------------------------------------------------------------------
+
+getFieldSize,
+
+    fldSize = 0
+    fldDim = 0
+
+    ;; we're inside a group, so don't process group fields as parameters
+
+    ;; find comma
+    pos = 1
+    while(pos < buff_len && buff_lc(pos:1) != ',')
+        pos += 1
+
+    ;; no comma found
+    if(pos >= buff_len)
+        return
+
+    ;; skip comma
+    pos += 1
+
+    ;; skip any whitespace before type
+    while(pos <= buff_len && !buff_lc(pos:1))
+        pos += 1
+
+    ;; remove the stuff we have processed
+    buff_lc = buff_lc(pos, ^size(buff_lc))
+    buff_len = %trim(buff_lc)
+
+    ;; find comment
+    pos = 1
+    while(pos <= buff_len && buff_lc(pos:^size(D_COMMENT)) != D_COMMENT)
+        pos += 1
+
+    ;; clear comment
+    if(pos <= buff_len)
+        clear buff_lc(pos, ^size(buff_lc))
+
+    ;; whatever is left, is the type/size
+    buff_len = %trim(buff_lc)
+    fldType = buff_lc(1:^size(fldType))
+    upcase fldType
+
+    ;; remove parameter array info
+    using fldType select
+    ('['),
+    begin
+        fldDim = 1
+        ctr = %instr(2, fldType, ']')
+        if(ctr)
+        begin
+            if(ctr > 2)
+            begin
+                data stpos ,i4 ,1
+                data enpos ,i4
+                while(enpos=%instr(stpos,fldType(2,ctr-1),','))
+                begin
+                    fldDim *= ^d(fldType(stpos,enpos-1))
+                    stpos = enpos+1
+                end
+                if(stpos+1 <= ctr-1)
+                    fldDim *= ^d(fldType(stpos+1,ctr-1))
+            end
+            fldType = fldType(ctr+1,^size(fldType))
+        end
+    end
+    ('0' thru '9'),
+    begin
+        fldDim = ^d(fldType(1:1))
+        ctr = 2
+        while(fldType(ctr:1) >= '0' &&
+        &     fldType(ctr:1) <= '9')
+        begin
+            fldDim *= 10
+            fldDim += ^d(fldType(ctr:1))
+            ctr += 1
+        end
+        fldType = fldType(ctr,^size(fldType))
+    end
+    ('('),
+    begin
+        fldDim = 1
+        ctr = %instr(2, fldType, ')')
+        if(ctr)
+            fldType = fldType(ctr+1,^size(fldType))
+    end
+    endusing
+
+    ;; get parameter size info
+    using fldType select
+    ('A', 'D', 'I'),
+    begin
+        using fldType(2:1) select
+        ('0' thru '9'),
+        begin
+            ;; see if the parameter has a size
+            ctr = 2
+            while((fldType(ctr:1) >= '0' && fldType(ctr:1) <= '9') || fldType(ctr:1) == '.')
+                ctr += 1
+            if(ctr > 2)
+                fldSize = ^d(fldType(2,ctr-1))
+        end
+        endusing
+    end
+    ('BOOLEAN ', 'BOOL'),
+    begin
+        fldSize = 4
+    end
+    ('INTEGER ', 'INT'),
+    begin
+        fldSize = 4
+    end
+    endusing
+
+    if(fldSize && fldDim)
+        fldSize *= fldDim
+
+    return
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Remove spaces from alpha buffer
+;;; </summary>
+;;; <param name="aBuff">buffer</param>
+;;; <returns>
+;;; buffer with no spaces
+;;; </returns>
+
+function stripSpaces            ,a
+    req in      aBuff           ,a      ;; buffer
+    endparams
+
+structure name
+    ch              ,a1
+endstructure
+
+record
+    hdl             ,D_HANDLE       ;; memory handle
+    sLen            ,i4
+    ctr             ,i4
+endrecord
+
+proc
+    sLen = %trimz(aBuff)
+    if(sLen < 1)
+        freturn ''
+
+    hdl = %mem_proc(DM_ALLOC, sLen)
+    ^m(hdl) = aBuff
+
+    ctr = 1
+    while(ctr <= sLen)
+    begin
+        if(^m(name[ctr],hdl) == ' ') then
+        begin
+            if(ctr < sLen)
+                ^m(name.ch(ctr,sLen),hdl) = ^m(name.ch(ctr+1,sLen),hdl)
+            sLen -= 1
+        end
+        else
+            ctr += 1
+    end
+    freturn ^m(name.ch(1,sLen),hdl)
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Remove leading spaces from alpha buffer
+;;; </summary>
+;;; <param name="aBuff">buffer</param>
+;;; <returns>
+;;; buffer with no leading spaces
+;;; </returns>
+
+function stripLeadingSpaces     ,a
+    req in      aBuff           ,a      ;; buffer
+    endparams
+
+record
+    ctr             ,i4
+endrecord
+
+proc
+    ctr = 1
+    while(aBuff(ctr:1) == ' ' && ctr < ^size(aBuff))
+        ctr += 1
+    freturn aBuff(ctr,^size(aBuff))
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+;;; <summary>
+;;; Next token in source line is a data type
+;;; </summary>
+;;; <param name="aBuff">source code line</param>
+;;; <returns>
+;;; true/false
+;;; </returns>
+
+function nextTokenIsType        ,boolean
+    req in      aBuff           ,a      ;; buffer
+    endparams
+
+record
+    ctr         ,i4
+endrecord
+proc
+
+    ;; skip past current token
+    ctr = 1
+    while(aBuff(ctr:1) != ' ' && ctr < %trim(aBuff))
+        ctr += 1
+
+    ;; skip spaces to next token
+    while(aBuff(ctr:1) == ' ' && ctr < %trim(aBuff))
+        ctr += 1
+
+    ;; if next token starts with a comma, it's a parameter type
+    freturn (aBuff(ctr:1) == ',')
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Add source comment to memory array
+;;; </summary>
+;;; <param name="aNode">XML node that may have comments</param>
+;;; <param name="aComment">Current comment text</param>
+;;; <param name="aMaxComment">Maximum length of a comment line</param>
+;;; <param name="aMaxLines">Maximum number of comment lines</param>
+
+subroutine addComment
+    req inout   aNode           ,XML_ELEM_TYPE
+    req in      aComment        ,string
+    opt in      aMaxComment     ,n
+    opt in      aMaxLines       ,n
+    endparams
+
+record
+    commentNode     ,XML_ELEM_TYPE
+    lineNode        ,XML_ELEM_TYPE
+    lineCtr         ,i4
+    linePos         ,i4
+    maxComment      ,i4
+    maxLines        ,i4
+    pComment        ,string
+    comment         ,string
+endrecord
+
+proc
+
+    pComment = aComment
+    if(^passed(aMaxComment))
+        maxComment = aMaxComment
+    if(^passed(aMaxLines))
+        maxLines = aMaxLines
+
+    commentNode = %xml_elem_create
+    xcall xml_elem_setname(commentNode, D_XML_COMMENT)
+
+    lineCtr = 1
+    while(pcomment.Length && lineCtr <= 6)
+    begin
+        if(!maxComment) then
+        begin
+            if(pcomment.Length > D_MAX_COMMENT_SIZE) then
+                linePos = D_MAX_COMMENT_SIZE
+            else
+                linePos = pcomment.Length
+            if(linePos < pcomment.Length && pcomment(linePos+1:1) != ' ')
+            begin
+                ;; find end of current word
+                while(linePos >= 1 && pcomment(linePos:1) != ' ')
+                    linePos -= 1
+                if(linePos == 0)
+                    linePos = maxComment ;; no word breaks
+            end
+        end
+        else
+        begin
+            if(pcomment.Length > maxComment) then
+                linePos = maxComment
+            else
+                linePos = pcomment.Length
+        end
+        comment = %atrim(pComment(1:linePos))
+
+        if(%trimz(comment))
+        begin
+            lineNode = %xml_elem_create
+            xcall xml_elem_setname(lineNode, D_XML_LINE+%string(lineCtr))
+            xcall xml_elem_settext(lineNode, comment(1:%trim(comment)))
+            xcall xml_elem_addchild(commentNode, lineNode)
+            lineCtr += 1
+            if(maxLines && lineCtr > maxLines)
+                exitloop
+        end
+
+        ;; skip past any leading spaces on next line
+        linePos += 1
+        if(!maxComment)
+        begin
+            while(linePos < pcomment.Length && pcomment(linePos:1) == ' ')
+                linePos += 1
+        end
+        if(linePos <= pcomment.Length) then
+            pcomment = pcomment(linePos,pcomment.Length)
+        else
+            pcomment = ''
+    end
+
+    xcall xml_elem_addchild(aNode, commentNode)
+
+    xreturn
+
+endsubroutine
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get Original case for provided lowercase string
+;;; </summary>
+;;; <param name="aOrig">Original buffer</param>
+;;; <param name="aLC">Lowercase string</param>
+;;; <returns>
+;;; String from original buffer
+;;; </returns>
+
+function getOriginal    ,a
+    aOrig               ,a              ;; original buffer
+    aLC                 ,a              ;; lowercase value to look for
+    endparams
+
+record
+    lcText              ,a1024
+    lcLen               ,i4
+    start               ,i4
+    pos                 ,i4
+endrecord
+
+proc
+    lcText = aOrig
+    locase lcText
+
+    lcLen = %trim(aLc)
+
+    start = 1
+    repeat
+    begin
+        if(pos = %instr(start, lcText, aLC))
+        begin
+            using lcText(pos+lcLen:1) select
+            ('0' thru '9', 'A' thru 'Z', 'a' thru 'z', '_', '$'),
+            begin
+                start = pos+1
+                nextloop
+            end
+            endusing
+            freturn aOrig(pos:lcLen)
+        end
+        exitloop
+    end
+
+    freturn aLC
+end
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Does source inlcude file contain a named group
+;;; </summary>
+;;; <param name="aFileName">Source filename</param>
+;;; <returns>
+;;; True is first token in file is a named group
+;;; </returns>
+
+function isGroupInclude         ,boolean
+    req in      aFileName       ,a255           ;; filename
+    endparams
+
+record read_buff_vars
+    in_ch               ,i4             ;; in channel
+    buff                ,a512           ;; current read buffer
+    buff_lc             ,a512           ;; lowercase copy of current read buffer
+    buff_len            ,i4             ;; length of buff
+    next_buff           ,a512           ;; next read buffer
+    next_buff_lc        ,a512           ;; lowercase copy of next read buffer
+    next_len            ,i4             ;; length of next_buff
+endrecord
+
+record
+    isGroupInclude      ,boolean        ;; is a group
+    pos                 ,i4             ;; position
+endrecord
+
+proc
+
+    isGroupInclude = false
+
+    try
+    begin
+        open(in_ch, 'I', %atrim(aFileName))
+
+        ;; read first buffer
+        read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+
+        repeat
+        begin
+            read_buff(in_ch, buff, buff_lc, buff_len, next_buff, next_buff_lc, next_len)
+            using buff_len select
+            (0),
+                nextloop
+            (<0),
+                goto eof_src
+            endusing
+
+            using buff_lc select
+            (D_COMMENT),
+                nop ;ignore comments
+            ('group '),
+            begin
+                ;; make sure it a named group and not just a field called "group"
+                pos = 7
+                while(pos <= %trim(buff_lc) && buff_lc(pos:1) == ' ')
+                    pos += 1
+                if(pos <= %trim(buff_lc) && buff_lc(pos:1) != ',')
+                    isGroupInclude = true
+                exitloop
+            end
+            (),
+                exitloop
+            endusing
+        end
+
+eof_src,
+    end
+    catch (e)
+    begin
+        ;; ignore any errors
+    end
+    finally
+    begin
+        if(in_ch && %chopen(in_ch))
+            close in_ch
+    end
+    endtry
+
+    freturn isGroupInclude
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Add structure to arraylist of structures being used
+;;; </summary>
+;;; <param name="aInterfaceNode">Interface node in XML document</param>
+;;; <param name="aStructureName">Structure name</param>
+;;; <param name="rps_main">Optional RPSMAIN filename</param>
+;;; <param name="rps_text">Optional RPSTEXT filename</param>
+;;; <returns>
+;;; Structure size (bytes)
+;;; </returns>
+
+function addStructure           ,i4
+    req inout   aInterfaceNode  ,i4;;XML_ELEM_TYPE
+    req in      aStructureName  ,a30
+    opt in      rps_main        ,a255
+    opt in      rps_text        ,a255
+    endparams
+
+.include 'RPSLIB:ddinfo.def'
+
+external function
+    case_name           ,a
+    get_all_fields      ,i
+endexternal
+
+structure fld_names
+    fld_name            ,a30                ;; field names for structure
+endstructure
+
+structure fld_array
+    fld_name            ,a30                ;; field names for structure
+    fld_pos             ,i4                 ;; field position
+    fld_len             ,i4                 ;; field length
+    fld_dim             ,i4                 ;; field dimensions
+    fld_typ             ,a1                 ;; field type
+    fld_dp              ,d2                 ;; field decimal places
+    fld_ovrlay          ,d1                 ;; field is an overlay field
+    fld_class           ,d1                 ;; field class
+    fld_coerc           ,d2                 ;; field coerc type
+    fld_ro              ,d1                 ;; field is read only
+    fld_grp_st          ,d1                 ;; field is a group (1-explicit, 2-implicit)
+    fld_grp_end         ,d1                 ;; field is last field in group (number of endgroups)
+endstructure
+
+structure current_node
+    cn                  ,XML_ELEM_TYPE
+endstructure
+
+;;  group type
+.define D_GROUP_EXPLICIT    1
+.define D_GROUP_IMPLICIT    2
+
+;;  %CASE_NAME
+.define D_CASE_NONE         0
+.define D_CASE_CAPITALIZE   1
+.define D_CASE_UPPER        2
+.define D_CASE_LOWER        3
+.define D_CASE_CAMEL        4
+.define D_CASE_PASCAL       5
+
+record control
+    name_case       ,i4 ,D_CASE_NONE        ;; name case
+    odbcfldname     ,i4 ,0                  ;; use ODBC field names (0-no, 1-yes)
+    no_overlays     ,i4 ,1                  ;; do not include overlays
+endrecord
+
+record
+    strname         ,a30
+    str_size        ,i4
+    str_node        ,XML_ELEM_TYPE          ;; structure node
+    fld_node        ,XML_ELEM_TYPE          ;; field node
+    grp_node        ,XML_ELEM_TYPE          ;; group node
+    cur_node        ,XML_ELEM_TYPE          ;; current node
+    rps_error       ,i4                     ;; RPS error
+endrecord
+
+record clr_i
+    fn_ptr          ,D_HANDLE               ;; field names list handle
+    f_ptr           ,D_HANDLE               ;; field details list handle
+    cn_hdl          ,D_HANDLE               ;; current_node array handle
+    cn_ctr          ,i4                     ;; current_node array counter
+    fld_ctr         ,i4                     ;; field array pointer
+    ctr             ,i4                     ;; general purpose counter
+
+    field_pos       ,i4                     ;; field position in structure/group
+    field_num       ,i4                     ;; field number
+    field_len       ,i4                     ;; length
+    field_dim       ,i4                     ;; dimension
+    field_prec      ,i4                     ;; field precision
+    field_coerc     ,i4                     ;; field coerc type
+    field_ro        ,i4                     ;; field is read only
+    field_ovrlay    ,i4                     ;; field is an overlay
+    grp_overlay     ,i4                     ;; in a group overlay
+endrecord
+
+record clr
+    field_name      ,a30                    ;; field name
+    field_type      ,a30                    ;; field type
+    field_format    ,a10                    ;; field format string
+endrecord
+
+proc
+
+    if(^passed(rps_main) && ^passed(rps_text) && rps_main && rps_text) then
+        xcall dd_init(dcs, rps_main, rps_text)
+    else
+        xcall dd_init(dcs)
+    if(error == E_OK)
+    begin
+        strname = %case_name(aStructureName, name_case)
+
+        xcall dd_struct(dcs, DDS_INFO, strname, s_info)
+        if(error == E_OK)
+        begin
+            str_size = si_recsz
+
+            ;; export this structure
+            call process_structure
+        end
+
+        xcall dd_exit(dcs)
+    end
+
+    freturn str_size
+
+;; --------------------------------------------------------------------------
+
+process_structure,
+
+    clear clr, ^I(clr_i)
+
+    ;; field array
+    fn_ptr = %mem_proc(DM_ALLOC+DM_STATIC, si_nmflds*^size(fld_names))
+
+    ;; get a list of fields
+    xcall dd_field(dcs, DDF_SLIST, si_nmflds, ^m(fld_names, fn_ptr))
+    if(error)
+    begin
+        fn_ptr = %mem_proc(DM_FREE, fn_ptr)
+        freturn 0
+    end
+
+    ;; field array
+    f_ptr = %mem_proc(DM_ALLOC+DM_STATIC, si_nmflds*^size(fld_array))
+
+    ;; get properties all fields
+    clear field_num, field_pos, grp_overlay
+    rps_error = %get_all_fields(dcs, control, fn_ptr, f_ptr, si_nmflds, field_num, field_pos, grp_overlay)
+    if(!rps_error)
+    begin
+        ;; export structure tag
+        call export_str_tag
+
+        cur_node = str_node
+
+        for fld_ctr from 1 thru field_num
+        begin
+            call export_field
+        end
+    end
+
+    f_ptr = %mem_proc(DM_FREE, f_ptr)
+    fn_ptr = %mem_proc(DM_FREE, fn_ptr)
+
+    return
+
+;; --------------------------------------------------------------------------
+
+export_str_tag,
+
+    ;; create structure node
+    str_node = %xml_elem_create
+    if(str_node)
+    begin
+        ;; add structure node as child of interface node
+        if(%xml_elem_addchild(aInterfaceNode, str_node) != XML_SUCCESS)
+        begin
+        end
+        ;; set name of structure node
+        if(%xml_elem_setname(str_node, D_XML_STRUCT) != XML_SUCCESS)
+        begin
+        end
+        ;; set NAME attribute of structure node
+        if(%xml_elem_setattribute(str_node, D_XML_NAME, strname) != XML_SUCCESS)
+        begin
+        end
+        ;; set SIZE attribute of structure node
+        if(%xml_elem_setattribute(str_node, D_XML_SIZE, %string(str_size)) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+export_field,
+
+    ;; exclude overlay fields
+    if(no_overlays && ^m(fld_array[fld_ctr].fld_ovrlay, f_ptr))
+        return
+
+    ;; is this this first field in a group
+    using ^m(fld_array[fld_ctr].fld_grp_st, f_ptr) select
+    (D_GROUP_EXPLICIT),
+    begin ;; explicit group
+        field_name = ^m(fld_array[fld_ctr].fld_name, f_ptr)
+        field_len = ^m(fld_array[fld_ctr].fld_len, f_ptr)
+        field_dim = ^m(fld_array[fld_ctr].fld_dim, f_ptr)
+        field_ovrlay = ^m(fld_array[fld_ctr].fld_ovrlay, f_ptr)
+
+        call export_grp_hdr
+    end
+    (D_GROUP_EXPLICIT),
+    begin ;; implicit group
+        field_name = ^m(fld_array[fld_ctr].fld_name, f_ptr)
+        field_len = ^m(fld_array[fld_ctr].fld_len, f_ptr)
+        field_dim = ^m(fld_array[fld_ctr].fld_dim, f_ptr)
+        field_ovrlay = ^m(fld_array[fld_ctr].fld_ovrlay, f_ptr)
+        call export_grp_hdr
+    end
+    (), ;; must be a field
+        call export_fld
+    endusing
+
+    ;; is this the last field in a group (or multiple groups)
+    if(^m(fld_array[fld_ctr].fld_grp_end, f_ptr))
+    begin
+        ctr = ^m(fld_array[fld_ctr].fld_grp_end, f_ptr)
+        while(ctr)
+        begin
+            call export_grp_ftr
+            ctr -= 1
+        end
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+export_fld,
+
+    ;; field information
+    field_name = ^m(fld_array[fld_ctr].fld_name, f_ptr)
+    field_len = ^m(fld_array[fld_ctr].fld_len, f_ptr)
+    field_dim = ^m(fld_array[fld_ctr].fld_dim, f_ptr)
+    field_prec = ^m(fld_array[fld_ctr].fld_dp, f_ptr)
+    field_ovrlay = ^m(fld_array[fld_ctr].fld_ovrlay, f_ptr)
+    field_coerc = ^m(fld_array[fld_ctr].fld_coerc, f_ptr)
+    field_ro = ^m(fld_array[fld_ctr].fld_ro, f_ptr)
+
+    ;; create field node
+    fld_node = %xml_elem_create
+
+    ;; add field node as child of current node
+    if(%xml_elem_addchild(cur_node, fld_node) != XML_SUCCESS)
+    begin
+    end
+    ;; set name of field node
+    if(%xml_elem_setname(fld_node, D_XML_FIELD) != XML_SUCCESS)
+    begin
+    end
+    ;; set NAME attribute of field node
+    if(%xml_elem_setattribute(fld_node, D_XML_NAME, %case_name(field_name, name_case)) != XML_SUCCESS)
+    begin
+    end
+
+    clear field_format
+
+    ;; set field type
+    using ^m(fld_array[fld_ctr].fld_typ, f_ptr) select
+    ('A'),
+    begin
+        using ^m(fld_array[fld_ctr].fld_class, f_ptr) select
+        (C_BINARY),
+            field_type = D_XML_FLD_BINARY
+        (),
+            field_type = D_XML_FLD_ALPHA
+        endusing
+    end
+    ('D'),
+    begin
+        field_type = D_XML_FLD_DEC
+        using ^m(fld_array[fld_ctr].fld_class, f_ptr) select
+        (0),
+            nop
+        (C_YYMMDD),
+        begin
+            field_format = 'YYMMDD'
+            field_type = 'date'
+        end
+        (C_YYYYMMDD),
+        begin
+            field_format = 'YYYYMMDD'
+            field_type = 'date'
+        end
+        (C_YYJJJ),
+        begin
+            field_format = 'YYJJJ'
+            field_type = 'date'
+        end
+        (C_YYYYJJJ),
+        begin
+            field_format = 'YYYYJJJ'
+            field_type = 'date'
+        end
+        (C_YYPP),
+        begin
+            field_format = 'YYPP'
+            field_type = 'date'
+        end
+        (C_YYYYPP),
+        begin
+            field_format = 'YYYYPP'
+            field_type = 'date'
+        end
+        (C_HHMMSS),
+        begin
+            field_format = 'HHMMSS'
+            field_type = 'time'
+        end
+        (C_HHMM),
+        begin
+            field_format = 'HHMM'
+            field_type = 'time'
+        end
+        endusing
+    end
+    ('I'),
+    begin
+        field_type = D_XML_FLD_INT
+    end
+    ('U'),
+    begin
+        field_type = D_XML_FLD_ALPHA ;; 'user'
+    end
+    (),
+    begin
+        field_type = D_XML_FLD_ALPHA
+    end
+    endusing
+
+    if(field_coerc)
+    begin
+        data coerced_type   ,a20
+        data nullableind    ,boolean ,false
+
+        using field_type select
+        ('date', 'time'),
+        begin
+            using field_coerc select
+            (CT_DATETIME),
+                coerced_type = D_XML_COERCE_DATETIME
+            (CT_NULLDATETIME),
+            begin
+                nullableind = true
+                coerced_type = D_XML_COERCE_DATETIME
+            end
+            (CT_FLOAT),
+                coerced_type = D_XML_COERCE_FLOAT
+            endusing
+        end
+        (D_XML_FLD_DEC),
+        begin
+            if (field_prec .gt. 0) then
+            begin
+                using field_coerc select
+                (CT_DECIMAL),
+                    coerced_type = D_XML_COERCE_DECIMAL
+                (CT_DOUBLE),
+                    coerced_type = D_XML_COERCE_DOUBLE
+                (CT_FLOAT),
+                    coerced_type = D_XML_COERCE_FLOAT
+                (CT_NULLDEC),
+                begin
+                    nullableind = true
+                    coerced_type = D_XML_COERCE_DECIMAL
+                end
+                (CT_NULLDECIMAL),
+                begin
+                    nullableind = true
+                    coerced_type = D_XML_COERCE_DECIMAL
+                end
+                endusing
+            end
+            else
+            begin
+                using field_coerc select
+                (CT_DEFAULT),
+                begin
+                    if (field_len <= 9) then
+                        coerced_type = D_XML_COERCE_INT
+                    else
+                        coerced_type = D_XML_COERCE_LONG
+                end
+                (CT_INT),
+                    coerced_type = D_XML_COERCE_INT
+                (CT_BOOLEAN),
+                    coerced_type = D_XML_COERCE_BOOLEAN
+                (CT_BYTE),
+                    coerced_type = D_XML_COERCE_BYTE
+                (CT_SHORT),
+                    coerced_type = D_XML_COERCE_SHORT
+                (CT_LONG),
+                    coerced_type = D_XML_COERCE_LONG
+                (CT_SBYTE),
+                    coerced_type = D_XML_COERCE_SBYTE
+                (CT_UINT),
+                    coerced_type = D_XML_COERCE_UINT
+                (CT_USHORT),
+                    coerced_type = D_XML_COERCE_USHORT
+                (CT_ULONG),
+                    coerced_type = D_XML_COERCE_ULONG
+                (CT_DEC),
+                    coerced_type = D_XML_COERCE_DECIMAL
+                (CT_NULLDEC),
+                begin
+                    nullableind = true
+                    coerced_type = D_XML_COERCE_DECIMAL
+                end
+                (CT_NULLDECIMAL),
+                begin
+                    nullableind = true
+                    coerced_type = D_XML_COERCE_DECIMAL
+                end
+                endusing
+            end
+        end
+        (D_XML_FLD_INT),
+        begin
+            using field_coerc select
+            (CT_DEFAULT),
+            begin
+                if (field_len <= 7) then
+                    coerced_type = D_XML_COERCE_INT
+                else
+                    coerced_type = D_XML_COERCE_LONG
+            end
+            (CT_INT),
+                coerced_type = D_XML_COERCE_INT
+            (CT_BOOLEAN),
+                coerced_type = D_XML_COERCE_BOOLEAN
+            (CT_BYTE),
+                coerced_type = D_XML_COERCE_BYTE
+            (CT_SHORT),
+                coerced_type = D_XML_COERCE_SHORT
+            (CT_LONG),
+                coerced_type = D_XML_COERCE_LONG
+            (CT_SBYTE),
+                coerced_type = D_XML_COERCE_SBYTE
+            (CT_UINT),
+                coerced_type = D_XML_COERCE_UINT
+            (CT_USHORT),
+                coerced_type = D_XML_COERCE_USHORT
+            (CT_ULONG),
+                coerced_type = D_XML_COERCE_ULONG
+            (CT_DEC),
+                coerced_type = D_XML_COERCE_DECIMAL
+            (CT_NULLDEC),
+            begin
+                nullableind = true
+                coerced_type = D_XML_COERCE_DECIMAL
+            end
+            (CT_NULLDECIMAL),
+            begin
+                nullableind = true
+                coerced_type = D_XML_COERCE_DECIMAL
+            end
+            endusing
+        end
+        endusing
+        if(coerced_type)
+        begin
+            xcall xml_elem_setAttribute(fld_node, D_XML_COERCE, %atrim(coerced_type))
+            if (nullableind == true)
+                xcall xml_elem_setAttribute(fld_node, D_XML_NULLABLE, D_XML_TRUE)
+        end
+    end
+
+
+    ;; set TYPE attribute of field node
+    if(%xml_elem_setattribute(fld_node, D_XML_TYPE, %atrim(field_type)) != XML_SUCCESS)
+    begin
+    end
+
+    ;; set SIZE attribute of field node
+    if(%xml_elem_setattribute(fld_node, D_XML_SIZE, %string(field_len)) != XML_SUCCESS)
+    begin
+    end
+
+    if(field_format)
+    begin
+        ;; set FORMAT attribute of field node
+        if(%xml_elem_setattribute(fld_node, D_XML_FORMAT, %atrim(field_format)) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    if(field_prec)
+    begin
+        ;; set PRECISION attribute of field node
+        if(%xml_elem_setattribute(fld_node, D_XML_PREC, %string(field_prec)) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    if(field_dim > 1)
+    begin
+        ;; set DIM attribute of field node
+        if(%xml_elem_setattribute(fld_node, D_XML_DIM, %string(field_dim)) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    if(field_ro)
+    begin
+        ;; set READONLY attribute of field node
+        if(%xml_elem_setattribute(fld_node, D_XML_READONLY, D_XML_TRUE) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    return
+
+;; --------------------------------------------------------------------------
+
+export_grp_hdr,
+
+    ;; create field node
+    grp_node = %xml_elem_create
+    if(!grp_node)
+    begin
+        return
+    end
+
+    ;; add field node as child of structure node
+    if(%xml_elem_addchild(str_node, grp_node) != XML_SUCCESS)
+    begin
+    end
+    ;; set name of field node
+    if(%xml_elem_setname(grp_node, D_XML_FIELD) != XML_SUCCESS)
+    begin
+    end
+    ;; set NAME attribute of field node
+    if(%xml_elem_setattribute(grp_node, D_XML_NAME, %case_name(field_name, name_case)) != XML_SUCCESS)
+    begin
+    end
+
+    if(field_dim > 1)
+    begin
+        ;; set DIM attribute of field node
+        if(%xml_elem_setattribute(grp_node, D_XML_DIM, %string(field_dim)) != XML_SUCCESS)
+        begin
+        end
+    end
+
+    ;; create a dynamic memory array of previous nodes, so the correct node can be used
+    ;;  when we've finished with the current group
+
+    if(cn_hdl) then
+        cn_hdl = %mem_proc(DM_RESIZ, cn_ctr*^size(current_node), cn_hdl)
+    else
+        cn_hdl = %mem_proc(DM_ALLOC, ^size(current_node), cn_hdl)
+
+    cn_ctr += 1
+    ^m(current_node[cn_ctr].cn, cn_hdl) = cur_node
+
+    cur_node = grp_node
+
+    return
+
+;; --------------------------------------------------------------------------
+
+export_grp_ftr,
+
+    cur_node = ^m(current_node[cn_ctr].cn,cn_hdl)
+    cn_ctr -= 1
+
+    if(!cn_ctr)
+        cn_hdl = %mem_proc(DM_FREE, cn_hdl)
+
+    return
+
+;; --------------------------------------------------------------------------
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Get all fields for a structure / group
+;;; </summary>
+;;; <param name="a_dcs">Repository DCS control structure</param>
+;;; <param name="a_control"></param>
+;;; <param name="a_fn_ptr">File name dynamic array handle</param>
+;;; <param name="a_f_ptr">File info dynamic array gandle</param>
+;;; <param name="a_si_nmflds">Number of fields in structure</param>
+;;; <param name="a_field_num">Current field number</param>
+;;; <param name="a_fi_pos">Current field position</param>
+;;; <param name="a_grp_overlay">Am I in a group overlay</param>
+;;; <returns>
+;;; 0 = ok
+;;; else Synergy error number
+;;; </returns>
+
+function get_all_fields             ,i4  ,reentrant,stack
+    req inout   a_dcs               ,a              ;DCS control structure
+    req in      a_control           ,a              ;; application control structure
+    req in      a_fn_ptr            ,D_HANDLE       ;; field name array handle
+    req in      a_f_ptr             ,D_HANDLE       ;; field array handle
+    req in      a_si_nmflds         ,n              ;; number of fields in structure
+    req inout   a_field_num         ,n              ;; field number in (outer) structure
+    req in      a_fi_pos            ,n              ;; field position in (outer) structure
+    req in      a_grp_overlay       ,n              ;; in a group overlay
+    endparams
+
+.include 'RPSLIB:ddinfo.def'
+
+external function
+    get_all_fields      ,i
+endexternal
+
+structure fld_names
+    fld_name            ,a30            ;; field names for structure
+endstructure
+
+structure fld_array
+    fld_name            ,a30            ;; field names for structure
+    fld_pos             ,i4             ;; field position
+    fld_len             ,i4             ;; field length
+    fld_dim             ,i4             ;; field dimensions
+    fld_typ             ,a1             ;; field type
+    fld_dp              ,d2             ;; field decimal places
+    fld_ovrlay          ,d1             ;; field is an overlay field
+    fld_class           ,d1             ;; field class
+    fld_coerc           ,d2             ;; field coerc type
+    fld_ro              ,d1             ;; field is read only
+    fld_grp_st          ,d1             ;; field is a group (1-explicit, 2-implicit)
+    fld_grp_end         ,d1             ;; field is last field in group (number of endgroups)
+endstructure
+
+record control
+    name_case           ,i4             ;; name case
+    odbcfldname         ,i4             ;; use ODBC field names (0-no, 1-yes)
+    no_overlays         ,i4             ;; do not include overlays
+endrecord
+
+;;  maximum number of fields to process at one time
+.define MAX_FLDS            500
+
+stack record clr_i
+    num_flds            ,d4                 ;; number of fields in DDF_SLIST
+    fld_ctr             ,i4                 ;; field counter
+    in_grp_overlay      ,i4                 ;; in a group overlay
+    rps_error           ,i4                 ;; RPS error has occurred (0-no, 1-yes)
+endrecord
+
+stack record clr
+    field_names         ,MAX_FLDS a30       ;; DDF_SLIST array of field names
+    field_name          ,a30                ;; field name
+    start               ,a30                ;; start field name (for DDF_SLIST)
+    old_dcs             ,a^size(dcs)        ;; previous DCS (for implicit groups)
+    strname             ,a30                ;; current structure name (for implicit groups)
+endrecord
+
+proc
+
+    clear clr, ^i(clr_i)
+
+    dcs = a_dcs
+    control = a_control
+
+again,
+    xcall dd_field(dcs, DDF_SLIST, MAX_FLDS, field_names, start, num_flds)
+    if (error)
+    begin
+        rps_error = 1
+        freturn rps_error
+    end
+
+    for fld_ctr from 1 thru num_flds
+    begin
+        ;; second time through, ignore first field
+        if(fld_ctr == 1 && start && field_names(1) == start)
+            nextloop
+
+        ;; get the field information
+        xcall dd_field(dcs, DDF_INFO, field_names(fld_ctr), f_info)
+        if(error)
+        begin
+            nextloop
+        end
+
+        if(no_overlays)
+        begin
+            ;; is this an overlay field?
+            if(fi_ovrfld)
+                nextloop
+        end
+
+        ;; ODBC name or field name
+        if (odbcfldname && fi_odbcnm) then
+        begin
+            ;; get the ODBC fieldname
+            xcall dd_field(dcs, DDF_TEXT, fi_odbcnm, field_name)
+            if (error)
+            begin
+                field_name = field_names(fld_ctr)
+            end
+        end
+        else
+            field_name = field_names(fld_ctr)
+
+        a_field_num += 1
+
+        ;; update field names array
+        ^m(fld_names[a_field_num].fld_name, a_fn_ptr) = field_names(fld_ctr)
+
+        ;; update field details array
+        ^m(fld_array[a_field_num].fld_name, a_f_ptr) = field_name
+        ^m(fld_array[a_field_num].fld_pos, a_f_ptr) = a_fi_pos + fi_pos
+        ^m(fld_array[a_field_num].fld_len, a_f_ptr) = fi_size
+
+        ;; check for multi-dimensional arrays
+        if(fi_dim(2) || fi_dim(3) || fi_dim(4))
+        begin
+            rps_error = 1
+        end
+
+        ^m(fld_array[a_field_num].fld_dim, a_f_ptr) = fi_dim(1)+fi_dim(2)+fi_dim(3)+fi_dim(4)
+        if(.not.^m(fld_array[a_field_num].fld_dim, a_f_ptr))
+            ^m(fld_array[a_field_num].fld_dim, a_f_ptr) = 1
+
+        using fi_type select
+        (T_ALP),
+        begin
+            ^m(fld_array[a_field_num].fld_typ, a_f_ptr) = 'A'
+            ^m(fld_array[a_field_num].fld_dp, a_f_ptr) = 0
+            ^m(fld_array[a_field_num].fld_class, a_f_ptr) = fi_class
+            ;using fi_class select
+            ;(C_BINARY),
+            ;endusing
+        end
+        (T_DEC),
+        begin
+            ^m(fld_array[a_field_num].fld_typ, a_f_ptr) = 'D'
+            ^m(fld_array[a_field_num].fld_dp, a_f_ptr) = fi_prec
+            ^m(fld_array[a_field_num].fld_class, a_f_ptr) = fi_class
+        end
+        (T_INT),
+        begin
+            ^m(fld_array[a_field_num].fld_typ, a_f_ptr) = 'I'
+            ^m(fld_array[a_field_num].fld_dp, a_f_ptr) = 0
+            ^m(fld_array[a_field_num].fld_class, a_f_ptr) = 0
+        end
+        (T_USR),
+        begin
+            ^m(fld_array[a_field_num].fld_typ, a_f_ptr) = 'U'
+            ^m(fld_array[a_field_num].fld_dp, a_f_ptr) = 0
+            ^m(fld_array[a_field_num].fld_class, a_f_ptr) = 0
+            ;using fi_class select
+            ;(C_ALPHA),
+            ;(C_NUMERIC),
+            ;(C_DATE),
+            ;endusing
+        end
+        (), ;; unknown type
+        begin
+            ^m(fld_array[a_field_num].fld_typ, a_f_ptr) = 'A'
+            ^m(fld_array[a_field_num].fld_dp, a_f_ptr) = 0
+            ^m(fld_array[a_field_num].fld_class, a_f_ptr) = 0
+        end
+        endusing
+
+        ^m(fld_array[a_field_num].fld_coerc, a_f_ptr) = fi_coertype
+        ^m(fld_array[a_field_num].fld_ro, a_f_ptr) = fi_readonly
+
+        if(a_grp_overlay) then
+            ^m(fld_array[a_field_num].fld_ovrlay, a_f_ptr) = 2
+        else
+            ;; is this field is an overlay field
+            ^m(fld_array[a_field_num].fld_ovrlay, a_f_ptr) = (fi_ovrfld.ne.' ')
+
+        ;; is this field a group
+        using fi_group select
+        (F_GROUPOVRFLD),
+        begin
+            if(no_overlays)
+            begin
+                ;; group overlay - skip
+                nextloop
+            end
+
+            ^m(fld_array[a_field_num].fld_ovrlay, a_f_ptr) = 2
+
+            in_grp_overlay = 1
+            call process_group
+            in_grp_overlay = a_grp_overlay
+            if(error)
+                goto abort
+        end
+        (F_GROUPFLD),
+        begin
+            in_grp_overlay = a_grp_overlay
+            call process_group
+            if(error)
+                goto abort
+        end
+        (),
+        begin
+            ;; not the start or end of a group
+            ^m(fld_array[a_field_num].fld_grp_st, a_f_ptr) = 0
+            ^m(fld_array[a_field_num].fld_grp_end, a_f_ptr) = 0
+        end
+        endusing
+    end
+
+    ;; see if there are more fields
+    if(num_flds == MAX_FLDS && field_names(MAX_FLDS))
+    begin
+        start = field_names(MAX_FLDS)
+        goto again
+    end
+
+    if(false)
+    begin
+abort,
+        rps_error = 1
+    end
+
+    a_dcs = dcs
+    freturn rps_error
+
+;; --------------------------------------------------------------------------
+
+process_group,
+
+    ;; is this an implicit group
+    if(fi_struct) then
+    begin
+        ;; start of implicit group
+        ^m(fld_array[a_field_num].fld_grp_st, a_f_ptr) = D_GROUP_IMPLICIT
+        old_dcs = dcs
+        ;; get structure name
+        xcall dd_field(dcs, DDF_TEXT, fi_struct, strname)
+        if(!error)
+        begin
+            ;; reset to new structure
+            xcall dd_struct(dcs, DDS_INFO, strname, s_info)
+            if(error)
+                goto abort_group
+        end
+    end
+    else
+    begin
+        ;; start of explicit group
+        ^m(fld_array[a_field_num].fld_grp_st, a_f_ptr) = D_GROUP_EXPLICIT
+        clear old_dcs
+        ;; start explicit group
+        xcall dd_field(dcs, DDF_GROUP, field_names(fld_ctr))
+    end
+
+    if(!error)
+    begin
+        rps_error = %get_all_fields(dcs, control, a_fn_ptr, a_f_ptr, a_si_nmflds,
+        &           a_field_num, fi_pos-1, in_grp_overlay)
+        if(rps_error)
+            return
+    end
+
+    ;; last field in a (nested) group
+    ^m(fld_array[a_field_num].fld_grp_end, a_f_ptr) += 1
+
+    if(old_dcs) then
+    begin
+        dcs = old_dcs
+    end
+    else
+    begin
+        ;; end explicit group
+        xcall dd_field(dcs, DDF_ENDGROUP)
+    end
+
+    clear error
+
+    if(false)
+    begin
+abort_group,
+        rps_error = 1
+    end
+
+    return
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Convert the case of an alpha string
+;;; </summary>
+;;; <param name="a_name">
+;;; String to be modified by case rules
+;;; </param>
+;;; <param name="a_mode">
+;;; D_CASE_NONE         0
+;;; D_CASE_CAPITALIZE   1
+;;; D_CASE_UPPER        2
+;;; D_CASE_LOWER        3
+;;; D_CASE_CAMEL        4
+;;; D_CASE_PASCAL       5
+;;; </param>
+;;; <returns></returns>
+
+function CASE_NAME      ,a
+    req in a_name       ,a              ;; name
+    opt in a_mode       ,n              ;; conversion type
+    endparams
+
+    structure name
+        ch              ,a1
+    endstructure
+
+    record
+        mode            ,i4             ;; conversion mode
+        hdl             ,D_HANDLE       ;; memory handle
+        sLen            ,i4
+        ctr             ,i4
+    endrecord
+
+proc
+
+    ;; what conversion mode is required
+    if(^passed(a_mode)) then
+        mode = a_mode
+    else
+        clear mode
+
+    sLen = %trim(a_name)
+    hdl = %mem_proc(DM_ALLOC, sLen)
+    ^m(hdl) = a_name
+
+    using mode select
+    (D_CASE_CAPITALIZE),
+    begin
+        locase ^m(hdl)
+        upcase ^m(name[1],hdl)
+    end
+    (D_CASE_LOWER),
+    begin
+        locase ^m(hdl)
+    end
+    (D_CASE_UPPER),
+    begin
+        upcase ^m(hdl)
+    end
+    (D_CASE_CAMEL),
+    begin
+        locase ^m(hdl)
+        while(ctr=%instr(1,^m(hdl),'_'))
+        begin
+            using ctr select
+            (1),
+                ^m(hdl) = ^m(name(2,slen),hdl)
+            (sLen),
+                ^m(hdl) = ^m(name(1,ctr-1),hdl)
+            (),
+                ^m(hdl) = ^m(name(1,ctr-1),hdl) + ^m(name(ctr+1,slen),hdl)
+            endusing
+            upcase ^m(name[ctr],hdl)
+        end
+        upcase ^m(name[1],hdl)
+    end
+    (D_CASE_PASCAL),
+        begin
+            locase ^m(hdl)
+            while(ctr=%instr(1,^m(hdl),'_'))
+            begin
+                using ctr select
+                (1),
+                    ^m(hdl) = ^m(name(2,slen),hdl)
+                (sLen),
+                    ^m(hdl) = ^m(name(1,ctr-1),hdl)
+                (),
+                    ^m(hdl) = ^m(name(1,ctr-1),hdl) + ^m(name(ctr+1,slen),hdl)
+                endusing
+                upcase ^m(name[ctr],hdl)
+            end
+        end
+    endusing
+
+    freturn ^m(hdl)
+
+endfunction
+
+;; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

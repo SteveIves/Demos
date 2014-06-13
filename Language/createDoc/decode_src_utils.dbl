@@ -1,0 +1,389 @@
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Have we reached the end of the parameters
+;;; </summary>
+;;; <param name="a_buff">
+;;; Current source code buffer
+;;; </param>
+;;; <param name="a_in_proc">
+;;; Returned - are we now in the procedure division?
+;;; </param>
+;;; <returns>
+;;; true/false
+;;; </returns>
+
+function end_of_params  ,boolean
+req in  a_buff          ,a              ;buffer to check
+req out a_in_proc       ,n              ;in procedure division
+endparams
+
+static record
+    comment_eop_len     ,i4
+    comment_eop         ,a80            ;comment signalling end of parameters
+    hdl                 ,D_HANDLE
+endrecord
+
+record
+    start               ,i4
+    pos                 ,i4
+endrecord
+
+structure buff
+    b                   ,a1
+endstructure
+
+proc
+
+    using a_buff select
+    ('endparams '),
+        freturn true
+    ('proc ', '.proc '),
+    begin
+        a_in_proc = 1
+        freturn true
+    end
+    ('record ', 'common ', 'global ' 'external ', 'literal '),
+        freturn true
+    ('stack record', 'static record', 'local record'),
+        freturn true
+    ('.define ', '.align '),
+        freturn true
+    ('.include '),
+    begin
+        if(%instr(1, a_buff, 'record=') || %instr(1, a_buff, 'record ='))
+            freturn true
+        if(%instr(1, a_buff, 'common=') || %instr(1, a_buff, 'common ='))
+            freturn true
+        ;if(!%isGroupInclude())
+        ;    freturn true
+    end
+    endusing
+
+    ;; check for Synergy provided includes
+    if(%instr(1, a_buff, 'dbldir:dbl.def'))
+        freturn true
+    if(%instr(1, a_buff, 'dbldir:windows.def'))
+        freturn true
+    if(%instr(1, a_buff, 'dbldir:synxml.def'))
+        freturn true
+
+    if(%instr(1, a_buff, 'wnd:tools.def'))
+        freturn true
+    if(%instr(1, a_buff, 'wnd:tkctl.def'))
+        freturn true
+    if(%instr(1, a_buff, 'wnd:windows.def')) ;;should be in DBLDIR:
+        freturn true
+
+    if(%instr(1, a_buff, 'rpslib:ddinfo.def'))
+        freturn true
+
+    if(%instr(1, a_buff, 'connectdir:ssql.def'))
+        freturn true
+
+    ;end of parameters comment
+    if(!comment_eop_len)
+    begin
+        getlog('COMMENT_EOP', comment_eop, pos)
+        if(!pos)
+        begin
+            comment_eop = ';end of '
+            pos = %trim(comment_eop)
+        end
+        comment_eop_len = pos
+    end
+
+    if(comment_eop && a_buff == comment_eop(1:comment_eop_len))
+        freturn true
+
+
+    ;application specific includes
+    if(!hdl)
+    begin
+        ;static handles are > 0
+        hdl = %mem_proc(DM_ALLOC.bor.DM_STATIC.bor.DM_BLANK, 65000)
+
+        getlog('APP_INCLUDES', ^m(hdl), pos)
+        if(pos) then
+            hdl = %mem_proc(DM_RESIZ, pos, hdl)
+        else
+        begin
+            hdl = %mem_proc(DM_FREE, hdl)
+            hdl = -1
+        end
+    end
+    if(hdl > 0)
+    begin
+        start = 1
+        while(pos=%instr(start, ^m(hdl), '|'))
+        begin
+            if(%instr(1, a_buff, ^m(buff.b(start, pos-1), hdl)))
+                freturn true
+            start = pos+1
+        end
+    end
+
+    freturn false
+
+endfunction
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.define TOKEN_NONE          0
+.define TOKEN_IDENTIFIER    1
+.define TOKEN_PAREN         2
+.define TOKEN_BRACKET       3
+.define TOKEN_OPERATOR      4
+.define TOKEN_INVALID       -1 ;Invalid tokens are <= this token
+.define TOKEN_NEXT_INVALID  -1
+.define TOKEN_CURR_INVALID  -2
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+;;; <summary>
+;;; What type of token do we have?
+;;; </summary>
+;;; <param name="a_token">Current token</param>
+;;; <param name="a_source">Next token</param>
+;;; <returns>
+;;; 0=none, 1=identifier, 2=parenthesis, 3=bracket, 4=operator
+;;;  -1=next token is invalid,
+;;;  -2=current token is invalid
+;;; </returns>
+function nextToken      ,i
+    a_token             ,a              ;current token in line
+    a_source            ,a              ;next token on line
+endparams
+
+record
+    pos                 ,i4
+    len                 ,i4
+endrecord
+
+proc
+    pos = %trim(a_token)+1
+    len = %trim(a_source)
+    if(pos > len)
+        freturn TOKEN_NONE
+    using a_source(pos:1) select
+    (' '),
+    begin
+        while(pos < len)
+        begin
+            pos += 1
+            using a_source(pos:1) select
+            (' '),
+                nop
+            (';'),
+                freturn TOKEN_NONE
+            ('A' thru 'Z', 'a' thru 'z', '$', '_'),
+                freturn TOKEN_IDENTIFIER
+            ('('),
+                freturn TOKEN_PAREN
+            ('['),
+                freturn TOKEN_BRACKET
+            ('=', '>', '<', '!', '.'),
+                freturn TOKEN_OPERATOR
+            (),
+                freturn TOKEN_NEXT_INVALID
+            endusing
+        end
+    end
+    (';'),
+        freturn TOKEN_NONE
+    ('('),
+        freturn TOKEN_PAREN
+    ('['),
+        freturn TOKEN_BRACKET
+    ('=', '>', '<', '!', '.'),
+        freturn TOKEN_OPERATOR
+    (),
+        freturn TOKEN_CURR_INVALID
+    endusing
+    freturn TOKEN_NONE
+endfunction
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+;;; <summary>
+;;; Read source file
+;;; </summary>
+;;; <param name="in_ch">Input channel</param>
+;;; <param name="buff">
+;;; Source line buffer
+;;; </param>
+;;; <param name="buff_lc">
+;;; Lowercase version of BUFF
+;;; </param>
+;;; <param name="buff_len">
+;;; Length of BUFF
+;;; </param>
+;;; <param name="next_buff">
+;;; Next source line
+;;; </param>
+;;; <param name="next_buff_lc">
+;;; Lowercase version of next source line
+;;; </param>
+;;; <param name="next_len">
+;;; Length of next source line
+;;; </param>
+
+subroutine read_buff
+    req in      in_ch           ,i4             ;; in channel
+    req inout   buff            ,a512           ;; current read buffer
+    req inout   buff_lc         ,a512           ;; lowercase copy of current read buffer
+    req inout   buff_len        ,i4             ;; length of buff
+    req inout   next_buff       ,a512           ;; next read buffer
+    req inout   next_buff_lc    ,a512           ;; lowercase copy of next read buffer
+    req inout   next_len        ,i4             ;; length of next_buff
+    endparams
+
+;; logical end of file
+.define EOF_SRC_FILE    '~~~~'
+
+proc
+
+    if(next_buff == EOF_SRC_FILE)
+    begin
+        clear buff, buff_lc, next_buff, next_buff_lc
+        buff_len = -1
+        xreturn
+    end
+
+    buff = next_buff
+    buff_lc = next_buff_lc
+    buff_len = next_len
+
+    reads(in_ch, next_buff, read_buff_eof)
+    gen_buff_lc(next_buff, next_buff_lc, next_len)
+
+    xreturn
+
+read_buff_eof,
+
+    if(!%rsize) then
+    begin
+        next_buff = EOF_SRC_FILE
+        next_buff_lc = EOF_SRC_FILE
+        next_len = %trim(next_buff)
+    end
+    else
+        gen_buff_lc(next_buff, next_buff_lc, next_len)
+
+    xreturn
+
+endsubroutine
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;;; <summary>
+;;; Lowercase source, excluding string contents
+;;; </summary>
+;;; <param name="a_buff">Source code line</param>
+;;; <param name="a_buff_lc">Returned lowercase version of source code line</param>
+;;; <param name="a_len">Returned length of source code line</param>
+
+subroutine gen_buff_lc
+req in  a_buff          ,a              ;buffer
+req out a_buff_lc       ,a              ;lowercase buffer
+req out a_len           ,n              ;length of buff_lc
+endparams
+
+record
+    pos             ,i4
+    len             ,i4
+    in_string       ,i4
+endrecord
+
+record buff_lc
+    buff_lc1        ,200a1
+endrecord
+
+proc
+
+    clear a_buff_lc, a_len
+
+    buff_lc = a_buff
+    locase buff_lc
+
+    len = %trimz(buff_lc)
+    if(!len)
+        xreturn
+
+    ;replace control chars with spaces
+    for pos from 1 thru len
+    begin
+        if(buff_lc1(pos) < ' ' || buff_lc1(pos) > '~')
+            clear buff_lc1(pos)
+    end
+
+    len = %trimz(buff_lc)
+    if(!len)
+        xreturn
+
+    ;remove leading whitespace
+    pos = 1
+    while(!buff_lc1(pos))
+        pos += 1
+    if(pos > 1 && pos <= len)
+        buff_lc = buff_lc(pos, len)
+
+    ;remove multiple spaces that are not in strings and/or comments
+    pos = 1
+    while(pos <= len)
+    begin
+        using buff_lc1(pos) select
+        ('"'),
+        begin
+            using in_string select
+            (0),
+                in_string = 2
+            (2),
+                in_string = 0
+            endusing
+        end
+        ("'"),
+        begin
+            using in_string select
+            (0),
+                in_string = 1
+            (1),
+                in_string = 0
+            endusing
+        end
+        (';'),
+        begin
+            if(!in_string)
+                pos = len
+        end
+        (' '),
+        begin
+            if(!in_string && pos < len)
+            begin
+                using buff_lc1(pos+1) select
+                (' '),
+                begin
+                    buff_lc(pos, len) = buff_lc(pos+1, len)
+                    len -= 1
+                    pos -= 1
+                end
+                (','),
+                begin
+                    buff_lc(pos, len) = buff_lc(pos+1, len)
+                    len -= 1
+                end
+                endusing
+            end
+        end
+        endusing
+
+        pos += 1
+    end
+
+    a_buff_lc = buff_lc
+    a_len = %trimz(buff_lc)
+
+    return
+
+endsubroutine
+
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
