@@ -1,0 +1,23 @@
+.function logout, ^VAL
+
+    ;Argument list
+
+
+
+    ;End of argument list
+
+.include 'webapp.def'
+
+.proc
+
+    ;Default to success
+    clear status
+
+    ;Close data files
+
+
+
+
+    freturn status
+
+.end

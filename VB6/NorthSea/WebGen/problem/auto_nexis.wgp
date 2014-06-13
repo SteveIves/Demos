@@ -1,0 +1,7 @@
+DESCRIPTION=Nexis Generation
+ALLOW_FTP=NO
+ALLOW_EDIT=NO
+RECORD_LOG=YES
+DETAILED_LOG=YES
+TEMPLATE=C:\INetPub\WWWRoot\nexis\bulletinam.wgt
+TEMPLATE=C:\INetPub\WWWRoot\nexis\bulletinpm.wgt

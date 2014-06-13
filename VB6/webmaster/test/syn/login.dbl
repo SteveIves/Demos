@@ -1,0 +1,24 @@
+.function login, ^VAL
+
+    ;Argument list
+
+
+
+    ;End of argument list
+
+.define WEBAPP_INIT
+.include 'webapp.def'
+
+.proc
+
+    ;Default to success
+    clear status
+
+    ;Open data files
+
+
+
+
+    freturn status
+
+.end

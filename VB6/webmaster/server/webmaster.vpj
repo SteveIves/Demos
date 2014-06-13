@@ -1,0 +1,37 @@
+[COMPILER]
+MACRO=set XFPL_SMCPATH=c:\\webmaster\\server\nset RPSMFIL=c:\\webmaster\\test\\rps\\rpsmain.ism\nset RPSTFIL=c:\\webmaster\\test\\rps\\rpstext.ism\n\n\n
+Synergy=DBL
+FILTEREXPANSION=0
+FILTERASSOCIATEFILETYPES=0 0 0 
+FILTERPATTERN=*.dbl;*.tpl\n*.def\n*.*\n
+FILTERNAME=Source Files\nHeader Files\nOther Files\n
+syn_version=1
+version=5.0a
+FILTERAPPCOMMAND=\n\n\n
+compile=concur|capture|clear|savecurrent|nochangedir|:Compile:&Compile,dbl -dXT %n
+make=concur|capture|:Build:&Build,dblink -d test
+rebuild=concur|capture|:Rebuild:&Rebuild,
+debug=:Debug:&Debug,dbr -d test
+execute=:Execute:E&xecute,dbr test
+user1=concur|capture|hide|clear|savenone|:User 1:User 1,dblibr -r %rn.olb %n
+user2=concur|capture|hide|clear|:User 2:User 2,dblink -dl %rn.elb %rn.olb
+workingdir=.
+includedirs=
+reffile=
+vcsproject=SCC:Microsoft Visual SourceSafe:"$/Synergy/WebMaster Server", ZDAAAAAA
+vcslocalpath=SCC:Microsoft Visual SourceSafe:C:\WEBMASTER\SERVER
+[FILES]
+login.dbl
+logout.dbl
+register_server.bat
+relation_list.dbl
+structure_fields.dbl
+structure_list.dbl
+tag_list.dbl
+test.dbl
+validate_rps.dbl
+webmaster.def
+xfpl.ini
+xfpl.log
+\SynergyDE\rps\lib\ddinfo.def
+[ASSOCIATION]

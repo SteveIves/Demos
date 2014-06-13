@@ -1,0 +1,19 @@
+[CurrentProject]
+curproj=webmaster.vpj
+[ProjectFiles]
+webmaster.vpj
+[ProjectDates]
+webmaster.vpj=20001114225009815
+[State]
+SCREEN: 1024 768 169 136 768 537 0 0 M 0 0 0 0 792 488
+CWD: C:\chameleon
+FILEHIST: 9
+C:\webmaster\server\login.dbl
+C:\webmaster\server\logout.dbl
+C:\webmaster\server\relation_list.dbl
+C:\webmaster\server\structure_fields.dbl
+C:\webmaster\server\structure_list.dbl
+C:\webmaster\server\tag_list.dbl
+C:\webmaster\server\validate_rps.dbl
+C:\webmaster\server\webmaster.def
+C:\webmaster\server\test.dbl

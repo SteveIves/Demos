@@ -1,0 +1,62 @@
+.function relation_list, ^VAL
+
+	a_mode		,n
+	
+	a_structure	,a
+	
+	a_count		,n
+
+	a_names		,a
+
+	a_data		,a
+
+.include "webmaster.def"
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+
+stack record relation_data
+	from_structure	,a30
+	from_key		,a30
+	to_structure	,a30
+	to_key			,a30
+
+.proc
+
+	clear status	;Default to success
+
+	using (a_mode) select
+	(1),
+		begin
+			;Return number of relations for specified structure
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			a_count=si_nmrels
+			xcall dd_exit(dcs)
+		end
+	(2),	
+		begin
+			;Return arrays of relation names and data
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			
+			;Get array of names
+			xcall dd_relation(dcs,DDR_LIST,si_nmrels,a_names)
+			
+			;Build array of relation data
+			for c from 1 thru si_nmrels
+			begin
+				from_structure=a_names(c)
+				xcall dd_relation(dcs,DDR_INFO,	from_structure,
+				&				  				from_key,
+				&				  				to_structure,
+				&				  				to_key)
+				a_data(c)=relation_data
+			end
+			xcall dd_exit(dcs)
+		end
+	endusing
+	
+	freturn (status)
+
+.end
+

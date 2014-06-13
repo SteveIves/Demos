@@ -1,0 +1,42 @@
+[CONFIGURATIONS]
+activeconfig=,Debug
+config=,Debug
+config=,Release
+[COMPILER.Debug]
+includedirs=
+reffile=
+classpath=
+compile=copts: concur|capture|clear|saveall|nochangedir|menu: Compile:&Compilecmd: dbl -dXT %notheropts: 
+make=copts: concur|capture|clear|savenone|nochangedir|menu: Build:&Buildcmd: dblink -d "%n" WND:tklib.elbotheropts: 
+rebuild=copts: |hide|menu: Rebuild:&Rebuildcmd: otheropts: 
+debug=copts: |savenone|nochangedir|menu: Debug:&Debugcmd: dbr -d %notheropts: 
+execute=copts: |savenone|nochangedir|menu: Execute:E&xecutecmd: dbr %notheropts: 
+user1=copts: |hide|menu: User 1:User 1cmd: otheropts: 
+user2=copts: |hide|menu: User 2:User 2cmd: otheropts: 
+usertool_skelgen=copts: |menu: Generate Synergy Test Skeletons...:Generate Synergy Test Skeletons...cmd: SynStartSkeletonGenotheropts: 
+[COMPILER.Release]
+includedirs=
+reffile=
+classpath=
+compile=copts: concur|capture|clear|saveall|nochangedir|menu: Compile:&Compilecmd: dbl %notheropts: 
+make=copts: concur|capture|clear|savenone|nochangedir|menu: Build:&Buildcmd: dblink %n WND:tklib.elbotheropts: 
+rebuild=copts: |hide|menu: Rebuild:&Rebuildcmd: otheropts: 
+debug=copts: |savenone|nochangedir|menu: Debug:&Debugcmd: dbr -d %notheropts: 
+execute=copts: |savenone|nochangedir|menu: Execute:E&xecutecmd: dbr %notheropts: 
+user1=copts: |hide|menu: User 1:User 1cmd: otheropts: 
+user2=copts: |hide|menu: User 2:User 2cmd: otheropts: 
+usertool_skelgen=copts: |menu: Generate Synergy Test Skeletons...:Generate Synergy Test Skeletons...cmd: SynStartSkeletonGenotheropts: 
+[GLOBAL]
+FILTERPATTERN=*.dbl;*.tpl\n*.def\n*.wsc\n*.*\n
+FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
+FILTERASSOCIATEFILETYPES=0 0 0 0
+syn_version=2
+Synergy=DBL
+workingdir=.
+version=6.0
+packname=Synergy/DE
+MACRO=\n
+[FILES]
+calctest.dbl
+Script1.wsc
+[ASSOCIATION]

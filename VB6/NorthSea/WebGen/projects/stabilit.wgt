@@ -1,0 +1,261 @@
+<html>
+
+<head>
+<meta name="DATASOURCE" content="data.xls">
+<meta name="FTP_URL" content="ftp://server.iss.co.uk">
+<meta name="FTP_DIR" content="test">
+<meta name="FTP_USERNAME" content="steve">
+<meta name="FTP_PASSWORD" content="kudos">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<meta name="Microsoft Border" content="none, default">
+<meta name="Microsoft Theme" content="global 011, default">
+<title>stability</title>
+</head>
+
+<body
+background="file:///C:/Program%20Files/Microsoft%20FrontPage/themes/global/glotextb.gif"
+bgcolor="#FFFFFF" text="#000000" link="#000066" vlink="#666699" alink="#CC6633">
+<!--mstheme--><font face="arial, helvetica"><!--mstheme--></font>
+
+<table border="0" width="100%" cellspacing="1">
+  <tr>
+    <td width="16%"><!--mstheme--><font face="arial, helvetica"><p align="right"><img
+    src="images/ingotl.gif" width="58" height="87" alt="ingotl.gif (7645 bytes)"><!--mstheme--></font></td>
+    <td width="68%"><!--mstheme--><font face="arial, helvetica"><p align="center"><a href="index.htm"><font
+    face="Times New Roman" size="5" color="#000080"><em>HumberNet NEXIS99 : </em>STABILITY</font><font
+    color="#000080" face="Times New Roman"><br>
+    <big>for ~A32~ to ~A36~ ~A31~</a><big><br>
+    </big></big></font><font face="Times New Roman" color="#FF0000"><small>click title bar to
+    return to Nexis Home Page</small></font><!--mstheme--></font></td>
+    <td width="16%"><!--mstheme--><font face="arial, helvetica"><img src="images/ingotr.gif" width="58"
+    height="86" alt="ingotr.gif (7659 bytes)"><!--mstheme--></font></td>
+  </tr>
+</table>
+<!--mstheme--><font face="arial, helvetica"><!--mstheme--></font>
+
+<table border="0" width="100%" cellspacing="1">
+  <tr>
+    <td width="21%"><!--mstheme--><font face="arial, helvetica"><font color="#FFFFFF" face="Times New Roman"
+    size="1">fake</font><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="11%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="28%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">DAY</font><!--mstheme--></font></td>
+    <td width="10%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="3" color="#000080">noon<br>
+    wind<br>
+    knots</font><!--mstheme--></font></td>
+    <td width="10%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="3" color="#000080">noon<br>
+    wind<br>
+    from</font><!--mstheme--></font></td>
+    <td width="10%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="3" color="#000080">noon<br>
+    insol-<br>
+    ation</font><!--mstheme--></font></td>
+    <td width="11%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="3" color="#000080">PG<br>
+    class<br>
+    A-G</font><!--mstheme--></font></td>
+    <td width="28%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="3" color="#000000">visual</font><!--mstheme--></font></td>
+    <td width="10%" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">name</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">MONDAY</font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~B32~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~C32~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" size="3"
+    color="#000000">~D32~</font><!--mstheme--></font></td>
+    <td width="11%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~E32~</strong></font><!--mstheme--></font></td>
+    <td width="28%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica">~~F32~<!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica"><font face="Times New Roman" size="3" color="#000000"><p
+    align="center">~H32~</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">TUESDAY</font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~B33~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~C33~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" size="3"
+    color="#000000">~D33~</font><!--mstheme--></font></td>
+    <td width="11%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~E33~</strong></font><!--mstheme--></font></td>
+    <td width="28%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica">~~F33~<!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica"><font face="Times New Roman" size="3" color="#000000"><p
+    align="center">~H33~</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">WEDNESDAY</font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~B34~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~C34~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" size="3"
+    color="#000000">~D34~</font><!--mstheme--></font></td>
+    <td width="11%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~E34~</strong></font><!--mstheme--></font></td>
+    <td width="28%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica">~~F34~<!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica"><font face="Times New Roman" size="3" color="#000000"><p
+    align="center">~H34~</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">THURSDAY</font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~B35~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~C35~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" size="3"
+    color="#000000">~D35~</font><!--mstheme--></font></td>
+    <td width="11%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~E35~</strong></font><!--mstheme--></font></td>
+    <td width="28%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica">~~F35~<!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica"><font face="Times New Roman" size="3" color="#000000"><p
+    align="center">~H35~</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%" bgcolor="#FFFFFF" align="center" style="border: 1px solid rgb(0,0,128)"
+    bordercolorlight="#000080"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman"
+    size="5" color="#000080">FRIDAY</font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~B36~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~C36~</strong></font><!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" size="3"
+    color="#000000">~D36~</font><!--mstheme--></font></td>
+    <td width="11%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"
+    align="center"><!--mstheme--><font face="arial, helvetica"><font face="Times New Roman" color="#000000"
+    size="6"><strong>~E36~</strong></font><!--mstheme--></font></td>
+    <td width="28%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica">~~F36~<!--mstheme--></font></td>
+    <td width="10%" style="border: 1px solid rgb(0,0,128)" bordercolorlight="#000080"><!--mstheme--><font
+    face="arial, helvetica"><font face="Times New Roman" size="3" color="#000000"><p
+    align="center">~H36~</font><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%"><!--mstheme--><font face="arial, helvetica"><font color="#FFFFFF" face="Times New Roman"
+    size="1">ake</font><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="11%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="28%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%"><!--mstheme--><font face="arial, helvetica"><p align="right"><font color="#000080"
+    face="Times New Roman" size="1">click for technical pages:</font><!--mstheme--></font></td>
+    <td width="10%" align="center"
+    style="background-color: rgb(192,192,192); border: 1px solid rgb(0,0,128)"
+    bgcolor="#000080"><!--mstheme--><font face="arial, helvetica"><a href="techbeau.htm"><font
+    color="#000080" face="Times New Roman" size="1">BEAUFORT</font></a><!--mstheme--></font></td>
+    <td width="10%" align="center"
+    style="background-color: rgb(192,192,192); border: 1px solid rgb(0,0,128)"
+    bgcolor="#000080"><!--mstheme--><font face="arial, helvetica"><a href="techclas.htm"><font
+    color="#000080" face="Times New Roman" size="1">CLASSES</font></a><!--mstheme--></font></td>
+    <td width="10%" align="center"
+    style="background-color: rgb(192,192,192); border: 1px solid rgb(0,0,128)"
+    bgcolor="#000080"><!--mstheme--><font face="arial, helvetica"><a href="techclou.htm"><font
+    color="#000080" face="Times New Roman" size="1">CLOUDS</font></a><!--mstheme--></font></td>
+    <td width="11%" align="center"
+    style="background-color: rgb(192,192,192); border: 1px solid rgb(0,0,128)"
+    bgcolor="#000080"><!--mstheme--><font face="arial, helvetica"><a href="techstab.htm"><font
+    color="#000080" face="Times New Roman" size="1">STABILITY</font></a><!--mstheme--></font></td>
+    <td width="28%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="21%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="11%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="28%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="10%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+</table>
+<!--mstheme--><font face="arial, helvetica"><!--mstheme--></font>
+
+<table border="0" width="100%" cellspacing="1">
+  <tr>
+    <td width="5%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="91%"><!--mstheme--><font face="arial, helvetica"><font color="#000080" face="Book Antiqua"
+    size="1"><span style="BORDER-TOP: 0px"><p align="center">Editorial Office (01482) 859070
+    Fax 805187 <a href="mailto:editor@humbernet.co.uk">nexus@humbernet.co.uk</a>&nbsp;
+    Published by &amp; Copyright © 1998-99 NorthSea Software Systems<br>
+    18 Newlands House, Newlands Science Park, Inglemire Lane, Kingston upon Hull, HU6 7TQ, UK</span></font><!--mstheme--></font></td>
+    <td width="4%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="5%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="91%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+    <td width="4%"><!--mstheme--><font face="arial, helvetica"><!--mstheme--></font></td>
+  </tr>
+</table>
+<!--mstheme--><font face="arial, helvetica">
+
+<p>~SHORTDATE~</p>
+
+<p>~LONGDATE~</p>
+
+<p>~GENERALDATE~</p>
+
+<p>~SHORTTIME~</p>
+
+<p>~LONGTIME~</p>
+<!--mstheme--></font>
+</body>
+</html>

@@ -1,0 +1,28 @@
+.function validate_rps, ^VAL
+
+	a_main		,a
+	
+	a_text		,a
+
+.include "webmaster.def"
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+
+.proc
+
+	xcall openelb("WND:tklib.elb")
+	xcall openelb("RPSLIB:ddlib.elb")
+	
+	xcall xsubr("u_start",,,,,,,,1,,99)
+	
+	xcall xsubr("dd_init",dcs,a_main,a_text)
+
+	if (.not.(dcs.error))
+		xcall xsubr("dd_exit",dcs)
+
+	xcall xsubr("u_finish")
+
+	freturn (dcs.error)
+
+.end
+

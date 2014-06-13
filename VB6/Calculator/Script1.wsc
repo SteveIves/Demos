@@ -1,0 +1,8 @@
+.script
+.date_generated "11/05/1998, 14:09"
+.version "6.3"
+
+.input Input1, 10, 46
+.placement 7, 12
+.field fld, d18.9, fpos(4, 6), drill_method("drill_number")
+.end

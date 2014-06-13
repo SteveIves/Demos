@@ -1,0 +1,8 @@
+DESCRIPTION=Nexis Predications
+ALLOW_FTP=YES
+ALLOW_EDIT=YES
+RECORD_LOG=YES
+DETAILED_LOG=YES
+TEMPLATE=S:\Source\VB\WebGen\projects\drivers.wgt
+TEMPLATE=S:\Source\VB\WebGen\projects\river.wgt
+TEMPLATE=S:\Source\VB\WebGen\projects\stabilit.wgt

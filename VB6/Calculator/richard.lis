@@ -1,0 +1,20 @@
+CALCTEST                                                    Thu Nov 05 13:46:21 1998   DBL Version 6.3.1   Compiler      Page:   1
+                                                                  Thu Apr 16 14:40:38 1998   C:\SynergyDE\TOOLKIT\tools.def      
+
+    1          .include 'WND:tools.def'
+    2          
+    3          record 
+    4          number,d15
+    5          bid,i4
+    6          iid,i4
+    7          
+    8        1 .proc
+    9          
+    10                 xcall u_start
+    11                 xcall ib_input(bid, 'name', 10, 50)
+    12                 xcall 
+%DBL-E-PARSE, syntax error at or near {XCALL}
+%DBL-E-NOOBJ, No object file created
+
+Errors:         1, in file D:\Source\VB\Calculator\calctest.dbl
+dbl -TXl richard calctest

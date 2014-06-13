@@ -1,0 +1,82 @@
+.function structure_list, ^VAL
+
+	a_mode			,n
+	
+	a_strcount		,n
+
+	a_names			,a
+
+	a_data			,a
+
+.include "webmaster.def"
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+
+record str_data				;(Length 181)
+	short_desc		,a40	;(1:40)
+	file_type		,a15	;(41:15)
+	user_text		,a60	;(56:60)
+	record_size		,d5		;(116:5)
+	field_count		,d3		;(121:3)
+	key_count		,d3		;(124:3)
+	relation_count	,d2		;(127:2)
+	file_count		,d3		;(129:3)
+	format_count	,d3		;(132:3)
+	tag_count		,d2		;(135:2)
+	tag_type		,a15	;(137:15)
+	first_file		,a30	;(152:30)
+
+.proc
+
+	clear status	;Default to success
+
+	using (a_mode) select
+	(1),
+		begin
+			;Return number of structures in RPS
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_name(dcs,DDN_COUNT,DDN_STRUCT,a_strcount)
+			xcall dd_exit(dcs)
+		end
+	(2),	
+		begin
+			;Return array of structure names
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_name(dcs,DDN_LIST,DDN_STRUCT,a_strcount,a_names)
+			
+			for c from 1 thru a_strcount
+			begin
+				
+				xcall dd_struct(dcs,DDS_INFO,a_names(c),s_info)
+
+				file_type = si_filtyp
+				record_size = si_recsz
+				field_count = si_nmflds
+				key_count = si_nmkeys
+				relation_count = si_nmrels
+				file_count = si_nmfils
+				format_count = si_nmfmts
+				tag_count = si_nmtags
+				case si_tagtyp of		
+				begincase
+				TAGNON: tag_type="No tag"
+				TAGFLD: tag_type="Field & value"
+				TAGSIZ: tag_type="Record size"
+				endcase
+				first_file = si_file
+				
+				xcall dd_struct(dcs,DDS_TEXT,si_desc,short_desc)
+				xcall dd_struct(dcs,DDS_TEXT,si_utext,user_text)
+
+				a_data(c)=str_data
+			
+			end
+			
+			xcall dd_exit(dcs)
+		end
+	endusing
+	
+	freturn (status)
+
+.end
+

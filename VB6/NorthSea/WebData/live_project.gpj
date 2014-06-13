@@ -1,0 +1,372 @@
+[Humberside Airport Predictions]
+URL=http://www.lfv.se/met/taffc.europe.htm
+START_TAG=<LF>EGNJ
+END_TAG==<LF>
+START_INCLUDE=4
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B1
+
+[Hull High Temperature]
+URL=http://weather.yahoo.com/forecast/Hull_UK_c.html
+START_TAG=<small>Hi</small>&nbsp;<b>
+END_TAG=&#176;</b>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B2
+
+[Hull Low Temperature]
+URL=http://weather.yahoo.com/forecast/Hull_UK_c.html
+START_TAG=<small>Lo</small><b>&nbsp;
+END_TAG=&#176;</b>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B3
+
+[Humberside Humidity]
+URL=http://weather.yahoo.com/forecast/Humberside_UK_c.html
+START_TAG=Humidity:</font></td><td><font size=-1>
+END_TAG=</font>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B4
+
+[Humberside Wind]
+URL=http://weather.yahoo.com/forecast/Humberside_UK_c.html
+START_TAG=Wind:</font></td><td><font size=-1>
+END_TAG=</font>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B5
+
+[Humberside Dewpoint]
+URL=http://weather.yahoo.com/forecast/Humberside_UK_c.html
+START_TAG=Dewpoint:</font></td><td><font size=-1>
+END_TAG=&#176;
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B6
+
+[MET Office Inshore Waters Forecast]
+GROUP_HEADING
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=<BR>Until
+END_TAG=<P>
+START_INCLUDE=5
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B9
+
+[Berwick-upon-Tweed to Flamborough Head]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Berwick-upon-Tweed to Flamborough Head. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B11
+
+[Flamborough Head to Lowestoft]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Flamborough Head to Lowestoft. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B12
+
+[Lowestoft to the Isle of Wight]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Lowestoft to the Isle of Wight. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B13
+
+[Isle of Wight to Lands End]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From the Isle of Wight to Lands End. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B14
+
+[Lands End to Holyhead]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Lands End to Holyhead. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B15
+
+[Holyhead to Tiree including from Carlingford Lough to Lough Foyle]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Holyhead to Tiree including from Carlingford Lough to Lough Foyle. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B16
+
+[Tiree to Wick including waters around Orkney and Shetland]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Tiree to Wick including the waters around Orkney and Shetland. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B17
+
+[Wick to Berwick-upon-Tweed]
+URL=http://www.met-office.gov.uk/datafiles/inshore.html
+START_TAG=From Wick to Berwick-upon-Tweed. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B18
+
+[MET Office Shipping Forecast]
+GROUP_HEADING
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=AT 
+END_TAG=<BR>
+START_INCLUDE=3
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B20
+
+[General Synopsis]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=THE GENERAL SYNOPSIS AT
+END_TAG=<P>
+START_INCLUDE=23
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B23
+
+[Viking]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>VIKING
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B25
+
+[North Utsire South Utsire]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>NORTH UTSIRE SOUTH UTSIRE
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B26
+
+[Forties]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>FORTIES
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B27
+
+[Cromarty Forth Tyne]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>CROMARTY FORTH TYNE
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B28
+
+[Dogger Fisher]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>DOGGER FISHER
+END_TAG=<BR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B29
+
+[German Bight Humber]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>GERMAN BIGHT HUMBER
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B30
+
+[Thames Dover Wight]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>THAMES DOVER WIGHT
+END_TAG=<BR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B31
+
+[Portland Plymouth]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>PORTLAND PLYMOUTH
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B32
+
+[Biscay]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>BISCAY
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B33
+
+[Finisterre]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>FINISTERRE
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B34
+
+[Sole]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>SOLE
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B35
+
+[Lundy Fastnet]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>LUNDY FASTNET
+END_TAG=<BR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B36
+
+[Irish Sea]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>IRISH SEA
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B37
+
+[Shannon]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>SHANNON
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B38
+
+[Rockall]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>ROCKALL
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B39
+
+[Malin]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>MALIN
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B40
+
+[Hebrides]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>HEBRIDES
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B41
+
+[Bailey]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>BAILEY
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B42
+
+[Fair Isle]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>FAIR ISLE
+END_TAG=<BR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B43
+
+[Faroes Southeast Iceland]
+URL=http://www.met-office.gov.uk/datafiles/offshore.html
+START_TAG=<LF>FAEROES SOUTHEAST ICELAND
+END_TAG=<BR><LF></TD>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B44
+

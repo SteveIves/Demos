@@ -1,0 +1,6 @@
+frmMain = 88, 88, 556, 536, Z, 22, 22, 490, 470, C
+modRegistry = 110, 110, 589, 550, C
+frmAbout = 88, 88, 620, 533, C, 66, 66, 598, 511, C
+frmDepot = 0, 0, 0, 0, C, 0, 0, 0, 0, C
+frmOptions = 0, 0, 0, 0, C, 0, 0, 0, 0, C
+frmDepotDetail = 0, 0, 0, 0, C, 0, 0, 0, 0, C

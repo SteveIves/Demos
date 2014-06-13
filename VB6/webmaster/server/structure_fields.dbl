@@ -1,0 +1,155 @@
+.function structure_fields, ^VAL
+
+	a_mode		,n
+	
+	a_structure	,a
+	
+	a_fldcount	,n
+
+	a_fldnames	,a
+
+	a_flddata	,a
+
+.include "webmaster.def"
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+
+stack record FieldData
+	Type			,a1			;(1:1)
+	Size			,d5			;(2:6)
+	Precision		,d2			;(7:2)
+	Required		,d1			;(9:1)
+	Uppercase		,d1			;(10:1)
+	Prompt			,a80		;(11:80)
+	Negatives		,d1			;(91:1)
+	Position		,d5			;(92:5)
+	OverlayField	,a30		;(97:30)
+	OverlayOffset	,d5			;(127:5)
+	ShortDesc		,a40		;(132:40)
+	Class			,d1			;(172:1)
+	ArrayDim		,4d3		;(173:12)
+	AvailLanguage	,d1			;(185:1)
+	AvailRpt		,d1			;(186:1)
+	AvailDtk		,d1			;(187:1)
+	ReportHeading	,a40		;(188:40)
+	ReportJust		,a6			;(228:6)
+	InputJust		,a6			;(234:6)
+	Radio			,d1			;(240:1)
+	Checkbox		,d1			;(241:1)
+	HelpID			,a80		;(242:80)
+	InfoLine		,a80		;(322:80)
+	OdbcName		,a30		;(402:30)
+	FieldFont		,a30		;(432:30)
+	PromptFont		,a30		;(462:30)
+	ReadOnly		,d1			;(492:1)
+	Disabled		,d1			;(493:1)
+	Password		,d1			;(494:1)
+	Default			,a80		;(495:80)
+	DateToday		,d1			;(575:1)
+	TimeNow			,d1			;(576:1)
+	TimeAmPm		,d1			;(577:1)
+	NoDecimal		,d1			;(578:1)
+	Max				,d28.10		;(579:28)
+	Min				,d28.10		;(607:28)
+
+.proc
+
+	clear status	;Default to success
+
+	using (a_mode) select
+	(1),
+		begin
+			;Return number of fields in structure
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			a_fldcount=si_nmflds
+			xcall dd_exit(dcs)
+		end
+	(2),	
+		begin
+			
+			;Return array of field properties
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+
+			;Set current structure
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			
+			;Get array of fiald names
+			xcall dd_field(dcs,DDF_SLIST,si_nmflds,a_fldnames)
+
+			;Populate array of field attributes
+
+			for c from 1 thru si_nmflds
+			begin
+				xcall dd_field(dcs,DDF_INFO,a_fldnames(c),f_info)
+
+				Type = fi_type
+				Size = fi_size
+				Precision = fi_prec
+				Required = fi_req
+				Uppercase = fi_uc
+				if (fi_prompt)
+                    xcall dd_field(dcs,DDF_TEXT,fi_prompt,Prompt)
+				Negatives = fi_negalw
+				Position = fi_pos
+				OverlayField = fi_ovrfld
+				OverlayOffset = fi_ovroff
+				if (fi_desc)
+                    xcall dd_field(dcs,DDF_TEXT,fi_desc,ShortDesc)
+				Class = fi_class
+				ArrayDim = fi_dim
+				AvailLanguage = fi_dblvw
+				AvailRpt = fi_rptvw
+				AvailDtk = fi_scrptvw
+				if fi_heading
+					xcall dd_field(dcs,DDF_TEXT,fi_heading,ReportHeading)
+				using fi_rptjust select
+				  (0),	ReportJust="Left"
+				  (1),	ReportJust="Right"
+				  (2),	ReportJust="Center"
+				endusing
+				using fi_inpjust select
+				  (0),	InputJust="Left"
+				  (1),	InputJust="Right"
+				  (2),	InputJust="Center"
+				endusing
+				using fi_view select
+				  (2),	Radio=1
+				  (3),	Checkbox=1
+				endusing
+				if (fi_help)
+					xcall dd_field(dcs,DDF_TEXT,fi_help,HelpID)
+				if (fi_infoln)
+					xcall dd_field(dcs,DDF_TEXT,fi_infoln,InfoLine)
+				if (fi_odbcnm)
+					xcall dd_field(dcs,DDF_TEXT,fi_odbcnm,OdbcName)
+				if (fi_font)
+					xcall dd_field(dcs,DDF_TEXT,fi_font,FieldFont)
+				if (fi_prmptfont)
+					xcall dd_field(dcs,DDF_TEXT,fi_prmptfont,PromptFont)
+				ReadOnly = fi_readonly
+				Disabled = fi_disabled
+				Password = fi_noecho
+				if (fi_def)
+					xcall dd_field(dcs,DDF_TEXT,fi_def,Default)
+				DateToday = fi_today
+				TimeNow = fi_now
+				TimeAmPm = fi_ampm
+				NoDecimal = fi_nodec
+				if (fi_range)
+					xcall dd_field(dcs,DDF_TEXT,fi_range,fti_range)
+				Max = fti_rgmin
+				Min = fti_rgmax
+
+				a_flddata(c) = FieldData
+			end
+
+			xcall dd_exit(dcs)
+		
+		end
+	endusing
+	
+	freturn (status)
+
+.end
+

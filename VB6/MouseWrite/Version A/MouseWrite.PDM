@@ -1,0 +1,141 @@
+[Root]
+Most Recent Package=MouseWrite Setup
+
+
+[Package|MouseWrite Setup|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=c:\TEMP\MouseWrite
+
+[Package|MouseWrite Setup|Configure DAO ISAMs]
+Applicable=No
+
+[Package|MouseWrite Setup|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|MouseWrite Setup|Files Found]
+
+[Package|MouseWrite Setup|Files Released]
+
+[Package|MouseWrite Setup|Missing Dependency Information]
+
+[Package|MouseWrite Setup|Out-of-Date Dependency Information]
+
+[Package|MouseWrite Setup|Files Added]
+
+[Package|MouseWrite Setup|Files Removed]
+
+[Package|MouseWrite Setup|Files In Project]
+\\Gromit\S\MouseWrite\MouseWrite.exe=Yes
+C:\WINNT.SBS\system32\MSVBVM60.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\WINNT.SBS\system32\MSRDC20.OCX=Yes
+C:\WINNT.SBS\system32\MSRDO20.DLL=Yes
+C:\WINNT.SBS\system32\RDOCURS.DLL=Yes
+C:\WINNT.SBS\system32\TABCTL32.OCX=Yes
+C:\WINNT.SBS\system32\MSFLXGRD.OCX=Yes
+C:\WINNT.SBS\system32\comdlg32.ocx=Yes
+C:\WINNT.SBS\system32\MSCOMCTL.OCX=Yes
+C:\WINNT.SBS\system32\MSCOMCT2.OCX=Yes
+C:\WINNT.SBS\system32\MSINET.OCX=Yes
+C:\WINNT.SBS\system32\RICHTX32.OCX=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\RICHED32.DLL=Yes
+C:\WINNT.SBS\system32\MSCHRT20.OCX=Yes
+C:\WINNT.SBS\system32\MSWINSCK.OCX=Yes
+C:\WINNT.SBS\system32\MSMAPI32.OCX=Yes
+C:\WINNT.SBS\system32\MCI32.OCX=Yes
+C:\WINNT.SBS\system32\PICCLP32.OCX=Yes
+C:\WINNT.SBS\system32\SYSINFO.OCX=Yes
+C:\WINNT.SBS\system32\MSCOMM32.OCX=Yes
+C:\WINNT.SBS\system32\MSMASK32.OCX=Yes
+C:\WINNT.SBS\system32\MSDATGRD.OCX=Yes
+C:\WINNT.SBS\system32\MSSTDFMT.DLL=Yes
+C:\WINNT.SBS\system32\MSDATLST.OCX=Yes
+C:\WINNT.SBS\system32\Comct332.ocx=Yes
+C:\WINNT.SBS\system32\MSADODC.OCX=Yes
+C:\WINNT.SBS\system32\MSHFLXGD.OCX=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\WINNT.SBS\system32\VB6STKIT.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+
+[Package|MouseWrite Setup|Configure Registry Files]
+Applicable=No
+
+[Package|MouseWrite Setup|Configure Remote Servers]
+Applicable=No
+
+[Package|MouseWrite Setup|Install Locations]
+\\Gromit\S\MouseWrite\MouseWrite.exe=$(AppPath)
+C:\WINNT.SBS\system32\MSVBVM60.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\WINNT.SBS\system32\MSRDC20.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSRDO20.DLL=$(WinSysPath)
+C:\WINNT.SBS\system32\RDOCURS.DLL=$(WinSysPath)
+C:\WINNT.SBS\system32\TABCTL32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSFLXGRD.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\comdlg32.ocx=$(WinSysPath)
+C:\WINNT.SBS\system32\MSCOMCTL.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSCOMCT2.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSINET.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\RICHTX32.OCX=$(WinSysPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\RICHED32.DLL=$(WinSysPathSysFile)
+C:\WINNT.SBS\system32\MSCHRT20.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSWINSCK.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSMAPI32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MCI32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\PICCLP32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\SYSINFO.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSCOMM32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSMASK32.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSDATGRD.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSSTDFMT.DLL=$(WinSysPath)
+C:\WINNT.SBS\system32\MSDATLST.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\Comct332.ocx=$(WinSysPath)
+C:\WINNT.SBS\system32\MSADODC.OCX=$(WinSysPath)
+C:\WINNT.SBS\system32\MSHFLXGD.OCX=$(WinSysPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=$(AppPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\WINNT.SBS\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+
+[Package|MouseWrite Setup|Configure Shared Files]
+Applicable=Yes
+\\Gromit\S\MouseWrite\MouseWrite.exe=No
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=Yes
+
+[Package|MouseWrite Setup|Distribution]
+Type=single
+Size=
+Title=MouseWrite
+
+[Package|MouseWrite Setup|IconGroups]
+Group0=MouseWrite
+PrivateGroup0=-1
+Parent0=$(Programs)
+
+[Package|MouseWrite Setup|MouseWrite]
+Icon1=MouseWrite.exe
+Title1=MouseWrite
+StartIn1=$(AppPath)
+Key1=Icon1
+
+[Package|MouseWrite Setup|Package]
+PackageFolder=c:\TEMP\MouseWrite
+ProjectFolder=\\Gromit\S\MouseWrite
+ServerSideCab=
+File1=c:\TEMP\MouseWrite\setup.exe
+File2=c:\TEMP\MouseWrite\Setup.Lst
+File3=c:\TEMP\MouseWrite\MouseWrite.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz

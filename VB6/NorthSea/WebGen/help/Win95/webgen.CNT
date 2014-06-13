@@ -1,0 +1,35 @@
+:Base WEBGEN.HLP
+:Title Web Generator Help
+1 Introduction to Web Generator
+2 Contents=Contents
+2 Overview=Overview
+2 Installation=Installation
+1 Working with Templates
+2 Introduction to Templates=Templates
+2 Web Generator Tags
+3 Control Meta Tags=Control_Meta_Tags
+3 DATASOURCE=DATASOURCE
+3 FTP_URL=FTP_URL
+3 FTP_DIR=FTP_DIR
+3 FTP_USERNAME=FTP_USERNAME
+3 FTP_PASSWORD=FTP_PASSWORD
+3 TARGET=TARGET
+3 TARGET2=TARGET2
+3 TARGET_DIR=TARGET_DIR
+3 Text Replacement Tags=Text_Replacement_Tags
+3 Image Replacement Tags=Image_Replacement_Tags
+3 Date Replacement Tags=Date_Replacement_Tags
+1 Working with Projects
+; next level + 1
+1 Projects=Projects
+2 Creating_a_New_Project=Creating_a_New_Project
+2 Opening_a_Project=Opening_a_Project
+2 Setting_Project_Properties=Setting_Project_Properties
+2 Closing_a_Project=Closing_a_Project
+2 Deleting_a_Project=Deleting_a_Project
+1 Generating HTML Files
+2 Generating HTML=Generating_HTML
+1 Other Information
+2 External Tools=External_Tools
+2 Sample Project=Sample_Project
+2 Version History=Version_History

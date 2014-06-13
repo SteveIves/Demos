@@ -1,0 +1,34 @@
+.function login, ^VAL
+
+	a_mainfile	,a
+
+	a_textfile	,a
+
+.define WEBMASTER_INIT
+.include "webmaster.def"
+
+.define TOOLS_INIT			;Initialize Toolkit global data
+.include "WND:tools.def"
+
+.proc
+
+	clear status
+
+	xcall openelb("WND:tklib.elb")
+	xcall openelb("RPSLIB:ddlib.elb")
+	
+	;Get UI Toolkit up and running
+	xcall xsubr("u_start",,,,,,,,1,,99)
+
+	clear rpsmfil, rpstfil
+
+	if (^passed(a_mainfile))
+		rpsmfil=a_mainfile
+
+	if (^passed(a_textfile))
+		rpstfil=a_textfile
+
+	freturn status
+
+.end
+

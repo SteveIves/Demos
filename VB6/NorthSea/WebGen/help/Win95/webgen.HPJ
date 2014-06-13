@@ -1,0 +1,44 @@
+
+[OPTIONS]
+ERRORLOG=webgen.ERR
+COMPRESS=0x0
+LCID=0x0809 0x0 0x0
+CONTENTS=Contents
+INDEX_SEPARATORS=","
+TITLE=Web Generator Help
+COPYRIGHT=Copyright ©Internet Software Services, 1999
+CNT=WEBGEN.CNT
+
+[WINDOWS]
+main=,(276,133,686,758),0xef04,(255,255,232),(255,255,191),0
+
+[MACROS]
+
+[FILES]
+webgen.RTF
+
+[ALIAS]
+
+[MAP]
+#define _Requirements	17
+#define Contents	0
+#define Control_Meta_Tags	3
+#define DATASOURCE	12
+#define Date_Replacement_Tags	6
+#define External_Tools	8
+#define FTP_PASSWORD	15
+#define FTP_URL	13
+#define FTP_USERNAME	14
+#define Generating_HTML	9
+#define Image_Replacement_Tags	5
+#define Installation	16
+#define Overview	1
+#define Projects	7
+#define Sample_Project	10
+#define Templates	2
+#define Text_Replacement_Tags	4
+#define Version_History	11
+
+[BAGGAGE]
+
+[CONFIG]

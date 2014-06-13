@@ -1,0 +1,53 @@
+
+<OBJECT RUNAT="Server" SCOPE="Session" ID="Synergy" PROGID="xfnlCom.xfProxy"></OBJECT>
+
+<SCRIPT LANGUAGE="VBScript" RUNAT="Server">
+
+Sub Session_OnStart()
+
+    Dim Status
+
+    'Bring up xfServerPlus connection
+    Status = Synergy.xfStartup("LOCALHOST", 2332)
+
+    If (VarType(Status) = vbError) Then
+        Session("ERROR_PAGE") = "global.asa"
+        Session("ERROR_PAGE_MODE") = ""
+        Session("ERROR_ROUTINE") = "xfStartup"
+        Session("ERROR_TEXT") = Synergy.getxfErrorMessage
+        Response.Redirect("error.asp")
+    End If
+
+    'Connected to xfServerPlus, now log in to the application
+
+    Status = Synergy.xfSubr("login")
+
+    If (VarType(Status) = vbError) Then
+        Session("ERROR_PAGE") = "global.asa"
+        Session("ERROR_PAGE_MODE") = ""
+        Session("ERROR_ROUTINE") = "login"
+        Session("ERROR_TEXT") = Synergy.getxfErrorMessage
+        Response.Redirect("error.asp")
+    Else
+        If (Status <> 0) Then
+            Session("ERROR_PAGE") = "global.asa"
+            Session("ERROR_PAGE_MODE") = ""
+            Session("ERROR_ROUTINE") = "login"
+            Session("ERROR_TEXT") = "Routine returned error " & Status
+            Response.Redirect("error.asp")
+        End If
+    End If
+
+    'Logged in to the application OK
+
+End Sub
+
+Sub Session_OnEnd()
+
+    'Destroy the xfServerPlus session
+    Synergy.xfSubr "logout"
+    Synergy.xfShutdown
+
+End Sub
+
+</SCRIPT>

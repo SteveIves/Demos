@@ -1,0 +1,79 @@
+.function customer_list, ^VAL
+
+    ;Argument list
+
+    a_mode      ,n      ;Operation mode (Required, Passed)
+                        ;   1 = Build new array and return count
+                        ;   2 = Return existing array content
+
+    a_count     ,a      ;Returned record count
+
+    a_data      ,a      ;Optional returned data array (mode 2)
+
+    ;End of argument list
+
+.include 'webapp.def'
+.include 'customer' repository, stack record = 'customer'
+.include 'customer' repository, structure = 'customer_list'
+
+.align
+static record dm_control
+    mh          ,i4     ;Memory handle for array
+    ms          ,i4     ;Current size of array
+    mc          ,i4     ;Current content of array
+
+stack record
+    c           ,i4     ;Local counter
+
+.define INCREMENT 10
+
+.proc
+
+    ;Default to success
+    clear status
+
+    using (a_mode) select
+    (1),
+    begin
+
+        ;First time in and need to allocate memory?
+        if (.not.mh)
+        begin
+            ms = INCREMENT
+            mh=%mem_proc(DM_ALLOC+DM_STATIC,^size(customer_list)*ms)
+        end
+
+        ;Setup initial position in file
+        clear mc
+        find(ch_customer,,^FIRST,KEYNUM:Q_PRIMARY) [ERR=Eof]
+
+        ;Read file and store details to dynamic memory
+        repeat
+        begin
+            reads(ch_customer,customer,Eof,LOCK:Q_NO_LOCK)
+            incr mc
+
+            ;Make sure dynamic memory is big enough
+            if (mc.gt.ms)
+            begin
+                ms = ms + INCREMENT
+                mh = %mem_proc(DM_RESIZ,^size(customer_list)*ms,mh)
+            end
+
+            ^m(customer_list[mc],mh) = customer
+        end
+
+Eof,    a_count = mc
+
+    end
+    (2),
+    begin
+        ;Assign array data to retun argument
+        for c from 1 thru mc
+            a_data(c) = ^m(customer_list[c],mh)
+    end
+    endusing
+
+    freturn status
+
+.end

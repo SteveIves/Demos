@@ -1,0 +1,46 @@
+{\rtf1\ansi\deff37
+\sectd \ftnbj {\*\listtable
+{\list\listtemplateid553648139\listsimple{\listlevel\levelnfc4\leveljc0\levelstartat1\levelfollow0{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listname ; }\listid16777227}
+{\list\listtemplateid553648140\listsimple{\listlevel\levelnfc2\leveljc0\levelstartat1\levelfollow0{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listname ; }\listid16777228}
+{\list\listtemplateid553648141\listsimple{\listlevel\levelnfc3\leveljc0\levelstartat1\levelfollow0{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listname ; }\listid16777229}
+{\list\listtemplateid553648142\listsimple{\listlevel\levelnfc1\leveljc0\levelstartat1\levelfollow0{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listname ; }\listid16777230}
+{\list\listtemplateid553648138\listsimple{\listlevel\levelnfc0\leveljc0\levelstartat1\levelfollow0{\leveltext\'02\'00.;}{\levelnumbers\'01;}}{\listname ; }\listid16777226}
+}{\*\listoverridetable
+{\listoverride\listid16777227\listoverridecount0\ls5}
+{\listoverride\listid16777228\listoverridecount0\ls4}
+{\listoverride\listid16777229\listoverridecount0\ls3}
+{\listoverride\listid16777230\listoverridecount0\ls2}
+{\listoverride\listid16777226\listoverridecount0\ls1}
+}
+{\fonttbl
+{\f4\fswiss\fcharset0 MS Sans Serif;}
+{\f37\fswiss\fcharset0 Arial;}
+{\f135\ftech\fcharset2 Wingdings;}
+}
+{\stylesheet
+{\s0\fs20\snext0 Base;}
+{\s1\b\snext1 Banner Base;}
+{\s2\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvlblt\pnstart1\pnf135\pnfs20{\pntxtb \'a7}}\sbasedon0\snext2 Bullet1;}
+{\s3\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvlblt\pnstart1\pnf135\pnfs20{\pntxtb }}\sbasedon0\snext3 Bullet2;}
+{\s4\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvlblt\pnstart1\pnf135\pnfs20{\pntxtb }}\sbasedon0\snext4 Bullet3;}
+{\s5\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvlblt\pnstart1\pnf135\pnfs20{\pntxtb \'a1}}\sbasedon0\snext5 Bullet4;}
+{\s6\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvlblt\pnstart1\pnf135\pnfs20{\pntxtb }}\sbasedon0\snext6 Bullet5;}
+{\s7\fs12\b\li-144\sbasedon1\snext7 Button Bar;}
+{\s8\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvl1\pndec\pnstart1{\pntxta .}}\ls1\sbasedon0\snext8 Number1;}
+{\s9\fs20\li360\fi-360\tx360{\*\pn\pnlvlcont\pnlvl1\pnucrm\pnstart1{\pntxta .}}\ls2\sbasedon0\snext9 Number2;}
+{\s10\fs20\li720\fi-360\tx720{\*\pn\pnlvlcont\pnlvl1\pnucltr\pnstart1{\pntxta .}}\ls3\sbasedon0\snext10 Number3;}
+{\s11\fs20\li1080\fi-360\tx1080{\*\pn\pnlvlcont\pnlvl1\pnlcrm\pnstart1{\pntxta .}}\ls4\sbasedon0\snext11 Number4;}
+{\s12\fs20\li1440\fi-360\tx1440{\*\pn\pnlvlcont\pnlvl1\pnlcltr\pnstart1{\pntxta .}}\ls5\sbasedon0\snext12 Number5;}
+}
+{\field{\*\fldinst{PRIVATE ForeHelp xParaStyle ID=172}}{\fldrslt }}\pard\plain\s0 {\field{\*\fldinst{PRIVATE ForeHelp xTopic ID=33554453}}{\fldrslt }}{\up $}{\footnote $ <Template> NewContentsTpc_ }
+{\up #}{\footnote # 354138}
+\plain\fs20 
+\page{\field{\*\fldinst{PRIVATE ForeHelp xParaStyle ID=175}}{\fldrslt }}\pard\plain\s0 {\field{\*\fldinst{PRIVATE ForeHelp xTopic ID=33554455}}{\fldrslt }}{\up $}{\footnote $ <Template> ~ContextMap~ }
+{\up #}{\footnote # 354178}
+\plain\fs20 
+\page{\field{\*\fldinst{PRIVATE ForeHelp xParaStyle ID=169}}{\fldrslt }}\pard\plain\s0 {\field{\*\fldinst{PRIVATE ForeHelp xTopic ID=33554451}}{\fldrslt }}{\up #}{\footnote # 354098}
+\plain\fs20 
+\page{\field{\*\fldinst{PRIVATE ForeHelp xParaStyle ID=166}}{\fldrslt }}\pard\plain\s0 {\field{\*\fldinst{PRIVATE ForeHelp xTopic ID=33554449}}{\fldrslt }}{\up $}{\footnote $ <Template> ~ContextSensDlg~ }
+{\up #}{\footnote # 354048}
+\plain\fs20 
+}

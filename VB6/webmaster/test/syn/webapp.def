@@ -1,0 +1,21 @@
+.ifdef WEBAPP_INIT
+  global data section WEBAPP, init
+  .undefine WEBAPP_INIT
+.else
+  global data section WEBAPP
+.endc
+
+    record
+      ch_salesrep ,i4 ;Channel for salesrep structure
+
+  endglobal
+
+.align
+stack record
+    status       ,i4
+
+.ifndef TRUE
+  .define TRUE  1
+  .define FALSE 0
+.endc
+

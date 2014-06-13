@@ -1,0 +1,118 @@
+.include 'WND:tools.def'
+.include 'dbldir:activex.def'
+.include 'dbldir:windows.def'
+
+common
+number,d28.10
+bid,i4
+iid,i4
+
+.proc
+
+	xcall u_start('script1',1,1)
+;	xcall ib_input(bid, 'name', 10, 50)
+;	xcall ib_field(bid, 'fld', D_DECIMAL, D_FLD_SIZE, 28, D_FLD_DEC, 10, D_FLD_FPOS, 5, 5, D_FLD_DRILL, 'drill_number')
+;	xcall ib_end(bid, iid)
+	
+	xcall i_ldinp(iid,g_utlib, 'input1')
+	xcall u_window(D_PLACE, iid)
+	
+	number=123.456
+	xcall i_display(iid,, number)
+	xcall i_next(iid,,'*FRST*')
+	
+	xcall i_input(iid,,number)
+	xcall u_message(number)
+	xcall u_finish
+	stop
+	
+.end
+
+.subroutine drill_number
+.include 'WND:inpinf.def'
+a_data,a
+
+.include 'WND:tools.def'
+.include 'WND:fldinf.def'
+
+record
+ tkwin_id,i4
+ ctr_id,i4
+ ctl_id,i4
+ name,a15
+ 
+.proc
+
+	tkwin_id = %ax_tkwin('calc', 7, 12, ctr_id)
+	xcall w_brdr(tkwin_id, WB_OFF)
+	ctl_id = %ax_load(ctr_id, 'CalcCtrl.CalcCtrl1')
+	
+	xcall ax_bind(ctl_id, 'DisplayNumber', 'display_number')
+	xcall ax_bind(ctl_id, 'CalcDone', 'calc_done')
+	xcall ax_bind(ctl_id, 'CloseCalc', 'close_calc')
+
+	clear name
+	xcall i_fldinf(inp_wndid, name, inp_fldnum,, gs_inpfld)
+
+	
+	xcall ax_show(ctl_id)
+	xcall ax_show(ctr_id)
+	if gs_frow.gt.15
+	then
+	begin
+		xcall u_window(D_PLACE, tkwin_id, gs_frow-7, gs_fcol+1)	
+	end
+	else
+	begin
+		xcall u_window(D_PLACE, tkwin_id, gs_frow+2, gs_fcol+1)	
+	end	
+
+	xcall ax_input(tkwin_id)
+	xcall u_window(D_DELETE, tkwin_id)
+	clear g_select	
+	xreturn
+	
+.end
+.subroutine display_number
+a_ctlid,	n
+a_number,	d.
+
+common
+number,d15
+bid,i4
+iid,i4
+
+record
+num,d28.10
+
+.proc
+	
+	num=a_number
+	xcall i_dspfld(iid, 'fld', num)
+		
+	xreturn
+	
+.end
+
+.subroutine calc_done
+a_ctlid,	n
+
+.proc
+
+	xcall m_signal('calcdone')
+	
+	xreturn
+	
+.end
+
+.subroutine close_calc
+a_ctlid,	n
+
+.proc
+
+	xcall m_signal('calcdone')
+	
+	xreturn
+	
+.end
+	

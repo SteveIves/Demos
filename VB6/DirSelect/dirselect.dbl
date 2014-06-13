@@ -1,0 +1,65 @@
+.main dirselect
+
+.include "WND:tools.def"
+.include "DBLDIR:activex.def"
+
+.align
+record
+	window		,i4
+	container	,i4
+	control		,i4
+	path		,a80, "c:\"
+.proc
+
+	xcall u_start
+
+	xcall e_enter
+
+	window=%ax_tkwin("DIRSEL",12,48,container)
+	control=%ax_load(container,"SynPsg.DirSelect")
+	xcall ax_set(control,"Path",path)
+	xcall ax_bind(control,"DirSelect","DirSelected")
+	xcall ax_bind(control,"DirCancel","DirCancel")
+	xcall u_window(D_PLACE,window)
+	
+	repeat
+	begin
+		xcall ax_input(window)
+		case g_entnam of		
+		begincase
+		"SELECT":
+		begin
+			xcall ax_get(control,"Path",path)
+			xcall u_message("Selected " + %atrim(path))
+			exitloop
+		end
+		"CANCEL":
+		begin
+			xcall u_message("No directory selected")
+			exitloop
+		end
+		endcase
+	end
+	
+	xcall e_exit
+
+	xcall u_finish
+	
+	stop
+
+.end
+
+.subroutine DirSelected
+	a_control	,n
+.proc
+	xcall m_signal("SELECT")
+	xreturn
+.end
+
+.subroutine DirCancel
+	a_control	,n
+.proc
+	xcall m_signal("CANCEL")
+	xreturn
+.end
+

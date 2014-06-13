@@ -1,0 +1,28 @@
+.main
+
+.include "DBLDIR:activex.def"
+
+.align
+record
+	container	,i4
+	control		,i4
+
+.proc
+
+	xcall u_start
+
+	container=%ax_create
+	control = %ax_load(container,"PsgZipper.Zipper")
+
+	if %ax_call(control,"Zip","C:\NT","*.ini","C:\steve.zip") then
+		xcall u_message("OK")
+	else
+		xcall u_message("Fail")
+
+	xcall ax_delete(container)
+
+	xcall u_finish
+	stop
+
+
+.end

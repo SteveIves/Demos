@@ -1,0 +1,1106 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE ROLODEX_LIST SYSTEM "rolodex.dtd">
+
+<ROLODEX_LIST>
+
+  <ROLODEX>
+    <CODE>0001</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Hitchless Software</COMPANY>
+    <STREET>Mooney Court</STREET>
+    <CITY>Rancho Cordova</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95670</ZIP>
+    <CONTACT>William J Mooney</CONTACT>
+    <PHONE>916 853 03</PHONE>
+    <FAX>916 634 65</FAX>
+    <EMAIL>William.Mooney@synergex.com</EMAIL>
+    <WEBSITE>www.hitchless_software.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0002</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Brookline Wonderworks</COMPANY>
+    <STREET>5786 Professional Drive</STREET>
+    <CITY>Concrete</CITY>
+    <STATE>AL</STATE>
+    <ZIP>22142</ZIP>
+    <CONTACT>Mark Coin</CONTACT>
+    <PHONE>2152325656</PHONE>
+    <FAX>2152325566</FAX>
+    <EMAIL>mark@brookline.net</EMAIL>
+    <WEBSITE>www.brookline.net</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0005</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Auto Experts</COMPANY>
+    <STREET>921 Northgate Boulevard</STREET>
+    <CITY>Stockton</CITY>
+    <STATE>TX</STATE>
+    <ZIP>77235</ZIP>
+    <CONTACT>Gregory Edwards</CONTACT>
+    <PHONE>8097819966</PHONE>
+    <FAX>8097810099</FAX>
+    <EMAIL>greg@autoexperts.com</EMAIL>
+    <WEBSITE>www.autoexperts.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0009</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Cycle Gear Helmets</COMPANY>
+    <STREET>3479 Orange Grove Lane</STREET>
+    <CITY>Auburn</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95687</ZIP>
+    <CONTACT>Grey Hogue</CONTACT>
+    <PHONE>9154886665</PHONE>
+    <FAX>9154687799</FAX>
+    <EMAIL>grey.hogue@cyclegear.com</EMAIL>
+    <WEBSITE>www.cyclegear.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0010</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Gold Pointe Costumes</COMPANY>
+    <STREET>3935 Fair Lane</STREET>
+    <CITY>Watters</CITY>
+    <STATE>KS</STATE>
+    <ZIP>66528</ZIP>
+    <CONTACT>Jonathan Carolina</CONTACT>
+    <PHONE>8325698956</PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0111</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Guns R Us</COMPANY>
+    <STREET>210 A Rifle Court</STREET>
+    <CITY>Sweda</CITY>
+    <STATE>AL</STATE>
+    <ZIP>55142</ZIP>
+    <CONTACT>John Parker</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0123</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Carpet One</COMPANY>
+    <STREET>452 Plush Drive</STREET>
+    <CITY>Pile</CITY>
+    <STATE>AL</STATE>
+    <ZIP>52412</ZIP>
+    <CONTACT>James Eaton</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0125</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>McGuire Earth Works</COMPANY>
+    <STREET>564 Eco Lane</STREET>
+    <CITY>San Francisco</CITY>
+    <STATE>CA</STATE>
+    <ZIP>92045</ZIP>
+    <CONTACT>Lance McGuire</CONTACT>
+    <PHONE>4155665987</PHONE>
+    <FAX>4155668988</FAX>
+    <EMAIL>lance@earthworks.net</EMAIL>
+    <WEBSITE>www.earthworks.net</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0127</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Jack Clancy and Associates</COMPANY>
+    <STREET>404 Bridge Street</STREET>
+    <CITY>Fair Oaks</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95628</ZIP>
+    <CONTACT>Jack Clancy</CONTACT>
+    <PHONE>9168968686</PHONE>
+    <FAX>9168967789</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0134</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Moth Hole</COMPANY>
+    <STREET>491 Madison Avenue</STREET>
+    <CITY>New York</CITY>
+    <STATE>NY</STATE>
+    <ZIP>02078</ZIP>
+    <CONTACT>Paula Mace</CONTACT>
+    <PHONE>9169011262</PHONE>
+    <FAX>9166011131</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0139</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Waterproof Roofs</COMPANY>
+    <STREET>800 Tar Way</STREET>
+    <CITY>Academy</CITY>
+    <STATE>WV</STATE>
+    <ZIP>12569</ZIP>
+    <CONTACT>Victor Palmer</CONTACT>
+    <PHONE>2135589000</PHONE>
+    <FAX>2135589800</FAX>
+    <EMAIL>victor@waterproofroofs.com</EMAIL>
+    <WEBSITE>www.waterproofroofs.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0142</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Green Thumb Grass</COMPANY>
+    <STREET>852 Rosegarden Way</STREET>
+    <CITY>Tracy</CITY>
+    <STATE>AZ</STATE>
+    <ZIP>85222</ZIP>
+    <CONTACT>Heather Stahlberg</CONTACT>
+    <PHONE>8552269569</PHONE>
+    <FAX>8552254658</FAX>
+    <EMAIL>heather@greenthumb.com</EMAIL>
+    <WEBSITE>www.greenthumbgrass.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0145</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>McGreevy Insurance</COMPANY>
+    <STREET>83 Park Place</STREET>
+    <CITY>Birmingham</CITY>
+    <STATE>AL</STATE>
+    <ZIP>24153</ZIP>
+    <CONTACT>Glen McGreevy</CONTACT>
+    <PHONE>5259698523</PHONE>
+    <FAX>5257894562</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0147</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Sundance Carpet Repair</COMPANY>
+    <STREET>1978 William Court</STREET>
+    <CITY>Sherwin</CITY>
+    <STATE>KY</STATE>
+    <ZIP>44125</ZIP>
+    <CONTACT>GL Moore</CONTACT>
+    <PHONE>8954657878</PHONE>
+    <FAX>8954658888</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0150</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Complete Auto Glass</COMPANY>
+    <STREET>123 Mobile Court</STREET>
+    <CITY>Rancho</CITY>
+    <STATE>AL</STATE>
+    <ZIP>33564</ZIP>
+    <CONTACT>Mike Alvarez</CONTACT>
+    <PHONE>4155551212</PHONE>
+    <FAX>4155552222</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0157</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Paralegals USA</COMPANY>
+    <STREET>3346 Airplay Way</STREET>
+    <CITY>Bunny</CITY>
+    <STATE>ME</STATE>
+    <ZIP>02030</ZIP>
+    <CONTACT>Gary Lane</CONTACT>
+    <PHONE>8532563333</PHONE>
+    <FAX>8532569999</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE>www.parausa.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0169</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>OReilly + Lothrop</COMPANY>
+    <STREET>100 Capitol Mall</STREET>
+    <CITY>Sacramento</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95811</ZIP>
+    <CONTACT>Laura OReilly</CONTACT>
+    <PHONE>9165231121</PHONE>
+    <FAX>9165231000</FAX>
+    <EMAIL>laura@patentsattorney.com</EMAIL>
+    <WEBSITE>www.patentattorney.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0179</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Hoover Chimney Sweep</COMPANY>
+    <STREET>11234 Equipment Road</STREET>
+    <CITY>Worchester</CITY>
+    <STATE>IA</STATE>
+    <ZIP>66589</ZIP>
+    <CONTACT>Jonathan Martin</CONTACT>
+    <PHONE>2235568979</PHONE>
+    <FAX>2235564111</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0192</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>A1 Advertising</COMPANY>
+    <STREET>25 Oahu Drive</STREET>
+    <CITY>Waikiki</CITY>
+    <STATE>HI</STATE>
+    <ZIP>99558</ZIP>
+    <CONTACT>Mickey Suarez</CONTACT>
+    <PHONE>9056886868</PHONE>
+    <FAX>9056886999</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0198</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Santucci Medical Supplies</COMPANY>
+    <STREET>2001 Zinfandel Square</STREET>
+    <CITY>Napa</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95875</ZIP>
+    <CONTACT>Michael Santucci</CONTACT>
+    <PHONE>4187978888</PHONE>
+    <FAX>4187978856</FAX>
+    <EMAIL>info@santucci.com</EMAIL>
+    <WEBSITE>www.santuccimedical.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0199</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Cellar Cafe</COMPANY>
+    <STREET>1256 Nimbus Road</STREET>
+    <CITY>Cameron Park</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95682</ZIP>
+    <CONTACT>Ronald McDonald</CONTACT>
+    <PHONE>9168930503</PHONE>
+    <FAX>9168930809</FAX>
+    <EMAIL>ronald_cellar@yahoo.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0201</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Canada Yukon Wines</COMPANY>
+    <STREET>24567 Merlot Lane</STREET>
+    <CITY>New York</CITY>
+    <STATE>NY</STATE>
+    <ZIP>00022</ZIP>
+    <CONTACT>Robert Funk</CONTACT>
+    <PHONE>4148792256</PHONE>
+    <FAX></FAX>
+    <EMAIL>robert@canadayukon.com</EMAIL>
+    <WEBSITE>www.canadayukonwines.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0204</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Brazil Roofing, Inc</COMPANY>
+    <STREET>11223 Finance Way</STREET>
+    <CITY>Shingle Springs</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95682</ZIP>
+    <CONTACT>Janice Hubble</CONTACT>
+    <PHONE>9369662032</PHONE>
+    <FAX>9369660022</FAX>
+    <EMAIL>jan@brazilroof.com</EMAIL>
+    <WEBSITE>www.brazilroof.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0211</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Matt Williams, Inc</COMPANY>
+    <STREET>988 White Rock Boulevard</STREET>
+    <CITY>Denver</CITY>
+    <STATE>CO</STATE>
+    <ZIP>60058</ZIP>
+    <CONTACT>Matthew Williams</CONTACT>
+    <PHONE>4653231212</PHONE>
+    <FAX>4652322121</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0232</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Sunriver Dental Care</COMPANY>
+    <STREET>11050 Coloma Drive</STREET>
+    <CITY>Branson</CITY>
+    <STATE>MO</STATE>
+    <ZIP>75896</ZIP>
+    <CONTACT>Richard Gonzales</CONTACT>
+    <PHONE>2135648979</PHONE>
+    <FAX>2138546979</FAX>
+    <EMAIL>richard@sunriverdental.com</EMAIL>
+    <WEBSITE>www.sunriverdental.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0245</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Formula One Racing</COMPANY>
+    <STREET>123 Nascar Way</STREET>
+    <CITY>Marco</CITY>
+    <STATE>AL</STATE>
+    <ZIP>21548</ZIP>
+    <CONTACT>John Ford</CONTACT>
+    <PHONE>4568965236</PHONE>
+    <FAX>4568964545</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0285</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>American River Wire</COMPANY>
+    <STREET>11245 Violet Circle</STREET>
+    <CITY>Americana</CITY>
+    <STATE>VT</STATE>
+    <ZIP>02145</ZIP>
+    <CONTACT>Doug Anderson</CONTACT>
+    <PHONE>2035554412</PHONE>
+    <FAX>2035552236</FAX>
+    <EMAIL>douglas@americanriverwire.com</EMAIL>
+    <WEBSITE>www.americanriverwire.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0289</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Garage Door Alabama</COMPANY>
+    <STREET>129 Spring Way</STREET>
+    <CITY>Genie</CITY>
+    <STATE>AL</STATE>
+    <ZIP>55212</ZIP>
+    <CONTACT>John Stanley</CONTACT>
+    <PHONE>5554142233</PHONE>
+    <FAX>5554142255</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0317</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Ace Asphalt</COMPANY>
+    <STREET>736 Neumann Circle</STREET>
+    <CITY>Mancini</CITY>
+    <STATE>CT</STATE>
+    <ZIP>05698</ZIP>
+    <CONTACT>Brian Larson</CONTACT>
+    <PHONE>2114557896</PHONE>
+    <FAX>2114552222</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0324</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Dave Gunter, Incorporated</COMPANY>
+    <STREET>576 I Street</STREET>
+    <CITY>Sacramento</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95684</ZIP>
+    <CONTACT>Dave Gunter</CONTACT>
+    <PHONE>9165552231</PHONE>
+    <FAX></FAX>
+    <EMAIL>dave_gunter@yahoo.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0326</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Cascade Rock</COMPANY>
+    <STREET>858 Kiefer Boulevard</STREET>
+    <CITY>Cedar Falls</CITY>
+    <STATE>GA</STATE>
+    <ZIP>33232</ZIP>
+    <CONTACT>Virginia Wells</CONTACT>
+    <PHONE>9895654545</PHONE>
+    <FAX>9895668897</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0331</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Baja Spa Works</COMPANY>
+    <STREET>154 Red Rock Road</STREET>
+    <CITY>Eagle</CITY>
+    <STATE>CO</STATE>
+    <ZIP>77548</ZIP>
+    <CONTACT>Ronald Fleet</CONTACT>
+    <PHONE>4089612358</PHONE>
+    <FAX>4089618956</FAX>
+    <EMAIL>ronald@baja.com</EMAIL>
+    <WEBSITE>www.bajaspaworks.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0375</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>S + G Discount Brakes</COMPANY>
+    <STREET>11299 Speedy Lane</STREET>
+    <CITY>Roseville</CITY>
+    <STATE>OH</STATE>
+    <ZIP>44556</ZIP>
+    <CONTACT>Steven Gillespie</CONTACT>
+    <PHONE>9156218899</PHONE>
+    <FAX>9166210003</FAX>
+    <EMAIL>steve@hotmail.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0409</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>All Pro Estimates</COMPANY>
+    <STREET>985 Rocklin Road</STREET>
+    <CITY>Rocklin</CITY>
+    <STATE>DE</STATE>
+    <ZIP>20011</ZIP>
+    <CONTACT>Paul Kelley</CONTACT>
+    <PHONE>8956814500</PHONE>
+    <FAX>9856814601</FAX>
+    <EMAIL>paul@apest.com</EMAIL>
+    <WEBSITE>www.apestimates.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0415</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Cresco</COMPANY>
+    <STREET>951 Richards Boulevard</STREET>
+    <CITY>Las Palmas</CITY>
+    <STATE>NM</STATE>
+    <ZIP>55648</ZIP>
+    <CONTACT>Juan Palma</CONTACT>
+    <PHONE>5554789696</PHONE>
+    <FAX>5554780300</FAX>
+    <EMAIL>juan@crseco.com</EMAIL>
+    <WEBSITE>www.cresco.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0418</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Linda Sadowski, LCSW</COMPANY>
+    <STREET>420 Graphics Avenue</STREET>
+    <CITY>Reid</CITY>
+    <STATE>MA</STATE>
+    <ZIP>02050</ZIP>
+    <CONTACT>Linda Sadowski</CONTACT>
+    <PHONE>2125554454</PHONE>
+    <FAX>2125554466</FAX>
+    <EMAIL>linda_sadowski@hotmail.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0421</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Brett Brothers</COMPANY>
+    <STREET>983 Wholesale Court</STREET>
+    <CITY>Sikkens</CITY>
+    <STATE>IL</STATE>
+    <ZIP>55403</ZIP>
+    <CONTACT>Bob Brett</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE>www.brettbros.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0427</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Martins Mobile Windshield</COMPANY>
+    <STREET>625 Maine Street</STREET>
+    <CITY>Moule</CITY>
+    <STATE>PA</STATE>
+    <ZIP>09845</ZIP>
+    <CONTACT>Bram Martin</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0485</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Green Light Delivery</COMPANY>
+    <STREET>6521 Prospect Drive</STREET>
+    <CITY>Holiday</CITY>
+    <STATE>AL</STATE>
+    <ZIP>55645</ZIP>
+    <CONTACT>Blake Jones</CONTACT>
+    <PHONE>2015654421</PHONE>
+    <FAX>2015658899</FAX>
+    <EMAIL>blake@greenlight.com</EMAIL>
+    <WEBSITE>www.greenlightdelivery.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0507</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Kemen Contractors</COMPANY>
+    <STREET>702 General Ave</STREET>
+    <CITY>Las Vegas</CITY>
+    <STATE>NV</STATE>
+    <ZIP>90230</ZIP>
+    <CONTACT>Travis Doran</CONTACT>
+    <PHONE>9854441212</PHONE>
+    <FAX>9854441313</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0508</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>North America Publishing</COMPANY>
+    <STREET>151 Valley High Road</STREET>
+    <CITY>Kelton</CITY>
+    <STATE>FL</STATE>
+    <ZIP>20115</ZIP>
+    <CONTACT>George Holzer</CONTACT>
+    <PHONE>2482598898</PHONE>
+    <FAX>2482597777</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE>www.northamericapublishing.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0535</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Delta Bedding</COMPANY>
+    <STREET>4479 Commercial Way</STREET>
+    <CITY>Bannon</CITY>
+    <STATE>VA</STATE>
+    <ZIP>12132</ZIP>
+    <CONTACT>Robert Lee</CONTACT>
+    <PHONE>2014445566</PHONE>
+    <FAX>2014446655</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0547</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Grossman Technology</COMPANY>
+    <STREET>451 Redo Ct</STREET>
+    <CITY>Contact</CITY>
+    <STATE>NE</STATE>
+    <ZIP>54512</ZIP>
+    <CONTACT>Ronald Grossman</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL>ronald@excite.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0559</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Channel Staffing Services</COMPANY>
+    <STREET>3951 Florin Road</STREET>
+    <CITY>Sacramento</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95828</ZIP>
+    <CONTACT>Larry Eastburn</CONTACT>
+    <PHONE>9165589696</PHONE>
+    <FAX>9165584212</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0563</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Century Carpet Cleaning</COMPANY>
+    <STREET>6115 Main Street</STREET>
+    <CITY>Orangevale</CITY>
+    <STATE>NH</STATE>
+    <ZIP>05050</ZIP>
+    <CONTACT>Dan Beers</CONTACT>
+    <PHONE>6038985656</PHONE>
+    <FAX></FAX>
+    <EMAIL>dan_beers_81@yahoo.com</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0588</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Baltimore Fire Extinguishers</COMPANY>
+    <STREET>12563 Morrison Way</STREET>
+    <CITY>Dry Creek</CITY>
+    <STATE>OK</STATE>
+    <ZIP>66523</ZIP>
+    <CONTACT>John Donald</CONTACT>
+    <PHONE>2154427878</PHONE>
+    <FAX>2154429989</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0589</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Bonney Gold Vault</COMPANY>
+    <STREET>1972 Grossmont Avenue</STREET>
+    <CITY>San Diego</CITY>
+    <STATE>CA</STATE>
+    <ZIP>98454</ZIP>
+    <CONTACT>Candace Bonney</CONTACT>
+    <PHONE>6195642321</PHONE>
+    <FAX>6195642300</FAX>
+    <EMAIL>candace@bonneygoldvault.com</EMAIL>
+    <WEBSITE>www.bonneygoldvault.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0596</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Instant Comfort</COMPANY>
+    <STREET>2664 California Avenue</STREET>
+    <CITY>Medford</CITY>
+    <STATE>OH</STATE>
+    <ZIP>55245</ZIP>
+    <CONTACT>John Baker</CONTACT>
+    <PHONE>754321234</PHONE>
+    <FAX>7544321515</FAX>
+    <EMAIL>john.baker@mindspring.com</EMAIL>
+    <WEBSITE>www.instantcomfort.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0613</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Miracle Auto Painting</COMPANY>
+    <STREET>1 National Drive</STREET>
+    <CITY>Atlanta</CITY>
+    <STATE>GA</STATE>
+    <ZIP>30336</ZIP>
+    <CONTACT>Marcus Welby</CONTACT>
+    <PHONE>6015647779</PHONE>
+    <FAX>6015649997</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0677</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Friendly Acres Sea Horse Ranch</COMPANY>
+    <STREET>182 Fishtale Way</STREET>
+    <CITY>Duncan Bay</CITY>
+    <STATE>SC</STATE>
+    <ZIP>12345</ZIP>
+    <CONTACT>John Monroe</CONTACT>
+    <PHONE>8096895555</PHONE>
+    <FAX>8096892222</FAX>
+    <EMAIL>john@seahorseranch.com</EMAIL>
+    <WEBSITE>www.seahorseranch.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0707</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Rapid Rooter</COMPANY>
+    <STREET>2676 West Flow Street</STREET>
+    <CITY>Sacramento</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95814</ZIP>
+    <CONTACT>Judith Light</CONTACT>
+    <PHONE>9165552233</PHONE>
+    <FAX>9168972569</FAX>
+    <EMAIL>judith@rapidrooter.com</EMAIL>
+    <WEBSITE>www.rapidrooter.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0711</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Comfort Bedrooms</COMPANY>
+    <STREET>4146 Sunrise Avenue</STREET>
+    <CITY>Milwaukee</CITY>
+    <STATE>WI</STATE>
+    <ZIP>33245</ZIP>
+    <CONTACT>John Roberts</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0713</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Final Care Cremation</COMPANY>
+    <STREET>497 Lifetime Way</STREET>
+    <CITY>Davis</CITY>
+    <STATE>WV</STATE>
+    <ZIP>12345</ZIP>
+    <CONTACT>William Hogan</CONTACT>
+    <PHONE></PHONE>
+    <FAX></FAX>
+    <EMAIL>william_hogan@finalcarecremation.com</EMAIL>
+    <WEBSITE>www.finalcarecremation.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0721</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>Woodland Station</COMPANY>
+    <STREET>12456 Hwy 54</STREET>
+    <CITY>Gibson</CITY>
+    <STATE>NE</STATE>
+    <ZIP>66542</ZIP>
+    <CONTACT>Lucky Rosco</CONTACT>
+    <PHONE>4559258898</PHONE>
+    <FAX>4559258888</FAX>
+    <EMAIL>lucky@woodland.com</EMAIL>
+    <WEBSITE>www.woodlandstation.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0799</CODE>
+    <TYPE>S</TYPE>
+    <COMPANY>Copy Central</COMPANY>
+    <STREET>11224 Trade Center Drive</STREET>
+    <CITY>Rancho Cordova</CITY>
+    <STATE>CA</STATE>
+    <ZIP>95670</ZIP>
+    <CONTACT>Paula Tabs</CONTACT>
+    <PHONE>9166354458</PHONE>
+    <FAX>9166358898</FAX>
+    <EMAIL>paula@copycentral.net</EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0822</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>ABBA Electric</COMPANY>
+    <STREET>4045 P Street</STREET>
+    <CITY>Malt</CITY>
+    <STATE>ME</STATE>
+    <ZIP>02145</ZIP>
+    <CONTACT>John Johnson</CONTACT>
+    <PHONE>5648917845</PHONE>
+    <FAX>5648917846</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0832</CODE>
+    <TYPE>C</TYPE>
+    <COMPANY>IRT Roofing, Inc</COMPANY>
+    <STREET>916 Emergency Way</STREET>
+    <CITY>Williamsburg</CITY>
+    <STATE>ID</STATE>
+    <ZIP>85696</ZIP>
+    <CONTACT>Roger Thomas</CONTACT>
+    <PHONE>7815558923</PHONE>
+    <FAX>7815553232</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0875</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Gold Meadow Trees</COMPANY>
+    <STREET>843 Carey Street</STREET>
+    <CITY>Amador</CITY>
+    <STATE>MT</STATE>
+    <ZIP>78936</ZIP>
+    <CONTACT>Peggy Fleming</CONTACT>
+    <PHONE>9165552233</PHONE>
+    <FAX>9165548897</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0918</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Oregon State Cheese</COMPANY>
+    <STREET>564 Gouda Way</STREET>
+    <CITY>Meunster</CITY>
+    <STATE>OR</STATE>
+    <ZIP>66547</ZIP>
+    <CONTACT>Harvey Cheesehead</CONTACT>
+    <PHONE>5425425421</PHONE>
+    <FAX>5425425423</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE></WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>0991</CODE>
+    <TYPE>O</TYPE>
+    <COMPANY>Kenar Pet Resort</COMPANY>
+    <STREET>123 Lo Mar Road</STREET>
+    <CITY>Fremont</CITY>
+    <STATE>PA</STATE>
+    <ZIP>12345</ZIP>
+    <CONTACT>Marvin Scully</CONTACT>
+    <PHONE>8914445656</PHONE>
+    <FAX>8914447878</FAX>
+    <EMAIL></EMAIL>
+    <WEBSITE>www.kenarpetresort.com</WEBSITE>
+    <MAILSHOT>N</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+  <ROLODEX>
+    <CODE>1114</CODE>
+    <TYPE>P</TYPE>
+    <COMPANY>Joe Blow Co</COMPANY>
+    <STREET>1234 Somewhere st</STREET>
+    <CITY>Somewhereville</CITY>
+    <STATE>AL</STATE>
+    <ZIP>12345</ZIP>
+    <CONTACT>Joe Blow</CONTACT>
+    <PHONE>2145551223</PHONE>
+    <FAX></FAX>
+    <EMAIL>joe.blow@joeblow.com</EMAIL>
+    <WEBSITE>www.joeblow.com</WEBSITE>
+    <MAILSHOT>Y</MAILSHOT>
+    <MEMO></MEMO>
+    <SPARE></SPARE>
+  </ROLODEX>
+
+</ROLODEX_LIST>
+

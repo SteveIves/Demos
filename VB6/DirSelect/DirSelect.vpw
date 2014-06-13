@@ -1,0 +1,21 @@
+[CurrentProject]
+curproj=DirSelect.vpj
+[ProjectFiles]
+DirSelect.vpj
+[ProjectDates]
+DirSelect.vpj=20040930162958768
+[State]
+SCREEN: 1400 1050 254 154 833 639 0 0 M 0 0 0 0 1108 712
+CWD: C:\SOURCE\VB\Controls\DirSelect
+FILEHIST: 9
+C:\ICE\dat\trnfil.ddf
+C:\ICE\www\account.asp
+C:\ICE\src\get_accounts.dbl
+C:\ICE\src\get_transactions.dbl
+C:\ICE\www\menu.asp
+C:\ICE\www\statement.asp
+C:\ICE\Scroll.t24
+C:\ICE\src\Jl2dat.dbl
+C:\SOURCE\VB\Controls\DirSelect\dirselect.dbl
+[TreeExpansion]
+DirSelect.vpj 1 1 0 0 0

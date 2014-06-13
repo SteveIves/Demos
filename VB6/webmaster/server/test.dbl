@@ -1,0 +1,14 @@
+.main test
+
+
+.proc
+
+	xcall openelb("webmaster.elb")
+
+	xcall xsubr("login")
+
+	xcall xsubr("logout")
+
+	stop
+
+.end

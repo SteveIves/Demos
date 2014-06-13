@@ -1,0 +1,21 @@
+[CurrentProject]
+curproj=calculator.vpj
+[ProjectDates]
+calculator.vpj=20040930163350521
+[ProjectFiles]
+calculator.vpj
+[TreeExpansion]
+calculator.vpj 1 1 0 1 0
+[State]
+SCREEN: 1400 1050 254 154 833 639 0 0 M 0 0 0 0 1108 712
+CWD: C:\SOURCE\VB\Controls\Calculator
+FILEHIST: 9
+C:\ICE\src\get_accounts.dbl
+C:\ICE\src\get_transactions.dbl
+C:\ICE\www\menu.asp
+C:\ICE\www\statement.asp
+C:\ICE\Scroll.t24
+C:\ICE\src\Jl2dat.dbl
+C:\SOURCE\VB\Controls\DirSelect\dirselect.dbl
+C:\SOURCE\VB\Controls\Calculator\Script1.wsc
+C:\SOURCE\VB\Controls\Calculator\calctest.dbl

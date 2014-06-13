@@ -1,0 +1,11 @@
+DESCRIPTION=Test Project
+WEBDIR=c:\webmaster\test\web
+SYNDIR=c:\webmaster\test\syn
+SERVER=LOCALHOST
+PORT=2332
+RPSMFIL=C:\webmaster\test\rps\rpsmain.ism
+RPSTFIL=C:\webmaster\test\rps\rpstext.ism
+OLB=testproj.olb
+ELB=testproj.elb
+FILE=customer.asp|CUSTOMER|CS_CODE,CS_NAME
+FILE=salesrep.asp|SALESREP|SR_CODE,SR_NAME

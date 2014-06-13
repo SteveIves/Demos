@@ -1,0 +1,30 @@
+.function salesrep_read, ^VAL
+
+    ;Argument list
+
+      a_key      ,a
+
+      a_data     ,a
+
+      a_lock     ,n
+
+    ;End of argument list
+
+.include 'webapp.def'
+
+.proc
+
+    ;Default to success
+    clear status
+
+    if (^passed(a_lock).and.a_lock) then
+        read(ch_salesrep,a_data,a_key,KEYNUM:Q_PRIMARY) [ERR=Err]
+    Else
+        read(ch_salesrep,a_data,a_key,KEYNUM:Q_PRIMARY,LOCK:Q_NO_LOCK) [ERR=Err]
+
+    if (FALSE)
+Err,  status=1
+
+    freturn status
+
+.end

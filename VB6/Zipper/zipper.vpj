@@ -1,0 +1,34 @@
+[COMPILER]
+MACRO=\n
+FILTERNAME=Source Files\nHeader Files\nToolkit Script Files\nOther Files\n
+FILTERPATTERN=*.dbl;*.tpl\n*.def\n*.wsc\n*.*\n
+FILTERASSOCIATEFILETYPES=0 0 0 0
+FILTEREXPANSION=
+Synergy=1
+compile=concur|capture|clear|:Compile:&Compile,dbl -dTXo OBJ:%n %f
+make=concur|capture|:Build:&Build,dblink -do EXE:%n OBJ:%n DBLDIR:axlib.elb WND:tklib.elb %(USRLIBS)
+rebuild=concur|capture|:Rebuild:&Rebuild,
+debug=:Debug:&Debug,%(DBLBINDIR)\dbr -d EXE:%rn
+execute=:Execute:E&xecute,dbr EXE:%rn
+user1=concur|capture|hide|:User 1:User 1,dblibr -r OBJ:%rn.olb OBJ:%n
+user2=concur|capture|hide|:User 2:User 2,dblink -dl EXE:%rn.elb OBJ:%rn.olb
+usertool_makelib=concur|capture|:MakeLib:&Make Library,dblibr -c OBJ:%rn.olb
+workingdir=C:\SOURCE\VB\Zipper
+includedirs=
+tagfiles=
+reffile=
+[STATE]
+SCREEN: 1024 768 95 13 679 487 0 0 M 0 0 0 0 829 487
+CWD: C:\SOURCE\VB\Zipper
+BUFFER: BN="C:\SYNERG~1\WORKBE~1\wbconfig\vrestore.slk"
+BI: MA=1 254 1  TABS=1 9  WWS=3 IWT=0 ST=0 IN=0 BW=0 US=0 RO=0 SE=0 SN=0 BIN=0 MN=Fundamental	HM=0 MF=1 TL=0 MLL=0 ASE=0
+VIEW: LN=.0 CL=1 LE=0 CX=0 CY=0 WI=5 BI=19 HT=0 HN=0 HF=0 HC=4
+FILEHIST: 5
+C:\rpt_html\customers.htm
+C:\rpt_html\rpt_html.dbl
+C:\TEMP\axword.dbl
+C:\SOURCE\VB\Zipper\zipper.dbl
+c:\nt\synergy.ini
+PRINTER: 2
+
+

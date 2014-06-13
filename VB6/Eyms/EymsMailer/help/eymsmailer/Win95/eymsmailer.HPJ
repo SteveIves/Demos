@@ -1,0 +1,33 @@
+
+[OPTIONS]
+ERRORLOG=eymsmailer.ERR
+COMPRESS=0x0
+LCID=0x0809 0x0 0x0
+CONTENTS=Contents
+INDEX_SEPARATORS=","
+TITLE=Transmit Wayfarer Data
+COPYRIGHT=Copyright ©Internet Software Services Ltd, 1999
+CNT=EYMSMAILER.CNT
+
+[WINDOWS]
+main=,,,(255,255,234),(255,255,151),0
+
+[MACROS]
+
+[FILES]
+eymsmailer.RTF
+
+[ALIAS]
+
+[MAP]
+#define Contents	1
+#define Product_Overview	2
+#define Revision_History	6
+#define Setting_a_Program_Options_Password	7
+#define Setting_Program_Options	5
+#define Working_With_Data_Batches	3
+#define Working_With_The_Log_Window	4
+
+[BAGGAGE]
+
+[CONFIG]

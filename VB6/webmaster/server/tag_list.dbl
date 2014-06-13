@@ -1,0 +1,72 @@
+.function tag_list, ^VAL
+
+	a_mode		,n
+	
+	a_structure	,a
+	
+	a_count		,n
+
+	a_names		,a
+
+	a_data		,a
+
+.include "webmaster.def"
+.include "WND:tools.def"
+.include "RPSLIB:ddinfo.def"
+
+stack record tag_data
+	tag_connector	,a3
+	tag_field		,a30
+	tag_comparison	,a2
+	tag_value		,a15
+
+.proc
+
+	clear status	;Default to success
+
+	using (a_mode) select
+	(1),
+		begin
+			;Return number of tags for specified structure
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			a_count=si_nmtags
+			xcall dd_exit(dcs)
+		end
+	(2),	
+		begin
+			;Return arrays of tag names and data
+			xcall dd_init(dcs,rpsmfil,rpstfil)
+			xcall dd_struct(dcs,DDS_INFO,a_structure,s_info)
+			
+			;Get array of names
+			xcall dd_tag(dcs,DDTG_LIST,si_nmtags,a_names)
+			
+			;Build array of relation data
+			for c from 1 thru si_nmtags
+			begin
+				xcall dd_tag(dcs,DDTG_INFO,a_names(c),tg_info)
+				using tgi_tagcon select
+				(TGI_AND),	tag_connector = "AND"
+				(TGI_OR),	tag_connector = "OR"
+				endusing
+				tag_field = tgi_tagfld
+				using tgi_tagcmp select
+				(TGI_EQ),	tag_comparison= "EQ"
+				(TGI_NE),	tag_comparison= "NE"
+				(TGI_LE),	tag_comparison= "LE"
+				(TGI_LT),	tag_comparison= "LT"
+				(TGI_GE),	tag_comparison= "GE"
+				(TGI_GT),	tag_comparison= "GT"
+				endusing
+				tag_value= tgi_tagval
+				a_data(c)=tag_data
+			end
+			xcall dd_exit(dcs)
+		end
+	endusing
+	
+	freturn (status)
+
+.end
+

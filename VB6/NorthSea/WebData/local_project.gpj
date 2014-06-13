@@ -1,0 +1,372 @@
+[Humberside Airport Predictions]
+URL=http://www.iss.co.uk/grab/test.htm
+START_TAG=<CR><LF>EGNJ
+END_TAG=<CR><LF>
+START_INCLUDE=4
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B1
+
+[Hull High Temperature]
+URL=http://www.iss.co.uk/grab/yahoo_hull.htm
+START_TAG=<small>Hi</small>&nbsp;<b>
+END_TAG=&#176;</b>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B2
+
+[Hull Low Temperature]
+URL=http://www.iss.co.uk/grab/yahoo_hull.htm
+START_TAG=<small>Lo</small><b>&nbsp;
+END_TAG=&#176;</b>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B3
+
+[Humberside Humidity]
+URL=http://www.iss.co.uk/grab/yahoo_humberside.htm
+START_TAG=Humidity:</font></td><td><font size=-1>
+END_TAG=</font>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B4
+
+[Humberside Wind]
+URL=http://www.iss.co.uk/grab/yahoo_humberside.htm
+START_TAG=Wind:</font></td><td><font size=-1>
+END_TAG=</font>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B5
+
+[Humberside Dewpoint]
+URL=http://www.iss.co.uk/grab/yahoo_humberside.htm
+START_TAG=Dewpoint:</font></td><td><font size=-1>
+END_TAG=&#176;
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B6
+
+[MET Office Inshore Waters Forecast]
+GROUP_HEADING
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=<BR>Until
+END_TAG=<P>
+START_INCLUDE=5
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B9
+
+[Berwick-upon-Tweed to Flamborough Head]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Berwick-upon-Tweed to Flamborough Head. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B11
+
+[Flamborough Head to Lowestoft]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Flamborough Head to Lowestoft. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B12
+
+[Lowestoft to the Isle of Wight]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Lowestoft to the Isle of Wight. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B13
+
+[Isle of Wight to Lands End]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From the Isle of Wight to Lands End. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B14
+
+[Lands End to Holyhead]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Lands End to Holyhead. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B15
+
+[Holyhead to Tiree including from Carlingford Lough to Lough Foyle]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Holyhead to Tiree including from Carlingford Lough to Lough Foyle. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B16
+
+[Tiree to Wick including waters around Orkney and Shetland]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Tiree to Wick including the waters around Orkney and Shetland. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B17
+
+[Wick to Berwick-upon-Tweed]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Wick to Berwick-upon-Tweed. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B18
+
+[MET Office Shipping Forecast]
+GROUP_HEADING
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=<BR><CR><LF>AT
+END_TAG=<BR>
+START_INCLUDE=2
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B20
+
+[General Synopsis]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=THE GENERAL SYNOPSIS AT
+END_TAG=<P>
+START_INCLUDE=23
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B23
+
+[Viking]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=VIKING<BR><CR><LF>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B25
+
+[North Utsire South Utsire]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=NORTH UTSIRE SOUTH UTSIRE<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B26
+
+[Forties]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=FORTIES<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B27
+
+[Cromarty Forth Tyne]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=CROMARTY FORTH TYNE <BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B28
+
+[Dogger Fisher]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=DOGGER FISHER<BR><CR><LF>
+END_TAG=<BR><CR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B29
+
+[German Bight Humber]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=GERMAN BIGHT HUMBER<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B30
+
+[Thames Dover Wight]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=THAMES DOVER WIGHT  <BR><CR><LF>
+END_TAG=<BR><CR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B31
+
+[Portland Plymouth]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=PORTLAND PLYMOUTH<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B32
+
+[Biscay]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=BISCAY<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B33
+
+[Finisterre]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=FINISTERRE<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B34
+
+[Sole]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=SOLE<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B35
+
+[Lundy Fastnet]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=LUNDY FASTNET<BR><CR><LF>
+END_TAG=<BR><CR><LF> <BR>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B36
+
+[Irish Sea]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=IRISH SEA <BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B37
+
+[Shannon]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=SHANNON<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B38
+
+[Rockall]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=ROCKALL<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B39
+
+[Malin]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=MALIN<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B40
+
+[Hebrides]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=HEBRIDES<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B41
+
+[Bailey]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=BAILEY<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B42
+
+[Fair Isle]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=FAIR ISLE<BR><CR><LF>
+END_TAG=<BR><CR><LF><P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B43
+
+[Faroes Southeast Iceland]
+URL=http://www.iss.co.uk/grab/ShippingForecast.htm
+START_TAG=FAEROES SOUTHEAST ICELAND<BR><CR><LF>
+END_TAG=<BR><CR><LF></TD>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B44
+

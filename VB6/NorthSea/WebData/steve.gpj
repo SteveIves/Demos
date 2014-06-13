@@ -1,0 +1,101 @@
+[MET Office Inshore Waters Forecast]
+GROUP_HEADING
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=<BR>Until
+END_TAG=<P>
+START_INCLUDE=5
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B9
+
+[sdfsdf]
+URL=kjhk
+START_TAG=kjhkjh
+END_TAG=kjhkj
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=
+SPREADSHEET_CELL=
+
+[Berwick-upon-Tweed to Flamborough Head]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Berwick-upon-Tweed to Flamborough Head. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B11
+
+[Flamborough Head to Lowestoft]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Flamborough Head to Lowestoft. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B12
+
+[Lowestoft to the Isle of Wight]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Lowestoft to the Isle of Wight. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B13
+
+[Isle of Wight to Lands End]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From the Isle of Wight to Lands End. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B14
+
+[Lands End to Holyhead]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Lands End to Holyhead. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B15
+
+[Holyhead to Tiree including from Carlingford Lough to Lough Foyle]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Holyhead to Tiree including from Carlingford Lough to Lough Foyle. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B16
+
+[Tiree to Wick including waters around Orkney and Shetland]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Tiree to Wick including the waters around Orkney and Shetland. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B17
+
+[Wick to Berwick-upon-Tweed]
+URL=http://www.iss.co.uk/grab/InshoreWatersForecast.htm
+START_TAG=From Wick to Berwick-upon-Tweed. <BR>
+END_TAG=<P>
+START_INCLUDE=0
+END_INCLUDE=0
+TIMEOUT=15
+SPREADSHEET_NAME=s:\source\vb\webdata\test.xls
+SPREADSHEET_CELL=B18
+

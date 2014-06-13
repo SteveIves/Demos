@@ -1,0 +1,98 @@
+ 
+Sending command: Jxfpl_tst7;1;AL30#123456789012345678901234567890;    
+ 
+Received packet: {Rxfpl_tst7;001;001AL28#DBL/MS-WINDOWS Version 7.2.9;} 56
+Server: DBL/MS-WINDOWS Version 7.2.9
+ 
+Test 1. General incoming data.
+ 
+Sending command: Jxfpl_tst1;004;AL53#This is an alpha string that will likely be truncated;DE5#12345;ID13#1.234567911E6;DE7#9876543;
+ 
+Received packet: {Rxfpl_tst1;000;} 19
+Test 1: Passed
+ 
+Test 2. General incoming data.
+ 
+Sending command: Jxfpl_tst2;010;ID13#1.234567891E9;ID18#12345.678910000002;ID18#123456.78910000001;ID11#1234567.891;ID20#1.2345678910000001E8;ID19#0.12345000000000002;ID18#1.2345000000000002;ID20#1.2345678899000002E7;ID12#1234567.8987;ID14#1.2345678987E8;
+ 
+Received packet: {Rxfpl_tst2;005;001ID14#-1234567891.12;002ID7#333.334;006ID9#0.9988332;008ID11#-88991010.0;009ID8#654321.0;} 110
+Test 2: Passed
+ 
+Test 3. General incoming data.
+ 
+Sending command: Jxfpl_tst3;004;AL16#This;is;number 1;AL16#This;is#number 2;AL16#This#is#number 3;AL16#This#is;number 4;
+ 
+Received packet: {Rxfpl_tst3;004;001AL13#Coming back 1;002AL13#Coming back 2;003AL6#back 3;004AL34#backi1234567890 1234567890 1234567;} 120
+Test 3: Passed
+ 
+Test 4. General incoming data.
+ 
+Sending command: Jxfpl_tst4;009;AL5#abcde;DE5#54321;DE6#123456;AL4#opqr;ID7#123.456;AR[5]DE31#~1#1~2#22~3#333~4#4444~5#55555~;AR[6]AL45#~5#abcde~4#fghi~5#jklmn~4#opqr~5#stuvw~3#xyz~;AR[4]ID38#~4#12.3~6#987.65~7#123.456~8#987.6543~;AR[5]DE31#~1#1~2#22~3#333~4#4444~5#55555~;
+ 
+Received packet: {Rxfpl_tst4;008;001AL5#aaaaa;002DE5#77777;003DE5#66655;005ID7#333.444;006AR[5]DE31#~5#55555~4#4444~3#333~2#22~1#1~;007AR[6]AL145#~20#a                   ~20#bb                  ~20#ccc                 ~20#dddd                ~20#eeeee               ~20#fffff               ~;008AR[4]ID47#~4#0.12~7#3333.44~10#555555.667~11#7777777.888~;009AR[5]DE51#~9#999999999~8#88888888~7#7777777~6#666666~5#55555~;} 404
+Test 4: Passed
+ 
+Test 5. General incoming data.
+ 
+Sending command: Jxfpl_tst5;002;AL5#abcde;AL5#54321;
+ 
+Received packet: {Rxfpl_tst5;003;000AL6#Return;001AL5#back1;002AL5#back2;} 59
+Test 5: Passed
+ 
+Test 6. General incoming data.
+ 
+Sending command: Jxfpl_tst6;002;AL5#abcde;AL5#54321;
+ 
+Received packet: {Rxfpl_tst6;002;000DE9#123456789;002AL4#back;} 48
+Test 6: Passed
+ 
+Sending command: S;0;;
+ 
+Sending command: Jxfpl_tst7;1;AL30#123456789012345678901234567890;    
+ 
+Received packet: {Rxfpl_tst7;001;001AL28#DBL/MS-WINDOWS Version 7.2.9;} 56
+Server: DBL/MS-WINDOWS Version 7.2.9
+ 
+Test 1. General incoming data.
+ 
+Sending command: Jxfpl_tst1;004;AL53#This is an alpha string that will likely be truncated;DE5#12345;ID13#1.234567911E6;DE7#9876543;
+ 
+Received packet: {Rxfpl_tst1;000;} 19
+Test 1: Passed
+ 
+Test 2. General incoming data.
+ 
+Sending command: Jxfpl_tst2;010;ID13#1.234567891E9;ID18#12345.678910000002;ID18#123456.78910000001;ID11#1234567.891;ID20#1.2345678910000001E8;ID19#0.12345000000000002;ID18#1.2345000000000002;ID20#1.2345678899000002E7;ID12#1234567.8987;ID14#1.2345678987E8;
+ 
+Received packet: {Rxfpl_tst2;005;001ID14#-1234567891.12;002ID7#333.334;006ID9#0.9988332;008ID11#-88991010.0;009ID8#654321.0;} 110
+Test 2: Passed
+ 
+Test 3. General incoming data.
+ 
+Sending command: Jxfpl_tst3;004;AL16#This;is;number 1;AL16#This;is#number 2;AL16#This#is#number 3;AL16#This#is;number 4;
+ 
+Received packet: {Rxfpl_tst3;004;001AL13#Coming back 1;002AL13#Coming back 2;003AL6#back 3;004AL34#backi1234567890 1234567890 1234567;} 120
+Test 3: Passed
+ 
+Test 4. General incoming data.
+ 
+Sending command: Jxfpl_tst4;009;AL5#abcde;DE5#54321;DE6#123456;AL4#opqr;ID7#123.456;AR[5]DE31#~1#1~2#22~3#333~4#4444~5#55555~;AR[6]AL45#~5#abcde~4#fghi~5#jklmn~4#opqr~5#stuvw~3#xyz~;AR[4]ID38#~4#12.3~6#987.65~7#123.456~8#987.6543~;AR[5]DE31#~1#1~2#22~3#333~4#4444~5#55555~;
+ 
+Received packet: {Rxfpl_tst4;008;001AL5#aaaaa;002DE5#77777;003DE5#66655;005ID7#333.444;006AR[5]DE31#~5#55555~4#4444~3#333~2#22~1#1~;007AR[6]AL145#~20#a                   ~20#bb                  ~20#ccc                 ~20#dddd                ~20#eeeee               ~20#fffff               ~;008AR[4]ID47#~4#0.12~7#3333.44~10#555555.667~11#7777777.888~;009AR[5]DE51#~9#999999999~8#88888888~7#7777777~6#666666~5#55555~;} 404
+Test 4: Passed
+ 
+Test 5. General incoming data.
+ 
+Sending command: Jxfpl_tst5;002;AL5#abcde;AL5#54321;
+ 
+Received packet: {Rxfpl_tst5;003;000AL6#Return;001AL5#back1;002AL5#back2;} 59
+Test 5: Passed
+ 
+Test 6. General incoming data.
+ 
+Sending command: Jxfpl_tst6;002;AL5#abcde;AL5#54321;
+ 
+Received packet: {Rxfpl_tst6;002;000DE9#123456789;002AL4#back;} 48
+Test 6: Passed
+ 
+Sending command: S;0;;

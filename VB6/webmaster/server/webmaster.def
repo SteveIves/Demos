@@ -1,0 +1,22 @@
+;
+; webmaster.def
+;
+;
+
+.align
+stack record
+	status		,i4
+	c			,i4
+
+.ifdef WEBMASTER_INIT
+global data section GDS$WEBMASTER,init
+.undefine WEBMASTER_INIT
+.else
+global data section GDS$WEBMASTER
+.endc
+
+record
+	rpsmfil		,a64
+	rpstfil		,a64
+
+endglobal

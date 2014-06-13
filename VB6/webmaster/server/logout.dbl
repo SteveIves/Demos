@@ -1,0 +1,15 @@
+.function logout, ^VAL
+
+.include "webmaster.def"
+.include "WND:tools.def"
+
+.proc
+
+
+	clear status
+
+	xcall u_finish()
+
+	freturn status
+
+.end

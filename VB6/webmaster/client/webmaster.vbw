@@ -1,0 +1,14 @@
+frmMain = 88, 88, 552, 536, C, 22, 22, 478, 462, C
+modMain = 66, 66, 530, 514, Z
+frmProperties = 66, 66, 530, 514, C, 44, 44, 508, 492, C
+Project = 66, 66, 530, 514, C
+modGenerate = 198, 198, 662, 646, C
+frmDirectory = 198, 198, 679, 646, C, 176, 176, 657, 624, C
+DirSelect = 110, 110, 591, 558, C, 145, 46, 626, 494, C
+modRegistry = 0, 0, 0, 0, C
+ProjectFile = 154, 154, 635, 602, C
+ProjectFileField = 176, 176, 657, 624, C
+ProjectFileFields = 198, 198, 679, 646, C
+ProjectFiles = 102, 82, 583, 635, 
+frmFile = 154, 154, 610, 602, C, 132, 132, 588, 580, C
+frmGenerate = 176, 176, 630, 624, C, 132, 132, 586, 580, C

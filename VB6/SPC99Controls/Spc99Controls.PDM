@@ -1,0 +1,97 @@
+[Root]
+Most Recent Package=SPC99 Controls
+
+
+[Package|SPC99 Controls|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=S:\spc99\1 Sun - ActiveX Seminar\controls\Package
+Controls Design-Time Support=Yes
+
+[Package|SPC99 Controls|Configure DAO ISAMs]
+Applicable=No
+
+[Package|SPC99 Controls|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|SPC99 Controls|Files Found]
+
+[Package|SPC99 Controls|Files Released]
+
+[Package|SPC99 Controls|Missing Dependency Information]
+
+[Package|SPC99 Controls|Out-of-Date Dependency Information]
+
+[Package|SPC99 Controls|Files Added]
+c:\nt\system32\msstkprp.dll=This file is needed for usercontrol design-time support.
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.dbr=
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.jpg=
+
+[Package|SPC99 Controls|Files Removed]
+
+[Package|SPC99 Controls|Files In Project]
+S:\spc99\1 Sun - ActiveX Seminar\controls\Spc99Controls.ocx=Yes
+C:\NT\system32\MSVBVM60.DLL=Yes
+C:\NT\system32\oleaut32.dll=Yes
+C:\NT\system32\olepro32.dll=Yes
+C:\NT\system32\asycfilt.dll=Yes
+C:\NT\system32\stdole2.tlb=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\NT\system32\MSCOMCTL.OCX=Yes
+C:\NT\system32\MCI32.OCX=Yes
+C:\Program Files\Common Files\designer\MSWCRUN.DLL=Yes
+C:\NT\system32\MSCHRT20.OCX=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\NT\system32\VB6STKIT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+C:\NT\system32\MSSTKPRP.DLL=Yes
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.dbr=Yes
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.jpg=Yes
+
+[Package|SPC99 Controls|Configure Registry Files]
+Applicable=No
+
+[Package|SPC99 Controls|Configure Remote Servers]
+Applicable=No
+
+[Package|SPC99 Controls|Install Locations]
+S:\spc99\1 Sun - ActiveX Seminar\controls\Spc99Controls.ocx=$(AppPath)
+C:\NT\system32\MSVBVM60.DLL=$(WinSysPathSysFile)
+C:\NT\system32\oleaut32.dll=$(WinSysPathSysFile)
+C:\NT\system32\olepro32.dll=$(WinSysPathSysFile)
+C:\NT\system32\asycfilt.dll=$(WinSysPathSysFile)
+C:\NT\system32\stdole2.tlb=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\NT\system32\MSCOMCTL.OCX=$(WinSysPath)
+C:\NT\system32\MCI32.OCX=$(WinSysPath)
+C:\Program Files\Common Files\designer\MSWCRUN.DLL=$(CommonFiles)\designer
+C:\NT\system32\MSCHRT20.OCX=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\NT\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+C:\NT\system32\MSSTKPRP.DLL=$(WinSysPath)
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.dbr=$(AppPath)
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.jpg=$(AppPath)
+
+[Package|SPC99 Controls|Configure Shared Files]
+Applicable=Yes
+S:\spc99\1 Sun - ActiveX Seminar\controls\Spc99Controls.ocx=No
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.dbr=No
+S:\spc99\1 Sun - ActiveX Seminar\controls\test.jpg=No
+
+[Package|SPC99 Controls|Distribution]
+Type=single
+Size=
+Title=Spc99Controls
+
+[Package|SPC99 Controls|Package]
+PackageFolder=S:\spc99\1 Sun - ActiveX Seminar\controls\Package
+ProjectFolder=S:\spc99\1 Sun - ActiveX Seminar\controls
+ServerSideCab=
+File1=S:\spc99\1 Sun - ActiveX Seminar\controls\Package\setup.exe
+File2=S:\spc99\1 Sun - ActiveX Seminar\controls\Package\Setup.Lst
+File3=S:\spc99\1 Sun - ActiveX Seminar\controls\Package\Spc99Controls.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz

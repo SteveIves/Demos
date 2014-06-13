@@ -1,0 +1,28 @@
+.function salesrep_write, ^VAL
+
+    ;Argument list
+
+      a_data     ,a
+
+      a_create   ,n
+
+    ;End of argument list
+
+.include 'webapp.def'
+
+.proc
+
+    ;Default to success
+    clear status
+
+    if (^passed(a_create) .and. a_create) then
+      store(ch_salesrep,a_data) [ERR=Err]
+    else
+      write(ch_salesrep,a_data) [ERR=Err]
+
+    if (FALSE)
+Err,  status=TRUE
+
+    freturn status
+
+.end
