@@ -1,0 +1,1 @@
+This demo is basically the same as the solution to the ContactService tutorial, but has XML and JSON implemented.

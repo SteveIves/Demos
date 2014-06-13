@@ -1,0 +1,268 @@
+namespace DPC2013.Examples
+
+    main ContactServiceTest
+        record
+            app, @ContactServiceTest
+        endrecord
+    proc
+        app = new ContactServiceTest()
+        app.Run()
+    endmain
+
+    public class ContactServiceTest
+
+        private tt      ,int
+        private client  ,@ContactServiceClient
+
+        public method ContactServiceTest
+            endparams
+            record
+                format, WebMessageFormat
+            endrecord
+        proc
+            open(tt=0,o,"tt:")
+            flags(7004000,1)
+
+            repeat
+            begin
+                data tmpKey, a1
+                display(tt,$scr_clr(SCREEN),$scr_pos(1,1),"Transfer [X]ML or [J]SON ? ")
+                accept(tt,tmpKey)
+                using tmpKey select
+                ("X"),
+                begin
+                    format = WebMessageFormat.xml
+                    exitloop
+                end
+                ("J"),
+                begin
+                    format = WebMessageFormat.Json
+                    exitloop
+                end
+                endusing
+            end
+
+            display(tt,$scr_clr(SCREEN),$scr_pos(1,1))
+
+            delet("http.log")
+            client = new ContactServiceClient("http","localhost",8086,
+            &   "/ContactService",format,true)
+        endmethod
+
+        method ~ContactServiceTest
+        proc
+            close tt
+            clear client
+        endmethod
+
+        public method Run, void
+            endparams
+            record
+                ok, boolean
+                contact, strContact
+            endrecord
+        proc
+            ok = resetData()
+
+            if (ok)
+                ok = readAllContacts()
+
+            if (ok)
+                ok = readContact(1)
+
+            if (ok)
+                ok = deleteContact(3)
+
+            if (ok)
+                ok = deleteContact(4)
+
+            if (ok)
+                ok = deleteContact(5)
+
+            if (ok)
+                ok = readAllContacts()
+
+            if (ok)
+            begin
+                init contact
+                contact.ContactId = 3
+                contact.FirstName = "Julia"
+                contact.LastName  = "Anderson"
+                contact.Email     = "janderson@gmail.com"
+                ok = createContact(contact)
+            end
+
+            if (ok)
+                ok = readContact(3)
+
+            if (ok)
+            begin
+                contact.LastName = "Jenks"
+                contact.Email     = "jjenks@gmail.com"
+                ok = updateContact(contact)
+            end
+
+            if (ok)
+                ok = readContact(3)
+
+            waitForKeyPress()
+
+        endmethod
+
+        private method resetData, boolean
+            endparams
+            record
+                ok, boolean
+            endrecord
+        proc
+            ok = true
+            display(tt,"Resetting data  ...      ")
+            if (client.ResetData()) then
+                writes(tt,"DONE")
+            else
+            begin
+                reportError()
+                ok = false
+            end
+            mreturn ok
+        endmethod
+
+        private method readAllContacts, boolean
+            endparams
+            record
+                ok          ,boolean
+                contacts    ,@ArrayList
+                bcontact    ,@strContact
+            endrecord
+        proc
+            ok = true
+            display(tt,"Reading all Contacts ... ")
+            if (client.GetAllContacts(contacts)) then
+            begin
+                writes(tt,"DONE")
+                foreach bcontact in contacts
+                    displayContact((strContact)bcontact)
+            end
+            else
+            begin
+                reportError()
+                ok = false
+            end
+            mreturn ok
+        endmethod
+
+        private method readContact, boolean
+            required in contactId, int
+            endparams
+            record
+                ok, boolean
+                contact, strContact
+            endrecord
+        proc
+            ok = true
+            display(tt,"Reading contact "+string(contactId)+" ...    ")
+            if (client.GetContact(contactId,contact)) then
+            begin
+                writes(tt,"DONE")
+                displayContact(contact)
+            end
+            else
+                reportError()
+            mreturn ok
+        endmethod
+
+        private method deleteContact, boolean
+            required in contactId, int
+            endparams
+            record
+                ok, boolean
+            endrecord
+        proc
+            ok = true
+            display(tt,"Deleting contact "+string(contactId)+" ...   ")
+            if (client.DeleteContact(contactId)) then
+                writes(tt,"DONE")
+            else
+            begin
+                reportError()
+                ok = false
+            end
+            mreturn ok
+        endmethod
+
+        private method createContact, boolean
+            required in contact, strContact
+            endparams
+            record
+                ok, boolean
+            endrecord
+        proc
+            ok = true
+            display(tt,"Creating contact "+string(contact.ContactId)+" ...   ")
+            if (client.CreateContact(contact)) then
+            begin
+                writes(tt,"DONE")
+                displayContact(contact)
+            end
+            else
+            begin
+                reportError()
+                ok = false
+            end
+            mreturn ok
+        endmethod
+
+        private method updateContact, boolean
+            required in contact, strContact
+            endparams
+            record
+                ok, boolean
+            endrecord
+        proc
+            ok = true
+            display(tt,"Updating contact "+string(contact.ContactId)+" ...   ")
+            if (client.UpdateContact(contact)) then
+            begin
+                writes(tt,"DONE")
+                displayContact(contact)
+            end
+            else
+            begin
+                reportError()
+                ok = false
+            end
+            mreturn ok
+        endmethod
+
+        private method displayContact, void
+            required in contact, strContact
+            endparams
+        proc
+            writes(tt,
+            &   string(contact.ContactId,"ZZX") + " "
+            &   + contact.FirstName + " "
+            &   + contact.LastName + " "
+            &   + atrim(contact.Email))
+        endmethod
+
+        private method reportError, void
+            endparams
+        proc
+            display(tt,"*** FAILED ***",13,10,
+            &   "Error ",string(client.LastErrorNumber),
+            &   " - ",client.LastErrorText,13,10)
+        endmethod
+
+        private method waitForKeyPress, void
+            endparams
+            record
+                tmpkey, a1
+            endrecord
+        proc
+            display(tt,13,10,"Press a key: ")
+            accept(tt,tmpkey)
+        endmethod
+
+    endclass
+
+endnamespace

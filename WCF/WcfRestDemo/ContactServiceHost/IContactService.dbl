@@ -1,0 +1,126 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Linq
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.ServiceModel.Web
+import System.Text
+
+.array 0
+namespace ContactServiceHost
+	
+	{ServiceContract(Namespace = "demos.synergex.com")}
+	{Description("Service description")}
+	public interface IContactService
+		
+		{OperationContract()}
+		{Description("Returns all contacts")}
+		{WebGet(UriTemplate = "contacts")}
+		method GetAllContacts, @List<Contact>
+			endparams
+		endmethod
+		
+		{OperationContract()}
+		{Description("Returns a contact")}
+		{WebGet(UriTemplate = "contacts/{contactId}")}
+		method GetContact, @Contact
+			required in contactId, string 
+			endparams
+		endmethod
+		
+		{OperationContract()}
+		{Description("Creates a contact")}
+		{WebInvoke(Method = "POST", UriTemplate = "contacts/{contactId}")}
+		method CreateContact, boolean
+			required in contactId, string
+			required in newContact, @Contact 
+			endparams
+		endmethod
+		
+		{OperationContract()}
+		{Description("Updates a contact")}
+		{WebInvoke(Method = "PUT", UriTemplate = "contacts/{contactId}")}
+		method UpdateContact, boolean
+			required in contactId, string
+			required in updatedContact, @Contact 
+			endparams
+		endmethod
+		
+		{OperationContract()}
+		{Description("Deletes a contact")}
+		{WebInvoke(Method = "DELETE", UriTemplate = "contacts/{contactId}")}
+		method DeleteContact, boolean
+			required in contactId, string 
+			endparams
+		endmethod
+		
+		{OperationContract()}
+		{Description("Resets test data to initial state")}
+		{WebGet(UriTemplate = "reset")}
+		method ResetData, void
+			endparams
+		endmethod
+		
+	endinterface
+	
+.region "Data contracts"
+	
+	{DataContract(Namespace = "demos.synergex.com")}
+	public class Contact
+		
+		public method Contact
+			endparams
+		proc
+		endmethod
+		
+		public method Contact
+			required in id, int
+			required in first, String
+			required in last, String			
+			required in eml, String
+			endparams
+		proc
+			ContactId = id
+			FirstName = first
+			LastName = last
+			Email = eml
+		endmethod
+		
+		{DataMember(EmitDefaultValue = false)}
+		public property ContactId, int
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		{DataMember(EmitDefaultValue = false)}
+		public property FirstName, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		{DataMember(EmitDefaultValue = false)}
+		public property LastName, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		{DataMember(EmitDefaultValue = false)}
+		public property Email, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+	endclass
+	
+.endregion
+	
+endnamespace
