@@ -74,9 +74,14 @@ function <structure_name>_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    static record
-        sql     ,string     ;;SQL statement
-    endrecord
+    literal 
+        sql, a*, "SELECT "
+        <FIELD_LOOP>
+        & "<FIELD_SQLNAME><,>"
+        </FIELD_LOOP>
+        & " FROM <STRUCTURE_NAME>"
+        & " WHERE <PRIMARY_KEY><SEGMENT_LOOP> <SEGMENT_NAME>=:<SEGMENT_NUMBER> <AND></SEGMENT_LOOP></PRIMARY_KEY>"
+    endliteral
 
 proc
 
@@ -86,17 +91,7 @@ proc
     ;;-------------------------------------------------------------------------
     ;;Open a cursor for the SELECT statement
     ;;
-    if (!(a)sql)
-    begin
-        sql = "SELECT "
-        <FIELD_LOOP>
-        &    "<FIELD_SQLNAME><,>"
-        </FIELD_LOOP>
-        &    " FROM <STRUCTURE_NAME>"
-        &    " WHERE <PRIMARY_KEY><SEGMENT_LOOP> <SEGMENT_NAME>=:<SEGMENT_NUMBER> <AND></SEGMENT_LOOP></PRIMARY_KEY>"
-    end
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_SELECT,,<PRIMARY_KEY><KEY_SEGMENTS></PRIMARY_KEY>,<PRIMARY_KEY><SEGMENT_LOOP>a_<segment_name><,></SEGMENT_LOOP></PRIMARY_KEY>)==SSQL_FAILURE)
+    if (%ssc_open(a_dbchn,cursor,sql,SSQL_SELECT,,<PRIMARY_KEY><KEY_SEGMENTS></PRIMARY_KEY>,<PRIMARY_KEY><SEGMENT_LOOP>a_<segment_name><,></SEGMENT_LOOP></PRIMARY_KEY>)==SSQL_FAILURE)
     begin
         ok = false
         if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

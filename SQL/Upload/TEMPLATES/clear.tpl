@@ -66,9 +66,12 @@ function <structure_name>_clear ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal 
+		sql			,a*, "TRUNCATE TABLE <STRUCTURE_NAME>"
+	endliteral
+	
 proc
 
     init local_data
@@ -91,8 +94,7 @@ proc
 
     if (ok)
     begin
-        sql = "TRUNCATE TABLE <STRUCTURE_NAME>"
-        if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
+        if (%ssc_open(a_dbchn,cursor,sql,SSQL_NONSEL)==SSQL_FAILURE)
         begin
             ok = false
             if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

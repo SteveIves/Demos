@@ -40,9 +40,29 @@ function order_header_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal
+		sql_create, a*, "CREATE TABLE ORDER_HEADER ("
+		& "ORDER_NUMBER DECIMAL(8) NOT NULL,"
+		& "ORDER_DATE DATE NOT NULL,"
+		& "STATUS VARCHAR(1),"
+		& "SHIP_DATE DATE,"
+		& "CUSTOMER VARCHAR(8) NOT NULL,"
+		& "DELIVERY_DATE DATE,"
+		& "CUSTOMER_ORDER_REF VARCHAR(20),"
+		& "GOODS_VALUE DECIMAL(8,2),"
+		& "TAX_VALUE DECIMAL(8,2),"
+		& "SHIPPING_VALUE DECIMAL(8,2),"
+		& "GIFT_WRAP DECIMAL(1),"
+		& "GIFT_MESSAGE VARCHAR(60),"
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_ORDER_HEADER PRIMARY KEY CLUSTERED (ORDER_NUMBER ASC))"
+		sql_index1, a*, "CREATE INDEX IX_ORDER_HEADER_CUSTOMER ON ORDER_HEADER(CUSTOMER ASC)"
+		sql_index2, a*, "CREATE INDEX IX_ORDER_HEADER_STATUS ON ORDER_HEADER(STATUS ASC)"
+		sql_index3, a*, "CREATE INDEX IX_ORDER_HEADER_CUSREF ON ORDER_HEADER(CUSTOMER_ORDER_REF ASC)"
+	endliteral
+	
 proc
 
     init local_data
@@ -65,30 +85,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE ORDER_HEADER ("
-        & + "ORDER_NUMBER DECIMAL(8) NOT NULL,"
-        & + "ORDER_DATE DATE NOT NULL,"
-        & + "STATUS VARCHAR(1),"
-        & + "SHIP_DATE DATE,"
-        & + "CUSTOMER VARCHAR(8) NOT NULL,"
-        & + "DELIVERY_DATE DATE,"
-        & + "CUSTOMER_ORDER_REF VARCHAR(20),"
-        & + "GOODS_VALUE DECIMAL(8,2),"
-        & + "TAX_VALUE DECIMAL(8,2),"
-        & + "SHIPPING_VALUE DECIMAL(8,2),"
-        & + "GIFT_WRAP DECIMAL(1),"
-        & + "GIFT_MESSAGE VARCHAR(60),"
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_ORDER_HEADER PRIMARY KEY CLUSTERED"
-        & + " (ORDER_NUMBER ASC))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -96,16 +99,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_ORDER_HEADER_CUSTOMER "
-        &     "ON ORDER_HEADER(CUSTOMER ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -113,16 +113,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_ORDER_HEADER_STATUS "
-        &     "ON ORDER_HEADER(STATUS ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -130,16 +127,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_ORDER_HEADER_CUSREF "
-        &     "ON ORDER_HEADER(CUSTOMER_ORDER_REF ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -147,15 +141,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON ORDER_HEADER TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON ORDER_HEADER TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -193,20 +185,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -239,6 +217,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 

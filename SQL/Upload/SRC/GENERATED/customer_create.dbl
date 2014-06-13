@@ -40,9 +40,39 @@ function customer_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal
+		sql_create, a*, "CREATE TABLE CUSTOMER ("
+		& "ACCOUNT VARCHAR(8) NOT NULL,"
+		& "COMPANY VARCHAR(40) NOT NULL,"
+		& "STREET VARCHAR(40) NOT NULL,"
+		& "CITY VARCHAR(25) NOT NULL,"
+		& "STATE VARCHAR(2) NOT NULL,"
+		& "ZIP DECIMAL(5) NOT NULL,"
+		& "PHONE_NUMBER DECIMAL(10),"
+		& "FAX_NUMBER DECIMAL(10),"
+		& "MOBILE_NUMBER DECIMAL(10),"
+		& "PAGER_NUMBER DECIMAL(10),"
+		& "EMAIL1 VARCHAR(80),"
+		& "EMAIL2 VARCHAR(80),"
+		& "DATE_OPENED DATE NOT NULL,"
+		& "DATE_HOLD DATE,"
+		& "DATE_CLOSED DATE,"
+		& "STATUS DECIMAL(1) NOT NULL,"
+		& "LIMIT DECIMAL(10,2) NOT NULL,"
+		& "BALANCE DECIMAL(10,2),"
+		& "CARD_NUMBER VARCHAR(16),"
+		& "CARD_EXPIRY DECIMAL(4),"
+		& "CARD_NAME VARCHAR(25),"
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_CUSTOMER PRIMARY KEY CLUSTERED (ACCOUNT ASC))"
+		sql_index1, a*, "CREATE INDEX IX_CUSTOMER_COMPANY ON CUSTOMER(COMPANY ASC)"
+		sql_index2, a*, "CREATE INDEX IX_CUSTOMER_STATE ON CUSTOMER(STATE ASC)"
+		sql_index3, a*, "CREATE INDEX IX_CUSTOMER_ZIP ON CUSTOMER(ZIP ASC)"
+		sql_index4, a*, "CREATE INDEX IX_CUSTOMER_STATUS ON CUSTOMER(STATUS ASC)"
+	endliteral
+	
 proc
 
     init local_data
@@ -65,39 +95,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE CUSTOMER ("
-        & + "ACCOUNT VARCHAR(8) NOT NULL,"
-        & + "COMPANY VARCHAR(40) NOT NULL,"
-        & + "STREET VARCHAR(40) NOT NULL,"
-        & + "CITY VARCHAR(25) NOT NULL,"
-        & + "STATE VARCHAR(2) NOT NULL,"
-        & + "ZIP DECIMAL(5) NOT NULL,"
-        & + "PHONE_NUMBER DECIMAL(10),"
-        & + "FAX_NUMBER DECIMAL(10),"
-        & + "MOBILE_NUMBER DECIMAL(10),"
-        & + "PAGER_NUMBER DECIMAL(10),"
-        & + "EMAIL1 VARCHAR(80),"
-        & + "EMAIL2 VARCHAR(80),"
-        & + "DATE_OPENED DATE NOT NULL,"
-        & + "DATE_HOLD DATE,"
-        & + "DATE_CLOSED DATE,"
-        & + "STATUS DECIMAL(1) NOT NULL,"
-        & + "LIMIT DECIMAL(10,2) NOT NULL,"
-        & + "BALANCE DECIMAL(10,2),"
-        & + "CARD_NUMBER VARCHAR(16),"
-        & + "CARD_EXPIRY DECIMAL(4),"
-        & + "CARD_NAME VARCHAR(25),"
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_CUSTOMER PRIMARY KEY CLUSTERED"
-        & + " (ACCOUNT ASC))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -105,16 +109,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_CUSTOMER_COMPANY "
-        &     "ON CUSTOMER(COMPANY ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -122,16 +123,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_CUSTOMER_STATE "
-        &     "ON CUSTOMER(STATE ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -139,16 +137,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_CUSTOMER_ZIP "
-        &     "ON CUSTOMER(ZIP ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -156,16 +151,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_CUSTOMER_STATUS "
-        &     "ON CUSTOMER(STATUS ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index4,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -173,15 +165,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON CUSTOMER TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON CUSTOMER TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -219,20 +209,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -265,6 +241,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 

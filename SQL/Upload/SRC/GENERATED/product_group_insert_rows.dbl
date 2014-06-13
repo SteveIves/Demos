@@ -58,9 +58,12 @@ function product_group_insert_rows ,^val
         errtxt      ,a255       ;;Error message text
     endrecord
 
-    static record
-        sql         ,string     ;;SQL statement
-    endrecord
+	literal
+        sql, a*, "INSERT INTO PRODUCT_GROUP ("
+        & "NAME,"
+        & "DESCRIPTION"
+        & ") VALUES(:1,:2)"
+	endliteral
 
 proc
 
@@ -92,15 +95,7 @@ proc
     ;;
     if (ok)
     begin
-        if (!(a)sql)
-        begin
-            sql = "INSERT INTO PRODUCT_GROUP ("
-            & + "NAME,"
-            & + "DESCRIPTION"
-            & + ") VALUES(:1,:2)"
-        end
-
-        if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
+        if (%ssc_open(a_dbchn,cursor,sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
         begin
             ok = true
             if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

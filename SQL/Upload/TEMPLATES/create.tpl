@@ -67,9 +67,20 @@ function <structure_name>_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal 
+		sql_create, a*, "CREATE TABLE <STRUCTURE_NAME> ("
+		<FIELD_LOOP>
+		& "<FIELD_SQLNAME> <FIELD_SQLTYPE><IF REQUIRED> NOT NULL</IF>,"
+		</FIELD_LOOP>
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_<STRUCTURE_NAME> PRIMARY KEY CLUSTERED (<PRIMARY_KEY><SEGMENT_LOOP><SEGMENT_NAME> <SEGMENT_ORDER><,></SEGMENT_LOOP></PRIMARY_KEY>))"
+		<ALTERNATE_KEY_LOOP>
+		sql_index<KEY_NUMBER>, a*, "CREATE <KEY_UNIQUE> INDEX IX_<STRUCTURE_NAME>_<KEY_NAME> ON <STRUCTURE_NAME>(<SEGMENT_LOOP><SEGMENT_NAME> <SEGMENT_ORDER><,></SEGMENT_LOOP>)"
+		</ALTERNATE_KEY_LOOP>
+	endliteral
+	
 proc
 
     init local_data
@@ -92,21 +103,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE <STRUCTURE_NAME> ("
-        <FIELD_LOOP>
-        & + "<FIELD_SQLNAME> <FIELD_SQLTYPE><IF REQUIRED> NOT NULL</IF>,"
-        </FIELD_LOOP>
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_<STRUCTURE_NAME> PRIMARY KEY CLUSTERED"
-        & + " (<PRIMARY_KEY><SEGMENT_LOOP><SEGMENT_NAME> <SEGMENT_ORDER><,></SEGMENT_LOOP></PRIMARY_KEY>))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then 
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     <ALTERNATE_KEY_LOOP>
@@ -115,16 +118,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE <KEY_UNIQUE> INDEX IX_<STRUCTURE_NAME>_<KEY_NAME> "
-        &     "ON <STRUCTURE_NAME>(<SEGMENT_LOOP><SEGMENT_NAME> <SEGMENT_ORDER><,></SEGMENT_LOOP>)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index<KEY_NUMBER>,SSQL_NONSEL)==SSQL_NORMAL) then 
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     </ALTERNATE_KEY_LOOP>
@@ -133,15 +133,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON <STRUCTURE_NAME> TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON <STRUCTURE_NAME> TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -179,20 +177,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -225,6 +209,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 

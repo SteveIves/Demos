@@ -77,8 +77,7 @@ proc
     ;;-------------------------------------------------------------------------
     ;;Open a cursor for the SELECT statement
     ;;
-    if (%ssc_open(a_dbchn,cursor,"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
-    &   "WHERE TABLE_NAME='<STRUCTURE_NAME>'",SSQL_SELECT)==SSQL_FAILURE)
+    if (%ssc_open(a_dbchn,cursor,"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='<STRUCTURE_NAME>'",SSQL_SELECT)==SSQL_FAILURE)
     begin
         error=-1
         if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

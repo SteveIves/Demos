@@ -49,10 +49,32 @@ function customer_insert_row ,^val
         errtxt      ,a256       ;;Error message text
     endrecord
 
-    static record
-        sql         ,string     ;;SQL statement
-    endrecord
-
+	literal
+		sql, a*, "INSERT INTO CUSTOMER ("
+		& "ACCOUNT,"
+		& "COMPANY,"
+		& "STREET,"
+		& "CITY,"
+		& "STATE,"
+		& "ZIP,"
+		& "PHONE_NUMBER,"
+		& "FAX_NUMBER,"
+		& "MOBILE_NUMBER,"
+		& "PAGER_NUMBER,"
+		& "EMAIL1,"
+		& "EMAIL2,"
+		& "DATE_OPENED,"
+		& "DATE_HOLD,"
+		& "DATE_CLOSED,"
+		& "STATUS,"
+		& "LIMIT,"
+		& "BALANCE,"
+		& "CARD_NUMBER,"
+		& "CARD_EXPIRY,"
+		& "CARD_NAME"
+		& ") VALUES(:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13,:14,:15,:16,:17,:18,:19,:20,:21)"		
+	endliteral
+	
 proc
 
     init local_data
@@ -75,34 +97,7 @@ proc
     ;;
     if (ok)
     begin
-        if (!(a)sql)
-        begin
-            sql = "INSERT INTO CUSTOMER ("
-            & + "ACCOUNT,"
-            & + "COMPANY,"
-            & + "STREET,"
-            & + "CITY,"
-            & + "STATE,"
-            & + "ZIP,"
-            & + "PHONE_NUMBER,"
-            & + "FAX_NUMBER,"
-            & + "MOBILE_NUMBER,"
-            & + "PAGER_NUMBER,"
-            & + "EMAIL1,"
-            & + "EMAIL2,"
-            & + "DATE_OPENED,"
-            & + "DATE_HOLD,"
-            & + "DATE_CLOSED,"
-            & + "STATUS,"
-            & + "LIMIT,"
-            & + "BALANCE,"
-            & + "CARD_NUMBER,"
-            & + "CARD_EXPIRY,"
-            & + "CARD_NAME"
-            & + ") VALUES(:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13,:14,:15,:16,:17,:18,:19,:20,:21)"
-        end
-
-        if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
+        if (%ssc_open(a_dbchn,cursor,sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
         begin
             ok = false
             if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

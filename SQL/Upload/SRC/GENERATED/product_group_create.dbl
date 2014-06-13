@@ -40,9 +40,16 @@ function product_group_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal
+		sql_create, a*, "CREATE TABLE PRODUCT_GROUP ("
+		& "NAME VARCHAR(10) NOT NULL,"
+		& "DESCRIPTION VARCHAR(40) NOT NULL,"
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_PRODUCT_GROUP PRIMARY KEY CLUSTERED (NAME ASC))"
+	endliteral
+	
 proc
 
     init local_data
@@ -65,20 +72,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE PRODUCT_GROUP ("
-        & + "NAME VARCHAR(10) NOT NULL,"
-        & + "DESCRIPTION VARCHAR(40) NOT NULL,"
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_PRODUCT_GROUP PRIMARY KEY CLUSTERED"
-        & + " (NAME ASC))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -86,15 +86,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON PRODUCT_GROUP TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON PRODUCT_GROUP TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -132,20 +130,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -178,6 +162,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 

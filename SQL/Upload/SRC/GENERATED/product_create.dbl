@@ -40,9 +40,38 @@ function product_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal
+		sql_create, a*, "CREATE TABLE PRODUCT ("
+		& "SKU VARCHAR(10) NOT NULL,"
+		& "PRODUCT_GROUP VARCHAR(10) NOT NULL,"
+		& "DESCRIPTION VARCHAR(80) NOT NULL,"
+		& "PRICE_GROUP VARCHAR(10),"
+		& "SELLING_PRICE DECIMAL(6,2),"
+		& "LAST_SALE DATE,"
+		& "LAST_COST_PRICE DECIMAL(10,4),"
+		& "AVERAGE_COST_PRICE DECIMAL(10,4),"
+		& "QTY_IN_STOCK DECIMAL(6),"
+		& "QTY_ALLOCATED DECIMAL(6),"
+		& "QTY_IN_TRANSIT DECIMAL(6),"
+		& "QTY_ON_ORDER DECIMAL(6),"
+		& "REFERENCE VARCHAR(20),"
+		& "PUBLISHER VARCHAR(50),"
+		& "AUTHOR VARCHAR(50),"
+		& "TYPE VARCHAR(20),"
+		& "RELEASE_DATE DATE NOT NULL,"
+		& "RATING VARCHAR(6),"
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_PRODUCT PRIMARY KEY CLUSTERED (SKU ASC))"
+		sql_index1, a*, "CREATE INDEX IX_PRODUCT_PRODUCT_GROUP ON PRODUCT(PRODUCT_GROUP ASC)"
+		sql_index2, a*, "CREATE INDEX IX_PRODUCT_DESCRIPTION ON PRODUCT(DESCRIPTION ASC)"
+		sql_index3, a*, "CREATE INDEX IX_PRODUCT_PRICE_GROUP ON PRODUCT(PRICE_GROUP ASC)"
+		sql_index4, a*, "CREATE INDEX IX_PRODUCT_AUTHOR ON PRODUCT(AUTHOR ASC)"
+		sql_index5, a*, "CREATE INDEX IX_PRODUCT_PUBLISHER ON PRODUCT(PUBLISHER ASC)"
+		sql_index6, a*, "CREATE INDEX IX_PRODUCT_REFERENCE ON PRODUCT(REFERENCE ASC)"
+	endliteral
+	
 proc
 
     init local_data
@@ -65,36 +94,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE PRODUCT ("
-        & + "SKU VARCHAR(10) NOT NULL,"
-        & + "PRODUCT_GROUP VARCHAR(10) NOT NULL,"
-        & + "DESCRIPTION VARCHAR(80) NOT NULL,"
-        & + "PRICE_GROUP VARCHAR(10),"
-        & + "SELLING_PRICE DECIMAL(6,2),"
-        & + "LAST_SALE DATE,"
-        & + "LAST_COST_PRICE DECIMAL(10,4),"
-        & + "AVERAGE_COST_PRICE DECIMAL(10,4),"
-        & + "QTY_IN_STOCK DECIMAL(6),"
-        & + "QTY_ALLOCATED DECIMAL(6),"
-        & + "QTY_IN_TRANSIT DECIMAL(6),"
-        & + "QTY_ON_ORDER DECIMAL(6),"
-        & + "REFERENCE VARCHAR(20),"
-        & + "PUBLISHER VARCHAR(50),"
-        & + "AUTHOR VARCHAR(50),"
-        & + "TYPE VARCHAR(20),"
-        & + "RELEASE_DATE DATE NOT NULL,"
-        & + "RATING VARCHAR(6),"
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_PRODUCT PRIMARY KEY CLUSTERED"
-        & + " (SKU ASC))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -102,16 +108,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_PRODUCT_GROUP "
-        &     "ON PRODUCT(PRODUCT_GROUP ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -119,16 +122,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_DESCRIPTION "
-        &     "ON PRODUCT(DESCRIPTION ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -136,16 +136,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_PRICE_GROUP "
-        &     "ON PRODUCT(PRICE_GROUP ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -153,16 +150,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_AUTHOR "
-        &     "ON PRODUCT(AUTHOR ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index4,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -170,16 +164,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_PUBLISHER "
-        &     "ON PRODUCT(PUBLISHER ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index5,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -187,16 +178,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_PRODUCT_REFERENCE "
-        &     "ON PRODUCT(REFERENCE ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index6,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -204,15 +192,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON PRODUCT TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON PRODUCT TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -250,20 +236,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -296,6 +268,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 

@@ -75,10 +75,14 @@ function <structure_name>_insert_row ,^val
         errtxt      ,a256       ;;Error message text
     endrecord
 
-    static record
-        sql         ,string     ;;SQL statement
-    endrecord
-
+	literal 
+		sql, a*, "INSERT INTO <STRUCTURE_NAME> ("
+		<FIELD_LOOP>
+		& "<FIELD_SQLNAME><,>"
+		</FIELD_LOOP>
+		& ") VALUES(<FIELD_LOOP>:<FIELD#LOGICAL><,></FIELD_LOOP>)"		
+	endliteral
+	
 proc
 
     init local_data
@@ -101,16 +105,7 @@ proc
     ;;
     if (ok)
     begin
-        if (!(a)sql)
-        begin
-            sql = "INSERT INTO <STRUCTURE_NAME> ("
-            <FIELD_LOOP>
-            & + "<FIELD_SQLNAME><,>"
-            </FIELD_LOOP>
-            & + ") VALUES(<FIELD_LOOP>:<FIELD#LOGICAL><,></FIELD_LOOP>)"
-        end
-
-        if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
+        if (%ssc_open(a_dbchn,cursor,sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
         begin
             ok = false
             if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

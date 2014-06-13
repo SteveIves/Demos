@@ -44,9 +44,13 @@ function product_group_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    static record
-        sql     ,string     ;;SQL statement
-    endrecord
+    literal
+        sql, a*, "SELECT "
+        & "NAME,"
+        & "DESCRIPTION"
+        & " FROM PRODUCT_GROUP"
+        & " WHERE NAME=:1"
+    endliteral
 
 proc
 
@@ -56,16 +60,7 @@ proc
     ;;-------------------------------------------------------------------------
     ;;Open a cursor for the SELECT statement
     ;;
-    if (!(a)sql)
-    begin
-        sql = "SELECT "
-        &    "NAME,"
-        &    "DESCRIPTION"
-        &    " FROM PRODUCT_GROUP"
-        &    " WHERE NAME=:1"
-    end
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_SELECT,,1,a_name)==SSQL_FAILURE)
+    if (%ssc_open(a_dbchn,cursor,sql,SSQL_SELECT,,1,a_name)==SSQL_FAILURE)
     begin
         ok = false
         if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)

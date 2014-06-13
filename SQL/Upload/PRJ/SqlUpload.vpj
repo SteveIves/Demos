@@ -201,6 +201,7 @@
 			<F N="../TEMPLATES/map.tpl"/>
 			<F N="../TEMPLATES/select_row.tpl"/>
 			<F N="../TEMPLATES/select_rows.tpl"/>
+			<F N="../TEMPLATES/update.tpl"/>
 		</Folder>
 		<Folder
 			Name="Source Files"

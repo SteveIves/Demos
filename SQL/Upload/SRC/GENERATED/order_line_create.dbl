@@ -40,9 +40,24 @@ function order_line_create ,^val
         length      ,int        ;;Length of a string
         transaction ,int        ;;Transaction in process
         errtxt      ,a256       ;;Returned error message text
-        sql         ,string     ;;SQL statement
     endrecord
 
+	literal
+		sql_create, a*, "CREATE TABLE ORDER_LINE ("
+		& "ORDER_NUMBER DECIMAL(8) NOT NULL,"
+		& "LINE_NUMBER DECIMAL(3) NOT NULL,"
+		& "SKU VARCHAR(10) NOT NULL,"
+		& "DESCRIPTION VARCHAR(80) NOT NULL,"
+		& "QTY_ORDERED DECIMAL(6) NOT NULL,"
+		& "QTY_ALLOCATED DECIMAL(6),"
+		& "PRICE DECIMAL(6,2),"
+		& "LINE_VALUE DECIMAL(6,2),"
+		& "TAX DECIMAL(6,2),"
+		& "TIMESTAMP,"
+		& "CONSTRAINT PK_ORDER_LINE PRIMARY KEY CLUSTERED (ORDER_NUMBER ASC,LINE_NUMBER ASC))"
+		sql_index1, a*, "CREATE INDEX IX_ORDER_LINE_SKU ON ORDER_LINE(SKU ASC)"
+	endliteral
+	
 proc
 
     init local_data
@@ -65,27 +80,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE TABLE ORDER_LINE ("
-        & + "ORDER_NUMBER DECIMAL(8) NOT NULL,"
-        & + "LINE_NUMBER DECIMAL(3) NOT NULL,"
-        & + "SKU VARCHAR(10) NOT NULL,"
-        & + "DESCRIPTION VARCHAR(80) NOT NULL,"
-        & + "QTY_ORDERED DECIMAL(6) NOT NULL,"
-        & + "QTY_ALLOCATED DECIMAL(6),"
-        & + "PRICE DECIMAL(6,2),"
-        & + "LINE_VALUE DECIMAL(6,2),"
-        & + "TAX DECIMAL(6,2),"
-        & + "TIMESTAMP,"
-        & + "CONSTRAINT PK_ORDER_LINE PRIMARY KEY CLUSTERED"
-        & + " (ORDER_NUMBER ASC,LINE_NUMBER ASC))"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -93,16 +94,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "CREATE INDEX IX_ORDER_LINE_SKU "
-        &     "ON ORDER_LINE(SKU ASC)"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -110,15 +108,13 @@ proc
     ;;
     if (ok)
     begin
-        sql = "GRANT ALL ON ORDER_LINE TO PUBLIC"
-
-        call open_cursor
-
-        if (ok)
-        begin
-            call execute_cursor
-            call close_cursor
-        end
+		if (%ssc_open(a_dbchn,cursor,"GRANT ALL ON ORDER_LINE TO PUBLIC",SSQL_NONSEL)==SSQL_NORMAL) then
+		begin
+			call execute_cursor
+			call close_cursor
+		end
+		else
+			call open_cursor_error
     end
 
     ;;-------------------------------------------------------------------------
@@ -156,20 +152,6 @@ proc
 
     freturn ok
 
-;------------------------------------------------------------------------------
-;;Open a cursor
-;;
-open_cursor,
-
-    if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL)==SSQL_FAILURE)
-    begin
-        ok = false
-        if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
-            errtxt="Failed to open cursor"
-    end
-
-    return
-
 ;;-----------------------------------------------------------------------------
 ;;Execute a cursor
 ;;
@@ -202,6 +184,17 @@ close_cursor,
         end
         clear cursor
     end
+
+    return
+
+;------------------------------------------------------------------------------
+;;Process an error
+;;
+open_cursor_error,
+
+	ok = false
+	if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_FAILURE)
+		errtxt="Failed to open cursor"
 
     return
 
