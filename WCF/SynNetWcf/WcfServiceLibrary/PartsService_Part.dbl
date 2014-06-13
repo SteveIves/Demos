@@ -1,0 +1,126 @@
+;;******************************************************************************
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
+;;******************************************************************************
+
+import System
+import System.Collections.Generic
+import System.ServiceModel
+import System.Threading.Tasks
+import AppDomainProtection
+import PartsSystem
+
+namespace WcfServiceLibrary
+
+    public partial class PartsService
+
+        {OperationContract}
+        public method CreatePart, MethodStatus
+            required in aPart, @Part
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.CreatePart(aPart))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
+
+        {OperationContract}
+        public method ReadPart, MethodStatus
+            required in  aId, string
+            required out aPart, @Part
+            required out aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Part,String>>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data tmpPart, @Part
+                data tmpGrfa, String
+                completionSource.SetResult(Tuple.Create(api.ReadPart(aId,tmpPart,tmpGrfa),tmpPart,tmpGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aPart = completionSource.Task.Result.Item2
+            aGrfa = completionSource.Task.Result.Item3
+            mreturn completionSource.Task.Result.Item1
+        endmethod
+
+        {OperationContract}
+        public method ReadAllParts, MethodStatus
+            required out aParts, @List<Part>
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,List<Part>>>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data tmpParts, @List<Part>
+                completionSource.SetResult(Tuple.Create(api.ReadAllParts(tmpParts),tmpParts))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aParts = completionSource.Task.Result.Item2
+            mreturn completionSource.Task.Result.Item1
+        endmethod
+
+        {OperationContract}
+        public method UpdatePart, MethodStatus
+            required inout aPart, @Part
+            required inout aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,Part,String>>()
+            data tmpPart, @Part, aPart
+            data tmpGrfa, String, aGrfa
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(Tuple.Create(api.UpdatePart(tmpPart,tmpGrfa),tmpPart,tmpGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            aPart = completionSource.Task.Result.Item2
+            aGrfa = completionSource.Task.Result.Item3
+            mreturn completionSource.Task.Result.Item1
+        endmethod
+
+        {OperationContract}
+        public method DeletePart, MethodStatus
+            required in aGrfa, String
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.DeletePart(aGrfa))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
+
+        {OperationContract}
+        public method PartExists, MethodStatus
+            required in aId, string
+            endparams
+        proc
+            data completionSource = new TaskCompletionSource<MethodStatus>()
+            lambda curryParams()
+            begin
+                data api, @PartsSystemAPI, new PartsSystemAPI()
+                completionSource.SetResult(api.PartExists(aId))
+            end
+            this.ServiceDispatcher.Dispatch(curryParams)
+            completionSource.Task.Wait()
+            mreturn completionSource.Task.Result
+        endmethod
+
+    endclass
+
+endnamespace
