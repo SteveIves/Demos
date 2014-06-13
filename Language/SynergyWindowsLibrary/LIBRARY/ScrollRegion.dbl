@@ -1,0 +1,50 @@
+
+;;; <summary>
+;;; Sets the scrolling region within the main screen
+;;; </summary>
+;;; <param name="top">Top row of scrolling region</param>
+;;; <param name="bottom">Bottom row of scrolling region</param>
+;;; <returns>void</returns>
+subroutine ScrollRegion
+	required in top		,int
+	required in bottom	,int
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	xcall WScrollRegion(widMAIN,top,bottom)
+
+	xreturn
+	
+endsubroutine
+
+;;; <summary>
+;;; Sets the scrolling region within a window
+;;; </summary>
+;;; <param name="wid">Window ID</param>
+;;; <param name="top">Top row of scrolling region</param>
+;;; <param name="bottom">Bottom row of scrolling region</param>
+;;; <returns>void</returns>
+subroutine WScrollRegion
+	required in wid		,int
+	required in top		,int
+	required in bottom	,int
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	;TODO: More work needed for scrolling. Not this simple!!!
+	
+	xcall w_area(wid,WA_SET,top,1,(bottom-top+1),winenvScreenWidth)
+	xcall w_disp(wid,WD_POS,top,1)
+	
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine

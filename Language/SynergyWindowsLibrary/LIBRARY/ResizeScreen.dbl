@@ -1,0 +1,42 @@
+;;; <summary>
+;;; Resize the screen to new dimensions. If a new height and/or width are passed
+;;; then they are used, otherwise the screen is reset to its original size.
+;;; </summary>
+;;; <param name="newScreenHeight">New screen height in rows</param>
+;;; <param name="newScreenWidth">New screen width in columns</param>
+;;; <returns></returns>
+subroutine ResizeScreen
+	optional in newScreenHeight	,n
+	optional in newScreenWidth	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	;;If we didn't get any parameters then reset to the initial size
+	if ((!^passed(newScreenHeight))&&(!^passed(newScreenWidth))) then 
+	begin
+		winenvScreenHeight = winenvInitialHeight
+		winenvScreenWidth = winenvInitialWidth
+	end
+	else
+	begin
+		;;Use the new dimensions we were given
+		if (^passed(newScreenHeight))
+			winenvScreenHeight = newScreenHeight
+		if (^passed(newScreenWidth))
+			winenvScreenWidth = newScreenWidth
+	end
+	
+	xcall w_proc(WP_REMOVE,widMAIN,
+	&		 	 WP_RESIZE,WPR_SCREEN,winenvScreenHeight,winenvScreenWidth,
+	&       	 WP_RESIZE,widMAIN,winenvScreenHeight,winenvScreenWidth,
+	&		 	 WP_PLACE,widMAIN,1,1)
+	
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine

@@ -1,0 +1,144 @@
+;;; <summary>
+;;; 
+;;; </summary>
+;;; <param name="terminalChannel"></param>
+;;; <param name="screenHeight"></param>
+;;; <param name="wscrreWidth"></param>
+;;; <param name="maxWindows"></param>
+;;; <param name="autoUpdate"></param>
+;;; <returns></returns>
+subroutine OpenTerminal
+
+	optional in terminalChannel	,n
+	optional in screenHeight	,n
+	optional in screenWidth		,n
+	optional in maxWindows		,n
+	optional in autoUpdate		,boolean
+	
+	.include "DEF:SynergyWindowsLibrary.def"
+
+	.ifdef D_GUI
+	.define COLOR_BLACK     0
+	.define COLOR_BLUE      1
+	.define COLOR_LIME      2
+	.define COLOR_CYAN      3
+	.define COLOR_RED       4
+	.define COLOR_FUCHSIA   5
+	.define COLOR_YELLOW    6
+	.define COLOR_WHITE     7
+	.define COLOR_GREY      8
+	.define COLOR_NAVY      9
+	.define COLOR_GREEN     10
+	.define COLOR_TEAL      11
+	.define COLOR_MAROON    12
+	.define COLOR_PURPLE    13
+	.define COLOR_OLIVE     14
+	.define COLOR_SILVER    15
+	.endc
+
+	stack record 
+		maxWnd				,i4
+		alreadyInitialized	,i4
+	endrecord
+	
+proc
+
+	xcall flags(7004020,1)
+
+	;;If we were given a terminal channel number and the channel is already
+	;;open then make sure it's oprn to the terminal. Otherwise open a new one
+	chTT = 0
+	if (^passed(terminalChannel)&&terminalChannel) then 
+	begin
+		if (%chopen(terminalChannel)) then
+		begin
+			;;Make sure the channel is open to the terminal
+			data deviceName, a3
+			xcall filnm(terminalChannel,deviceName)
+			if (deviceName=="TT:") then
+				chTT = terminalChannel
+			else
+			begin
+				;;Can't use the requested channel, it's already in use for something else
+				open(chTT=0,O,"TT:")
+			end
+		end
+		else
+		begin
+			;;Yes, we can use the requested channel, but it's not already open
+			open(chTT=terminalChannel,O,"TT:")
+		end
+	end
+	else
+	begin
+		;;We weren't given a channel number so we'll just pick one
+		open(chTT=0,O,"TT:")
+	end
+
+	;;If we were given an initial screen height then use it, otherwise use 24
+	if (^passed(screenHeight)) then 
+		winenvScreenHeight = screenHeight
+	else
+		winenvScreenHeight = 24
+	
+	;;If we were given an initial screen width then use it, otherwise use 80
+	if (^passed(screenWidth)) then 
+		winenvScreenWidth = screenWidth
+	else
+		winenvScreenWidth = 80
+
+	;;Save away the initial screen dimensions so that we can restore them later
+	winenvInitialHeight = winenvScreenHeight
+	winenvInitialWidth  = winenvScreenWidth
+	
+	;;Were we told how many windows to allow for?
+	if (^passed(maxWindows)&&maxWindows) then 
+		maxWnd = maxWindows
+	else
+		maxWnd = 10
+	
+	;;Are we being asked to auto-update the screen after every W_DISP?
+	if (^passed(autoUpdate)) then
+		winenvAutoUpdate = autoUpdate
+	else
+		winenvAutoUpdate = false
+	
+	;;Set the default color palette number
+	winenvDefaultPalette = 1
+	
+	;;Turn on Synergy Windows, detecting if this has already been done
+	xcall w_init(1,chTT,maxWnd,winenvScreenHeight,winenvScreenWidth,alreadyInitialized)
+
+	if (!alreadyInitialized)
+	begin
+		.ifdef D_GUI
+		xcall w_proc(WP_PALET, 1, SYSCOLOR_WINDOW, SYSCOLOR_WINDOWTEXT,
+		&	     WP_PALET, 2, COLOR_WHITE, COLOR_GREEN,   
+		&	     WP_PALET, 3, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET, 4, COLOR_WHITE, COLOR_RED,   
+		&	     WP_PALET, 5, COLOR_WHITE, COLOR_BLUE,    
+		&	     WP_PALET, 6, COLOR_RED  , COLOR_WHITE,   
+		&	     WP_PALET, 7, COLOR_BLUE , COLOR_WHITE,   
+		&	     WP_PALET, 8, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET, 9, COLOR_WHITE, COLOR_RED,     
+		&	     WP_PALET,10, COLOR_WHITE, COLOR_RED,     
+		&	     WP_PALET,11, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET,12, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET,13, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET,14, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET,15, COLOR_WHITE, COLOR_BLACK,   
+		&	     WP_PALET,16, COLOR_WHITE, COLOR_BLACK)   
+		.endc
+
+		xcall w_proc(WP_CREATE,widMAIN,'MAIN',winenvScreenHeight,winenvScreenWidth,
+		&			 WP_PLACE, widMAIN,1,1)
+
+		xcall w_brdr(widMAIN,WB_OFF)
+
+		if (winenvAutoUpdate)
+			xcall w_updt
+	end
+	
+	xreturn
+
+endsubroutine

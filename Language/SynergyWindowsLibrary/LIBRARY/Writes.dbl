@@ -1,0 +1,49 @@
+;;; <summary>
+;;; 
+;;; </summary>
+;;; <param name="aText">Text to display</param>
+;;; <param name="aPalette">Color palette # to use</param>
+;;; <returns>void</returns>
+subroutine WRITES
+	required in aText		,a
+	optional in aPalette	,n
+	endparams
+	.include "DEF:SynergyWindowsLibrary.def"
+proc
+	xcall WWRITES(widMAIN,aText,aPalette)
+	xreturn
+endsubroutine
+
+;;; <summary>
+;;; 
+;;; </summary>
+;;; <param name="aWindow">Window ID</param>
+;;; <param name="aText">Text to display</param>
+;;; <param name="aPalette">Color palette # to use</param>
+;;; <returns>void</returns>
+subroutine WWRITES
+	required in aWindow		,i
+	required in aText		,a
+	optional in aPalette	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	;;If necessary, set the color palette
+	if (^passed(aPalette)&&(aPalette!=winenvDefaultPalette))
+		xcall w_disp(widMAIN,WD_COLOR,aPalette)
+	
+	xcall w_disp(aWindow,WD_WRITES,aText)
+
+	;;If necessary, reset the color palette
+	if (^passed(aPalette)&&(aPalette!=winenvDefaultPalette))
+		xcall w_disp(widMAIN,WD_COLOR,winenvDefaultPalette)
+
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+

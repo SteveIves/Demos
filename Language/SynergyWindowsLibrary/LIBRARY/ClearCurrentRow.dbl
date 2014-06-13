@@ -1,0 +1,29 @@
+
+subroutine ClearCurrentRow
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	xcall WClearCurrentRow(widMAIN)
+	
+	xreturn
+
+endsubroutine
+
+subroutine WClearCurrentRow
+	required in windowId	,i4
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	xcall w_disp(windowId,WD_CLR,WDC_LIN)
+
+	xreturn	
+
+endsubroutine
+
+

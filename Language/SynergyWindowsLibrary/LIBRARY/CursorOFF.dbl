@@ -1,0 +1,19 @@
+;;; <summary>
+;;; Turns the cursor off
+;;; </summary>
+;;; <returns>void</returns>
+subroutine CURSOR_OFF
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	xcall w_proc(WP_CURSOR,WPC_OFF)
+
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+
+endsubroutine

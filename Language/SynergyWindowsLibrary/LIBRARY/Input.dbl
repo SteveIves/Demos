@@ -1,0 +1,155 @@
+
+;;; <summary>
+;;; Accepts a single character from the main window
+;;; </summary>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aChar">Character pressed</param>
+;;; <param name="aClear">Clear from position to end of line after entry</param>
+;;; <returns>void</returns>
+subroutine AcceptCharacter
+	optional in 			aRow	,n
+	optional in 			aCol	,n
+	optional in				aPrompt	,a
+	required in mismatch 	aChar	,n
+	optional in 			aClear	,boolean
+	endparams
+	.include "DEF:SynergyWindowsLibrary.def"
+proc
+	xcall WAcceptCharacter(widMAIN,aRow,aCol,aPrompt,aChar,aClear)
+	xreturn
+endsubroutine
+
+;;; <summary>
+;;; Accepts a single character from a specified window
+;;; </summary>
+;;; <param name="aWindow">ID of window to accept character from</param>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aChar">Character pressed</param>
+;;; <param name="aClear">Clear from position to end of line after entry</param>
+;;; <returns>void</returns>
+subroutine WAcceptCharacter
+	required in 			aWindow	,i
+	optional in 			aRow	,n
+	optional in 			aCol	,n
+	optional in				aPrompt	,a
+	required in mismatch 	aChar	,n
+	optional in 			aClear	,boolean
+	endparams
+
+	.include "WND:windows.def"
+
+	stack record 
+		newRow						,i4
+		newCol						,i4
+		clearFromRow				,i4
+		clearFromCol				,i4
+	endrecord
+
+proc
+	;;If we were passed a new row then use it, otherwise use the current row
+	if (^passed(aRow)) then 
+		newRow = aRow
+	else
+		newRow = 0
+	
+	;;If we were passed a new column then use it, otherwise use the current column
+	if (^passed(aCol)) then 
+		newCol = aCol
+	else
+		newCol = 0
+
+	;;Position the cursor if necessary
+	if (newRow||newCol)
+		xcall w_disp(aWindow,WD_POS,newRow,newCol)
+
+	;;If we need to clear, record the position to clear from
+	if (^passed(aClear)&&aClear)
+	begin
+		clearFromRow = %w_info(WIF_ROWPOS,aWindow)
+		clearFromCol = %w_info(WIF_COLPOS,aWindow)
+	end
+	
+	;;Display the prompt if necessary
+	if (aPrompt)
+		xcall w_disp(aWindow,aPrompt)
+	
+	;;Wait for the key press
+	xcall w_disp(aWindow,WD_ACCEPT,aChar)
+
+	;;Make sure there is nothing remaining in the keyboard buffer
+	while (%ttsts)
+	begin
+		data tmpChar, a1
+		xcall w_disp(aWindow,WD_ACCEPT,tmpChar)
+	end
+		
+	;;Clear if necessary
+	if (^passed(aClear)&&aClear)
+		xcall w_disp(aWindow,WD_POS,clearFromRow,clearFromCol,WD_CLR,WDC_EOL)
+	
+	xreturn
+	
+endsubroutine
+
+;;; <summary>
+;;; Enters data into a variable from the main window
+;;; </summary>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aData">Characters entered</param>
+;;; <returns>void</returns>
+subroutine READS
+	optional in 		aRow	,n
+	optional in 		aCol	,n
+	required in			aData	,a
+	endparams
+	.include "DEF:SynergyWindowsLibrary.def"
+proc
+	xcall WREADS(widMAIN,aRow,aCol,aData)
+	xreturn
+endsubroutine
+
+;;; <summary>
+;;; Enters data into a variable from a specified window
+;;; </summary>
+;;; <param name="aWindow">ID of window to enter data from</param>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aData">Characters entered</param>
+;;; <returns>void</returns>
+subroutine WREADS
+	required in 		aWindow	,i
+	optional in 		aRow	,n
+	optional in 		aCol	,n
+	required in			aData	,a
+	endparams
+
+	.include "WND:windows.def"
+
+	stack record 
+		newRow						,i4
+		newCol						,i4
+	endrecord
+
+proc
+	;;If we were passed a new row then use it, otherwise use the current row
+	if (^passed(aRow)) then 
+		newRow = aRow
+	else
+		newRow = 0
+
+	;;If we were passed a new column then use it, otherwise use the current column
+	if (^passed(aCol)) then 
+		newCol = aCol
+	else
+		newCol = 0
+
+	xcall w_disp(aWindow,WD_POS,newRow,newCol,WD_READS,aData)
+
+	xreturn
+	
+endsubroutine
+
+

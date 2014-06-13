@@ -1,0 +1,16 @@
+subroutine CloseTerminal
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+
+	xcall w_proc(WP_DELETE,widMAIN)
+	
+	xcall w_exit
+	
+	close chTT
+	
+	xreturn
+
+endsubroutine

@@ -1,0 +1,27 @@
+;;; <summary>
+;;; Beep (ring the terminal bell)
+;;; </summary>
+;;; <param name="howManyTimes">How many times to beep (default 1)</param>
+;;; <returns>void</returns>
+subroutine Beep
+	optional in howManyTimes, n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+	if (^passed(howManyTimes)) then
+	begin
+		data ix, int
+		for ix from 1 thru howManyTimes
+			xcall w_disp(widMAIN,WD_BELL)
+	end
+	else
+		xcall w_disp(widMAIN,WD_BELL)
+
+	if (winenvAutoUpdate)
+		xcall w_updt
+	
+	xreturn
+	
+endsubroutine

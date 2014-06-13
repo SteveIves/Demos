@@ -1,0 +1,19 @@
+
+.include "WND:windows.def"
+
+common SynergyWindowsLibrary
+
+	chTT					,i4
+	widMAIN					,i4
+
+	winenvAutoUpdate		,boolean
+
+	winenvScreenHeight		,int
+	winenvScreenWidth		,int
+
+	winenvInitialHeight		,int
+	winenvInitialWidth		,int
+
+	winenvDefaultPalette	,int
+	
+endcommon

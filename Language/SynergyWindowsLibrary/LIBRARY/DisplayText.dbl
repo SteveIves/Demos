@@ -1,0 +1,89 @@
+
+;;; <summary>
+;;; Display text at a position on the main window
+;;; </summary>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aText">Text to display</param>
+;;; <param name="aAttributes">Display attributes (e.g. ATTR_BOLD+ATTR_RVRS)</param>
+;;; <param name="aPalette">Color palette # to use</param>
+;;; <returns>void</returns>
+subroutine DisplayText
+	optional in aRow		,n
+	optional in aCol		,n
+	required in aText		,a
+	optional in aAttributes	,n
+	optional in aPalette	,n
+	endparams
+	.include "DEF:SynergyWindowsLibrary.def"
+proc
+	xcall WDisplayText(widMAIN,aRow,aCol,aText,aAttributes,aPalette)
+	xreturn
+endsubroutine
+
+;;; <summary>
+;;; Display text at a specified position on a window
+;;; </summary>
+;;; <param name="aWindow">Window ID</param>
+;;; <param name="aRow">Screen row</param>
+;;; <param name="aCol">Screen column</param>
+;;; <param name="aText">Text to display</param>
+;;; <param name="aAttributes">Display attributes (e.g. ATTR_BOLD+ATTR_RVRS)</param>
+;;; <param name="aPalette">Color palette # to use</param>
+;;; <returns>void</returns>
+subroutine WDisplayText
+	required in aWindow		,i
+	optional in aRow		,n
+	optional in aCol		,n
+	required in aText		,a
+	optional in aAttributes	,n
+	optional in aPalette	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+	stack record 
+		newRow			,i4
+		newCol			,i4
+	endrecord
+
+proc
+	;;If we were passed a new row then use it, otherwise use the current row
+	if (^passed(aRow)) then 
+		newRow = aRow
+	else
+		newRow = 0
+
+	;;If we were passed a new column then use it, otherwise use the current column
+	if (^passed(aCol)) then 
+		newCol = aCol
+	else
+		newCol = 0
+
+	;;If necessary, set the attributes
+	if (^passed(aAttributes)&&aAttributes)
+		xcall w_disp(widMAIN,WD_ATTR,ATTR_SET+aAttributes)
+	
+	;;If necessary, set the color palette
+	if (^passed(aPalette)&&(aPalette!=winenvDefaultPalette))
+		xcall w_disp(widMAIN,WD_COLOR,aPalette)
+
+	;;Display the text
+	xcall w_disp(aWindow,WD_POS,newRow,newCol,aText)
+
+	;;If necessary, reset the color palette
+	if (^passed(aPalette)&&(aPalette!=winenvDefaultPalette))
+		xcall w_disp(widMAIN,WD_COLOR,winenvDefaultPalette)
+
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	;;If necessary, reset the attributes
+	if (^passed(aAttributes)&&aAttributes)
+		xcall w_disp(widMAIN,WD_ATTR,ATTR_CLR+aAttributes)
+
+	xreturn
+	
+endsubroutine
+

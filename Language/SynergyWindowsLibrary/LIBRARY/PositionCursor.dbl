@@ -1,0 +1,48 @@
+
+subroutine PositionCursor
+	optional in row			,n
+	optional in column		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+proc
+		
+	xcall WPositionCursor(widMAIN,row,column)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WPositionCursor
+	required in windowId	,i
+	optional in row			,n
+	optional in column		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+	stack record 
+		newRow				,i4
+		newCol				,i4
+	endrecord
+	
+proc
+	;;If we were passed a new row then use it, otherwise use the current row
+	if (^passed(row)) then 
+		newRow = row
+	else
+		newRow = 0
+
+	;;If we were passed a new column then use it, otherwise use the current column
+	if (^passed(column)) then 
+		newCol = column
+	else
+		newCol = 0
+
+	if (newRow||newCol)
+		xcall w_disp(windowId,WD_POS,newRow,newCol)
+	
+	xreturn
+	
+endsubroutine

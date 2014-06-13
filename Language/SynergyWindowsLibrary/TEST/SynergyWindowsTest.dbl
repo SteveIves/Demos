@@ -1,0 +1,46 @@
+main SynergyWindowsTest
+
+	.include "DEF:SynergyWindowsLibrary.def"
+
+	record 
+		achar	,a1
+	endrecord
+	
+proc
+	xcall OpenTerminal(,,,,true)
+	
+	;xcall SetDefaultColorPalette(7)
+	
+	xcall DisplayText(1,1,"This is normal text")
+	xcall DisplayText(2,1,"This is bold text",ATTR_BOLD)
+	xcall DisplayText(3,1,"This is reverse text",ATTR_RVRS)
+	xcall DisplayText(4,1,"This is underlined text",ATTR_UNDR)
+	xcall DisplayText(5,1,"This is flashing text",ATTR_BLNK)
+	xcall DisplayText(6,1,"This is bold flashing text",ATTR_BOLD+ATTR_BLNK)
+	
+	xcall DisplayText(8,1,"This text uses color palette 6",,6)
+	xcall DisplayText(9,1,"This text uses color palette 7",,7)
+	
+	xcall AcceptCharacter(24,1,"Press a key to resize to 132 wide: ",achar,true)
+	xcall ResizeScreen(,132)
+	
+	xcall AcceptCharacter(24,1,"Press a key to resize to 40 high: ",achar,true)
+ 	xcall ResizeScreen(40)
+
+	xcall AcceptCharacter(24,1,"Press a key to draw a box: ",achar,true)
+	xcall DrawBox(20,90,30,5)
+	
+	xcall AcceptCharacter(24,1,"Press a key to erase the box: ",achar,true)
+	xcall EraseBox(20,90,30,5)
+
+	xcall AcceptCharacter(24,1,"Press a key to resize to original size: ",achar,true)
+	xcall ResizeScreen
+
+	xcall AcceptCharacter(24,1,"Press a key reset scrolling region: ",achar,true)
+	xcall ScrollRegion(1,24)
+
+	xcall AcceptCharacter(24,1,"Press a key to exit: ",achar)
+	xcall CloseTerminal
+	stop
+	
+endmain

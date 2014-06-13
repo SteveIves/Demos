@@ -1,0 +1,48 @@
+
+;;; <summary>
+;;; Sets the default color palette to be used for the main window. A color
+;;; palette defines a combination of foreground and background colors. Using
+;;; this routine will clear the main screen using the new color palette.
+;;; </summary>
+;;; <param name="paletteNumber">Color palette number to use</param>
+;;; <returns>void</returns>
+subroutine SetDefaultColorPalette
+	required in paletteNumber, n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+
+	xcall WSetDefaultColorPalette(widMAIN,paletteNumber)
+
+	xreturn
+	
+endsubroutine
+
+;;; <summary>
+;;; Sets the default color palette to be used for a specified window. A color
+;;; palette defines a combination of foreground and background colors. Using
+;;; this routine will clear the window using the new color palette.
+;;; </summary>
+;;; <param name="paletteNumber">Color palette number to use</param>
+;;; <returns>void</returns>
+subroutine WSetDefaultColorPalette
+	required in windowId		,i
+	required in paletteNumber	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	winenvDefaultPalette = paletteNumber
+	
+	xcall w_disp(windowId,WD_COLOR,paletteNumber,WD_CLR,WDC_WND)
+	
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine

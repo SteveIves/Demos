@@ -1,0 +1,253 @@
+
+subroutine DrawHorizontalLine
+	required in row		,n
+	required in col		,n
+	required in length	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WDrawHorizontalLine(widMAIN,row,col,length)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WDrawHorizontalLine
+	required in windowId	,i
+	required in row			,n
+	required in col			,n
+	required in length		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Draw the line
+	xcall w_disp(windowId,WD_HLINE,row,col,length)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
+subroutine DrawVerticalLine
+	required in row		,n
+	required in col		,n
+	required in length	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WDrawVerticalLine(widMAIN,row,col,length)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WDrawVerticalLine
+	required in windowId	,i
+	required in row			,n
+	required in col			,n
+	required in length		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Draw the line
+	xcall w_disp(windowId,WD_VLINE,row,col,length)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
+subroutine DrawBox
+	required in topLeftRow	,n
+	required in topLeftCol	,n
+	required in width		,n
+	required in height		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WDrawBox(widMAIN,topLeftRow,topLeftCol,width,height)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WDrawBox
+	required in windowId	,i
+	required in topLeftRow	,n
+	required in topLeftCol	,n
+	required in width		,n
+	required in height		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Top line
+	xcall w_disp(windowId,WD_HLINE,topLeftRow,topLeftCol,width)
+	
+	;;Bottom line
+	xcall w_disp(windowId,WD_HLINE,topLeftRow+height-1,topLeftCol,width)
+	
+	;;Left line
+	xcall w_disp(windowId,WD_VLINE,topLeftRow,topLeftCol,height)
+	
+	;;Right line
+	xcall w_disp(windowId,WD_VLINE,topLeftRow,topLeftCol+width-1,height)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
+;;-----------------------------------------------------------------------------
+
+subroutine EraseHorizontalLine
+	required in row		,n
+	required in col		,n
+	required in length	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WEraseHorizontalLine(widMAIN,row,col,length)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WEraseHorizontalLine
+	required in windowId	,i
+	required in row			,n
+	required in col			,n
+	required in length		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Draw the line
+	xcall w_disp(windowId,WD_HERASE,row,col,length)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
+subroutine EraseVerticalLine
+	required in row		,n
+	required in col		,n
+	required in length	,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WEraseVerticalLine(widMAIN,row,col,length)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WEraseVerticalLine
+	required in windowId	,i
+	required in row			,n
+	required in col			,n
+	required in length		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Draw the line
+	xcall w_disp(windowId,WD_VERASE,row,col,length)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
+subroutine EraseBox
+	required in topLeftRow	,n
+	required in topLeftCol	,n
+	required in width		,n
+	required in height		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	xcall WEraseBox(widMAIN,topLeftRow,topLeftCol,width,height)
+	
+	xreturn
+	
+endsubroutine
+
+subroutine WEraseBox
+	required in windowId	,i
+	required in topLeftRow	,n
+	required in topLeftCol	,n
+	required in width		,n
+	required in height		,n
+	endparams
+
+	.include "DEF:SynergyWindowsLibrary.def"
+	
+proc
+	
+	;;Top line
+	xcall w_disp(windowId,WD_HERASE,topLeftRow,topLeftCol,width)
+	
+	;;Bottom line
+	xcall w_disp(windowId,WD_HERASE,topLeftRow+height-1,topLeftCol,width)
+	
+	;;Left line
+	xcall w_disp(windowId,WD_VERASE,topLeftRow,topLeftCol,height)
+	
+	;;Right line
+	xcall w_disp(windowId,WD_VERASE,topLeftRow,topLeftCol+width-1,height)
+	
+	;;If necessary, update the screen
+	if (winenvAutoUpdate)
+		xcall w_updt
+
+	xreturn
+	
+endsubroutine
+
