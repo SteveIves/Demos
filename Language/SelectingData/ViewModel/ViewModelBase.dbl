@@ -1,0 +1,26 @@
+
+import System
+import System.ComponentModel
+
+namespace SelectingData.ViewModel
+	
+	public abstract class ViewModelBase implements INotifyPropertyChanged
+		
+.region "INotifyPropertyChanged"
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected virtual method NotifyPropertyChanged, void
+			local_property, string 
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				PropertyChanged(this, new PropertyChangedEventArgs(local_property))
+		endmethod
+		
+.endregion
+		
+	endclass
+	
+endnamespace
+

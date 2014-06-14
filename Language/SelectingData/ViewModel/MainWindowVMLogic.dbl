@@ -1,0 +1,253 @@
+
+import System
+import System.Collections
+import System.IO
+import Synergex.SynergyDE.Select
+
+.array 0
+namespace SelectingData.ViewModel
+
+	public partial class MainWindowVM
+		
+		private dataPath, String
+
+		private method checkDataLogical, void
+			endparams
+		proc
+			if (!String.IsNullOrEmpty(dataPath))
+				return
+			dataPath = String.Format("{0}\data",Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))
+			data sts, int
+			xcall setlog("DAT",dataPath,sts)
+		endmethod
+
+		private method doSelectData, void
+			param, @Object
+		proc
+			;;Declare variables
+			data cust, strCustomer
+			data source, @From
+			data filter, @Where
+			data order, @OrderBy
+			disposable data results, @Select
+			data tmpCode, String, ""
+			
+			checkDataLogical()
+
+			;;Define where the data is coming from
+			source = new From("DAT:customer.ism",cust)
+			tmpCode = 'source = new From("DAT:customer.ism",cust)'
+
+			if (param!=^null&&(String)param=="ALL") then
+			begin
+				;;Just get everything
+				results = new Select(source)
+				tmpCode = tmpCode + %char(13) + %char(10) + 'results = new Select(source)'
+			end
+			else
+			begin
+				
+				;;Define a case sensitive where clause for "state is"
+				filter = (Where)cust.state .eq. SelectedState.Code
+				tmpCode = tmpCode + %char(13) + %char(10) + 'filter = (Where)cust.state.eq."' + SelectedState.Code + '"'
+				
+				;;Add a case insensitive where clause for "city begins with"
+				if (!String.IsNullOrWhiteSpace(CityFilter))
+				begin
+					filter = filter .and. (NoCaseWhere)cust.city .eq. CityFilter.Trim()
+					tmpCode = tmpCode + %char(13) + %char(10) + 'filter = filter .and. (NoCaseWhere)cust.city.eq."' + CityFilter.Trim() + '"'
+				end
+				
+				;;Add a case insensitive where clause for "company name contains"
+				if (!string.IsNullOrWhiteSpace(CompanyFilter))
+				begin
+					filter = filter .and. NoCaseWhere.Contains(cust.company,CompanyFilter.Trim())
+					tmpCode = tmpCode + %char(13) + %char(10) + 'filter = filter .and. NoCaseWhere.Contains(cust.company,"' + CompanyFilter.Trim() + '")'
+				end
+				
+				;;Define the order of the returned data
+				using SelectedOrderBy select
+				(OrderByOptions.CustomerId),
+				begin
+					if (OrderByDescending) then
+					begin
+						order = OrderBy.DescendingKey(0)
+						tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.DescendingKey(0)'
+					end
+					else
+					begin
+						order = OrderBy.AscendingKey(0)
+						;tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.AscendingKey(0)'
+					end
+				end
+				(OrderByOptions.City),
+				begin
+					if (OrderByDescending) then
+					begin
+						order = OrderBy.DescendingKey(2)
+						tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.DescendingKey(2)'
+					end
+					else
+					begin
+						order = OrderBy.AscendingKey(2)
+						tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.AscendingKey(2)'
+					end
+				end
+				(OrderByOptions.Company),
+				begin
+					if (OrderByDescending) then
+					begin
+						order = OrderBy.Descending(cust.company)
+						tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.Descending(cust.company)'
+					end
+					else
+					begin
+						order = OrderBy.Ascending(cust.company)
+						tmpCode = tmpCode + %char(13) + %char(10) + 'order = OrderBy.Ascending(cust.company)'
+					end
+				end
+				endusing
+				
+				;;Define the select environment
+				results = new Select(source,filter,order)
+				tmpCode = tmpCode + %char(13) + %char(10) + 'results = new Select(source,filter,order)'
+				
+			end
+			
+			;;Define the fields to be returned by the select
+			;results.SparseRecord(cust.customer_id,cust.company,cust.street,cust.zip)
+			
+			;;Define the fields to be returned by the select
+			if (SparseFields.IsSubsetSelected())
+			begin
+				data args, [#]@VariantDesc, new VariantDesc[SparseFields.GetSelectedFieldCount()]
+				data nextIndex, int, -1
+				data sparseCode, String, "results.SparseRecord("
+				if (SparseFields.CustomerIdSelected)
+				begin
+					args[nextIndex+=1] = cust.customer_id
+					sparseCode = sparseCode + "cust.customer_id,"
+				end
+				if (SparseFields.FirstNameSelected)
+				begin
+					args[nextIndex+=1] = cust.first_name
+					sparseCode = sparseCode + "cust.first_name,"
+				end
+				if (SparseFields.LastNameSelected)
+				begin
+					args[nextIndex+=1] = cust.last_name
+					sparseCode = sparseCode + "cust.last_name,"
+				end
+				if (SparseFields.CompanySelected)
+				begin
+					args[nextIndex+=1] = cust.company
+					sparseCode = sparseCode + "cust.company,"
+				end
+				if (SparseFields.StreetSelected)
+				begin
+					args[nextIndex+=1] = cust.street
+					sparseCode = sparseCode + "cust.street,"
+				end
+				if (SparseFields.CitySelected)
+				begin
+					args[nextIndex+=1] = cust.city
+					sparseCode = sparseCode + "cust.city,"
+				end
+				if (SparseFields.StateSelected)
+				begin
+					args[nextIndex+=1] = cust.state
+					sparseCode = sparseCode + "cust.state,"
+				end
+				if (SparseFields.ZipSelected)
+				begin
+					args[nextIndex+=1] = cust.zip
+					sparseCode = sparseCode + "cust.zip,"
+				end
+				if (SparseFields.PhoneSelected)
+				begin
+					args[nextIndex+=1] = cust.phone
+					sparseCode = sparseCode + "cust.phone,"
+				end
+				if (SparseFields.FaxSelected)
+				begin
+					args[nextIndex+=1] = cust.fax
+					sparseCode = sparseCode + "cust.fax,"
+				end
+				if (SparseFields.EmailSelected)
+				begin
+					args[nextIndex+=1] = cust.email
+					sparseCode = sparseCode + "cust.email,"
+				end
+				if (SparseFields.WebSelected)
+				begin
+					args[nextIndex+=1] = cust.web
+					sparseCode = sparseCode + "cust.web,"
+				end
+				results.SparseRecord(^varargarray(args))
+
+				if (sparseCode.EndsWith(","))
+				begin
+					sparseCode = sparseCode.Substring(0,sparseCode.Length-1) + ")"
+					tmpCode = tmpCode + %char(13) + %char(10) + sparseCode
+				end
+
+			end
+
+			;;Clear out the previous data
+			resetData()
+			
+			;;Build a collection of the matching data
+			foreach cust in results
+				Customers.Add(new Customer(cust))
+
+			tmpCode = tmpCode + %char(13) + %char(10) + 'foreach cust in results'
+			tmpCode = tmpCode + %char(13) + %char(10) + '    Customers.Add(new Customer(cust))'
+			
+
+			Code = tmpCode
+
+		endmethod
+		
+		private method doDelete, void
+			param, @Object
+		proc
+			;Get the collection of selected items from the grid
+			data grid = ^as(param, System.Windows.Controls.DataGrid)
+			data items, @IList, (@IList)grid.SelectedItems
+
+			;;Define variables
+			data filter, @Where
+			data custObj, @Customer
+			data cust, strCustomer
+			data firstOne, boolean, true
+			disposable data results, @Select
+
+			checkDataLogical()
+
+			;;Setup a where clause identify the selected grid rows
+			foreach custObj in items
+			begin
+				if (firstOne) then
+				begin
+					filter = (Where)cust.customer_id .eq. %integer(custObj.CustomerId,8)
+					firstOne = false
+				end
+				else
+					filter = filter .or. (Where)cust.customer_id .eq. %integer(custObj.CustomerId,8)
+			end
+
+			;;Configure the select
+			results = new Select(new From("DAT:customer.ism",cust,"/io=u:i"),filter)
+
+			;;Delete the matching records
+			results.Delete()
+
+			;;Refresh the data in the grid
+			doSelectData(^null)
+			
+		endmethod
+		
+	endclass
+
+endnamespace
+

@@ -1,0 +1,355 @@
+
+import System
+import System.Collections
+import System.Collections.ObjectModel
+import System.ComponentModel
+import System.Text
+import System.Windows
+import System.Windows.Input
+import Synergex.SynergyDE.Select
+import SelectingData.Model
+
+namespace SelectingData.ViewModel
+	
+	enum OrderByOptions
+		CustomerId
+		City
+		Company
+	endenum
+
+	public partial class MainWindowVM extends ViewModelBase
+		
+.region "Customers collection"
+		
+		private mCustomers, @ObservableCollection<Customer>
+		
+		public property Customers, @ObservableCollection<Customer>
+			method get
+			proc
+				if (mCustomers==^null)
+					Customers = new ObservableCollection<Customer>()
+				mreturn mCustomers
+			endmethod
+			method set
+			proc
+				mCustomers = value
+				NotifyPropertyChanged("Customers")
+			endmethod
+		endproperty
+		
+.endregion
+
+.region "Selected customer"
+
+		private mFirstSelectedIndex, int
+
+		public property FirstSelectedIndex, int
+			method get
+			proc
+				mreturn mFirstSelectedIndex
+			endmethod
+			method set
+			proc
+				mFirstSelectedIndex = value
+				NotifyPropertyChanged("FirstSelectedIndex")
+			endmethod
+		endproperty
+
+.endregion
+
+.region "Customer sparse record fields"
+
+		private mSparseFields, @CustomerFieldSelector
+
+		public property SparseFields, @CustomerFieldSelector
+			method get
+			proc
+				if (mSparseFields==^null)
+					SparseFields = new CustomerFieldSelector()
+				mreturn mSparseFields
+			endmethod
+			method set
+			proc
+				mSparseFields = value
+				NotifyPropertyChanged("SparseFields")
+			endmethod
+		endproperty
+
+.endregion
+
+.region "States collection"
+
+		private mStates, @UsStates
+
+		public property States, @UsStates
+			method get
+			proc
+				if (mStates==^null)
+					States = new UsStates()
+				mreturn mStates
+			endmethod
+			method set
+			proc
+				mStates = value
+				NotifyPropertyChanged("States")
+			endmethod
+		endproperty
+
+		private mSelectedState, @UsState
+
+		public property SelectedState, @UsState
+			method get
+			proc
+				if (mSelectedState==^null)
+					SelectedState = States[0]
+				mreturn mSelectedState
+			endmethod
+			method set
+			proc
+				mSelectedState = value
+				NotifyPropertyChanged("SelectedState")
+			endmethod
+		endproperty
+
+.endregion
+
+.region "City and company filters"
+
+		private mCityFilter, String, ""
+		
+		public property CityFilter, String
+			method get
+			proc
+				mreturn mCityFilter
+			endmethod
+			method set
+			proc
+				mCityFilter = value
+				NotifyPropertyChanged("CityFilter")
+			endmethod
+		endproperty
+		
+		private mCompanyFilter, String, ""
+		
+		public property CompanyFilter, String
+			method get
+			proc
+				mreturn mCompanyFilter
+			endmethod
+			method set
+			proc
+				mCompanyFilter = value
+				NotifyPropertyChanged("CompanyFilter")
+			endmethod
+		endproperty
+		
+.endregion
+
+.region "OrderBy selections"
+
+		private mSelectedOrderBy, OrderByOptions, OrderByOptions.CustomerId
+
+		public property SelectedOrderBy, OrderByOptions
+			method get
+			proc
+				mreturn mSelectedOrderBy
+			endmethod
+			method set
+			proc
+				mSelectedOrderBy = value
+				NotifyPropertyChanged("SelectedOrderBy")
+			endmethod
+		endproperty
+
+		private mOrderByDescending, Boolean, false
+
+		public property OrderByDescending, Boolean
+			method get
+			proc
+				mreturn mOrderByDescending
+			endmethod
+			method set
+			proc
+				mOrderByDescending = value
+				NotifyPropertyChanged("OrderByDescending")
+			endmethod
+		endproperty
+		
+
+.endregion
+
+.region "SelectDataCommand"
+		
+		private mSelectDataCommand, @RelayCommand
+		
+		public property SelectDataCommand, @ICommand
+			method get
+			proc
+				if (mSelectDataCommand == ^null)
+					mSelectDataCommand = new RelayCommand(doSelectData)
+				mreturn mSelectDataCommand
+			endmethod
+		endproperty
+		
+.endregion
+		
+.region "Delete command"
+		
+		private mDeleteCommand, @RelayCommand
+		
+		public property DeleteCommand, @ICommand
+			method get
+			proc
+				if (mDeleteCommand == ^null)
+					mDeleteCommand = new RelayCommand(doDelete, canDelete)
+				mreturn mDeleteCommand
+			endmethod
+		endproperty
+		
+		private method canDelete, Boolean
+			param, @Object
+		proc
+			;;Delete is only valid if there are selected rows, and we haven't done a
+			;;sparse select, or we've done a sparse select that includes CustomerId
+			data subsetSelected = SparseFields.IsSubsetSelected()
+			mreturn (FirstSelectedIndex!=-1) && (!subsetSelected||(subsetSelected&&SparseFields.CustomerIdSelected==true))
+		endmethod
+		
+.endregion
+		
+.region "Reset data command"
+		
+		private mResetDataCommand, @RelayCommand
+		
+		public property ResetDataCommand, @ICommand
+			method get
+			proc
+				if (mResetDataCommand == ^null)
+					mResetDataCommand = new RelayCommand(doResetData,canResetData)
+				mreturn mResetDataCommand
+			endmethod
+		endproperty
+		
+		private method doResetData, void
+			param, @Object
+		proc
+			resetData()
+		endmethod
+		
+		private method canResetData, boolean
+			param, @Object
+			endparams
+		proc
+			mreturn ((Customers!=^null) && (Customers.Count>0))
+		endmethod
+		
+.endregion
+		
+.region "Reload data command"
+		
+		private mReloadDataCommand, @RelayCommand
+		
+		public property ReloadDataCommand, @ICommand
+			method get
+			proc
+				if (mReloadDataCommand == ^null)
+					mReloadDataCommand = new RelayCommand(doReloadData)
+				mreturn mReloadDataCommand
+			endmethod
+		endproperty
+		
+		private method doReloadData, void
+			param, @Object
+		proc
+			data ok, boolean, true
+			
+			resetData()
+			
+			;;Delete the original file
+			try
+			begin
+				xcall delet("DAT:customer.ism")
+			end
+			catch (e, @Exception)
+			begin
+				ok = false
+				MessageBox.Show("Failed to delete DAT:customer.ism. "+e.Message)
+			end
+			endtry
+			
+			;;Copy the saved file
+			if (ok)
+			begin
+				try
+				begin
+					xcall copy("DAT:customer_save.ism","DAT:customer.ism")
+					xcall copy("DAT:customer_save.is1","DAT:customer.is1")
+				end
+				catch (e, @Exception)
+				begin
+					ok = false
+					MessageBox.Show("Failed to copy file. "+e.Message)
+				end
+				endtry
+			end
+			
+			if (ok)
+				doSelectData(^null)
+			
+		endmethod
+		
+.endregion
+		
+.region "Exit command"
+		
+		private mExitCommand, @RelayCommand
+		
+		public property ExitCommand, @ICommand
+			method get
+			proc
+				if (mExitCommand == ^null)
+					mExitCommand = new RelayCommand(doExit)
+				mreturn mExitCommand
+			endmethod
+		endproperty
+		
+		private method doExit, void
+			param, @Object
+		proc
+			Application.Current.Shutdown()
+		endmethod
+		
+.endregion
+		
+.region "Helper methods"
+		
+		private method resetData, void
+			endparams
+		proc
+			Customers = new ObservableCollection<Customer>()
+		endmethod
+		
+.endregion
+		
+.region "Code display"
+
+		private mCode, String
+
+		public property Code, String
+			method get
+			proc
+				mreturn mCode
+			endmethod
+			method set
+			proc
+				mCode = value
+				NotifyPropertyChanged("Code")
+			endmethod
+		endproperty
+
+.endregion
+
+	endclass
+	
+endnamespace
+

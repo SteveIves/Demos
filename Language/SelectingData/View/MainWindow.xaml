@@ -1,0 +1,101 @@
+﻿<Window x:Class="SelectingData.View.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:SelectingData"
+    xmlns:controls="clr-namespace:SelectingData.Controls"
+    xmlns:vm="clr-namespace:SelectingData.ViewModel"
+    Title="Selecting Data Demo"
+    Height="700" Width="900" MinHeight="700" MinWidth="900" 
+    WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:MainWindowVM />
+    </Window.DataContext>
+    
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                <GradientStop Color="#FFF3F2EA" Offset="0.48"/>
+                <GradientStop Color="#FF2FC5F1" Offset="0.181"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="200" />
+        </Grid.RowDefinitions>
+
+        <StackPanel VerticalAlignment="Center">
+
+            <!-- Add WhereControl here -->
+            <controls:WhereControl DataContext="{Binding}" Margin="20,0,0,0" />
+
+            <!-- Add OrderByControl here -->
+            <controls:OrderByControl DataContext="{Binding}" Margin="20,0,0,0" />
+
+            <!-- Add SparseFieldsControl here -->
+            <controls:SparseFieldsControl DataContext="{Binding SparseFields}" Margin="20,0,0,0" />
+
+        </StackPanel>
+
+        <!-- These are the main options buttons -->
+        <StackPanel Grid.Row="1" Height="30" Orientation="Horizontal" Margin="20,0,0,0">
+            <TextBlock Width="60" Text="Actions" VerticalAlignment="Center" Margin="0,0,10,0" />
+
+            <Button Content="Get All" Width="90" Command="{Binding SelectDataCommand}" CommandParameter="ALL" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button ignores ALL of the fields above and retrieves all records in primary key sequence.
+                </Button.ToolTip>
+            </Button>
+
+            <Button Content="Select" Width="90" Command="{Binding SelectDataCommand}" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button retrieves data based on the criteria defined by the fields above.
+                </Button.ToolTip>
+            </Button>
+            <Button Content="Clear Grid" Width="90" Command="{Binding ResetDataCommand}" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button removes all data from the display but does not affect the file in any way.
+                </Button.ToolTip>
+            </Button>
+
+            <Button Content="Delete" Width="90" Command="{Binding DeleteCommand}" CommandParameter="{Binding ElementName=grid}" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button deletes the selected records from the file.
+                </Button.ToolTip>
+            </Button>
+
+            <Button Content="Reload Data" Width="90" Command="{Binding ReloadDataCommand}" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button reloads the original data back into the file to "undo" any deleted records.
+                </Button.ToolTip>
+            </Button>
+
+            <Button Content="Close" Width="90" Command="{Binding ExitCommand}" VerticalAlignment="Center" Margin="0,0,10,0">
+                <Button.ToolTip>
+                    This button closes the applicaiton.
+                </Button.ToolTip>
+            </Button>
+
+            <TextBlock Text="Matching customers:" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBlock Text="{Binding Path=Customers.Count}" VerticalAlignment="Center" Margin="0,0,10,0" />
+        </StackPanel>
+
+        <!-- This is the data grid control that displays the data -->
+        <DataGrid Grid.Row="2" x:Name="grid" IsReadOnly="True"
+                  GridLinesVisibility="None"
+                  Margin="20"
+                  ItemsSource="{Binding Customers}"
+                  SelectedIndex="{Binding FirstSelectedIndex, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                  FontSize="14"
+                  Background="Transparent" RowBackground="Transparent" HeadersVisibility="Column">
+        </DataGrid>
+
+        <!-- This is the code display -->
+        <TextBlock Grid.Row="3" Margin="20,0,20,20" Text="{Binding Code}" FontFamily="Courier New" FontSize="18" FontWeight="Bold" />
+        
+    </Grid>
+
+</Window>

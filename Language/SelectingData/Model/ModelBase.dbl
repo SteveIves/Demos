@@ -1,0 +1,26 @@
+
+import System
+import System.ComponentModel
+
+namespace SelectingData.Model
+
+	public abstract class ModelBase implements INotifyPropertyChanged
+		
+.region "INotifyPropertyChanged"
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected virtual method NotifyPropertyChanged, void
+			local_property, string 
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				PropertyChanged(this, new PropertyChangedEventArgs(local_property))
+		endmethod
+		
+.endregion
+		
+	endclass
+
+endnamespace
+

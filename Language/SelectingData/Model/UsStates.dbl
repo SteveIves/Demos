@@ -1,0 +1,94 @@
+
+import System
+import System.Collections.ObjectModel
+
+namespace SelectingData.Model
+
+	public class UsStates extends ObservableCollection<UsState>
+		
+		public method UsStates
+			endparams
+		proc
+			this.Add(new UsState("Alabama","AL"))
+			this.Add(new UsState("Alaska","AK"))
+			this.Add(new UsState("Arizona","AZ"))
+			this.Add(new UsState("Arkansas","AR"))
+			this.Add(new UsState("California","CA"))
+			this.Add(new UsState("Colorado","CO"))
+			this.Add(new UsState("Connecticut","CT"))
+			this.Add(new UsState("Delaware","DE"))
+			this.Add(new UsState("District of Columbia","DC"))
+			this.Add(new UsState("Florida","FL"))
+			this.Add(new UsState("Georgia","GA"))
+			this.Add(new UsState("Hawaii","HI"))
+			this.Add(new UsState("Idaho","ID"))
+			this.Add(new UsState("Illinois","IL"))
+			this.Add(new UsState("Indiana","IN"))
+			this.Add(new UsState("Iowa","IA"))
+			this.Add(new UsState("Kansas","KS"))
+			this.Add(new UsState("Kentucky","KY"))
+			this.Add(new UsState("Louisiana","LA"))
+			this.Add(new UsState("Maine","ME"))
+			this.Add(new UsState("Maryland","MD"))
+			this.Add(new UsState("Massachusetts","MA"))
+			this.Add(new UsState("Michigan","MI"))
+			this.Add(new UsState("Minnesota","MN"))
+			this.Add(new UsState("Mississippi","MS"))
+			this.Add(new UsState("Missouri","MO"))
+			this.Add(new UsState("Montana","MT"))
+			this.Add(new UsState("Nebraska","NE"))
+			this.Add(new UsState("Nevada","NV"))
+			this.Add(new UsState("New Hampshire","NH"))
+			this.Add(new UsState("New Jersey","NJ"))
+			this.Add(new UsState("New Mexico","NM"))
+			this.Add(new UsState("New York","NY"))
+			this.Add(new UsState("North Carolina","NC"))
+			this.Add(new UsState("North Dakota","ND"))
+			this.Add(new UsState("Ohio","OH"))
+			this.Add(new UsState("Oklahoma","OK"))
+			this.Add(new UsState("Oregon","OR"))
+			this.Add(new UsState("Pennsylvania","PA"))
+			this.Add(new UsState("Rhode Island","RI"))
+			this.Add(new UsState("South Carolina","SC"))
+			this.Add(new UsState("South Dakota","SD"))
+			this.Add(new UsState("Tennessee","TN"))
+			this.Add(new UsState("Texas","TX"))
+			this.Add(new UsState("Utah","UT"))
+			this.Add(new UsState("Vermont","VT"))
+			this.Add(new UsState("Virginia","VA"))
+			this.Add(new UsState("Washington","WA"))
+			this.Add(new UsState("West Virginia","WV"))
+			this.Add(new UsState("Wisconsin","WI"))
+			this.Add(new UsState("Wyoming","WY"))
+		endmethod		
+		
+	endclass
+	
+	public class UsState
+		
+		public method UsState
+			required in aName, String
+			required in aCode, String
+			endparams
+		proc
+			Name = aName
+			Code = aCode
+		endmethod
+		
+		public property Name, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		public property Code, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+	endclass
+endnamespace
+

@@ -1,0 +1,392 @@
+
+import System
+
+namespace SelectingData.Model
+
+	structure strCustomer
+		customer_id     ,i8     ; (1,8)     Key 0
+		last_name       ,a15    ; (9,23)    Key 1 seg 1
+		first_name      ,a15    ; (24,38)   Key 1 seg 2
+		company         ,a30    ; (39,68)
+		street          ,a30    ; (69,98)
+		city            ,a20    ; (99,118)  Key 2
+		state           ,a2     ; (119,120) Key 3
+		zip             ,d5     ; (121,125) Key 4
+		phone           ,a12    ; (126,137)
+		fax             ,a12    ; (138,149)
+		email           ,a27    ; (150,176) Key 5
+		web             ,a50    ; (177,226)
+	endstructure
+
+	public class Customer extends ModelBase
+		
+		private mCustomer, strCustomer
+		
+		public method Customer
+			endparams
+		proc
+			init mCustomer
+		endmethod
+		
+		public method Customer
+			required in c, strCustomer
+			endparams
+		proc
+			mCustomer = c
+		endmethod
+		
+		public property CustomerId, String
+			method get
+			proc
+				if (^a(mCustomer.customer_id)) then
+					mreturn %string(mCustomer.customer_id)
+				else
+					mreturn ""
+			endmethod
+			method set
+			proc
+				mCustomer.customer_id = %integer(value,8)
+				NotifyPropertyChanged("CustomerId")
+			endmethod
+		endproperty
+		
+		public property LastName, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.last_name)
+			endmethod
+			method set
+			proc
+				mCustomer.last_name = value
+				NotifyPropertyChanged("LastName")
+			endmethod
+		endproperty
+		
+		public property FirstName, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.first_name)
+			endmethod
+			method set
+			proc
+				mCustomer.first_name = value
+				NotifyPropertyChanged("FirstName")
+			endmethod
+		endproperty
+		
+		public property Company, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.company)
+			endmethod
+			method set
+			proc
+				mCustomer.company = value
+				NotifyPropertyChanged("Company")
+			endmethod
+		endproperty
+		
+		public property Street, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.street)
+			endmethod
+			method set
+			proc
+				mCustomer.street = value
+				NotifyPropertyChanged("Street")
+			endmethod
+		endproperty
+		
+		public property City, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.city)
+			endmethod
+			method set
+			proc
+				mCustomer.city = value
+				NotifyPropertyChanged("City")
+			endmethod
+		endproperty
+		
+		public property State, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.state)
+			endmethod
+			method set
+			proc
+				mCustomer.state = value
+				NotifyPropertyChanged("State")
+			endmethod
+		endproperty
+		
+		public property Zip, String
+			method get
+			proc
+				if (mCustomer.zip) then
+					mreturn %string(mCustomer.zip,"XXXXX")
+				else
+					mreturn ""
+			endmethod
+			method set
+			proc
+				mCustomer.zip = %integer(value)
+				NotifyPropertyChanged("Zip")
+			endmethod
+		endproperty
+		
+		public property Phone, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.phone)
+			endmethod
+			method set
+			proc
+				mCustomer.phone = value
+				NotifyPropertyChanged("Phone")
+			endmethod
+		endproperty
+		
+		public property Fax, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.fax)
+			endmethod
+			method set
+			proc
+				mCustomer.fax = value
+				NotifyPropertyChanged("Fax")
+			endmethod
+		endproperty
+		
+		public property Email, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.email)
+			endmethod
+			method set
+			proc
+				mCustomer.email = value
+				NotifyPropertyChanged("Email")
+			endmethod
+		endproperty
+		
+		public property Web, String
+			method get
+			proc
+				mreturn %atrim(mCustomer.web)
+			endmethod
+			method set
+			proc
+				mCustomer.web = value
+				NotifyPropertyChanged("Web")
+			endmethod
+		endproperty
+		
+	endclass
+	
+	public class CustomerFieldSelector extends ModelBase
+
+		private allFields, int, 12
+		
+		public method IsSubsetSelected, boolean
+			endparams
+		proc
+			data selectedFields, int, GetSelectedFieldCount()
+			mreturn (selectedFields&&(selectedFields!=allFields))
+		endmethod
+		
+		public method GetSelectedFieldCount, int
+			endparams
+		proc
+			data selectedFields, int, 0
+			if (mCustomerIdSelected)	selectedFields += 1
+			if (mLastNameSelected)		selectedFields += 1
+			if (mFirstNameSelected)		selectedFields += 1
+			if (mCompanySelected)		selectedFields += 1
+			if (mStreetSelected)		selectedFields += 1
+			if (mCitySelected)			selectedFields += 1
+			if (mStateSelected)			selectedFields += 1
+			if (mZipSelected)			selectedFields += 1
+			if (mPhoneSelected)			selectedFields += 1
+			if (mFaxSelected)			selectedFields += 1
+			if (mEmailSelected)			selectedFields += 1
+			if (mWebSelected)			selectedFields += 1
+			mreturn selectedFields
+		endmethod
+
+		private mCustomerIdSelected, boolean
+
+		public property CustomerIdSelected, boolean
+			method get
+			proc
+				mreturn mCustomerIdSelected
+			endmethod
+			method set
+			proc
+				mCustomerIdSelected = value
+				NotifyPropertyChanged("CustomerIdSelected")
+			endmethod
+		endproperty
+		
+		private mLastNameSelected, boolean
+		
+		public property LastNameSelected, boolean
+			method get
+			proc
+				mreturn mLastNameSelected
+			endmethod
+			method set
+			proc
+				mLastNameSelected = value
+				NotifyPropertyChanged("LastNameSelected")
+			endmethod
+		endproperty
+		
+		private mFirstNameSelected, boolean
+		
+		public property FirstNameSelected, boolean
+			method get
+			proc
+				mreturn mFirstNameSelected
+			endmethod
+			method set
+			proc
+				mFirstNameSelected = value
+				NotifyPropertyChanged("FirstNameFirstNameSelected")
+			endmethod
+		endproperty
+		
+		private mCompanySelected, boolean
+		
+		public property CompanySelected, boolean
+			method get
+			proc
+				mreturn mCompanySelected
+			endmethod
+			method set
+			proc
+				mCompanySelected = value
+				NotifyPropertyChanged("CompanySelected")
+			endmethod
+		endproperty
+		
+		private mStreetSelected, boolean
+		
+		public property StreetSelected, boolean
+			method get
+			proc
+				mreturn  mStreetSelected
+			endmethod
+			method set
+			proc
+				mStreetSelected = value
+				NotifyPropertyChanged("StreetSelected")
+			endmethod
+		endproperty
+		
+		private mCitySelected, boolean
+		
+		public property CitySelected, boolean
+			method get
+			proc
+				mreturn mCitySelected
+			endmethod
+			method set
+			proc
+				mCitySelected = value
+				NotifyPropertyChanged("CitySelected")
+			endmethod
+		endproperty
+		
+		private mStateSelected, boolean
+		
+		public property StateSelected, boolean
+			method get
+			proc
+				mreturn mStateSelected
+			endmethod
+			method set
+			proc
+				mStateSelected = value
+				NotifyPropertyChanged("StateSelected")
+			endmethod
+		endproperty
+		
+		private mZipSelected, boolean
+		
+		public property ZipSelected, boolean
+			method get
+			proc
+				mreturn mZipSelected
+			endmethod
+			method set
+			proc
+				mZipSelected = value
+				NotifyPropertyChanged("ZipSelected")
+			endmethod
+		endproperty
+		
+		private mPhoneSelected, boolean
+		
+		public property PhoneSelected, boolean
+			method get
+			proc
+				mreturn mPhoneSelected
+			endmethod
+			method set
+			proc
+				mPhoneSelected = value
+				NotifyPropertyChanged("PhoneSelected")
+			endmethod
+		endproperty
+		
+		private mFaxSelected, boolean
+		
+		public property FaxSelected, boolean
+			method get
+			proc
+				mreturn mFaxSelected
+			endmethod
+			method set
+			proc
+				mFaxSelected = value
+				NotifyPropertyChanged("FaxSelected")
+			endmethod
+		endproperty
+		
+		private mEmailSelected, boolean
+		
+		public property EmailSelected, boolean
+			method get
+			proc
+				mreturn mEmailSelected
+			endmethod
+			method set
+			proc
+				mEmailSelected = value
+				NotifyPropertyChanged("EmailSelected")
+			endmethod
+		endproperty
+		
+		private mWebSelected, boolean
+		
+		public property WebSelected, boolean
+			method get
+			proc
+				mreturn mWebSelected
+			endmethod
+			method set
+			proc
+				mWebSelected = value
+				NotifyPropertyChanged("WebSelected")
+			endmethod
+		endproperty
+
+	endclass
+	
+
+endnamespace
+
