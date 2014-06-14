@@ -1,0 +1,54 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+namespace AutoKeys.Model
+
+	structure strAutoKeyRec
+		recordId    ,i8
+		lastUpdated ,i8
+	endstructure
+	
+	public class TheRecord extends ModelBase
+		
+		private mAutoKeyRec, strAutoKeyRec
+
+		public method TheRecord
+			endparams
+		proc
+			init mAutoKeyRec
+		endmethod
+		
+		public method TheRecord
+			required in aAutoKeyRec, strAutoKeyRec
+			endparams
+		proc
+			mAutoKeyRec = aAutoKeyRec
+		endmethod
+
+		public property RecordId, long
+			method get
+			proc
+				mreturn mAutoKeyRec.recordId
+			endmethod
+		endproperty
+
+		public property LastUpdated, String
+			method get
+			proc
+				mreturn formatI8(mAutoKeyRec.lastUpdated)
+			endmethod
+		endproperty
+
+		private method formatI8, String
+			required in i8ts, i8
+			endparams
+		proc
+			mreturn %string(^d(%datetime_from_i8(i8ts)),"XXXX-XX-XX XX:XX:XX.XXXXXX")
+		endmethod
+
+	endclass
+
+endnamespace
+

@@ -1,0 +1,67 @@
+﻿<Window x:Class="AutoKeys.View.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:AutoKeys.ViewModel"
+    Height="600" Width="900" MinHeight="600" MinWidth="900"
+    Title="ISAM Rev 6 Auto Keys Demo">
+
+    <Window.DataContext>
+        <vm:MainWindowVM />
+    </Window.DataContext>
+    
+    <Grid>
+        
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                <GradientStop Color="#FFFFEF7B" Offset="0"/>
+                <GradientStop Color="#FFFFFFFF" Offset="0.567"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Command="{Binding CreateThreeRecords}">
+                <TextBlock Text="Create Three" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding DeleteAll}">
+                <TextBlock Text="Delete All" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding DeleteSelected}" CommandParameter="{Binding ElementName=grid}">
+                <TextBlock Text="Delete Selected" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding UpdateAll}" >
+                <TextBlock Text="Update All" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding UpdateSelected}" CommandParameter="{Binding ElementName=grid}">
+                <TextBlock Text="Update Selected" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding ClearGrid}" >
+                <TextBlock Text="Clear Grid" TextWrapping="Wrap"/>
+            </Button>
+            <Button Command="{Binding GetAllRecords}">
+                <TextBlock Text="Read All" TextWrapping="Wrap" />
+            </Button>
+            <Button Command="{Binding ResetFile}">
+                <TextBlock Text="Reset File" TextWrapping="Wrap" />
+            </Button>
+        </StackPanel>
+        
+        <DataGrid Grid.Row="1" x:Name="grid" IsReadOnly="True"
+                  GridLinesVisibility="None"
+                  Margin="20"
+                  ItemsSource="{Binding Records}"
+                  SelectedIndex="{Binding FirstSelectedIndex, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                  FontSize="18" AutoGenerateColumns="False"
+                  Background="Transparent" RowBackground="Transparent" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding RecordId}" Header="Primary Key (Auto Sequence)" Width="1*" />
+                <DataGridTextColumn Binding="{Binding LastUpdated}" Header="Alternate Key (Auto Timestamp)" Width="2*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>

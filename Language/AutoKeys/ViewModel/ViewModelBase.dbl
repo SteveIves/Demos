@@ -1,0 +1,36 @@
+
+import System
+import System.ComponentModel
+
+namespace AutoKeys.ViewModel
+	
+	public abstract class ViewModelBase implements INotifyPropertyChanged, IDisposable
+		
+.region "INotifyPropertyChanged"
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected virtual method NotifyPropertyChanged, void
+			local_property, string 
+			endparams
+		proc
+			if (PropertyChanged != ^null)
+				PropertyChanged(this, new PropertyChangedEventArgs(local_property))
+		endmethod
+		
+.endregion
+
+.region "IDisposable"
+
+		public virtual method Dispose, void
+			endparams
+		proc
+
+		endmethod
+
+.endregion
+		
+	endclass
+	
+endnamespace
+

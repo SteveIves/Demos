@@ -1,0 +1,295 @@
+
+import System
+import System.Collections
+import System.Collections.ObjectModel
+import System.Text
+import System.Windows.Input
+import AutoKeys.Model
+
+.array 0
+namespace AutoKeys.ViewModel
+
+	public class MainWindowVM extends ViewModelBase
+
+		private mModel, @ModelLogic
+
+		public method MainWindowVM
+			endparams
+		proc
+			mModel = new ModelLogic()
+		endmethod
+
+		private method doGetAllRecords, void
+			endparams
+		proc
+			Records = mModel.GetAllRecords()
+		endmethod
+
+.region "Bindable properties"
+
+		private mRecords, @ObservableCollection<TheRecord>
+		
+		public property Records, @ObservableCollection<TheRecord>
+			method get
+			proc
+				if (mRecords==^null)
+					doGetAllRecords()
+				mreturn mRecords
+			endmethod
+			method set
+			proc
+				mRecords = value
+				NotifyPropertyChanged("Records")
+			endmethod
+		endproperty
+		
+		private mFirstSelectedIndex, int
+		
+		public property FirstSelectedIndex, int
+			method get
+			proc
+				mreturn mFirstSelectedIndex
+			endmethod
+			method set
+			proc
+				mFirstSelectedIndex = value
+				NotifyPropertyChanged("FirstSelectedIndex")
+			endmethod
+		endproperty
+		
+.endregion
+
+.region "GetAllRecords"
+		
+		private mGetAllRecords, @ICommand
+		
+		public property GetAllRecords, @ICommand
+			method get
+			proc
+				if (mGetAllRecords==^null)
+					mGetAllRecords = new RelayCommand(doGetAllRecords)
+				mreturn mGetAllRecords
+			endmethod
+		endproperty
+		
+		private method doGetAllRecords, void
+			param, @Object
+		proc
+			Records = mModel.GetAllRecords()
+		endmethod
+
+.endregion		
+
+.region "CreateRecords"
+
+		private mCreateThreeRecords, @ICommand
+		
+		public property CreateThreeRecords, @ICommand
+			method get
+			proc
+				if (mCreateThreeRecords==^null)
+					mCreateThreeRecords = new RelayCommand(doCreateThreeRecords)
+				mreturn mCreateThreeRecords
+			endmethod
+		endproperty
+		
+		private method doCreateThreeRecords, void
+			param, @Object
+		proc
+			mModel.CreateRecords(3)
+			doGetAllRecords()
+		endmethod
+		
+.endregion		
+		
+.region "ClearGrid"
+		
+		private mClearGrid, @ICommand
+		
+		public property ClearGrid, @ICommand
+			method get
+			proc
+				if (mClearGrid==^null)
+					mClearGrid = new RelayCommand(doClearGrid,canClearGrid)
+				mreturn mClearGrid
+			endmethod
+		endproperty
+		
+		private method doClearGrid, void
+			param, @Object
+		proc
+			Records = new ObservableCollection<TheRecord>()
+		endmethod
+
+		private method canClearGrid, Boolean
+			param, @Object
+		proc
+			mreturn (Records.Count>0)
+		endmethod
+		
+.endregion		
+		
+.region "DeleteAll"
+		
+		private mDeleteAll, @ICommand
+		
+		public property DeleteAll, @ICommand
+			method get
+			proc
+				if (mDeleteAll==^null)
+					mDeleteAll = new RelayCommand(doDeleteAll,canDeleteAll)
+				mreturn mDeleteAll
+			endmethod
+		endproperty
+		
+		private method doDeleteAll, void
+			param, @Object
+		proc
+			mModel.DeleteAllRecords()
+			doGetAllRecords()
+		endmethod
+		
+		private method canDeleteAll, Boolean
+			param, @Object
+		proc
+			mreturn (Records.Count>0)
+		endmethod
+		
+.endregion		
+		
+.region "ResetFile"
+		
+		private mResetFile, @ICommand
+		
+		public property ResetFile, @ICommand
+			method get
+			proc
+				if (mResetFile==^null)
+					mResetFile = new RelayCommand(doResetFile)
+				mreturn mResetFile
+			endmethod
+		endproperty
+		
+		private method doResetFile, void
+			param, @Object
+		proc
+			mModel.ResetFile()
+			doGetAllRecords()
+		endmethod
+		
+.endregion		
+		
+.region "UpdateAll"
+		
+		private mUpdateAll, @ICommand
+		
+		public property UpdateAll, @ICommand
+			method get
+			proc
+				if (mUpdateAll==^null)
+					mUpdateAll = new RelayCommand(doUpdateAll,canUpdateAll)
+				mreturn mUpdateAll
+			endmethod
+		endproperty
+		
+		private method doUpdateAll, void
+			param, @Object
+		proc
+			mModel.UpdateAllRecords()
+			doGetAllRecords()
+		endmethod
+		
+		private method canUpdateAll, Boolean
+			param, @Object
+		proc
+			mreturn (Records.Count>0)
+		endmethod
+		
+.endregion		
+		
+.region "DeleteSelected"
+		
+		private mDeleteSelected, @RelayCommand
+		
+		public property DeleteSelected, @ICommand
+			method get
+			proc
+				if (mDeleteSelected == ^null)
+					mDeleteSelected = new RelayCommand(doDeleteSelected, canDeleteSelected)
+				mreturn mDeleteSelected
+			endmethod
+		endproperty
+		
+		private method doDeleteSelected, void
+			param, @Object
+		proc
+			;Get the collection of selected items from the grid
+			data grid = ^as(param, System.Windows.Controls.DataGrid)
+			data selectedRecords, @IList, (@IList)grid.SelectedItems
+			data idsToDelete, [#]long, new long[selectedRecords.Count]
+			data ix, long, -1
+			data selectedRecord, @TheRecord
+			foreach selectedRecord in selectedRecords
+				idsToDelete[ix+=1] = selectedRecord.RecordId
+			mModel.DeleteSelectedRecords(idsToDelete)
+			doGetAllRecords()
+		endmethod
+		
+		private method canDeleteSelected, Boolean
+			param, @Object
+		proc
+			mreturn (FirstSelectedIndex!=-1)
+		endmethod
+
+.endregion
+		
+.region "UpdateSelected"
+		
+		private mUpdateSelected, @RelayCommand
+		
+		public property UpdateSelected, @ICommand
+			method get
+			proc
+				if (mUpdateSelected == ^null)
+					mUpdateSelected = new RelayCommand(doUpdateSelected, canUpdateSelected)
+				mreturn mUpdateSelected
+			endmethod
+		endproperty
+		
+		private method doUpdateSelected, void
+			param, @Object
+		proc
+			;Get the collection of selected items from the grid
+			data grid = ^as(param, System.Windows.Controls.DataGrid)
+			data selectedRecords, @IList, (@IList)grid.SelectedItems
+			data idsToUpdate, [#]long, new long[selectedRecords.Count]
+			data ix, long, -1
+			data selectedRecord, @TheRecord
+			foreach selectedRecord in selectedRecords
+				idsToUpdate[ix+=1] = selectedRecord.RecordId
+			mModel.UpdateSelectedRecords(idsToUpdate)
+			doGetAllRecords()
+		endmethod
+		
+		private method canUpdateSelected, Boolean
+			param, @Object
+		proc
+			mreturn (FirstSelectedIndex!=-1)
+		endmethod
+		
+.endregion
+
+.region "IDisposable"
+		
+		public override method Dispose, void
+			endparams
+		proc
+			mModel.Dispose()
+		endmethod
+		
+.endregion
+		
+	endclass
+
+endnamespace
+

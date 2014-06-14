@@ -1,0 +1,147 @@
+
+import System
+import System.Collections.ObjectModel
+import System.Text
+import System.Threading.Tasks
+import Synergex.SynergyDE.Select
+
+namespace AutoKeys.Model
+
+	public class ModelLogic implements IDisposable
+
+		.define FILE_NAME "file.ism"
+		
+		public method ModelLogic
+			endparams
+		proc
+			createFile()
+		endmethod
+
+		public method GetAllRecords, @ObservableCollection<TheRecord>
+			endparams
+		proc
+			data records, @ObservableCollection<TheRecord>, new ObservableCollection<TheRecord>()	
+			data autoKeyRec, strAutoKeyRec
+			disposable data s, @Select, new Select(new From(FILE_NAME,autoKeyRec))
+			foreach autoKeyRec in s
+				records.Add(new TheRecord(autoKeyRec))
+			mreturn records
+		endmethod
+		
+		public method CreateRecords, void
+			required in recordCount, int
+			endparams
+		proc
+			data ch, int
+			data ix, int
+			data autoKeyRec, strAutoKeyRec
+			open(ch=0,u:i,FILE_NAME)
+			for ix from 1 thru recordCount
+			begin
+				init autoKeyRec
+				store(ch,autoKeyRec)
+			end
+			close ch
+		endmethod
+
+		public method DeleteAllRecords, void
+			endparams
+		proc
+			disposable data s, @Select
+			data autoKeyRec, strAutoKeyRec
+			s = new Select(new From(FILE_NAME,autoKeyRec,"/io=u:i"))
+			s.Delete()
+		endmethod
+
+		public method DeleteSelectedRecords, void
+			required in idsToDelete, [#]long
+			endparams
+		proc
+			disposable data s, @Select
+			data w, @Where
+			data autoKeyRec, strAutoKeyRec
+			data first, boolean, true
+			data thisId, long
+
+			foreach thisId in idsToDelete
+			begin
+				if (first) then	
+				begin
+					w = (Where)autoKeyRec.recordId .eq. thisId
+					first = false
+				end
+				else
+					w = w .or. (Where)autoKeyRec.recordId==thisId
+			end
+			s = new Select(new From(FILE_NAME,autoKeyRec,"/io=u:i"),w)
+			s.Delete()
+		endmethod
+
+		public method UpdateAllRecords, void
+			endparams
+		proc
+			disposable data s, @Select
+			data e, @AlphaEnumerator
+			data autoKeyRec, strAutoKeyRec
+			s = new Select(new From(FILE_NAME,autoKeyRec,"/io=u:i"))
+			e = s.GetEnumerator()
+			while (e.MoveNext())
+				e.Current = autoKeyRec
+		endmethod
+
+		public method UpdateSelectedRecords, void
+			required in idsToUpdate, [#]long
+			endparams
+		proc
+			data w, @Where
+			data autoKeyRec, strAutoKeyRec
+			data first, boolean, true
+			data thisId, long
+			
+			foreach thisId in idsToUpdate
+			begin
+				if (first) then	
+				begin
+					w = (Where)autoKeyRec.recordId .eq. thisId
+					first = false
+				end
+				else
+					w = w .or. (Where)autoKeyRec.recordId==thisId
+			end
+
+			disposable data s, @Select, new Select(new From(FILE_NAME,autoKeyRec,"/io=u:i"),w)
+
+			data e, @AlphaEnumerator, s.GetEnumerator()
+
+			while (e.MoveNext())
+				e.Current = autoKeyRec
+			
+		endmethod
+		
+		public method ResetFile, void
+			endparams
+		proc
+			data sts, int
+			xcall isclr(FILE_NAME,sts)
+		endmethod
+
+		private method createFile, void
+			endparams
+		proc
+			data keySpec, [2]a80
+			data fileSpec = FILE_NAME + ",SGRFA"
+			keySpec[1] = "START=1,LENGTH=8,NAME=RECNO,TYPE=SEQUENCE"
+			keySpec[2] = "START=9,LENGTH=8,NAME=UPDATED,TYPE=TIME"
+			xcall isamc(fileSpec,^size(strAutoKeyRec),2,keySpec)
+		endmethod
+
+		public method Dispose, void
+			endparams
+		proc
+			xcall delet(FILE_NAME)
+		endmethod
+
+	endclass
+
+endnamespace
+
