@@ -1,3 +1,4 @@
+
 import SynPSG.System
 import SynPSG.System.IO
 import SynPSG.System.Net
@@ -6,49 +7,60 @@ import SynPSG.System.Net.Sockets
 import SynPSG.System.Net.Mime
 
 main
+
 record
-    myFTP   ,@synpsg.system.net.ftp.FtpClient
+    ftpClient   ,@SynPsg.System.Net.Ftp.FtpClient
 endrecord
 
-.DEFINE D_FTP_SERVER		"localhost"
-.DEFINE D_CONNECTMODE		FtpConnectMode.Passive
-.DEFINE D_USE_CREDENTIALS	1
-.DEFINE D_USERNAME			"anonymous"
-.DEFINE D_PASSWORD			"user@somedomain.com"
-.DEFINE D_LOGGING			true
-.DEFINE D_LOGFILE			"ftp.log"
-
-.DEFINE D_REMOTEDIR			"/"
-.DEFINE D_GETFILE			"ismsts.dbl"
-.DEFINE D_LOCALDIR			"C:\Temp"
-.DEFINE D_SAVEFILE			"ismsts.dbl"
-.DEFINE D_TXFR_MODE			FtpTransferType.Ascii
-
 proc
+
     open(1,i,"TT:")
-    myFtp = new ftpclient( D_FTP_SERVER, 21, D_CONNECTMODE)
-	myFtp.LoggingEnabled = D_LOGGING
-	myFtp.LogFile = D_LOGFILE
 
-	writes(1,'...Attempting to connect...')
+	;Create an instance of the FTP client
+    ftpClient = new ftpclient("ftp.synergexpsg.com",21,FtpConnectMode.Passive)
 
-	if D_USE_CREDENTIALS then
-		myFtp.Connect(D_USERNAME,D_PASSWORD)
-	else
-		myFtp.Connect()
+	;Configure logging
+	ftpClient.LogFile = "ftp.log"
+	ftpClient.LoggingEnabled = false
 
-	if !(myFTP.IsConnected) then
+	ftpClient.LocalDirectory = "D:\"
+
+	;Connect to the remote server
+	writes(1,'Connecting ...')
+	try 
 	begin
-		writes(1,'...Connection failed!...')
+		ftpClient.Connect("flexcon","p@ssw0rd")
+		writes(1,'Connected')
 	end
-	else
+	catch (ex, @ApplicationException)
 	begin
-		writes(1,'...Connection successful...')
-		myFtp.LocalDirectory = D_LOCALDIR
-		myFtp.ChangeDirectory(D_REMOTEDIR)
-		myFtp.GetFile(D_GETFILE, D_SAVEFILE, D_TXFR_MODE)
-		writes(1,'...' + myFtp.LastServerResponse + '...')
-		myFtp.Disconnect()
+		;;There was a problem logging in!
+		writes(1,ftpClient.LastServerResponse)
+		nop
+	end
+	endtry
+
+	if (ftpClient.IsLoggedIn)
+	begin
+		;Change remote directory
+		;writes(1,'Changing remote directory...')
+		;ftpClient.ChangeDirectory("/some/directory")
+		;writes(1,ftpClient.LastServerResponse)
+
+		;Receive a file
+		writes(1,'Retrieving bridge.jpg ...')
+		ftpClient.GetFile("bridge.jpg", "bridge.jpg",FtpTransferType.Binary)
+		writes(1,ftpClient.LastServerResponse)
+
+		;Send a file
+		writes(1,'Sending bridge.jpg as bridge_new.jpg...')
+		ftpClient.PutFile("bridge.jpg", "bridge_new.jpg",FtpTransferType.Binary)
+		writes(1,ftpClient.LastServerResponse)
+
+		writes(1,'Disconnecting...')
+		ftpClient.Disconnect()
+		writes(1,ftpClient.LastServerResponse)
+
 	end
 
 endmain

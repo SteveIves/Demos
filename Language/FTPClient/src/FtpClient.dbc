@@ -1,21 +1,12 @@
-;; Copyright    © 2011 Synergex International Corporation.  All rights reserved.
+;;**********************************************************************
 ;;
-;; WARNING:     All content constituting or related to this code ("Code") is the
-;;              property of Synergex International Corporation ("Synergex") and
-;;              is protected by U.S. and international copyright laws.
-;;              If you were given this Code by a Synergex employee then you may
-;;              use and modify it freely for use within your applications.
+;; Title:       FtpClient.dbc
 ;;
-;;              However, you may use the Code only for your personal use.
-;;              Any other use, unless otherwise authorized in writing by
-;;              Synergex is strictly prohibited.  You may not under any
-;;              circumstances distribute this Code, or any modified version
-;;              or part of this Code, to any third party without first
-;;              obtaining written permission to do so from Synergex.
-;;              In using this Code you accept that it is provided as is,
-;;              and without support or warranty of any kind.
+;; Type:        Class 
 ;;
-;;              Neither Synergex nor the author accept any responsibility
+;; Author:      Tod Phillips, Synergex Professional Services Group
+;;
+;; WARNING:     Neither Synergex nor the author accept any responsibility
 ;;              for any losses or damages of any nature which may arise
 ;;              from the use of this Code.  This header information must
 ;;              remain unaltered in the Code at all times.  Possession
@@ -48,6 +39,7 @@ namespace SynPSG.System.Net.Ftp
     endenum
 
     public class FtpClient
+
         public ConnectMode      ,FtpConnectMode
         public Host             ,string
         public LogFile          ,string
@@ -69,7 +61,7 @@ namespace SynPSG.System.Net.Ftp
         private mLocalDirectory ,string
         private mLoggingEnabled ,boolean
         private mTcpClient      ,@TcpClient
-        private mIsConnected    ,boolean
+        private mIsLoggedIn     ,boolean
         private mRespCode       ,integer
         private mFtpResponse    ,string
 
@@ -104,7 +96,6 @@ namespace SynPSG.System.Net.Ftp
 .ifdef OS_VMS
             mDirSeparator = ""
 .endc
-
         endmethod
 
         ;;********************************************************************
@@ -147,12 +138,14 @@ namespace SynPSG.System.Net.Ftp
             do
                 getResponse(mCtrlStream, mRespCode)
             until !(mCtrlContinues)
+
             if (mRespCode == 220)
             begin
                 sendCommand("USER " + User)
                 do
                     getResponse(mCtrlStream, mRespCode)
-                until !(mCtrlContinues)
+				until !(mCtrlContinues)
+				
                 if (mRespCode == 331)
                 begin
                     sendCommand("PASS " + Pwd)
@@ -160,13 +153,20 @@ namespace SynPSG.System.Net.Ftp
                         getResponse(mCtrlStream, mRespCode)
                     until !(mCtrlContinues)
                 end
+
                 if (mRespCode!=230)
                     throw new applicationException("Login error: "+mFtpResponse)
+
+				mIsLoggedIn = true
+				
                 GetRemoteDirectory()
+
                 if (mRespCode<300)
                     GetDirectoryListing()
 			end
+
             mreturn
+
         endmethod
 
         ;;********************************************************************
@@ -198,7 +198,7 @@ namespace SynPSG.System.Net.Ftp
                 getResponse(mCtrlStream, mRespCode)
             until !(mCtrlContinues || mCtrlStream.DataAvailable)
             mCtrlStream.Close()
-			mIsConnected = false
+			mIsLoggedIn = false
         endmethod
 
         ;;********************************************************************
@@ -303,7 +303,7 @@ namespace SynPSG.System.Net.Ftp
             until !(mCtrlContinues)
             if (mRespCode<300) then
             begin
-				newFile = new FileStream(mLocalDirectory + mDirSeparator + localFileName, FileMode.Create)
+                newFile = new FileStream(mLocalDirectory + mDirSeparator + localFileName, FileMode.Create)
                 while (byteCount = mDataStream.Read(mDataBlock, 0, ^size(mDataBlock)))
                     newFile.Write(mDataBlock(1:byteCount), 0, byteCount)
                 newFile.Close()
@@ -682,6 +682,15 @@ namespace SynPSG.System.Net.Ftp
             method get
             proc
                 mreturn mTcpClient.Connected
+            endmethod
+        endproperty
+
+       ;;********************************************************************
+
+        public property IsLoggedIn ,boolean
+            method get
+            proc
+                mreturn mIsLoggedIn
             endmethod
         endproperty
 
