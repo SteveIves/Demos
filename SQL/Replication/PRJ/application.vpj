@@ -100,6 +100,30 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
+			<Target
+				Name="Reload Data"
+				MenuCaption="&amp;Reload Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+			<Target
+				Name="Import Repository from Schema"
+				MenuCaption="&amp;Import Repository from Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_import.bat"/>
+			</Target>
+			<Target
+				Name="Export Repository to Schema"
+				MenuCaption="&amp;Export Repository to Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_export.bat"/>
+			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -180,8 +204,31 @@
 			<F N="../SRC/APPLICATION/employee_maint_tab.wsc"/>
 		</Folder>
 		<Folder
+			Name="File Definitions"
+			Filters="*.xdl">
+			<F N="../XDL/department.xdl"/>
+			<F N="../XDL/employee.xdl"/>
+			<F N="../XDL/replication.xdl"/>
+		</Folder>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat">
+			<F N="../BAT/load_data.bat"/>
+			<F N="../BAT/register_service.bat"/>
+			<F N="../BAT/remove_service.bat"/>
+			<F N="../BAT/rps_export.bat"/>
+			<F N="../BAT/rps_import.bat"/>
+			<F N="../BAT/start_service.bat"/>
+			<F N="../BAT/stop_service.bat"/>
+		</Folder>
+		<Folder
 			Name="Other Files"
-			Filters=""/>
+			Filters="">
+			<F N="../DAT/DEPARTMENT.SEQ"/>
+			<F N="../DAT/EMPLOYEE.SEQ"/>
+			<F N="../readme.txt"/>
+			<F N="../RPS/rps.sch"/>
+		</Folder>
 	</Files>
 	<Config
 		Name="Debug64"
@@ -278,6 +325,30 @@
 				<Exec
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Reload Data"
+				MenuCaption="&amp;Reload Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+			<Target
+				Name="Import Repository from Schema"
+				MenuCaption="&amp;Import Repository from Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_import.bat"/>
+			</Target>
+			<Target
+				Name="Export Repository to Schema"
+				MenuCaption="&amp;Export Repository to Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_export.bat"/>
 			</Target>
 		</Menu>
 		<SynSettings>
@@ -427,6 +498,30 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
+			<Target
+				Name="Reload Data"
+				MenuCaption="&amp;Reload Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+			<Target
+				Name="Import Repository from Schema"
+				MenuCaption="&amp;Import Repository from Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_import.bat"/>
+			</Target>
+			<Target
+				Name="Export Repository to Schema"
+				MenuCaption="&amp;Export Repository to Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_export.bat"/>
+			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -574,6 +669,30 @@
 				<Exec
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Reload Data"
+				MenuCaption="&amp;Reload Data"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="load_data.bat"/>
+			</Target>
+			<Target
+				Name="Import Repository from Schema"
+				MenuCaption="&amp;Import Repository from Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_import.bat"/>
+			</Target>
+			<Target
+				Name="Export Repository to Schema"
+				MenuCaption="&amp;Export Repository to Schema"
+				RunFromDir="%(BAT)"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveAll">
+				<Exec CmdLine="rps_export.bat"/>
 			</Target>
 		</Menu>
 		<SynSettings>

@@ -5,9 +5,9 @@
 ;                 : D:\Dev\Demos\SQL\Replication\RPS\rpstext.ism
 ;                 : Version 8.1.7
 ;
-;  GENERATED      : 22-MAR-2014, 19:46:59
-;                 : Version 10.1.1c
-;  EXPORT OPTIONS : [ALL] 
+;  GENERATED      : 02-JUL-2014, 12:08:43
+;                 : Version 10.2.3
+;  EXPORT OPTIONS : [ALL-K-R-A] 
  
  
 Format PHONE   Type NUMERIC   "(XXX) XXX-XXXX"   Justify LEFT

@@ -2,7 +2,6 @@
 <Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.2.3">
 	<Projects>
 		<Project File="PRJ/application.vpj"/>
-		<Project File="PRJ/environment.vpj"/>
 		<Project File="PRJ/library.vpj"/>
 		<Project File="PRJ/replicator.vpj"/>
 	</Projects>

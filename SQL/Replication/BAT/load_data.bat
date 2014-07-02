@@ -1,13 +1,21 @@
+@echo off
 setlocal
-if exist %DAT%\action.ism del /q %DAT%\action.ism
-if exist %DAT%\action.is1 del /q %DAT%\action.is1
-if exist %DAT%\department.ism del /q %DAT%\department.ism
-if exist %DAT%\department.is1 del /q %DAT%\department.is1
-if exist %DAT%\employee.ism del /q %DAT%\employee.ism
-if exist %DAT%\employee.is1 del /q %DAT%\employee.is1
-fconvert -it DAT:department.seq -oi DAT:department.ism -d XDL:department.xdl
-fconvert -it DAT:employee.seq -oi DAT:employee.ism -d XDL:employee.xdl
-cd %DAT%
-dbs dbldir:bldism -k XDL:replication.xdl
-cd %ROOT%
+pushd "%DAT%"
+
+echo Deleting existing files...
+if exist %DAT%\REPLICATION.ISM del /q %DAT%\REPLICATION.ISM
+if exist %DAT%\REPLICATION.IS1 del /q %DAT%\REPLICATION.IS1
+if exist %DAT%\DEPARTMENT.ISM  del /q %DAT%\DEPARTMENT.ISM
+if exist %DAT%\DEPARTMENT.IS1  del /q %DAT%\DEPARTMENT.IS1
+if exist %DAT%\EMPLOYEE.ISM    del /q %DAT%\EMPLOYEE.ISM
+if exist %DAT%\EMPLOYEE.IS1    del /q %DAT%\EMPLOYEE.IS1
+
+echo Loading new files...
+fconvert -it DAT:DEPARTMENT.SEQ -oi DAT:DEPARTMENT.ISM -d XDL:DEPARTMENT.XDL
+fconvert -it DAT:EMPLOYEE.SEQ   -oi DAT:EMPLOYEE.ISM   -d XDL:EMPLOYEE.XDL
+
+echo Creating new replication log...
+dbs DBLDIR:bldism -k XDL:REPLICATION.XDL
+
+popd
 endlocal
