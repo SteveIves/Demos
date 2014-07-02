@@ -626,7 +626,7 @@ DoLoadTable,
 	    debuglog(" - Table does not exist!")
     end
     (<0),;Error
-	call FunctionError
+		call FunctionError
     endusing
 
     return
@@ -851,7 +851,7 @@ proc
         clear tch
     end
 
-    log("Replicator will close in 5 seconds")
+    log("Replicator will stop in 5 seconds")
     sleep 5
     
     xreturn
