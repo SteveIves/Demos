@@ -55,178 +55,46 @@ type of project, the major requirements are:
 Requirements
 ------------
 
-This example has only been tested on Synergy/DE V9.1.3 on a Windows system.  I
-believe it should work under V9.1.1, but I have not tested it.  In theory the
-software should also work on UNIX and OpenVMS, although some environmental
-setup would be required.  The database used during testing was Microsoft SQL
-Server 2005 Developer edition, with all the latest service packs and Windows
-Update patches applied.
+This example was originally created using Synergy/DE V9.1.3 on a Windows system,
+and should work on any higher version.  In theory the software should also work
+on UNIX and OpenVMS, although some environmental setup would be required.  The
+database used during testing was Microsoft SQL Server 2005 and the code should
+work with any later version of SQL Server.
 
 Development Environment
 -----------------------
 
-Use workbench and open the Workspace SqlReplication.vpw This workspace contains
-six projects, as follows:
+Use workbench and open the Workspace SQLReplication.vpw This workspace contains
+three projects, as follows:
 
-iolib.vpj       This project is used to develop an ELB called EXE:iolib.elb,
-                which contains routines which are used to access the Synergy
-                applications ISAM files.  If you need to rebuild these routines
-                then make sure the project is active (bold in the project tree,
-                if not then right-click it and select "set active project") and
-                then pick "Rebuild" from the "Build" menu.
+application.vpj Contains a UI Toolkit application that includes an employee
+                maintenance function. The replicator program can be started,
+                stopped and controlled via menu items in the application.
 
-sqllib.vpj      This project is used to develop an ELB called EXE:sqllib.elb,
-                which contains routines which are used to access the SQL Server
-                database tables which mirror the applications ISAM files. These
-                are the tables that will hold the replicated data. If you need
-                to rebuild these routines then make sure the project is active
-                (bold in the project tree, if not then right-click it and select
-                "set active project") and then pick "Rebuild" from the "Build"
-                menu.
+library.vpj     Contains subroutines and functions that are used both by the
+                UI Toolkit application, and the replicator progrma.
 
-tklib.vpj       This project is used to develop a set of miscellaneous routines
-                which can be used by UI Toolkit applications. These routines are
-                contained in EXE:tklib.elb.   If you need to rebuild these
-                routines then make sure the project is active (bold in the
-                project tree, if not then right-click it and select "set active
-                project") and then pick "Rebuild" from the "Build" menu.
+replicator.vpj  Contains the replicator program.
 
-apps.vpj       This project is used to develop routines which are essentially
-                user applications. There are two applications included with
-                this demo, the first is an employee file maintenance routine
-                called employee_maint_tab, and the second is a routine which
-                displays an employee report, called EmployeePhoneList.dbl.
-                These routines are held in EXE:apps.elb  If you need to
-                rebuild these routines then make sure the project is active
-                (bold in the project tree, if not then right-click it and
-                select "set active project") and then pick "Rebuild" from the
-                "Build" menu.
 
-menu.vpj        This project is used to develop a very simple menu system which
-                can be used to activate the applications in apps.elb.  The
-                menu system is called menu.dbl and is compiled into EXE:menu.dbr.
-                If you need to rebuild the menu program, make sure the project
-                is active (bold in the project tree, if not then right-click
-                it and select "set active project"), open the file menu.dbl in
-                the editor, then "Compile", then "Build" from the "Build" menu.
 
-replicator.vpj  This project is used to develop a program called replicator.dbl.
-                This program executes as a Windows Service and performs the
-                replication of the ISAM data to the SQL Server database.
-                If you need to rebuild the menu program, make sure the project
-                is active (bold in the project tree, if not then right-click
-                it and select "set active project"), open the file
-                replicator.dbl in the editor, then "Compile", then "Build" from
-                the "Build" menu.
+Running Replicator as a Windows Service
+---------------------------------------
 
-Setup
------
+To register the service:
 
-If you wish to actually configure and execute this demo you will need:
+        dbssvc -cReplicationServer -r -d"Synergy/DE Replication Server" EXE:replicator.dbr
+        sc config ReplicationServer depend= lanmanworkstation/Eventlog/SynLM/MSSQLSERVER
 
-  - Synergy/DE V9.1.3 Professional Series Workbench on a Windows system
+To start the service:
 
-  - A SQL Server 2005 database (express edition should be OK) and at least
-    one Synergy/DE SQL connection license available.  If you wish to avoid
-    editing the supplied example code then use a SQL Server database on the
-    same computer that you intend to run the Synergy code on.  If you do not
-    use a local database then you will need to edit replicator.dbl, change the
-    value of the define SQL_SERVER, and recompile and link the program.
+        net start ReplicationServer
 
-  - Create a new SQL Server login, and make a note of the username and password
-    that you use.  If you wish to avoid editing the supplied example code then
-    use username "ReplicationServer" and password "ReplicationPassword". If you
-    do not use these default values then upi will need to edit replicator.dbl,
-    change the values of the defines SQL_USERNAME and SQL_PASSWORD, then
-    recompile and link the program.
+To stop the service
 
-  - Create a new SQL Server database, and set the owner of the database to be
-    the new login account that you just created.  If you wish to avoid editing
-    the supplied example code then name the database "SynergyReplication". If
-    you do not use this default database name then you will need to edit
-    replicator.dbl, change the value of the define SQL_DATABASE, then recompile
-    and link the program.
+        net stop ReplicationServer
 
-  - Edit your Synergy.ini file and create a new section to allow you to define
-    settings for the replicator program (replicator.dbr), like this:
+To unregister the service:
 
-        [replicator]
-        EXE=C:\SQLREPLICATION\EXE
-        DAT=C:\SQLREPLICATION\DAT
-
-    Change the paths to the location where you extracted the demo files.
-
-  - Start Workbench and open the workspace called SQLReplication.vpw.  Use the
-    "Project > Open Workspace..." menu option to do this.  Make sure you can
-    see the "Projects" window.  If it is not active then make it active, if it
-    is not displayed then display it by selecting "View -> Toolbars" from the
-    menu and checking the "Projects" option.
-
-  - Make sure that the "replicator.vpj" project is the current project (it
-    should appear bold when compared to the other projects in the workspace.
-    If it does not then right-click the replicator.vpj project and select
-    "Set Active Project".
-
-  - If you edited the replicator.dbl program in order to change the database
-    configuration options above then you sould recompile and relink the program.
-    To do this, open the replicator.dbl source file, then select "Compile" then
-    "Build" from the "Build" menu.  Make sure there are no errors displayed in
-    the output window.
-
-  - If your SQL Server service is not called the default "MSSQLSERVER" then
-    you will need to edit the file "register_service.bat" and change the
-    reference to the service name in the "sc" command".
-
-  - From Workbench, open a command prompt by selecting "Tools > OS Shell" from
-    the menu.  When the command promp opens you should already be in the
-    projects SRC\REPLICATOR folder, but if not then go there.
-
-  - Execute the file "register_service.bat" This creates a new Windows service.
-    If you wish to verify that the service has been created then go to the
-    Services application in Control Panel / Administrative Tools and make sure
-    you can see a service called "Synergy Replication Server".
-
-  - Now start the service.  You can either do this in the Services application,
-    or you can execute the batch file start_service.bat. Check that the service
-    starts OK.
-
-  - Look in the Windows Application Event Log.  You should see two messages
-    from ReplicationServer, one saying "Service Started" and one saying
-    "Processing transactions".  If not then you should see an error message
-    indicating what problem caused the replication server to fail to start. The
-    most likely reason for failure will be failure to connect to or log in to
-    the SQL Server database. Keep an eye on the event log, if ReplicationServer
-    has a problem, that's where the information will be!
-
-Running the demo
-----------------
-
-In order to see the replication happenning, use SQL Server Management Studio to
-connect to the database, and display the list of tables in the database - there
-aren't any at the moment.  Run the Synergy client application by selecting
-"Execute" from the Workbench "Build Menu".
-
-Pick the "Applications -> Employee Maintenance", then cick on the search button
-to show a list of all of the employees in the ISAM file.  Souble click an
-employee to edit it, then change something and click OK.
-
-This will record an update operation in the replication servers transaction log.
-Within five seconds it should pick up the entry, realize there is an update to
-the database, and try to replicate the change.  The first time this happens
-it will realize that the EMPLOYEE table doesn't exist in the database as yet,
-so it should create the table, and then initiate a full load of the table from
-the ISAM file.
-
-Check Management studio, is the table and data there yet?  If not, check the
-event log!
-
-From now on, as you create, amend and delete employee records, those changes
-should be replicated to the EMPLOYEE table in SQL server.  The example
-replicator goes to sleep for five seconds if there is nothing to do, so you
-should see any changes within that time frame.  If you are sitting looking at
-the table in Management studio however, the table is not automatically
-refreshed, you you'll have to refresh it manually each time you want to see
-a change.
-
-Enjoy!
+        dbssvc -cReplicationServer -x
 

@@ -1,1 +1,0 @@
-dbssvc -cReplicationServer -x

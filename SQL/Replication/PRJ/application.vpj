@@ -214,12 +214,9 @@
 			Name="Batch Files"
 			Filters="*.bat">
 			<F N="../BAT/load_data.bat"/>
-			<F N="../BAT/register_service.bat"/>
 			<F N="../BAT/remove_service.bat"/>
 			<F N="../BAT/rps_export.bat"/>
 			<F N="../BAT/rps_import.bat"/>
-			<F N="../BAT/start_service.bat"/>
-			<F N="../BAT/stop_service.bat"/>
 		</Folder>
 		<Folder
 			Name="Other Files"
