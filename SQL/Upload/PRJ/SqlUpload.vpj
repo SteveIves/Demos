@@ -60,7 +60,7 @@
 				MenuCaption="&amp;Debug"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine="dbr -d %rn.dbr"/>
+				<Exec CmdLine="dbr -d EXE:%rn.dbr"/>
 			</Target>
 			<Target
 				Name="Execute"
@@ -102,7 +102,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%(BAT)"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -198,6 +198,7 @@
 			<F N="../TEMPLATES/insert_row.tpl"/>
 			<F N="../TEMPLATES/insert_rows.tpl"/>
 			<F N="../TEMPLATES/load_mapped.tpl"/>
+			<F N="../TEMPLATES/load_mapped_bulk.tpl"/>
 			<F N="../TEMPLATES/map.tpl"/>
 			<F N="../TEMPLATES/select_row.tpl"/>
 			<F N="../TEMPLATES/select_rows.tpl"/>
@@ -214,6 +215,7 @@
 			<F N="../SRC/GENERATED/customer_insert_row.dbl"/>
 			<F N="../SRC/GENERATED/customer_insert_rows.dbl"/>
 			<F N="../SRC/GENERATED/customer_load.dbl"/>
+			<F N="../SRC/GENERATED/customer_load_bulk.dbl"/>
 			<F N="../SRC/GENERATED/customer_map.dbl"/>
 			<F N="../SRC/GENERATED/customer_select_row.dbl"/>
 			<F N="../SRC/GENERATED/customer_select_rows.dbl"/>
@@ -228,6 +230,7 @@
 			<F N="../SRC/GENERATED/order_header_insert_row.dbl"/>
 			<F N="../SRC/GENERATED/order_header_insert_rows.dbl"/>
 			<F N="../SRC/GENERATED/order_header_load.dbl"/>
+			<F N="../SRC/GENERATED/order_header_load_bulk.dbl"/>
 			<F N="../SRC/GENERATED/order_header_map.dbl"/>
 			<F N="../SRC/GENERATED/order_header_select_row.dbl"/>
 			<F N="../SRC/GENERATED/order_header_select_rows.dbl"/>
@@ -239,6 +242,7 @@
 			<F N="../SRC/GENERATED/order_line_insert_row.dbl"/>
 			<F N="../SRC/GENERATED/order_line_insert_rows.dbl"/>
 			<F N="../SRC/GENERATED/order_line_load.dbl"/>
+			<F N="../SRC/GENERATED/order_line_load_bulk.dbl"/>
 			<F N="../SRC/GENERATED/order_line_map.dbl"/>
 			<F N="../SRC/GENERATED/order_line_select_row.dbl"/>
 			<F N="../SRC/GENERATED/order_line_select_rows.dbl"/>
@@ -255,12 +259,14 @@
 			<F N="../SRC/GENERATED/product_group_insert_row.dbl"/>
 			<F N="../SRC/GENERATED/product_group_insert_rows.dbl"/>
 			<F N="../SRC/GENERATED/product_group_load.dbl"/>
+			<F N="../SRC/GENERATED/product_group_load_bulk.dbl"/>
 			<F N="../SRC/GENERATED/product_group_map.dbl"/>
 			<F N="../SRC/GENERATED/product_group_select_row.dbl"/>
 			<F N="../SRC/GENERATED/product_group_select_rows.dbl"/>
 			<F N="../SRC/GENERATED/product_insert_row.dbl"/>
 			<F N="../SRC/GENERATED/product_insert_rows.dbl"/>
 			<F N="../SRC/GENERATED/product_load.dbl"/>
+			<F N="../SRC/GENERATED/product_load_bulk.dbl"/>
 			<F N="../SRC/GENERATED/product_map.dbl"/>
 			<F N="../SRC/GENERATED/product_select_row.dbl"/>
 			<F N="../SRC/GENERATED/product_select_rows.dbl"/>
@@ -280,7 +286,7 @@
 			<F N="../BAT/delgen.bat"/>
 			<F N="../BAT/load_data.bat"/>
 			<F N="../BAT/prep.bat"/>
-			<F N="../BAT/regen.bat"/>
+			<F N="../regen.bat"/>
 			<F N="../BAT/rps_export.bat"/>
 			<F N="../BAT/rps_import.bat"/>
 		</Folder>
@@ -351,7 +357,7 @@
 				MenuCaption="&amp;Debug"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine="dbr -d %rn.dbr"/>
+				<Exec CmdLine="dbr -d EXE:%rn.dbr"/>
 			</Target>
 			<Target
 				Name="Execute"
@@ -393,7 +399,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%(BAT)"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -534,7 +540,7 @@
 				MenuCaption="&amp;Debug"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine="dbr -d %rn.dbr"/>
+				<Exec CmdLine="dbr -d EXE:%rn.dbr"/>
 			</Target>
 			<Target
 				Name="Execute"
@@ -576,7 +582,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%(BAT)"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -717,7 +723,7 @@
 				MenuCaption="&amp;Debug"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine="dbr -d %rn.dbr"/>
+				<Exec CmdLine="dbr -d EXE:%rn.dbr"/>
 			</Target>
 			<Target
 				Name="Execute"
@@ -759,7 +765,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%(BAT)"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">

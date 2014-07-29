@@ -3,7 +3,7 @@ setlocal
 
 rem Configure the CodeGen environment
 
-set ROOT_FOLDER=%~dp0..
+set ROOT_FOLDER=%~dp0
 set CODEGEN_TPLDIR=%ROOT_FOLDER%\TEMPLATES
 set CODEGEN_OUTDIR=%ROOT_FOLDER%\SRC\GENERATED
 set CODEGEN_AUTHOR="Steve Ives"

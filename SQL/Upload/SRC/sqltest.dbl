@@ -50,7 +50,6 @@ record  ivars
 
 record avars
     errtxt      ,a256           ;Error text
-    sql         ,a1024          ;SQL statement
 
 .proc
 
@@ -75,11 +74,6 @@ record avars
     display(tt,"Initializing database channel ... ")
     if (%ssc_init(dbchn=1)==SSQL_NORMAL) then
     begin
-
-
-
-
-
         dbinit=1
         writes(tt,"done")
     end
@@ -260,8 +254,9 @@ record avars
     if (ok)
     begin
         display(tt,"Loading table CUSTOMER ... ")
-        if (%customer_load(dbchn,errtxt,1,tt)) then
-            writes(tt,"done")
+        ;if (%customer_load(dbchn,errtxt,1,tt)) then
+		if (%customer_load_bulk(dbchn,len,errtxt)) then
+            writes(tt,"done ... " + %string(len) + " rows inserted")
         else
         begin
             writes(tt,%atrim(errtxt))
@@ -272,8 +267,9 @@ record avars
     if (ok)
     begin
         display(tt,"Loading table PRODUCT_GROUP ... ")
-        if (%product_group_load(dbchn,errtxt,1,tt)) then
-            writes(tt,"done")
+        ;if (%product_group_load(dbchn,errtxt,1,tt)) then
+		if (%product_group_load_bulk(dbchn,len,errtxt)) then
+			writes(tt,"done ... " + %string(len) + " rows inserted")
         else
         begin
             writes(tt,%atrim(errtxt))
@@ -284,8 +280,9 @@ record avars
     if (ok)
     begin
         display(tt,"Loading table PRODUCT ... ")
-        if (%product_load(dbchn,errtxt,1,tt)) then
-            writes(tt,"done")
+        ;if (%product_load_bulk(dbchn,errtxt,1,tt)) then
+		if (%product_load_bulk(dbchn,len,errtxt)) then
+			writes(tt,"done ... " + %string(len) + " rows inserted")
         else
         begin
             writes(tt,%atrim(errtxt))
@@ -296,8 +293,9 @@ record avars
     if (ok)
     begin
         display(tt,"Loading table ORDER_HEADER ... ")
-        if (%order_header_load(dbchn,errtxt,1,tt)) then
-            writes(tt,"done")
+        ;if (%order_header_load_bulk(dbchn,errtxt,1,tt)) then
+		if (%order_header_load_bulk(dbchn,len,errtxt)) then
+			writes(tt,"done ... " + %string(len) + " rows inserted")
         else
         begin
             writes(tt,%atrim(errtxt))
@@ -308,8 +306,9 @@ record avars
     if (ok)
     begin
         display(tt,"Loading table ORDER_LINE ... ")
-        if (%order_line_load(dbchn,errtxt,1,tt)) then
-            writes(tt,"done")
+        ;if (%order_line_load_bulk(dbchn,errtxt,1,tt)) then
+		if (%order_line_load_bulk(dbchn,len,errtxt)) then
+			writes(tt,"done ... " + %string(len) + " rows inserted")
         else
         begin
             writes(tt,%atrim(errtxt))
