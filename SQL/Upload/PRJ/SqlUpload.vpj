@@ -206,7 +206,7 @@
 		</Folder>
 		<Folder
 			Name="Source Files"
-			Filters="*.dbl">
+			Filters="*.dbl;*.tpl;*.dbc">
 			<F N="../SRC/GENERATED/customer_clear.dbl"/>
 			<F N="../SRC/GENERATED/customer_create.dbl"/>
 			<F N="../SRC/GENERATED/customer_delete_row.dbl"/>
