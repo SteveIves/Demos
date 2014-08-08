@@ -194,7 +194,7 @@
 		<Folder
 			Name="Other Files"
 			Filters="">
-			<F N="BAT/regen.bat"/>
+			<F N="regen.bat"/>
 		</Folder>
 	</Files>
 	<Config

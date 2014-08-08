@@ -66,7 +66,7 @@ import <NAMESPACE>
 
 namespace <NAMESPACE>
 
-	.include "CONNECTDIR:ssql.def"
+    .include "CONNECTDIR:ssql.def"
 
     public class DatabaseConnection
 
@@ -79,13 +79,20 @@ namespace <NAMESPACE>
 		private mBufferSize, 	int
 		private mDbCursors,		int
 		
-		public method DatabaseConnection
-			endparams
-		proc
+        public method DatabaseConnection
+            required in aChannel, int
+            required in aConnectString, string
+            endparams
+        proc
+
+			;;Save away the channel and connect string
+            mChannel = aChannel
+            mConnectString = aConnectString
+
 			;;Set default values for other properties
 			mMaxCursors = 128
 			mMaxColumns = 254
-			mBufferSize = 32768
+            mBufferSize = 32768
 			mDbCursors = mMaxCursors
 
 			;Initialize SQL Connection
@@ -98,17 +105,6 @@ namespace <NAMESPACE>
 				.endc
 			end
 
-		endmethod
-
-        public method DatabaseConnection
-            required in aChannel, int
-            required in aConnectString, string
-            endparams
-			this()
-        proc
-			;;Save away the channel and connect string
-            mChannel = aChannel
-            mConnectString = aConnectString
         endmethod
 
         method ~DatabaseConnection
@@ -156,20 +152,12 @@ namespace <NAMESPACE>
 			proc
 				mreturn mChannel
 			endmethod
-			method set
-			proc
-				mChannel = value
-			endmethod
 		endproperty
 
 		public property ConnectString, string
 			method get
 			proc
 				mreturn mConnectString
-			endmethod
-			method set
-			proc
-				mConnectString = value
 			endmethod
 		endproperty
 
