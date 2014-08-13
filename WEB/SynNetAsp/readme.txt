@@ -12,6 +12,15 @@ Date:           5th June 2013
 Requirements:   Synergy .NET 10.1.1c or higher
 
 --------------------------------------------------------------------------------
+Revision log
+
+1.0             Original example
+
+1.1             Simple bug fix
+
+1.2             Added instructions about running the example in IIS
+
+--------------------------------------------------------------------------------
 
 There are some special considerations that must be taken into account when
 executing Synergy .NET code in any multi-threaded environment. Specifically a
@@ -98,3 +107,12 @@ There are two critical things to look at in this project.
 2. Not the code in the Session_OnEnd method (in Global.asax.cs) that ensures
    that the AppDomain containing the Synergy .NET code is cleaned up at the
    end of a users session.
+
+================================================================================
+Running the project in IIS
+
+As shipped, both assemblies are configured to builf for "AnyCPU" and the
+WebApplicationProject is configured to run under IIS Express. If you want to
+run the example code under full IIS on a 64-bit system, you will need to
+change both prjects to build for x64. To do this edit the project properties
+for both projects and make the change on the Build tab for each.
