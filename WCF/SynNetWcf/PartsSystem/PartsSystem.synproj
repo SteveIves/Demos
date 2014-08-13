@@ -20,6 +20,10 @@
     <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <ProjEnvVars>RPSMFIL=$(SolutionDir)rps\rpsmain.ism;RPSTFIL=$(SolutionDir)rps\rpstext.ism;DAT=$(SolutionDir)data;</ProjEnvVars>
+    <SignManifests>false</SignManifests>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>PartsSystemKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -69,6 +73,11 @@
       <Name>AppDomainProtection</Name>
       <Project>{730cac09-e5cf-441c-80d0-f0623ed1adbb}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PartsSystemKey.snk">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
 </Project>

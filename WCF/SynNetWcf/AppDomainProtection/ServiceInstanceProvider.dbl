@@ -44,6 +44,7 @@
 ;;
 ;;*****************************************************************************
 
+import System.Reflection
 import System.ServiceModel
 import System.ServiceModel.Channels
 import System.ServiceModel.Dispatcher
@@ -83,8 +84,8 @@ namespace AppDomainProtection
 			data instanceAppDomain, @AppDomain, AppDomainPoolManager.Allocate(isNew)
 
 			;;Load a new instance of the WCF service into the AppDomain
-			data service, @IsolatableServiceBase, (@IsolatableServiceBase)instanceAppDomain.CreateInstanceAndUnwrap(mTargetType.Assembly.FullName, mTargetType.FullName)
-
+			data service, @IsolatableServiceBase, (@IsolatableServiceBase)instanceAppDomain.CreateInstanceFromAndUnwrap(mTargetType.Assembly.CodeBase, mTargetType.FullName,true,BindingFlags.Default,^null,^null,^null,^null)
+			
 			;;Hook up the custom dispatcher for multi-threading protection
 			service.ServiceDispatcher = BackgroundDispatcher.AllocateDispatcher()
 			

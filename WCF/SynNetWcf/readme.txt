@@ -5,11 +5,21 @@ Description:    An example of how to implement WCF services using Synergy .NET
 
 Author:         Steve Ives, Synergex Professional Services Group
 
-Revision:       1.1
+Revision:       1.2
 
-Date:           5th June 2013
+Date:           13th August 2014
 
 Requirements:   Synergy .NET 10.1.1c or higher
+
+--------------------------------------------------------------------------------
+Change history
+
+1.0		        Original example.
+
+1.1	            Simple bug fix.
+
+1.2             Enhanced the code in the AppDomainProtection assembly to work
+                better when hosted in IIS.
 
 --------------------------------------------------------------------------------
 
@@ -159,3 +169,11 @@ TestClient Project
 This project is a very simple Synergy .NET WPF application. It has a service
 reference to the WCF service exposed by the server solution, and uses some of
 the WCF services methods
+
+================================================================================
+Strong Name Signing
+
+If you intend to host your Synergy .NET WCF services in Internet Information
+Server (IIS) then all assemblies that will be loaded in IIS (in the case of
+this example that would be AppDomainProtection.dll, PartsSystem.dll and
+WcfServiceLibrary.dll) must be strong name signed.

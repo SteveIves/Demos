@@ -42,6 +42,8 @@
 ;;*****************************************************************************
 
 import System.Collections.Generic
+import System.IO
+import System.Reflection
 import System.Threading
 
 namespace AppDomainProtection
@@ -97,7 +99,17 @@ namespace AppDomainProtection
 			;;If we didn't have an AppDomain in the pool then we'll create a new one.
 			if (ad==^null)
 			begin
-				ad = AppDomain.CreateDomain(Guid.NewGuid().ToString())
+				data baseFolder, String, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+				;;IMPORTANT:
+				;;
+				;;The last parameter to this overload of CreateDomain is "shadowCopyFiles".
+				;;When set to true a COPY of assemblies is placed into the AppDomain, rather than loading the
+				;;ACTUAL assembly. The advantage of specifying true is that the ACTUAL assembly is not locked by IIS,
+				;;which would in turn prevent the assembly being re-built in Visual Studio without first restarting IIS.
+				;;The downside is that more memory is used (because a different copy of each assembly is loaded into
+				;;each AppDomain. Although a PAIN, the best thing to do is specify true during development,
+				;;and change it to false before a final build for production deployment.
+				ad = AppDomain.CreateDomain(Guid.NewGuid().ToString(), ^null, baseFolder, ^null, true)
 				isNew = true
 			end
 
