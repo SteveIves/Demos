@@ -1,0 +1,36 @@
+
+import System
+import System.ServiceModel
+
+namespace RestServer
+
+    main Server
+
+    proc
+
+		data svc, @ServiceHost, new ServiceHost(^typeof(RestServer.Service))
+		svc.Open()
+		
+		Console.WriteLine("WCF REST Service is available at the following URL:")
+		Console.WriteLine("")
+		
+		data uri, @Uri
+		foreach uri in svc.BaseAddresses
+			Console.WriteLine(uri.AbsoluteUri)
+		
+		Console.WriteLine("")
+		Console.WriteLine("Supported operations:")
+		Console.WriteLine("")
+		Console.WriteLine("  HTTP   Path                  Description")
+		Console.WriteLine("  -----------------------------------------------------------------")
+		Console.WriteLine("  POST   /SendReceiveString    Send a string, get a string back!")
+		Console.WriteLine("")
+		Console.WriteLine("Press any key to stop the server")
+		Console.WriteLine("")
+		Console.ReadKey()
+		
+		svc.Close()
+		
+    endmain
+
+endnamespace

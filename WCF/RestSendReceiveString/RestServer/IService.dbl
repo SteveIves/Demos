@@ -1,0 +1,25 @@
+
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.IO
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.ServiceModel.Web
+
+namespace RestServer
+
+	{ServiceContract(Namespace = "demos.synergex.com")}
+	{Description("Service description")}
+	public interface IService
+		
+		{OperationContract()}
+		{Description("Send a string, get back a string")}
+		{WebInvoke(Method = "POST", UriTemplate = "SendReceiveString", BodyStyle=WebMessageBodyStyle.Bare)}
+		method SendReceiveString, @Stream
+			required in indata, @Stream
+		endmethod
+		
+	endinterface
+	
+endnamespace
