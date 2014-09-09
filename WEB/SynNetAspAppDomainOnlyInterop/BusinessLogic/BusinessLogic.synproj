@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Name>"BusinessLogic"</Name>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3322ede9-edc8-417c-8c35-9bf84a8b9bbb}</ProjectGuid>
+    <ProjectGuid>{3322ede9-edc8-417c-8c35-9bf84a8b9bbc}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>BusinessLogic</RootNamespace>
     <AssemblyName>BusinessLogic</AssemblyName>

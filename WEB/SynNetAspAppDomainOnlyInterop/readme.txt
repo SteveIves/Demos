@@ -19,6 +19,7 @@ Requirements:   Synergy .NET 10.1.1c or higher
 Revision log
 
 1.0             Original example
+
 1.1		Updated with an example of how to pass configuration data from
                 the Web application to the Synergy .NET code and use SETLOG
                 to set environment variables based on those settings.
