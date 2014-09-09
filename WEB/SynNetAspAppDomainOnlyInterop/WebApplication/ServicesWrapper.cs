@@ -5,6 +5,7 @@ using BusinessLogic;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using System.Configuration;
 
 namespace WebApplication
 {
@@ -31,8 +32,22 @@ namespace WebApplication
         AppDomain _domain;
         public Services Services;
 
+
         public ServicesWrapper()
         {
+            //If you need to pass configuration information into your Synergy .NET code then
+            //add a Dictionary<string,string> parameter to the constructor of your
+            //helper class and do something like this. This example assumes you have
+            //configuration info in Web.config.
+            //Dictionary<String, String> settings = new Dictionary<string, string>();
+            //foreach (string key in ConfigurationManager.AppSettings)
+            //    settings.Add(key, ConfigurationManager.AppSettings[key]);
+            // 
+            //_domain = AppDomainUtil.GetAppDomain();
+            //Services = _domain.CreateInstanceFromAndUnwrap(typeof(ServicesHelper).Assembly.CodeBase, typeof(ServicesHelper).FullName,
+            //    false, System.Reflection.BindingFlags.CreateInstance, null, new object[] { settings }, null, null) as Services;
+            
+            //Otherwise your helper class constructor does not need a parameter, and you can do this:
             _domain = AppDomainUtil.GetAppDomain();
             Services = _domain.CreateInstanceFromAndUnwrap(typeof(ServicesHelper).Assembly.CodeBase, typeof(ServicesHelper).FullName) as Services;
         }
