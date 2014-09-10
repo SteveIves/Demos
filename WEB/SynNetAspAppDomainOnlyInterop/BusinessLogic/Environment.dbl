@@ -19,11 +19,8 @@ namespace BusinessLogic
 				data status, i4
 				foreach item in settings
 					xcall setlog(item.Key, item.Value, status)
-
 				environmentSet = true
-				
 			end
-
 		endmethod
 	
 	endclass

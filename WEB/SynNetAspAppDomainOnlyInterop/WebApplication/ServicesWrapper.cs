@@ -35,9 +35,9 @@ namespace WebApplication
 
         public ServicesWrapper()
         {
+            //Get an AppDomain
             _domain = AppDomainUtil.GetAppDomain();
-
-            //Create an instance of the ServicesHelper class INSIDE an AppDomain.
+            //Create an instance of the ServicesHelper class INSIDE the AppDomain.
             Services = _domain.CreateInstanceFromAndUnwrap(typeof(ServicesHelper).Assembly.CodeBase, typeof(ServicesHelper).FullName) as Services;
         }
 
