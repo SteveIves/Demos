@@ -15,7 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 	ProjectSection(SolutionItems) = preProject
 		templates\CrudMethods.tpl = templates\CrudMethods.tpl
 		templates\MethodStatus.tpl = templates\MethodStatus.tpl
-		templates\ServicesCustom.tpl = templates\ServicesCustom.tpl
+		templates\ServicesHelper.tpl = templates\ServicesHelper.tpl
+		templates\SynergyEnvironment.tpl = templates\SynergyEnvironment.tpl
 	EndProjectSection
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "BusinessLogic", "BusinessLogic\BusinessLogic.synproj", "{3322EDE9-EDC8-417C-8C35-9BF84A8B9BBC}"

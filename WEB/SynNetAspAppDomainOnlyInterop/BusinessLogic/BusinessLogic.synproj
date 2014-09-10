@@ -63,8 +63,8 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Environment.dbl" />
     <Compile Include="ServicesHelper.dbl" />
+    <Compile Include="SynergyEnvironment.dbl" />
     <Compile Include="SynergyRoutines.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
     <Compile Include="xfServerPlusCode\MethodStatus.dbl" />

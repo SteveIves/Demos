@@ -1,3 +1,4 @@
+<CODEGEN_FILENAME>ServicesHelper.dbl</CODEGEN_FILENAME>
 ;;******************************************************************************
 ;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
 ;;******************************************************************************
@@ -6,7 +7,7 @@ import System
 import System.Collections.Generic
 import System.Reflection
 
-namespace BusinessLogic
+namespace <NAMESPACE>
 
 	public class ServicesHelper extends Services
 

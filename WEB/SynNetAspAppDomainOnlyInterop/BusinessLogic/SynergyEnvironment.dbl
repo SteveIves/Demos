@@ -1,3 +1,6 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
 
 import System
 import System.Collections.Generic
