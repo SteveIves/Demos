@@ -59,6 +59,7 @@
     <Compile Include="ServicesProductGroup.dbl" />
     <Compile Include="ServicesSupplier.dbl" />
     <Compile Include="Supplier.dbl" />
+    <Compile Include="SynergyEnvironment.dbl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

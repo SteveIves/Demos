@@ -20,9 +20,18 @@ Revision log
 
 1.0             Original example
 
-1.1		Updated with an example of how to pass configuration data from
+1.1		        Updated with an example of how to pass configuration data from
                 the Web application to the Synergy .NET code and use SETLOG
                 to set environment variables based on those settings.
+
+1.2             Changed the recommended mechanism for setting locical names.
+
+--------------------------------------------------------------------------------
+
+IMPORTANT:      BEFORE YOU WILL BE ABLE TO RUN THE CODE IN THIS EXAMPLE YOU MUST
+                EDIT THE FILE WEB.CONFIG AND CHANGE THE PATH ASSOCIATED WITH THE
+                DAT SETTING TO BE CORRECT FOR WHEREVER YOU PLACED THE EXAMPLE
+                CODE ON YOUR SYSTEM
 
 --------------------------------------------------------------------------------
 

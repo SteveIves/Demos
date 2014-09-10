@@ -25,6 +25,7 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method Create<StructureName>, MethodStatus
             required in a<StructureName>, @<StructureName>
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -33,19 +34,32 @@ namespace <NAMESPACE>
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
                 open(ch=0,u:i,"<FILE_NAME>")
                 store(ch,a<StructureName>.Record)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @DuplicateException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record already exists!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -65,10 +79,12 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method ReadAll<StructureName>s, MethodStatus
             required out a<StructureName>s, @List<<StructureName>>
+            required out aErrorMessage, String
             endparams
         proc
 
             data status, MethodStatus, MethodStatus.Success
+            aErrorMessage = ""
 
             a<StructureName>s = new List<<StructureName>>()
 
@@ -78,9 +94,20 @@ namespace <NAMESPACE>
                 foreach rec in new Select(new From("<FILE_NAME>",rec))
                     a<StructureName>s.Add(new <StructureName>(rec))
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             endtry
 
@@ -104,6 +131,7 @@ namespace <NAMESPACE>
             </SEGMENT_LOOP>
             required out a<StructureName>, @<StructureName>
             required out aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -113,6 +141,7 @@ namespace <NAMESPACE>
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             init rec
             <SEGMENT_LOOP>
@@ -130,17 +159,30 @@ namespace <NAMESPACE>
                 a<StructureName> = new <StructureName>(rec)
                 aGrfa = grfa
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @EndOfFileException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @KeyNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -163,6 +205,7 @@ namespace <NAMESPACE>
         public method Update<StructureName>, MethodStatus
             required inout a<StructureName>, @<StructureName>
             required inout aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -172,6 +215,7 @@ namespace <NAMESPACE>
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
@@ -182,6 +226,16 @@ namespace <NAMESPACE>
                 read(ch,rec,RFA:grfa,GETRFA:grfa)
                 write(ch,a<StructureName>.Record)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (ex, @RecordNotSameException)
             begin
                 ;;Failed to lock the original record, it must have been changed
@@ -190,14 +244,17 @@ namespace <NAMESPACE>
                 a<StructureName> = new <StructureName>(rec)
                 aGrfa = grfa
                 status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
             end
             catch (e, @DuplicateException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Duplicate key!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -217,6 +274,7 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method Delete<StructureName>, MethodStatus
             required in aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -226,6 +284,7 @@ namespace <NAMESPACE>
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
@@ -236,13 +295,25 @@ namespace <NAMESPACE>
                 read(ch,rec,RFA:grfa)
                 delete(ch)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (ex, @RecordNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -270,6 +341,7 @@ namespace <NAMESPACE>
             required in  a<SegmentName>, <SEGMENT_CSTYPE>
             </SEGMENT_LOOP>
             </PRIMARY_KEY>
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -278,6 +350,7 @@ namespace <NAMESPACE>
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             init rec
             <PRIMARY_KEY>
@@ -291,17 +364,30 @@ namespace <NAMESPACE>
                 open(ch=0,I:I,"<FILE_NAME>")
                 find(ch,,%keyval(ch,rec,0))
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @EndOfFileException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @KeyNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin

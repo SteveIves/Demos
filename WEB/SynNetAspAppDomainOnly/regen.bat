@@ -7,7 +7,8 @@ set CODEGEN_OUTDIR=.\BusinessLogic
 set RPSMFIL=.\rps\rpsmain.ism
 set RPSTFIL=.\rps\rpstext.ism
 
-codegen -e -s PART SUPPLIER PRODUCT_GROUP -t ServicesCRUD -n BusinessLogic -r -lf
+codegen -e -t SynergyEnvironment                          -n BusinessLogic -r -lf
+codegen -e -t ServicesCRUD -s PART SUPPLIER PRODUCT_GROUP -n BusinessLogic -r -lf
 
 echo Code generation complete
 

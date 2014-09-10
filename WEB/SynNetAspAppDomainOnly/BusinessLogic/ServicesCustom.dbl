@@ -40,6 +40,7 @@ namespace BusinessLogic
 		public method GetProductGroupParts, MethodStatus
 			required in  aGroupId, String 
 			required out aParts, @List<Part>
+			required out aErrorMessage, String
 			endparams
 		proc
 			
@@ -53,9 +54,20 @@ namespace BusinessLogic
 				foreach rec in new Select(new From("DAT:parts.ism",rec),(Where)rec.groupid.eq.aGroupId)
 					aParts.Add(new Part(rec))
 			end
+			catch (e, @FileNameException)
+			begin
+				status = MethodStatus.FatalError
+				aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+			end
+			catch (e, @NoFileFoundException)
+			begin
+				status = MethodStatus.FatalError
+				aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+			end
 			catch (e, @Exception)
 			begin
 				status = MethodStatus.FatalError
+				aErrorMessage = e.Message
 			end
 			endtry
 			

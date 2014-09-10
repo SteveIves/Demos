@@ -34,19 +34,9 @@ namespace WebApplication
 
         public ServicesWrapper()
         {
-            _domain = AppDomainUtil.GetAppDomain();
-
-            //If you need to pass configuration information into your Synergy .NET code then
-            //add a Dictionary<string,string> parameter to the constructor of your
-            //services class and do something like this. This example assumes you have
-            //configuration info in Web.config.
-            //Dictionary<String, String> settings = new Dictionary<string, string>();
-            //foreach (string key in ConfigurationManager.AppSettings)
-            //    settings.Add(key, ConfigurationManager.AppSettings[key]);
-            //Services = _domain.CreateInstanceFromAndUnwrap(typeof(Services).Assembly.CodeBase, typeof(Services).FullName,
-            //    false, System.Reflection.BindingFlags.CreateInstance, null, new object[] { settings }, null, null) as Services;
-
-            //Otherwise your helper class constructor does not need a parameter, and you can do this:
+            //Create an AppDomain
+            _domain = AppDomainUtil.GetThreadAppDomain();
+            //And load the Synergy .NET business logic INTO the AppDomain
             Services = _domain.CreateInstanceFromAndUnwrap(typeof(Services).Assembly.CodeBase, typeof(Services).FullName) as Services;
         }
 
@@ -60,25 +50,45 @@ namespace WebApplication
     
     public static class AppDomainUtil
     {
+        //Maintain a cache of AppDomains, keyed by the ID of the thread the AppDomain is associated with.
+        //This means we can use the same AppDomain each time in a given thread, avoiding the overhead
+        //of creating a brand new AppDomain every time we need one.
         public static Dictionary<Thread, AppDomain> _activeDomains = new Dictionary<Thread, AppDomain>();
 
-        public static AppDomain GetAppDomain()
+        /// <summary>
+        /// This methos is used to retrieve the AppDomain that is associated with the current thread.
+        /// If there is no AppDomain associated with the thread then a new one will be created.
+        /// </summary>
+        /// <returns>AppDomain for use by current thread.</returns>
+        public static AppDomain GetThreadAppDomain()
         {
+            //Make sure only one thread can go through this logic at the same time. Others will wait.
             lock (_activeDomains)
             {
+                //Is there an AppDomain associated with the current thread?
                 if (_activeDomains.ContainsKey(Thread.CurrentThread))
+                {
+                    //Yes, return it
                     return _activeDomains[Thread.CurrentThread];
+                }
                 else
                 {
+                    //No, return a new one
                     var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString());
-                    _activeDomains.Add(Thread.CurrentThread,domain);
+                    _activeDomains.Add(Thread.CurrentThread, domain);
                     return domain;
                 }
             }
         }
 
+        /// <summary>
+        /// This method cleans up the AppDomain cache. It removes the AppDomain entry
+        /// for any thread that no longer exists. The method is called each time a
+        /// ServicesWrapper instance is disposed.
+        /// </summary>
         public static void ThreadCleanup()
         {
+            //Make sure only one thread can go through this logic at the same time. Others will wait.
             lock (_activeDomains)
             {
                 foreach (var item in _activeDomains.Where(tpl => !tpl.Key.IsAlive).ToList())

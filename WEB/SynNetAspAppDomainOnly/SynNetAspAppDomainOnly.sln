@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		templates\MethodStatus.tpl = templates\MethodStatus.tpl
 		templates\Services.tpl = templates\Services.tpl
 		templates\ServicesCRUD.tpl = templates\ServicesCRUD.tpl
+		templates\SynergyEnvironment.tpl = templates\SynergyEnvironment.tpl
 	EndProjectSection
 EndProject
 Global

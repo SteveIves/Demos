@@ -16,7 +16,8 @@ namespace WebApplication
             using (var servicesWrapper = new ServicesWrapper())
             {
                 List<Part> parts;
-                switch (servicesWrapper.Services.ReadAllParts(out parts))
+                string errorMessage;
+                switch (servicesWrapper.Services.ReadAllParts(out parts, out errorMessage))
                 {
                     case MethodStatus.Success:
                         grid.DataSource = parts;
@@ -24,7 +25,7 @@ namespace WebApplication
                         lblMessage.Text = String.Format("{0} matching parts", parts.Count);
                         break;
                     case MethodStatus.FatalError:
-                        lblMessage.Text = "Fatal error!";
+                        lblMessage.Text = String.Format("Fatal error {0}",errorMessage);
                         break;
                 }
             }

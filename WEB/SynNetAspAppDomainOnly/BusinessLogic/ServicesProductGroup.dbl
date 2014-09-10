@@ -21,6 +21,7 @@ namespace BusinessLogic
         ;;; <returns></returns>
         public method CreateProductGroup, MethodStatus
             required in aProductGroup, @ProductGroup
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -29,19 +30,32 @@ namespace BusinessLogic
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
                 open(ch=0,u:i,"DAT:groups.ism")
                 store(ch,aProductGroup.Record)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @DuplicateException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record already exists!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -61,10 +75,12 @@ namespace BusinessLogic
         ;;; <returns></returns>
         public method ReadAllProductGroups, MethodStatus
             required out aProductGroups, @List<ProductGroup>
+            required out aErrorMessage, String
             endparams
         proc
 
             data status, MethodStatus, MethodStatus.Success
+            aErrorMessage = ""
 
             aProductGroups = new List<ProductGroup>()
 
@@ -74,9 +90,20 @@ namespace BusinessLogic
                 foreach rec in new Select(new From("DAT:groups.ism",rec))
                     aProductGroups.Add(new ProductGroup(rec))
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             endtry
 
@@ -95,6 +122,7 @@ namespace BusinessLogic
             required in  aGroupId, String
             required out aProductGroup, @ProductGroup
             required out aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -104,6 +132,7 @@ namespace BusinessLogic
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             init rec
             rec.group_id = aGroupId
@@ -115,17 +144,30 @@ namespace BusinessLogic
                 aProductGroup = new ProductGroup(rec)
                 aGrfa = grfa
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @EndOfFileException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @KeyNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -147,6 +189,7 @@ namespace BusinessLogic
         public method UpdateProductGroup, MethodStatus
             required inout aProductGroup, @ProductGroup
             required inout aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -156,6 +199,7 @@ namespace BusinessLogic
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
@@ -166,6 +210,16 @@ namespace BusinessLogic
                 read(ch,rec,RFA:grfa,GETRFA:grfa)
                 write(ch,aProductGroup.Record)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (ex, @RecordNotSameException)
             begin
                 ;;Failed to lock the original record, it must have been changed
@@ -174,14 +228,17 @@ namespace BusinessLogic
                 aProductGroup = new ProductGroup(rec)
                 aGrfa = grfa
                 status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
             end
             catch (e, @DuplicateException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Duplicate key!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -201,6 +258,7 @@ namespace BusinessLogic
         ;;; <returns></returns>
         public method DeleteProductGroup, MethodStatus
             required in aGrfa, String
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -210,6 +268,7 @@ namespace BusinessLogic
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             try
             begin
@@ -220,13 +279,25 @@ namespace BusinessLogic
                 read(ch,rec,RFA:grfa)
                 delete(ch)
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (ex, @RecordNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin
@@ -246,6 +317,7 @@ namespace BusinessLogic
         ;;; <returns></returns>
         public method ProductGroupExists, MethodStatus
             required in  aGroupId, string
+            required out aErrorMessage, String
             endparams
             stack record
                 ch, int
@@ -254,6 +326,7 @@ namespace BusinessLogic
             endrecord
         proc
             status = MethodStatus.Success
+            aErrorMessage = ""
 
             init rec
             rec.group_id = aGroupId
@@ -263,17 +336,30 @@ namespace BusinessLogic
                 open(ch=0,I:I,"DAT:groups.ism")
                 find(ch,,%keyval(ch,rec,0))
             end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
             catch (e, @EndOfFileException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @KeyNotSameException)
             begin
                 status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
             end
             catch (e, @Exception)
             begin
                 status = MethodStatus.FatalError
+                aErrorMessage = e.Message
             end
             finally
             begin

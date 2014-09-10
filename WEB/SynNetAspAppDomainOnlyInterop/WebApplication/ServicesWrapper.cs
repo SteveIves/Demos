@@ -36,7 +36,7 @@ namespace WebApplication
         public ServicesWrapper()
         {
             //Get an AppDomain
-            _domain = AppDomainUtil.GetAppDomain();
+            _domain = AppDomainUtil.GetThreadAppDomain();
             //Create an instance of the ServicesHelper class INSIDE the AppDomain.
             Services = _domain.CreateInstanceFromAndUnwrap(typeof(ServicesHelper).Assembly.CodeBase, typeof(ServicesHelper).FullName) as Services;
         }
@@ -51,25 +51,45 @@ namespace WebApplication
     
     public static class AppDomainUtil
     {
+        //Maintain a cache of AppDomains, keyed by the ID of the thread the AppDomain is associated with.
+        //This means we can use the same AppDomain each time in a given thread, avoiding the overhead
+        //of creating a brand new AppDomain every time we need one.
         public static Dictionary<Thread, AppDomain> _activeDomains = new Dictionary<Thread, AppDomain>();
 
-        public static AppDomain GetAppDomain()
+        /// <summary>
+        /// This methos is used to retrieve the AppDomain that is associated with the current thread.
+        /// If there is no AppDomain associated with the thread then a new one will be created.
+        /// </summary>
+        /// <returns>AppDomain for use by current thread.</returns>
+        public static AppDomain GetThreadAppDomain()
         {
+            //Make sure only one thread can go through this logic at the same time. Others will wait.
             lock (_activeDomains)
             {
+                //Is there an AppDomain associated with the current thread?
                 if (_activeDomains.ContainsKey(Thread.CurrentThread))
+                {
+                    //Yes, return it
                     return _activeDomains[Thread.CurrentThread];
+                }
                 else
                 {
+                    //No, return a new one
                     var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString());
-                    _activeDomains.Add(Thread.CurrentThread,domain);
+                    _activeDomains.Add(Thread.CurrentThread, domain);
                     return domain;
                 }
             }
         }
 
+        /// <summary>
+        /// This method cleans up the AppDomain cache. It removes the AppDomain entry
+        /// for any thread that no longer exists. The method is called each time a
+        /// ServicesWrapper instance is disposed.
+        /// </summary>
         public static void ThreadCleanup()
         {
+            //Make sure only one thread can go through this logic at the same time. Others will wait.
             lock (_activeDomains)
             {
                 foreach (var item in _activeDomains.Where(tpl => !tpl.Key.IsAlive).ToList())
