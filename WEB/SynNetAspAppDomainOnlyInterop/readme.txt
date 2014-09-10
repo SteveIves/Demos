@@ -9,9 +9,9 @@ Description:    An example of how to use a Synergy .NET Interop assembly in an
 
 Author:         Steve Ives, Synergex Professional Services Group
 
-Revision:       1.1
+Revision:       1.2
 
-Date:           9th September 2014
+Date:           10th September 2014
 
 Requirements:   Synergy .NET 10.1.1c or higher
 
@@ -20,9 +20,18 @@ Revision log
 
 1.0             Original example
 
-1.1		Updated with an example of how to pass configuration data from
+1.1	            Updated with an example of how to pass configuration data from
                 the Web application to the Synergy .NET code and use SETLOG
                 to set environment variables based on those settings.
+
+1.2             Changed the recommended mechanism for setting locical names.
+
+--------------------------------------------------------------------------------
+
+IMPORTANT:      BEFORE YOU WILL BE ABLE TO RUN THE CODE IN THIS EXAMPLE YOU MUST
+                EDIT THE FILE WEB.CONFIG AND CHANGE THE PATH ASSOCIATED WITH THE
+                DAT SETTING TO BE CORRECT FOR WHEREVER YOU PLACED THE EXAMPLE
+                CODE ON YOUR SYSTEM
 
 --------------------------------------------------------------------------------
 

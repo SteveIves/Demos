@@ -28,13 +28,14 @@ namespace WebApplication
                     {
                         Supplier supplier;
                         String grfa;
-                        switch (servicesWrapper.Services.ReadSupplier(supplierId, out supplier, out grfa))
+                        String errorMessage;
+                        switch (servicesWrapper.Services.ReadSupplier(supplierId, out supplier, out grfa, out errorMessage))
                         {
                             case Method_status.Success:
                                 showSupplier(supplier, grfa);
                                 break;
                             case Method_status.Fatal_error:
-                                lblErrorMessage.Text = "Service method ReadSupplier_0 returned a fatal error notification!";
+                                lblErrorMessage.Text = String.Format("Fatal error {0}",errorMessage);
                                 break;
                         }
                     }

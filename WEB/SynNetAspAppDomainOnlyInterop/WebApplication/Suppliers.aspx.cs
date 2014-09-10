@@ -17,7 +17,8 @@ namespace WebApplication
 
             using (var servicesWrapper = new ServicesWrapper())
             {
-                switch (servicesWrapper.Services.ReadAllSuppliers(out suppliers))
+                string errorMessage;
+                switch (servicesWrapper.Services.ReadAllSuppliers(out suppliers, out errorMessage))
                 {
                     case Method_status.Success:
                         grid.DataSource = suppliers;
@@ -25,7 +26,7 @@ namespace WebApplication
                         lblMessage.Text = String.Format("{0} matching suppliers", suppliers.Count);
                         break;
                     case Method_status.Fatal_error:
-                        lblMessage.Text = "Fatal error!";
+                        lblMessage.Text = String.Format("Fatal error {0}",errorMessage);
                         break;
                 }
             }

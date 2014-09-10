@@ -11,7 +11,8 @@ import Synergex.SynergyDE.Select
  
 {xfMethod(interface="Services")}
 function Create<StructureName>, METHOD_STATUS
-    required in a<StructureName>, str<StructureName>
+    required in  a<StructureName>, str<StructureName>
+    required out aErrorMessage, string
     endparams
     stack record
         ch, int
@@ -19,19 +20,32 @@ function Create<StructureName>, METHOD_STATUS
     endrecord
 proc
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     try
     begin
         open(ch=0,u:i,"<FILE_NAME>")
         store(ch,a<StructureName>)
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (e, @DuplicateException)
     begin
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Record already exists!"
     end
     catch (e, @Exception)
     begin
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     finally
     begin
@@ -48,6 +62,7 @@ endfunction
 function ReadAll<StructureName>s, METHOD_STATUS
     {xfParameter(collectionType=xfCollectType.structure,structure="str<StructureName>")}
     required out a<StructureName>s, @ArrayList
+    required out aErrorMessage, string
     endparams
     stack record 
         status, METHOD_STATUS
@@ -55,6 +70,7 @@ function ReadAll<StructureName>s, METHOD_STATUS
 proc
 
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     a<StructureName>s = new ArrayList()
 
@@ -64,9 +80,20 @@ proc
         foreach rec in new Select(new From("<FILE_NAME>",rec))
             a<StructureName>s.Add((@str<StructureName>)rec)
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (e, @Exception)
     begin
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     endtry
 
@@ -82,6 +109,7 @@ function Read<StructureName>, METHOD_STATUS
     </SEGMENT_LOOP>
     required out a<StructureName>, str<StructureName>
     required out aGrfa, String
+    required out aErrorMessage, string
     endparams
     stack record
         ch, int
@@ -90,6 +118,7 @@ function Read<StructureName>, METHOD_STATUS
     endrecord
 proc
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     init a<StructureName>
     <SEGMENT_LOOP>
@@ -106,20 +135,33 @@ proc
         read(ch,a<StructureName>,%keyval(ch,a<StructureName>,<KEY_NUMBER>),GETRFA:grfa)
         aGrfa = grfa
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (e, @EndOfFileException)
     begin
         init a<StructureName>
         status = METHOD_STATUS.FAIL
+      aErrorMessage = "Record not found"
     end
     catch (e, @KeyNotSameException)
     begin
 	init a<StructureName>
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Record not found!"
     end
     catch (e, @Exception)
     begin
         init a<StructureName>
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     finally
     begin
@@ -137,6 +179,7 @@ endfunction
 function Update<StructureName>, METHOD_STATUS
     required inout a<StructureName>, str<StructureName>
     required inout aGrfa, String
+    required out aErrorMessage, string
     endparams
     stack record
         ch, int
@@ -146,6 +189,7 @@ function Update<StructureName>, METHOD_STATUS
     endrecord
 proc
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     try
     begin
@@ -156,6 +200,16 @@ proc
         read(ch,rec,RFA:grfa,GETRFA:grfa)
         write(ch,a<StructureName>)
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (ex, @RecordNotSameException)
     begin
         ;;Failed to lock the original record, it must have been changed
@@ -164,14 +218,17 @@ proc
         a<StructureName> = rec
         aGrfa = grfa
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Record was changed by another user!"
     end
     catch (e, @DuplicateException)
     begin
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Duplicate key error!"
     end
     catch (e, @Exception)
     begin
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     finally
     begin
@@ -187,6 +244,7 @@ endfunction
 {xfMethod(interface="Services")}
 function Delete<StructureName>, METHOD_STATUS
     required in aGrfa, String
+    required out aErrorMessage, string
     endparams
     stack record
         ch, int
@@ -196,6 +254,7 @@ function Delete<StructureName>, METHOD_STATUS
     endrecord
 proc
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     try
     begin
@@ -206,13 +265,25 @@ proc
         read(ch,rec,RFA:grfa)
         delete(ch)
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (ex, @RecordNotSameException)
     begin
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "The record has been changed by another user!"
     end
     catch (e, @Exception)
     begin
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     finally
     begin
@@ -232,6 +303,7 @@ function <StructureName>Exists, METHOD_STATUS
     required in  a<SegmentName>, <SEGMENT_SPEC>
     </SEGMENT_LOOP>
     </PRIMARY_KEY>
+    required out aErrorMessage, string
     endparams
     stack record
         ch, int
@@ -240,6 +312,7 @@ function <StructureName>Exists, METHOD_STATUS
     endrecord
 proc
     status = METHOD_STATUS.SUCCESS
+    aErrorMessage = ""
 
     init rec
     <PRIMARY_KEY>
@@ -253,17 +326,30 @@ proc
         open(ch=0,I:I,"<FILE_NAME>")
         find(ch,,%keyval(ch,rec,0))
     end
+    catch (e, @FileNameException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
+    catch (e, @NoFileFoundException)
+    begin
+        status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+    end
     catch (e, @EndOfFileException)
     begin
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Record not found!"
     end
     catch (e, @KeyNotSameException)
     begin
         status = METHOD_STATUS.FAIL
+        aErrorMessage = "Record not found!"
     end
     catch (e, @Exception)
     begin
         status = METHOD_STATUS.FATAL_ERROR
+        aErrorMessage = e.Message
     end
     finally
     begin

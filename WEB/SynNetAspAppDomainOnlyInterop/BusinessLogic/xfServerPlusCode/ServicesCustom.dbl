@@ -28,6 +28,7 @@ function GetProductGroupParts, METHOD_STATUS
 	required in  aGroupId, String 
 	{xfParameter(collectionType=xfCollectType.structure,structure="strPart")}
 	required out aParts, @ArrayList
+	required out aErrorMessage, string
 	endparams
 	stack record
 		status, METHOD_STATUS
@@ -35,17 +36,30 @@ function GetProductGroupParts, METHOD_STATUS
 proc
 			
 	status = METHOD_STATUS.SUCCESS
+	aErrorMessage = ""
+
 	aParts = new ArrayList()
-			
+		
 	try
 	begin
 		data rec, strPart
 		foreach rec in new Select(new From("DAT:parts.ism",rec),(Where)rec.groupid.eq.aGroupId)
 			aParts.Add((@strPart)rec)
 	end
+	catch (e, @FileNameException)
+	begin
+		status = METHOD_STATUS.FATAL_ERROR
+		aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+	end
+	catch (e, @NoFileFoundException)
+	begin
+		status = METHOD_STATUS.FATAL_ERROR
+		aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+	end
 	catch (e, @Exception)
 	begin
 		status = METHOD_STATUS.FATAL_ERROR
+		aErrorMessage = e.Message
 	end
 	endtry
 			

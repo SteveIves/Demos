@@ -16,7 +16,8 @@ namespace WebApplication
             List<Product_group> productGroups;
             using (var servicesWrapper = new ServicesWrapper())
             {
-                switch (servicesWrapper.Services.ReadAllProductGroups(out productGroups))
+                string errorMessage;
+                switch (servicesWrapper.Services.ReadAllProductGroups(out productGroups, out errorMessage))
                 {
                     case Method_status.Success:
                         grid.DataSource = productGroups;
@@ -24,7 +25,7 @@ namespace WebApplication
                         lblMessage.Text = String.Format("{0} matching product groups", productGroups.Count);
                         break;
                     case Method_status.Fatal_error:
-                        lblMessage.Text = "Fatal error!";
+                        lblMessage.Text = String.Format("Fatal error {0}",errorMessage);
                         break;
                 }
             }

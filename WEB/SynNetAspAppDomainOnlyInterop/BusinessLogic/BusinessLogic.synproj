@@ -63,6 +63,7 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Environment.dbl" />
     <Compile Include="ServicesCustom.dbl" />
     <Compile Include="SynergyRoutines.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
