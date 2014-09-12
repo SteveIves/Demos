@@ -1,0 +1,169 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System.Collections
+import Synergex.SynergyDE.Select
+
+.include "PART" repository, structure="strPart", end
+
+{xfMethod(interface="Services")}
+function ReadAllParts, METHOD_STATUS
+	required in aMax, int
+	{xfParameter(collectionType=xfCollectType.structure,structure="strPart")}
+    required out aParts, @ArrayList
+    required out aErrorMessage, string
+    endparams
+proc
+	data status, METHOD_STATUS, METHOD_STATUS.SUCCESS
+	data rec, strPart
+	data ix,int, 0
+    aParts = new ArrayList()
+	aErrorMessage = ""
+
+	try
+	begin
+		foreach rec in new Select(new From("MYDATA:parts.ism",rec))
+		begin
+			aParts.Add((@strPart)rec)
+			if ((ix+=1)==aMax)
+				exitloop
+		end
+	end
+	catch (e, @Exception)
+	begin
+		data status, METHOD_STATUS, METHOD_STATUS.SUCCESS
+		aErrorMessage = e.Message
+	end
+	endtry
+
+    freturn status
+	
+endfunction
+
+{xfMethod(interface="Services")}
+function ReadAllPartsHandleBad, METHOD_STATUS
+	required in aMax, int
+	{xfParameter(collectionType=xfCollectType.structure,structure="strPart", dataTable=false)}
+	required out aParts, D_HANDLE
+	required out aErrorMessage, string
+	endparams
+proc
+	data status, METHOD_STATUS, METHOD_STATUS.SUCCESS
+	aErrorMessage = ""
+	data fileOpen, boolean
+	data memmax, i4, 0
+	data ch, int, 0
+	data rec, strPart
+
+	try
+	begin
+		open(ch=0,I:I,"MYDATA:parts.ism")
+		fileOpen = true
+	end
+	catch (e, @Exception)
+	begin
+		status = METHOD_STATUS.FATAL_ERROR
+		fileOpen = false
+		aErrorMessage = "OPEN error: " + e.Message
+	end
+	endtry
+
+	if (fileOpen)
+	begin
+		try
+		begin
+			repeat
+			begin
+				reads(ch,rec)
+				aParts = %mem_proc(DM_RESIZ,^size(strPart)*(memmax+=1),aParts)
+				^m(strPart[memmax],aParts) = rec
+				if (memmax==aMax)
+					exitloop
+			end
+		end
+		catch (e, @EndOfFileException)
+		begin
+			nop
+		end
+		catch (e, @Exception)
+		begin
+			status = METHOD_STATUS.FATAL_ERROR
+			aErrorMessage = "READ error: " + e.Message
+		end
+		finally
+		begin
+			close ch
+		end
+		endtry
+	end
+
+	freturn status
+	
+endfunction
+
+{xfMethod(interface="Services")}
+function ReadAllPartsHandleGood, METHOD_STATUS
+	required in aMax, int
+	{xfParameter(collectionType=xfCollectType.structure,structure="strPart", dataTable=false)}
+	required out aParts, D_HANDLE
+	required out aErrorMessage, string
+	endparams
+proc
+	data status, METHOD_STATUS, METHOD_STATUS.SUCCESS
+	data memsize, i4, 0
+	data memused, i4, 0
+	data ch, i4, 0
+	data rec, strPart
+	data fileOpen, boolean
+	aErrorMessage = ""
+
+	try
+	begin
+		open(ch=0,I:I,"MYDATA:parts.ism")
+		fileOpen = true
+	end
+	catch (e, @Exception)
+	begin
+		status = METHOD_STATUS.FATAL_ERROR
+		fileOpen = false
+		aErrorMessage = "OPEN error: " + e.Message
+	end
+	endtry
+
+	if (fileOpen)
+	begin
+		try
+		begin
+			repeat
+			begin
+				reads(ch,rec)
+				if ((memused+=1)>memsize)
+					aParts = %mem_proc(DM_RESIZ,^size(strPart)*(memsize+=1000),aParts)
+				^m(strPart[memused],aParts) = rec
+				if (memused == aMax)
+					exitloop
+			end
+		end
+		catch (e, @EndOfFileException)
+		begin
+			nop
+		end
+		catch (e, @Exception)
+		begin
+			status = METHOD_STATUS.FATAL_ERROR
+			aErrorMessage = "READ error: " + e.Message
+		end
+		finally
+		begin
+			close ch
+			if (memused>0)
+				aParts = %mem_proc(DM_RESIZ,^size(strPart)*memused,aParts)
+		end
+		endtry
+	end
+
+	freturn status
+
+endfunction
+

@@ -1,0 +1,45 @@
+;	Synergy ISAM PAR File created Fri Sep 12 10:18:20 2014
+parts.ism
+700	;Record size
+3	;Number of keys
+	;5ca5 magic, revision 6, 7 byte record overhead
+	;Static vectoring disabled
+	;Default R6 file attributes:
+	;  Static RFAs enabled (Required)
+	;  Page size 4K
+	;Creation version 10.1.1  {Compat Level 6.0}
+	;0 of 32 byte file text allocation in use, @0x169c
+	;Update revision count 4876
+	;File created on Mon Mar 05 02:43:19 2012
+	;Last re-indexed on Tue Apr 16 05:35:07 2013
+	;23 byte longest key
+	;2 free index blocks, 0xc000 free list head
+	;5000 records, 0 free
+id
+	;Primary alpha key
+20	;Key size
+1	;Start position
+N	;Duplicates allowed
+A	;Ascending/descending
+	;Root 0x9000, index depth 2
+	;Minimum keys per block 85
+group/modify
+	;Alternate alpha key #1
+20	;Key size
+21	;Start position
+Y	;Duplicates allowed
+N	;Insert at front
+A	;Ascending/descending
+	;Root 0x5000, index depth 2
+	;Qualifier offset 1
+	;Minimum keys per block 75
+supplier/modify
+	;Alternate alpha key #2
+20	;Key size
+41	;Start position
+Y	;Duplicates allowed
+N	;Insert at front
+A	;Ascending/descending
+	;Root 0x7000, index depth 2
+	;Qualifier offset 4
+	;Minimum keys per block 75

@@ -1,0 +1,106 @@
+import System
+import System.IO
+import BusinessLogic
+import System.Threading
+import System.Collections.Generic
+import System.Linq
+
+.array 0
+
+namespace ThreadTest
+
+	;;      *      using (var servicesWrapper = new ServicesWrapper())
+	;;      *      {
+	;;      *          result = servicesWrapper.MyServices.SomeMethod(params)
+	;;      *      
+	;;      *          //Other code
+	;;      * 
+	;;      *      }
+
+	
+	public class ServicesWrapper implements IDisposable
+		
+		private myAppDomain, @AppDomain
+		public MyServices, @Services
+		
+		public method ServicesWrapper
+			endparams
+		proc
+			;; Get an AppDomain
+			myAppDomain = AppDomainUtil.GetThreadAppDomain()
+			;; Create an instance of the ServicesHelper class INSIDE the AppDomain.
+			MyServices = ^as(myAppDomain.CreateInstanceFromAndUnwrap(^typeof(ServicesHelper).Assembly.CodeBase, ^typeof(ServicesHelper).FullName), Services)
+		endmethod
+		
+		public method Dispose, void
+			endparams
+		proc
+			myAppDomain = ^null
+			MyServices = ^null
+			AppDomainUtil.ThreadCleanup()
+		endmethod
+
+	endclass
+	
+	public static class AppDomainUtil
+		
+		public static activeAppDomains, @Dictionary<Thread, AppDomain>, new Dictionary<Thread, AppDomain>()
+		
+		public static method GetThreadAppDomain, @AppDomain
+			endparams
+		proc
+			try
+			begin
+				Monitor.Enter(activeAppDomains)
+				begin
+					;; Is there an AppDomain associated with the current thread?
+					if (activeAppDomains.ContainsKey(Thread.CurrentThread)) then
+					begin
+						;; Yes, return it
+						mreturn activeAppDomains[Thread.CurrentThread]
+					end
+					else
+					begin
+						;; No, return a new one
+						data domain = AppDomain.CreateDomain(Guid.NewGuid().ToString())
+						activeAppDomains.Add(Thread.CurrentThread, domain)
+						mreturn domain
+					end
+				end
+			end
+			finally
+			begin
+				Monitor.Exit(activeAppDomains)
+			end
+			endtry
+
+		endmethod
+		
+		public static method ThreadCleanup, void
+			endparams
+		proc
+			;; Make sure only one thread can go through this logic at the same time. Others will wait.
+			try
+			begin
+				Monitor.Enter(activeAppDomains)
+				lambda isDead(threadDomainPair)
+				begin
+					mreturn !threadDomainPair.Key.IsAlive
+				end
+				data item, @KeyValuePair<Thread,AppDomain>
+				foreach item in activeAppDomains.Where(isDead).ToList()
+				begin
+					AppDomain.Unload(item.Value)
+					activeAppDomains.Remove(item.Key)
+				end
+			end
+			finally
+			begin
+				Monitor.Exit(activeAppDomains)
+			end
+			endtry
+		endmethod
+
+	endclass
+
+endnamespace
