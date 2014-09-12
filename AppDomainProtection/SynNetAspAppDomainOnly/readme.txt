@@ -3,13 +3,13 @@ Title:          SynNetAspAppDomainOnly
 
 Description:    An example of how to use a Synergy .NET assembly in an
                 ASP.NET application. This example assumes a stateless environment
-				in both the ASP.NET Web application AND the Synergy code. In other
-				words NO RELICANCE on consistency of COMMON, GLOBAL or STATIC data
-				and no channels left open beyond the completion of any method.
+                in both the ASP.NET Web application AND the Synergy code. In other
+                words NO RELICANCE on consistency of COMMON, GLOBAL or STATIC data
+                and no channels left open beyond the completion single web request.
 
 Author:         Steve Ives, Synergex Professional Services Group
 
-Revision:       1.1
+Revision:       1.2
 
 Date:           9th September 2014
 
@@ -20,7 +20,7 @@ Revision log
 
 1.0             Original example
 
-1.1		        Updated with an example of how to pass configuration data from
+1.1             Updated with an example of how to pass configuration data from
                 the Web application to the Synergy .NET code and use SETLOG
                 to set environment variables based on those settings.
 

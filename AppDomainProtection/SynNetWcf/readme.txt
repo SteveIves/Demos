@@ -2,6 +2,11 @@
 Title:          SynNetWcf
 
 Description:    An example of how to implement WCF services using Synergy .NET
+                while providing the required AppDomain isolation and multi-
+                threading protection needed for Synergy .NET code. This example
+                implements the WCF service directly in code, not via a Synergy
+                .NET Interop project. A different solution would be required
+                in that case.
 
 Author:         Steve Ives, Synergex Professional Services Group
 
@@ -14,9 +19,9 @@ Requirements:   Synergy .NET 10.1.1c or higher
 --------------------------------------------------------------------------------
 Change history
 
-1.0		        Original example.
+1.0             Original example.
 
-1.1	            Simple bug fix.
+1.1             Simple bug fix.
 
 1.2             Enhanced the code in the AppDomainProtection assembly to work
                 better when hosted in IIS.

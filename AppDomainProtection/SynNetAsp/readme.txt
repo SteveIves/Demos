@@ -2,6 +2,7 @@
 Title:          SynNetAsp
 
 Description:    An example of how to use Synergy .NET code in ASP.NET applications
+                which maintain session state.
 
 Author:         Steve Ives, Synergex Professional Services Group
 
