@@ -1,0 +1,27 @@
+
+import System.collections
+
+main test
+
+record
+	tt,			i4
+	results, 	@ArrayList
+	result, 	String
+endrecord
+	
+proc
+
+	open(tt=0,i,"tt:")
+
+	if (%WinDir("TEMP:*.*",results))
+
+	foreach result in results
+		writes(tt,result)
+	
+	writes(tt,"Matching files: " + %string(results.Count))
+	
+	close tt
+	stop
+
+endmain
+
