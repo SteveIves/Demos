@@ -1,0 +1,31 @@
+
+main ClipBoardTest
+
+	.include "WND:windows.def"
+	
+	record 
+		tt			,i4
+		wnd			,i4
+		cb			,@ClipBoard
+		cbdata		,String
+	endrecord
+
+proc
+	open(tt=0,i,"tt:")
+	xcall w_init(9,tt,5,24,80)
+	xcall w_proc(WP_CREATE,wnd,"MAIN",24,80,WP_PLACE,wnd,1,1)
+	
+	cb = new ClipBoard(wnd)
+	cb.SetClipboardText("Hello Clipboard")
+	cbdata = cb.GetClipboardText()
+
+	clear cb
+	
+	xcall w_disp(wnd,cbdata)
+	xcall w_updt
+	
+	xcall w_proc(WP_DELETE,wnd)
+	close tt
+	
+endmain
+

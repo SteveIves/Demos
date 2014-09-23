@@ -1,0 +1,110 @@
+
+.include "WND:windows.def"
+
+namespace SynPSG.Examples
+
+	public class Clipboard
+		
+		private user32,		D_ADDR
+		private kernel32,	D_ADDR
+		private wnd,		i4
+		
+		structure oneCharacterStructure
+							,a1
+		endstructure
+
+		
+		public method Clipboard
+			required in owningWindowId, i4
+		proc
+			wnd = owningWindowId
+			user32 = %dll_open("user32.dll")
+			kernel32 = %dll_open("kernel32.dll")
+		endmethod
+		
+		method ~Clipboard
+
+		proc
+			user32 = %dll_close(user32)
+			kernel32 = %dll_close(kernel32)
+		endmethod
+		
+		public method GetClipboardText, string
+			endparams
+			record 
+				clipboardData, string
+				format, i4
+			endrecord
+		proc
+			clipboardData = ""
+			;;Is text available from the clipboard?
+			if (%dll_call(user32,DLL_TYPE_WINAPI,"IsClipboardFormatAvailable",format=1))
+			begin
+				;;Open the clipboard	
+				data result, i4
+				if (result = %dll_call(user32,DLL_TYPE_WINAPI,"OpenClipboard",%w_info(WIF_HWND,wnd)))
+				begin
+					;;Get data from clipboard
+					data pointerToFirstChar, D_ADDR
+					if ((pointerToFirstChar = %dll_call(user32,DLL_TYPE_WINAPI,"GetClipboardData",format=1))!=0) then
+					begin
+						;;Now what?
+						data addressOfFirstChar, D_ADDR, %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalLock",pointerToFirstChar)
+						data memoryHandle, i4
+						data offset, i4, -1
+						repeat
+						begin
+							data nextCharacter, String
+							memoryHandle = %mem_proc(DM_REG,1,addressOfFirstChar+(offset+=1))
+							nextCharacter = ^m(oneCharacterStructure[1],memoryHandle)
+							memoryHandle = %mem_proc(DM_FREE,memoryHandle)
+							if (nextCharacter != %char(0)) then
+								clipboardData += nextCharacter
+							else
+								exitloop
+						end
+					end
+					else
+					begin
+						;;GetClipboardData failed.
+						nop
+					end
+					;;Close the clipboard
+					xcall dll_call(user32,DLL_TYPE_WINAPI,"CloseClipboard")
+				end
+			end
+			mreturn clipboardData
+		endmethod
+		
+		public method SetClipboardText, void
+			required in text, String
+			endparams
+			record 
+				result, i4
+			endrecord
+		proc
+			if (result = %dll_call(user32,DLL_TYPE_WINAPI,"OpenClipboard",%w_info(WIF_HWND,wnd)))
+			begin
+				data clipBuffer, D_ADDR
+				data buffer, D_ADDR
+				data format, i4, 1
+				data GMEM_DDESHARE, i4, 8192
+				data memHandle, i4
+
+				xcall dll_call(user32,DLL_TYPE_WINAPI,"EmptyClipboard")
+				clipBuffer = %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalAlloc",GMEM_DDESHARE,text.Length+1)
+				buffer = %dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalLock",clipBuffer)
+
+				memHandle = %mem_proc(DM_REG,text.Length+1,buffer)
+				^m(memHandle) = (a)text
+				memHandle = %mem_proc(DM_FREE,memHandle)
+
+				xcall dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalUnlock",clipBuffer)
+				xcall dll_call(user32,DLL_TYPE_WINAPI,"SetClipboardData",format,clipBuffer)
+				xcall dll_call(user32,DLL_TYPE_WINAPI,"CloseClipboard")
+			end
+		endmethod
+		
+	endclass
+	
+endnamespace
