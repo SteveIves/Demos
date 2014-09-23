@@ -80,34 +80,34 @@
 			<Target
 				Name="Register Service"
 				MenuCaption="&amp;Register Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="register_service"/>
+				<Exec CmdLine="RegisterService.bat"/>
 			</Target>
 			<Target
 				Name="Start Service"
 				MenuCaption="&amp;Start Service"
-				RunFromDir="%rp"
 				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1">
-				<Exec CmdLine="start_service"/>
+				ClearProcessBuffer="1"
+				RunFromDir="%wp">
+				<Exec CmdLine="StartService.bat"/>
 			</Target>
 			<Target
 				Name="Stop Service"
 				MenuCaption="&amp;Stop Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="stop_service"/>
+				<Exec CmdLine="StopService.bat"/>
 			</Target>
 			<Target
 				Name="Remove Service"
 				MenuCaption="&amp;Remove Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="remove_service"/>
+				<Exec CmdLine="RemoveService.bat"/>
 			</Target>
 		</Menu>
 	</Config>
@@ -188,34 +188,34 @@
 			<Target
 				Name="Register Service"
 				MenuCaption="&amp;Register Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="register_service"/>
+				<Exec CmdLine="RegisterService.bat"/>
 			</Target>
 			<Target
 				Name="Start Service"
 				MenuCaption="&amp;Start Service"
-				RunFromDir="%rp"
 				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1">
-				<Exec CmdLine="start_service"/>
+				ClearProcessBuffer="1"
+				RunFromDir="%wp">
+				<Exec CmdLine="StartService.bat"/>
 			</Target>
 			<Target
 				Name="Stop Service"
 				MenuCaption="&amp;Stop Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="stop_service"/>
+				<Exec CmdLine="StopService.bat"/>
 			</Target>
 			<Target
 				Name="Remove Service"
 				MenuCaption="&amp;Remove Service"
-				RunFromDir="%rp"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="remove_service"/>
+				<Exec CmdLine="RemoveService.bat"/>
 			</Target>
 		</Menu>
 	</Config>
@@ -234,10 +234,10 @@
 		<Folder
 			Name="Other Files"
 			Filters="">
-			<F N="register_service.bat"/>
-			<F N="remove_service.bat"/>
-			<F N="start_service.bat"/>
-			<F N="stop_service.bat"/>
+			<F N="RegisterService.bat"/>
+			<F N="RemoveService.bat"/>
+			<F N="StartService.bat"/>
+			<F N="StopService.bat"/>
 		</Folder>
 	</Files>
 	<Macro>

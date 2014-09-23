@@ -1,0 +1,1 @@
+dbssvc -x -c MySynergyService
