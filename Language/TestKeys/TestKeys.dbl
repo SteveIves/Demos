@@ -4,7 +4,7 @@ record
 	achar,	a6
 endrecord
 proc
-	flags(50000,1)
+	flags(80050000,1)
 	open(1,i,"tt:")
 	repeat
 	begin

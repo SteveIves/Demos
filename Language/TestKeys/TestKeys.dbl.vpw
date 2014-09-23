@@ -1,6 +1,6 @@
 <!DOCTYPE Workspace SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpw.dtd">
-<Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.1.1b">
+<Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.2.5">
 	<Projects>
-		<Project File="TestKeys.dbl.vpj" />
+		<Project File="TestKeys.dbl.vpj"/>
 	</Projects>
 </Workspace>
