@@ -2,37 +2,50 @@
 main ScheduledTaskControl
 	record
 		tt,				i4
-		errorMessage, string
+		errorMessage, 	string
+		task,			@ScheduledTask
 	endrecord
 proc
 	open(tt=0,i,'tt:')
 	
-	if (%StartScheduledTask("Synergy Task 1","D:\Dev\Demos\Language\ScheduledTask\ScheduledTask.dbr",errorMessage)) then
+	task = new ScheduledTask("Synergy Task 1","D:\Dev\Demos\Language\ScheduledTask\ScheduledTask.dbr")
+	
+	;;Optional settings
+	
+	;;TODO: Need to add support for specifying the run frequency
+	
+	;task.System			= "system_name"		;;System to run/control the scheduled task on
+	;task.RunAsUser			= "username"		;;Username to use to manage the scheduled task (default is current user)
+	;task.RunAsPassword		= "password"		;;Password for user account used to manage scheduled task
+	;task.RunTaskAsUser		= "username"		;;User account to run scheduled task as (default is "SYSTEM")
+	;task.RunTaskAsPassword	= "password"		;;Password for user account used to run scheduled task
+	
+	if (task.Create(errorMessage)) then
 	begin
 		writes(tt,"Task started.")
 		writes(tt,"Check for C:\Windows\Temp\TEMP\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
 		writes(tt,"Task will be automatically run once per minute.")
 
-		writes(tt,"Task will be manually run in 5 seconds")		
-		sleep 5
-		
-		if (%RunScheduledTask("Synergy Task 1",errorMessage)) then
-			writes(tt,"Task was manually run.")
-		else
-			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
-		
-		writes(tt,"Task will be manually run in 5 seconds")		
+		writes(tt,"Task will be manually run in 5 seconds")
 		sleep 5
 
-		if (%RunScheduledTask("Synergy Task 1",errorMessage)) then
+		if (task.Run(errorMessage)) then
 			writes(tt,"Task was manually run.")
 		else
 			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
 
-		writes(tt,"Task will be stopped and deleted in 3 minutes.")
+		writes(tt,"Task will be manually run in 5 seconds")
+		sleep 5
+
+		if (task.Run(errorMessage)) then
+			writes(tt,"Task was manually run.")
+		else
+			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
+
+		writes(tt,"Task will be stopped and deleted in 2 minutes.")
 		sleep 120
-		
-		if (%DeleteScheduledTask("Synergy Task 1",errorMessage)) then
+
+		if (task.Delete(errorMessage)) then
 			writes(tt,"Task deleted.")
 		else
 			writes(tt,"ERROR: Failed to delete task. Error was " + errorMessage)
@@ -40,138 +53,192 @@ proc
 	end
 	else
 		writes(tt,"ERROR: Failed to start task! Error was " + errorMessage)
-
+	
 	close tt
 	stop
 
 endmain
 
-;;; Registers and starts a new scheduled task. If a task with the same name already exists it is replaced with a new task.
-;;; </summary>
-;;; <param name="taskName">Name of scheduled task to create.</param>
-;;; <param name="errorMessage">Error message returned only if the return value is false.</param>
-;;; <returns>Returns true if the task was created or replaced, or false if the task failed to stop.</returns>
-;;; <returns></returns>
-function StartScheduledTask, boolean
-	required in  taskName, string
-	required in  taskDbr, string
-	required out errorMessage, string
-	endparams
-	stack record 
-		ok,			boolean
-		ch,			i4
-		command,	string
-		message,	a256
-	endrecord
-proc
-	ok = true
-	errorMessage = ""
+namespace SynPSG.Examples
 
-	command = '|schtasks /create /f /sc MINUTE /ru SYSTEM /tn "' + taskName.Trim() + '" /tr "C:\Program Files (x86)\Synergex\SynergyDE\dbl\bin\dbs.exe ' + taskDbr.Trim() + '"'
+	public class ScheduledTask
+		
+		public method ScheduledTask
+			required in aTaskName,	String
+			required in aTaskDbr,	String
+		proc
+			;;Store constructor parameters
+			TaskName = aTaskName
+			TaskDbr = aTaskDbr
+			;;Set default values
+			RunTaskAsUser = "SYSTEM"
+		endmethod
+		
+		public property TaskName, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		public property TaskDbr, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+		public property System, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+		public property RunAsUser, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+		public property RunAsPassword, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+		public property RunTaskAsUser, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+		public property RunTaskAsPassword, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		public method Create, boolean
+			required out errorMessage, String
+			endparams
+			record 
+				ok, boolean
+				ch, i4
+				command, String
+				message, a256
+			endrecord
+		proc
+			ok = true
+			command = '|schtasks /create /f /sc MINUTE'
+			command += getTaskAndAuthInfo()
+			command += ' /ru ' + RunTaskAsUser
+			if (RunTaskAsPassword!=^null)
+				command += ' /rp ' + RunTaskAsPassword
+			command += ' /tr "C:\Program Files (x86)\Synergex\SynergyDE\dbl\bin\dbs.exe ' + TaskDbr + '"'
+
+			open(ch=0,i,command)
+			reads(ch,message)
+			if (!(ok = (message=='SUCCESS: The scheduled task "' + TaskName + '" has successfully been created.')))
+				errorMessage = %atrim(message)
+			close ch
+			mreturn ok
+		endmethod
+		
+		public method Run, boolean
+			required out errorMessage, String
+			endparams
+			record 
+				ok, boolean
+				ch, i4
+				command, string
+				message, a256
+			endrecord
+		proc
+			ok = true
+			errorMessage = ""
+
+			command = "|schtasks /run /i"
+			command += getTaskAndAuthInfo()
+
+			open(ch=0,i,command)
+			reads(ch,message)
+			if (!(ok = (message=='SUCCESS: Attempted to run the scheduled task "' + taskName.Trim() + '".')))
+				errorMessage = message
+			close ch
+			mreturn ok
+		endmethod
+
+		public method Stop, boolean
+			required out errorMessage, String
+			endparams
+			record 
+				ok, boolean
+				ch, i4
+				command, string
+				message, a256
+			endrecord
+		proc
+			ok = true
+			errorMessage = ""
+
+			command = "|schtasks /end"
+			command += getTaskAndAuthInfo()
+
+			open(ch=0,i,command)
+			reads(ch,message)
+			if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" has been terminated successfully.')))
+				errorMessage = message
+			close ch
+			mreturn ok
+		endmethod
+		
+		public method Delete, boolean
+			required out errorMessage, String
+			endparams
+			record 
+				ok, boolean
+				ch, i4
+				command, string
+				message, a256
+			endrecord
+		proc
+			ok = true
+			errorMessage = ""
+
+			command = "|schtasks /delete /f"
+			command += getTaskAndAuthInfo()
+
+			open(ch=0,i,command)
+			reads(ch,message)
+			if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" was successfully deleted.')))
+				errorMessage = message
+			close ch
+			mreturn ok
+		endmethod
+
+		private method getTaskAndAuthInfo, string
+			endparams
+			record 
+				authInfo, String
+			endrecord
+		proc
+			authInfo = ' /tn "' + TaskName + '"'
+			if (System != ^null)
+				authInfo += ' /s ' + System
+			if (RunAsUser != ^null)
+				authInfo += ' /u ' + runAsUser
+			if (RunAsPassword != ^null)
+				authInfo += ' /p ' + RunAsPassword
+			mreturn authInfo
+		endmethod
+
+
+	endclass
 	
-	open(ch=0,i,command)
-	reads(ch,message)
-	if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" has successfully been created.')))
-		errorMessage = %atrim(message)
-	close ch
-	
-	freturn ok
-
-endfunction
-
-;;; <summary>
-;;; Stops a currently running scheduled task. If the task is not currently running no error is reported.
-;;; </summary>
-;;; <param name="taskName">Name of scheduled task to stop.</param>
-;;; <param name="errorMessage">Error message returned only if the return value is false.</param>
-;;; <returns>Returns true if the task was stopped or wasn't running, or false if the task failed to stop.</returns>
-function StopScheduledTask, boolean
-	required in  taskName, string
-	required out errorMessage, string
-	endparams
-	stack record 
-		ok,			boolean
-		ch,			i4
-		command,	string
-		message,	a256
-	endrecord
-proc
-	ok = true
-	errorMessage = ""
-
-	command = '|schtasks /end /tn "' + taskName.Trim() + '"'
-	
-	open(ch=0,i,command)
-	reads(ch,message)
-	if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" has been terminated successfully.')))
-		errorMessage = message
-	close ch
-	
-	freturn ok
-
-endfunction
-
-;;; <summary>
-;;; Deletes an existing scheduled task. If the task is currently running it will be terminated and deleted.
-;;; </summary>
-;;; <param name="taskName">Name of scheduled task to delete.</param>
-;;; <param name="errorMessage">Error message returned only if the return value is false.</param>
-;;; <returns>Returns true if the task was deleted, or false if the task failed to delete.</returns>
-function DeleteScheduledTask, boolean
-	required in  taskName, string
-	required out errorMessage, string
-	endparams
-	stack record 
-		ok,			boolean
-		ch,			i4
-		command,	string
-		message,	a256
-	endrecord
-proc
-	ok = true
-	errorMessage = ""
-
-	command = '|schtasks /delete /f /tn "' + taskName.Trim() + '"'
-	
-	open(ch=0,i,command)
-	reads(ch,message)
-	if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" was successfully deleted.')))
-		errorMessage = message
-	close ch
-	
-	freturn ok
-
-endfunction
-
-;;; <summary>
-;;; Runs an existing scheduled task immediately, regardless of schedules or constraints..
-;;; </summary>
-;;; <param name="taskName">Name of scheduled task to run.</param>
-;;; <param name="errorMessage">Error message returned only if the return value is false.</param>
-;;; <returns>Returns true if the task was successfully run, or false if the task failed to run.</returns>
-function RunScheduledTask, boolean
-	required in  taskName, string
-	required out errorMessage, string
-	endparams
-	stack record 
-		ok,			boolean
-		ch,			i4
-		command,	string
-		message,	a256
-	endrecord
-proc
-	ok = true
-	errorMessage = ""
-
-	command = '|schtasks /run /i /tn "' + taskName.Trim() + '"'
-	
-	open(ch=0,i,command)
-	reads(ch,message)
-	if (!(ok = (message=='SUCCESS: Attempted to run the scheduled task "' + taskName.Trim() + '".')))
-		errorMessage = message
-	close ch
-	
-	freturn ok
-
-endfunction
+endnamespace
 
