@@ -14,18 +14,19 @@ proc
 	
 	;;TODO: Need to add support for specifying the run frequency
 	
-	;task.System			= "system_name"		;;System to run/control the scheduled task on
-	;task.RunAsUser			= "username"		;;Username to use to manage the scheduled task (default is current user)
-	;task.RunAsPassword		= "password"		;;Password for user account used to manage scheduled task
-	;task.RunTaskAsUser		= "username"		;;User account to run scheduled task as (default is "SYSTEM")
-	;task.RunTaskAsPassword	= "password"		;;Password for user account used to run scheduled task
+;	task.System				= "system_name"		;;System to run/control the scheduled task on
+;	task.RunAsUser			= "username"		;;Username to use to manage the scheduled task (default is current user)
+;	task.RunAsPassword		= "password"		;;Password for user account used to manage scheduled task
+;	task.RunTaskAsUser		= "username"		;;User account to run scheduled task as (default is "SYSTEM")
+;	task.RunTaskAsPassword	= "password"		;;Password for user account used to run scheduled task
 	
-	if (task.Create(errorMessage)) then
+	if (task.Create(TaskSchedule.Minute,1,errorMessage)) then
 	begin
 		writes(tt,"Task started.")
 		writes(tt,"Check for C:\Windows\Temp\TEMP\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
 		writes(tt,"Task will be automatically run once per minute.")
-
+		
+		
 		writes(tt,"Task will be manually run in 5 seconds")
 		sleep 5
 
@@ -61,6 +62,20 @@ endmain
 
 namespace SynPSG.Examples
 
+	public enum TaskSchedule
+		None
+		Minute
+		Hourly
+		Daily
+		Weekly
+		Monthly
+		Once
+		OnStart
+		OnLogon
+		OnIdle
+		OnEvent
+	endenum
+	
 	public class ScheduledTask
 		
 		public method ScheduledTask
@@ -124,17 +139,125 @@ namespace SynPSG.Examples
 		endproperty
 		
 		public method Create, boolean
-			required out errorMessage, String
+			required in  schedule		,TaskSchedule
+			required out errorMessage	,String
+			endparams
+		proc
+			mreturn Create(schedule,0,^null,errorMessage)
+		endmethod
+
+		public method Create, boolean
+			required in  schedule		,TaskSchedule
+			required in  modifier		,int
+			required out errorMessage	,String
+			endparams
+		proc
+			mreturn Create(schedule,modifier,^null,errorMessage)
+		endmethod
+		
+		public method Create, boolean
+			required in  schedule		,TaskSchedule
+			required in  modifier		,int
+			required in  startTime		,String
+			required out errorMessage	,String
 			endparams
 			record 
-				ok, boolean
 				ch, i4
 				command, String
 				message, a256
 			endrecord
 		proc
-			ok = true
-			command = '|schtasks /create /f /sc MINUTE'
+			command = '|schtasks /create /f'
+
+			using schedule select
+			(TaskSchedule.None),
+				nop
+			(TaskSchedule.Minute),
+			begin
+				command += ' /sc MINUTE'
+				if (modifier && modifier >= 1 && modifier <= 1439) then
+					command += ' /mo '+%string(modifier)
+				else if (modifier)
+				begin
+					errorMessage = 'Modifier value ' + %string(modifier) + ' is not valid for schedule type MINUTE'
+					mreturn false
+				end
+			end
+			(TaskSchedule.Hourly),
+			begin
+				command += ' /sc HOURLY'
+				if (modifier && modifier >= 1 && modifier <= 23) then
+					command += ' /mo '+%string(modifier)
+				else if (modifier)
+				begin
+					errorMessage = 'Modifier value ' + %string(modifier) + ' is not valid for schedule type HOURLY'
+					mreturn false
+				end
+			end
+			(TaskSchedule.Daily),
+			begin
+				command += ' /sc DAILY'
+				if (modifier && modifier >= 1 && modifier <= 365) then
+					command += ' /mo '+%string(modifier)
+				else if (modifier)
+				begin
+					errorMessage = 'Modifier value ' + %string(modifier) + ' is not valid for schedule type DAILY'
+					mreturn false
+				end
+				if ((startTime!=^null)&&(startTime.Length>0))
+					command += ' /st ' + startTime
+			end
+			(TaskSchedule.Weekly),
+			begin
+				command += ' /sc WEEKLY'
+				if (modifier && modifier >= 1 && modifier <= 365) then
+					command += ' /mo '+%string(modifier)
+				else if (modifier)
+				begin
+					errorMessage = 'Modifier value ' + %string(modifier) + ' is not valid for schedule type DAILY'
+					mreturn false
+				end
+				if ((startTime!=^null)&&(startTime.Length>0))
+					command += ' /st ' + startTime
+			end
+			(TaskSchedule.Monthly),
+			begin
+				command += ' /sc MONTHLY'
+				if (modifier && modifier >= 1 && modifier <= 12) then
+					command += ' /mo '+%string(modifier)
+				else if (modifier)
+				begin
+					errorMessage = 'Modifier value ' + %string(modifier) + ' is not valid for schedule type MONTHLY'
+					mreturn false
+				end
+				if ((startTime!=^null)&&(startTime.Length>0))
+					command += ' /st ' + startTime
+			end
+			(TaskSchedule.Once),
+			begin
+				command += ' /sc ONCE'
+				if ((startTime!=^null)&&(startTime.Length>0))
+					command += ' /st ' + startTime
+			end
+			(TaskSchedule.OnStart),
+			begin
+				command += ' /sc ONSTART'
+			end
+			(TaskSchedule.OnLogon),
+			begin
+				command += ' /sc ONLOGON'
+			end
+			(TaskSchedule.OnIdle),
+			begin
+				command += ' /sc ONIDLE'
+			end
+			(TaskSchedule.OnEvent),
+			begin
+				errorMessage = 'Schedule type ONEVENT is sot supported yet'
+				mreturn false
+			end
+			endusing
+
 			command += getTaskAndAuthInfo()
 			command += ' /ru ' + RunTaskAsUser
 			if (RunTaskAsPassword!=^null)
@@ -143,10 +266,16 @@ namespace SynPSG.Examples
 
 			open(ch=0,i,command)
 			reads(ch,message)
-			if (!(ok = (message=='SUCCESS: The scheduled task "' + TaskName + '" has successfully been created.')))
-				errorMessage = %atrim(message)
 			close ch
-			mreturn ok
+			
+			if (message!='SUCCESS: The scheduled task "' + TaskName + '" has successfully been created.')
+			begin
+				errorMessage = %atrim(message)
+				mreturn false
+			end
+				
+			mreturn true
+			
 		endmethod
 		
 		public method Run, boolean
@@ -167,10 +296,16 @@ namespace SynPSG.Examples
 
 			open(ch=0,i,command)
 			reads(ch,message)
-			if (!(ok = (message=='SUCCESS: Attempted to run the scheduled task "' + taskName.Trim() + '".')))
-				errorMessage = message
 			close ch
+
+			if (message!='SUCCESS: Attempted to run the scheduled task "' + taskName.Trim() + '".')
+			begin
+				errorMessage = %atrim(message)
+				mreturn false
+			end
+			
 			mreturn ok
+			
 		endmethod
 
 		public method Stop, boolean
@@ -191,10 +326,16 @@ namespace SynPSG.Examples
 
 			open(ch=0,i,command)
 			reads(ch,message)
-			if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" has been terminated successfully.')))
-				errorMessage = message
 			close ch
+
+			if (message!='SUCCESS: The scheduled task "' + taskName.Trim() + '" has been terminated successfully.')
+			begin
+				errorMessage = %atrim(message)
+				mreturn false
+			end
+
 			mreturn ok
+			
 		endmethod
 		
 		public method Delete, boolean
@@ -215,12 +356,39 @@ namespace SynPSG.Examples
 
 			open(ch=0,i,command)
 			reads(ch,message)
-			if (!(ok = (message=='SUCCESS: The scheduled task "' + taskName.Trim() + '" was successfully deleted.')))
-				errorMessage = message
 			close ch
-			mreturn ok
-		endmethod
 
+			if (message!='SUCCESS: The scheduled task "' + taskName.Trim() + '" was successfully deleted.')
+			begin
+				errorMessage = %atrim(message)
+				mreturn false
+			end
+
+			mreturn ok
+
+		endmethod
+		
+		public method GetStatus, String
+			endparams
+			record 
+				ch, int
+				command, string
+				message, a256
+				returnMsg, string
+			endrecord
+		proc
+			command = '|schtasks /query /tn "' + TaskName + '"'
+			open(ch=0,i,command)
+			repeat
+			begin
+				reads(ch,message,eof)
+				returnMsg = %atrim(message)
+			end
+		eof,
+			close ch
+			mreturn returnMsg
+		endmethod
+		
 		private method getTaskAndAuthInfo, string
 			endparams
 			record 
