@@ -1,0 +1,9 @@
+
+main ScheduledTask
+	
+proc
+    xcall flags(7004020,1)
+    open(1,o,"TEMP:scheduled_task_"+%datetime+".txt")
+    writes(1,%datetime)
+    close 1
+endmain
