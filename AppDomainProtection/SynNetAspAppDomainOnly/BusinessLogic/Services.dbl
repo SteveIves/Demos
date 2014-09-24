@@ -3,8 +3,6 @@
 ;;******************************************************************************
 
 import System
-import System.Collections.Generic
-import System.Reflection
 
 namespace BusinessLogic
 
@@ -18,9 +16,6 @@ namespace BusinessLogic
 		
         public method Services
             endparams
-            record
-                status, i4	;Result of XCALL SETLOG
-            endrecord
         proc
             ;;CRITICAL: If your Synergy .NET code uses xfServer to access data then you must ensure that
             ;;your xfServer connection is locked to the current thread.
