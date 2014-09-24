@@ -1,18 +1,61 @@
-;;; <summary>
+;;*****************************************************************************
+;;
+;; Title:       ScheduledTaskControl.dbl
+;;
+;; Type:        Program
+;;
+;; Description: A program that demonstrates how to start a Traditional
+;;              Synergy application as a Windows Scheduled task.
+;;
+;; Date:        23rd September 2014
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;              http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
+
 main ScheduledTaskControl
 	record
 		tt,				i4
-		errorMessage, 	string
+		folder,			a128
+		length,i4
 		task,			@ScheduledTask
+		errorMessage, 	string
 	endrecord
 proc
 	open(tt=0,i,'tt:')
+	xcall getlog("ROOT",folder,length)
 	
-	task = new ScheduledTask("Synergy Task 1","D:\Dev\Demos\Language\ScheduledTask\ScheduledTask.dbr")
+	task = new ScheduledTask("Synergy Task 1",%atrim(folder)+"ScheduledTask.dbr")
 	
 	;;Optional settings
-	
-	;;TODO: Need to add support for specifying the run frequency
 	
 ;	task.System				= "system_name"		;;System to run/control the scheduled task on
 ;	task.RunAsUser			= "username"		;;Username to use to manage the scheduled task (default is current user)
@@ -23,27 +66,22 @@ proc
 	if (task.Create(TaskSchedule.Minute,1,errorMessage)) then
 	begin
 		writes(tt,"Task started.")
-		writes(tt,"Check for C:\Windows\Temp\TEMP\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
+		writes(tt,"Check for <windows_dir>\Temp\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
 		writes(tt,"Task will be automatically run once per minute.")
 		
 		
 		writes(tt,"Task will be manually run in 5 seconds")
 		sleep 5
-
-		if (task.Run(errorMessage)) then
-			writes(tt,"Task was manually run.")
-		else
-			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
-
-		writes(tt,"Task will be manually run in 5 seconds")
-		sleep 5
-
 		if (task.Run(errorMessage)) then
 			writes(tt,"Task was manually run.")
 		else
 			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
 
 		writes(tt,"Task will be stopped and deleted in 2 minutes.")
+
+		writes(tt,"")
+		writes(tt,"If you kill the program early, don't forget to delete the scheduled task!")
+
 		sleep 120
 
 		if (task.Delete(errorMessage)) then
@@ -59,6 +97,49 @@ proc
 	stop
 
 endmain
+
+;;*****************************************************************************
+;;
+;; Title:       ScheduledTask.dbl
+;;
+;; Type:        Class
+;;
+;; Description: Implements a simple API to allow Traditional Synergy applications
+;;              to be run as Windows Scheduled tasks.
+;;
+;; Date:        23rd September 2014
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;              http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
 
 namespace SynPSG.Examples
 
@@ -89,52 +170,94 @@ namespace SynPSG.Examples
 			RunTaskAsUser = "SYSTEM"
 		endmethod
 		
+		private mTaskName, String
+		
 		public property TaskName, String
 			method get
+			proc
+				mreturn mTaskName
 			endmethod
 			method set
+			proc
+				mTaskName = value
 			endmethod
 		endproperty
 		
+		private mTaskDbr, String
+
 		public property TaskDbr, String
 			method get
+			proc
+				mreturn mTaskDbr
 			endmethod
 			method set
+			proc
+				mTaskDbr = value
 			endmethod
 		endproperty
+
+		private mSystem, String
 
 		public property System, String
 			method get
+			proc
+				mreturn mSystem
 			endmethod
 			method set
+			proc
+				mSystem = value
 			endmethod
 		endproperty
+
+		private mRunAsUser, String
 
 		public property RunAsUser, String
 			method get
+			proc
+				mreturn mRunAsUser
 			endmethod
 			method set
+			proc
+				mRunAsUser = value
 			endmethod
 		endproperty
+
+		private mRunAsPassword, String
 
 		public property RunAsPassword, String
 			method get
+			proc
+				mreturn mRunAsPassword
 			endmethod
 			method set
+			proc
+				mRunAsPassword = value
 			endmethod
 		endproperty
+
+		private mRunTaskAsUser, String
 
 		public property RunTaskAsUser, String
 			method get
+			proc
+				mreturn mRunTaskAsUser
 			endmethod
 			method set
+			proc
+				mRunTaskAsUser = value
 			endmethod
 		endproperty
 
+		private mRunTaskAsPassword, String
+
 		public property RunTaskAsPassword, String
 			method get
+			proc
+				mreturn mRunTaskAsPassword
 			endmethod
 			method set
+			proc
+				mRunTaskAsPassword = value
 			endmethod
 		endproperty
 		
@@ -165,6 +288,7 @@ namespace SynPSG.Examples
 				ch, i4
 				command, String
 				message, a256
+				lastmessage, string
 			endrecord
 		proc
 			command = '|schtasks /create /f'
@@ -265,12 +389,17 @@ namespace SynPSG.Examples
 			command += ' /tr "C:\Program Files (x86)\Synergex\SynergyDE\dbl\bin\dbs.exe ' + TaskDbr + '"'
 
 			open(ch=0,i,command)
-			reads(ch,message)
+			repeat
+			begin
+				reads(ch,message,eof)
+				lastmessage = %atrim(message)
+			end
+		eof,
 			close ch
 			
-			if (message!='SUCCESS: The scheduled task "' + TaskName + '" has successfully been created.')
+			if (lastmessage!='SUCCESS: The scheduled task "' + TaskName + '" has successfully been created.')
 			begin
-				errorMessage = %atrim(message)
+				errorMessage = lastmessage
 				mreturn false
 			end
 				

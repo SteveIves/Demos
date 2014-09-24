@@ -99,14 +99,6 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
-			<Target
-				Name="Start Scheduled Task"
-				MenuCaption="&amp;Start Scheduled Task"
-				RunFromDir="%wp"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveNone">
-				<Exec CmdLine="StartTask.bat"/>
-			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -129,7 +121,7 @@
 				Value="1"/>
 			<SynSetting
 				Name="build_prototype"
-				Value="0"/>
+				Value="1"/>
 			<SynSetting
 				Name="proto_first_run"
 				Value="0"/>
@@ -160,27 +152,25 @@
 			<SynSetting
 				Name="build_complink_single"
 				Value="1"/>
-			<SynSetting
-				Name="qimpdir"
-				Value=""/>
 		</SynSettings>
 	</Config>
 	<Files>
 		<Folder
 			Name="Source Files"
-			Filters="*.dbl;*.tpl;*.dbc;*.wpd;*.wid;*.whd;*.ssd;*.sad;*.pod;*.opd;*.ind;*.utd;*.gld;*.ard;*.apd;*.agd;*.sud;*.uts;*.utg;*.utm;*.utl;*.DBI">
+			Filters="*.dbl;*.tpl;*.dbc">
 			<F N="ScheduledTask.dbl"/>
 			<F N="ScheduledTaskControl.dbl"/>
 		</Folder>
 		<Folder
 			Name="Header Files"
-			Filters="*.def;*.dbh;*.agl;*.apl;*.arl;*.ctl;*.gll;*.opl;*.pol;*.sal;*.ssl;*.syl;*.whl;*.wil;*.wpl"/>
+			Filters="*.def;*.dbh"/>
 		<Folder
 			Name="Toolkit Script Files"
 			Filters="*.wsc"/>
 		<Folder
 			Name="Other Files"
 			Filters="">
+			<F N="ReadMe.txt"/>
 		</Folder>
 	</Files>
 	<Config
@@ -279,14 +269,6 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
-			<Target
-				Name="Start Scheduled Task"
-				MenuCaption="&amp;Start Scheduled Task"
-				RunFromDir="%wp"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveNone">
-				<Exec CmdLine="StartTask.bat"/>
-			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -309,7 +291,7 @@
 				Value="1"/>
 			<SynSetting
 				Name="build_prototype"
-				Value="0"/>
+				Value="1"/>
 			<SynSetting
 				Name="proto_first_run"
 				Value="0"/>
@@ -340,9 +322,6 @@
 			<SynSetting
 				Name="build_complink_single"
 				Value="1"/>
-			<SynSetting
-				Name="qimpdir"
-				Value=""/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -441,14 +420,6 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
-			<Target
-				Name="Start Scheduled Task"
-				MenuCaption="&amp;Start Scheduled Task"
-				RunFromDir="%wp"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveNone">
-				<Exec CmdLine="StartTask.bat"/>
-			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -471,7 +442,7 @@
 				Value="1"/>
 			<SynSetting
 				Name="build_prototype"
-				Value="0"/>
+				Value="1"/>
 			<SynSetting
 				Name="proto_first_run"
 				Value="0"/>
@@ -502,9 +473,6 @@
 			<SynSetting
 				Name="build_complink_single"
 				Value="1"/>
-			<SynSetting
-				Name="qimpdir"
-				Value=""/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -603,14 +571,6 @@
 					CmdLine="SynSetupCompileScripts"
 					Type="Slick-C"/>
 			</Target>
-			<Target
-				Name="Start Scheduled Task"
-				MenuCaption="&amp;Start Scheduled Task"
-				RunFromDir="%wp"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveNone">
-				<Exec CmdLine="StartTask.bat"/>
-			</Target>
 		</Menu>
 		<SynSettings>
 			<SynSetting
@@ -633,7 +593,7 @@
 				Value="1"/>
 			<SynSetting
 				Name="build_prototype"
-				Value="0"/>
+				Value="1"/>
 			<SynSetting
 				Name="proto_first_run"
 				Value="0"/>
@@ -664,9 +624,9 @@
 			<SynSetting
 				Name="build_complink_single"
 				Value="1"/>
-			<SynSetting
-				Name="qimpdir"
-				Value=""/>
 		</SynSettings>
 	</Config>
+	<Macro>
+		<ExecMacro CmdLine="syn_set ROOT=%wp"/>
+	</Macro>
 </Project>
