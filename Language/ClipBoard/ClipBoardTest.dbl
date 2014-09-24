@@ -43,30 +43,25 @@
 
 main ClipBoardTest
 
-	.include "WND:windows.def"
-	
 	record 
 		tt			,i4
-		wnd			,i4
 		cb			,@ClipBoard
 		cbdata		,String
 	endrecord
 
 proc
 	open(tt=0,i,"tt:")
-	xcall w_init(9,tt,5,24,80)
-	xcall w_proc(WP_CREATE,wnd,"MAIN",24,80,WP_PLACE,wnd,1,1)
-
-	xcall w_disp(wnd,WD_WRITES,'Copying data "Hello Clipboard" TO the clipboard...')
+	;;We're not using Synergy Windows but we need to to a W_INIT so the clipboard
+	;;class can get to the container window handle!
+	xcall w_init(0,tt,1)
+	writes(tt,'Copying data "Hello Clipboard" TO the clipboard...')
 
 	cb = new Clipboard()
 	cb.Copy("Hello Clipboard")
 	cbdata = cb.Paste()
 	clear cb	
 
-	xcall w_disp(wnd,WD_WRITES,'Pasting data FROM the clipboard... received "' + cbdata + '".')
-	xcall w_updt
-	xcall w_proc(WP_DELETE,wnd)
+	writes(tt,'Pasting data FROM the clipboard... received "' + cbdata + '".')
 	close tt
 	
 endmain
