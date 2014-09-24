@@ -174,7 +174,9 @@
 			Filters="*.wsc"/>
 		<Folder
 			Name="Other Files"
-			Filters=""/>
+			Filters="">
+			<F N="ReadMe.txt"/>
+		</Folder>
 	</Files>
 	<Config
 		Name="Debug64"
