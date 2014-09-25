@@ -155,17 +155,17 @@
 		<Folder
 			Name="Source Files"
 			Filters="*.dbl;*.tpl;*.dbc">
-			<F N="src/ContentType.dbc"/>
-			<F N="src/FileStream.dbc"/>
+			<F N="src/ContentType.dbl"/>
+			<F N="src/FileStream.dbl"/>
 			<F N="src/FTP_Main_Program.dbl"/>
-			<F N="src/FtpClient.dbc"/>
-			<F N="src/IPEndPoint.dbc"/>
-			<F N="src/NetworkStream.dbc"/>
-			<F N="src/Socket.dbc"/>
-			<F N="src/SocketException.dbc"/>
-			<F N="src/Stream.dbc"/>
-			<F N="src/StringUtil.dbc"/>
-			<F N="src/TcpClient.dbc"/>
+			<F N="src/FtpClient.dbl"/>
+			<F N="src/IPEndPoint.dbl"/>
+			<F N="src/NetworkStream.dbl"/>
+			<F N="src/Socket.dbl"/>
+			<F N="src/SocketException.dbl"/>
+			<F N="src/Stream.dbl"/>
+			<F N="src/StringUtil.dbl"/>
+			<F N="src/TcpClient.dbl"/>
 		</Folder>
 		<Folder
 			Name="Header Files"

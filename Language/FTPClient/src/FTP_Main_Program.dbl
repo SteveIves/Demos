@@ -27,41 +27,25 @@ proc
 
 	;Connect to the remote server
 	writes(1,'Connecting ...')
-	try 
+	if (!ftpClient.Connect("flexcon","p@ssw0rd")) then
+		writes(1,ftpClient.ErrorMessage)
+	else
 	begin
-		ftpClient.Connect("flexcon","p@ssw0rd")
-		writes(1,'Connected')
-	end
-	catch (ex, @ApplicationException)
-	begin
-		;;There was a problem logging in!
-		writes(1,ftpClient.LastServerResponse)
-		nop
-	end
-	endtry
-
-	if (ftpClient.IsLoggedIn)
-	begin
-		;Change remote directory
-		;writes(1,'Changing remote directory...')
-		;ftpClient.ChangeDirectory("/some/directory")
-		;writes(1,ftpClient.LastServerResponse)
-
 		;Receive a file
 		writes(1,'Retrieving bridge.jpg ...')
-		ftpClient.GetFile("bridge.jpg", "bridge.jpg",FtpTransferType.Binary)
-		writes(1,ftpClient.LastServerResponse)
-
-		;Send a file
-		writes(1,'Sending bridge.jpg as bridge_new.jpg...')
-		ftpClient.PutFile("bridge.jpg", "bridge_new.jpg",FtpTransferType.Binary)
-		writes(1,ftpClient.LastServerResponse)
+		if (!ftpClient.Download("bridge.jpg", "bridge.jpg",FtpTransferType.Binary)) then
+			writes(1,ftpClient.ErrorMessage)
+		else
+		begin 
+			;Send a file
+			writes(1,'Sending bridge.jpg as bridge_new.jpg...')
+			if (!ftpClient.Upload("bridge.jpg", "bridge_new.jpg",FtpTransferType.Binary))
+				writes(1,ftpClient.ErrorMessage)
+		end
 
 		writes(1,'Disconnecting...')
 		ftpClient.Disconnect()
-		writes(1,ftpClient.LastServerResponse)
-
 	end
-
+		
 endmain
 
