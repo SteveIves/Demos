@@ -157,7 +157,7 @@ namespace SynPSG.Examples
 							else
 								exitloop
 						end
-						;;Release the synamic memory
+						;;Release the dynamic memory
 						memoryHandle = %mem_proc(DM_FREE,memoryHandle)
 						;;Release the lock on the global memory
 						xcall dll_call(kernel32,DLL_TYPE_WINAPI,"GlobalUnlock",clipBuffer)
