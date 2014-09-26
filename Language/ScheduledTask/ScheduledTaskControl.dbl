@@ -52,7 +52,27 @@ main ScheduledTaskControl
 proc
 	open(tt=0,i,'tt:')
 	xcall getlog("ROOT",folder,length)
-	
+
+	begin
+		data tasks, @ArrayList, ScheduledTask.GetTasks(^null,TaskStatus.All)
+		data task, @TaskInfo
+
+		if (tasks.Count == 0) then 
+			writes(tt,"No matching tasks!")
+		else
+		begin
+			open(55,o:s,"d:\results.txt")
+			foreach task in tasks
+			begin
+;				writes(tt,task.LogonMode)
+				;writes(55,%string(task.PowerManagement))
+				writes(55,task.Schedule)
+			end
+			close 55
+			writes(tt,%string(tasks.Count) + " matching tasks!")
+		end
+	end
+
 	task = new ScheduledTask("Synergy Task 1",%atrim(folder)+"ScheduledTask.dbr")
 	
 	;;Optional settings
@@ -63,35 +83,36 @@ proc
 ;	task.RunTaskAsUser		= "username"		;;User account to run scheduled task as (default is "SYSTEM")
 ;	task.RunTaskAsPassword	= "password"		;;Password for user account used to run scheduled task
 	
-	if (task.Create(TaskSchedule.Minute,1,errorMessage)) then
-	begin
-		writes(tt,"Task started.")
-		writes(tt,"Check for <windows_dir>\Temp\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
-		writes(tt,"Task will be automatically run once per minute.")
-		
-		
-		writes(tt,"Task will be manually run in 5 seconds")
-		sleep 5
-		if (task.Run(errorMessage)) then
-			writes(tt,"Task was manually run.")
-		else
-			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
-
-		writes(tt,"Task will be stopped and deleted in 2 minutes.")
-
-		writes(tt,"")
-		writes(tt,"If you kill the program early, don't forget to delete the scheduled task!")
-
-		sleep 120
-
-		if (task.Delete(errorMessage)) then
-			writes(tt,"Task deleted.")
-		else
-			writes(tt,"ERROR: Failed to delete task. Error was " + errorMessage)
-
-	end
-	else
-		writes(tt,"ERROR: Failed to start task! Error was " + errorMessage)
+	
+;	if (task.Create(TaskSchedule.Minute,1,errorMessage)) then
+;	begin
+;		writes(tt,"Task started.")
+;		writes(tt,"Check for <windows_dir>\Temp\scheduled_task_yyyymmddhhmmssuuuuuu.txt files.")
+;		writes(tt,"Task will be automatically run once per minute.")
+;
+;
+;		writes(tt,"Task will be manually run in 5 seconds")
+;		sleep 5
+;		if (task.Run(errorMessage)) then
+;			writes(tt,"Task was manually run.")
+;		else
+;			writes(tt,"ERROR: Failed to manually run task. Error was " + errorMessage)
+;
+;		writes(tt,"Task will be stopped and deleted in 2 minutes.")
+;
+;		writes(tt,"")
+;		writes(tt,"If you kill the program early, don't forget to delete the scheduled task!")
+;
+;		sleep 120
+;
+;		if (task.Delete(errorMessage)) then
+;			writes(tt,"Task deleted.")
+;		else
+;			writes(tt,"ERROR: Failed to delete task. Error was " + errorMessage)
+;
+;	end
+;	else
+;		writes(tt,"ERROR: Failed to start task! Error was " + errorMessage)
 	
 	close tt
 	stop
@@ -140,6 +161,8 @@ endmain
 ;; POSSIBILITY OF SUCH DAMAGE.
 ;;
 ;;*****************************************************************************
+
+import System.Collections
 
 namespace SynPSG.Examples
 
@@ -533,9 +556,334 @@ namespace SynPSG.Examples
 				authInfo += ' /p ' + RunAsPassword
 			mreturn authInfo
 		endmethod
+		
+		;;; <summary>
+		;;; Get all tasks for a specific system
+		;;; </summary>
+		;;; <param name="system">System to get tasks for</param>
+		;;; <returns></returns>
+		public static method GetTasks, @ArrayList
+			required in system, string
+			required in status, TaskStatus
+			endparams
+			record 
+				ch, int
+				command, string
+				dataline, a256
+				linekey, string
+				linevalue, string
+				currentFolder, string
+				tsk, @TaskInfo
+				tasks, @ArrayList
+			endrecord
+		proc
+			;;Define the command to execute
+			command = '|schtasks /query /v /fo list'
+			if ((system != ^null) && (system.Length > 0))
+				command += " /s " + system
+			
+			;;Create the returned collection
+			tasks = new ArrayList()
+			currentFolder = ""
 
+			;;Execute the command
+			open(ch=0,i,command)
+			
+			;;Read the resulting data
+			repeat
+			begin
+				reads(ch,dataline,eof)
+
+				if (!dataline) then
+				begin
+					;;Add the previous task to the returned collection
+					if (tsk!=^null && ((tsk.TaskName!=^null)&&(tsk.TaskName.Length>0)))
+						call addTask
+					;;Start recording a new task
+					tsk = new TaskInfo()
+					tsk.Folder = currentFolder
+				end
+				else if (dataline.eq."Folder: ") then
+				begin
+					currentFolder = %atrim(dataline(9,^size(dataline)))
+					tsk.Folder = currentFolder
+				end
+				else if (dataline.eq."INFO: ") then
+				begin
+					nop
+				end
+				else
+				begin
+					linekey = %atrim(dataline(1:38))
+					linevalue = %atrim( dataline(39,^size(dataline))   )
+					
+					;;Extract the data
+					using linekey select
+					("HostName:"),
+						tsk.HostName = linevalue
+					("TaskName:"),
+						tsk.TaskName = linevalue
+					("Next Run Time:"),
+						tsk.NextRunTime = stringToDateAndTime(linevalue)
+					("Status:"),
+					begin
+						using linevalue select
+						("Disabled"),
+							tsk.Status = TaskStatus.Disabled
+						("Ready"),
+							tsk.Status = TaskStatus.Ready
+						("Running"),
+							tsk.Status = TaskStatus.Running
+						("Queued"),
+							tsk.Status = TaskStatus.Queued
+						(),
+							throw new ApplicationException("Unrecognized TaskStatus " + linevalue )
+						endusing
+					end
+					("Logon Mode:"),
+					begin
+						using linevalue select
+						("Interactive only"),
+							tsk.LogonMode = TaskLogonMode.InteractiveOnly
+						("Interactive/Background"),
+							tsk.LogonMode = TaskLogonMode.InteractiveOrBackground
+						(""),
+							throw new ApplicationException("Unrecognized TaskLogonMode " + linevalue )
+						endusing
+					end
+					("Last Run Time:"),
+						tsk.LastRunTime = stringToDateAndTime(linevalue)
+					("Last Result:"),
+						tsk.LastResult = %integer(linevalue,4)
+					("Author:"),
+						tsk.Author = linevalue
+					("Task To Run:"),
+						tsk.TaskToRun = linevalue
+					("Start In:"),
+						tsk.StartIn = linevalue
+					("Comment:"),
+						tsk.Comment = linevalue
+					("Scheduled Task State:"),
+					begin
+						using linevalue select
+						("Enabled"),
+							tsk.State = TaskState.Enabled
+						("Disabled"),
+							tsk.State = TaskState.Disabled
+						(""),
+							throw new ApplicationException("Unrecognized TaskState " + linevalue )
+						endusing
+					end
+					("Idle Time:"),
+						tsk.IdleTime = linevalue
+					("Power Management:"),
+					begin
+						using ((a)linevalue) select
+						("No Start On Batteries"),
+							tsk.PowerManagement = TaskPowerMode.NoStartOnBattery
+						("Stop On Battery Mode "),
+							tsk.PowerManagement = TaskPowerMode.StopOnBattery
+						("Stop On Battery Mode, No Start On Batteries"),
+							tsk.PowerManagement = TaskPowerMode.StopOnBatteryNoStartOnBattery
+						(""),
+							tsk.PowerManagement = TaskPowerMode.None
+						(),
+							throw new ApplicationException("Unrecognized TaskPowerMode " + linevalue )
+						endusing
+					end
+					("Run As User:"),
+						tsk.RunAsUser = linevalue
+					("Delete Task If Not Rescheduled:"),
+						tsk.DeleteIfNotRescheduled = linevalue
+					("Stop Task If Runs X Hours and X Mins:"),
+						tsk.StopIfRunsTooLong = linevalue
+					("Schedule:"),
+						tsk.Schedule = linevalue
+					("Schedule Type:"),
+						tsk.ScheduleType = linevalue
+					("Start Time:"),
+						tsk.StartTime = linevalue
+					("Start Date:"),
+						tsk.StartDate = linevalue
+					("End Date:"),
+						tsk.EndDate = linevalue
+					("Days:"),
+						tsk.Days = linevalue
+					("Months:"),
+						tsk.Months = linevalue
+					("Repeat: Every:"),
+						tsk.RepeatEvery = linevalue
+					("Repeat: Until: Time:"),
+						tsk.RepeatUntilTime = linevalue
+					("Repeat: Until: Duration:"),
+						tsk.RepeatUntilDuration = linevalue
+					("Repeat: Stop If Still Running:"),
+						tsk.RepeatStopIfStillRunning = linevalue
+					endusing
+				end
+			end
+		eof,
+			;;Add the final task to the collection
+			call addTask
+			close ch
+			mreturn tasks
+			
+		addTask,
+
+			if ((status != TaskStatus.All) && (tsk.Status != status))
+				return
+
+			tasks.Add(tsk)
+
+			return			
+
+		endmethod
+		
+		private static method stringToDateAndTime, string
+			required in stringDateTime, a
+			endparams
+			record 
+				pos1,			int
+				pos2,			int
+				group outDate,	a
+					year, 		a4
+					month, 		a2
+					day, 		a2
+					hour,		a2
+					min,		a2
+					sec,		a2
+				endgroup
+			endrecord
+		proc
+			if (!stringDateTime || stringDateTime=="N/A")
+				mreturn ""
+			
+			;1/1/2013 4:51:20 PM
+			;10/19/2013 4:51:20 PM
+			pos1  = %instr(1,stringDateTime,"/")
+			month = %string( ^d(stringDateTime(1:pos1-1)),"XX")
+			pos2  = %instr(pos1+1,stringDateTime,"/")
+			day   = %string(^d(stringDateTime(pos1+1,pos2-1)),"XX")
+			pos1  = %instr(pos2+1,stringDateTime," ")
+			year  = stringDateTime(pos2+1,pos1-1)
+			pos2  = %instr(pos1+1,stringDateTime,":")
+			hour  = %string(^d(stringDateTime(pos1+1,pos2-1)),"XX")
+			pos1  = %instr(pos2+1,stringDateTime,":")
+			min   = %string(^d(stringDateTime(pos2+1,pos1-1)),"XX")
+			pos2  = %instr(pos1+1,stringDateTime," ")
+			sec   = %string(^d(stringDateTime(pos1+1,pos2-1)),"XX")
+			if (stringDateTime(pos2+1:2)=="PM")
+				hour = %string(^d(hour)+12,"XX")
+			mreturn outDate
+		endmethod
 
 	endclass
 	
+endnamespace
+		
+;;*****************************************************************************
+;;
+;; Title:       TaskInfo.dbl
+;;
+;; Type:        Class
+;;
+;; Description: Exposes information about a scheduled task.
+;;
+;; Date:        24th September 2014
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;              http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
+
+namespace SynPSG.Examples
+		
+	public enum TaskStatus
+		All
+		Disabled
+		Ready
+		Running
+		Queued
+	endenum
+		
+	public enum TaskLogonMode
+		InteractiveOnly
+		InteractiveOrBackground
+	endenum
+		
+	public enum TaskState
+		Disabled
+		Enabled
+	endenum
+		
+	public enum TaskPowerMode	
+		None
+		NoStartOnBattery
+		StopOnBatteryNoStartOnBattery
+		StopOnBattery
+	endenum
+	
+	public class TaskInfo
+		
+		public Folder, string
+		
+		public HostName, string
+		public TaskName, string
+		public NextRunTime, string
+		public Status, TaskStatus
+		public LogonMode, TaskLogonMode
+		public LastRunTime, string
+		public LastResult, int
+		public Author, string
+		public TaskToRun, string
+		public StartIn, string
+		public Comment, string
+		public State, TaskState
+		public IdleTime, string
+		public PowerManagement, TaskPowerMode
+		public RunAsUser, string
+		public DeleteIfNotRescheduled, string
+		public StopIfRunsTooLong, string
+		public Schedule, string
+		public ScheduleType, string
+		public StartTime, string
+		public StartDate, string
+		public EndDate, string
+		public Days, string
+		public Months, string
+		public RepeatEvery, string
+		public RepeatUntilTime, string
+		public RepeatUntilDuration, string
+		public RepeatStopIfStillRunning, string
+		
+	endclass
+
 endnamespace
 
