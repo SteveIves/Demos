@@ -1,0 +1,19 @@
+;;******************************************************************************
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
+;;******************************************************************************
+
+import System
+import System.Collections.Generic
+import System.ServiceModel
+import Synergex.SynergyDE.Select
+import AppDomainProtection
+
+namespace WcfServiceLibrary
+
+    {ServiceContract(SessionMode = SessionMode.Required)}
+    {SingletonBehaviorAttribute(^typeof(PartsService))}
+    public partial class PartsService extends IsolatableServiceBase
+
+    endclass
+
+endnamespace
