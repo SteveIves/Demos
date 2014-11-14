@@ -79,11 +79,11 @@ function <structure_noalias>_io ,^val
     endrecord
 
     <TAG_LOOP>
-    <IF FIRST_TAG>
+    <IF FIRST>
     .define TAG_VALUE "<TAGLOOP_TAG_VALUE>"
     .define TAG_MATCH <structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>
     .define TAG_NO_MATCH !(<structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>)
-    </IF FIRST_TAG>
+    </IF FIRST>
     </TAG_LOOP>
 
 proc
@@ -341,5 +341,3 @@ function <structure_noalias>_length ,^val
 proc
     freturn <STRUCTURE_SIZE>
 endfunction
-    
-

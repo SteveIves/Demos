@@ -34,8 +34,8 @@ proc
     instruction.structure_key = a_strkey
 
     ;And add it to the instructions file
-	repeat
-	begin
+    repeat
+    begin
 		try 
 		begin
 			instruction.transaction_id = %datetime
@@ -47,7 +47,7 @@ proc
 			sleep 0.1
 		end
 		endtry
-	end
+    end
 
     xreturn
 
