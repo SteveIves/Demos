@@ -72,7 +72,7 @@ proc
     begin
         if ((^passed(a_name)&&a_name)) then
         begin
-            sql = "DELETE FROM PRODUCT_GROUP WHERE NAME=:1"
+            sql = "DELETE FROM PRODUCT_GROUP WHERE  NAME=:1 "
             if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,,1,a_name)==SSQL_FAILURE)
             begin
                 ok = false

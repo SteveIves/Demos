@@ -49,7 +49,7 @@ function order_header_insert_row ,^val
         errtxt      ,a256       ;;Error message text
     endrecord
 
-	literal
+	literal 
 		sql, a*, "INSERT INTO ORDER_HEADER ("
 		& "ORDER_NUMBER,"
 		& "ORDER_DATE,"

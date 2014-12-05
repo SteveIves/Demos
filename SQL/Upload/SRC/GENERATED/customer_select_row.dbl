@@ -44,7 +44,7 @@ function customer_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    literal
+    literal 
         sql, a*, "SELECT "
         & "ACCOUNT,"
         & "COMPANY,"
@@ -68,7 +68,7 @@ function customer_select_row ,^val
         & "CARD_EXPIRY,"
         & "CARD_NAME"
         & " FROM CUSTOMER"
-        & " WHERE ACCOUNT=:1"
+        & " WHERE  ACCOUNT=:1 "
     endliteral
 
 proc

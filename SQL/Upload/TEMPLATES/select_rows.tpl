@@ -210,4 +210,3 @@ function <structure_name>_select_rows ,^val
     freturn ok
 
 endfunction
-

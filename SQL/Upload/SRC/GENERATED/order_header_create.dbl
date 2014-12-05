@@ -42,7 +42,7 @@ function order_header_create ,^val
         errtxt      ,a256       ;;Returned error message text
     endrecord
 
-	literal
+	literal 
 		sql_create, a*, "CREATE TABLE ORDER_HEADER ("
 		& "ORDER_NUMBER DECIMAL(8) NOT NULL,"
 		& "ORDER_DATE DATE NOT NULL,"
@@ -58,9 +58,9 @@ function order_header_create ,^val
 		& "GIFT_MESSAGE VARCHAR(60),"
 		& "TIMESTAMP,"
 		& "CONSTRAINT PK_ORDER_HEADER PRIMARY KEY CLUSTERED (ORDER_NUMBER ASC))"
-		sql_index1, a*, "CREATE INDEX IX_ORDER_HEADER_CUSTOMER ON ORDER_HEADER(CUSTOMER ASC)"
-		sql_index2, a*, "CREATE INDEX IX_ORDER_HEADER_STATUS ON ORDER_HEADER(STATUS ASC)"
-		sql_index3, a*, "CREATE INDEX IX_ORDER_HEADER_CUSREF ON ORDER_HEADER(CUSTOMER_ORDER_REF ASC)"
+		sql_index1, a*, "CREATE  INDEX IX_ORDER_HEADER_CUSTOMER ON ORDER_HEADER(CUSTOMER ASC)"
+		sql_index2, a*, "CREATE  INDEX IX_ORDER_HEADER_STATUS ON ORDER_HEADER(STATUS ASC)"
+		sql_index3, a*, "CREATE  INDEX IX_ORDER_HEADER_CUSREF ON ORDER_HEADER(CUSTOMER_ORDER_REF ASC)"
 	endliteral
 	
 proc
@@ -85,7 +85,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -99,7 +99,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -113,7 +113,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -127,7 +127,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor

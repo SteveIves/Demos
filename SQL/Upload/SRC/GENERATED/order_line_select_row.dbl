@@ -45,7 +45,7 @@ function order_line_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    literal
+    literal 
         sql, a*, "SELECT "
         & "ORDER_NUMBER,"
         & "LINE_NUMBER,"
@@ -57,7 +57,7 @@ function order_line_select_row ,^val
         & "LINE_VALUE,"
         & "TAX"
         & " FROM ORDER_LINE"
-        & " WHERE ORDER_NUMBER=:1 AND LINE_NUMBER=:2"
+        & " WHERE  ORDER_NUMBER=:1 AND LINE_NUMBER=:2 "
     endliteral
 
 proc

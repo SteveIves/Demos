@@ -42,7 +42,7 @@ function order_line_clear ,^val
         errtxt      ,a256       ;;Returned error message text
     endrecord
 
-	literal
+	literal 
 		sql			,a*, "TRUNCATE TABLE ORDER_LINE"
 	endliteral
 	

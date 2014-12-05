@@ -224,4 +224,3 @@ open_cursor_error,
     return
 
 endfunction
-

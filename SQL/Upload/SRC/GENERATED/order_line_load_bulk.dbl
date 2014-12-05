@@ -57,7 +57,7 @@ proc
     ok = true
 
     ;;Open the data file associated with the mapped structure
-    try
+    try 
     begin
         open(chIn=%syn_freechn,i:i,"DAT:ordlin.ism")
     end
@@ -70,7 +70,7 @@ proc
     endtry
 
     ;;Open the delimited output file and build the SQL statement
-    try
+    try 
     begin
         ;;Get the TEMP path
         data tempPath, a256
@@ -91,7 +91,7 @@ proc
 
         ;;Build the SQL statement
         sqlCommand = "BULK INSERT [ORDER_LINE] FROM '"+fileSpec+"' WITH (FIELDTERMINATOR='|',ROWTERMINATOR='\n',FIRSTROW=2,KEEPNULLS,ERRORFILE='"+errorFile+"')"
-
+        
         ;;Save the SQL statement to a file (for debugging)
         begin
             data tmpCh, i4, 0

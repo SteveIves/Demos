@@ -42,7 +42,7 @@ function product_group_create ,^val
         errtxt      ,a256       ;;Returned error message text
     endrecord
 
-	literal
+	literal 
 		sql_create, a*, "CREATE TABLE PRODUCT_GROUP ("
 		& "NAME VARCHAR(10) NOT NULL,"
 		& "DESCRIPTION VARCHAR(40) NOT NULL,"
@@ -72,7 +72,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor

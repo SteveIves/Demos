@@ -72,7 +72,7 @@ proc
     begin
         if ((^passed(a_account)&&a_account)) then
         begin
-            sql = "DELETE FROM CUSTOMER WHERE ACCOUNT=:1"
+            sql = "DELETE FROM CUSTOMER WHERE  ACCOUNT=:1 "
             if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,,1,a_account)==SSQL_FAILURE)
             begin
                 ok = false

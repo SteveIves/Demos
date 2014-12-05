@@ -44,7 +44,7 @@ function order_header_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    literal
+    literal 
         sql, a*, "SELECT "
         & "ORDER_NUMBER,"
         & "ORDER_DATE,"
@@ -59,7 +59,7 @@ function order_header_select_row ,^val
         & "GIFT_WRAP,"
         & "GIFT_MESSAGE"
         & " FROM ORDER_HEADER"
-        & " WHERE ORDER_NUMBER=:1"
+        & " WHERE  ORDER_NUMBER=:1 "
     endliteral
 
 proc

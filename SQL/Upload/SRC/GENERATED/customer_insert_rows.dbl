@@ -58,7 +58,7 @@ function customer_insert_rows ,^val
         errtxt      ,a255       ;;Error message text
     endrecord
 
-	literal
+	literal 
         sql, a*, "INSERT INTO CUSTOMER ("
         & "ACCOUNT,"
         & "COMPANY,"

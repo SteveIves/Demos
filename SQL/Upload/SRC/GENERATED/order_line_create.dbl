@@ -42,7 +42,7 @@ function order_line_create ,^val
         errtxt      ,a256       ;;Returned error message text
     endrecord
 
-	literal
+	literal 
 		sql_create, a*, "CREATE TABLE ORDER_LINE ("
 		& "ORDER_NUMBER DECIMAL(8) NOT NULL,"
 		& "LINE_NUMBER DECIMAL(3) NOT NULL,"
@@ -55,7 +55,7 @@ function order_line_create ,^val
 		& "TAX DECIMAL(6,2),"
 		& "TIMESTAMP,"
 		& "CONSTRAINT PK_ORDER_LINE PRIMARY KEY CLUSTERED (ORDER_NUMBER ASC,LINE_NUMBER ASC))"
-		sql_index1, a*, "CREATE INDEX IX_ORDER_LINE_SKU ON ORDER_LINE(SKU ASC)"
+		sql_index1, a*, "CREATE  INDEX IX_ORDER_LINE_SKU ON ORDER_LINE(SKU ASC)"
 	endliteral
 	
 proc
@@ -80,7 +80,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -94,7 +94,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor

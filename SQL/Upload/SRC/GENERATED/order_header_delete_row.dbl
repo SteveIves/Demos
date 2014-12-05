@@ -72,7 +72,7 @@ proc
     begin
         if ((^passed(a_order_number)&&a_order_number)) then
         begin
-            sql = "DELETE FROM ORDER_HEADER WHERE ORDER_NUMBER=:1"
+            sql = "DELETE FROM ORDER_HEADER WHERE  ORDER_NUMBER=:1 "
             if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,,1,a_order_number)==SSQL_FAILURE)
             begin
                 ok = false

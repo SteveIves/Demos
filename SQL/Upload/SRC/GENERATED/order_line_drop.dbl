@@ -82,7 +82,7 @@ proc
             if (%ssc_getemsg(a_dbchn,errtxt,length,,dberror)==SSQL_NORMAL) then
             begin
                 ;;Check if the error was that the table did not exist
-                if (dberror==-3701) then
+                if (dberror==-3701) then 
                     clear errtxt
                 else
                     ok = false

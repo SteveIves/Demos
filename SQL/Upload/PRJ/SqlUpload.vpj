@@ -859,6 +859,5 @@
 		<ExecMacro CmdLine="syn_set BAT=%(ROOT)BAT"/>
 		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
 		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
-		<ExecMacro CmdLine="syn_set PATH=%(BAT);%(PATH)"/>
 	</Macro>
 </Project>

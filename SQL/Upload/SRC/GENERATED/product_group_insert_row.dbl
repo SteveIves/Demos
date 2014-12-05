@@ -49,7 +49,7 @@ function product_group_insert_row ,^val
         errtxt      ,a256       ;;Error message text
     endrecord
 
-	literal
+	literal 
 		sql, a*, "INSERT INTO PRODUCT_GROUP ("
 		& "NAME,"
 		& "DESCRIPTION"

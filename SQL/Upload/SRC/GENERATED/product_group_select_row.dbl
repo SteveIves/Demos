@@ -44,12 +44,12 @@ function product_group_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    literal
+    literal 
         sql, a*, "SELECT "
         & "NAME,"
         & "DESCRIPTION"
         & " FROM PRODUCT_GROUP"
-        & " WHERE NAME=:1"
+        & " WHERE  NAME=:1 "
     endliteral
 
 proc

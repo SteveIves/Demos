@@ -42,7 +42,7 @@ function customer_create ,^val
         errtxt      ,a256       ;;Returned error message text
     endrecord
 
-	literal
+	literal 
 		sql_create, a*, "CREATE TABLE CUSTOMER ("
 		& "ACCOUNT VARCHAR(8) NOT NULL,"
 		& "COMPANY VARCHAR(40) NOT NULL,"
@@ -67,10 +67,10 @@ function customer_create ,^val
 		& "CARD_NAME VARCHAR(25),"
 		& "TIMESTAMP,"
 		& "CONSTRAINT PK_CUSTOMER PRIMARY KEY CLUSTERED (ACCOUNT ASC))"
-		sql_index1, a*, "CREATE INDEX IX_CUSTOMER_COMPANY ON CUSTOMER(COMPANY ASC)"
-		sql_index2, a*, "CREATE INDEX IX_CUSTOMER_STATE ON CUSTOMER(STATE ASC)"
-		sql_index3, a*, "CREATE INDEX IX_CUSTOMER_ZIP ON CUSTOMER(ZIP ASC)"
-		sql_index4, a*, "CREATE INDEX IX_CUSTOMER_STATUS ON CUSTOMER(STATUS ASC)"
+		sql_index1, a*, "CREATE  INDEX IX_CUSTOMER_COMPANY ON CUSTOMER(COMPANY ASC)"
+		sql_index2, a*, "CREATE  INDEX IX_CUSTOMER_STATE ON CUSTOMER(STATE ASC)"
+		sql_index3, a*, "CREATE  INDEX IX_CUSTOMER_ZIP ON CUSTOMER(ZIP ASC)"
+		sql_index4, a*, "CREATE  INDEX IX_CUSTOMER_STATUS ON CUSTOMER(STATUS ASC)"
 	endliteral
 	
 proc
@@ -95,7 +95,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_create,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -109,7 +109,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index1,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -123,7 +123,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index2,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -137,7 +137,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index3,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor
@@ -151,7 +151,7 @@ proc
     ;;
     if (ok)
     begin
-		if (%ssc_open(a_dbchn,cursor,sql_index4,SSQL_NONSEL)==SSQL_NORMAL) then
+		if (%ssc_open(a_dbchn,cursor,sql_index4,SSQL_NONSEL)==SSQL_NORMAL) then 
 		begin
 			call execute_cursor
 			call close_cursor

@@ -58,7 +58,7 @@ function order_line_insert_rows ,^val
         errtxt      ,a255       ;;Error message text
     endrecord
 
-	literal
+	literal 
         sql, a*, "INSERT INTO ORDER_LINE ("
         & "ORDER_NUMBER,"
         & "LINE_NUMBER,"

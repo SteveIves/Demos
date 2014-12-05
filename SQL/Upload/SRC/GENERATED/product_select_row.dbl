@@ -44,7 +44,7 @@ function product_select_row ,^val
         errtxt  ,a256       ;;Error message text
     endrecord
 
-    literal
+    literal 
         sql, a*, "SELECT "
         & "SKU,"
         & "PRODUCT_GROUP,"
@@ -65,7 +65,7 @@ function product_select_row ,^val
         & "RELEASE_DATE,"
         & "RATING"
         & " FROM PRODUCT"
-        & " WHERE SKU=:1"
+        & " WHERE  SKU=:1 "
     endliteral
 
 proc

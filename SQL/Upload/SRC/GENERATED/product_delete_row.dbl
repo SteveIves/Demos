@@ -72,7 +72,7 @@ proc
     begin
         if ((^passed(a_sku)&&a_sku)) then
         begin
-            sql = "DELETE FROM PRODUCT WHERE SKU=:1"
+            sql = "DELETE FROM PRODUCT WHERE  SKU=:1 "
             if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,,1,a_sku)==SSQL_FAILURE)
             begin
                 ok = false
