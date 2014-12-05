@@ -1,0 +1,78 @@
+
+import System
+import System.Collections.Concurrent
+import System.Collections.Generic
+import System.Reflection
+import System.Web
+import ServiceStack
+import BusinessLogic
+
+namespace Services
+	
+	public partial class PartsService
+		
+		public method Any, @PartReadSupplierPartsResponse
+			required in request, @PartReadSupplierParts
+			endparams
+		proc
+			data api, @PartsLogic, getPartsLogic()
+			data parts, @List<Part>
+			data sts, MethodStatus, api.ReadSupplierParts(request.SupplierId,parts)
+			data response, @PartReadSupplierPartsResponse, new PartReadSupplierPartsResponse(sts,parts)
+			appDomainQueue.Enqueue(api.GetAppDomain())
+			mreturn response
+		endmethod
+		
+	endclass
+	
+.region "PartReadSupplierParts DTO's"
+	
+	{Route("/parts/supplier/{SupplierId}", "GET")}
+	public class PartReadSupplierParts implements IReturn<PartReadSupplierPartsResponse>
+		
+		public method PartReadSupplierParts
+			required in aSupplierId, string
+			endparams
+		proc
+			SupplierId = aSupplierId
+		endmethod
+
+		public property SupplierId, String
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+	endclass
+	
+	public class PartReadSupplierPartsResponse
+		
+		public method PartReadSupplierPartsResponse
+			required in aStatus, MethodStatus
+			required in aParts, @List<Part> 
+			endparams
+		proc
+			Status = aStatus
+			Parts = aParts
+		endmethod
+		
+		public property Status, MethodStatus
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+		public property Parts, @List<Part>
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+		
+	endclass
+	
+.endregion
+
+endnamespace

@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F6CB391-E519-433D-A341-FD00E1D7A31B}"
+	ProjectSection(SolutionItems) = preProject
+		readme.txt = readme.txt
+		regen.bat = regen.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{66C67D32-B695-4B7B-AFE2-6BFB59C29DC8}"
+	ProjectSection(SolutionItems) = preProject
+		templates\DataUtils.tpl = templates\DataUtils.tpl
+		templates\MethodStatus.tpl = templates\MethodStatus.tpl
+		templates\ServiceStack_AppHost.tpl = templates\ServiceStack_AppHost.tpl
+		templates\ServiceStack_Code.tpl = templates\ServiceStack_Code.tpl
+		templates\ServiceStack_DataClass.tpl = templates\ServiceStack_DataClass.tpl
+		templates\ServiceStack_DataWrapper.tpl = templates\ServiceStack_DataWrapper.tpl
+		templates\ServiceStack_Service.tpl = templates\ServiceStack_Service.tpl
+	EndProjectSection
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ServiceHost", "ServiceHost\ServiceHost.synproj", "{4BC136BC-6707-4222-B156-1554E244B4EF}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "Services", "Services\Services.synproj", "{AC434C7A-991E-4DD6-9188-241EE865A71E}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "BusinessLogic", "BusinessLogic\BusinessLogic.synproj", "{4F00BBF1-71E8-4761-89DF-6EFF838C341A}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "UnitTests", "UnitTests\UnitTests.synproj", "{A149FC7A-96F1-4EC3-B786-715D9085CBB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClientCS", "TestClientCS\TestClientCS.csproj", "{D3471543-CA16-44A5-A24A-CAC8E54518AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BC136BC-6707-4222-B156-1554E244B4EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BC136BC-6707-4222-B156-1554E244B4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BC136BC-6707-4222-B156-1554E244B4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BC136BC-6707-4222-B156-1554E244B4EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC434C7A-991E-4DD6-9188-241EE865A71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC434C7A-991E-4DD6-9188-241EE865A71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC434C7A-991E-4DD6-9188-241EE865A71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC434C7A-991E-4DD6-9188-241EE865A71E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F00BBF1-71E8-4761-89DF-6EFF838C341A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F00BBF1-71E8-4761-89DF-6EFF838C341A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F00BBF1-71E8-4761-89DF-6EFF838C341A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F00BBF1-71E8-4761-89DF-6EFF838C341A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A149FC7A-96F1-4EC3-B786-715D9085CBB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A149FC7A-96F1-4EC3-B786-715D9085CBB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A149FC7A-96F1-4EC3-B786-715D9085CBB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A149FC7A-96F1-4EC3-B786-715D9085CBB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3471543-CA16-44A5-A24A-CAC8E54518AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3471543-CA16-44A5-A24A-CAC8E54518AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3471543-CA16-44A5-A24A-CAC8E54518AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3471543-CA16-44A5-A24A-CAC8E54518AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

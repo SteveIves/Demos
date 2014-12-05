@@ -1,0 +1,15 @@
+
+import System
+import System.Collections.Generic
+import System.Text
+
+namespace BusinessLogic
+
+	public interface IProtectedClass
+	
+		method GetAppDomain, @AppDomain
+		endmethod
+
+	endinterface
+	
+endnamespace

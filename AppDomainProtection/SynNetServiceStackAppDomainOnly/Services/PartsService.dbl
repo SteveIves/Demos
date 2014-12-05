@@ -1,0 +1,361 @@
+;;******************************************************************************
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
+;;******************************************************************************
+
+import System
+import System.Collections.Concurrent
+import System.Collections.Generic
+import System.Reflection
+import System.Web
+import ServiceStack
+import BusinessLogic
+
+namespace Services
+
+.region "PartsService"
+
+    public partial class PartsService extends Service
+
+        private static appDomainQueue, @ConcurrentQueue<AppDomain>, new ConcurrentQueue<AppDomain>()
+
+        private method getPartsLogic, @PartsLogic
+            endparams
+        proc
+            ;;Get the type of the business logic class that we're loading
+            data partsLogicType, @Type, ^typeof(PartsLogic)
+
+            ;;Get an AppDomain to host a new business logic instance
+            data partsServiceDomain, @AppDomain
+            if (!appDomainQueue.TryDequeue(partsServiceDomain))
+                partsServiceDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString())
+
+            ;;Load a new instance of the business logic object into the AppDomain
+            data partsLogicInstance, @PartsLogic, (@PartsLogic)partsServiceDomain.CreateInstanceFromAndUnwrap(partsLogicType.Assembly.CodeBase, partsLogicType.FullName,true,BindingFlags.Default,^null,^null,^null,^null)
+
+            ;;Return it for use
+            mreturn partsLogicInstance
+
+        endmethod
+
+        public method Any, @PartCreateResponse
+            required in request, @PartCreate
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data sts, MethodStatus, api.CreatePart(request.Part)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn new PartCreateResponse(sts)
+        endmethod
+
+        public method Any, @PartReadResponse
+            required in request, @PartRead
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data part, @Part
+            data grfa, string
+            data sts, MethodStatus, api.ReadPart(request.Id,part,grfa)
+            data response, @PartReadResponse, new PartReadResponse(sts,part,grfa)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn response
+        endmethod
+
+        public method Any, @PartReadAllResponse
+            required in request, @PartReadAll
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data parts, @List<Part>
+            data sts, MethodStatus, api.ReadAllParts(parts)
+            data response, @PartReadAllResponse, new PartReadAllResponse(sts,parts)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn response
+        endmethod
+
+        public method Any, @PartUpdateResponse
+            required in request, @PartUpdate
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data part, @Part, request.Part
+            data grfa, string, request.grfa
+            data sts, MethodStatus, api.UpdatePart(part,grfa)
+            data response, @PartUpdateResponse, new PartUpdateResponse(sts,part,grfa)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn response
+        endmethod
+
+        public method Any, @PartDeleteResponse
+            required in request, @PartDelete
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data sts, MethodStatus, api.DeletePart(request.Grfa)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn new PartDeleteResponse(sts)
+        endmethod
+
+        public method Any, @PartExistsResponse
+            required in request, @PartExists
+            endparams
+        proc
+            data api, @PartsLogic, getPartsLogic()
+            data sts, MethodStatus, api.PartExists(request.Id)
+            appDomainQueue.Enqueue(api.GetAppDomain())
+            mreturn new PartExistsResponse(sts)
+        endmethod
+
+    endclass
+
+.endregion
+
+.region "PartCreate DTO's"
+
+    {Route("/parts", "POST")}
+    public class PartCreate implements IReturn<PartCreateResponse>
+
+        public property Part, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+    public class PartCreateResponse
+
+        public method PartCreateResponse
+            required in aStatus, MethodStatus
+            endparams
+        proc
+            Status = aStatus
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion
+
+.region "PartRead DTO's"
+
+    {Route("/parts/{Id}", "GET")}
+    public class PartRead implements IReturn<PartReadResponse>
+
+        public property Id, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+      endclass
+
+    public class PartReadResponse
+
+        public method PartReadResponse
+            required in aStatus, MethodStatus
+            required in aPart, @Part
+            required in aGrfa, String
+            endparams
+        proc
+            Status = aStatus
+            Part = aPart
+            Grfa = aGrfa
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Part, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Grfa, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion
+
+.region "PartReadAll DTO's"
+
+    {Route("/parts", "GET")}
+    public class PartReadAll implements IReturn<PartReadAllResponse>
+
+    endclass
+
+    public class PartReadAllResponse
+
+        public method PartReadAllResponse
+            required in aStatus, MethodStatus
+            required in aParts, @List<Part> 
+            endparams
+        proc
+            Status = aStatus
+            Parts = aParts
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Parts, @List<Part>
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion
+
+.region "PartUpdate DTO's"
+
+    {Route("/parts", "PUT")}
+    public class PartUpdate implements IReturn<PartUpdateResponse>
+
+        public property Part, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Grfa, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+    public class PartUpdateResponse
+
+        public method PartUpdateResponse
+            required in aStatus, MethodStatus
+            required in aPart, @Part
+            required in aGrfa, String
+            endparams
+        proc
+            Status = aStatus
+            Part = aPart
+            Grfa = aGrfa
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Part, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+        public property Grfa, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion	
+
+.region "PartDelete DTO's"
+
+    {Route("/parts/{Grfa}", "DELETE")}
+    public class PartDelete implements IReturn<PartDeleteResponse>
+
+        public property Grfa, string
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+    public class PartDeleteResponse
+
+        public method PartDeleteResponse
+            required in aStatus, MethodStatus
+            endparams
+        proc
+            Status = aStatus
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion
+
+.region "PartExists DTO's"
+
+    {Route("/parts/exist/{Id}", "GET")}
+    public class PartExists implements IReturn<PartExistsResponse>
+
+        public property Id, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+    public class PartExistsResponse
+
+        public method PartExistsResponse
+            required in aStatus, MethodStatus
+            endparams
+        proc
+            Status = aStatus
+        endmethod
+
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+
+    endclass
+
+.endregion
+
+endnamespace

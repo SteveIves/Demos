@@ -1,0 +1,43 @@
+;;******************************************************************************
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
+;;******************************************************************************
+
+import System.Reflection
+import Funq
+import ServiceStack
+;import BusinessLogic
+import Services
+
+.array 0
+
+namespace ServiceHost
+
+    public class AppHost extends AppSelfHostBase
+
+        ;;;  <summary>
+        ;;;  Default constructor.
+        ;;;  Base constructor requires a name and assembly to locate web service classes. 
+        ;;;  </summary>
+        public method AppHost
+            endparams
+            parent("SynNetServiceStackAppDomainOnly Service", ^typeof(PartsService).Assembly)
+        proc
+
+        endmethod
+
+        ;;;  <summary>
+        ;;;  Application specific configuration
+        ;;;  This method should initialize any IoC resources utilized by your web service classes.
+        ;;;  </summary>
+        ;;;  <param name="container"></param>
+        public override method Configure, void
+            ctr, @Container
+            endparams
+        proc
+            ;; Enable sessions
+            ;; this.Plugins.Add(new SessionFeature())
+        endmethod
+
+    endclass
+
+endnamespace

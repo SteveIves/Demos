@@ -1,0 +1,36 @@
+
+import System
+import System.Diagnostics
+import System.ServiceModel
+import ServiceStack
+
+namespace ServiceHost
+	
+	;;; <summary>
+	;;; The main entry point for the application.
+	;;; </summary>
+	main
+
+	proc
+		;;Register the ServiceStack license key
+		Licensing.RegisterLicenseFromFileIfExists("D:\Dev\ServiceStackLicenseKey.txt")
+
+		;;Self-host the service
+		;new AppHost().Init().Start("http://*:8088/")
+		data host, @AppHost, new AppHost()
+		host.Init()
+		host.Start("http://*:8088/")
+
+		Console.WriteLine("ServiceStack SelfHost listening at http://localhost:8088 ")
+		Console.WriteLine("Metadata is available at http://localhost:8088/metadata ")
+		
+		;Process.Start("http://localhost:8088/")
+
+		Console.Write("Press a key to terminate the server: ")		
+		Console.ReadKey()
+		Console.WriteLine()
+		
+	endmain
+
+endnamespace
+

@@ -1,0 +1,38 @@
+
+import System
+import System.Collections.Generic
+import Synergex.SynergyDE.Select
+
+namespace BusinessLogic
+
+	public partial class PartsLogic
+
+		public method ReadSupplierParts, MethodStatus
+			required in  aSupplierId, String 
+			required out aParts, @List<Part>
+			endparams
+		proc
+			
+			data status, MethodStatus, MethodStatus.Success
+			
+			aParts = new List<Part>()
+			
+			try
+			begin
+				data rec, strPart
+				foreach rec in new Select(new From("DAT:parts.ism",rec),(Where)rec.Supplierid.eq.aSupplierId)
+					aParts.Add(new Part((String)rec))
+			end
+			catch (e, @Exception)
+			begin
+				status = MethodStatus.FatalError
+			end
+			endtry
+			
+			mreturn status
+			
+		endmethod
+
+	endclass
+
+endnamespace

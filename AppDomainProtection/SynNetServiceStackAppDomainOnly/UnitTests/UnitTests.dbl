@@ -1,0 +1,48 @@
+
+import System
+import NUnit.Framework
+import Services
+import ServiceStack.Testing
+import ServiceStack
+
+.array 0
+
+namespace UnitTests
+
+	{TestFixture}
+	public class UnitTests
+	
+		private readonly appHost, @ServiceStackHost
+		
+		public method UnitTests
+			endparams
+		proc
+			lambda addIocDependencies(container)
+			begin
+				;;Add your IoC dependencies here
+
+			end
+			data tmpHost, @BasicAppHost, new BasicAppHost(^typeof(PartsService).Assembly)
+			tmpHost.ConfigureContainer = addIocDependencies
+			appHost = tmpHost.Init()
+		endmethod
+		
+		{TestFixtureTearDown()}
+		public method TestFixtureTearDown, void
+			endparams
+		proc
+			appHost.Dispose()
+		endmethod
+		
+;		{Test()}
+;		public method HelloService_Test1, void
+;			endparams
+;		proc
+;			data svc = appHost.Container.Resolve<PartsService>()
+;			data response = (@ReadPartResponse)svc.Any(new ReadPart() { Id = "1" })
+;			Assert.That(response.Part.Description, Is.EqualTo("Part 1"))
+;		endmethod
+
+	endclass
+
+endnamespace
