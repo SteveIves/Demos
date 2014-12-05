@@ -1,7 +1,7 @@
 /* Options:
-Date: 2014-12-04 19:12:19
+Date: 2014-12-05 09:52:36
 Version: 1
-BaseUrl: http://localhost:8088
+BaseUrl: http://sivesw8x64:8088
 
 //MakePartial: True
 //MakeVirtual: True

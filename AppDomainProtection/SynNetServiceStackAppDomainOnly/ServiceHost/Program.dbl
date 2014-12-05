@@ -15,16 +15,18 @@ namespace ServiceHost
 		;;Register the ServiceStack license key
 		Licensing.RegisterLicenseFromFileIfExists("D:\Dev\ServiceStackLicenseKey.txt")
 
+		data serviceUrl, String, String.Format("http://{0}:8088/",System.Net.Dns.GetHostName().ToLower())
+
 		;;Self-host the service
-		;new AppHost().Init().Start("http://*:8088/")
+		;new AppHost().Init().Start(serviceUrl)
 		data host, @AppHost, new AppHost()
 		host.Init()
-		host.Start("http://*:8088/")
+		host.Start(serviceUrl)
 
-		Console.WriteLine("ServiceStack SelfHost listening at http://localhost:8088 ")
-		Console.WriteLine("Metadata is available at http://localhost:8088/metadata ")
+		Console.WriteLine("ServiceStack SelfHost listening at {0}",serviceUrl)
+		Console.WriteLine("Metadata is available at {0}metadata",serviceUrl)
 		
-		;Process.Start("http://localhost:8088/")
+		;Process.Start(serviceUrl)
 
 		Console.Write("Press a key to terminate the server: ")		
 		Console.ReadKey()

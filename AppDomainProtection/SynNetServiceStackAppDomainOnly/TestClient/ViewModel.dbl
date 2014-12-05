@@ -1,0 +1,167 @@
+
+import System
+import System.Collections.ObjectModel
+import System.ComponentModel
+import System.Windows.Input
+
+import ServiceStack
+import BusinessLogic
+import Services
+
+namespace TestClient
+
+	public class ViewModel implements INotifyPropertyChanged
+
+		private servicesUrl, string
+
+.region "Constructors"
+
+		public method ViewModel
+			endparams
+		proc
+			servicesUrl = String.Format("http://{0}:8088/", System.Net.Dns.GetHostName().ToLower())
+			getSuppliers()
+		endmethod
+
+.endregion
+
+.region "Backing storage for properties"
+
+		private mSuppliers,			@ObservableCollection<Supplier>
+		private mSelectedSupplier,	@Supplier
+		private mParts,				@ObservableCollection<Part>
+		private mSelectedPart,		@Part
+
+.endregion
+
+.region "Bindable Properties"
+
+		public property Suppliers, @ObservableCollection<Supplier>
+			method get
+			proc
+				mreturn mSuppliers
+			endmethod
+			method set
+            proc
+				mSuppliers = value
+				NotifyPropertyChanged("Suppliers")
+			endmethod
+		endproperty
+		
+		public property SelectedSupplier, @Supplier
+			method get
+			proc
+				mreturn mSelectedSupplier
+			endmethod
+			method set
+			proc
+				mSelectedSupplier = value
+				NotifyPropertyChanged("SelectedSupplier")
+				getSupplierParts()
+			endmethod
+		endproperty
+		
+		public property Parts, @ObservableCollection<Part>
+			method get
+			proc
+				mreturn mParts
+			endmethod
+			method set
+			proc
+				mParts = value
+				NotifyPropertyChanged("Parts")
+			endmethod
+		endproperty
+		
+		public property SelectedPart, @Part
+			method get
+			proc
+				mreturn mSelectedPart
+			endmethod
+			method set
+			proc
+				mSelectedPart = value
+				NotifyPropertyChanged("SelectedPart")
+			endmethod
+		endproperty
+
+.endregion
+
+.region "Logic"
+
+		private async method getSuppliers, void
+			endparams
+		proc
+			ErrorMessage = ""
+			disposable data client = new JsonServiceClient(servicesUrl)
+			try
+			begin
+				data response, @SupplierReadAllResponse, client.Get<SupplierReadAllResponse>(new SupplierReadAll())
+				Suppliers = new ObservableCollection<Supplier>(response.Suppliers)
+				if (Suppliers.Count > 0)
+					SelectedSupplier = Suppliers[0]
+			end
+			catch (e, @Exception)
+			begin
+				ErrorMessage = e.Message
+			end
+			endtry
+		endmethod
+
+		private async method getSupplierParts, void
+			endparams
+		proc
+			ErrorMessage = ""
+			disposable data client = new JsonServiceClient(servicesUrl)
+			try
+			begin
+				data response, @PartReadSupplierPartsResponse, client.Get<PartReadSupplierPartsResponse>(new PartReadSupplierParts() { SupplierId = SelectedSupplier.SupplierId });
+				Parts = new ObservableCollection<Part>(response.Parts)
+				if (Parts.Count > 0)
+					SelectedPart = Parts[0]
+			end
+			catch (e, @Exception)
+			begin
+				ErrorMessage = e.Message
+			end
+			endtry
+		endmethod
+
+.endregion
+
+.region "ErrorMessage"
+
+		private mErrorMessage, String
+
+		public property ErrorMessage, String
+			method get
+			proc
+				mreturn mErrorMessage
+			endmethod
+			method set
+			proc
+				mErrorMessage = value
+				NotifyPropertyChanged("ErrorMessage")
+			endmethod
+		endproperty
+		
+.endregion
+
+.region "INotifyPropertyChanged"
+		
+		public event PropertyChanged, @PropertyChangedEventHandler
+		
+		protected method NotifyPropertyChanged, void
+			required in propertyName, String
+			endparams
+		proc
+			if (PropertyChanged!=^null)
+				raiseevent(PropertyChanged,this,new PropertyChangedEventArgs(propertyName))
+		endmethod
+		
+.endregion
+		
+	endclass
+
+endnamespace
+
