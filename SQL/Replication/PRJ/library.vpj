@@ -69,7 +69,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%wpBAT"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -147,7 +147,7 @@
 		</Folder>
 		<Folder
 			Name="Source Files"
-			Filters="*.dbl">
+			Filters="*.dbl;*.tpl;*.dbc">
 			<F N="../SRC/LIBRARY/ChannelCache.dbl"/>
 			<F N="../SRC/LIBRARY/DepartmentIO.dbl"/>
 			<F N="../SRC/LIBRARY/EmployeeIO.dbl"/>
@@ -231,7 +231,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%wpBAT"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -360,7 +360,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%wpBAT"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">
@@ -489,7 +489,7 @@
 			<Target
 				Name="Regenerate Code"
 				MenuCaption="&amp;Regenerate Code"
-				RunFromDir="%wpBAT"
+				RunFromDir="%wp"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				SaveOption="SaveAll">

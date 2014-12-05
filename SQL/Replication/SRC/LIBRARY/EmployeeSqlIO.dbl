@@ -81,7 +81,7 @@ proc
     ;;Create index 1 (Department ID)
     if (ok)
     begin
-        sql = "CREATE INDEX IX_Employee_EmpDept "
+        sql = "CREATE  INDEX IX_Employee_EmpDept "
         &     "ON Employee(EmpDept ASC)"
 
         call open_cursor
@@ -96,7 +96,7 @@ proc
     ;;Create index 2 (Last name)
     if (ok)
     begin
-        sql = "CREATE INDEX IX_Employee_EmpLastName "
+        sql = "CREATE  INDEX IX_Employee_EmpLastName "
         &     "ON Employee(EmpLastName ASC)"
 
         call open_cursor
@@ -748,7 +748,7 @@ proc
                 endusing
             end
             else
-                errtxt="Failed to execute SQL statement"
+                errtxt="Failed to execute SQL statement"                
         end
     end
 
@@ -1187,13 +1187,13 @@ proc
         a_added = ttl_added
     if (^passed(a_failed))
         a_failed = ttl_failed
-
+    
     freturn ok
 
 insert_data,
 
     attempted = (%mem_proc(DM_GETSIZE,mh)/^size(employee))
-
+    
     if (%employee_insert_rows(a_dbchn,mh,errtxt,ex_mh,a_terminal))
     begin
         ;;Any exceptions?
@@ -1316,7 +1316,7 @@ proc
         & + "EmpHomeOk=:10,"
         & + "ReplicationKey=:11"
         & + " WHERE"
-        & + " EmpId='" + %atrim(^a(employee.emp_id)) + "'"
+        & + " EmpId='" + %atrim(^a(employee.emp_id)) + "' "
 
         if (%ssc_open(a_dbchn,cursor,(a)sql,SSQL_NONSEL,SSQL_STANDARD)==SSQL_FAILURE)
         begin
