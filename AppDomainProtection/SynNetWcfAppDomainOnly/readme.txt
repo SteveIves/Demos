@@ -1,5 +1,5 @@
 
-Title:          SynNetWcf
+Title:          SynNetWcfAppDomainOnly
 
 Description:    An example of how to implement WCF services using Synergy .NET
                 while providing the required AppDomain isolation and multi-
