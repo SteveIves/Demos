@@ -1,10 +1,9 @@
-;; Generated on 27-Jun-2012 1:54:54 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
-;; 
+;; ;; 
 ;; The contents of this file are auto-generated. Only add modifications to the end of this file.
 ;; Any modifications will be lost when the file is re-generated.
 ;; 
-import System;
-import System.Text;
+import System
+import System.Text
 namespace xfpldemo
  
 ;;; <summary>
@@ -25,12 +24,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Address_id != value) 
-			       m_changed = true 
-			    f_Address_id = value
+				if(f_Address_id != value)
+				begin
+					m_changed = true 
+					f_Address_id = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Customer_id    ,int
 		 
 		;;; <summary>
@@ -43,12 +43,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Customer_id != value) 
-			       m_changed = true 
-			    f_Customer_id = value
+				if(f_Customer_id != value)
+				begin
+					m_changed = true 
+					f_Customer_id = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Address_type    ,Address_type
 		 
 		;;; <summary>
@@ -61,12 +62,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Address_type != value) 
-			       m_changed = true 
-			    f_Address_type = value
+				if(f_Address_type != value)
+				begin
+					m_changed = true 
+					f_Address_type = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Address1    ,string
 		 
 		;;; <summary>
@@ -79,19 +81,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Address1)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Address1.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Address1 = value
+				if(f_Address1 != value)
+				begin
+					m_changed = true 
+					f_Address1 = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Address2    ,string
 		 
 		;;; <summary>
@@ -104,19 +100,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Address2)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Address2.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Address2 = value
+				if(f_Address2 != value)
+				begin
+					m_changed = true 
+					f_Address2 = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Address3    ,string
 		 
 		;;; <summary>
@@ -129,19 +119,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Address3)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Address3.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Address3 = value
+				if(f_Address3 != value)
+				begin
+					m_changed = true 
+					f_Address3 = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_City    ,string
 		 
 		;;; <summary>
@@ -154,19 +138,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_City)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_City.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_City = value
+				if(f_City != value)
+				begin
+					m_changed = true 
+					f_City = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Postal_code    ,string
 		 
 		;;; <summary>
@@ -179,55 +157,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Postal_code)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Postal_code.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Postal_code = value
+				if(f_Postal_code != value)
+				begin
+					m_changed = true 
+					f_Postal_code = value
+				end
 			endmethod
 		endproperty
-		 
-		private f_Zip    ,int
-		 
-		;;; <summary>
-		;;; Zip Code (US Only)
-		;;; </summary>
-		public property Zip   ,int
-			method get
-			proc
-			    mreturn f_Zip
-			endmethod
-			method set
-			proc
-			    if(f_Zip != value) 
-			       m_changed = true 
-			    f_Zip = value
-			endmethod
-		endproperty
-		 
-		private f_Zip_extend    ,int
-		 
-		;;; <summary>
-		;;; Zip extension (US Only)
-		;;; </summary>
-		public property Zip_extend   ,int
-			method get
-			proc
-			    mreturn f_Zip_extend
-			endmethod
-			method set
-			proc
-			    if(f_Zip_extend != value) 
-			       m_changed = true 
-			    f_Zip_extend = value
-			endmethod
-		endproperty
-		 
 		private f_State    ,string
 		 
 		;;; <summary>
@@ -240,19 +176,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_State)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_State.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_State = value
+				if(f_State != value)
+				begin
+					m_changed = true 
+					f_State = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Country    ,string
 		 
 		;;; <summary>
@@ -265,19 +195,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Country)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Country.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Country = value
+				if(f_Country != value)
+				begin
+					m_changed = true 
+					f_Country = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Mailing_address    ,boolean
 		 
 		;;; <summary>
@@ -290,12 +214,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Mailing_address != value) 
-			       m_changed = true 
-			    f_Mailing_address = value
+				if(f_Mailing_address != value)
+				begin
+					m_changed = true 
+					f_Mailing_address = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Billing_address    ,boolean
 		 
 		;;; <summary>
@@ -308,12 +233,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Billing_address != value) 
-			       m_changed = true 
-			    f_Billing_address = value
+				if(f_Billing_address != value)
+				begin
+					m_changed = true 
+					f_Billing_address = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Main_address    ,boolean
 		 
 		;;; <summary>
@@ -326,12 +252,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Main_address != value) 
-			       m_changed = true 
-			    f_Main_address = value
+				if(f_Main_address != value)
+				begin
+					m_changed = true 
+					f_Main_address = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Satellite_office    ,boolean
 		 
 		;;; <summary>
@@ -344,30 +271,32 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Satellite_office != value) 
-			       m_changed = true 
-			    f_Satellite_office = value
+				if(f_Satellite_office != value)
+				begin
+					m_changed = true 
+					f_Satellite_office = value
+				end
 			endmethod
 		endproperty
-		 
-		private f_Active_date    ,DateTime
+		private f_Active_date    ,System.DateTime
 		 
 		;;; <summary>
 		;;; Date address became active
 		;;; </summary>
-		public property Active_date   ,DateTime
+		public property Active_date   ,System.DateTime
 			method get
 			proc
 			    mreturn f_Active_date
 			endmethod
 			method set
 			proc
-			    if(f_Active_date != value) 
-			       m_changed = true 
-			    f_Active_date = value
+				if(f_Active_date != value)
+				begin
+					m_changed = true 
+					f_Active_date = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Replication_key    ,string
 		 
 		;;; <summary>
@@ -380,30 +309,20 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Replication_key)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Replication_key.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Replication_key = value
+				if(f_Replication_key != value)
+				begin
+					m_changed = true 
+					f_Replication_key = value
+				end
 			endmethod
 		endproperty
-		 
 		;;; <summary>
 		;;; structure clone
 		;;; </summary>
 		public method Clone    ,@xfpldemo.Address
 		endparams
-		record
-		    i      ,int
-		    tmp    ,@xfpldemo.Address
-		endrecord
 		proc
-			tmp = new xfpldemo.Address()
+			data tmp = new xfpldemo.Address()
 			tmp.f_Address_id = this.f_Address_id
 			tmp.f_Customer_id = this.f_Customer_id
 			tmp.f_Address_type = this.f_Address_type
@@ -412,8 +331,6 @@ namespace xfpldemo
 			tmp.f_Address3 = this.f_Address3
 			tmp.f_City = this.f_City
 			tmp.f_Postal_code = this.f_Postal_code
-			tmp.f_Zip = this.f_Zip
-			tmp.f_Zip_extend = this.f_Zip_extend
 			tmp.f_State = this.f_State
 			tmp.f_Country = this.f_Country
 			tmp.f_Mailing_address = this.f_Mailing_address
@@ -422,7 +339,7 @@ namespace xfpldemo
 			tmp.f_Satellite_office = this.f_Satellite_office
 			tmp.f_Active_date = this.f_Active_date
 			tmp.f_Replication_key = this.f_Replication_key
-			mreturn tmp;
+			mreturn tmp
 		endmethod
 		private f_original    ,@xfpldemo.Address
 		;;; <summary>
@@ -444,110 +361,40 @@ namespace xfpldemo
 		public method Equals,   boolean
 			str    ,@xfpldemo.Address
 		endparams
-		record
-			i     ,int
-			eql   ,boolean
-		endrecord
 		proc
-			eql = true;
 			if (this.Address_id != str.Address_id)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Customer_id != str.Customer_id)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Address_type != str.Address_type)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Address1.Equals(str.Address1))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Address2.Equals(str.Address2))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Address3.Equals(str.Address3))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.City.Equals(str.City))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Postal_code.Equals(str.Postal_code))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (this.Zip != str.Zip)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (this.Zip_extend != str.Zip_extend)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.State.Equals(str.State))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Country.Equals(str.Country))
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
+			if (this.Address1 != str.Address1)
+				mreturn false
+			if (this.Address2 != str.Address2)
+				mreturn false
+			if (this.Address3 != str.Address3)
+				mreturn false
+			if (this.City != str.City)
+				mreturn false
+			if (this.Postal_code != str.Postal_code)
+				mreturn false
+			if (this.State != str.State)
+				mreturn false
+			if (this.Country != str.Country)
+				mreturn false
 			if (this.Mailing_address != str.Mailing_address)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Billing_address != str.Billing_address)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Main_address != str.Main_address)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Satellite_office != str.Satellite_office)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Active_date != str.Active_date)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Replication_key.Equals(str.Replication_key))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			mreturn eql;
-		endmethod
-		;;; <summary>
-		;;; Constructor
-		;;; </summary>
-		public method Address
-		endparams
-		proc
+				mreturn false
+			if (this.Replication_key != str.Replication_key)
+				mreturn false
+			mreturn true
 		endmethod
  
 		private m_changed    ,boolean, false
@@ -566,108 +413,44 @@ namespace xfpldemo
 		;;; <summary>
 		;;; Serialize a structure to a string
 		;;; </summary>
-		public method StructToString,    string 
+		public method StructToSynergy,    A
 		endparams
 		record Tmp_Address
-			Address_id    ,i4
-			Customer_id    ,i4
-			Address_type    ,i4
-			Address1    ,a50
-			Address2    ,a50
-			Address3    ,a50
-			City    ,a30
-			Postal_code    ,a10
-			Zip    ,d5
-			Zip_extend    ,d4
-			State    ,a2
-			Country    ,a2
-			Mailing_address    ,d4
-			Billing_address    ,d4
-			Main_address    ,d4
-			Satellite_office    ,d4
-			Active_date    ,d8
-			Replication_key    ,a20
-		endrecord
-		record
-			outString    ,string
-			hldString    ,string
-			i            ,i4
+			tAddress_id    ,i4
+			tCustomer_id    ,i4
+			tAddress_type    ,^global.Address_type
+			tAddress1    ,a50
+			tAddress2    ,a50
+			tAddress3    ,a50
+			tCity    ,a30
+			tPostal_code    ,a10
+			tState    ,a2
+			tCountry    ,a2
+			tMailing_address    ,d4
+			tBilling_address    ,d4
+			tMain_address    ,d4
+			tSatellite_office    ,d4
+			tActive_date    ,d8
+			tReplication_key    ,a20
 		endrecord
 		proc
-			Tmp_Address.Address_id = this.Address_id
-			Tmp_Address.Customer_id = this.Customer_id
-			Tmp_Address.Address_type = %integer(this.Address_type)
-			Tmp_Address.Address1 = this.Address1
-			Tmp_Address.Address2 = this.Address2
-			Tmp_Address.Address3 = this.Address3
-			Tmp_Address.City = this.City
-			Tmp_Address.Postal_code = this.Postal_code
-			Tmp_Address.Zip = this.Zip
-			Tmp_Address.Zip_extend = this.Zip_extend
-			Tmp_Address.State = this.State
-			Tmp_Address.Country = this.Country
-			Tmp_Address.Mailing_address = this.Mailing_address
-			Tmp_Address.Billing_address = this.Billing_address
-			Tmp_Address.Main_address = this.Main_address
-			Tmp_Address.Satellite_office = this.Satellite_office
-			Tmp_Address.Active_date = %DateTimeToDec(f_Active_date, "YYYYMMDD")
-			Tmp_Address.Replication_key = this.Replication_key
-			outstring = Tmp_Address
-			mreturn outstring
-		endmethod
-		;;; <summary>
-		;;; Serialize a string to a structure
-		;;; </summary>
-		public method StringToStruct,    void 
-			stringIn    ,string
-		endparams
-		record Tmp_Address
-			Address_id    ,i4
-			Customer_id    ,i4
-			Address_type    ,i4
-			Address1    ,a50
-			Address2    ,a50
-			Address3    ,a50
-			City    ,a30
-			Postal_code    ,a10
-			Zip    ,d5
-			Zip_extend    ,d4
-			State    ,a2
-			Country    ,a2
-			Mailing_address    ,d4
-			Billing_address    ,d4
-			Main_address    ,d4
-			Satellite_office    ,d4
-			Active_date    ,d8
-			Replication_key    ,a20
-		endrecord
-		record
-			i          ,i4
-			len        ,i4
-			pos        ,i4
-			hldString  ,string
-		endrecord
-		proc
-			Tmp_Address = stringIn
-			f_Address_id = Tmp_Address.Address_id
-			f_Customer_id = Tmp_Address.Customer_id
-			f_Address_type = (Address_type)(%integer(Tmp_Address.Address_type))
-			f_Address1 = %atrim(Tmp_Address.Address1)
-			f_Address2 = %atrim(Tmp_Address.Address2)
-			f_Address3 = %atrim(Tmp_Address.Address3)
-			f_City = %atrim(Tmp_Address.City)
-			f_Postal_code = %atrim(Tmp_Address.Postal_code)
-			f_Zip = Tmp_Address.Zip
-			f_Zip_extend = Tmp_Address.Zip_extend
-			f_State = %atrim(Tmp_Address.State)
-			f_Country = %atrim(Tmp_Address.Country)
-			f_Mailing_address = Tmp_Address.Mailing_address
-			f_Billing_address = Tmp_Address.Billing_address
-			f_Main_address = Tmp_Address.Main_address
-			f_Satellite_office = Tmp_Address.Satellite_office
-			f_Active_date = new DateTime(%DecToDateTime(Tmp_Address.Active_date, "YYYYMMDD"))
-			f_Replication_key = %atrim(Tmp_Address.Replication_key)
-			mreturn
+			Tmp_Address.tAddress_id = this.Address_id
+			Tmp_Address.tCustomer_id = this.Customer_id
+			Tmp_Address.tAddress_type = (^global.Address_type)(int)this.Address_type
+			Tmp_Address.tAddress1 = this.Address1
+			Tmp_Address.tAddress2 = this.Address2
+			Tmp_Address.tAddress3 = this.Address3
+			Tmp_Address.tCity = this.City
+			Tmp_Address.tPostal_code = this.Postal_code
+			Tmp_Address.tState = this.State
+			Tmp_Address.tCountry = this.Country
+			Tmp_Address.tMailing_address = this.Mailing_address
+			Tmp_Address.tBilling_address = this.Billing_address
+			Tmp_Address.tMain_address = this.Main_address
+			Tmp_Address.tSatellite_office = this.Satellite_office
+			Tmp_Address.tActive_date = %DateTimeToDec(this.Active_date,"YYYYMMDD")
+			Tmp_Address.tReplication_key = this.Replication_key
+			mreturn Tmp_Address
 		endmethod
 		;;; <summary>
 		;;; Serialize a Synergy structure to a .NET structure
@@ -676,52 +459,41 @@ namespace xfpldemo
 			structIn    ,a
 		endparams
 		record Tmp_Address
-			Address_id    ,i4
-			Customer_id    ,i4
-			Address_type    ,i4
-			Address1    ,a50
-			Address2    ,a50
-			Address3    ,a50
-			City    ,a30
-			Postal_code    ,a10
-			Zip    ,d5
-			Zip_extend    ,d4
-			State    ,a2
-			Country    ,a2
-			Mailing_address    ,d4
-			Billing_address    ,d4
-			Main_address    ,d4
-			Satellite_office    ,d4
-			Active_date    ,d8
-			Replication_key    ,a20
-		endrecord
-		record
-			i          ,i4
-			len        ,i4
-			pos        ,i4
-			hldString  ,string
+			tAddress_id    ,i4
+			tCustomer_id    ,i4
+			tAddress_type    ,^global.Address_type
+			tAddress1    ,a50
+			tAddress2    ,a50
+			tAddress3    ,a50
+			tCity    ,a30
+			tPostal_code    ,a10
+			tState    ,a2
+			tCountry    ,a2
+			tMailing_address    ,d4
+			tBilling_address    ,d4
+			tMain_address    ,d4
+			tSatellite_office    ,d4
+			tActive_date    ,d8
+			tReplication_key    ,a20
 		endrecord
 		proc
 			Tmp_Address = structIn
-			f_Address_id = Tmp_Address.Address_id
-			f_Customer_id = Tmp_Address.Customer_id
-			i = (%integer(Tmp_Address.Address_type))
-			f_Address_type = (Address_type)i
-			f_Address1 = %atrim(Tmp_Address.Address1)
-			f_Address2 = %atrim(Tmp_Address.Address2)
-			f_Address3 = %atrim(Tmp_Address.Address3)
-			f_City = %atrim(Tmp_Address.City)
-			f_Postal_code = %atrim(Tmp_Address.Postal_code)
-			f_Zip = Tmp_Address.Zip
-			f_Zip_extend = Tmp_Address.Zip_extend
-			f_State = %atrim(Tmp_Address.State)
-			f_Country = %atrim(Tmp_Address.Country)
-			f_Mailing_address = Tmp_Address.Mailing_address
-			f_Billing_address = Tmp_Address.Billing_address
-			f_Main_address = Tmp_Address.Main_address
-			f_Satellite_office = Tmp_Address.Satellite_office
-			f_Active_date = new DateTime(%DecToDateTime(Tmp_Address.Active_date, "YYYYMMDD"))
-			f_Replication_key = %atrim(Tmp_Address.Replication_key)
+			f_Address_id = Tmp_Address.tAddress_id
+			f_Customer_id = Tmp_Address.tCustomer_id
+			f_Address_type = (Address_type)%integer(Tmp_Address.tAddress_type)
+			f_Address1 = %atrim(Tmp_Address.tAddress1)
+			f_Address2 = %atrim(Tmp_Address.tAddress2)
+			f_Address3 = %atrim(Tmp_Address.tAddress3)
+			f_City = %atrim(Tmp_Address.tCity)
+			f_Postal_code = %atrim(Tmp_Address.tPostal_code)
+			f_State = %atrim(Tmp_Address.tState)
+			f_Country = %atrim(Tmp_Address.tCountry)
+			f_Mailing_address = Tmp_Address.tMailing_address
+			f_Billing_address = Tmp_Address.tBilling_address
+			f_Main_address = Tmp_Address.tMain_address
+			f_Satellite_office = Tmp_Address.tSatellite_office
+			f_Active_date = new System.DateTime(%DecToDateTime(Tmp_Address.tActive_date, "YYYYMMDD"))
+			f_Replication_key = %atrim(Tmp_Address.tReplication_key)
 			mreturn
 		endmethod
 	endclass

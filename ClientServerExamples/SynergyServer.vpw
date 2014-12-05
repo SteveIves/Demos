@@ -1,9 +1,9 @@
 <!DOCTYPE Workspace SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpw.dtd">
-<Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.1.1c">
+<Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.2.5f">
 	<Projects>
-		<Project File="JavaClient/JavaClient.vpj" />
-		<Project File="xfNetLink/xfNetLink.vpj" />
-		<Project File="xfNetLink_wcf/xfNetLink_wcf.vpj" />
-		<Project File="xfServerPlus/xfServerPlus.vpj" />
+		<Project File="JavaClient/JavaClient.vpj"/>
+		<Project File="xfNetLink/xfNetLink.vpj"/>
+		<Project File="xfNetLink_wcf/xfNetLink_wcf.vpj"/>
+		<Project File="xfServerPlus/xfServerPlus.vpj"/>
 	</Projects>
 </Workspace>

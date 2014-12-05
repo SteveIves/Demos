@@ -1,16 +1,15 @@
-;; Generated on 22-Jun-2011 10:26:37 by SynergyInterop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
-;; 
+;; ;; 
 ;; The contents of this file are auto-generated. Only add modifications to the end of this file.
 ;; Any modifications will be lost when the file is re-generated.
 ;; 
-import System;
-import System.Text;
-import System.Runtime.Serialization;
-import System.ServiceModel;
+import System
+import System.Text
+import System.Runtime.Serialization
+import System.ServiceModel
 namespace xfpldemo
  
 ;;; <summary>
-;;; Structural Interface Class InteropAssembly
+;;; Structural Interface Class InteropAssemblyTmp
 ;;; </summary>
 	{DataContractAttribute}
 	{Serializable}
@@ -29,12 +28,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Contact_id != value) 
-			       m_changed = true 
-			    f_Contact_id = value
+				if(f_Contact_id != value)
+				begin
+					m_changed = true 
+					f_Contact_id = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Customer_id    ,int
 		 
 		;;; <summary>
@@ -48,12 +48,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Customer_id != value) 
-			       m_changed = true 
-			    f_Customer_id = value
+				if(f_Customer_id != value)
+				begin
+					m_changed = true 
+					f_Customer_id = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Address_id    ,int
 		 
 		;;; <summary>
@@ -67,12 +68,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Address_id != value) 
-			       m_changed = true 
-			    f_Address_id = value
+				if(f_Address_id != value)
+				begin
+					m_changed = true 
+					f_Address_id = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Salutation    ,string
 		 
 		;;; <summary>
@@ -86,19 +88,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Salutation)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Salutation.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Salutation = value
+				if(f_Salutation != value)
+				begin
+					m_changed = true 
+					f_Salutation = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_First_name    ,string
 		 
 		;;; <summary>
@@ -112,19 +108,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_First_name)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_First_name.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_First_name = value
+				if(f_First_name != value)
+				begin
+					m_changed = true 
+					f_First_name = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Last_name    ,string
 		 
 		;;; <summary>
@@ -138,19 +128,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Last_name)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Last_name.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Last_name = value
+				if(f_Last_name != value)
+				begin
+					m_changed = true 
+					f_Last_name = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Friendly_name    ,string
 		 
 		;;; <summary>
@@ -164,19 +148,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Friendly_name)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Friendly_name.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Friendly_name = value
+				if(f_Friendly_name != value)
+				begin
+					m_changed = true 
+					f_Friendly_name = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Title    ,string
 		 
 		;;; <summary>
@@ -190,19 +168,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Title)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Title.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Title = value
+				if(f_Title != value)
+				begin
+					m_changed = true 
+					f_Title = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Department    ,string
 		 
 		;;; <summary>
@@ -216,19 +188,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Department)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Department.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Department = value
+				if(f_Department != value)
+				begin
+					m_changed = true 
+					f_Department = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Work_phone    ,long
 		 
 		;;; <summary>
@@ -242,12 +208,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Work_phone != value) 
-			       m_changed = true 
-			    f_Work_phone = value
+				if(f_Work_phone != value)
+				begin
+					m_changed = true 
+					f_Work_phone = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Work_extension    ,int
 		 
 		;;; <summary>
@@ -261,12 +228,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Work_extension != value) 
-			       m_changed = true 
-			    f_Work_extension = value
+				if(f_Work_extension != value)
+				begin
+					m_changed = true 
+					f_Work_extension = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Mobile_phone    ,long
 		 
 		;;; <summary>
@@ -280,12 +248,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Mobile_phone != value) 
-			       m_changed = true 
-			    f_Mobile_phone = value
+				if(f_Mobile_phone != value)
+				begin
+					m_changed = true 
+					f_Mobile_phone = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Home_phone    ,long
 		 
 		;;; <summary>
@@ -299,12 +268,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Home_phone != value) 
-			       m_changed = true 
-			    f_Home_phone = value
+				if(f_Home_phone != value)
+				begin
+					m_changed = true 
+					f_Home_phone = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Fax    ,long
 		 
 		;;; <summary>
@@ -318,12 +288,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Fax != value) 
-			       m_changed = true 
-			    f_Fax = value
+				if(f_Fax != value)
+				begin
+					m_changed = true 
+					f_Fax = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Web_site    ,string
 		 
 		;;; <summary>
@@ -337,19 +308,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Web_site)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Web_site.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Web_site = value
+				if(f_Web_site != value)
+				begin
+					m_changed = true 
+					f_Web_site = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Email    ,string
 		 
 		;;; <summary>
@@ -363,19 +328,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Email)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Email.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Email = value
+				if(f_Email != value)
+				begin
+					m_changed = true 
+					f_Email = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Picture_file    ,string
 		 
 		;;; <summary>
@@ -389,19 +348,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Picture_file)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Picture_file.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Picture_file = value
+				if(f_Picture_file != value)
+				begin
+					m_changed = true 
+					f_Picture_file = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Management_contact    ,boolean
 		 
 		;;; <summary>
@@ -415,12 +368,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Management_contact != value) 
-			       m_changed = true 
-			    f_Management_contact = value
+				if(f_Management_contact != value)
+				begin
+					m_changed = true 
+					f_Management_contact = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Technical_contact    ,boolean
 		 
 		;;; <summary>
@@ -434,12 +388,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Technical_contact != value) 
-			       m_changed = true 
-			    f_Technical_contact = value
+				if(f_Technical_contact != value)
+				begin
+					m_changed = true 
+					f_Technical_contact = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Sales_contact    ,boolean
 		 
 		;;; <summary>
@@ -453,12 +408,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Sales_contact != value) 
-			       m_changed = true 
-			    f_Sales_contact = value
+				if(f_Sales_contact != value)
+				begin
+					m_changed = true 
+					f_Sales_contact = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Billing_contact    ,boolean
 		 
 		;;; <summary>
@@ -472,12 +428,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_Billing_contact != value) 
-			       m_changed = true 
-			    f_Billing_contact = value
+				if(f_Billing_contact != value)
+				begin
+					m_changed = true 
+					f_Billing_contact = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_General_contact    ,boolean
 		 
 		;;; <summary>
@@ -491,12 +448,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			    if(f_General_contact != value) 
-			       m_changed = true 
-			    f_General_contact = value
+				if(f_General_contact != value)
+				begin
+					m_changed = true 
+					f_General_contact = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Replication_key    ,string
 		 
 		;;; <summary>
@@ -510,19 +468,13 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Replication_key)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Replication_key.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Replication_key = value
+				if(f_Replication_key != value)
+				begin
+					m_changed = true 
+					f_Replication_key = value
+				end
 			endmethod
 		endproperty
-		 
 		private f_Noname_001    ,string
 		 
 		;;; <summary>
@@ -536,30 +488,20 @@ namespace xfpldemo
 			endmethod
 			method set
 			proc
-			      if(String.IsNullOrEmpty(f_Noname_001)) then
-			       begin 
-			         m_changed = true 
-			       end 
-			      else
-			       begin 
-			        if(!f_Noname_001.Equals(value)) 
-			           m_changed = true 
-			       end 
-			      f_Noname_001 = value
+				if(f_Noname_001 != value)
+				begin
+					m_changed = true 
+					f_Noname_001 = value
+				end
 			endmethod
 		endproperty
-		 
 		;;; <summary>
 		;;; structure clone
 		;;; </summary>
 		public method Clone    ,@xfpldemo.Contact
 		endparams
-		record
-		    i      ,int
-		    tmp    ,@xfpldemo.Contact
-		endrecord
 		proc
-			tmp = new xfpldemo.Contact()
+			data tmp = new xfpldemo.Contact()
 			tmp.f_Contact_id = this.f_Contact_id
 			tmp.f_Customer_id = this.f_Customer_id
 			tmp.f_Address_id = this.f_Address_id
@@ -584,7 +526,7 @@ namespace xfpldemo
 			tmp.f_General_contact = this.f_General_contact
 			tmp.f_Replication_key = this.f_Replication_key
 			tmp.f_Noname_001 = this.f_Noname_001
-			mreturn tmp;
+			mreturn tmp
 		endmethod
 		private f_original    ,@xfpldemo.Contact
 		;;; <summary>
@@ -606,140 +548,56 @@ namespace xfpldemo
 		public method Equals,   boolean
 			str    ,@xfpldemo.Contact
 		endparams
-		record
-			i     ,int
-			eql   ,boolean
-		endrecord
 		proc
-			eql = true;
 			if (this.Contact_id != str.Contact_id)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Customer_id != str.Customer_id)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Address_id != str.Address_id)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Salutation.Equals(str.Salutation))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.First_name.Equals(str.First_name))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Last_name.Equals(str.Last_name))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Friendly_name.Equals(str.Friendly_name))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Title.Equals(str.Title))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Department.Equals(str.Department))
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
+			if (this.Salutation != str.Salutation)
+				mreturn false
+			if (this.First_name != str.First_name)
+				mreturn false
+			if (this.Last_name != str.Last_name)
+				mreturn false
+			if (this.Friendly_name != str.Friendly_name)
+				mreturn false
+			if (this.Title != str.Title)
+				mreturn false
+			if (this.Department != str.Department)
+				mreturn false
 			if (this.Work_phone != str.Work_phone)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Work_extension != str.Work_extension)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Mobile_phone != str.Mobile_phone)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Home_phone != str.Home_phone)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Fax != str.Fax)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Web_site.Equals(str.Web_site))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Email.Equals(str.Email))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Picture_file.Equals(str.Picture_file))
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
+			if (this.Web_site != str.Web_site)
+				mreturn false
+			if (this.Email != str.Email)
+				mreturn false
+			if (this.Picture_file != str.Picture_file)
+				mreturn false
 			if (this.Management_contact != str.Management_contact)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Technical_contact != str.Technical_contact)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Sales_contact != str.Sales_contact)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.Billing_contact != str.Billing_contact)
-			  begin
-				eql = false
-				mreturn eql
-			  end
+				mreturn false
 			if (this.General_contact != str.General_contact)
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Replication_key.Equals(str.Replication_key))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			if (!this.Noname_001.Equals(str.Noname_001))
-			  begin
-				eql = false
-				mreturn eql
-			  end
-			mreturn eql;
-		endmethod
-		;;; <summary>
-		;;; Constructor
-		;;; </summary>
-		public method Contact
-		endparams
-		proc
+				mreturn false
+			if (this.Replication_key != str.Replication_key)
+				mreturn false
+			if (this.Noname_001 != str.Noname_001)
+				mreturn false
+			mreturn true
 		endmethod
  
 		private m_changed    ,boolean, false
@@ -758,132 +616,60 @@ namespace xfpldemo
 		;;; <summary>
 		;;; Serialize a structure to a string
 		;;; </summary>
-		public method StructToString,    string 
+		public method StructToSynergy,    A
 		endparams
 		record Tmp_Contact
-			Contact_id    ,i4
-			Customer_id    ,i4
-			Address_id    ,i4
-			Salutation    ,a5
-			First_name    ,a30
-			Last_name    ,a30
-			Friendly_name    ,a60
-			Title    ,a25
-			Department    ,a15
-			Work_phone    ,d12
-			Work_extension    ,d6
-			Mobile_phone    ,d12
-			Home_phone    ,d12
-			Fax    ,d12
-			Web_site    ,a50
-			Email    ,a50
-			Picture_file    ,a255
-			Management_contact    ,d1
-			Technical_contact    ,d1
-			Sales_contact    ,d1
-			Billing_contact    ,d1
-			General_contact    ,d1
-			Replication_key    ,a20
-			Noname_001    ,a80
-		endrecord
-		record
-			outString    ,string
-			hldString    ,string
-			i            ,i4
+			tContact_id    ,i4
+			tCustomer_id    ,i4
+			tAddress_id    ,i4
+			tSalutation    ,a5
+			tFirst_name    ,a30
+			tLast_name    ,a30
+			tFriendly_name    ,a60
+			tTitle    ,a25
+			tDepartment    ,a15
+			tWork_phone    ,d12
+			tWork_extension    ,d6
+			tMobile_phone    ,d12
+			tHome_phone    ,d12
+			tFax    ,d12
+			tWeb_site    ,a50
+			tEmail    ,a50
+			tPicture_file    ,a255
+			tManagement_contact    ,d1
+			tTechnical_contact    ,d1
+			tSales_contact    ,d1
+			tBilling_contact    ,d1
+			tGeneral_contact    ,d1
+			tReplication_key    ,a20
+			tNoname_001    ,a80
 		endrecord
 		proc
-			Tmp_Contact.Contact_id = this.Contact_id
-			Tmp_Contact.Customer_id = this.Customer_id
-			Tmp_Contact.Address_id = this.Address_id
-			Tmp_Contact.Salutation = this.Salutation
-			Tmp_Contact.First_name = this.First_name
-			Tmp_Contact.Last_name = this.Last_name
-			Tmp_Contact.Friendly_name = this.Friendly_name
-			Tmp_Contact.Title = this.Title
-			Tmp_Contact.Department = this.Department
-			Tmp_Contact.Work_phone = this.Work_phone
-			Tmp_Contact.Work_extension = this.Work_extension
-			Tmp_Contact.Mobile_phone = this.Mobile_phone
-			Tmp_Contact.Home_phone = this.Home_phone
-			Tmp_Contact.Fax = this.Fax
-			Tmp_Contact.Web_site = this.Web_site
-			Tmp_Contact.Email = this.Email
-			Tmp_Contact.Picture_file = this.Picture_file
-			Tmp_Contact.Management_contact = this.Management_contact
-			Tmp_Contact.Technical_contact = this.Technical_contact
-			Tmp_Contact.Sales_contact = this.Sales_contact
-			Tmp_Contact.Billing_contact = this.Billing_contact
-			Tmp_Contact.General_contact = this.General_contact
-			Tmp_Contact.Replication_key = this.Replication_key
-			Tmp_Contact.Noname_001 = this.Noname_001
-			outstring = Tmp_Contact
-			mreturn outstring
-		endmethod
-		;;; <summary>
-		;;; Serialize a string to a structure
-		;;; </summary>
-		public method StringToStruct,    void 
-			stringIn    ,string
-		endparams
-		record Tmp_Contact
-			Contact_id    ,i4
-			Customer_id    ,i4
-			Address_id    ,i4
-			Salutation    ,a5
-			First_name    ,a30
-			Last_name    ,a30
-			Friendly_name    ,a60
-			Title    ,a25
-			Department    ,a15
-			Work_phone    ,d12
-			Work_extension    ,d6
-			Mobile_phone    ,d12
-			Home_phone    ,d12
-			Fax    ,d12
-			Web_site    ,a50
-			Email    ,a50
-			Picture_file    ,a255
-			Management_contact    ,d1
-			Technical_contact    ,d1
-			Sales_contact    ,d1
-			Billing_contact    ,d1
-			General_contact    ,d1
-			Replication_key    ,a20
-			Noname_001    ,a80
-		endrecord
-		record
-			i          ,i4
-			len        ,i4
-			pos        ,i4
-			hldString  ,string
-		endrecord
-		proc
-			Tmp_Contact = stringIn
-			f_Contact_id = Tmp_Contact.Contact_id
-			f_Customer_id = Tmp_Contact.Customer_id
-			f_Address_id = Tmp_Contact.Address_id
-			f_Salutation = %atrim(Tmp_Contact.Salutation)
-			f_First_name = %atrim(Tmp_Contact.First_name)
-			f_Last_name = %atrim(Tmp_Contact.Last_name)
-			f_Friendly_name = %atrim(Tmp_Contact.Friendly_name)
-			f_Title = %atrim(Tmp_Contact.Title)
-			f_Department = %atrim(Tmp_Contact.Department)
-			f_Work_phone = Tmp_Contact.Work_phone
-			f_Work_extension = Tmp_Contact.Work_extension
-			f_Mobile_phone = Tmp_Contact.Mobile_phone
-			f_Home_phone = Tmp_Contact.Home_phone
-			f_Fax = Tmp_Contact.Fax
-			f_Web_site = %atrim(Tmp_Contact.Web_site)
-			f_Email = %atrim(Tmp_Contact.Email)
-			f_Picture_file = %atrim(Tmp_Contact.Picture_file)
-			f_Management_contact = Tmp_Contact.Management_contact
-			f_Technical_contact = Tmp_Contact.Technical_contact
-			f_Sales_contact = Tmp_Contact.Sales_contact
-			f_Billing_contact = Tmp_Contact.Billing_contact
-			f_General_contact = Tmp_Contact.General_contact
-			f_Replication_key = %atrim(Tmp_Contact.Replication_key)
-			f_Noname_001 = %atrim(Tmp_Contact.Noname_001)
-			mreturn
+			Tmp_Contact.tContact_id = this.Contact_id
+			Tmp_Contact.tCustomer_id = this.Customer_id
+			Tmp_Contact.tAddress_id = this.Address_id
+			Tmp_Contact.tSalutation = this.Salutation
+			Tmp_Contact.tFirst_name = this.First_name
+			Tmp_Contact.tLast_name = this.Last_name
+			Tmp_Contact.tFriendly_name = this.Friendly_name
+			Tmp_Contact.tTitle = this.Title
+			Tmp_Contact.tDepartment = this.Department
+			Tmp_Contact.tWork_phone = this.Work_phone
+			Tmp_Contact.tWork_extension = this.Work_extension
+			Tmp_Contact.tMobile_phone = this.Mobile_phone
+			Tmp_Contact.tHome_phone = this.Home_phone
+			Tmp_Contact.tFax = this.Fax
+			Tmp_Contact.tWeb_site = this.Web_site
+			Tmp_Contact.tEmail = this.Email
+			Tmp_Contact.tPicture_file = this.Picture_file
+			Tmp_Contact.tManagement_contact = this.Management_contact
+			Tmp_Contact.tTechnical_contact = this.Technical_contact
+			Tmp_Contact.tSales_contact = this.Sales_contact
+			Tmp_Contact.tBilling_contact = this.Billing_contact
+			Tmp_Contact.tGeneral_contact = this.General_contact
+			Tmp_Contact.tReplication_key = this.Replication_key
+			Tmp_Contact.tNoname_001 = this.Noname_001
+			mreturn Tmp_Contact
 		endmethod
 		;;; <summary>
 		;;; Serialize a Synergy structure to a .NET structure
@@ -892,63 +678,57 @@ namespace xfpldemo
 			structIn    ,a
 		endparams
 		record Tmp_Contact
-			Contact_id    ,i4
-			Customer_id    ,i4
-			Address_id    ,i4
-			Salutation    ,a5
-			First_name    ,a30
-			Last_name    ,a30
-			Friendly_name    ,a60
-			Title    ,a25
-			Department    ,a15
-			Work_phone    ,d12
-			Work_extension    ,d6
-			Mobile_phone    ,d12
-			Home_phone    ,d12
-			Fax    ,d12
-			Web_site    ,a50
-			Email    ,a50
-			Picture_file    ,a255
-			Management_contact    ,d1
-			Technical_contact    ,d1
-			Sales_contact    ,d1
-			Billing_contact    ,d1
-			General_contact    ,d1
-			Replication_key    ,a20
-			Noname_001    ,a80
-		endrecord
-		record
-			i          ,i4
-			len        ,i4
-			pos        ,i4
-			hldString  ,string
+			tContact_id    ,i4
+			tCustomer_id    ,i4
+			tAddress_id    ,i4
+			tSalutation    ,a5
+			tFirst_name    ,a30
+			tLast_name    ,a30
+			tFriendly_name    ,a60
+			tTitle    ,a25
+			tDepartment    ,a15
+			tWork_phone    ,d12
+			tWork_extension    ,d6
+			tMobile_phone    ,d12
+			tHome_phone    ,d12
+			tFax    ,d12
+			tWeb_site    ,a50
+			tEmail    ,a50
+			tPicture_file    ,a255
+			tManagement_contact    ,d1
+			tTechnical_contact    ,d1
+			tSales_contact    ,d1
+			tBilling_contact    ,d1
+			tGeneral_contact    ,d1
+			tReplication_key    ,a20
+			tNoname_001    ,a80
 		endrecord
 		proc
 			Tmp_Contact = structIn
-			f_Contact_id = Tmp_Contact.Contact_id
-			f_Customer_id = Tmp_Contact.Customer_id
-			f_Address_id = Tmp_Contact.Address_id
-			f_Salutation = %atrim(Tmp_Contact.Salutation)
-			f_First_name = %atrim(Tmp_Contact.First_name)
-			f_Last_name = %atrim(Tmp_Contact.Last_name)
-			f_Friendly_name = %atrim(Tmp_Contact.Friendly_name)
-			f_Title = %atrim(Tmp_Contact.Title)
-			f_Department = %atrim(Tmp_Contact.Department)
-			f_Work_phone = Tmp_Contact.Work_phone
-			f_Work_extension = Tmp_Contact.Work_extension
-			f_Mobile_phone = Tmp_Contact.Mobile_phone
-			f_Home_phone = Tmp_Contact.Home_phone
-			f_Fax = Tmp_Contact.Fax
-			f_Web_site = %atrim(Tmp_Contact.Web_site)
-			f_Email = %atrim(Tmp_Contact.Email)
-			f_Picture_file = %atrim(Tmp_Contact.Picture_file)
-			f_Management_contact = Tmp_Contact.Management_contact
-			f_Technical_contact = Tmp_Contact.Technical_contact
-			f_Sales_contact = Tmp_Contact.Sales_contact
-			f_Billing_contact = Tmp_Contact.Billing_contact
-			f_General_contact = Tmp_Contact.General_contact
-			f_Replication_key = %atrim(Tmp_Contact.Replication_key)
-			f_Noname_001 = %atrim(Tmp_Contact.Noname_001)
+			f_Contact_id = Tmp_Contact.tContact_id
+			f_Customer_id = Tmp_Contact.tCustomer_id
+			f_Address_id = Tmp_Contact.tAddress_id
+			f_Salutation = %atrim(Tmp_Contact.tSalutation)
+			f_First_name = %atrim(Tmp_Contact.tFirst_name)
+			f_Last_name = %atrim(Tmp_Contact.tLast_name)
+			f_Friendly_name = %atrim(Tmp_Contact.tFriendly_name)
+			f_Title = %atrim(Tmp_Contact.tTitle)
+			f_Department = %atrim(Tmp_Contact.tDepartment)
+			f_Work_phone = Tmp_Contact.tWork_phone
+			f_Work_extension = Tmp_Contact.tWork_extension
+			f_Mobile_phone = Tmp_Contact.tMobile_phone
+			f_Home_phone = Tmp_Contact.tHome_phone
+			f_Fax = Tmp_Contact.tFax
+			f_Web_site = %atrim(Tmp_Contact.tWeb_site)
+			f_Email = %atrim(Tmp_Contact.tEmail)
+			f_Picture_file = %atrim(Tmp_Contact.tPicture_file)
+			f_Management_contact = Tmp_Contact.tManagement_contact
+			f_Technical_contact = Tmp_Contact.tTechnical_contact
+			f_Sales_contact = Tmp_Contact.tSales_contact
+			f_Billing_contact = Tmp_Contact.tBilling_contact
+			f_General_contact = Tmp_Contact.tGeneral_contact
+			f_Replication_key = %atrim(Tmp_Contact.tReplication_key)
+			f_Noname_001 = %atrim(Tmp_Contact.tNoname_001)
 			mreturn
 		endmethod
 	endclass

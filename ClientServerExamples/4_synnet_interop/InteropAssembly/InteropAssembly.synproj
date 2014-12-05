@@ -73,12 +73,6 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeneratedCode\Address.dbl" />
-    <Compile Include="GeneratedCode\Address_type.dbl" />
-    <Compile Include="GeneratedCode\Contact.dbl" />
-    <Compile Include="GeneratedCode\Customer.dbl" />
-    <Compile Include="GeneratedCode\Method_status.dbl" />
-    <Compile Include="GeneratedCode\SynergyServer.dbl" />
     <Compile Include="Methods\DataDefinitions.dbl" />
     <Compile Include="Methods\GetAddressForUpdate.dbl" />
     <Compile Include="Methods\GetAllCustomers.dbl" />
@@ -92,7 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.dbl" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GeneratedCode\" />
     <Folder Include="Methods" />
     <Folder Include="Properties\" />
   </ItemGroup>
