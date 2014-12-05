@@ -10,9 +10,9 @@ namespace ThreadTest
 	proc
 		;data dataFiles, String	, "D:\Dev\Demos\AppDomainProtection\InteropThreadingTest\data@LOCALHOST"
 		data dataFiles, String	, "DKA0:[USER.STEVEI]@SIVMS"
-		data threadCount, int	, 5							;How many concurrent threas
-		CallBacks.MaxRecords	= 100						;Number of records to real per iteration (1 - 5000)
-		CallBacks.Iterations	= 3							;Number of iterations per thread
+		data threadCount, int	, 50							;How many concurrent threas
+		CallBacks.MaxRecords	= 5						;Number of records to real per iteration (1 - 5000)
+		CallBacks.Iterations	= 10							;Number of iterations per thread
 		CallBacks.DelayStart	= false						;Random delay before starting to read data?
 		CallBacks.DelayBy		= 1000						;Milliseconds
 		
