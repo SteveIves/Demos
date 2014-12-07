@@ -5,11 +5,11 @@
 ;;******************************************************************************
 
 import System
-import System.Collections.Concurrent
 import System.Collections.Generic
 import System.Reflection
 import System.Web
 import ServiceStack
+import AppDomainProtection
 import <LOGIC_PROJECT>
 
 namespace <NAMESPACE>
@@ -18,34 +18,13 @@ namespace <NAMESPACE>
 
     public partial class <StructureName>sService extends Service
 
-        private static appDomainQueue, @ConcurrentQueue<AppDomain>, new ConcurrentQueue<AppDomain>()
-
-        private method get<StructureName>sLogic, @<StructureName>sLogic
-            endparams
-        proc
-            ;;Get the type of the business logic class that we're loading
-            data <structureName>sLogicType, @Type, ^typeof(<StructureName>sLogic)
-
-            ;;Get an AppDomain to host a new business logic instance
-            data <structureName>sServiceDomain, @AppDomain
-            if (!appDomainQueue.TryDequeue(<structureName>sServiceDomain))
-                <structureName>sServiceDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString())
-
-            ;;Load a new instance of the business logic object into the AppDomain
-            data <structureName>sLogicInstance, @<StructureName>sLogic, (@<StructureName>sLogic)<structureName>sServiceDomain.CreateInstanceFromAndUnwrap(<structureName>sLogicType.Assembly.CodeBase, <structureName>sLogicType.FullName,true,BindingFlags.Default,^null,^null,^null,^null)
-
-            ;;Return it for use
-            mreturn <structureName>sLogicInstance
-
-        endmethod
-
         public method Any, @<StructureName>CreateResponse
             required in request, @<StructureName>Create
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data sts, MethodStatus, api.Create<StructureName>(request.<StructureName>)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new <StructureName>CreateResponse(sts)
         endmethod
 
@@ -53,12 +32,12 @@ namespace <NAMESPACE>
             required in request, @<StructureName>Read
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data <structureName>, @<StructureName>
             data grfa, string
             data sts, MethodStatus, api.Read<StructureName>(<PRIMARY_KEY><SEGMENT_LOOP>request.<SegmentName><IF MORE>,</IF></SEGMENT_LOOP></PRIMARY_KEY>,<structureName>,grfa)
             data response, @<StructureName>ReadResponse, new <StructureName>ReadResponse(sts,<structureName>,grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -66,11 +45,11 @@ namespace <NAMESPACE>
             required in request, @<StructureName>ReadAll
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data <structureName>s, @List<<StructureName>>
             data sts, MethodStatus, api.ReadAll<StructureName>s(<structureName>s)
             data response, @<StructureName>ReadAllResponse, new <StructureName>ReadAllResponse(sts,<structureName>s)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -78,12 +57,12 @@ namespace <NAMESPACE>
             required in request, @<StructureName>Update
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data <structureName>, @<StructureName>, request.<StructureName>
             data grfa, string, request.grfa
             data sts, MethodStatus, api.Update<StructureName>(<structureName>,grfa)
             data response, @<StructureName>UpdateResponse, new <StructureName>UpdateResponse(sts,<structureName>,grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -91,9 +70,9 @@ namespace <NAMESPACE>
             required in request, @<StructureName>Delete
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data sts, MethodStatus, api.Delete<StructureName>(request.Grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new <StructureName>DeleteResponse(sts)
         endmethod
 
@@ -101,9 +80,9 @@ namespace <NAMESPACE>
             required in request, @<StructureName>Exists
             endparams
         proc
-            data api, @<StructureName>sLogic, get<StructureName>sLogic()
+            data api, @<StructureName>sLogic, BusinessLogicFactory.GetInstance<<StructureName>sLogic>()
             data sts, MethodStatus, api.<StructureName>Exists(<PRIMARY_KEY><SEGMENT_LOOP>request.<SegmentName><IF MORE>,</IF></SEGMENT_LOOP></PRIMARY_KEY>)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new <StructureName>ExistsResponse(sts)
         endmethod
 

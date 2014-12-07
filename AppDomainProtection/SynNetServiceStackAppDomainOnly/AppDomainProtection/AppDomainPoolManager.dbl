@@ -1,0 +1,92 @@
+;;*****************************************************************************
+;;
+;; Title:       AppDomainPoolManager.dbl
+;;
+;; Type:        Class
+;;
+;; Description: Implements a pooling mechanism for AppDomains
+;;
+;; Date:        9th January 2014
+;;
+;; Authors:     Steve Ives       Synergex Professional Services Group
+;;              Jeff Greene      Synergex Development
+;;                               http://www.synergex.com
+;;
+;;*****************************************************************************
+;;
+;; Copyright (c) 2014, Synergex International, Inc.
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; * Redistributions of source code must retain the above copyright notice,
+;;   this list of conditions and the following disclaimer.
+;;
+;; * Redistributions in binary form must reproduce the above copyright notice,
+;;   this list of conditions and the following disclaimer in the documentation
+;;   and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+;; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+;; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+;; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+;; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+;; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+;; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+;; POSSIBILITY OF SUCH DAMAGE.
+;;
+;;*****************************************************************************
+
+import System.Collections.Concurrent
+import System.IO
+import System.Reflection
+import System.Threading
+
+namespace AppDomainProtection
+
+    ;;; <summary>
+    ;;; Implements a pooling mechanism for AppDomains.
+    ;;; </summary>
+    public static class AppDomainPoolManager
+
+        private static queue, @ConcurrentQueue<AppDomain>, new ConcurrentQueue<AppDomain>()
+
+        ;;; <summary>
+        ;;; Allocate an AppDomain from the pool, or create a new one if the pool is empty.
+        ;;; </summary>
+        public static method Allocate, @AppDomain
+            endparams
+        proc
+            data domain, @AppDomain
+
+			;;Do we have an AppDomain available in the pool?
+			if (!queue.TryDequeue(domain))
+			begin
+				;;No, create a new one
+				domain = AppDomain.CreateDomain(Guid.NewGuid().ToString())
+			end
+
+            mreturn domain
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Release an AppDoman to the pool.
+        ;;; </summary>
+        public static method Release, void
+            required inout domain, @AppDomain
+            endparams
+        proc
+			;;Add the AppDomain to the pool
+			queue.Enqueue(domain)
+			;;Remove the callers reference to the AppDomain
+			domain = ^null
+		endmethod
+
+    endclass
+
+endnamespace

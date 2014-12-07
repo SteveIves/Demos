@@ -7,6 +7,7 @@
 
 import System.Collections.Generic
 import Synergex.SynergyDE.Select
+import AppDomainProtection
 
 namespace <NAMESPACE>
 

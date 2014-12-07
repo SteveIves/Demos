@@ -2,12 +2,12 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Name>"Services"</Name>
+    <Name>"AppDomainProtection"</Name>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ac434c7a-991e-4dd6-9188-241ee865a71e}</ProjectGuid>
+    <ProjectGuid>{0d086460-6ffa-4bea-ab1e-22b6271568f1}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Services</RootNamespace>
-    <AssemblyName>Services</AssemblyName>
+    <RootNamespace>AppDomainProtection</RootNamespace>
+    <AssemblyName>AppDomainProtection</AssemblyName>
     <MainFile>Class.dbl</MainFile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetPlatform>v45</TargetPlatform>
@@ -31,7 +31,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DebugOptimize>Debug</DebugOptimize>
-    <DocumentationFile>bin\Debug\Services.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\AppDomainProtection.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <SerializeAssembly>Auto</SerializeAssembly>
     <LanguageCompatibilityLevel>100301</LanguageCompatibilityLevel>
@@ -43,63 +43,23 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DebugOptimize>Optimize</DebugOptimize>
-    <DocumentationFile>bin\Release\Services.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\AppDomainProtection.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="ServiceStack, Version=4.0.33.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\ServiceStack.4.0.33\lib\net40\ServiceStack.dll</HintPath>
-      <Private>true</Private>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="ServiceStack.Client, Version=4.0.33.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\ServiceStack.Client.4.0.33\lib\net40\ServiceStack.Client.dll</HintPath>
-      <Private>true</Private>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="ServiceStack.Common, Version=4.0.33.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\ServiceStack.Common.4.0.33\lib\net40\ServiceStack.Common.dll</HintPath>
-      <Private>true</Private>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43">
-      <HintPath>..\packages\ServiceStack.Interfaces.4.0.33\lib\portable-wp80+sl5+net40+win8+monotouch+monoandroid\ServiceStack.Interfaces.dll</HintPath>
-      <Private>true</Private>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
-    <Reference Include="ServiceStack.Text, Version=4.0.33.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\ServiceStack.Text.4.0.33\lib\net40\ServiceStack.Text.dll</HintPath>
-      <Private>true</Private>
-      <CopyLocal>True</CopyLocal>
-    </Reference>
     <Reference Include="synrnt">
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PartsService.Custom.dbl" />
-    <Compile Include="PartsService.dbl" />
-    <Compile Include="ProductGroupsService.dbl" />
+    <Compile Include="AppDomainPoolManager.dbl" />
+    <Compile Include="BusinessLogicFactory.dbl" />
+    <Compile Include="IProtectedClass.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
-    <Compile Include="SuppliersService.dbl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AppDomainProtection\AppDomainProtection.synproj">
-      <Name>AppDomainProtection</Name>
-      <Project>{0d086460-6ffa-4bea-ab1e-22b6271568f1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\BusinessLogic\BusinessLogic.synproj">
-      <Name>BusinessLogic</Name>
-      <Project>{4f00bbf1-71e8-4761-89df-6eff838c341a}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
   <PropertyGroup>

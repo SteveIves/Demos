@@ -3,11 +3,11 @@
 ;;******************************************************************************
 
 import System
-import System.Collections.Concurrent
 import System.Collections.Generic
 import System.Reflection
 import System.Web
 import ServiceStack
+import AppDomainProtection
 import BusinessLogic
 
 namespace Services
@@ -16,34 +16,13 @@ namespace Services
 
     public partial class SuppliersService extends Service
 
-        private static appDomainQueue, @ConcurrentQueue<AppDomain>, new ConcurrentQueue<AppDomain>()
-
-        private method getSuppliersLogic, @SuppliersLogic
-            endparams
-        proc
-            ;;Get the type of the business logic class that we're loading
-            data suppliersLogicType, @Type, ^typeof(SuppliersLogic)
-
-            ;;Get an AppDomain to host a new business logic instance
-            data suppliersServiceDomain, @AppDomain
-            if (!appDomainQueue.TryDequeue(suppliersServiceDomain))
-                suppliersServiceDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString())
-
-            ;;Load a new instance of the business logic object into the AppDomain
-            data suppliersLogicInstance, @SuppliersLogic, (@SuppliersLogic)suppliersServiceDomain.CreateInstanceFromAndUnwrap(suppliersLogicType.Assembly.CodeBase, suppliersLogicType.FullName,true,BindingFlags.Default,^null,^null,^null,^null)
-
-            ;;Return it for use
-            mreturn suppliersLogicInstance
-
-        endmethod
-
         public method Any, @SupplierCreateResponse
             required in request, @SupplierCreate
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data sts, MethodStatus, api.CreateSupplier(request.Supplier)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new SupplierCreateResponse(sts)
         endmethod
 
@@ -51,12 +30,12 @@ namespace Services
             required in request, @SupplierRead
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data supplier, @Supplier
             data grfa, string
             data sts, MethodStatus, api.ReadSupplier(request.SupplierId,supplier,grfa)
             data response, @SupplierReadResponse, new SupplierReadResponse(sts,supplier,grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -64,11 +43,11 @@ namespace Services
             required in request, @SupplierReadAll
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data suppliers, @List<Supplier>
             data sts, MethodStatus, api.ReadAllSuppliers(suppliers)
             data response, @SupplierReadAllResponse, new SupplierReadAllResponse(sts,suppliers)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -76,12 +55,12 @@ namespace Services
             required in request, @SupplierUpdate
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data supplier, @Supplier, request.Supplier
             data grfa, string, request.grfa
             data sts, MethodStatus, api.UpdateSupplier(supplier,grfa)
             data response, @SupplierUpdateResponse, new SupplierUpdateResponse(sts,supplier,grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn response
         endmethod
 
@@ -89,9 +68,9 @@ namespace Services
             required in request, @SupplierDelete
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data sts, MethodStatus, api.DeleteSupplier(request.Grfa)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new SupplierDeleteResponse(sts)
         endmethod
 
@@ -99,9 +78,9 @@ namespace Services
             required in request, @SupplierExists
             endparams
         proc
-            data api, @SuppliersLogic, getSuppliersLogic()
+            data api, @SuppliersLogic, BusinessLogicFactory.GetInstance<SuppliersLogic>()
             data sts, MethodStatus, api.SupplierExists(request.SupplierId)
-            appDomainQueue.Enqueue(api.GetAppDomain())
+            BusinessLogicFactory.ReleaseInstance(api)
             mreturn new SupplierExistsResponse(sts)
         endmethod
 

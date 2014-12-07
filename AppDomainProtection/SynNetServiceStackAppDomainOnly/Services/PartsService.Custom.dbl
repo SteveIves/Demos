@@ -5,6 +5,7 @@ import System.Collections.Generic
 import System.Reflection
 import System.Web
 import ServiceStack
+import AppDomainProtection
 import BusinessLogic
 
 namespace Services
@@ -15,11 +16,11 @@ namespace Services
 			required in request, @PartReadSupplierParts
 			endparams
 		proc
-			data api, @PartsLogic, getPartsLogic()
+			data api, @PartsLogic, BusinessLogicFactory.GetInstance<PartsLogic>()
 			data parts, @List<Part>
 			data sts, MethodStatus, api.ReadSupplierParts(request.SupplierId,parts)
 			data response, @PartReadSupplierPartsResponse, new PartReadSupplierPartsResponse(sts,parts)
-			appDomainQueue.Enqueue(api.GetAppDomain())
+			BusinessLogicFactory.ReleaseInstance(api)
 			mreturn response
 		endmethod
 		

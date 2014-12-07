@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataUtils.dbl" />
-    <Compile Include="IProtectedClass.dbl" />
     <Compile Include="MethodStatus.dbl" />
     <Compile Include="Part.dbl" />
     <Compile Include="PartsLogic.Custom.dbl" />
@@ -71,6 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AppDomainProtection\AppDomainProtection.synproj">
+      <Name>AppDomainProtection</Name>
+      <Project>{0d086460-6ffa-4bea-ab1e-22b6271568f1}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
   <PropertyGroup>
