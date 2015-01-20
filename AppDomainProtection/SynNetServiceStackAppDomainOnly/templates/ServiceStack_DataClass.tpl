@@ -32,9 +32,9 @@ namespace <NAMESPACE>
         public method <StructureName>
             required in a<StructureName>, String
             endparams
-            this()
         proc
             ;;Save the record
+            wrapper = new <StructureName>Wrapper()
             wrapper.Record = a<StructureName>
         endmethod
 

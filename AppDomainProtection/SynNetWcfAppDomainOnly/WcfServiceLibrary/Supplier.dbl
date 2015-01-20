@@ -30,9 +30,9 @@ namespace WcfServiceLibrary
         internal method Supplier
             required in aSupplier, String
             endparams
-            this()
         proc
             ;;Save the record
+            wrapper = new SupplierWrapper()
             wrapper.Record = aSupplier
         endmethod
 

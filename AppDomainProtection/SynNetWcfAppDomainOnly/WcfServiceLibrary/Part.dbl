@@ -30,9 +30,9 @@ namespace WcfServiceLibrary
         internal method Part
             required in aPart, String
             endparams
-            this()
         proc
             ;;Save the record
+            wrapper = new PartWrapper()
             wrapper.Record = aPart
         endmethod
 
@@ -151,7 +151,7 @@ namespace WcfServiceLibrary
         endproperty
 
         ;;; <summary>
-        ;;;
+        ;;; 
         ;;; </summary>
         {DataMember}
         public property Spare, String

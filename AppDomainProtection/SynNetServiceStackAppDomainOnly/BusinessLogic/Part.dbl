@@ -30,9 +30,9 @@ namespace BusinessLogic
         public method Part
             required in aPart, String
             endparams
-            this()
         proc
             ;;Save the record
+            wrapper = new PartWrapper()
             wrapper.Record = aPart
         endmethod
 

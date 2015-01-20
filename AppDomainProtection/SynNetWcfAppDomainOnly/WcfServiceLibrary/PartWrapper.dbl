@@ -30,13 +30,13 @@ namespace WcfServiceLibrary
         endmethod
 
         public method GetObjectData, void
-            info, @SerializationInfo
-            context, StreamingContext
+            info, @SerializationInfo 
+            context, StreamingContext 
             endparams
         proc
             throw new System.NotImplementedException("PartWrapper.GetObjectData should never be called!")
         endmethod
-
+        
         public property Record, String
             method get
             proc
@@ -147,7 +147,7 @@ namespace WcfServiceLibrary
         endproperty
 
         ;;; <summary>
-        ;;; (SPARE, A76)
+        ;;;  (SPARE, A76)
         ;;; </summary>
         public property Spare, String
             method get
