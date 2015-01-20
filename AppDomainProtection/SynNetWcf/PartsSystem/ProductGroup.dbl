@@ -30,9 +30,9 @@ namespace PartsSystem
         internal method ProductGroup
             required in aProductGroup, String
             endparams
-            this()
         proc
             ;;Save the record
+            wrapper = new ProductGroupWrapper()
             wrapper.Record = aProductGroup
         endmethod
 

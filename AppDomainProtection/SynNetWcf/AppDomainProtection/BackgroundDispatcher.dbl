@@ -139,7 +139,7 @@ namespace AppDomainProtection
 			data item, @DispatcherItem
 			foreach item in mActiveDispatcherList
 			begin
-				;;find the passd dispatcher object in our list
+				;;find the passed dispatcher object in our list
 				if (item.BDitem == aDispatcher)
 				begin
 					;;found it, so remove it!!
