@@ -32,12 +32,29 @@ namespace <NAMESPACE>
         internal method <StructureName>
             required in a<StructureName>, String
             endparams
+            this()
         proc
             ;;Save the record
-            wrapper = new <StructureName>Wrapper()
             wrapper.Record = a<StructureName>
         endmethod
 
+        ;;; <summary>
+        ;;; When WCF de-serializes data back into an object it uses "vudu" to construct an
+        ;;; object in such a magical way that the constructors are not called!!! This causes
+        ;;; problems because we need to instantiate our "wrapper" object. This method solves
+        ;;; that problem by doing the "new" when deserialization takes place.
+        ;;; </summary>
+        {OnDeserializing}
+        private method SetValuesOnDeserializing, void
+            context, StreamingContext
+            endparams
+        proc
+            wrapper = new <StructureName>Wrapper()
+        endmethod
+
+        ;;; <summary>
+        ;;; Provide a mechanism for INTERNAL code to be able to get the data as a record.
+        ;;; </summary>
         internal property Record, String
             method get
             proc

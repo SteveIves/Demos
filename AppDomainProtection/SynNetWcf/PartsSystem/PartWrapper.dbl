@@ -147,7 +147,7 @@ namespace PartsSystem
         endproperty
 
         ;;; <summary>
-        ;;; (SPARE, A76)
+        ;;;  (SPARE, A76)
         ;;; </summary>
         public property Spare, String
             method get
