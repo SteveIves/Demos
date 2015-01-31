@@ -688,7 +688,7 @@ namespace SqlUploadDemo
                 & "Name=:1,"
                 & "Description=:2"
                 & " WHERE"
-                & " Name='" + %atrim(^a(recProductGroup.name)) + "'"
+                & " Name='" + %atrim(^a(recProductGroup.name)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -719,7 +719,7 @@ namespace SqlUploadDemo
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -738,7 +738,7 @@ namespace SqlUploadDemo
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -999,7 +999,7 @@ namespace SqlUploadDemo
                 & "Name,"
                 & "Description"
                 & " FROM ProductGroup"
-                & " WHERE Name=:1"
+                & " WHERE  Name=:1 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1008,10 +1008,11 @@ namespace SqlUploadDemo
                 & " FROM ProductGroup"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM ProductGroup WHERE Name=:1"
+                mDeleteByKeyStatement = "DELETE FROM ProductGroup WHERE  Name=:1 "
 
         endmethod
 
     endclass
 
 endnamespace
+
