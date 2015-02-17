@@ -10,7 +10,7 @@ namespace BusinessLogic
     .include "PRODUCT_GROUP" repository, structure="strProductGroup", end
 
     {Serializable}
-    public class ProductGroupWrapper extends MarshalByRefObject implements ISerializable
+    public class ProductGroupWrapper implements ISerializable
 
         internal mProductGroup, strProductGroup
 
@@ -26,7 +26,8 @@ namespace BusinessLogic
             endparams
             this()
         proc
-            throw new System.NotImplementedException("This ProductGroupWrapper constructor should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            Record = info.GetString("Record")
         endmethod
 
         public method GetObjectData, void
@@ -34,7 +35,8 @@ namespace BusinessLogic
             context, StreamingContext 
             endparams
         proc
-            throw new System.NotImplementedException("ProductGroupWrapper.GetObjectData should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            info.AddValue("Record",Record)
         endmethod
         
         public property Record, String

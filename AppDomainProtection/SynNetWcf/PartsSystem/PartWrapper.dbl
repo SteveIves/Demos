@@ -10,7 +10,7 @@ namespace PartsSystem
     .include "PART" repository, structure="strPart", end
 
     {Serializable}
-    public class PartWrapper extends MarshalByRefObject implements ISerializable
+    public class PartWrapper implements ISerializable
 
         internal mPart, strPart
 
@@ -26,7 +26,8 @@ namespace PartsSystem
             endparams
             this()
         proc
-            throw new System.NotImplementedException("This PartWrapper constructor should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            Record = info.GetString("Record")
         endmethod
 
         public method GetObjectData, void
@@ -34,7 +35,8 @@ namespace PartsSystem
             context, StreamingContext 
             endparams
         proc
-            throw new System.NotImplementedException("PartWrapper.GetObjectData should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            info.AddValue("Record",Record)
         endmethod
         
         public property Record, String

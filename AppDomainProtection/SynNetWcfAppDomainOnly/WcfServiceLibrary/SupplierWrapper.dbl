@@ -10,7 +10,7 @@ namespace WcfServiceLibrary
     .include "SUPPLIER" repository, structure="strSupplier", end
 
     {Serializable}
-    public class SupplierWrapper extends MarshalByRefObject implements ISerializable
+    public class SupplierWrapper implements ISerializable
 
         internal mSupplier, strSupplier
 
@@ -26,7 +26,8 @@ namespace WcfServiceLibrary
             endparams
             this()
         proc
-            throw new System.NotImplementedException("This SupplierWrapper constructor should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            Record = info.GetString("Record")
         endmethod
 
         public method GetObjectData, void
@@ -34,7 +35,8 @@ namespace WcfServiceLibrary
             context, StreamingContext 
             endparams
         proc
-            throw new System.NotImplementedException("SupplierWrapper.GetObjectData should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            info.AddValue("Record",Record)
         endmethod
         
         public property Record, String

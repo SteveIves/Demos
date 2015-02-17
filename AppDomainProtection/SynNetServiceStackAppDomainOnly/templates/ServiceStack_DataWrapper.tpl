@@ -12,7 +12,7 @@ namespace <NAMESPACE>
     .include "<STRUCTURE_NOALIAS>" repository, structure="str<StructureName>", end
 
     {Serializable}
-    public class <StructureName>Wrapper extends MarshalByRefObject implements ISerializable
+    public class <StructureName>Wrapper implements ISerializable
 
         internal m<StructureName>, str<StructureName>
 
@@ -28,7 +28,8 @@ namespace <NAMESPACE>
             endparams
             this()
         proc
-            throw new System.NotImplementedException("This <StructureName>Wrapper constructor should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            Record = info.GetString("Record")
         endmethod
 
         public method GetObjectData, void
@@ -36,7 +37,8 @@ namespace <NAMESPACE>
             context, StreamingContext 
             endparams
         proc
-            throw new System.NotImplementedException("<StructureName>Wrapper.GetObjectData should never be called!")
+            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            info.AddValue("Record",Record)
         endmethod
         
         public property Record, String

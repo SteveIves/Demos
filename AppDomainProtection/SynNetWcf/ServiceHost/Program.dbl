@@ -25,7 +25,7 @@ namespace ServiceHost
 			Console.WriteLine("")
 			Console.WriteLine("Press a key to terminate the service")
 			Console.WriteLine("")
-			Console.ReadKey(true)
+			Console.ReadKey()
 			
 			;;Close the ServiceHostBase to shutdown the service.
 			svcHost.Close() 
