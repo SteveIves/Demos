@@ -2,7 +2,7 @@ import System.Collections
 import IsamTools
 
 main EmployeeShowSnapshots
-	record
+	record 
 		tt, int
 	endrecord
 proc
@@ -10,19 +10,19 @@ proc
 	open(tt=0,i,"tt:")
 	xcall flags(7004020,1)
 	
-	;;Check change tracking is enabled
+	;;Check change tracking is enabled 
 	
-	if (!ChangeTracking.IsEnabled("DAT:employee.ism")) then
+	if (!ChangeTracking.IsEnabled("DAT:employee.ism")) then 
 		writes(tt,"ERROR: Change tracking is not enabled for DAT:employee.ism")
 	else
 	begin
 		;Get snapshot details from the file
 		data snapshots, @ArrayList, new ArrayList()
-		if (!ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)) then
+		if (!ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)) then 
 			writes(tt,"ERROR: Failed to retrieve snapshots for DAT:employee.ism")
 		else
 		begin
-			if (snapshots.Count==0) then
+			if (snapshots.Count==0) then 
 				writes(tt,"No snapshots exist in DAT:employee.ism")
 			else
 			begin
@@ -52,3 +52,4 @@ proc
 	stop
 	
 endmain
+

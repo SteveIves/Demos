@@ -1,4 +1,3 @@
-
 import System.Collections
 import Synergex.SynergyDE.Select
 import DatabaseTools
@@ -6,7 +5,7 @@ import IsamTools
 
 main EmployeeUploadChanges
 
-	record
+	record 
 		tt,						int
 		ok,						boolean
 		disableSynBackup,		boolean
@@ -42,11 +41,11 @@ proc
 	
 	if (ok)
 	begin
-		if (ChangeTracking.IsEnabled("DAT:employee.ism")) then
+		if (ChangeTracking.IsEnabled("DAT:employee.ism")) then 
 		begin
 
 			data snapshots, @ArrayList, new ArrayList()
-			if (!ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)) then
+			if (!ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)) then 
 			begin
 				writes(tt,"ERROR: Failed to retrieve snapshot info for DAT:employee.ism")
 				ok = false
@@ -125,7 +124,7 @@ proc
 			if (ok)
 			begin
 				data latestSnapshotNumber, int
-				if (ChangeTracking.AddSnapshot("DAT:employee.ism",latestSnapshotNumber)) then
+				if (ChangeTracking.AddSnapshot("DAT:employee.ism",latestSnapshotNumber)) then 
 					writes(tt,"Snapshot #" + %string(latestSnapshotNumber) + " was created in DAT:employee.ism")
 				else
 				begin
@@ -135,7 +134,7 @@ proc
 			end
 
 			;;Resume Synergy IO
-			if (SynBackup.SetBackupState(SynBackupState.Off)) then
+			if (SynBackup.SetBackupState(SynBackupState.Off)) then 
 			begin
 				writes(tt,"SynBackup state has been set to OFF")
 			end
@@ -151,7 +150,7 @@ proc
 	
 	if (disableSynBackup)
 	begin
-		if (SynBackup.Disable()) then
+		if (SynBackup.Disable()) then 
 			writes(tt,"SynBackup has been disabled")
 		else
 			writes(tt,"ERROR: Failed to disable synbackup. You should issue a synbackup - d command IMMEDIATELY.")
@@ -219,7 +218,7 @@ proc
 			
 			;;Record the result
 
-			if (success) then
+			if (success) then 
 				updates += 1
 			else
 				failures += 1
@@ -257,3 +256,4 @@ proc
 	stop
 	
 endmain
+

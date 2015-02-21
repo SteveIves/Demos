@@ -5,7 +5,7 @@ import IsamTools
 
 main EmployeeInitialUpload
 
-	record
+	record 
 		tt, 					int
 		fileChan,				int
 		ok, 					boolean
@@ -174,3 +174,4 @@ proc
 	stop
 	
 endmain
+

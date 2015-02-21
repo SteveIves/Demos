@@ -214,6 +214,7 @@
 			Name="Templates"
 			Filters="*.tpl">
 			<F N="../TEMPLATES/NetChangeInitialUpload.tpl"/>
+			<F N="../TEMPLATES/NetChangeShowPendingChanges.tpl"/>
 			<F N="../TEMPLATES/NetChangeShowSnapshots.tpl"/>
 			<F N="../TEMPLATES/NetChangeUploadChanges.tpl"/>
 		</Folder>
