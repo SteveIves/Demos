@@ -7,6 +7,7 @@
 import System
 import System.Collections.Generic
 import System.Reflection
+import System.Runtime.Serialization
 import System.Web
 import ServiceStack
 import AppDomainProtection
@@ -92,9 +93,11 @@ namespace <NAMESPACE>
 
 .region "<StructureName>Create DTO's"
 
-    {Route("/<structureName>s", "POST")}
+    {DataContract}
+    {Route("/<structureName>", "POST", Summary="",Notes="")}
     public class <StructureName>Create implements IReturn<<StructureName>CreateResponse>
 
+        {DataMember}
         public property <StructureName>, @<StructureName>
             method get
             endmethod
@@ -104,6 +107,7 @@ namespace <NAMESPACE>
 
     endclass
 
+    {DataContract}
     public class <StructureName>CreateResponse
 
         public method <StructureName>CreateResponse
@@ -113,6 +117,7 @@ namespace <NAMESPACE>
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -126,11 +131,13 @@ namespace <NAMESPACE>
 
 .region "<StructureName>Read DTO's"
 
-    {Route("/<structureName>s/<PRIMARY_KEY><SEGMENT_LOOP>{<SegmentName>}<IF MORE>/</IF></SEGMENT_LOOP></PRIMARY_KEY>", "GET")}
+    {DataContract}
+    {Route("/<structureName>/<PRIMARY_KEY><SEGMENT_LOOP>{<SegmentName>}<IF MORE>/</IF></SEGMENT_LOOP></PRIMARY_KEY>", "GET")}
     public class <StructureName>Read implements IReturn<<StructureName>ReadResponse>
 
         <PRIMARY_KEY>
         <SEGMENT_LOOP>
+        {DataMember}
         public property <SegmentName>, <SEGMENT_SNTYPE>
             method get
             endmethod
@@ -142,6 +149,7 @@ namespace <NAMESPACE>
         </PRIMARY_KEY>
       endclass
 
+    {DataContract}
     public class <StructureName>ReadResponse
 
         public method <StructureName>ReadResponse
@@ -155,6 +163,7 @@ namespace <NAMESPACE>
             Grfa = aGrfa
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -162,6 +171,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property <StructureName>, @<StructureName>
             method get
             endmethod
@@ -169,6 +179,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -182,11 +193,13 @@ namespace <NAMESPACE>
 
 .region "<StructureName>ReadAll DTO's"
 
-    {Route("/<structureName>s", "GET")}
+    {DataContract}
+    {Route("/<structureName>", "GET")}
     public class <StructureName>ReadAll implements IReturn<<StructureName>ReadAllResponse>
 
     endclass
 
+    {DataContract}
     public class <StructureName>ReadAllResponse
 
         public method <StructureName>ReadAllResponse
@@ -198,6 +211,7 @@ namespace <NAMESPACE>
             <StructureName>s = a<StructureName>s
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -205,6 +219,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property <StructureName>s, @List<<StructureName>>
             method get
             endmethod
@@ -218,9 +233,11 @@ namespace <NAMESPACE>
 
 .region "<StructureName>Update DTO's"
 
-    {Route("/<structureName>s", "PUT")}
+    {DataContract}
+    {Route("/<structureName>", "PUT")}
     public class <StructureName>Update implements IReturn<<StructureName>UpdateResponse>
 
+        {DataMember}
         public property <StructureName>, @<StructureName>
             method get
             endmethod
@@ -228,6 +245,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -237,6 +255,7 @@ namespace <NAMESPACE>
 
     endclass
 
+    {DataContract}
     public class <StructureName>UpdateResponse
 
         public method <StructureName>UpdateResponse
@@ -250,6 +269,7 @@ namespace <NAMESPACE>
             Grfa = aGrfa
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -257,6 +277,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property <StructureName>, @<StructureName>
             method get
             endmethod
@@ -264,6 +285,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -277,7 +299,8 @@ namespace <NAMESPACE>
 
 .region "<StructureName>Delete DTO's"
 
-    {Route("/<structureName>s/{Grfa}", "DELETE")}
+    {DataContract}
+    {Route("/<structureName>/{Grfa}", "DELETE")}
     public class <StructureName>Delete implements IReturn<<StructureName>DeleteResponse>
 
         public property Grfa, string
@@ -289,6 +312,7 @@ namespace <NAMESPACE>
 
     endclass
 
+    {DataContract}
     public class <StructureName>DeleteResponse
 
         public method <StructureName>DeleteResponse
@@ -298,6 +322,7 @@ namespace <NAMESPACE>
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -311,11 +336,13 @@ namespace <NAMESPACE>
 
 .region "<StructureName>Exists DTO's"
 
-    {Route("/<structureName>s/exist/<PRIMARY_KEY><SEGMENT_LOOP>{<SegmentName>}<IF MORE>/</IF></SEGMENT_LOOP></PRIMARY_KEY>", "GET")}
+    {DataContract}
+    {Route("/<structureName>/exist/<PRIMARY_KEY><SEGMENT_LOOP>{<SegmentName>}<IF MORE>/</IF></SEGMENT_LOOP></PRIMARY_KEY>", "GET")}
     public class <StructureName>Exists implements IReturn<<StructureName>ExistsResponse>
 
         <PRIMARY_KEY>
         <SEGMENT_LOOP>
+        {DataMember}
         public property <SegmentName>, <SEGMENT_SNTYPE>
             method get
             endmethod
@@ -327,6 +354,7 @@ namespace <NAMESPACE>
         </PRIMARY_KEY>
     endclass
 
+    {DataContract}
     public class <StructureName>ExistsResponse
 
         public method <StructureName>ExistsResponse
@@ -336,6 +364,7 @@ namespace <NAMESPACE>
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod

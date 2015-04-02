@@ -3,6 +3,7 @@ import System
 import System.Collections.Concurrent
 import System.Collections.Generic
 import System.Reflection
+import System.Runtime.Serialization
 import System.Web
 import ServiceStack
 import AppDomainProtection
@@ -27,7 +28,8 @@ namespace Services
 	endclass
 	
 .region "PartReadSupplierParts DTO's"
-	
+
+	{DataContract}
 	{Route("/parts/supplier/{SupplierId}", "GET")}
 	public class PartReadSupplierParts implements IReturn<PartReadSupplierPartsResponse>
 		
@@ -38,6 +40,7 @@ namespace Services
 			SupplierId = aSupplierId
 		endmethod
 
+		{DataMember}
 		public property SupplierId, String
 			method get
 			endmethod
@@ -46,7 +49,8 @@ namespace Services
 		endproperty
 
 	endclass
-	
+
+	{DataContract}	
 	public class PartReadSupplierPartsResponse
 		
 		public method PartReadSupplierPartsResponse
@@ -58,6 +62,7 @@ namespace Services
 			Parts = aParts
 		endmethod
 		
+		{DataMember}
 		public property Status, MethodStatus
 			method get
 			endmethod
@@ -65,6 +70,7 @@ namespace Services
 			endmethod
 		endproperty
 		
+		{DataMember}
 		public property Parts, @List<Part>
 			method get
 			endmethod

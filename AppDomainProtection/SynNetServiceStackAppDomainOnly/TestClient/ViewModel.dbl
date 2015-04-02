@@ -20,6 +20,7 @@ namespace TestClient
 			endparams
 		proc
 			servicesUrl = String.Format("http://{0}:8088/", System.Net.Dns.GetHostName().ToLower())
+			getProductGroups()
 			getSuppliers()
 		endmethod
 
@@ -27,15 +28,48 @@ namespace TestClient
 
 .region "Backing storage for properties"
 
-		private mSuppliers,			@ObservableCollection<Supplier>
-		private mSelectedSupplier,	@Supplier
-		private mParts,				@ObservableCollection<Part>
-		private mSelectedPart,		@Part
+		private mSuppliers,				@ObservableCollection<Supplier>
+		private mSelectedSupplier,		@Supplier
+		private mProductGroups,			@ObservableCollection<ProductGroup>
+		private mSelectedProductGroup,	@ProductGroup
+		private mParts,					@ObservableCollection<Part>
+		private mSelectedPart,			@Part
 
 .endregion
 
 .region "Bindable Properties"
 
+		public property ProductGroups, @ObservableCollection<ProductGroup>
+			method get
+			proc
+				mreturn mProductGroups
+			endmethod
+			method set
+			proc
+				mProductGroups = value
+				NotifyPropertyChanged("ProductGroups")
+			endmethod
+		endproperty
+		
+		public property SelectedProductGroup, @ProductGroup
+			method get
+			proc
+				mreturn mSelectedProductGroup
+			endmethod
+			method set
+			proc
+				mSelectedProductGroup = value
+				NotifyPropertyChanged("SelectedProductGroup")
+
+				;;Update the selected part
+				if (mSelectedPart != ^null)
+				begin
+					mSelectedPart.GroupId = mSelectedProductGroup.GroupId
+				end
+
+			endmethod
+		endproperty
+		
 		public property Suppliers, @ObservableCollection<Supplier>
 			method get
 			proc
@@ -60,7 +94,7 @@ namespace TestClient
 				getSupplierParts()
 			endmethod
 		endproperty
-		
+
 		public property Parts, @ObservableCollection<Part>
 			method get
 			proc
@@ -82,6 +116,21 @@ namespace TestClient
 			proc
 				mSelectedPart = value
 				NotifyPropertyChanged("SelectedPart")
+
+				;;Change the product group that is selected in the ComboBox
+				if (mSelectedPart!=^null)
+				begin
+					data pg, @ProductGroup
+					foreach pg in mProductGroups
+					begin
+						if (pg.GroupId.Equals(mSelectedPart.GroupId))
+						begin
+							SelectedProductGroup = pg
+							exitloop
+						end
+					end
+				end
+
 			endmethod
 		endproperty
 
@@ -89,6 +138,23 @@ namespace TestClient
 
 .region "Logic"
 
+		private async method getProductGroups, void
+			endparams
+		proc
+			ErrorMessage = ""
+			disposable data client = new JsonServiceClient(servicesUrl)
+			try
+			begin
+				data response, @ProductGroupReadAllResponse, client.Get<ProductGroupReadAllResponse>(new ProductGroupReadAll())
+				ProductGroups = new ObservableCollection<ProductGroup>(response.ProductGroups)
+			end
+			catch (e, @Exception)
+			begin
+				ErrorMessage = e.Message
+			end
+			endtry
+		endmethod
+		
 		private async method getSuppliers, void
 			endparams
 		proc

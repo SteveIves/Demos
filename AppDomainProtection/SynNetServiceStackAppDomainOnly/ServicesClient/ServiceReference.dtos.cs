@@ -1,8 +1,9 @@
 /* Options:
-Date: 2014-12-05 09:52:36
+Date: 2015-03-25 10:43:24
 Version: 1
 BaseUrl: http://sivesw8x64:8088
 
+//GlobalNamespace: 
 //MakePartial: True
 //MakeVirtual: True
 //MakeDataContractsExtensible: False
@@ -13,6 +14,8 @@ BaseUrl: http://sivesw8x64:8088
 //AddResponseStatus: False
 //AddImplicitVersion: 
 //InitializeCollections: True
+//IncludeTypes: 
+//ExcludeTypes: 
 //AddDefaultXmlNamespace: http://schemas.servicestack.net/types
 */
 
@@ -39,7 +42,6 @@ namespace BusinessLogic
     [DataContract]
     public partial class Part
     {
-        public virtual string Record { get; set; }
         [DataMember]
         public virtual string Id { get; set; }
 
@@ -68,7 +70,6 @@ namespace BusinessLogic
     [DataContract]
     public partial class ProductGroup
     {
-        public virtual string Record { get; set; }
         [DataMember]
         public virtual string GroupId { get; set; }
 
@@ -79,7 +80,6 @@ namespace BusinessLogic
     [DataContract]
     public partial class Supplier
     {
-        public virtual string Record { get; set; }
         [DataMember]
         public virtual string SupplierId { get; set; }
 
@@ -109,7 +109,7 @@ namespace BusinessLogic
 namespace Services
 {
 
-    [Route("/parts", "POST")]
+    [Route("/part", "POST")]
     public partial class PartCreate
         : IReturn<PartCreateResponse>
     {
@@ -121,7 +121,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/parts/{Grfa}", "DELETE")]
+    [Route("/part/{Grfa}", "DELETE")]
     public partial class PartDelete
         : IReturn<PartDeleteResponse>
     {
@@ -133,7 +133,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/parts/exist/{Id}", "GET")]
+    [Route("/part/exist/{Id}", "GET")]
     public partial class PartExists
         : IReturn<PartExistsResponse>
     {
@@ -145,14 +145,14 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/parts/{Id}", "GET")]
+    [Route("/part/{Id}", "GET")]
     public partial class PartRead
         : IReturn<PartReadResponse>
     {
         public virtual string Id { get; set; }
     }
 
-    [Route("/parts", "GET")]
+    [Route("/part", "GET")]
     public partial class PartReadAll
         : IReturn<PartReadAllResponse>
     {
@@ -194,7 +194,7 @@ namespace Services
         public virtual List<Part> Parts { get; set; }
     }
 
-    [Route("/parts", "PUT")]
+    [Route("/part", "PUT")]
     public partial class PartUpdate
         : IReturn<PartUpdateResponse>
     {
@@ -209,7 +209,7 @@ namespace Services
         public virtual string Grfa { get; set; }
     }
 
-    [Route("/productGroups", "POST")]
+    [Route("/productGroup", "POST")]
     public partial class ProductGroupCreate
         : IReturn<ProductGroupCreateResponse>
     {
@@ -221,7 +221,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/productGroups/{Grfa}", "DELETE")]
+    [Route("/productGroup/{Grfa}", "DELETE")]
     public partial class ProductGroupDelete
         : IReturn<ProductGroupDeleteResponse>
     {
@@ -233,7 +233,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/productGroups/exist/{GroupId}", "GET")]
+    [Route("/productGroup/exist/{GroupId}", "GET")]
     public partial class ProductGroupExists
         : IReturn<ProductGroupExistsResponse>
     {
@@ -245,14 +245,14 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/productGroups/{GroupId}", "GET")]
+    [Route("/productGroup/{GroupId}", "GET")]
     public partial class ProductGroupRead
         : IReturn<ProductGroupReadResponse>
     {
         public virtual string GroupId { get; set; }
     }
 
-    [Route("/productGroups", "GET")]
+    [Route("/productGroup", "GET")]
     public partial class ProductGroupReadAll
         : IReturn<ProductGroupReadAllResponse>
     {
@@ -276,7 +276,7 @@ namespace Services
         public virtual string Grfa { get; set; }
     }
 
-    [Route("/productGroups", "PUT")]
+    [Route("/productGroup", "PUT")]
     public partial class ProductGroupUpdate
         : IReturn<ProductGroupUpdateResponse>
     {
@@ -291,7 +291,7 @@ namespace Services
         public virtual string Grfa { get; set; }
     }
 
-    [Route("/suppliers", "POST")]
+    [Route("/supplier", "POST")]
     public partial class SupplierCreate
         : IReturn<SupplierCreateResponse>
     {
@@ -303,7 +303,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/suppliers/{Grfa}", "DELETE")]
+    [Route("/supplier/{Grfa}", "DELETE")]
     public partial class SupplierDelete
         : IReturn<SupplierDeleteResponse>
     {
@@ -315,7 +315,7 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/suppliers/exist/{SupplierId}", "GET")]
+    [Route("/supplier/exist/{SupplierId}", "GET")]
     public partial class SupplierExists
         : IReturn<SupplierExistsResponse>
     {
@@ -327,14 +327,14 @@ namespace Services
         public virtual MethodStatus Status { get; set; }
     }
 
-    [Route("/suppliers/{SupplierId}", "GET")]
+    [Route("/supplier/{SupplierId}", "GET")]
     public partial class SupplierRead
         : IReturn<SupplierReadResponse>
     {
         public virtual string SupplierId { get; set; }
     }
 
-    [Route("/suppliers", "GET")]
+    [Route("/supplier", "GET")]
     public partial class SupplierReadAll
         : IReturn<SupplierReadAllResponse>
     {
@@ -358,7 +358,7 @@ namespace Services
         public virtual string Grfa { get; set; }
     }
 
-    [Route("/suppliers", "PUT")]
+    [Route("/supplier", "PUT")]
     public partial class SupplierUpdate
         : IReturn<SupplierUpdateResponse>
     {

@@ -5,6 +5,7 @@
 import System
 import System.Collections.Generic
 import System.Reflection
+import System.Runtime.Serialization
 import System.Web
 import ServiceStack
 import AppDomainProtection
@@ -90,9 +91,11 @@ namespace Services
 
 .region "SupplierCreate DTO's"
 
-    {Route("/suppliers", "POST")}
+    {DataContract}
+    {Route("/supplier", "POST", Summary="",Notes="")}
     public class SupplierCreate implements IReturn<SupplierCreateResponse>
 
+        {DataMember}
         public property Supplier, @Supplier
             method get
             endmethod
@@ -102,6 +105,7 @@ namespace Services
 
     endclass
 
+    {DataContract}
     public class SupplierCreateResponse
 
         public method SupplierCreateResponse
@@ -111,6 +115,7 @@ namespace Services
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -124,9 +129,11 @@ namespace Services
 
 .region "SupplierRead DTO's"
 
-    {Route("/suppliers/{SupplierId}", "GET")}
+    {DataContract}
+    {Route("/supplier/{SupplierId}", "GET")}
     public class SupplierRead implements IReturn<SupplierReadResponse>
 
+        {DataMember}
         public property SupplierId, String
             method get
             endmethod
@@ -136,6 +143,7 @@ namespace Services
 
       endclass
 
+    {DataContract}
     public class SupplierReadResponse
 
         public method SupplierReadResponse
@@ -149,6 +157,7 @@ namespace Services
             Grfa = aGrfa
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -156,6 +165,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Supplier, @Supplier
             method get
             endmethod
@@ -163,6 +173,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -176,11 +187,13 @@ namespace Services
 
 .region "SupplierReadAll DTO's"
 
-    {Route("/suppliers", "GET")}
+    {DataContract}
+    {Route("/supplier", "GET")}
     public class SupplierReadAll implements IReturn<SupplierReadAllResponse>
 
     endclass
 
+    {DataContract}
     public class SupplierReadAllResponse
 
         public method SupplierReadAllResponse
@@ -192,6 +205,7 @@ namespace Services
             Suppliers = aSuppliers
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -199,6 +213,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Suppliers, @List<Supplier>
             method get
             endmethod
@@ -212,9 +227,11 @@ namespace Services
 
 .region "SupplierUpdate DTO's"
 
-    {Route("/suppliers", "PUT")}
+    {DataContract}
+    {Route("/supplier", "PUT")}
     public class SupplierUpdate implements IReturn<SupplierUpdateResponse>
 
+        {DataMember}
         public property Supplier, @Supplier
             method get
             endmethod
@@ -222,6 +239,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -231,6 +249,7 @@ namespace Services
 
     endclass
 
+    {DataContract}
     public class SupplierUpdateResponse
 
         public method SupplierUpdateResponse
@@ -244,6 +263,7 @@ namespace Services
             Grfa = aGrfa
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -251,6 +271,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Supplier, @Supplier
             method get
             endmethod
@@ -258,6 +279,7 @@ namespace Services
             endmethod
         endproperty
 
+        {DataMember}
         public property Grfa, String
             method get
             endmethod
@@ -271,7 +293,8 @@ namespace Services
 
 .region "SupplierDelete DTO's"
 
-    {Route("/suppliers/{Grfa}", "DELETE")}
+    {DataContract}
+    {Route("/supplier/{Grfa}", "DELETE")}
     public class SupplierDelete implements IReturn<SupplierDeleteResponse>
 
         public property Grfa, string
@@ -283,6 +306,7 @@ namespace Services
 
     endclass
 
+    {DataContract}
     public class SupplierDeleteResponse
 
         public method SupplierDeleteResponse
@@ -292,6 +316,7 @@ namespace Services
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod
@@ -305,9 +330,11 @@ namespace Services
 
 .region "SupplierExists DTO's"
 
-    {Route("/suppliers/exist/{SupplierId}", "GET")}
+    {DataContract}
+    {Route("/supplier/exist/{SupplierId}", "GET")}
     public class SupplierExists implements IReturn<SupplierExistsResponse>
 
+        {DataMember}
         public property SupplierId, String
             method get
             endmethod
@@ -317,6 +344,7 @@ namespace Services
 
     endclass
 
+    {DataContract}
     public class SupplierExistsResponse
 
         public method SupplierExistsResponse
@@ -326,6 +354,7 @@ namespace Services
             Status = aStatus
         endmethod
 
+        {DataMember}
         public property Status, MethodStatus
             method get
             endmethod

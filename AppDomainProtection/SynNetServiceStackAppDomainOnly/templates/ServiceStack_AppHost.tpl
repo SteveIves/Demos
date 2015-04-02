@@ -1,21 +1,14 @@
 <CODEGEN_FILENAME>AppHost.dbl</CODEGEN_FILENAME>
-;//<REQUIRES_USERTOKEN>LOGIC_PROJECT</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>SERVICES_PROJECT</REQUIRES_USERTOKEN>
 ;;******************************************************************************
 ;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
-import System.Reflection
-import Funq
-import ServiceStack
-;import <LOGIC_PROJECT>
-import <SERVICES_PROJECT>
-
 .array 0
 
 namespace <NAMESPACE>
 
-    public class AppHost extends AppSelfHostBase
+    public class AppHost extends ServiceStack.AppSelfHostBase
 
         ;;;  <summary>
         ;;;  Default constructor.
@@ -23,7 +16,7 @@ namespace <NAMESPACE>
         ;;;  </summary>
         public method AppHost
             endparams
-            parent("SynNetServiceStackAppDomainOnly Service", ^typeof(<StructureName>sService).Assembly)
+            parent("SynNetServiceStackAppDomainOnly Service", ^typeof(<SERVICES_PROJECT>.<StructureName>sService).Assembly)
         proc
 
         endmethod
@@ -34,11 +27,10 @@ namespace <NAMESPACE>
         ;;;  </summary>
         ;;;  <param name="container"></param>
         public override method Configure, void
-            ctr, @Container
+            container, @Funq.Container
             endparams
         proc
-            ;; Enable sessions
-            ;; this.Plugins.Add(new SessionFeature())
+
         endmethod
 
     endclass

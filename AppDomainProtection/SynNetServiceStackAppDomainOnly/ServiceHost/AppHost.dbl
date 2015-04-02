@@ -2,17 +2,11 @@
 ;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
 ;;******************************************************************************
 
-import System.Reflection
-import Funq
-import ServiceStack
-;import BusinessLogic
-import Services
-
 .array 0
 
 namespace ServiceHost
 
-    public class AppHost extends AppSelfHostBase
+    public class AppHost extends ServiceStack.AppSelfHostBase
 
         ;;;  <summary>
         ;;;  Default constructor.
@@ -20,7 +14,7 @@ namespace ServiceHost
         ;;;  </summary>
         public method AppHost
             endparams
-            parent("SynNetServiceStackAppDomainOnly Service", ^typeof(PartsService).Assembly)
+            parent("SynNetServiceStackAppDomainOnly Service", ^typeof(Services.PartsService).Assembly)
         proc
 
         endmethod
@@ -31,11 +25,10 @@ namespace ServiceHost
         ;;;  </summary>
         ;;;  <param name="container"></param>
         public override method Configure, void
-            ctr, @Container
+            container, @Funq.Container
             endparams
         proc
-            ;; Enable sessions
-            ;; this.Plugins.Add(new SessionFeature())
+
         endmethod
 
     endclass
