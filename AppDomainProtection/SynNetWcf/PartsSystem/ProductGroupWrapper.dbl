@@ -26,8 +26,10 @@ namespace PartsSystem
             endparams
             this()
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            Record = info.GetString("Record")
+            ;Record = info.GetString("Record")
+            ;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            data myType = ^typeof([#]byte)
+            mProductGroup = (a)([#]byte)info.GetValue("Record",myType)
         endmethod
 
         public method GetObjectData, void
@@ -35,8 +37,10 @@ namespace PartsSystem
             context, StreamingContext 
             endparams
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            info.AddValue("Record",Record)
+            ;info.AddValue("Record",Record)
+            ;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
+            data bytes, [#]byte, (a)mProductGroup
+            info.AddValue("Record",bytes)
         endmethod
         
         public property Record, String
