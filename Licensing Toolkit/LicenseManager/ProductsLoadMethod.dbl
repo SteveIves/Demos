@@ -1,0 +1,30 @@
+
+subroutine ProductsLoadMethod ,stack
+	a_listid	,n			; List id
+	a_req		,n			; Request flag
+	a_product	,strProduct	; Item data
+	a_inpid		,n			; Input window id
+	a_disable	,n			; (Optional) Disable flag
+	a_index		,n			; Loading index
+	;Method data
+	a_channel	,n			; File channel
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+proc
+		
+	if (a_index==1)
+		find(a_channel,,ProducerCode,KEYNUM:0) [ERR=eof]
+	
+	reads(a_channel,a_product,eof,LOCK:Q_NO_LOCK)
+	
+	if (a_product.producer==ProducerCode) then
+		i_display(a_inpid,,a_product)
+	else
+eof,	a_req = D_LEOF
+	
+	xreturn
+
+endsubroutine
+

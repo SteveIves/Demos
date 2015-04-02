@@ -1,0 +1,55 @@
+
+function OpenFile, boolean
+	required in     file	,a
+	required inout	chan	,int
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		ok		,boolean
+		errnum	,int
+		opts	,string
+	endrecord
+
+proc
+	ok = true
+
+	repeat
+	begin
+		data fileSpec, string, "LM_ROOT:"+atrim(file)+".ism"
+		u_open(chan,"u:i",fileSpec,,,errnum)
+		using errnum select
+		(0),
+			exitloop
+		($ERR_FNF),
+		begin
+			data tmpCh, int, 0
+			try 
+			begin
+				data xdlSpec, string, "@LM_ROOT:"+atrim(file)+".xdl"
+				open(tmpCh,o:i,fileSpec,FDL:xdlSpec)
+				close tmpCh
+			end
+			catch (ex, @SynException)
+			begin
+				u_msgbox("Failed to create "+fileSpec+". "+ex.Message,
+				&	D_MICONSTOP|D_MCENTER,"Error")
+				ok = false
+				exitloop
+			end
+			endtry
+		end
+		(),
+		begin
+			u_msgbox("Failed to open "+fileSpec+". Error "+string(errnum),
+			&	D_MICONSTOP|D_MCENTER,"Error")
+			ok = false
+			exitloop
+		end
+		endusing
+	end
+	
+	freturn ok
+	
+endfunction

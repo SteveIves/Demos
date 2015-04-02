@@ -1,0 +1,9 @@
+;;=============================================================================
+;;
+subroutine CloseBox
+    endparams
+proc
+    m_signal("CLOSE")
+    xreturn
+endsubroutine
+

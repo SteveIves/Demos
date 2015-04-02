@@ -104,7 +104,7 @@ namespace SqlUploadDemo
             ;;Create index 1 (Group/product)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_ProductGroup ON Product(ProductGroup ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_ProductGroup ON Product(ProductGroup ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -114,7 +114,7 @@ namespace SqlUploadDemo
             ;;Create index 2 (Description)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_Description ON Product(Description ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_Description ON Product(Description ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -124,7 +124,7 @@ namespace SqlUploadDemo
             ;;Create index 3 (Price group)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_PriceGroup ON Product(PriceGroup ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_PriceGroup ON Product(PriceGroup ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -134,7 +134,7 @@ namespace SqlUploadDemo
             ;;Create index 4 (Author)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_Author ON Product(Author ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_Author ON Product(Author ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -144,7 +144,7 @@ namespace SqlUploadDemo
             ;;Create index 5 (Publisher)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_Publisher ON Product(Publisher ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_Publisher ON Product(Publisher ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -154,7 +154,7 @@ namespace SqlUploadDemo
             ;;Create index 6 (Reference)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Product_Reference ON Product(Reference ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Product_Reference ON Product(Reference ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -764,7 +764,7 @@ namespace SqlUploadDemo
                 & "ReleaseDate=:17,"
                 & "Rating=:18"
                 & " WHERE"
-                & " Sku='" + %atrim(^a(recProduct.sku)) + "'"
+                & " Sku='" + %atrim(^a(recProduct.sku)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -795,7 +795,7 @@ namespace SqlUploadDemo
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -814,7 +814,7 @@ namespace SqlUploadDemo
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -1121,17 +1121,14 @@ namespace SqlUploadDemo
             recordSpec.fields[4].fieldDecimals = 0
             recordSpec.fields[5].fieldType     = "D" ;;SellingPrice
             recordSpec.fields[5].fieldSize     = 6
-            recordSpec.fields[5].fieldDecimals = 2
-            recordSpec.fields[6].fieldType     = "A" ;;LastSale
+            recordSpec.fields[5].fieldDecimals = 2            recordSpec.fields[6].fieldType     = "A" ;;LastSale
             recordSpec.fields[6].fieldSize     = 8
             recordSpec.fields[6].fieldDecimals = 0
             recordSpec.fields[7].fieldType     = "D" ;;LastCostPrice
             recordSpec.fields[7].fieldSize     = 10
-            recordSpec.fields[7].fieldDecimals = 4
-            recordSpec.fields[8].fieldType     = "D" ;;AverageCostPrice
+            recordSpec.fields[7].fieldDecimals = 4            recordSpec.fields[8].fieldType     = "D" ;;AverageCostPrice
             recordSpec.fields[8].fieldSize     = 10
-            recordSpec.fields[8].fieldDecimals = 4
-            recordSpec.fields[9].fieldType     = "D" ;;QtyInStock
+            recordSpec.fields[8].fieldDecimals = 4            recordSpec.fields[9].fieldType     = "D" ;;QtyInStock
             recordSpec.fields[9].fieldSize     = 6
             recordSpec.fields[9].fieldDecimals = 0
             recordSpec.fields[10].fieldType     = "D" ;;QtyAllocated
@@ -1235,7 +1232,7 @@ namespace SqlUploadDemo
                 & "ReleaseDate,"
                 & "Rating"
                 & " FROM Product"
-                & " WHERE Sku=:1"
+                & " WHERE  Sku=:1 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1260,10 +1257,11 @@ namespace SqlUploadDemo
                 & " FROM Product"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM Product WHERE Sku=:1"
+                mDeleteByKeyStatement = "DELETE FROM Product WHERE  Sku=:1 "
 
         endmethod
 
     endclass
 
 endnamespace
+

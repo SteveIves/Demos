@@ -1,0 +1,99 @@
+
+function CheckFirstProducer, boolean
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record localData
+		ok				,boolean
+		gotProducer		,boolean
+		enterCodeNow	,boolean
+		inpWnd			,int
+		lm_producer		,strProducer
+	endrecord
+
+proc
+
+	init localData
+	
+	e_enter()
+
+	try 
+	begin
+		find(chProducer,,^FIRST)
+		gotProducer = true
+	end
+	catch (ex, @EndOfFileException)
+	begin
+		;;There are no producers. Let the user create one!
+		enterCodeNow = (u_msgbox("No license producer code was found.\n"
+		&	+ "Would you like to enter your producer code now?",
+		&	D_MYESNO|D_MICONQUESTION|D_MCENTER,"License Manager Setup")==D_MIDYES)
+	end
+	endtry
+
+	if (gotProducer) then
+	begin
+		e_exit()
+		freturn true
+	end
+	else if (!enterCodeNow)
+	begin
+		e_exit()
+		freturn false
+	end
+	
+	;;We need to enter a producer code
+	
+	;;Configure the environment
+	m_enable(D_COLUMN,editMenu)
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Load the maintenance window
+	i_ldinp(inpWnd,,"PRODUCER",D_NOPLC)
+	u_wndevents(D_ASSIGN,mset_close,inpWnd)
+	u_window(D_PLACE,inpWnd,7,10)
+	
+	do
+	begin
+		i_input(inpWnd,,lm_producer,,,,D_NOTERM)
+
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			;;Make sure the system has an LMKn license for the producer code
+			;;that the user entered.
+			ProducerCode = lm_producer.id
+			if (LmkLicenseIsPresent()) then 
+			begin
+				;;Add the producer to the file
+				store(chProducer,lm_producer)
+				ok = true
+				exitloop
+			end
+			else
+			begin
+				init ProducerCode
+				i_init(inpWnd,,lm_producer)
+				i_next(inpWnd,,"*FRST*")
+			end
+		end
+	end
+	until exitApp
+	
+	e_exit()
+	
+	init ProducerCode
+	
+	freturn ok
+
+endfunction

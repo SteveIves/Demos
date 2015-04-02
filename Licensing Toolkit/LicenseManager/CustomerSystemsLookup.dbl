@@ -1,0 +1,68 @@
+
+subroutine CustomerSystemsLookup, reentrant
+	.include "WND:inpinf.def"
+	a_inprec, a
+	;;Method data
+	a_customer, a
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		system			,strSystem
+	endrecord
+
+proc
+	
+	;;Configure the environment
+	e_enter()
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the data file
+	u_open(ichn,"i:i","LM_ROOT:system.ism")
+
+	;;Create the producer list
+	i_ldinp(listWnd,,"SYSTEM_LIST",D_NOPLC)
+	l_create(listId,listWnd,system,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_sect(listId,"Customer's Systems",D_TITLE,D_CENTER)
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+
+	;;Override the default load method
+	l_method(listId,D_LLOAD,"CustomerSystemsLoadMethod")
+	
+	;;Process the list
+	lreq=D_LNOP
+	do
+	begin
+		l_select(listId,lreq,system,,,,,,,,,,,,,ichn,a_customer)
+
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			xcall i_force(system.id)
+			exitloop
+		end		
+	end
+	until exitApp
+
+	e_exit()
+	xreturn
+
+endsubroutine
+

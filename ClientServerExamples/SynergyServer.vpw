@@ -2,6 +2,7 @@
 <Workspace Version="10.0" VendorName="SlickEdit" OEMVendorName="Synergy/DE Workbench 10.3.1">
 	<Projects>
 		<Project File="JavaClient/JavaClient.vpj"/>
+		<Project File="SynergyTests/SynergyTests.vpj"/>
 		<Project File="xfNetLink/xfNetLink.vpj"/>
 		<Project File="xfNetLink_wcf/xfNetLink_wcf.vpj"/>
 		<Project File="xfServerPlus/xfServerPlus.vpj"/>

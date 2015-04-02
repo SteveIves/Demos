@@ -1,0 +1,141 @@
+;;=============================================================================
+;; Create a license "key file" containing application licenses.
+;;
+subroutine CreateKeyFile
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record localData
+        inpid       ,int
+        status      ,int
+        lm_site     ,strLmSite
+        key_data    ,strKeyData
+        expireDate  ,d8
+        keyFile     ,a256
+    endrecord
+
+    record
+        strfields   ,[9]a30,   "COMPANY","CONTACT","EMAIL","LICENSEE","REGSTRING","PRODUCT","UNITS","EXPIRY","CUSTOM_DATA"
+    endrecord
+
+proc
+    init localData
+
+    e_enter()
+    m_enable(D_COLUMN,editMenu)
+    m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Get this systems license information
+	lm_info(status,lm_site)
+
+	i_ldinp(inpid,g_utlib,"NEWKEYS")
+	u_wndevents(D_ASSIGN,mset_close,inpid)
+	
+    ;;Set defaults
+    key_data.company     = "Synergex"
+    key_data.contact     = "Steve Ives"
+    key_data.email       = "steve.ives@synergex.com"
+    key_data.licensee    = lm_site.lm_licensee
+    key_data.regstring   = lm_site.lm_regstr
+    key_data.product     = ""
+    key_data.units       = 1
+    ^a(expireDate)      = %datetime
+    ^d(expireDate(1:4)) = ^d(expireDate(1:4))+1
+    key_data.expiry      = expireDate
+
+    i_display(inpid,,key_data)
+    i_next(inpid,,"*FRST*")
+
+    ;;Process input
+    do
+    begin
+        i_input(inpid,,key_data)
+
+        if (g_select) then
+        begin
+            using g_entnam select
+            ("CLOSE"),
+                exitloop
+            ("EXITAPP"),
+                exitApp = true
+            endusing
+        end
+        else
+        begin
+            data command, a1024
+            data tmpch, int
+
+            keyFile = MakeKeyFileName(key_data.company,key_data.licensee)
+
+            ;;Delete any old keyfile
+            delet(%atrim(keyFile))
+
+            ;;Create a new keyfile
+            s_bld(command,,'lmk -c"%a" -fc"%a"',key_data.licensee,%atrim(keyFile))
+            spawn(command,D_NOWINDOW)
+			xstat(status)
+			if (status)
+				u_msgbox("Failed to spawn lmk command!",D_MICONINFO|D_MCENTER,"Oops!")
+
+            ;;Add comments to the key file
+            try
+            begin
+                open(tmpch=syn_freechn(),a:s,keyFile)
+                writes(tmpch,"; Company: " + %atrim(key_data.company))
+                writes(tmpch,"; Contact: " + %atrim(key_data.contact))
+                writes(tmpch,"; Email  : " + %atrim(key_data.email))
+                writes(tmpch,"")
+                close tmpch
+            end
+            catch (ex)
+                nop
+            endtry
+
+            ;;Add the license to the key file
+            s_bld(command,,'lmk -a"%a" -c"%a" -r"%a" -u%a -fa"%a"',
+			&	key_data.product,key_data.licensee,key_data.regstring,
+			&	string(key_data.units),%atrim(keyFile))
+
+            ;;Add optional expiry date
+            if (key_data.expiry)
+                s_bld(command,,'%a -d%a',command,
+				&	string(jperiod(key_data.expiry)-%jperiod(19920101)+1))
+
+            ;;Add optional custom string
+            if (key_data.custom_data)
+                s_bld(command,,'%a -x"%a"',command,key_data.custom_data)
+
+            ;;Execute the LMK command
+            spawn(command,D_NOWINDOW)
+			xstat(status)
+			if (status)
+				u_msgbox("Failed to spawn lmk command!",D_MICONINFO|D_MCENTER,"Oops!")
+			
+            ;;Give the user the option to view the key file we just created
+            if (u_msgbox("View the key file?",
+			&	D_MCENTER|D_MICONQUESTION|D_MYESNO,"Option")==D_MIDYES)
+                ViewFile(%atrim(keyFile))
+
+            ;;Do we want to do another?
+            if (u_msgbox("Create another key file?",
+			&	D_MCENTER|D_MICONQUESTION|D_MYESNO,"Option")==D_MIDNO)
+                exitloop
+
+            clear key_data.licensee
+            clear key_data.contact
+            clear key_data.email
+            clear key_data.regstring
+            i_display(inpid,,key_data)
+            i_next(inpid,,"CONTACT")
+        end
+	end
+	until exitApp
+
+    e_exit()
+
+    xreturn
+
+endsubroutine
+

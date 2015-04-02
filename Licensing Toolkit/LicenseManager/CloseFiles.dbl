@@ -1,0 +1,12 @@
+
+subroutine CloseFiles
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+proc
+	
+	u_close(chCustomer,chLicense,chPlatform,chProducer,chProduct,chSystem)
+	xreturn
+	
+endsubroutine

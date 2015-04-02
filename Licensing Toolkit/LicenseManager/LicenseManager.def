@@ -1,0 +1,55 @@
+
+.define APP_TITLE			"License Manager"
+
+.define LMSTS_OK            0       ;Product has been configured
+.define LMSTS_NOCONFIG      1       ;Product has not been configured
+.define LMSTS_MAXUSR        2       ;Concurrent user maximum reached
+.define LMSTS_BADTOK        3       ;Bad license token (logout)
+.define LMSTS_TIMEOUT       7       ;Product demo has expired
+
+.include "WND:tools.def"
+.include "WND:inpctl.def"
+.include "WND:windows.def"
+
+.define LM_FILE_COUNT 6
+
+.ifdef LICENSE_MANAGER_INIT_GLOBALS
+	.undefine LICENSE_MANAGER_INIT_GLOBALS
+	global data section LicenseManagerGlobal, init
+.else
+	global data section LicenseManagerGlobal
+.endc
+	record
+		fileMenu        ,int
+		editMenu        ,int
+		keysMenu        ,int
+		toolsMenu     	,int
+		mset_close      ,int
+		keyFileDir      ,a256
+		exitApp         ,boolean
+		producerCode	,d3
+		lmkLicense		,a5
+
+		;File channels
+		chCustomer		,int
+		chLicense		,int
+		chPlatform		,int
+		chProducer		,int
+		chProduct		,int
+		chSystem		,int
+		lmChannel		,[LM_FILE_COUNT]int @chCustomer
+		
+	endrecord
+
+endglobal
+
+literal 
+	lmFile	,[LM_FILE_COUNT]a15	,"customer"
+	&							,"license"
+	& 							,"platform"
+	& 							,"producer"
+	& 							,"product"
+	& 							,"system"
+endliteral
+
+

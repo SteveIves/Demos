@@ -1,0 +1,139 @@
+;;=============================================================================
+;;
+;; File:		LicenseManager.dbl
+;;
+;; Description: Manage license keys
+;;
+;; Author:      Steve Ives, Synergex Professional Services Group
+;;
+;; Date:		13th January 2010
+;;
+;;=============================================================================
+
+.include "KEY_DATA"	   repository, structure="strKeyData", end
+
+.include "LM_LICENSE"  repository, structure="strLmLicense", end
+.include "LM_SITE" 	   repository, structure="strLmSite", end
+
+.include "CUSTOMER" repository, structure="strCustomer", end
+.include "LICENSE"  repository, structure="strLicense", end
+.include "PLATFORM" repository, structure="strPlatform", end
+.include "PRODUCER" repository, structure="strProducer", end
+.include "PRODUCT"  repository, structure="strProduct", end
+.include "SYSTEM"   repository, structure="strSystem", end
+
+main LicenseManager
+
+    .define LICENSE_MANAGER_INIT_GLOBALS
+    .include "LM_ROOT:LicenseManager.def"
+
+    record
+        ok          ,boolean, true
+        strLen      ,int
+    endrecord
+
+proc
+
+    ;;Start UI Toolkit and setup environment
+    u_start("LM_ROOT:LicenseManager.ism",1,0)
+    e_sect(APP_TITLE,D_HEADER)
+
+	;;Make sure we have the lmk program
+	ok = LmkExeIsPresent()
+
+	if (ok)
+	begin
+		e_state(D_ON,D_RETURNBTN)
+
+		m_ldcol(fileMenu,,"FILE",,,,D_GLOBAL)
+		m_ldcol(editMenu,,"EDIT",,,,D_GLOBAL)
+		m_ldcol(keysMenu,,"KEYS")
+		m_ldcol(toolsMenu,,"TOOLS")
+
+		mset_close = u_wndevents(D_CREATE,,D_EVENT_CLOSE,"CloseBox")
+
+		;;Suppress the artifical delay in the LMU command
+		setlog("NO_LMUDELAY","1",strLen)
+	end
+
+    ;;Make sure we know where to create key files
+    if (ok)
+    begin
+        getlog("LM_KEYFILES",keyFileDir,strLen)
+        if (strLen) then
+        begin
+            ;;Make sure the folder has a trailing \
+            if (keyFileDir(%trim(keyFileDir):1)!="\")
+                keyFileDir = %atrim(keyFileDir) + "\"
+        end
+        else
+        begin
+            keyFileDir = ".\"
+            u_msgbox("Key file location not deined, using current directory.\n"
+			&	"Define environment variable LM_KEYFILES.",
+			&	D_MICONSTOP|D_MCENTER,"Error")
+        end
+    end
+
+	;;Open the data files
+	if (ok)
+		ok = OpenFiles()
+	
+	;;Make sure we have at least one producer code defined
+	if (ok)
+		ok = CheckFirstProducer()
+	
+	;;Select the producer code to work with
+	if (ok)
+	begin
+		m_enable(D_ENTRY,fileMenu,"CLOSE")
+		SelectProducer()
+		m_disable(D_ENTRY,fileMenu,"CLOSE")
+	end
+	
+    ;;Good to go!
+    if (ok&&(!exitApp))
+    begin
+        ;;Process the UI Toolkit menu
+        do
+        begin
+            m_process()
+			
+			m_enable(D_ENTRY,fileMenu,"CLOSE")
+
+            using g_entnam select
+			("SETPRODUCER"),
+				SelectProducer()
+			("CUSTOMERS"),
+				Customers()
+			("LICENSES"),
+				Licenses()
+            ("KEYFILEINS"),
+                CreateKeyFile()
+			("PLATFORMS"),
+				Platforms()
+			("PRODUCERS"),
+				Producers()
+			("PRODUCTS"),
+				Products()
+			("SYSTEMS"),
+				Systems()
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+
+			m_disable(D_ENTRY,fileMenu,"CLOSE")
+
+        end
+        until exitApp
+    end
+
+	CloseFiles()
+    u_finish()
+
+    stop
+
+endmain
+

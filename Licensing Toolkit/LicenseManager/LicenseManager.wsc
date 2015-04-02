@@ -1,0 +1,201 @@
+.script
+.date_generated "03/01/2013, 11:33"
+.version "10.1.1"
+
+.column FILE, "File"
+.entry CLOSE, "Close Screen", key(ESC), disable
+.entry EXITAPP, "Exit", key(f4)
+.end
+
+.column EDIT, "Edit", disable
+.entry E_CUT, "Cut", key(^x), select(t)
+.entry E_COPY, "Copy", key(^c)
+.entry E_PASTE, "Paste", key(^v)
+.line
+.entry ADD, "Add", key(ins)
+.entry DELETE, "Delete", key(del)
+.end
+
+.column KEYS, "Manage Keys"
+.entry KEYFILEINS, "Create Key File"
+.end
+
+.column TOOLS, "Tools"
+.entry SETPRODUCER, "Set Current Producer"
+.line
+.entry CUSTOMERS, "Customers"
+.entry SYSTEMS,   "Systems"
+.entry LICENSES,  "Licenses"
+.line
+.entry PLATFORMS, "Platforms"
+.entry PRODUCERS, "Producers"
+.entry PRODUCTS,  "Products"
+.end
+
+.input NEWKEYS, 11, 66
+.placement 4, 6
+.title "Create Key File"
+.repository_structure KEY_DATA
+.field COMPANY, pos(2, 2), fpos(2, 14)
+.field CONTACT, pos(3, 2), fpos(3, 14)
+.field EMAIL, pos(4, 2), fpos(4, 14)
+.field LICENSEE, pos(5, 2), fpos(5, 14)
+.field REGSTRING, pos(6, 2), fpos(6, 14)
+.field PRODUCT, pos(7, 2), fpos(7, 14)
+.field UNITS, pos(9, 2), fpos(9, 14)
+.field EXPIRY, pos(10, 2), fpos(10, 14)
+.field CUSTOM_DATA, pos(11, 2), fpos(11, 14)
+.button I_OK, text("OK")
+.button CLOSE, text("Cancel")
+.button_set end
+.set ALL, KEY_DATA, COMPANY, CONTACT, EMAIL, LICENSEE, REGSTRING, -
+     PRODUCT, UNITS, EXPIRY, CUSTOM_DATA
+.end
+
+.listclass LC_GENERIC, items(15), load_method(GenericLoadMethod)
+.end
+
+.input PRODUCER_LIST, 1, 45
+.repository_structure PRODUCER
+.field ID, noprompt, fpos(1, 1)
+.field NAME, noprompt, fpos(1, 5)
+.end
+
+.input PRODUCER, 5, 52
+.placement 4, 8
+.title "Producer Code"
+.repository_structure PRODUCER
+.field ID, pos(2, 2), fpos(2, 11), nodrill_method
+.field NAME, pos(4, 2), fpos(4, 11)
+.button I_OK, text("OK")
+.button CLOSE, text("Cancel")
+.button_set end
+.set ALL, PRODUCER, ID, NAME
+.set KEY, PRODUCER, ID
+.set DATA, PRODUCER, NAME
+.end
+
+.input CUSTOMER_LIST, 1, 48
+.repository_structure CUSTOMER
+.field ID, noprompt, fpos(1, 1)
+.field NAME, noprompt, fpos(1, 18)
+.end
+
+.input CUSTOMER, 7, 52
+.placement 4, 8
+.title "Maintain Customer"
+.repository_structure CUSTOMER
+.field ID, pos(2, 2), fpos(2, 11), nodrill_method
+.field NAME, pos(4, 2), fpos(4, 11)
+.field EMAIL, pos(6, 2), fpos(6, 11)
+.button I_OK, text("OK")
+.button CLOSE, text("Cancel")
+.button_set end
+.set ALL, CUSTOMER, ID, NAME, EMAIL
+.set KEY, CUSTOMER, ID
+.set DATA, CUSTOMER, NAME, EMAIL
+.end
+
+.input PLATFORM_LIST, 1, 35
+.placement 2, 2
+.repository_structure PLATFORM
+.field ID, noprompt, fpos(1, 1)
+.field NAME, noprompt, fpos(1, 5)
+.end
+
+.input PLATFORM, 5, 43
+.placement 4, 8
+.title "Maintain Platform"
+.repository_structure PLATFORM
+.field ID, pos(2, 2), fpos(2, 11), nodrill_method
+.field NAME, pos(4, 2), fpos(4, 11)
+.button I_OK, text("OK")
+.button CLOSE, text("Cancel")
+.button_set end
+.set ALL, PLATFORM, ID, NAME
+.set KEY, PLATFORM, ID
+.set DATA, PLATFORM, NAME
+.end
+
+.input PRODUCT_LIST, 1, 51
+.placement 2, 2
+.repository_structure PRODUCT
+.field ID, noprompt, fpos(1, 1)
+.field NAME, noprompt, fpos(1, 8)
+.field ENABLED, noprompt, fpos(1, 50)
+.end
+
+.input PRODUCT, 5, 52
+.placement 4, 8
+.title "Maintain Product"
+.repository_structure PRODUCT
+.field ID, pos(2, 2), fpos(2, 11), nodrill_method
+.field ENABLED, fpos(2, 42)
+.field NAME, pos(4, 2), fpos(4, 11)
+.button I_OK, text("OK")
+.button CLOSE, text("Cancel")
+.button_set end
+.set ALL, PRODUCT, ID, ENABLED, NAME
+.set KEY, PRODUCT, ID
+.set DATA, PRODUCT, ENABLED, NAME
+.end
+
+.input SYSTEM_LIST, 1, 72
+.repository_structure SYSTEM
+.field ID, noprompt, fpos(1, 1)
+.field CUSTOMER, noprompt, fpos(1, 12), nodrill_method
+.field LICENSEE, noprompt, fpos(1, 28), view_length(40)
+.field PLATFORM, noprompt, fpos(1, 69), nodrill_method
+.end
+
+.input SYSTEM, 6, 66
+.placement 3, 5
+.title "System Information"
+.repository_structure SYSTEM
+.field ID, pos(2, 3), fpos(2, 14)
+.field CUSTOMER, pos(3, 3), fpos(3, 14)
+.field LICENSEE, pos(4, 3), fpos(4, 14)
+.field REG_STRING, pos(5, 3), fpos(5, 14)
+.field PLATFORM, pos(6, 3), fpos(6, 14)
+.button I_OK, text("OK")
+.button CLOSE, text("Close")
+.button_set end
+.set ALL, SYSTEM
+.set KEY, SYSTEM, ID
+.set DATA, SYSTEM, CUSTOMER, LICENSEE, REG_STRING, PLATFORM
+.end
+
+.input LICENSE_LISTALL, 1, 63
+.placement 2, 1
+.border on, dragbar(on)
+.repository_structure LICENSE
+.field CUSTOMER, noprompt, fpos(1, 1), nodrill_method
+.field SYSTEM, noprompt, fpos(1, 17)
+.field PRODUCER, noprompt, fpos(1, 28), nodrill_method
+.field PRODUCT, noprompt, fpos(1, 32), nodrill_method
+.field SEATS, noprompt, fpos(1, 39)
+.field KEY, noprompt, fpos(1, 44)
+.end
+
+.input LICENSE_ALL, 10, 53
+.placement 2, 2
+.title "All Licenses"
+.repository_structure LICENSE
+.field CUSTOMER, pos(2, 2), fpos(2, 12)
+.field SYSTEM, pos(3, 2), fpos(3, 12), -
+     drill_method("CustomerSystemsLookup")
+.field PRODUCER, pos(4, 2), fpos(4, 12)
+.field PRODUCT, pos(5, 2), fpos(5, 12)
+.field SEATS, pos(6, 2), fpos(6, 12)
+.field CUSTOM, pos(7, 2), fpos(7, 12)
+.field KEY, pos(8, 2), fpos(8, 12)
+.field GENERATED, pos(9, 2), fpos(9, 12)
+.field EXPIRES, pos(10, 2), fpos(10, 12)
+.button I_OK, text("OK")
+.button CLOSE, text("Close")
+.button_set end
+.set ALL, LICENSE, CUSTOMER, SYSTEM, PRODUCER, PRODUCT, SEATS, CUSTOM, -
+     KEY, GENERATED, EXPIRES
+.set KEY, LICENSE, CUSTOMER, SYSTEM, PRODUCER, PRODUCT
+.set DATA, LICENSE, SEATS, CUSTOM, EXPIRES
+.end

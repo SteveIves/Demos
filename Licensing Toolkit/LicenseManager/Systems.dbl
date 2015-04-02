@@ -1,0 +1,239 @@
+
+subroutine Systems
+	optional in customerId, a
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		inpWnd			,int
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		editMode		,boolean
+		lm_system		,strSystem
+		tmp_system		,strSystem
+	endrecord
+	
+proc
+
+	;;Configure the environment
+	e_enter()
+	m_enable(D_COLUMN,editMenu)
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the data file
+	u_open(ichn,"i:i","LM_ROOT:system.ism")
+	
+	;;Load the maintenance window
+	i_ldinp(inpWnd,,"SYSTEM",D_NOPLC)
+	u_wndevents(D_ASSIGN,mset_close,inpWnd)
+	
+	;;Create the producer list
+	i_ldinp(listWnd,,"SYSTEM_LIST",D_NOPLC)
+	l_create(listId,listWnd,lm_system,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_button(listId,DSB_ADD,"ADD",DSB_TEXT,"Add")
+	l_button(listId,DSB_ADD,"DELETE",DSB_TEXT,"Delete")
+	l_button(listId,DSB_ADD,"LICENSES",DSB_TEXT,"Licenses")
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,5,3)
+	
+	;;If we were passed a customer ID then use an alternate load method
+	if (^passed(customerId)&&customerId) then
+	begin
+		l_sect(listId,"Customers Systems",D_TITLE,D_CENTER)
+		l_method(listId,D_LLOAD,"CustomerSystemsLoadMethod")
+	end
+	else
+	begin
+		l_sect(listId,"All Systems",D_TITLE,D_CENTER)
+	end
+	
+	;;Pre-load the list
+	l_process(listId,lreq=D_LBOTTOM,lm_system,,ichn,customerId)
+	
+	;;Process the list
+	lreq=D_LTOP
+	do
+	begin
+		l_select(listId,lreq,lm_system,,,,,,,,,,,,,ichn,customerId)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("ADD"),
+			begin
+				editMode = false
+				call DoEdit
+			end
+			("DELETE"),
+				call DoDelete
+			("LICENSES"),
+				Licenses(,lm_system.id)
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			editMode = true
+			call DoEdit
+		end		
+	end
+	until exitApp
+	
+	e_exit()
+	xreturn
+	
+DoEdit,
+	
+	if (editMode)
+	begin
+		;;Lock the record
+		try 
+		begin
+			read(chSystem,tmp_system,lm_system.id,KEYNUM:0)
+		end
+		catch (ex)
+		begin
+			u_msgbox("Can't edit that system right now!",
+			&	D_MICONINFO|D_MCENTER,"Oops!")
+			return
+		end
+		endtry
+	end
+
+	e_enter()
+	i_init(inpWnd,,tmp_system)
+	i_enable(D_SET,inpWnd,"ALL")
+	i_disable(D_SET,inpWnd,"KEY")
+	u_window(D_PLACE,inpWnd,7,10)
+	
+	if (editMode) then
+		i_display(inpWnd,,tmp_system=lm_system)
+	else
+	begin
+		init tmp_system
+		if (^passed(customerId)&&customerId)
+		begin
+			tmp_system.customer = customerId
+			i_display(inpWnd,,tmp_system)
+			i_disable(D_FLDS,inpWnd,"CUSTOMER")
+		end
+	end
+	i_next(inpWnd,,"*FRST*")
+	
+	do
+	begin
+		i_input(inpWnd,,tmp_system,,,,D_NOTERM)
+		
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			try 
+			begin
+				;;Update the file
+				if (editMode) then
+				begin
+					data now, a20
+					;;Set the last updated date
+					now = %datetime
+					tmp_system.updated = ^d(now(1:8))
+					;;Update the file
+					write(chSystem,tmp_system)
+				end
+				else
+				begin
+					data lastSystem, strSystem
+					data now, a20
+					;;Figure out the next system number
+					try 
+					begin
+						read(chSystem,lastSystem,^LAST,KEYNUM:0,LOCK:Q_NO_LOCK)
+						tmp_system.id = lastSystem.id + 1
+					end
+					catch (ex, @EndOfFileException)
+					begin
+						;No records
+						tmp_system.id = 1
+					end
+					endtry
+					;;Populate the created and last updated dates
+					now = %datetime
+					tmp_system.created = ^d(now(1:8))
+					tmp_system.updated = ^d(now(1:8))
+					;;Add the new system to the file
+					store(chSystem,tmp_system)
+					;;Add a new blank item to the list
+					l_process(listId,lreq=D_LAPPEND,lm_system)
+				end
+				;;Update the list display
+				i_display(listWnd,,lm_system=tmp_system)
+				;;Add to list
+				lreq = D_LNOP
+				exitloop
+			end
+			catch (ex, @DuplicateException)
+			begin
+				u_msgbox("System already exists!",D_MICONINFO|D_MCENTER,"Oops!")
+				i_next(inpWnd,,"*FRST*")
+			end
+			endtry
+		end
+	end
+	until exitApp
+	
+	unlock chSystem
+	
+	e_exit()
+	
+	return
+	
+DoDelete,
+	
+	;;Make sure we have an item to delete
+	begin
+		data noItem, int
+		l_status(listId,D_LNULL,noItem)
+		if (noItem)
+			return
+	end
+	
+	if (u_msgbox("Delete selected system?",D_MYESNO|D_MICONQUESTION|D_MCENTER,
+	&	"Confirmation Required")==D_MIDYES)
+	begin
+		try 
+		begin
+			read(chSystem,tmp_system,lm_system.id,KEYNUM:0)
+			delete(chSystem)
+			lreq = D_LDELITEM
+			
+			;TODO: Later will also need to delete the systems license keys
+			
+		end
+		catch (ex)
+		begin
+			unlock chSystem
+			u_msgbox("Failed to delete system!",D_MICONINFO|D_MCENTER,"Oops!")
+		end
+		endtry
+	end
+	
+	return
+	
+endsubroutine
+

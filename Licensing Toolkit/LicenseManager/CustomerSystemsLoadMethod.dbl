@@ -1,0 +1,31 @@
+
+subroutine CustomerSystemsLoadMethod ,stack
+	a_listid	,n			; List id
+	a_req		,n			; Request flag
+	a_data		,a			; Item data
+	a_inpid		,n			; Input window id
+	a_disable	,n			; (Optional) Disable flag
+	a_index		,n			; Loading index
+	;Method data
+	a_channel	,n			; File channel
+	a_customer	,a			; Customer ID
+	endparams
+
+	.include "WND:tools.def"
+
+proc
+		
+	if (a_index==1)
+		find(a_channel,,a_customer,KEYNUM:1) [ERR=eof]
+
+	reads(a_channel,a_data,eof,LOCK:Q_NO_LOCK)
+	
+	if (keyval(a_channel,a_data,1)==a_customer) then 
+		i_display(a_inpid,,a_data)
+	else
+eof,	a_req = D_LEOF
+	
+	xreturn
+
+endsubroutine
+

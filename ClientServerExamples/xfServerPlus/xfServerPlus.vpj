@@ -130,12 +130,19 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="qimpdir"
+				Value=""/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Files>
 		<Folder
 			Name="Source Files"
 			Filters="*.dbl;*.tpl;*.dbc">
+			<F N="src/CopyFile.dbl"/>
 			<F N="src/DataDefinitions.dbl"/>
 			<F N="src/GetAddressForUpdate.dbl"/>
 			<F N="src/GetAllCustomers.dbl"/>
@@ -288,6 +295,12 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="qimpdir"
+				Value=""/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -417,6 +430,12 @@
 			<SynSetting
 				Name="object_dir"
 				Value="OBJ:"/>
+			<SynSetting
+				Name="qimpdir"
+				Value=""/>
+			<SynSetting
+				Name="build_complink_single"
+				Value="0"/>
 		</SynSettings>
 	</Config>
 	<Config
@@ -545,6 +564,12 @@
 				Value="OBJ:"/>
 			<SynSetting
 				Name="proto_first_run"
+				Value="0"/>
+			<SynSetting
+				Name="qimpdir"
+				Value=""/>
+			<SynSetting
+				Name="build_complink_single"
 				Value="0"/>
 		</SynSettings>
 	</Config>

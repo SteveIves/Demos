@@ -9,69 +9,56 @@
 		CompilerConfigName="">
 		<Menu>
 			<Target
-				Name="Prototype"
-				MenuCaption="&amp;Prototype"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynPrototype"
-					Type="Slick-C"/>
-			</Target>
-			<Target
 				Name="Compile"
 				MenuCaption="&amp;Compile"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveCurrent"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompile"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Compile All"
-				MenuCaption="Compile &amp;All"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompileAll"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Link"
-				MenuCaption="&amp;Link"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveWorkspaceFiles"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynLink"
-					Type="Slick-C"/>
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
 			</Target>
 			<Target
 				Name="Build"
-				MenuCaption="&amp;Build"
-				SaveOption="SaveWorkspaceFiles"
+				MenuCaption="&amp;Build Jar File"
 				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynBuild"
+					CmdLine="SynBuildJar"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Synergy/DE Options"
-				MenuCaption="&amp;Synergy/DE Options"
-				SaveOption="SaveNone"
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
 				RunFromDir="%rw"
-				Dialog="_synergyde_options_form Prototype">
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynShowSynDEOpts"
+					CmdLine="show_com_info"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Load SMC From Code"
-				MenuCaption="&amp;Load SMC From Code"
-				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1"
-				SaveOption="SaveAll">
-				<Exec CmdLine="%(XFPL_SMCPATH)\LoadSMC.bat"/>
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
 			</Target>
 		</Menu>
 		<SynSettings>
@@ -128,7 +115,7 @@
 	<Files>
 		<Folder
 			Name="Source Files"
-			Filters="*.dbl;*.tpl;*.dbc">
+			Filters="*.dbl;*.tpl;*.dbc;*.java">
 			<F N="src/pooltest.dbl"/>
 		</Folder>
 		<Folder
@@ -140,6 +127,9 @@
 			<F N="xfpl/LoadSMC.bat"/>
 			<F N="xfpl/xfpl.ini"/>
 		</Folder>
+		<Folder
+			Name="Batch Files"
+			Filters="*.bat"/>
 	</Files>
 	<Config
 		Name="Debug64"
@@ -147,69 +137,56 @@
 		CompilerConfigName="">
 		<Menu>
 			<Target
-				Name="Prototype"
-				MenuCaption="&amp;Prototype"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynPrototype"
-					Type="Slick-C"/>
-			</Target>
-			<Target
 				Name="Compile"
 				MenuCaption="&amp;Compile"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveCurrent"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompile"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Compile All"
-				MenuCaption="Compile &amp;All"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompileAll"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Link"
-				MenuCaption="&amp;Link"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveWorkspaceFiles"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynLink"
-					Type="Slick-C"/>
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
 			</Target>
 			<Target
 				Name="Build"
-				MenuCaption="&amp;Build"
-				SaveOption="SaveWorkspaceFiles"
+				MenuCaption="&amp;Build Jar File"
 				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynBuild"
+					CmdLine="SynBuildJar"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Synergy/DE Options"
-				MenuCaption="&amp;Synergy/DE Options"
-				SaveOption="SaveNone"
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
 				RunFromDir="%rw"
-				Dialog="_synergyde_options_form Prototype">
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynShowSynDEOpts"
+					CmdLine="show_com_info"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Load SMC From Code"
-				MenuCaption="&amp;Load SMC From Code"
-				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1"
-				SaveOption="SaveAll">
-				<Exec CmdLine="%(XFPL_SMCPATH)\LoadSMC.bat"/>
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
 			</Target>
 		</Menu>
 		<SynSettings>
@@ -269,69 +246,56 @@
 		CompilerConfigName="">
 		<Menu>
 			<Target
-				Name="Prototype"
-				MenuCaption="&amp;Prototype"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynPrototype"
-					Type="Slick-C"/>
-			</Target>
-			<Target
 				Name="Compile"
 				MenuCaption="&amp;Compile"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveCurrent"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompile"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Compile All"
-				MenuCaption="Compile &amp;All"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompileAll"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Link"
-				MenuCaption="&amp;Link"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveWorkspaceFiles"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynLink"
-					Type="Slick-C"/>
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
 			</Target>
 			<Target
 				Name="Build"
-				MenuCaption="&amp;Build"
-				SaveOption="SaveWorkspaceFiles"
+				MenuCaption="&amp;Build Jar File"
 				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynBuild"
+					CmdLine="SynBuildJar"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Synergy/DE Options"
-				MenuCaption="&amp;Synergy/DE Options"
-				SaveOption="SaveNone"
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
 				RunFromDir="%rw"
-				Dialog="_synergyde_options_form Prototype">
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynShowSynDEOpts"
+					CmdLine="show_com_info"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Load SMC From Code"
-				MenuCaption="&amp;Load SMC From Code"
-				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1"
-				SaveOption="SaveAll">
-				<Exec CmdLine="%(XFPL_SMCPATH)\LoadSMC.bat"/>
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
 			</Target>
 		</Menu>
 		<SynSettings>
@@ -391,69 +355,56 @@
 		CompilerConfigName="">
 		<Menu>
 			<Target
-				Name="Prototype"
-				MenuCaption="&amp;Prototype"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynPrototype"
-					Type="Slick-C"/>
-			</Target>
-			<Target
 				Name="Compile"
 				MenuCaption="&amp;Compile"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveCurrent"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompile"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Compile All"
-				MenuCaption="Compile &amp;All"
-				SaveOption="SaveAll"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynCompileAll"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Link"
-				MenuCaption="&amp;Link"
-				CaptureOutputWith="ProcessBuffer"
-				SaveOption="SaveWorkspaceFiles"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynLink"
-					Type="Slick-C"/>
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
 			</Target>
 			<Target
 				Name="Build"
-				MenuCaption="&amp;Build"
-				SaveOption="SaveWorkspaceFiles"
+				MenuCaption="&amp;Build Jar File"
 				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynBuild"
+					CmdLine="SynBuildJar"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Synergy/DE Options"
-				MenuCaption="&amp;Synergy/DE Options"
-				SaveOption="SaveNone"
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
 				RunFromDir="%rw"
-				Dialog="_synergyde_options_form Prototype">
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
 				<Exec
-					CmdLine="SynShowSynDEOpts"
+					CmdLine="show_com_info"
 					Type="Slick-C"/>
 			</Target>
 			<Target
-				Name="Load SMC From Code"
-				MenuCaption="&amp;Load SMC From Code"
-				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1"
-				SaveOption="SaveAll">
-				<Exec CmdLine="%(XFPL_SMCPATH)\LoadSMC.bat"/>
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
 			</Target>
 		</Menu>
 		<SynSettings>
@@ -517,4 +468,60 @@
 		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)xfpl"/>
 		<ExecMacro CmdLine="syn_set XFPL_INIPATH=%(ROOT)xfpl"/>
 	</Macro>
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build Jar File"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynBuildJar"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw"
+				ShowOnMenu="HideIfNoCmdLine">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Component Information"
+				MenuCaption="Component &amp;Information..."
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="show_com_info"
+					Type="Slick-C"/>
+			</Target>
+			<Target
+				Name="Generate Class Wrappers"
+				MenuCaption="Generate Class &amp;Wrappers"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine="SynGenerateClassWrappers"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+	</Config>
 </Project>

@@ -104,7 +104,7 @@ namespace SqlUploadDemo
             ;;Create index 1 (Sku)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_OrderLine_Sku ON OrderLine(Sku ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_OrderLine_Sku ON OrderLine(Sku ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -710,7 +710,7 @@ namespace SqlUploadDemo
                 & "Tax=:9"
                 & " WHERE"
                 & " OrderNumber='" + %atrim(^a(recOrderLine.order_number)) + "' AND"
-                & " LineNumber='" + %atrim(^a(recOrderLine.line_number)) + "'"
+                & " LineNumber='" + %atrim(^a(recOrderLine.line_number)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -741,7 +741,7 @@ namespace SqlUploadDemo
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -760,7 +760,7 @@ namespace SqlUploadDemo
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -1037,14 +1037,11 @@ namespace SqlUploadDemo
             recordSpec.fields[6].fieldDecimals = 0
             recordSpec.fields[7].fieldType     = "D" ;;Price
             recordSpec.fields[7].fieldSize     = 6
-            recordSpec.fields[7].fieldDecimals = 2
-            recordSpec.fields[8].fieldType     = "D" ;;LineValue
+            recordSpec.fields[7].fieldDecimals = 2            recordSpec.fields[8].fieldType     = "D" ;;LineValue
             recordSpec.fields[8].fieldSize     = 6
-            recordSpec.fields[8].fieldDecimals = 2
-            recordSpec.fields[9].fieldType     = "D" ;;Tax
+            recordSpec.fields[8].fieldDecimals = 2            recordSpec.fields[9].fieldType     = "D" ;;Tax
             recordSpec.fields[9].fieldSize     = 6
-            recordSpec.fields[9].fieldDecimals = 2
-        endmethod
+            recordSpec.fields[9].fieldDecimals = 2        endmethod
 
         ;;; <summary>
         ;;; Loads various SQL statements into "shared" static variables
@@ -1091,7 +1088,7 @@ namespace SqlUploadDemo
                 & "LineValue,"
                 & "Tax"
                 & " FROM OrderLine"
-                & " WHERE OrderNumber=:1 AND LineNumber=:2"
+                & " WHERE  OrderNumber=:1 AND LineNumber=:2 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1107,10 +1104,11 @@ namespace SqlUploadDemo
                 & " FROM OrderLine"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM OrderLine WHERE OrderNumber=:1 AND LineNumber=:2"
+                mDeleteByKeyStatement = "DELETE FROM OrderLine WHERE  OrderNumber=:1 AND LineNumber=:2 "
 
         endmethod
 
     endclass
 
 endnamespace
+

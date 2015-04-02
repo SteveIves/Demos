@@ -1,0 +1,63 @@
+
+subroutine PlatformLookup, reentrant
+	.include "WND:inpinf.def"
+	a_inprec, a
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		lm_platform		,strPlatform
+	endrecord
+
+proc
+	
+	;;Configure the environment
+	e_enter()
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the producer codes data file
+	u_open(ichn,"i:i","LM_ROOT:platform.ism")
+
+	;;Create the producer list
+	i_ldinp(listWnd,,"PLATFORM_LIST",D_NOPLC)
+	l_create(listId,listWnd,lm_platform,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_sect(listId,"Platforms",D_TITLE,D_CENTER)
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+
+	;;Process the list
+	lreq=D_LNOP
+	do
+	begin
+		l_select(listId,lreq,lm_platform,,,,,,,,,,,,,ichn)
+
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			xcall i_force(lm_platform.id)
+			exitloop
+		end		
+	end
+	until exitApp
+
+	e_exit()
+	xreturn
+
+endsubroutine
+

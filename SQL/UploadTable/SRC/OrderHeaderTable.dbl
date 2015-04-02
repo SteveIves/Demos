@@ -104,7 +104,7 @@ namespace SqlUploadDemo
             ;;Create index 1 (Customer ID)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_OrderHeader_Customer ON OrderHeader(Customer ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_OrderHeader_Customer ON OrderHeader(Customer ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -114,7 +114,7 @@ namespace SqlUploadDemo
             ;;Create index 2 (Status)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_OrderHeader_Status ON OrderHeader(Status ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_OrderHeader_Status ON OrderHeader(Status ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -124,7 +124,7 @@ namespace SqlUploadDemo
             ;;Create index 3 (Customer reference)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_OrderHeader_Cusref ON OrderHeader(CustomerOrderRef ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_OrderHeader_Cusref ON OrderHeader(CustomerOrderRef ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -728,7 +728,7 @@ namespace SqlUploadDemo
                 & "GiftWrap=:11,"
                 & "GiftMessage=:12"
                 & " WHERE"
-                & " OrderNumber='" + %atrim(^a(recOrderHeader.order_number)) + "'"
+                & " OrderNumber='" + %atrim(^a(recOrderHeader.order_number)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -759,7 +759,7 @@ namespace SqlUploadDemo
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -778,7 +778,7 @@ namespace SqlUploadDemo
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -1070,14 +1070,11 @@ namespace SqlUploadDemo
             recordSpec.fields[7].fieldDecimals = 0
             recordSpec.fields[8].fieldType     = "D" ;;GoodsValue
             recordSpec.fields[8].fieldSize     = 8
-            recordSpec.fields[8].fieldDecimals = 2
-            recordSpec.fields[9].fieldType     = "D" ;;TaxValue
+            recordSpec.fields[8].fieldDecimals = 2            recordSpec.fields[9].fieldType     = "D" ;;TaxValue
             recordSpec.fields[9].fieldSize     = 8
-            recordSpec.fields[9].fieldDecimals = 2
-            recordSpec.fields[10].fieldType     = "D" ;;ShippingValue
+            recordSpec.fields[9].fieldDecimals = 2            recordSpec.fields[10].fieldType     = "D" ;;ShippingValue
             recordSpec.fields[10].fieldSize     = 8
-            recordSpec.fields[10].fieldDecimals = 2
-            recordSpec.fields[11].fieldType     = "D" ;;GiftWrap
+            recordSpec.fields[10].fieldDecimals = 2            recordSpec.fields[11].fieldType     = "D" ;;GiftWrap
             recordSpec.fields[11].fieldSize     = 1
             recordSpec.fields[11].fieldDecimals = 0
             recordSpec.fields[12].fieldType     = "A" ;;GiftMessage
@@ -1139,7 +1136,7 @@ namespace SqlUploadDemo
                 & "GiftWrap,"
                 & "GiftMessage"
                 & " FROM OrderHeader"
-                & " WHERE OrderNumber=:1"
+                & " WHERE  OrderNumber=:1 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1158,10 +1155,11 @@ namespace SqlUploadDemo
                 & " FROM OrderHeader"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM OrderHeader WHERE OrderNumber=:1"
+                mDeleteByKeyStatement = "DELETE FROM OrderHeader WHERE  OrderNumber=:1 "
 
         endmethod
 
     endclass
 
 endnamespace
+

@@ -1,0 +1,93 @@
+;;=============================================================================
+;; Check that there is a valid LMKn license on the system for the current
+;; producer code
+;;
+function LmkLicenseIsPresent, boolean
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record localData
+        status          	,int
+        token           	,int
+        slot            	,int
+        lic_ok          	,boolean
+        lm_license    		,strLmLicense
+        today           	,a8
+		synergexProducer	,a3
+    endrecord
+
+proc
+
+    init localData
+
+	;;-------------------------------------------------------------------------
+	;;This code is required specifically to check for a producer specific LMK
+	;;license. All LMK licenses are from producer code 999 (Synergex), flipping
+	;;the high order bit of the first character of the 999 producer code causes
+	;;LM_LOGIN to use the producer code defined in the custom data string!
+	synergexProducer = string(producerCode)
+	synergexProducer(1:1) = ^a(^i(synergexProducer(1:1))|^x(80))
+	;;-------------------------------------------------------------------------
+	
+    lm_login(status,synergexProducer,lmkLicense,token,lm_license,slot,2)
+
+    using status select
+    (LMSTS_OK),
+    begin
+        ;;Is it for the correct producer code?
+        if (lm_license.lm_custom==string(producerCode)) then
+        begin
+            ;;Is this a permanent license?
+            if (!lm_license.lm_expdat) then
+            begin
+                ;;Yes
+                lic_ok = true
+            end
+            else
+            begin
+                ;;No, it's temporary. Did it already expire?
+                if (lm_license.lm_expdat<^d(today=%datetime)) then
+                begin
+                    ;;No, it's still active
+                    lic_ok = true
+				end
+				else
+				begin
+					u_msgbox("Your "+lmkLicense+" license for producer code "
+					&	+string(producerCode)+" has expired! (LMSTS_OK)",
+					&	D_MICONEXCLAM|D_MCENTER,"Configuration Check")
+				end
+            end
+		end
+		else
+		begin
+			;Winding up here!
+			u_msgbox("You don't have an "+lmkLicense+" license for producer code "
+			&	+string(producerCode)+"! (LMSTS_OK)",
+			&	D_MICONEXCLAM|D_MCENTER,"Configuration Check")
+		end
+    end
+    (LMSTS_NOCONFIG),
+	begin
+		u_msgbox("You don't have an "+lmkLicense+" license for producer code "
+		&	+string(producerCode)+"! (LMSTS_NOCONFIG)",
+		&	D_MICONEXCLAM|D_MCENTER,"Configuration Check")
+	end
+	(LMSTS_MAXUSR),
+	begin
+		;;User count exceeded implies that the license is OK.
+		lic_ok = true
+	end
+    (LMSTS_TIMEOUT),
+	begin
+		u_msgbox("Your "+lmkLicense+" license for producer code "
+		&	+string(producerCode)+" has expired! (LMSTS_TIMEOUT)",
+		&	D_MICONEXCLAM|D_MCENTER,"Configuration Check")
+	end
+    endusing
+
+    freturn lic_ok
+
+endfunction
+

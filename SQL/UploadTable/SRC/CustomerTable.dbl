@@ -104,7 +104,7 @@ namespace SqlUploadDemo
             ;;Create index 1 (Company name)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Customer_Company ON Customer(Company ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Customer_Company ON Customer(Company ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -114,7 +114,7 @@ namespace SqlUploadDemo
             ;;Create index 2 (State)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Customer_State ON Customer(State ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Customer_State ON Customer(State ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -124,7 +124,7 @@ namespace SqlUploadDemo
             ;;Create index 3 (Zip code)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Customer_Zip ON Customer(Zip ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Customer_Zip ON Customer(Zip ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -134,7 +134,7 @@ namespace SqlUploadDemo
             ;;Create index 4 (Account status)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Customer_Status ON Customer(Status ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Customer_Status ON Customer(Status ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -747,7 +747,7 @@ namespace SqlUploadDemo
                 & "CardExpiry=:20,"
                 & "CardName=:21"
                 & " WHERE"
-                & " Account='" + %atrim(^a(recCustomer.account)) + "'"
+                & " Account='" + %atrim(^a(recCustomer.account)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -778,7 +778,7 @@ namespace SqlUploadDemo
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -797,7 +797,7 @@ namespace SqlUploadDemo
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -1152,11 +1152,9 @@ namespace SqlUploadDemo
             recordSpec.fields[16].fieldDecimals = 0
             recordSpec.fields[17].fieldType     = "D" ;;Limit
             recordSpec.fields[17].fieldSize     = 10
-            recordSpec.fields[17].fieldDecimals = 2
-            recordSpec.fields[18].fieldType     = "D" ;;Balance
+            recordSpec.fields[17].fieldDecimals = 2            recordSpec.fields[18].fieldType     = "D" ;;Balance
             recordSpec.fields[18].fieldSize     = 10
-            recordSpec.fields[18].fieldDecimals = 2
-            recordSpec.fields[19].fieldType     = "A" ;;CardNumber
+            recordSpec.fields[18].fieldDecimals = 2            recordSpec.fields[19].fieldType     = "A" ;;CardNumber
             recordSpec.fields[19].fieldSize     = 16
             recordSpec.fields[19].fieldDecimals = 0
             recordSpec.fields[20].fieldType     = "D" ;;CardExpiry
@@ -1248,7 +1246,7 @@ namespace SqlUploadDemo
                 & "CardExpiry,"
                 & "CardName"
                 & " FROM Customer"
-                & " WHERE Account=:1"
+                & " WHERE  Account=:1 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1276,10 +1274,11 @@ namespace SqlUploadDemo
                 & " FROM Customer"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM Customer WHERE Account=:1"
+                mDeleteByKeyStatement = "DELETE FROM Customer WHERE  Account=:1 "
 
         endmethod
 
     endclass
 
 endnamespace
+

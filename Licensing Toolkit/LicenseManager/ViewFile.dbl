@@ -1,0 +1,30 @@
+;;=============================================================================
+;; Spawn notepad to view a text file
+;;
+subroutine ViewFile
+    required in FileName ,string
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record
+        ch      ,int
+        error   ,int
+    endrecord
+
+proc
+
+    u_open(ch,"i:s",FileName,,,error)
+
+    if error then
+        u_msgbox("File " + atrim(FileName) + " not found!",D_MICONINFO|D_MCENTER)
+    else
+    begin
+        u_close(ch)
+        spawn("notepad "+atrim(FileName),D_NOWINDOW|D_NOWAIT)
+    end
+
+    return
+
+endsubroutine
+

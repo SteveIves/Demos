@@ -1,0 +1,57 @@
+;;=============================================================================
+;; Check that a specified license is installed and has not expired
+;;
+function LicenseIsPresent, boolean
+	required in keyName		,a
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record localData
+        status          ,int
+        token           ,int
+        slot            ,int
+        lic_ok          ,boolean
+        lm_license    	,strLmLicense
+        today           ,a8
+    endrecord
+
+proc
+
+    init localData
+
+    lm_login(status,%string(producerCode),keyName,token,lm_license,slot,1)
+
+    using status select
+    (LMSTS_OK),
+    begin
+        ;;Is it for the correct producer code?
+        if (lm_license.lm_custom==string(producerCode))
+        begin
+            ;;Is this a permanent license?
+            if (!lm_license.lm_expdat) then
+            begin
+                ;;Yes
+                lic_ok = true
+            end
+            else
+            begin
+                ;;No, it's temporary. Did it already expire?
+                if (lm_license.lm_expdat<^d(today=%datetime))
+                begin
+                    ;;No, it's still active
+                    lic_ok = true
+                end
+            end
+        end
+    end
+    (LMSTS_NOCONFIG),
+		nop
+    (),
+		nop
+    endusing
+
+    freturn lic_ok
+
+endfunction
+

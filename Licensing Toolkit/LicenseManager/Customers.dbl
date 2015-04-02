@@ -1,0 +1,197 @@
+
+subroutine Customers
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		inpWnd			,int
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		editMode		,boolean
+		lm_customer		,strCustomer
+		tmp_customer	,strCustomer
+	endrecord
+	
+proc
+
+	;;Configure the environment
+	e_enter()
+	m_enable(D_COLUMN,editMenu)
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the producer codes data file
+	u_open(ichn,"i:i","LM_ROOT:customer.ism")
+	
+	;;Load the maintenance window
+	i_ldinp(inpWnd,,"CUSTOMER",D_NOPLC)
+	u_wndevents(D_ASSIGN,mset_close,inpWnd)
+	
+	;;Create the producer list
+	i_ldinp(listWnd,,"CUSTOMER_LIST",D_NOPLC)
+	l_create(listId,listWnd,lm_customer,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_sect(listId,"Customers",D_TITLE,D_CENTER)
+	l_button(listId,DSB_ADD,"ADD",DSB_TEXT,"Add")
+	l_button(listId,DSB_ADD,"DELETE",DSB_TEXT,"Delete")
+	l_button(listId,DSB_ADD,"SYSTEMS",DSB_TEXT,"Systems")
+	l_button(listId,DSB_ADD,"LICENSES",DSB_TEXT,"Licenses")
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+	
+	;;Pre-load the list
+	l_process(listId,lreq=D_LBOTTOM,lm_customer,,ichn)
+	
+	;;Process the list
+	lreq=D_LTOP
+	do
+	begin
+		l_select(listId,lreq,lm_customer,,,,,,,,,,,,,ichn)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("ADD"),
+			begin
+				editMode = false
+				call DoEdit
+			end
+			("DELETE"),
+				call DoDelete
+			("SYSTEMS"),
+				Systems(lm_customer.id)
+			("LICENSES"),
+				Licenses(lm_customer.id)
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			editMode = true
+			call DoEdit
+		end		
+	end
+	until exitApp
+	
+	e_exit()
+	xreturn
+	
+DoEdit,
+	
+	if (editMode)
+	begin
+		;;Lock the record
+		try 
+		begin
+			read(chCustomer,tmp_customer,lm_customer.id,KEYNUM:0)
+		end
+		catch (ex)
+		begin
+			u_msgbox("Can't edit that customer right now!",
+			&	D_MICONINFO|D_MCENTER,"Oops!")
+			return
+		end
+		endtry
+	end
+	
+	e_enter()
+	i_init(inpWnd,,tmp_customer)
+	i_enable(D_SET,inpWnd,"ALL")
+	u_window(D_PLACE,inpWnd,7,10)
+	
+	if (editMode) then
+	begin
+		i_display(inpWnd,,tmp_customer=lm_customer)
+		i_disable(D_SET,inpWnd,"KEY")
+	end
+	else
+		init tmp_customer
+		
+	i_next(inpWnd,,"*FRST*")
+	
+	do
+	begin
+		i_input(inpWnd,,tmp_customer,,,,D_NOTERM)
+		
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			try 
+			begin
+				;;Update the file
+				if (editMode) then
+					write(chCustomer,tmp_customer)
+				else
+				begin
+					store(chCustomer,tmp_customer)
+					;;Add a new blank item to the list
+					l_process(listId,lreq=D_LAPPEND,lm_customer)
+				end
+				;;Update the list display
+				i_display(listWnd,,lm_customer=tmp_customer)
+				;;Add to list
+				lreq = D_LNOP
+				exitloop
+			end
+			catch (ex, @DuplicateException)
+			begin
+				u_msgbox("Customer already exists!",D_MICONINFO|D_MCENTER,"Oops!")
+				i_next(inpWnd,,"*FRST*")
+			end
+			endtry
+		end
+	end
+	until exitApp
+	
+	unlock chCustomer
+	
+	e_exit()
+	
+	return
+	
+DoDelete,
+	
+	;;Make sure we have an item to delete
+	begin
+		data noItem, int
+		l_status(listId,D_LNULL,noItem)
+		if (noItem)
+			return
+	end
+	
+	if (u_msgbox("Delete selected customer?",D_MYESNO|D_MICONQUESTION|D_MCENTER,
+	&	"Confirmation Required")==D_MIDYES)
+	begin
+		try 
+		begin
+			read(chCustomer,tmp_customer,lm_customer.id,KEYNUM:0)
+			delete(chCustomer)
+			lreq = D_LDELITEM
+		end
+		catch (ex)
+		begin
+			unlock chCustomer
+			u_msgbox("Failed to delete customer!",D_MICONINFO|D_MCENTER,"Oops!")
+		end
+		endtry
+	end
+	
+	return
+	
+endsubroutine
+

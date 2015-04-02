@@ -1,0 +1,145 @@
+subroutine SelectProducer
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		inpWnd			,int
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		lm_producer		,strProducer
+		saveProducer	,int
+		gotProducer		,boolean
+	endrecord
+	
+proc
+
+	saveProducer = producerCode
+	gotProducer = false
+	
+	e_enter()
+	
+	;;Open the producer codes data file
+	u_open(ichn,"i:i","LM_ROOT:producer.ism")
+
+	do 
+	begin
+		;If there are no producers in the producer file then go to maintenance
+		try 
+		begin
+			read(ichn,lm_producer,^FIRST)
+		end
+		catch (ex, @EndOfFileException)
+		begin
+			;;There are no producers. Go to maintenance.
+			u_msgbox("Before you can continue you must define your license producer code.",
+			&	D_MICONINFO|D_MCENTER,"Configuration Check")
+			Producers()
+		end
+		endtry
+
+		;If there is only one producer code in the producer file then use it.
+		if (!exitApp)
+		begin
+			try 
+			begin
+				data tmp_producer, strProducer
+				reads(ichn,tmp_producer)
+				;We have multiple producers, the user needs to pick one
+				exitloop
+			end
+			catch (ex, @EndOfFileException)
+			begin
+				producerCode = lm_producer.id
+				if (LmkLicenseIsPresent()) then
+				begin
+					gotProducer = true
+					exitloop
+				end
+				else
+				begin
+					;;There is only one producer but we don't have an LMK license
+					;;for that producer. Go to maintenance.
+					Producers()
+				end
+			end
+			endtry
+		end
+	end
+	until exitApp
+	
+	;;If we already got a producer code then we're done
+	if (gotProducer||exitApp)
+	begin
+		e_exit()
+		if (gotProducer)
+		begin
+			data caption, a60
+			s_bld(caption,,"%a [%a]",APP_TITLE,lm_producer.name)
+			w_caption(WC_SET,caption)
+			m_disable(D_ENTRY,toolsMenu,"SETPRODUCER")
+		end
+		xreturn
+	end
+	
+	;;Configure the environment
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Create the producer list
+	i_ldinp(listWnd,,"PRODUCER_LIST",D_NOPLC)
+	l_create(listId,listWnd,lm_producer,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_sect(listId,"Set Current Producer",D_TITLE,D_CENTER)
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+	
+	;;Pre-load the list
+	l_process(listId,lreq=D_LBOTTOM,lm_producer,,ichn)
+	
+	;;Process the list
+	lreq=D_LTOP
+
+	do
+	begin
+		l_select(listId,lreq,lm_producer,,,,,,,,,,,,,ichn)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("CLOSE","EXITAPP"),
+			begin
+				producerCode = saveProducer
+				e_exit()
+				if g_entnam=="EXITAPP" then 
+					exitApp = true
+				else
+					exitloop
+			end
+			endusing
+		end
+		else
+		begin
+			;;Make sure we have an LMKn key for the selected producer code
+			producerCode = lm_producer.id
+			if (LmkLicenseIsPresent()) then
+			begin
+				data caption, a60
+				e_exit()
+				s_bld(caption,,"%a [%a]",APP_TITLE,lm_producer.name)
+				w_caption(WC_SET,caption)
+				exitloop
+			end
+			else
+				producerCode = saveProducer
+		end
+	end
+	until exitApp
+	
+	xreturn
+	
+endsubroutine
+

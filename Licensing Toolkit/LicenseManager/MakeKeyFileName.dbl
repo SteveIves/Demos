@@ -1,0 +1,64 @@
+;;=============================================================================
+;; Construct the name of a key file
+;;
+function MakeKeyFileName, a
+    required in aCompany, a
+    required in aLicensee, a
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record localData
+        company     ,a^size(strKeyData.company)
+        licensee    ,a^size(strKeyData.licensee)
+        fileSpec    ,a256
+        pos         ,int
+    endrecord
+
+proc
+
+    init localData
+
+    company  = aCompany
+    licensee = aLicensee
+
+    pos = 1
+    repeat
+    begin
+        using company(pos:1) select
+        ("/","\",":",";","*","?",'"',"'","|","<",">",",","."),
+        begin
+            if (pos==1) then
+                company = company(2:trim(company))
+            else
+                company = company(1:pos-1) + company(pos+1:trim(company))
+        end
+        (),
+            if ((pos+=1)>trim(company))
+                exitloop
+        endusing
+    end
+
+    pos = 1
+    repeat
+    begin
+        using licensee(pos:1) select
+        ("/","\",":",";","*","?",'"',"'","|","<",">",",","."),
+        begin
+            if (pos==1) then
+                licensee = licensee(2:trim(licensee))
+            else
+                licensee = licensee(1:pos-1) + licensee(pos+1:trim(licensee))
+        end
+        (),
+            if ((pos+=1)>trim(licensee))
+                exitloop
+        endusing
+    end
+
+    s_bld(fileSpec,,"%a%a-%a.skf",keyFileDir,company,licensee)
+
+    freturn fileSpec
+
+endfunction
+

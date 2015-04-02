@@ -1,0 +1,54 @@
+;;=============================================================================
+;; This function checks that the lmk program is in PATH, figures out the version of 
+;; the lmk program, and records the required LMKn license code in global data
+;;
+function LmkExeIsPresent, boolean
+    endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+    stack record
+        retval  ,boolean
+        status  ,int
+    endrecord
+
+proc
+    retval = true
+    spawn("lmk",D_NOWINDOW)
+    xstat(status)
+    if (status) then
+	begin
+		;;the lmk program was not found
+		u_msgbox("Key generator program lmk not found.\n"
+		&	"Ensure its location is included in PATH.",
+		&	D_MICONSTOP|D_MCENTER,"Error")
+        retval = false
+	end
+	else
+	begin
+		;;Figure out what version of the lmk program we have
+		data pipeCh, int, 0
+		data tmpBuf, a80
+		open(pipeCh,i,"|lmk -v")
+		reads(pipeCh,tmpBuf)
+		close pipeCh
+		using tmpBuf select
+		("LM Version 7"),
+			lmkLicense = "LMK7"
+		("LM Version 8"),
+			lmkLicense = "LMK8"
+		("LM Version 9"),
+			lmkLicense = "LMK9"
+		("LM Version 10"),
+			lmkLicense = "LMK10"
+		("LM Version 11"),
+			lmkLicense = "LMK11"
+		("LM Version 12"),
+			lmkLicense = "LMK12"
+		endusing
+	end
+
+    freturn retval
+
+endfunction
+

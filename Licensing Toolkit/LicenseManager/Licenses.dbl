@@ -1,0 +1,211 @@
+
+subroutine Licenses
+	optional in customerId	,a
+	optional in systemId	,n
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		inpWnd			,int
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		editMode		,boolean
+		license			,strLicense
+		tmp_license	,strLicense
+	endrecord
+	
+proc
+
+	;;Configure the environment
+	e_enter()
+	m_enable(D_COLUMN,editMenu)
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the data file
+	u_open(ichn,"i:i","LM_ROOT:license.ism")
+	
+	;;Load the maintenance window
+	i_ldinp(inpWnd,,"LICENSE_ALL",D_NOPLC)
+	u_wndevents(D_ASSIGN,mset_close,inpWnd)
+	
+	;;Create the list
+	i_ldinp(listWnd,,"LICENSE_LISTALL",D_NOPLC)
+	l_create(listId,listWnd,license,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_button(listId,DSB_ADD,"ADD",DSB_TEXT,"Add")
+	l_button(listId,DSB_ADD,"DELETE",DSB_TEXT,"Delete")
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+	
+	;;If we were passed a license ID then use an alternate load method
+	if (^passed(customerId)&&customerId) then 
+	begin
+		l_sect(listId,"Customer Licenses",D_TITLE,D_CENTER)
+		l_method(listId,D_LLOAD,"CustomerLicensesLoadMethod")
+	end
+	else if (^passed(systemId)&&systemId) then
+	begin
+		l_sect(listId,"System Licenses",D_TITLE,D_CENTER)
+		l_method(listId,D_LLOAD,"SystemLicensesLoadMethod")
+	end
+	else
+	begin
+		l_sect(listId,"All Licenses",D_TITLE,D_CENTER)
+	end
+
+	;;Process the list
+	lreq=D_LNOP
+	do
+	begin
+		if (^passed(customerId)&&customerId) then 
+			l_select(listId,lreq,license,,,,,,,,,,,,,ichn,customerId)
+		else if (^passed(systemId)&&systemId) then
+			l_select(listId,lreq,license,,,,,,,,,,,,,ichn,systemId)
+		else
+			l_select(listId,lreq,license,,,,,,,,,,,,,ichn)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("ADD"),
+			begin
+				editMode = false
+				call DoEdit
+			end
+			("DELETE"),
+				call DoDelete
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			editMode = true
+			call DoEdit
+		end		
+	end
+	until exitApp
+	
+	e_exit()
+	xreturn
+	
+DoEdit,
+	
+	if (editMode)
+	begin
+		;;Lock the record
+		try 
+		begin
+			read(chLicense,tmp_license,keyval(chLicense,license,0),KEYNUM:0)
+		end
+		catch (ex)
+		begin
+			u_msgbox("Can't edit that license right now!",
+			&	D_MICONINFO|D_MCENTER,"Oops!")
+			return
+		end
+		endtry
+	end
+	
+	e_enter()
+	i_init(inpWnd,,tmp_license)
+	i_enable(D_SET,inpWnd,"ALL")
+	i_disable(D_FLDS,inpWnd,"KEY,GENERATED")
+	u_window(D_PLACE,inpWnd,7,10)
+	
+	if (editMode) then
+	begin
+		i_display(inpWnd,,tmp_license=license)
+		i_disable(D_SET,inpWnd,"KEY")
+	end
+	else
+		init tmp_license
+		
+	i_next(inpWnd,,"*FRST*")
+	
+	do
+	begin
+		i_input(inpWnd,,tmp_license,,,,D_NOTERM,,,tmp_license.customer)
+		
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			try 
+			begin
+				;;Update the file
+				if (editMode) then
+					write(chLicense,tmp_license)
+				else
+				begin
+					store(chLicense,tmp_license)
+					;;Add a new blank item to the list
+					l_process(listId,lreq=D_LAPPEND,license)
+				end
+				;;Update the list display
+				i_display(listWnd,,license=tmp_license)
+				;;Add to list
+				lreq = D_LNOP
+				exitloop
+			end
+			catch (ex, @DuplicateException)
+			begin
+				u_msgbox("License already exists!",D_MICONINFO|D_MCENTER,"Oops!")
+				i_next(inpWnd,,"*FRST*")
+			end
+			endtry
+		end
+	end
+	until exitApp
+	
+	unlock chLicense
+	
+	e_exit()
+	
+	return
+	
+DoDelete,
+	
+	;;Make sure we have an item to delete
+	begin
+		data noItem, int
+		l_status(listId,D_LNULL,noItem)
+		if (noItem)
+			return
+	end
+	
+	if (u_msgbox("Delete selected license?",D_MYESNO|D_MICONQUESTION|D_MCENTER,
+	&	"Confirmation Required")==D_MIDYES)
+	begin
+		try 
+		begin
+			read(chLicense,tmp_license,keyval(chLicense,license,0),KEYNUM:0)
+			delete(chLicense)
+			lreq = D_LDELITEM
+		end
+		catch (ex)
+		begin
+			unlock chLicense
+			u_msgbox("Failed to delete license!",D_MICONINFO|D_MCENTER,"Oops!")
+		end
+		endtry
+	end
+	
+	return
+	
+endsubroutine
+

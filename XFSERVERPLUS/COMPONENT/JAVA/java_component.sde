@@ -10,7 +10,7 @@ SMC_Directory=D:\Dev\Demos\XFSERVERPLUS\SERVER\XFPL
 Package_Name=xfpldemo
 
 [GLOBAL]
-syn_version=6
+syn_version=7
 Synergy=JAVA
 
 [SMC Interfaces]

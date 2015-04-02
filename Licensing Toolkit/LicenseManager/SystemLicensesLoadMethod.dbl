@@ -1,0 +1,31 @@
+
+subroutine SystemLicensesLoadMethod ,stack
+	a_listid	,n			; List id
+	a_req		,n			; Request flag
+	a_license	,strLicense	; Item data
+	a_inpid		,n			; Input window id
+	a_disable	,n			; (Optional) Disable flag
+	a_index		,n			; Loading index
+	;Method data
+	a_channel	,n			; File channel
+	a_system	,n			; System ID
+	endparams
+
+	.include "WND:tools.def"
+
+proc
+
+	if (a_index==1)
+		find(a_channel,,a_system,KEYNUM:1) [ERR=eof]
+
+	reads(a_channel,a_license,eof,LOCK:Q_NO_LOCK)
+	
+	if (a_license.system==a_system) then 
+		i_display(a_inpid,,a_license)
+	else
+eof,	a_req = D_LEOF
+	
+	xreturn
+
+endsubroutine
+

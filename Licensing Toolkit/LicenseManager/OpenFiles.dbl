@@ -1,0 +1,25 @@
+
+function OpenFiles, boolean
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		ok		,boolean
+		ix		,int
+		errnum	,int
+		chan	,int
+		opts	,string
+		file	,string
+	endrecord
+
+proc
+	ok = true
+	
+	for ix from 1 thru LM_FILE_COUNT
+		if (!(ok = OpenFile(lmFile[ix],lmChannel[ix])))
+			exitloop
+	
+	freturn ok
+	
+endfunction

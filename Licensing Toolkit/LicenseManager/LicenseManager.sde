@@ -1,0 +1,10 @@
+[GLOBAL]
+syn_version=7
+Synergy=DBL
+Subtype=APP
+
+[COMPILE SCRIPTS]
+Library_Name=LicenseManager.ism
+Overwrite=1
+Files=<ALL>,LicenseManager.wsc
+

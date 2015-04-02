@@ -1,0 +1,196 @@
+
+subroutine Products
+	endparams
+
+	.include "LM_ROOT:LicenseManager.def"
+
+	stack record 
+		inpWnd			,int
+		listWnd			,int
+		listId			,int
+		lreq			,int
+		ichn			,int
+		editMode		,boolean
+		lm_product		,strProduct
+		tmp_product		,strProduct
+	endrecord
+	
+proc
+
+	;;Configure the environment
+	e_enter()
+	m_enable(D_COLUMN,editMenu)
+	m_disable(D_COLUMN,keysMenu)
+	m_disable(D_COLUMN,toolsMenu)
+
+	;;Open the producer codes data file
+	u_open(ichn,"i:i","LM_ROOT:product.ism")
+	
+	;;Load the maintenance window
+	i_ldinp(inpWnd,,"PRODUCT",D_NOPLC)
+	u_wndevents(D_ASSIGN,mset_close,inpWnd)
+	
+	;;Create the producer list
+	i_ldinp(listWnd,,"PRODUCT_LIST",D_NOPLC)
+	l_create(listId,listWnd,lm_product,g_utlib,"LC_GENERIC")
+	l_method(listId,D_LWNDEVENT,mset_close)
+	l_sect(listId,"Products",D_TITLE,D_CENTER)
+	l_button(listId,DSB_ADD,"ADD",DSB_TEXT,"Add")
+	l_button(listId,DSB_ADD,"DELETE",DSB_TEXT,"Delete")
+	l_button(listId,DSB_ADD,"CLOSE",DSB_TEXT,"Close")
+	l_buttonset(listId,DSB_BOTTOM,,DSB_END)
+	l_place(listId,3,5)
+	
+	;;Override the default load method
+	l_method(listId,D_LLOAD,"ProductsLoadMethod")
+	
+	;;Pre-load the list
+	l_process(listId,lreq=D_LBOTTOM,lm_product,,ichn)
+	
+	;;Process the list
+	lreq=D_LTOP
+	do
+	begin
+		l_select(listId,lreq,lm_product,,,,,,,,,,,,,ichn)
+		
+		if (g_select) then 
+		begin
+			using g_entnam select
+			("ADD"),
+			begin
+				editMode = false
+				call DoEdit
+			end
+			("DELETE"),
+				call DoDelete
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			editMode = true
+			call DoEdit
+		end		
+	end
+	until exitApp
+	
+	e_exit()
+	xreturn
+	
+DoEdit,
+	
+	if (editMode)
+	begin
+		;;Lock the record
+		try 
+		begin
+			read(chProduct,tmp_product,lm_product.id,KEYNUM:0)
+		end
+		catch (ex)
+		begin
+			u_msgbox("Can't edit that product right now!",
+			&	D_MICONINFO|D_MCENTER,"Oops!")
+			return
+		end
+		endtry
+	end
+	
+	e_enter()
+	i_init(inpWnd,,tmp_product)
+	i_enable(D_SET,inpWnd,"ALL")
+	u_window(D_PLACE,inpWnd,7,10)
+	
+	if (editMode) then
+	begin
+		i_display(inpWnd,,tmp_product=lm_product)
+		i_disable(D_SET,inpWnd,"KEY")
+	end
+	else
+	begin
+		init tmp_product
+		tmp_product.producer = ProducerCode
+	end
+	i_next(inpWnd,,"*FRST*")
+	
+	do
+	begin
+		i_input(inpWnd,,tmp_product,,,,D_NOTERM)
+		
+		if (g_setsts) then 
+		begin
+			using g_entnam select
+			("CLOSE"),
+				exitloop
+			("EXITAPP"),
+				exitApp = true
+			endusing
+		end
+		else
+		begin
+			try 
+			begin
+				;;Update the file
+				if (editMode) then
+					write(chProduct,tmp_product)
+				else
+				begin
+					store(chProduct,tmp_product)
+					;;Add a new blank item to the list
+					l_process(listId,lreq=D_LAPPEND,lm_product)
+				end
+				;;Update the list display
+				i_display(listWnd,,lm_product=tmp_product)
+				;;Add to list
+				lreq = D_LNOP
+				exitloop
+			end
+			catch (ex, @DuplicateException)
+			begin
+				u_msgbox("Product already exists!",D_MICONINFO|D_MCENTER,"Oops!")
+				i_next(inpWnd,,"*FRST*")
+			end
+			endtry
+		end
+	end
+	until exitApp
+	
+	unlock chProduct
+	
+	e_exit()
+	
+	return
+	
+DoDelete,
+	
+	;;Make sure we have an item to delete
+	begin
+		data noItem, int
+		l_status(listId,D_LNULL,noItem)
+		if (noItem)
+			return
+	end
+	
+	if (u_msgbox("Delete selected product?",D_MYESNO|D_MICONQUESTION|D_MCENTER,
+	&	"Confirmation Required")==D_MIDYES)
+	begin
+		try 
+		begin
+			read(chProduct,tmp_product,lm_product.id,KEYNUM:0)
+			delete(chProduct)
+			lreq = D_LDELITEM
+		end
+		catch (ex)
+		begin
+			unlock chProduct
+			u_msgbox("Failed to delete product!",D_MICONINFO|D_MCENTER,"Oops!")
+		end
+		endtry
+	end
+	
+	return
+	
+endsubroutine
+
