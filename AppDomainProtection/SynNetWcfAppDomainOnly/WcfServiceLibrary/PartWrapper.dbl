@@ -26,8 +26,8 @@ namespace WcfServiceLibrary
             endparams
             this()
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            Record = info.GetString("Record")
+            data myType = ^typeof([#]byte)
+            mPart = (a)([#]byte)info.GetValue("Record",myType)
         endmethod
 
         public method GetObjectData, void
@@ -35,8 +35,8 @@ namespace WcfServiceLibrary
             context, StreamingContext 
             endparams
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            info.AddValue("Record",Record)
+            data bytes, [#]byte, (a)mPart
+            info.AddValue("Record",bytes)
         endmethod
         
         public property Record, String

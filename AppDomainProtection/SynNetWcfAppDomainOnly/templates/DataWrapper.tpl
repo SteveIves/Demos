@@ -28,8 +28,8 @@ namespace <NAMESPACE>
             endparams
             this()
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            Record = info.GetString("Record")
+            data myType = ^typeof([#]byte)
+            m<StructureName> = (a)([#]byte)info.GetValue("Record",myType)
         endmethod
 
         public method GetObjectData, void
@@ -37,8 +37,8 @@ namespace <NAMESPACE>
             context, StreamingContext 
             endparams
         proc
-            ;;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
-            info.AddValue("Record",Record)
+            data bytes, [#]byte, (a)m<StructureName>
+            info.AddValue("Record",bytes)
         endmethod
         
         public property Record, String
