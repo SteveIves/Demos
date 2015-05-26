@@ -20,7 +20,7 @@ main
 	endrecord
 	
 proc
-	xcall flags(7004020,1)
+	xcall flags(7004000,1)
 	open(1,i,'tt:')
 	
 	log = 'http.log'
@@ -31,6 +31,10 @@ proc
 	
 	;;Report the base URL of the messages service
 	writes(1,'Server URL is: ' + url)
+	writes(1,'')
+	writes(1,'Try the following:')
+	writes(1,'    Message ID: COLOR with data RED, WHITE or BLUE')
+	writes(1,'    Message ID: EXIT')
 	writes(1,'')
 	
 	;;Configure the HTTP headers that are the same for all messages
@@ -44,9 +48,7 @@ proc
 	begin
 		;;Get a message ID
 		display(1,'Message ID: ')
-		xcall flags(20,0)
 		reads(1,msgid)
-		xcall flags(20,1)
 		
 		if (!msgid) then
 			exitloop
@@ -60,7 +62,7 @@ proc
 		else
 		begin
 			;;Get message data
-			display(1,'     Data : ')
+			display(1,'      Data: ')
 			reads(1,message)
 			;;Escape \ and " characters in the data
 			begin

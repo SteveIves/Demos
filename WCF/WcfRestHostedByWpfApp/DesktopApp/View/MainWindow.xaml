@@ -21,9 +21,14 @@
 
         <Border Background="{Binding BackgroundColor}">
 
-            <TextBlock Foreground="{Binding ForegroundColor}" Margin="50" TextWrapping="Wrap">
-                Supported messages are COLOR:RED, COLOR:WHITE, COLOR:BLUE and EXIT. 
-                Messages received can be viewed in the expandable panel to the right.
+            <TextBlock Foreground="{Binding ForegroundColor}" Margin="50" TextWrapping="Wrap" FontSize="18">
+                In addition to doing normal desktop application "stuff", this application can receive messages 
+                from other applications and can act upon those messages. The application hosts a WCF REST
+                service which is operating on a discreet thread from the main application. When a valid
+                message is received an event is raised in the main applicaiton on the UI thread. The
+                application can then respond to that event in any way required. Try usng the console 
+                application to send messages to this application. You can view the messages by expanding
+                the panel to the right side of this window.
             </TextBlock>
 
         </Border>
