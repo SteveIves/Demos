@@ -1,0 +1,33 @@
+﻿<Window
+    x:Class="DesktopAppCS.View.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:DesktopAppCS.ViewModel"
+    WindowStartupLocation="CenterScreen"
+    Title="{Binding AppTitle}" Height="500" Width="800">
+
+    <DockPanel>
+
+        <Expander DockPanel.Dock="Right" ExpandDirection="Left">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Messages Received" />
+                <ListBox Grid.Row="1" Width="200" ItemsSource="{Binding Messages}" />
+            </Grid>
+        </Expander>
+
+        <Border Background="{Binding BackgroundColor}">
+
+            <TextBlock Foreground="{Binding ForegroundColor}" Margin="50" TextWrapping="Wrap">
+                Supported messages are COLOR:RED, COLOR:WHITE, COLOR:BLUE and EXIT. 
+                Messages received can be viewed in the expandable panel to the right.
+            </TextBlock>
+
+        </Border>
+
+    </DockPanel >
+
+</Window>

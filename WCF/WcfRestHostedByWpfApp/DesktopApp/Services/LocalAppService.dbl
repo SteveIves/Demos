@@ -1,0 +1,128 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Net
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.ServiceModel.Web
+import System.Text
+
+.array 0
+
+namespace DesktopApp.Services
+
+	;; NOTE: To be able to host this service in Visual Studio you must prevent WebFaultException
+	;; from being reported as "unprocessed by user code". To do this use the DEBUG > Exceptions
+	;; Dialog and under Common Language Runtime Exceptions uncheck the "User-unhandled" checkbox
+	;; next to System.ServiceModel.Web.WebFaultException.
+	;; 
+	;; If you can't find the exception listed use the Add... button to add the exception using its
+	;; full path System.ServiceModel.Web.WebFaultException under Common Language Runtime Exceptions.
+	
+	{ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)}
+	public class LocalAppService implements ILocalAppService
+
+		public method MessagesCreate, void
+			id, string 
+			data, string 
+			endparams
+		proc
+			;; Validate the message that was received
+			using id select
+			("COLOR"),
+			begin
+				;; Make sure the data contains one of the supported colors
+				using (data.ToUpper()) select
+				("RED", "WHITE", "BLUE"),
+				begin
+					exit
+				end
+				(),
+				begin
+					throw new WebFaultException(HttpStatusCode.NotFound)
+				end
+				endusing
+				exit
+			end
+			("EXIT"),
+			begin
+				exit
+			end
+			(),
+			begin
+				throw new WebFaultException(HttpStatusCode.NotFound)
+			end
+			endusing
+			if (MessageReceived != ^null)
+				MessageReceived(id.ToUpper(), data)
+		endmethod
+
+		public delegate MessageReceivedHandler, void
+			id, string 
+			data, string 
+			endparams
+		enddelegate
+
+		public event MessageReceived, @MessageReceivedHandler
+
+;		private items, @Dictionary<string, string>, new Dictionary<string, string>() {
+;		&	{"BEER", "Stella Artois"}, 
+;		&	{"COLOR", "Blue"}, 
+;		&	{"FOOD", "Chicken Vindaloo"}}
+;		
+;		public method FavoritesQuery, @Dictionary<string, string>
+;			endparams
+;		proc
+;			mreturn items
+;		endmethod
+;
+;		public method FavoritesCreate, void
+;			id, string 
+;			data, string 
+;			endparams
+;		proc
+;			try
+;			begin
+;				items.Add(id.ToUpper(), data)
+;			end
+;			catch (syn_exception, @Exception)
+;			begin
+;				throw new WebFaultException(HttpStatusCode.Found)
+;			end
+;			endtry
+;		endmethod
+;
+;		public method FavoritesRead, string
+;			id, string 
+;			endparams
+;		proc
+;			data key, string, id.ToUpper()
+;			if (items.ContainsKey(key)) then
+;				mreturn items[key]
+;			else
+;				throw new WebFaultException(HttpStatusCode.NotFound)
+;		endmethod
+;
+;		public method FavoritesUpdate, void
+;			id, string 
+;			data, string 
+;			endparams
+;		proc
+;			if (items[id.ToUpper()] != ^null) then
+;				items[id.ToUpper()] = data
+;			else
+;				throw new WebFaultException(HttpStatusCode.NotFound)
+;		endmethod
+;
+;		public method FavoritesDelete, void
+;			id, string 
+;			endparams
+;		proc
+;			if (!items.Remove(id.ToUpper()))
+;				throw new WebFaultException(HttpStatusCode.NotFound)
+;		endmethod
+
+	endclass
+
+endnamespace
+

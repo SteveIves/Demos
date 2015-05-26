@@ -1,0 +1,154 @@
+import System
+import System.Collections.ObjectModel
+import System.Linq
+import System.Text
+import System.Threading
+import System.Threading.Tasks
+import System.Windows
+import System.Windows.Media
+
+import DesktopApp.Services
+
+.array 0
+
+namespace DesktopApp.ViewModel
+	
+	class MainWindowVM extends ViewModelBase
+		
+		const baseTitle, string, "Desktop App Hosting WCF REST Service"
+		private mAppTitle, string, baseTitle
+		private mMessages, @ObservableCollection<string>, new ObservableCollection<string>()
+		mainWindow, @Window
+		svchost, @LocalServicesHost
+		
+		public method MainWindowVM
+			w, @Window 
+			endparams
+		proc
+			mainWindow = w
+			mainWindow.Closing += mainWindow_Closing
+			startLocalServices()
+		endmethod
+		
+		public property AppTitle, string
+			method get
+			proc
+				mreturn mAppTitle
+			endmethod
+			method set
+			proc
+				mAppTitle = value
+				NotifyPropertyChanged("AppTitle")
+			endmethod
+		endproperty
+		
+		private mBackgroundColor, @Brush, Brushes.White
+		
+		public property BackgroundColor, @Brush
+			method get
+			proc
+				mreturn mBackgroundColor
+			endmethod
+			method set
+			proc
+				mBackgroundColor = value
+				NotifyPropertyChanged("BackgroundColor")
+			endmethod
+		endproperty
+		
+		private mForegroundColor, @Brush, Brushes.Black
+		
+		public property ForegroundColor, @Brush
+			method get
+			proc
+				mreturn mForegroundColor
+			endmethod
+			method set
+			proc
+				mForegroundColor = value
+				NotifyPropertyChanged("ForegroundColor")
+			endmethod
+		endproperty
+
+		public property Messages, @ObservableCollection<string>
+			method get
+			proc
+				mreturn mMessages
+			endmethod
+			method set
+			proc
+				mMessages = value
+				NotifyPropertyChanged("Messages")
+			endmethod
+		endproperty
+		
+		private method startLocalServices, void
+			endparams
+		proc
+			try
+			begin
+				svchost = new LocalServicesHost()
+				svchost.StartServices()
+				svchost.NewMessage += svchost_NewMessage
+				AppTitle = string.Format("{0} [{1}]", baseTitle, svchost.LocalServicesUrl)
+			end
+			catch (ex, @Exception)
+			begin
+				;; Services failed to start
+				MessageBox.Show(ex.Message)
+				svchost = ^null
+			end
+			endtry
+		endmethod
+		
+		method svchost_NewMessage, void
+			id, string 
+			data, string 
+			endparams
+		proc
+			;; Log the messages that we receive
+			Messages.Add(String.Format("{0}:{1}", id, data))
+
+			;; Message IDs all come out of the service in uppercase
+			using id select
+			("COLOR"),
+			begin
+				using (data.ToUpper()) select
+				("RED"),
+				begin
+					BackgroundColor = Brushes.Red
+					ForegroundColor = Brushes.White
+				end
+				("WHITE"),
+				begin
+					BackgroundColor = Brushes.White
+					ForegroundColor = Brushes.Black
+				end
+				("BLUE"),
+				begin
+					BackgroundColor = Brushes.Blue
+					ForegroundColor = Brushes.Yellow
+				end
+				endusing
+			end
+			("EXIT"),
+			begin
+				Application.Current.Shutdown()
+			end
+			(),
+				nop
+			endusing
+		endmethod
+		
+		method mainWindow_Closing, void
+			sender, @object 
+			e, @System.ComponentModel.CancelEventArgs 
+			endparams
+		proc
+			svchost.StopServices()
+		endmethod
+
+	endclass
+
+endnamespace
+

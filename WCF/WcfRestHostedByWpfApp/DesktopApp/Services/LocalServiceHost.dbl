@@ -1,0 +1,179 @@
+import System
+import System.Collections.Generic
+import System.Linq
+import System.Net
+import System.ServiceModel
+import System.ServiceModel.Description
+import System.Text
+import System.Threading
+import System.Threading.Tasks
+import System.Windows.Threading
+
+.array 0
+
+namespace DesktopApp.Services
+
+	;; In order to be able to self-host a WCF service in a .NET application, without
+	;; requiring administrator rights, it is necessary to reserve a portion of the HTTP
+	;; namespace that the service will use. This is done by issuing NETSH commands.
+	;; 
+	;; Add a reservation:
+	;; 
+	;; netsh http add urlacl url=http://+:8088/LocalAppService user=DOMAIN\user
+	;; 
+	;; View reservations:
+	;; 
+	;; netsh http show urlacl url=http://+:8088/LocalAppService/
+	;; 
+	;; Delete a reservation:
+	;; 
+	;; netsh http delete urlacl url=http://+:8088/LocalAppService/
+	;; 
+	;; Note that including the trailing / for the SHOW and DELETE commands is important, even
+	;; if the trailing / was not included on the ADD statement.
+	;; 
+	;; If a reservation is not made then you must start Visual Studio "As Administrator" in
+	;; order to run the application that hosts the service. Failing to do so will result in
+	;; an AddressAccessDeniedException exception (HTTP could not register URL XXXXXX. Your
+	;; process does not have access rights to this namespace) being thrown when you call the
+	;; Open() method of your ServiceHost object.
+	;; 
+	;; More information at https://msdn.microsoft.com/en-us/library/ms733768.aspx
+	
+	public class LocalServicesHost
+		
+		wcfServiceHost, @ServiceHost
+		wcfServiceThread, @Thread
+		uiThreadDispatcher, @Dispatcher
+		
+		public method LocalServicesHost
+			endparams
+		proc
+			LocalServicesUrl = String.Empty
+		endmethod
+		
+		public method StartServices, void
+			endparams
+		proc
+			;;Save the current (UI thread dispatcher) so we can use it later
+			uiThreadDispatcher = Dispatcher.CurrentDispatcher
+
+			;;Determine the URL that our WCF service will listen at
+			LocalServicesUrl = String.Format("http://{0}:8088/LocalAppService/", Dns.GetHostName())
+
+			lambda doStartService()
+			begin
+				;;Create an instance of our WCF service implementation
+				data wcfServiceInstance = new LocalAppService()
+
+				;;Add an event handler for the MessageReceived event
+				wcfServiceInstance.MessageReceived  += LocalAppService_MessageReceived
+
+				;;Create a new service host
+				wcfServiceHost = new ServiceHost(wcfServiceInstance, new Uri(LocalServicesUrl))
+
+				;-----------------------------------------------------------------------------
+
+				;;Add our main endpoint
+				data ep, @ServiceEndpoint, wcfServiceHost.AddServiceEndpoint(^typeof(ILocalAppService), new WebHttpBinding(), "")
+				ep.Behaviors.Add(new WebHttpBehavior() { HelpEnabled = true, AutomaticFormatSelectionEnabled = true })
+			
+				;;Add a MEX endpoint
+				wcfServiceHost.Description.Behaviors.Add(new ServiceMetadataBehavior() { HttpGetEnabled = true })
+				
+				;;Working with ServiceDebugBehavior is a little different because there will already be one present in the configuration by default
+				data sdb, @ServiceDebugBehavior, wcfServiceHost.Description.Behaviors.OfType<ServiceDebugBehavior>().First()
+				sdb.IncludeExceptionDetailInFaults = true
+				sdb.HttpHelpPageEnabled = true
+
+				;The configuration code above is the equivalent of having the following
+				;code in the applications App.config file
+				;
+				;<system.serviceModel>
+				;  <services>
+				;    <service behaviorConfiguration="httpBehaviour" name="DesktopApp.Services.LocalAppService">
+				;      <endpoint address="" behaviorConfiguration="httpEndpointBehavour" binding="webHttpBinding" contract="DesktopApp.Services.ILocalAppService" />
+				;      <endpoint address="mex" binding="mexHttpBinding" contract="IMetadataExchange" />
+				;    </service>
+				;  </services>
+				;  <behaviors>
+				;    <serviceBehaviors>
+				;      <behavior name="httpBehaviour">
+				;        <!--Don't expose WSDL because it's meaningless for REST services-->
+				;        <serviceMetadata httpGetEnabled="false"/>
+				;        <!--Disable the service home page because it is misleading for REST services because svcutil.exe doesn't work-->
+				;        <serviceDebug includeExceptionDetailInFaults="false" httpHelpPageEnabled="false" httpsHelpPageEnabled="false"/>
+				;      </behavior>
+				;    </serviceBehaviors>
+				;    <endpointBehaviors>
+				;      <behavior name="httpEndpointBehavour">
+				;        <webHttp helpEnabled="true" automaticFormatSelectionEnabled="true"/>
+				;      </behavior>
+				;    </endpointBehaviors>
+				;  </behaviors>
+				;</system.serviceModel>
+				;-----------------------------------------------------------------------------
+				
+				;;Start the service
+				wcfServiceHost.Open()
+			end
+
+			;;Create a new thread to execute the self hosting code
+			wcfServiceThread = new Thread(doStartService)
+
+			;;Start the new thread
+			wcfServiceThread.Start()
+
+		endmethod
+		
+		public method StopServices, void
+			endparams
+		proc
+			try
+			begin
+				wcfServiceHost.Close()
+			end
+			catch (syn_exception)
+			begin
+				
+			end
+			finally
+			begin
+				LocalServicesUrl = String.Empty
+				wcfServiceHost = ^null
+			end
+			endtry
+		endmethod
+		
+		method LocalAppService_MessageReceived, void
+			id, string 
+			data, string 
+			endparams
+		proc
+			lambda doMessageReceived()
+			begin
+				raiseevent(NewMessage,id,data)
+			end
+			;; Raise our NewMessage event back on the UI thread
+			uiThreadDispatcher.BeginInvoke((@Action)doMessageReceived)
+		endmethod
+		
+		public delegate MessageHandler, void
+			id, string 
+			data, string 
+			endparams
+		enddelegate
+		
+		public event NewMessage, @MessageHandler
+		
+		public property LocalServicesUrl, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+	endclass
+
+endnamespace
+

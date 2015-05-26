@@ -1,0 +1,70 @@
+import System
+import System.Collections.Generic
+import System.ComponentModel
+import System.Linq
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.ServiceModel.Web
+import System.Text
+
+.array 0
+
+namespace DesktopApp.Services
+	
+	{ServiceContract(Namespace = "demos.synergex.com")}
+	{Description("Service description")}
+	public interface ILocalAppService
+		
+		{OperationContract()}
+		{Description("Post a message to the application.")}
+		{WebInvoke(Method = "POST", UriTemplate = "/messages/{id}")}
+		method MessagesCreate, void
+			id, string 
+			data, string 
+			endparams
+		endmethod
+		
+;		{OperationContract()}
+;		{Description("Query for all items that currently exist.")}
+;		{WebGet(UriTemplate = "/favorites")}
+;		method FavoritesQuery, @Dictionary<string, string>
+;			endparams
+;		endmethod
+;		
+;		{OperationContract()}
+;		{Description("Create something new.")}
+;		{WebInvoke(Method = "POST", UriTemplate = "/favorites/{id}")}
+;		method FavoritesCreate, void
+;			id, string 
+;			data, string 
+;			endparams
+;		endmethod
+;		
+;		{OperationContract()}
+;		{Description("Read something that already exists.")}
+;		{WebGet(UriTemplate = "/favorites/{id}")}
+;		method FavoritesRead, string
+;			id, string 
+;			endparams
+;		endmethod
+;		
+;		{OperationContract()}
+;		{Description("Update something that already exists.")}
+;		{WebInvoke(Method = "PUT", UriTemplate = "/favorites/{id}")}
+;		method FavoritesUpdate, void
+;			id, string 
+;			data, string 
+;			endparams
+;		endmethod
+;		
+;		{OperationContract()}
+;		{Description("Delete something that already exists.")}
+;		{WebInvoke(Method = "DELETE", UriTemplate = "/favorites/{id}")}
+;		method FavoritesDelete, void
+;			id, string 
+;			endparams
+;		endmethod
+		
+	endinterface
+
+endnamespace
