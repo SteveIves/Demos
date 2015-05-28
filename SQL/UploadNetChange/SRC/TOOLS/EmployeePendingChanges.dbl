@@ -66,6 +66,26 @@ proc
         end
     end
 
+    ;;Make sure we can connect to the database
+
+    if (ok)
+    begin
+        try
+        begin
+            dbConnection = new DatabaseConnection(1,DB_CONSTR)
+            dbConnection.Connect()
+            disconnectFromDatabase = true
+            employeeTable = new EmployeeTable(dbConnection)
+        end
+        catch (ex, @ApplicationException)
+        begin
+            writes(tt,"ERROR: Failed to connect to database. Message was: " + ex.Message)
+            disconnectFromDatabase = false
+            ok = false
+        end
+        endtry
+    end
+
     ;;Now we can update the database
 
     if (ok)
@@ -77,21 +97,21 @@ proc
         ;;between the oldest and newest snapshots.
 
         data snapshots, @ArrayList
-		data newestSnapshot, int
+        data newestSnapshot, int
         data employee, strEmployee
         data results, @AlphaEnumerator
         data inserts, int, 0
         data updates, int, 0
         data deletes, int, 0
-        data fred, CTState
+        data ctstate, CTState
 
         ;;Get the collection of snapshots from the file.
 
-		ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)
+        ChangeTracking.GetSnapshots("DAT:employee.ism",snapshots)
 
         ;;Figure out the oldest and newest snapshot numbers
 
-		newestSnapshot = ((@Snapshot)snapshots[snapshots.Count-1]).SnapshotNumber
+        newestSnapshot = ((@Snapshot)snapshots[snapshots.Count-1]).SnapshotNumber
 
         ;;Select the net change since the last snapshot
 
@@ -105,35 +125,40 @@ proc
             data success, boolean
             employee = results.Current
 
-            fred = results.GetCTInfo.GetCTState
+            ctstate = results.GetCTInfo.GetCTState
 
-            if (fred & CTState.Insert) then
+            if (ctstate & CTState.Insert) then
             begin
                 writes(tt,"INSERT: " + employee(1:50))
                 inserts += 1
             end
-            else if (fred & CTState.Update) then
+            else if (ctstate & CTState.Update) then
             begin
                 writes(tt,"UPDATE: " + employee(1:50))
                 updates += 1
             end
-            else if (fred & CTState.Delete) then
+            else if (ctstate & CTState.Delete) then
             begin
                 writes(tt,"DELETE: " + employee(1:50))
                 deletes += 1
             end
             else
             begin
-                writes(tt,"UNKNOWN CTState = " + %string(fred))
+                writes(tt,"UNKNOWN CTState = " + %string(ctstate))
             end
 
         end
 
         ;;Report the totals
 
-		writes(tt,%string(inserts) + " inserts, " + %string(updates) + " updates, " + %string(deletes) + " deletes")
+        writes(tt,%string(inserts) + " inserts, " + %string(updates) + " updates, " + %string(deletes) + " deletes")
 
     end
+
+    ;;Disconnect from the database
+
+    if (disconnectFromDatabase)
+        dbConnection.Disconnect()
 
     ;;All done
 
