@@ -1,3 +1,4 @@
+
 import System
 import System.Collections.Generic
 import System.Linq
@@ -6,6 +7,8 @@ import System.Runtime.Serialization
 import System.ServiceModel
 import System.ServiceModel.Web
 import System.Text
+
+import DesktopApp.Model
 
 .array 0
 
@@ -58,51 +61,35 @@ namespace DesktopApp.Services
 		endmethod
 
 		public delegate MessageReceivedHandler, void
-			id, string 
-			data, string 
+			required in id, string 
+			required in data, string 
 			endparams
 		enddelegate
 
 		public event MessageReceived, @MessageReceivedHandler
 
-;		private items, @Dictionary<string, string>, new Dictionary<string, string>() {
-;		&	{"BEER", "Stella Artois"}, 
-;		&	{"COLOR", "Blue"}, 
-;		&	{"FOOD", "Chicken Vindaloo"}}
-;		
-;		public method FavoritesQuery, @Dictionary<string, string>
-;			endparams
-;		proc
-;			mreturn items
-;		endmethod
-;
-;		public method FavoritesCreate, void
-;			id, string 
-;			data, string 
-;			endparams
-;		proc
-;			try
-;			begin
-;				items.Add(id.ToUpper(), data)
-;			end
-;			catch (syn_exception, @Exception)
-;			begin
-;				throw new WebFaultException(HttpStatusCode.Found)
-;			end
-;			endtry
-;		endmethod
-;
-;		public method FavoritesRead, string
-;			id, string 
-;			endparams
-;		proc
-;			data key, string, id.ToUpper()
-;			if (items.ContainsKey(key)) then
-;				mreturn items[key]
-;			else
-;				throw new WebFaultException(HttpStatusCode.NotFound)
-;		endmethod
-;
+		public method PeopleQuery, @List<Person>
+			endparams
+		proc
+			mreturn PeopleLogic.GetAllPeople()
+		endmethod
+
+		public method PersonCreate, boolean
+			required inout aPerson, @Person 
+			endparams
+		proc
+			mreturn PeopleLogic.CreatePerson(aPerson)
+		endmethod
+
+		public method PersonRead, boolean
+			required in aID, String
+			required out aPerson, @Person
+			endparams
+		proc
+			data intID, int, Int32.Parse(aID)
+			mreturn PeopleLogic.ReadPerson(intID,aPerson)
+		endmethod
+
 ;		public method FavoritesUpdate, void
 ;			id, string 
 ;			data, string 

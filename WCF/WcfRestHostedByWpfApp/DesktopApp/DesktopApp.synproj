@@ -74,6 +74,8 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Model\PeopleLogic.dbl" />
+    <Compile Include="Model\Person.dbl" />
     <Compile Include="Services\ILocalAppService.dbl" />
     <Compile Include="Services\LocalAppService.dbl" />
     <Compile Include="Services\LocalServiceHost.dbl" />
@@ -116,6 +118,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Model" />
     <Folder Include="ViewModel" />
     <Folder Include="View" />
     <Folder Include="Services" />
