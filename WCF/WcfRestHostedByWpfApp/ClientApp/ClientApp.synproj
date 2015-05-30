@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.dbl" />
     <Compile Include="Program.dbl" />
+    <Compile Include="SEND_COMMAND.DBL" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

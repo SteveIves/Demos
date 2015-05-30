@@ -1,114 +1,51 @@
-
 main
 	
 	.include 'DBLDIR:synxml.def'
-.define XML_BOOL_TRUE '<boolean xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</boolean>'
 	
 	record
 		msgid		,a10
 		message		,a60
-		errnum  	,int
-		timeout		,int
-		errtxt		,string
-		url     	,string			;;URL for operation
-		msgurl		,string
-		request		,string			;;String sent
-		response	,string			;;String received
-		log			,string
-		hdr     	,[#]string		;;Headers sent
-		rhdr    	,[#]string		;;Headers received
+		ok  		,d1
+		errmsg		,a80
 	endrecord
 	
 proc
 	xcall flags(7004000,1)
 	open(1,i,'tt:')
 	
-	log = 'http.log'
-	;log = ''
-	
-	url = 'http://SIVESW81:8088/LocalAppService/messages'
-	timeout = 5
-	
-	;;Report the base URL of the messages service
-	writes(1,'Server URL is: ' + url)
-	writes(1,'')
-	writes(1,'Try the following:')
-	writes(1,'    Message ID: COLOR with data RED, WHITE or BLUE')
-	writes(1,'    Message ID: EXIT')
-	writes(1,'')
-	
-	;;Configure the HTTP headers that are the same for all messages
-	hdr = new string[4]
-	hdr[1] = 'Host: SIVESW81:8088'
-	hdr[2] = 'Content-Type: application/json'
-	hdr[4] = 'Accept: application/json'
-	
 	;;Process messages
 	repeat
 	begin
 		;;Get a message ID
+		writes(1,'')
 		display(1,'Message ID: ')
 		reads(1,msgid)
 		
-		if (!msgid) then
+		if (!msgid)
 			exitloop
-		else
-			msgurl = url + "/" + msgid
 		
 		clear message
 		
 		if (msgid=="EXIT") then 
-			request = '""'
+			clear message
 		else
 		begin
 			;;Get message data
 			display(1,'      Data: ')
 			reads(1,message)
-			;;Escape \ and " characters in the data
-			begin
-				data tmpmsg, string, %atrim(message)
-				tmpmsg = tmpmsg.Replace('\','\\').Replace('"','\"')
-				request = '"' + tmpmsg + '"'
-			end
 		end
 		
-		;;Set the Content-length header
-		hdr[3] = 'Content-Length: ' + %string(request.Length)
+		xcall send_command("SIVESW81",msgid,message,ok,errmsg)
 		
-		;;Send the HTTP POST request
-		errnum = http_post(msgurl,timeout,request,response,errtxt,hdr,rhdr,log,,,,,HTTP_RELURI,'1.1')
-		
-		;;Process the return value from the service
-		using errnum select
-		(0),
+		if (ok) then 
 		begin
-			writes(1,'  Response: Message sent')
-			if (msgid=="EXIT")
+			writes(1,'  Response: OK')
+			if (msgid=="EXIT") 
 				exitloop
+				
 		end
-		(10054),
-		begin
-			;;Connection reset. Depending on timing we sometimes get this response
-			;;;when we send an EXIT message!
-			if (msgid=="EXIT")
-				exitloop
-			writes(1,'  Response: ERROR 10054')
-			writes(1,'            '+errtxt)
-		end
-		(10061),
-		begin
-			writes(1,'  Response: ERROR 10061')
-			writes(1,'            '+errtxt)
-			writes(1,'            Is the server running?')
-		end
-		(),
-		begin
-			writes(1,'  Response: ERROR '+%string(errnum))
-			writes(1,'            '+errtxt)
-		end
-		endusing
-		
-		writes(1,'')
+		else
+			writes(1,'  Response: ' + %atrim(errmsg))
 	end
 	
 	sleep 0.5
@@ -117,4 +54,3 @@ proc
 	stop
 	
 endmain
-
