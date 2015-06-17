@@ -1070,11 +1070,14 @@ namespace SqlUploadDemo
             recordSpec.fields[7].fieldDecimals = 0
             recordSpec.fields[8].fieldType     = "D" ;;GoodsValue
             recordSpec.fields[8].fieldSize     = 8
-            recordSpec.fields[8].fieldDecimals = 2            recordSpec.fields[9].fieldType     = "D" ;;TaxValue
+            recordSpec.fields[8].fieldDecimals = 2
+	    recordSpec.fields[9].fieldType     = "D" ;;TaxValue
             recordSpec.fields[9].fieldSize     = 8
-            recordSpec.fields[9].fieldDecimals = 2            recordSpec.fields[10].fieldType     = "D" ;;ShippingValue
+            recordSpec.fields[9].fieldDecimals = 2
+	    recordSpec.fields[10].fieldType     = "D" ;;ShippingValue
             recordSpec.fields[10].fieldSize     = 8
-            recordSpec.fields[10].fieldDecimals = 2            recordSpec.fields[11].fieldType     = "D" ;;GiftWrap
+            recordSpec.fields[10].fieldDecimals = 2
+	    recordSpec.fields[11].fieldType     = "D" ;;GiftWrap
             recordSpec.fields[11].fieldSize     = 1
             recordSpec.fields[11].fieldDecimals = 0
             recordSpec.fields[12].fieldType     = "A" ;;GiftMessage

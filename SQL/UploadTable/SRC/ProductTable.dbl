@@ -1121,14 +1121,17 @@ namespace SqlUploadDemo
             recordSpec.fields[4].fieldDecimals = 0
             recordSpec.fields[5].fieldType     = "D" ;;SellingPrice
             recordSpec.fields[5].fieldSize     = 6
-            recordSpec.fields[5].fieldDecimals = 2            recordSpec.fields[6].fieldType     = "A" ;;LastSale
+            recordSpec.fields[5].fieldDecimals = 2
+	    recordSpec.fields[6].fieldType     = "A" ;;LastSale
             recordSpec.fields[6].fieldSize     = 8
             recordSpec.fields[6].fieldDecimals = 0
             recordSpec.fields[7].fieldType     = "D" ;;LastCostPrice
             recordSpec.fields[7].fieldSize     = 10
-            recordSpec.fields[7].fieldDecimals = 4            recordSpec.fields[8].fieldType     = "D" ;;AverageCostPrice
+            recordSpec.fields[7].fieldDecimals = 4
+	    recordSpec.fields[8].fieldType     = "D" ;;AverageCostPrice
             recordSpec.fields[8].fieldSize     = 10
-            recordSpec.fields[8].fieldDecimals = 4            recordSpec.fields[9].fieldType     = "D" ;;QtyInStock
+            recordSpec.fields[8].fieldDecimals = 4
+	    recordSpec.fields[9].fieldType     = "D" ;;QtyInStock
             recordSpec.fields[9].fieldSize     = 6
             recordSpec.fields[9].fieldDecimals = 0
             recordSpec.fields[10].fieldType     = "D" ;;QtyAllocated

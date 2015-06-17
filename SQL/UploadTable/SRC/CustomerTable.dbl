@@ -1152,9 +1152,11 @@ namespace SqlUploadDemo
             recordSpec.fields[16].fieldDecimals = 0
             recordSpec.fields[17].fieldType     = "D" ;;Limit
             recordSpec.fields[17].fieldSize     = 10
-            recordSpec.fields[17].fieldDecimals = 2            recordSpec.fields[18].fieldType     = "D" ;;Balance
+            recordSpec.fields[17].fieldDecimals = 2
+	    recordSpec.fields[18].fieldType     = "D" ;;Balance
             recordSpec.fields[18].fieldSize     = 10
-            recordSpec.fields[18].fieldDecimals = 2            recordSpec.fields[19].fieldType     = "A" ;;CardNumber
+            recordSpec.fields[18].fieldDecimals = 2
+	    recordSpec.fields[19].fieldType     = "A" ;;CardNumber
             recordSpec.fields[19].fieldSize     = 16
             recordSpec.fields[19].fieldDecimals = 0
             recordSpec.fields[20].fieldType     = "D" ;;CardExpiry
