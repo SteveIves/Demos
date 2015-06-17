@@ -39,12 +39,12 @@ namespace <NAMESPACE>
         {OperationContract}
         method Update<StructureName>, @Task<<StructureName>UpdateResponse>
             required in a<StructureName>, @<StructureName>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
         endmethod
 
         {OperationContract}
         method Delete<StructureName>, @Task<MethodStatus>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
         endmethod
 
         <PRIMARY_KEY>
@@ -76,7 +76,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
         {DataMember}
-        public property Grfa, String
+        public property Grfa, [#]byte
             method get
             endmethod
             method set
@@ -121,7 +121,7 @@ namespace <NAMESPACE>
             endmethod
         endproperty
         {DataMember}
-        public property Grfa, String
+        public property Grfa, [#]byte
             method get
             endmethod
             method set

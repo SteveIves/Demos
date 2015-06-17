@@ -19,18 +19,13 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method CreateSupplier, MethodStatus
             required in aSupplier, @Supplier
-            endparams
-            stack record
-                ch, int
-                rec, strSupplier
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
             try
             begin
-                open(ch=0,u:i,"DAT:suppliers.ism")
+                open(ch,u:i,"DAT:suppliers.ism")
                 store(ch,aSupplier.Record)
             end
             catch (e, @DuplicateException)
@@ -57,30 +52,26 @@ namespace PartsSystem
         ;;; </summary>
         ;;; <param name="aSupplierId">Passed supplier id (string)</param>
         ;;; <param name="aSupplier">Returned Supplier object (@Supplier)</param>
-        ;;; <param name="aGrfa">Returned GRFA (string)</param>
+        ;;; <param name="aGrfa">Returned GRFA data (byte array)</param>
         ;;; <returns></returns>
         public method ReadSupplier, MethodStatus
             required in  aSupplierId, string
             required out aSupplier, @Supplier
-            required out aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strSupplier
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required out aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
-            init rec
-            rec.supplier_id = aSupplierId
+			data supplierRec, strSupplier
+            init supplierRec
+            supplierRec.supplier_id = aSupplierId
 
             try
             begin
+                data grfa, a10
                 open(ch=0,I:I,"DAT:suppliers.ism")
-                read(ch,rec,%keyval(ch,rec,0),GETRFA:grfa)
-                aSupplier = new Supplier((String)rec)
+                read(ch,supplierRec,%keyval(ch,supplierRec,0),GETRFA:grfa)
+                aSupplier = new Supplier((String)supplierRec)
                 aGrfa = grfa
             end
             catch (e, @EndOfFileException)
@@ -113,18 +104,17 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method ReadAllSuppliers, MethodStatus
             required out aSuppliers, @List<Supplier>
-            endparams
         proc
 
-            data status, MethodStatus, MethodStatus.Success
+            data status = MethodStatus.Success
 
             aSuppliers = new List<Supplier>()
 
             try
             begin
-                data rec, strSupplier
-                foreach rec in new Select(new From("DAT:suppliers.ism",rec))
-                    aSuppliers.Add(new Supplier((String)rec))
+                data supplierRec, strSupplier
+                foreach supplierRec in new Select(new From("DAT:suppliers.ism",supplierRec))
+                    aSuppliers.Add(new Supplier((String)supplierRec))
             end
             catch (e, @Exception)
             begin
@@ -144,32 +134,28 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method UpdateSupplier, MethodStatus
             required inout aSupplier, @Supplier
-            required inout aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strSupplier
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required inout aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+            data supplierrec, strSupplier
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"DAT:suppliers.ism")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa,GETRFA:grfa)
-                write(ch,aSupplier.Record)
+                open(ch,u:i,"DAT:suppliers.ism")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,supplierrec,RFA:grfa,GETRFA:grfa)
+                write(ch,aSupplier.Record,,GETRFA:grfa)
+				aGrfa = grfa
             end
             catch (ex, @RecordNotSameException)
             begin
                 ;;Failed to lock the original record, it must have been changed
                 ;;by another process since this user obtained it. We'll return
                 ;;the new record and it's GRFA to the user
-                aSupplier = new Supplier((String)rec)
+                aSupplier = new Supplier((String)supplierrec)
                 aGrfa = grfa
                 status = MethodStatus.Fail
             end
@@ -198,24 +184,19 @@ namespace PartsSystem
         ;;; <param name="aGrfa">Passed GRFA (string)</param>
         ;;; <returns></returns>
         public method DeleteSupplier, MethodStatus
-            required in aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strSupplier
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required in aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+			data supplierrec, strSupplier
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"DAT:suppliers.ism")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa)
+                open(ch,u:i,"DAT:suppliers.ism")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,supplierrec,RFA:grfa)
                 delete(ch)
             end
             catch (ex, @RecordNotSameException)
@@ -245,21 +226,18 @@ namespace PartsSystem
         public method SupplierExists, MethodStatus
             required in  aSupplierId, string
             endparams
-            stack record
-                ch, int
-                rec, strSupplier
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+            data ch = 0
+            data supplierrec, strSupplier
 
-            init rec
-            rec.supplier_id = aSupplierId
+            init supplierrec
+            supplierrec.supplier_id = aSupplierId
 
             try
             begin
-                open(ch=0,I:I,"DAT:suppliers.ism")
-                find(ch,,%keyval(ch,rec,0))
+                open(ch,I:I,"DAT:suppliers.ism")
+                find(ch,,%keyval(ch,supplierrec,0))
             end
             catch (e, @EndOfFileException)
             begin

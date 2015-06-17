@@ -78,6 +78,7 @@ namespace TestClient
 			proc
 				mSelectedPart = value
 				NotifyPropertyChanged("SelectedPart")
+				getSelectedPart()
 			endmethod
 		endproperty
 
@@ -139,6 +140,44 @@ namespace TestClient
 			if (Parts.Count>0)
 				SelectedPart = Parts[0]
 
+		endmethod
+
+		private method getSelectedPart, void
+			endparams
+
+		proc
+
+			if (SelectedPart == ^null)
+				mreturn
+
+			;Not really required, just for testing.
+
+;			data newPart, @Part
+;			data client = new PartsServiceClient()
+;			
+;			try
+;			begin
+;				ErrorMessage = ""
+;				data response = client.ReadPart(mSelectedPart.Id)
+;				if (response.Status == MethodStatus.Success) then
+;				begin
+;					nop
+;					;;Test the update method
+;					data response2 = client.UpdatePart(response.Result,response.Grfa)
+;					if (response2.Status != MethodStatus.Success)
+;						ErrorMessage = "Failed to update selected part!"
+;				end
+;				else
+;					ErrorMessage = "Failed to read selected part!"
+;				client.Close()
+;			end
+;			catch (ex, @Exception)
+;			begin
+;				client.Abort()
+;				ErrorMessage = ex.Message
+;			end
+;			endtry
+			
 		endmethod
 
 .endregion

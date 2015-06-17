@@ -20,7 +20,7 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data api = new PartsSystemAPI()
                 completionSource.SetResult(api.CreateSupplier(aSupplier))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
@@ -34,10 +34,20 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<SupplierReadResponse>()
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data api = new PartsSystemAPI()
                 data tmpSupplier, @Supplier
-                data tmpGrfa, String
-                completionSource.SetResult(new SupplierReadResponse() { Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa), Result = tmpSupplier, Grfa = tmpGrfa } )
+                data tmpGrfa, [#]byte
+				;------
+				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+				;completionSource.SetResult(new SupplierReadResponse() { Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa), Result = tmpSupplier, Grfa = tmpGrfa } )
+				;------
+				;WORKAROUND:
+				data r = new SupplierReadResponse()
+				r.Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa)
+				r.Result = tmpSupplier
+				r.Grfa = tmpGrfa
+				completionSource.SetResult(r)
+				;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -49,7 +59,7 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<SupplierReadAllResponse>()
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data api = new PartsSystemAPI()
                 data tmpSuppliers, @List<Supplier>
                 completionSource.SetResult(new SupplierReadAllResponse() {Status = api.ReadAllSuppliers(tmpSuppliers), Result = tmpSuppliers} )
             end
@@ -59,29 +69,39 @@ namespace WcfServiceLibrary
 
         public method UpdateSupplier, @Task<SupplierUpdateResponse>
             required in aSupplier, @Supplier
-            required in aGrfa, String
+            required in aGrfa, [#]byte
             endparams
         proc
             data completionSource = new TaskCompletionSource<SupplierUpdateResponse>()
             data tmpSupplier, @Supplier, aSupplier
-            data tmpGrfa, String, aGrfa
+            data tmpGrfa, [#]byte, aGrfa
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
-                completionSource.SetResult(new SupplierUpdateResponse() {Status = api.UpdateSupplier(tmpSupplier,tmpGrfa), Result = tmpSupplier, Grfa = tmpGrfa} )
+                data api = new PartsSystemAPI()
+				;------
+				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+                ;completionSource.SetResult(new SupplierUpdateResponse() {Status = api.UpdateSupplier(tmpSupplier,tmpGrfa), Result = tmpSupplier, Grfa = tmpGrfa} )
+				;------
+				;WORKAROUND:
+				data r = new SupplierUpdateResponse()
+				r.Status = api.UpdateSupplier(tmpSupplier,tmpGrfa)
+				r.Result = tmpSupplier
+				r.Grfa = tmpGrfa
+				completionSource.SetResult(r)
+				;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
         public method DeleteSupplier, @Task<MethodStatus>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
             endparams
         proc
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data api = new PartsSystemAPI()
                 completionSource.SetResult(api.DeleteSupplier(aGrfa))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
@@ -95,7 +115,7 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @PartsSystemAPI, new PartsSystemAPI()
+                data api = new PartsSystemAPI()
                 completionSource.SetResult(api.SupplierExists(aSupplierId))
             end
             this.ServiceDispatcher.Dispatch(curryParams)

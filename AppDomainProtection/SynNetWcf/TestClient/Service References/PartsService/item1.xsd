@@ -60,7 +60,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aPart" nillable="true" type="q6:Part" />
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -74,7 +74,7 @@
   <xs:element name="DeletePart">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -143,7 +143,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aProductGroup" nillable="true" type="q14:ProductGroup" />
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -157,7 +157,7 @@
   <xs:element name="DeleteProductGroup">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -226,7 +226,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="aSupplier" nillable="true" type="q22:Supplier" />
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -240,7 +240,7 @@
   <xs:element name="DeleteSupplier">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="aGrfa" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

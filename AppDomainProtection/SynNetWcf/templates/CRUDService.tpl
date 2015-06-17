@@ -26,7 +26,7 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
+                data api = new <API_CLASS>()
                 completionSource.SetResult(api.Create<StructureName>(a<StructureName>))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
@@ -43,10 +43,20 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<StructureName>ReadResponse>()
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
+                data api = new <API_CLASS>()
                 data tmp<StructureName>, @<StructureName>
-                data tmpGrfa, String
-                completionSource.SetResult(new <StructureName>ReadResponse() { Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa } )
+                data tmpGrfa, [#]byte
+				;------
+				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+				;completionSource.SetResult(new <StructureName>ReadResponse() { Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa } )
+				;------
+				;WORKAROUND:
+				data r = new <StructureName>ReadResponse()
+				r.Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa)
+				r.Result = tmp<StructureName>
+				r.Grfa = tmpGrfa
+				completionSource.SetResult(r)
+				;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -59,7 +69,7 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<StructureName>ReadAllResponse>()
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
+                data api = new <API_CLASS>()
                 data tmp<StructureName>s, @List<<StructureName>>
                 completionSource.SetResult(new <StructureName>ReadAllResponse() {Status = api.ReadAll<StructureName>s(tmp<StructureName>s), Result = tmp<StructureName>s} )
             end
@@ -69,29 +79,39 @@ namespace <NAMESPACE>
 
         public method Update<StructureName>, @Task<<StructureName>UpdateResponse>
             required in a<StructureName>, @<StructureName>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
             endparams
         proc
             data completionSource = new TaskCompletionSource<<StructureName>UpdateResponse>()
             data tmp<StructureName>, @<StructureName>, a<StructureName>
-            data tmpGrfa, String, aGrfa
+            data tmpGrfa, [#]byte, aGrfa
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
-                completionSource.SetResult(new <StructureName>UpdateResponse() {Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa} )
+                data api = new <API_CLASS>()
+				;------
+				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+                ;completionSource.SetResult(new <StructureName>UpdateResponse() {Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa} )
+				;------
+				;WORKAROUND:
+				data r = new <StructureName>UpdateResponse()
+				r.Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa)
+				r.Result = tmp<StructureName>
+				r.Grfa = tmpGrfa
+				completionSource.SetResult(r)
+				;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
         public method Delete<StructureName>, @Task<MethodStatus>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
             endparams
         proc
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
+                data api = new <API_CLASS>()
                 completionSource.SetResult(api.Delete<StructureName>(aGrfa))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
@@ -108,7 +128,7 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<MethodStatus>()
             lambda curryParams()
             begin
-                data api, @<API_CLASS>, new <API_CLASS>()
+                data api = new <API_CLASS>()
                 completionSource.SetResult(api.<StructureName>Exists(<SEGMENT_LOOP>a<SegmentName><,></SEGMENT_LOOP>))
             end
             this.ServiceDispatcher.Dispatch(curryParams)

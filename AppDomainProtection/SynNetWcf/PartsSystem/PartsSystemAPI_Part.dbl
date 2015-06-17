@@ -19,18 +19,13 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method CreatePart, MethodStatus
             required in aPart, @Part
-            endparams
-            stack record
-                ch, int
-                rec, strPart
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
             try
             begin
-                open(ch=0,u:i,"DAT:parts.ism")
+                open(ch,u:i,"DAT:parts.ism")
                 store(ch,aPart.Record)
             end
             catch (e, @DuplicateException)
@@ -57,30 +52,26 @@ namespace PartsSystem
         ;;; </summary>
         ;;; <param name="aId">Passed part ID (string)</param>
         ;;; <param name="aPart">Returned Part object (@Part)</param>
-        ;;; <param name="aGrfa">Returned GRFA (string)</param>
+        ;;; <param name="aGrfa">Returned GRFA data (byte array)</param>
         ;;; <returns></returns>
         public method ReadPart, MethodStatus
             required in  aId, string
             required out aPart, @Part
-            required out aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strPart
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required out aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
-            init rec
-            rec.id = aId
+			data partRec, strPart
+            init partRec
+            partRec.id = aId
 
             try
             begin
+                data grfa, a10
                 open(ch=0,I:I,"DAT:parts.ism")
-                read(ch,rec,%keyval(ch,rec,0),GETRFA:grfa)
-                aPart = new Part((String)rec)
+                read(ch,partRec,%keyval(ch,partRec,0),GETRFA:grfa)
+                aPart = new Part((String)partRec)
                 aGrfa = grfa
             end
             catch (e, @EndOfFileException)
@@ -113,18 +104,17 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method ReadAllParts, MethodStatus
             required out aParts, @List<Part>
-            endparams
         proc
 
-            data status, MethodStatus, MethodStatus.Success
+            data status = MethodStatus.Success
 
             aParts = new List<Part>()
 
             try
             begin
-                data rec, strPart
-                foreach rec in new Select(new From("DAT:parts.ism",rec))
-                    aParts.Add(new Part((String)rec))
+                data partRec, strPart
+                foreach partRec in new Select(new From("DAT:parts.ism",partRec))
+                    aParts.Add(new Part((String)partRec))
             end
             catch (e, @Exception)
             begin
@@ -144,32 +134,28 @@ namespace PartsSystem
         ;;; <returns></returns>
         public method UpdatePart, MethodStatus
             required inout aPart, @Part
-            required inout aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strPart
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required inout aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+            data partrec, strPart
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"DAT:parts.ism")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa,GETRFA:grfa)
-                write(ch,aPart.Record)
+                open(ch,u:i,"DAT:parts.ism")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,partrec,RFA:grfa,GETRFA:grfa)
+                write(ch,aPart.Record,,GETRFA:grfa)
+				aGrfa = grfa
             end
             catch (ex, @RecordNotSameException)
             begin
                 ;;Failed to lock the original record, it must have been changed
                 ;;by another process since this user obtained it. We'll return
                 ;;the new record and it's GRFA to the user
-                aPart = new Part((String)rec)
+                aPart = new Part((String)partrec)
                 aGrfa = grfa
                 status = MethodStatus.Fail
             end
@@ -198,24 +184,19 @@ namespace PartsSystem
         ;;; <param name="aGrfa">Passed GRFA (string)</param>
         ;;; <returns></returns>
         public method DeletePart, MethodStatus
-            required in aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, strPart
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required in aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+			data partrec, strPart
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"DAT:parts.ism")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa)
+                open(ch,u:i,"DAT:parts.ism")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,partrec,RFA:grfa)
                 delete(ch)
             end
             catch (ex, @RecordNotSameException)
@@ -245,21 +226,18 @@ namespace PartsSystem
         public method PartExists, MethodStatus
             required in  aId, string
             endparams
-            stack record
-                ch, int
-                rec, strPart
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+            data ch = 0
+            data partrec, strPart
 
-            init rec
-            rec.id = aId
+            init partrec
+            partrec.id = aId
 
             try
             begin
-                open(ch=0,I:I,"DAT:parts.ism")
-                find(ch,,%keyval(ch,rec,0))
+                open(ch,I:I,"DAT:parts.ism")
+                find(ch,,%keyval(ch,partrec,0))
             end
             catch (e, @EndOfFileException)
             begin

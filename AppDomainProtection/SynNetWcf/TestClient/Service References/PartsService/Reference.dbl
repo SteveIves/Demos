@@ -304,10 +304,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -465,10 +465,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -626,10 +626,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -787,10 +787,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -1062,10 +1062,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -1223,10 +1223,10 @@ namespace TestClient.PartsService
 		endmethod
 
 		{System.Runtime.Serialization.OptionalFieldAttribute()}
-		private GrfaField, string
+		private GrfaField, [#]byte
 
 		{System.Runtime.Serialization.DataMemberAttribute()}
-		public property Grfa, string
+		public property Grfa, [#]byte
 			method get
 			proc
 				mreturn this.GrfaField
@@ -1333,26 +1333,26 @@ namespace TestClient.PartsService
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdatePart", ReplyAction = "http://tempuri.org/IPartsService/UpdatePartResponse")}
 		method UpdatePart, @TestClient.PartsService.PartUpdateResponse
 			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdatePart", ReplyAction = "http://tempuri.org/IPartsService/UpdatePartResponse")}
 		method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartUpdateResponse>
 			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeletePart", ReplyAction = "http://tempuri.org/IPartsService/DeletePartResponse")}
 		method DeletePart, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeletePart", ReplyAction = "http://tempuri.org/IPartsService/DeletePartResponse")}
 		method DeletePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
@@ -1405,26 +1405,26 @@ namespace TestClient.PartsService
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/UpdateProductGroupResponse")}
 		method UpdateProductGroup, @TestClient.PartsService.ProductGroupUpdateResponse
 			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/UpdateProductGroupResponse")}
 		method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupUpdateResponse>
 			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/IPartsService/DeleteProductGroupResponse")}
 		method DeleteProductGroup, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/IPartsService/DeleteProductGroupResponse")}
 		method DeleteProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
@@ -1477,26 +1477,26 @@ namespace TestClient.PartsService
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/IPartsService/UpdateSupplierResponse")}
 		method UpdateSupplier, @TestClient.PartsService.SupplierUpdateResponse
 			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/IPartsService/UpdateSupplierResponse")}
 		method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierUpdateResponse>
 			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/IPartsService/DeleteSupplierResponse")}
 		method DeleteSupplier, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
 		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/IPartsService/DeleteSupplierResponse")}
 		method DeleteSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		endmethod
 
@@ -1618,7 +1618,7 @@ namespace TestClient.PartsService
 
 		public method UpdatePart, @TestClient.PartsService.PartUpdateResponse
 			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdatePart(aPart, aGrfa)
@@ -1626,21 +1626,21 @@ namespace TestClient.PartsService
 
 		public method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartUpdateResponse>
 			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdatePartAsync(aPart, aGrfa)
 		endmethod
 
 		public method DeletePart, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeletePart(aGrfa)
 		endmethod
 
 		public method DeletePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeletePartAsync(aGrfa)
@@ -1702,7 +1702,7 @@ namespace TestClient.PartsService
 
 		public method UpdateProductGroup, @TestClient.PartsService.ProductGroupUpdateResponse
 			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdateProductGroup(aProductGroup, aGrfa)
@@ -1710,21 +1710,21 @@ namespace TestClient.PartsService
 
 		public method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupUpdateResponse>
 			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdateProductGroupAsync(aProductGroup, aGrfa)
 		endmethod
 
 		public method DeleteProductGroup, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeleteProductGroup(aGrfa)
 		endmethod
 
 		public method DeleteProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeleteProductGroupAsync(aGrfa)
@@ -1786,7 +1786,7 @@ namespace TestClient.PartsService
 
 		public method UpdateSupplier, @TestClient.PartsService.SupplierUpdateResponse
 			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdateSupplier(aSupplier, aGrfa)
@@ -1794,21 +1794,21 @@ namespace TestClient.PartsService
 
 		public method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierUpdateResponse>
 			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.UpdateSupplierAsync(aSupplier, aGrfa)
 		endmethod
 
 		public method DeleteSupplier, TestClient.PartsService.MethodStatus
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeleteSupplier(aGrfa)
 		endmethod
 
 		public method DeleteSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
-			aGrfa, string 
+			aGrfa, [#]byte 
 			endparams
 		proc
 			mreturn parent.Channel.DeleteSupplierAsync(aGrfa)

@@ -10,7 +10,7 @@
   <xs:element name="ReadSupplierPartsResponse" nillable="true" type="tns:ReadSupplierPartsResponse" />
   <xs:complexType name="PartReadResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q3:Part" />
       <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q4:MethodStatus" />
     </xs:sequence>
@@ -25,7 +25,7 @@
   <xs:element name="PartReadAllResponse" nillable="true" type="tns:PartReadAllResponse" />
   <xs:complexType name="PartUpdateResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q7:Part" />
       <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q8:MethodStatus" />
     </xs:sequence>
@@ -33,7 +33,7 @@
   <xs:element name="PartUpdateResponse" nillable="true" type="tns:PartUpdateResponse" />
   <xs:complexType name="ProductGroupReadResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q9:ProductGroup" />
       <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q10:MethodStatus" />
     </xs:sequence>
@@ -48,7 +48,7 @@
   <xs:element name="ProductGroupReadAllResponse" nillable="true" type="tns:ProductGroupReadAllResponse" />
   <xs:complexType name="ProductGroupUpdateResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q13:ProductGroup" />
       <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q14:MethodStatus" />
     </xs:sequence>
@@ -56,7 +56,7 @@
   <xs:element name="ProductGroupUpdateResponse" nillable="true" type="tns:ProductGroupUpdateResponse" />
   <xs:complexType name="SupplierReadResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q15:Supplier" />
       <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q16:MethodStatus" />
     </xs:sequence>
@@ -71,7 +71,7 @@
   <xs:element name="SupplierReadAllResponse" nillable="true" type="tns:SupplierReadAllResponse" />
   <xs:complexType name="SupplierUpdateResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Grfa" nillable="true" type="xs:base64Binary" />
       <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Result" nillable="true" type="q19:Supplier" />
       <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/PartsSystem" minOccurs="0" name="Status" type="q20:MethodStatus" />
     </xs:sequence>

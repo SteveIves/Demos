@@ -31,12 +31,12 @@ namespace WcfServiceLibrary
         {OperationContract}
         method UpdateSupplier, @Task<SupplierUpdateResponse>
             required in aSupplier, @Supplier
-            required in aGrfa, String
+            required in aGrfa, [#]byte
         endmethod
 
         {OperationContract}
         method DeleteSupplier, @Task<MethodStatus>
-            required in aGrfa, String
+            required in aGrfa, [#]byte
         endmethod
 
         {OperationContract}
@@ -64,7 +64,7 @@ namespace WcfServiceLibrary
             endmethod
         endproperty
         {DataMember}
-        public property Grfa, String
+        public property Grfa, [#]byte
             method get
             endmethod
             method set
@@ -109,7 +109,7 @@ namespace WcfServiceLibrary
             endmethod
         endproperty
         {DataMember}
-        public property Grfa, String
+        public property Grfa, [#]byte
             method get
             endmethod
             method set

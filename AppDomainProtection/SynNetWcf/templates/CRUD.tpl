@@ -23,18 +23,13 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method Create<StructureName>, MethodStatus
             required in a<StructureName>, @<StructureName>
-            endparams
-            stack record
-                ch, int
-                rec, str<StructureName>
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
             try
             begin
-                open(ch=0,u:i,"<FILE_NAME>")
+                open(ch,u:i,"<FILE_NAME>")
                 store(ch,a<StructureName>.Record)
             end
             catch (e, @DuplicateException)
@@ -64,38 +59,34 @@ namespace <NAMESPACE>
         ;;; <param name="a<SegmentName>">Passed <SEGMENT_DESC> (<SEGMENT_CSTYPE>)</param>
         </SEGMENT_LOOP>
         ;;; <param name="a<StructureName>">Returned <StructureName> object (@<StructureName>)</param>
-        ;;; <param name="aGrfa">Returned GRFA (string)</param>
+        ;;; <param name="aGrfa">Returned GRFA data (byte array)</param>
         ;;; <returns></returns>
         public method Read<StructureName>, MethodStatus
             <SEGMENT_LOOP>
             required in  a<SegmentName>, <SEGMENT_CSTYPE>
             </SEGMENT_LOOP>
             required out a<StructureName>, @<StructureName>
-            required out aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, str<StructureName>
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required out aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
 
-            init rec
+			data <structureName>Rec, str<StructureName>
+            init <structureName>Rec
             <SEGMENT_LOOP>
             <IF DATE_YYYYMMDD>
-            rec.<segment_name> = DataUtils.D8FromDate(a<SegmentName>)
+            <structureName>Rec.<segment_name> = DataUtils.D8FromDate(a<SegmentName>)
             <ELSE>
-            rec.<segment_name> = a<SegmentName>
+            <structureName>Rec.<segment_name> = a<SegmentName>
             </IF DATE_YYYYMMDD>
             </SEGMENT_LOOP>
 
             try
             begin
+                data grfa, a10
                 open(ch=0,I:I,"<FILE_NAME>")
-                read(ch,rec,%keyval(ch,rec,0),GETRFA:grfa)
-                a<StructureName> = new <StructureName>((String)rec)
+                read(ch,<structureName>Rec,%keyval(ch,<structureName>Rec,0),GETRFA:grfa)
+                a<StructureName> = new <StructureName>((String)<structureName>Rec)
                 aGrfa = grfa
             end
             catch (e, @EndOfFileException)
@@ -129,18 +120,17 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method ReadAll<StructureName>s, MethodStatus
             required out a<StructureName>s, @List<<StructureName>>
-            endparams
         proc
 
-            data status, MethodStatus, MethodStatus.Success
+            data status = MethodStatus.Success
 
             a<StructureName>s = new List<<StructureName>>()
 
             try
             begin
-                data rec, str<StructureName>
-                foreach rec in new Select(new From("<FILE_NAME>",rec))
-                    a<StructureName>s.Add(new <StructureName>((String)rec))
+                data <structureName>Rec, str<StructureName>
+                foreach <structureName>Rec in new Select(new From("<FILE_NAME>",<structureName>Rec))
+                    a<StructureName>s.Add(new <StructureName>((String)<structureName>Rec))
             end
             catch (e, @Exception)
             begin
@@ -160,32 +150,28 @@ namespace <NAMESPACE>
         ;;; <returns></returns>
         public method Update<StructureName>, MethodStatus
             required inout a<StructureName>, @<StructureName>
-            required inout aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, str<StructureName>
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required inout aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+            data <structureName>rec, str<StructureName>
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"<FILE_NAME>")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa,GETRFA:grfa)
-                write(ch,a<StructureName>.Record)
+                open(ch,u:i,"<FILE_NAME>")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,<structureName>rec,RFA:grfa,GETRFA:grfa)
+                write(ch,a<StructureName>.Record,,GETRFA:grfa)
+				aGrfa = grfa
             end
             catch (ex, @RecordNotSameException)
             begin
                 ;;Failed to lock the original record, it must have been changed
                 ;;by another process since this user obtained it. We'll return
                 ;;the new record and it's GRFA to the user
-                a<StructureName> = new <StructureName>((String)rec)
+                a<StructureName> = new <StructureName>((String)<structureName>rec)
                 aGrfa = grfa
                 status = MethodStatus.Fail
             end
@@ -214,24 +200,19 @@ namespace <NAMESPACE>
         ;;; <param name="aGrfa">Passed GRFA (string)</param>
         ;;; <returns></returns>
         public method Delete<StructureName>, MethodStatus
-            required in aGrfa, String
-            endparams
-            stack record
-                ch, int
-                rec, str<StructureName>
-                status, MethodStatus
-                grfa, a10
-            endrecord
+            required in aGrfa, [#]byte
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+			data ch = 0
+			data <structureName>rec, str<StructureName>
+			data grfa, a10
 
             try
             begin
-                open(ch=0,u:i,"<FILE_NAME>")
-                ;;Attempt to read the original record by GRFA to make sure that
-                ;;nobody else has modified or deleted it
-                grfa=aGrfa
-                read(ch,rec,RFA:grfa)
+                open(ch,u:i,"<FILE_NAME>")
+                ;;Attempt to read the original record by GRFA to make sure that nobody else has modified or deleted it
+                grfa = aGrfa
+                read(ch,<structureName>rec,RFA:grfa)
                 delete(ch)
             end
             catch (ex, @RecordNotSameException)
@@ -269,25 +250,22 @@ namespace <NAMESPACE>
             </SEGMENT_LOOP>
             </PRIMARY_KEY>
             endparams
-            stack record
-                ch, int
-                rec, str<StructureName>
-                status, MethodStatus
-            endrecord
         proc
-            status = MethodStatus.Success
+            data status = MethodStatus.Success
+            data ch = 0
+            data <structureName>rec, str<StructureName>
 
-            init rec
+            init <structureName>rec
             <PRIMARY_KEY>
             <SEGMENT_LOOP>
-            rec.<segment_name> = a<SegmentName>
+            <structureName>rec.<segment_name> = a<SegmentName>
             </SEGMENT_LOOP>
             </PRIMARY_KEY>
 
             try
             begin
-                open(ch=0,I:I,"<FILE_NAME>")
-                find(ch,,%keyval(ch,rec,0))
+                open(ch,I:I,"<FILE_NAME>")
+                find(ch,,%keyval(ch,<structureName>rec,0))
             end
             catch (e, @EndOfFileException)
             begin
