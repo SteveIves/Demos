@@ -29,7 +29,8 @@ Change history
 
 1.3             Re-worked the mechanisms used in the AppDomainProtection code
                 and significantly improved the suggested coding pattern for
-                the WCF service methods.
+                the WCF service methods. Also all GRFA processing now uses
+                [#]byte instead of string.
 
 --------------------------------------------------------------------------------
 
