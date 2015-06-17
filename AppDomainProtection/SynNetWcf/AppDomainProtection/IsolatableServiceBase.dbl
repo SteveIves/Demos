@@ -42,9 +42,12 @@
 ;;
 ;;*****************************************************************************
 
+import System.Threading.Tasks
+import AppDomainProtectionCore
+
 namespace AppDomainProtection
 
-	public class IsolatableServiceBase extends MarshalByRefObject
+	public class IsolatableServiceBase extends IsolatableServiceBaseBase
 
 		public method GetAppDomain, @AppDomain
 			endparams

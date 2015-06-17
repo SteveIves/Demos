@@ -89,17 +89,6 @@ namespace AppDomainProtection
 			;;Hook up the custom dispatcher for multi-threading protection
 			service.ServiceDispatcher = BackgroundDispatcher.AllocateDispatcher()
 			
-			;;Does the service implement IAppDomainPoolable?
-			data poolable, @IAppDomainPoolable, ^as((@object)service,@IAppDomainPoolable)
-			if(poolable != ^null)
-			begin
-				;;If this is a brand new AppDomain (not an existing one from the pool) then call the Initialize method
-				if(isNew)
-					poolable.Initialize()
-				;;Call the Activate method
-				poolable.Activate()
-			end
-
 			mreturn service
 		
 		endmethod

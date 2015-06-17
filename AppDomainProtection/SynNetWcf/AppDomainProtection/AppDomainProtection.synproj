@@ -32,6 +32,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DebugOptimize>Debug</DebugOptimize>
     <DocumentationFile>bin\Debug\AppDomainProtection.xml</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <SerializeAssembly>Auto</SerializeAssembly>
+    <RunVerifyPostCompile>true</RunVerifyPostCompile>
+    <LanguageCompatibilityLevel>100301</LanguageCompatibilityLevel>
+    <TargetRuntimeLevel>100301</TargetRuntimeLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -53,8 +58,12 @@
   <ItemGroup>
     <Compile Include="AppDomainPoolManager.dbl" />
     <Compile Include="BackgroundDispatcher.dbl" />
-    <Compile Include="IAppDomainPoolable.dbl" />
     <Compile Include="IsolatableServiceBase.dbl" />
+    <None Include="IsolatableServiceBaseBase.dbl" />
+    <None Include="MarshalableCompletionSource.dbl" />
+    <None Include="MarshalableOperationInvocation.dbl" />
+    <None Include="MarshaledAsyncBehaviorAttribute.dbl" />
+    <None Include="MarshaledOperationInvokerBehavior.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
     <Compile Include="ServiceInstanceProvider.dbl" />
     <Compile Include="SingletonBehaviorAttribute.dbl" />
@@ -66,6 +75,12 @@
     <Content Include="AppDomainProtectionKey.snk">
       <SubType>Content</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AppDomainProtectionCore\AppDomainProtectionCore.csproj">
+      <Name>AppDomainProtectionCore</Name>
+      <Project>{7169e122-bcee-43cb-81e9-db45c7937475}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
 </Project>
