@@ -95,7 +95,7 @@ namespace DatabaseTools
             ;;Create index 1 (Department ID)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Employee_EmpDept ON Employee(EmpDept ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Employee_EmpDept ON Employee(EmpDept ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -105,7 +105,7 @@ namespace DatabaseTools
             ;;Create index 2 (Last name)
             if (ok)
             begin
-                if (ok=openNonSelectCursor("CREATE INDEX IX_Employee_EmpLastName ON Employee(EmpLastName ASC)",cursor))
+                if (ok=openNonSelectCursor("CREATE  INDEX IX_Employee_EmpLastName ON Employee(EmpLastName ASC)",cursor))
                 begin
                     ok = executeNonSelectCursor(cursor)
                     closeCursor(cursor,ok)
@@ -708,7 +708,7 @@ namespace DatabaseTools
                 & "EmpHomeOk=:10,"
                 & "Noname001=:11"
                 & " WHERE"
-                & " EmpId='" + %atrim(^a(recEmployee.emp_id)) + "'"
+                & " EmpId='" + %atrim(^a(recEmployee.emp_id)) + "' "
 
                 ok = openNonSelectCursor(sql,cursor)
             end
@@ -739,7 +739,7 @@ namespace DatabaseTools
 		;;; <returns>True on successful load or false if an error occurred.</returns>
 		public method Load, boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -758,7 +758,7 @@ namespace DatabaseTools
 		public method Load, boolean
 			required in    a_logex      ,boolean
 			endparams
-			record
+			record 
 				rows		,int
 				failrows	,int
 			endrecord
@@ -1201,7 +1201,7 @@ namespace DatabaseTools
                 & "EmpHomeOk,"
                 & "Noname001"
                 & " FROM Employee"
-                & " WHERE EmpId=:1"
+                & " WHERE  EmpId=:1 "
 
             if (mSelectAllStatement==^null)
                 mSelectAllStatement = "SELECT "
@@ -1219,7 +1219,7 @@ namespace DatabaseTools
                 & " FROM Employee"
 
             if (mDeleteByKeyStatement==^null)
-                mDeleteByKeyStatement = "DELETE FROM Employee WHERE EmpId=:1"
+                mDeleteByKeyStatement = "DELETE FROM Employee WHERE  EmpId=:1 "
 
         endmethod
 
@@ -1244,3 +1244,4 @@ namespace DatabaseTools
     .endc
 
 endnamespace
+
