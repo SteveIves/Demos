@@ -26,8 +26,6 @@ namespace PartsSystem
             endparams
             this()
         proc
-            ;Record = info.GetString("Record")
-            ;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
             data myType = ^typeof([#]byte)
             mPart = (a)([#]byte)info.GetValue("Record",myType)
         endmethod
@@ -37,8 +35,6 @@ namespace PartsSystem
             context, StreamingContext 
             endparams
         proc
-            ;info.AddValue("Record",Record)
-            ;TODO: When the compiler lets us, we need to do this via a byte array instead of a string
             data bytes, [#]byte, (a)mPart
             info.AddValue("Record",bytes)
         endmethod

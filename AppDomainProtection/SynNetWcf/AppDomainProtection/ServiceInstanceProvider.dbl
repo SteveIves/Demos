@@ -80,8 +80,7 @@ namespace AppDomainProtection
 			endparams
 		proc
 			;;Get an AppDomain to host the service instance
-			data isNew, boolean
-			data instanceAppDomain, @AppDomain, AppDomainPoolManager.Allocate(isNew)
+			data instanceAppDomain, @AppDomain, AppDomainPoolManager.Allocate()
 
 			;;Load a new instance of the WCF service into the AppDomain
 			data service, @IsolatableServiceBase, (@IsolatableServiceBase)instanceAppDomain.CreateInstanceFromAndUnwrap(mTargetType.Assembly.CodeBase, mTargetType.FullName,true,BindingFlags.Default,^null,^null,^null,^null)
@@ -126,20 +125,8 @@ namespace AppDomainProtection
 			data poolable, @IAppDomainPoolable, ^as(instance, @IAppDomainPoolable)
 			if(poolable != ^null) then
 			begin
-				;;Call the Deactivate method
-				poolable.Deactivate()
-				;;Does the service instance indicate that it can be returned to the pool for reuse?
-				if(poolable.CanBeReused()) then
-				begin
-					;;Yes, return the instance AppDomain to the AppDomain pool
-					AppDomainPoolManager.ReturnToPool(instanceAppDomain)
-				end
-				else
-				begin
-					;;No, call the Cleanup method and then unload the AppDomain
-					poolable.Cleanup()
-					AppDomain.Unload(instanceAppDomain)
-				end
+				;;Yes, return the instance AppDomain to the AppDomain pool
+				AppDomainPoolManager.ReturnToPool(instanceAppDomain)
 			end
 			else
 			begin

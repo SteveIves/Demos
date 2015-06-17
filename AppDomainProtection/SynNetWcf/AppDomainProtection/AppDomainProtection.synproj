@@ -58,12 +58,13 @@
   <ItemGroup>
     <Compile Include="AppDomainPoolManager.dbl" />
     <Compile Include="BackgroundDispatcher.dbl" />
+    <Compile Include="IAppDomainPoolable.dbl" />
     <Compile Include="IsolatableServiceBase.dbl" />
-    <None Include="IsolatableServiceBaseBase.dbl" />
-    <None Include="MarshalableCompletionSource.dbl" />
-    <None Include="MarshalableOperationInvocation.dbl" />
-    <None Include="MarshaledAsyncBehaviorAttribute.dbl" />
-    <None Include="MarshaledOperationInvokerBehavior.dbl" />
+    <Compile Include="IsolatableServiceBaseBase.dbl" />
+    <Compile Include="MarshalableCompletionSource.dbl" />
+    <Compile Include="MarshalableOperationInvocation.dbl" />
+    <Compile Include="MarshaledAsyncBehaviorAttribute.dbl" />
+    <Compile Include="MarshaledOperationInvokerBehavior.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
     <Compile Include="ServiceInstanceProvider.dbl" />
     <Compile Include="SingletonBehaviorAttribute.dbl" />

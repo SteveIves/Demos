@@ -2,6 +2,7 @@
 <REQUIRES_USERTOKEN>WCF_SERVICE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_NAMESPACE</REQUIRES_USERTOKEN>
 <REQUIRES_USERTOKEN>API_CLASS</REQUIRES_USERTOKEN>
+<PROCESS_TEMPLATE>CRUDInterface</PROCESS_TEMPLATE>
 <PROCESS_TEMPLATE>CRUDServiceBase</PROCESS_TEMPLATE>
 ;;******************************************************************************
 ;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
@@ -9,6 +10,7 @@
 
 import System
 import System.Collections.Generic
+import System.Runtime.Serialization
 import System.ServiceModel
 import System.Threading.Tasks
 import AppDomainProtection
@@ -18,8 +20,7 @@ namespace <NAMESPACE>
 
     public partial class <WCF_SERVICE>
 
-        {OperationContract}
-        public method Create<StructureName>, MethodStatus
+        public method Create<StructureName>, @Task<MethodStatus>
             required in a<StructureName>, @<StructureName>
         proc
             data completionSource = new TaskCompletionSource<MethodStatus>()
@@ -29,77 +30,61 @@ namespace <NAMESPACE>
                 completionSource.SetResult(api.Create<StructureName>(a<StructureName>))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            mreturn completionSource.Task.Result
+            mreturn completionSource.Task
         endmethod
 
         <PRIMARY_KEY>
-        {OperationContract}
-        public method Read<StructureName>, MethodStatus
+        public method Read<StructureName>, @Task<<StructureName>ReadResponse>
             <SEGMENT_LOOP>
             required in  a<SegmentName>, <SEGMENT_CSTYPE>
             </SEGMENT_LOOP>
-            required out a<StructureName>, @<StructureName>
-            required out aGrfa, String
             endparams
         proc
-            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,<StructureName>,String>>()
+            data completionSource = new TaskCompletionSource<<StructureName>ReadResponse>()
             lambda curryParams()
             begin
                 data api, @<API_CLASS>, new <API_CLASS>()
                 data tmp<StructureName>, @<StructureName>
                 data tmpGrfa, String
-                completionSource.SetResult(Tuple.Create(api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa),tmp<StructureName>,tmpGrfa))
+                completionSource.SetResult(new <StructureName>ReadResponse() { Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa } )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            a<StructureName> = completionSource.Task.Result.Item2
-            aGrfa = completionSource.Task.Result.Item3
-            mreturn completionSource.Task.Result.Item1
+            mreturn completionSource.Task
         endmethod
         </PRIMARY_KEY>
 
-        {OperationContract}
-        public method ReadAll<StructureName>s, MethodStatus
-            required out a<StructureName>s, @List<<StructureName>>
+        public method ReadAll<StructureName>s, @Task<<StructureName>ReadAllResponse>
             endparams
         proc
-            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,List<<StructureName>>>>()
+            data completionSource = new TaskCompletionSource<<StructureName>ReadAllResponse>()
             lambda curryParams()
             begin
                 data api, @<API_CLASS>, new <API_CLASS>()
                 data tmp<StructureName>s, @List<<StructureName>>
-                completionSource.SetResult(Tuple.Create(api.ReadAll<StructureName>s(tmp<StructureName>s),tmp<StructureName>s))
+                completionSource.SetResult(new <StructureName>ReadAllResponse() {Status = api.ReadAll<StructureName>s(tmp<StructureName>s), Result = tmp<StructureName>s} )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            a<StructureName>s = completionSource.Task.Result.Item2
-            mreturn completionSource.Task.Result.Item1
+            mreturn completionSource.Task
         endmethod
 
-        {OperationContract}
-        public method Update<StructureName>, MethodStatus
-            required inout a<StructureName>, @<StructureName>
-            required inout aGrfa, String
+        public method Update<StructureName>, @Task<<StructureName>UpdateResponse>
+            required in a<StructureName>, @<StructureName>
+            required in aGrfa, String
             endparams
         proc
-            data completionSource = new TaskCompletionSource<Tuple<MethodStatus,<StructureName>,String>>()
+            data completionSource = new TaskCompletionSource<<StructureName>UpdateResponse>()
             data tmp<StructureName>, @<StructureName>, a<StructureName>
             data tmpGrfa, String, aGrfa
             lambda curryParams()
             begin
                 data api, @<API_CLASS>, new <API_CLASS>()
-                completionSource.SetResult(Tuple.Create(api.Update<StructureName>(tmp<StructureName>,tmpGrfa),tmp<StructureName>,tmpGrfa))
+                completionSource.SetResult(new <StructureName>UpdateResponse() {Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa), Result = tmp<StructureName>, Grfa = tmpGrfa} )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            a<StructureName> = completionSource.Task.Result.Item2
-            aGrfa = completionSource.Task.Result.Item3
-            mreturn completionSource.Task.Result.Item1
+            mreturn completionSource.Task
         endmethod
 
-        {OperationContract}
-        public method Delete<StructureName>, MethodStatus
+        public method Delete<StructureName>, @Task<MethodStatus>
             required in aGrfa, String
             endparams
         proc
@@ -110,13 +95,11 @@ namespace <NAMESPACE>
                 completionSource.SetResult(api.Delete<StructureName>(aGrfa))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            mreturn completionSource.Task.Result
+            mreturn completionSource.Task
         endmethod
 
         <PRIMARY_KEY>
-        {OperationContract}
-        public method <StructureName>Exists, MethodStatus
+        public method <StructureName>Exists, @Task<MethodStatus>
             <SEGMENT_LOOP>
             required in a<SegmentName>, <SEGMENT_CSTYPE>
             </SEGMENT_LOOP>
@@ -129,8 +112,7 @@ namespace <NAMESPACE>
                 completionSource.SetResult(api.<StructureName>Exists(<SEGMENT_LOOP>a<SegmentName><,></SEGMENT_LOOP>))
             end
             this.ServiceDispatcher.Dispatch(curryParams)
-            completionSource.Task.Wait()
-            mreturn completionSource.Task.Result
+            mreturn completionSource.Task
         endmethod
         </PRIMARY_KEY>
 

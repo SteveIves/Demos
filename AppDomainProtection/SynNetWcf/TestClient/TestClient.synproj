@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -129,6 +129,9 @@
     <None Include="Service References\PartsService\item2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\PartsService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\PartsService\PartsService.wsdl" />
     <None Include="Service References\PartsService\Reference.config" />
     <None Include="Service References\PartsService\Reference.svcmap">
@@ -142,7 +145,47 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Service References\PartsService\TestClient.PartsService.Part.datasource">
+    <Content Include="Service References\PartsService\TestClient.PartsService.MethodStatus.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.PartReadAllResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.PartReadResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.PartUpdateResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.ProductGroupReadAllResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.ProductGroupReadResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.ProductGroupUpdateResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.ReadSupplierPartsResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.SupplierReadAllResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.SupplierReadResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.SupplierUpdateResponse.datasource">
       <SubType>Content</SubType>
       <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
     </Content>

@@ -1,0 +1,120 @@
+;;******************************************************************************
+;; WARNING: THIS FILE WAS CODE GENERATED. CHANGES MAY BE LOST IF REGENERATED
+;;******************************************************************************
+
+import System
+import System.Collections.Generic
+import System.Runtime.Serialization
+import System.ServiceModel
+import System.Threading.Tasks
+import AppDomainProtection
+import PartsSystem
+
+namespace WcfServiceLibrary
+
+    public partial interface IPartsService
+
+        {OperationContract}
+        method CreatePart, @Task<MethodStatus>
+            required in aPart, @Part
+        endmethod
+
+        {OperationContract}
+        method ReadPart, @Task<PartReadResponse>
+            required in  aId, string
+        endmethod
+
+        {OperationContract}
+        method ReadAllParts, @Task<PartReadAllResponse>
+        endmethod
+
+        {OperationContract}
+        method UpdatePart, @Task<PartUpdateResponse>
+            required in aPart, @Part
+            required in aGrfa, String
+        endmethod
+
+        {OperationContract}
+        method DeletePart, @Task<MethodStatus>
+            required in aGrfa, String
+        endmethod
+
+        {OperationContract}
+        method PartExists, @Task<MethodStatus>
+            required in aId, string
+        endmethod
+
+    endinterface
+
+    {DataContract}
+    {Serializable}
+    public class PartReadResponse
+        {DataMember}
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+        {DataMember}
+        public property Result, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+        {DataMember}
+        public property Grfa, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+    endclass
+
+    {DataContract}
+    {Serializable}
+    public class PartReadAllResponse
+        {DataMember}
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+        {DataMember}
+        public property Result, @List<Part>
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+    endclass
+
+    {DataContract}
+    {Serializable}
+    public class PartUpdateResponse
+        {DataMember}
+        public property Status, MethodStatus
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+        {DataMember}
+        public property Result, @Part
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+        {DataMember}
+        public property Grfa, String
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+    endclass
+
+endnamespace

@@ -8,13 +8,14 @@ Description:    An example of how to implement WCF services using Synergy .NET
                 .NET Interop project. A different solution would be required
                 in that case.
 
-Author:         Steve Ives, Synergex Professional Services Group
+Authors:        Steve Ives, Synergex Professional Services Group
+                Jeff Greene, Synergex Development
 
-Revision:       1.2
+Revision:       1.3
 
-Date:           13th August 2014
+Date:           17th June 2015
 
-Requirements:   Synergy .NET 10.1.1c or higher
+Requirements:   Synergy .NET 10.3.1a or higher
 
 --------------------------------------------------------------------------------
 Change history
@@ -25,6 +26,10 @@ Change history
 
 1.2             Enhanced the code in the AppDomainProtection assembly to work
                 better when hosted in IIS.
+
+1.3             Re-worked the mechanisms used in the AppDomainProtection code
+                and significantly improved the suggested coding pattern for
+                the WCF service methods.
 
 --------------------------------------------------------------------------------
 

@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
     <OutputPath>bin\Debug\</OutputPath>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DebugOptimize>Debug</DebugOptimize>
     <DocumentationFile>bin\Debug\ServiceHost.xml</DocumentationFile>
@@ -57,6 +57,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppDomainProtectionCore\AppDomainProtectionCore.csproj">
+      <Name>AppDomainProtectionCore</Name>
+      <Project>{7169e122-bcee-43cb-81e9-db45c7937475}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\AppDomainProtection\AppDomainProtection.synproj">
       <Name>AppDomainProtection</Name>
       <Project>{730cac09-e5cf-441c-80d0-f0623ed1adbb}</Project>

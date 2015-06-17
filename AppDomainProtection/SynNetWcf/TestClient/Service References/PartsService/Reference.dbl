@@ -6,6 +6,77 @@ namespace TestClient.PartsService
 
 	{System.Diagnostics.DebuggerStepThroughAttribute()}
 	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "ReadSupplierPartsResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class ReadSupplierPartsResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
 	{System.Runtime.Serialization.DataContractAttribute(Name = "Part", Namespace = "http://schemas.datacontract.org/2004/07/PartsSystem")}
 	{System.SerializableAttribute()}
 	public partial class Part inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
@@ -202,6 +273,257 @@ namespace TestClient.PartsService
 
 	{System.Diagnostics.DebuggerStepThroughAttribute()}
 	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "PartReadResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class PartReadResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.Part
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.Part
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "PartReadAllResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class PartReadAllResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "PartUpdateResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class PartUpdateResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.Part
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.Part
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
 	{System.Runtime.Serialization.DataContractAttribute(Name = "ProductGroup", Namespace = "http://schemas.datacontract.org/2004/07/PartsSystem")}
 	{System.SerializableAttribute()}
 	public partial class ProductGroup inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
@@ -266,6 +588,257 @@ namespace TestClient.PartsService
 				begin
 					this.GroupIdField = value
 					this.RaisePropertyChanged("GroupId")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "ProductGroupReadResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class ProductGroupReadResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.ProductGroup
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.ProductGroup
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "ProductGroupReadAllResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class ProductGroupReadAllResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.ProductGroup>
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.ProductGroup>
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "ProductGroupUpdateResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class ProductGroupUpdateResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.ProductGroup
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.ProductGroup
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
 				end
 			endmethod
 		endproperty
@@ -456,742 +1029,497 @@ namespace TestClient.PartsService
 		endproperty
 	endclass
 
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = "PartsService.PartsService", SessionMode = System.ServiceModel.SessionMode.Required)}
-	public interface PartsService
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "SupplierReadResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class SupplierReadResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreatePart", ReplyAction = "http://tempuri.org/PartsService/CreatePartResponse")}
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.Supplier
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.Supplier
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "SupplierReadAllResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class SupplierReadAllResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Supplier>
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Supplier>
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.Diagnostics.DebuggerStepThroughAttribute()}
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")}
+	{System.Runtime.Serialization.DataContractAttribute(Name = "SupplierUpdateResponse", Namespace = "http://schemas.datacontract.org/2004/07/WcfServiceLibrary")}
+	{System.SerializableAttribute()}
+	public partial class SupplierUpdateResponse inherits System.Object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged
+
+		{System.NonSerializedAttribute()}
+		private extensionDataField, @System.Runtime.Serialization.ExtensionDataObject
+
+		{System.ComponentModel.BrowsableAttribute(false)}
+		public property ExtensionData, @System.Runtime.Serialization.ExtensionDataObject
+			method get
+			proc
+				mreturn this.extensionDataField
+			endmethod
+			method set
+			proc
+				this.extensionDataField = value
+			endmethod
+		endproperty
+
+		public virtual event PropertyChanged, @System.ComponentModel.PropertyChangedEventHandler
+
+		protected method RaisePropertyChanged, void
+			propertyName, string 
+			endparams
+		proc
+			data propertyChanged, @System.ComponentModel.PropertyChangedEventHandler, this.PropertyChanged
+			if (propertyChanged != ^null)
+				propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName))
+		endmethod
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private GrfaField, string
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Grfa, string
+			method get
+			proc
+				mreturn this.GrfaField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.GrfaField, value) != true)
+				begin
+					this.GrfaField = value
+					this.RaisePropertyChanged("Grfa")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private ResultField, @TestClient.PartsService.Supplier
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Result, @TestClient.PartsService.Supplier
+			method get
+			proc
+				mreturn this.ResultField
+			endmethod
+			method set
+			proc
+				if (System.Object.ReferenceEquals(this.ResultField, value) != true)
+				begin
+					this.ResultField = value
+					this.RaisePropertyChanged("Result")
+				end
+			endmethod
+		endproperty
+
+		{System.Runtime.Serialization.OptionalFieldAttribute()}
+		private StatusField, TestClient.PartsService.MethodStatus
+
+		{System.Runtime.Serialization.DataMemberAttribute()}
+		public property Status, TestClient.PartsService.MethodStatus
+			method get
+			proc
+				mreturn this.StatusField
+			endmethod
+			method set
+			proc
+				if ((this.StatusField == value) != true)
+				begin
+					this.StatusField = value
+					this.RaisePropertyChanged("Status")
+				end
+			endmethod
+		endproperty
+	endclass
+
+	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
+	{System.ServiceModel.ServiceContractAttribute(ConfigurationName = "PartsService.IPartsService", SessionMode = System.ServiceModel.SessionMode.Required)}
+	public interface IPartsService
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/IPartsService/ReadSupplierPartsResponse")}
+		method ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
+			aSupplierId, string 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/IPartsService/ReadSupplierPartsResponse")}
+		method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
+			aSupplierId, string 
+			endparams
+		endmethod
+
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreatePart", ReplyAction = "http://tempuri.org/IPartsService/CreatePartResponse")}
 		method CreatePart, TestClient.PartsService.MethodStatus
 			aPart, @TestClient.PartsService.Part 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreatePart", ReplyAction = "http://tempuri.org/PartsService/CreatePartResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreatePart", ReplyAction = "http://tempuri.org/IPartsService/CreatePartResponse")}
 		method CreatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aPart, @TestClient.PartsService.Part 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadPart", ReplyAction = "http://tempuri.org/PartsService/ReadPartResponse")}
-		method ReadPart, @TestClient.PartsService.ReadPartResponse
-			request, @TestClient.PartsService.ReadPartRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadPart", ReplyAction = "http://tempuri.org/IPartsService/ReadPartResponse")}
+		method ReadPart, @TestClient.PartsService.PartReadResponse
+			aId, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadPart", ReplyAction = "http://tempuri.org/PartsService/ReadPartResponse")}
-		method ReadPartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadPartResponse>
-			request, @TestClient.PartsService.ReadPartRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadPart", ReplyAction = "http://tempuri.org/IPartsService/ReadPartResponse")}
+		method ReadPartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartReadResponse>
+			aId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllParts", ReplyAction = "http://tempuri.org/PartsService/ReadAllPartsResponse")}
-		method ReadAllParts, @TestClient.PartsService.ReadAllPartsResponse
-			request, @TestClient.PartsService.ReadAllPartsRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllParts", ReplyAction = "http://tempuri.org/IPartsService/ReadAllPartsResponse")}
+		method ReadAllParts, @TestClient.PartsService.PartReadAllResponse
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllParts", ReplyAction = "http://tempuri.org/PartsService/ReadAllPartsResponse")}
-		method ReadAllPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllPartsResponse>
-			request, @TestClient.PartsService.ReadAllPartsRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllParts", ReplyAction = "http://tempuri.org/IPartsService/ReadAllPartsResponse")}
+		method ReadAllPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartReadAllResponse>
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdatePart", ReplyAction = "http://tempuri.org/PartsService/UpdatePartResponse")}
-		method UpdatePart, @TestClient.PartsService.UpdatePartResponse
-			request, @TestClient.PartsService.UpdatePartRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdatePart", ReplyAction = "http://tempuri.org/IPartsService/UpdatePartResponse")}
+		method UpdatePart, @TestClient.PartsService.PartUpdateResponse
+			aPart, @TestClient.PartsService.Part 
+			aGrfa, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdatePart", ReplyAction = "http://tempuri.org/PartsService/UpdatePartResponse")}
-		method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdatePartResponse>
-			request, @TestClient.PartsService.UpdatePartRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdatePart", ReplyAction = "http://tempuri.org/IPartsService/UpdatePartResponse")}
+		method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartUpdateResponse>
+			aPart, @TestClient.PartsService.Part 
+			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeletePart", ReplyAction = "http://tempuri.org/PartsService/DeletePartResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeletePart", ReplyAction = "http://tempuri.org/IPartsService/DeletePartResponse")}
 		method DeletePart, TestClient.PartsService.MethodStatus
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeletePart", ReplyAction = "http://tempuri.org/PartsService/DeletePartResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeletePart", ReplyAction = "http://tempuri.org/IPartsService/DeletePartResponse")}
 		method DeletePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/PartExists", ReplyAction = "http://tempuri.org/PartsService/PartExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/PartExists", ReplyAction = "http://tempuri.org/IPartsService/PartExistsResponse")}
 		method PartExists, TestClient.PartsService.MethodStatus
 			aId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/PartExists", ReplyAction = "http://tempuri.org/PartsService/PartExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/PartExists", ReplyAction = "http://tempuri.org/IPartsService/PartExistsResponse")}
 		method PartExistsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierPartsResponse")}
-		method ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
-			request, @TestClient.PartsService.ReadSupplierPartsRequest 
-			endparams
-		endmethod
-
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplierParts", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierPartsResponse")}
-		method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
-			request, @TestClient.PartsService.ReadSupplierPartsRequest 
-			endparams
-		endmethod
-
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreateProductGroup", ReplyAction = "http://tempuri.org/PartsService/CreateProductGroupResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/CreateProductGroupResponse")}
 		method CreateProductGroup, TestClient.PartsService.MethodStatus
 			aProductGroup, @TestClient.PartsService.ProductGroup 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreateProductGroup", ReplyAction = "http://tempuri.org/PartsService/CreateProductGroupResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/CreateProductGroupResponse")}
 		method CreateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aProductGroup, @TestClient.PartsService.ProductGroup 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadProductGroup", ReplyAction = "http://tempuri.org/PartsService/ReadProductGroupResponse")}
-		method ReadProductGroup, @TestClient.PartsService.ReadProductGroupResponse
-			request, @TestClient.PartsService.ReadProductGroupRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadProductGroup", ReplyAction = "http://tempuri.org/IPartsService/ReadProductGroupResponse")}
+		method ReadProductGroup, @TestClient.PartsService.ProductGroupReadResponse
+			aGroupId, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadProductGroup", ReplyAction = "http://tempuri.org/PartsService/ReadProductGroupResponse")}
-		method ReadProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadProductGroupResponse>
-			request, @TestClient.PartsService.ReadProductGroupRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadProductGroup", ReplyAction = "http://tempuri.org/IPartsService/ReadProductGroupResponse")}
+		method ReadProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupReadResponse>
+			aGroupId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllProductGroups", ReplyAction = "http://tempuri.org/PartsService/ReadAllProductGroupsResponse")}
-		method ReadAllProductGroups, @TestClient.PartsService.ReadAllProductGroupsResponse
-			request, @TestClient.PartsService.ReadAllProductGroupsRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllProductGroups", ReplyAction = "http://tempuri.org/IPartsService/ReadAllProductGroupsResponse")}
+		method ReadAllProductGroups, @TestClient.PartsService.ProductGroupReadAllResponse
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllProductGroups", ReplyAction = "http://tempuri.org/PartsService/ReadAllProductGroupsResponse")}
-		method ReadAllProductGroupsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllProductGroupsResponse>
-			request, @TestClient.PartsService.ReadAllProductGroupsRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllProductGroups", ReplyAction = "http://tempuri.org/IPartsService/ReadAllProductGroupsResponse")}
+		method ReadAllProductGroupsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupReadAllResponse>
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/PartsService/UpdateProductGroupResponse")}
-		method UpdateProductGroup, @TestClient.PartsService.UpdateProductGroupResponse
-			request, @TestClient.PartsService.UpdateProductGroupRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/UpdateProductGroupResponse")}
+		method UpdateProductGroup, @TestClient.PartsService.ProductGroupUpdateResponse
+			aProductGroup, @TestClient.PartsService.ProductGroup 
+			aGrfa, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/PartsService/UpdateProductGroupResponse")}
-		method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdateProductGroupResponse>
-			request, @TestClient.PartsService.UpdateProductGroupRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateProductGroup", ReplyAction = "http://tempuri.org/IPartsService/UpdateProductGroupResponse")}
+		method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupUpdateResponse>
+			aProductGroup, @TestClient.PartsService.ProductGroup 
+			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/PartsService/DeleteProductGroupResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/IPartsService/DeleteProductGroupResponse")}
 		method DeleteProductGroup, TestClient.PartsService.MethodStatus
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/PartsService/DeleteProductGroupResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteProductGroup", ReplyAction = "http://tempuri.org/IPartsService/DeleteProductGroupResponse")}
 		method DeleteProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ProductGroupExists", ReplyAction = "http://tempuri.org/PartsService/ProductGroupExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ProductGroupExists", ReplyAction = "http://tempuri.org/IPartsService/ProductGroupExistsResponse")}
 		method ProductGroupExists, TestClient.PartsService.MethodStatus
 			aGroupId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ProductGroupExists", ReplyAction = "http://tempuri.org/PartsService/ProductGroupExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ProductGroupExists", ReplyAction = "http://tempuri.org/IPartsService/ProductGroupExistsResponse")}
 		method ProductGroupExistsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aGroupId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreateSupplier", ReplyAction = "http://tempuri.org/PartsService/CreateSupplierResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreateSupplier", ReplyAction = "http://tempuri.org/IPartsService/CreateSupplierResponse")}
 		method CreateSupplier, TestClient.PartsService.MethodStatus
 			aSupplier, @TestClient.PartsService.Supplier 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/CreateSupplier", ReplyAction = "http://tempuri.org/PartsService/CreateSupplierResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/CreateSupplier", ReplyAction = "http://tempuri.org/IPartsService/CreateSupplierResponse")}
 		method CreateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aSupplier, @TestClient.PartsService.Supplier 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplier", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierResponse")}
-		method ReadSupplier, @TestClient.PartsService.ReadSupplierResponse
-			request, @TestClient.PartsService.ReadSupplierRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadSupplier", ReplyAction = "http://tempuri.org/IPartsService/ReadSupplierResponse")}
+		method ReadSupplier, @TestClient.PartsService.SupplierReadResponse
+			aSupplierId, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadSupplier", ReplyAction = "http://tempuri.org/PartsService/ReadSupplierResponse")}
-		method ReadSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierResponse>
-			request, @TestClient.PartsService.ReadSupplierRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadSupplier", ReplyAction = "http://tempuri.org/IPartsService/ReadSupplierResponse")}
+		method ReadSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierReadResponse>
+			aSupplierId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllSuppliers", ReplyAction = "http://tempuri.org/PartsService/ReadAllSuppliersResponse")}
-		method ReadAllSuppliers, @TestClient.PartsService.ReadAllSuppliersResponse
-			request, @TestClient.PartsService.ReadAllSuppliersRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllSuppliers", ReplyAction = "http://tempuri.org/IPartsService/ReadAllSuppliersResponse")}
+		method ReadAllSuppliers, @TestClient.PartsService.SupplierReadAllResponse
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/ReadAllSuppliers", ReplyAction = "http://tempuri.org/PartsService/ReadAllSuppliersResponse")}
-		method ReadAllSuppliersAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllSuppliersResponse>
-			request, @TestClient.PartsService.ReadAllSuppliersRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/ReadAllSuppliers", ReplyAction = "http://tempuri.org/IPartsService/ReadAllSuppliersResponse")}
+		method ReadAllSuppliersAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierReadAllResponse>
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/PartsService/UpdateSupplierResponse")}
-		method UpdateSupplier, @TestClient.PartsService.UpdateSupplierResponse
-			request, @TestClient.PartsService.UpdateSupplierRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/IPartsService/UpdateSupplierResponse")}
+		method UpdateSupplier, @TestClient.PartsService.SupplierUpdateResponse
+			aSupplier, @TestClient.PartsService.Supplier 
+			aGrfa, string 
 			endparams
 		endmethod
 
-;; CODEGEN: Generating message contract since the operation has multiple return values.
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/PartsService/UpdateSupplierResponse")}
-		method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdateSupplierResponse>
-			request, @TestClient.PartsService.UpdateSupplierRequest 
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/UpdateSupplier", ReplyAction = "http://tempuri.org/IPartsService/UpdateSupplierResponse")}
+		method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierUpdateResponse>
+			aSupplier, @TestClient.PartsService.Supplier 
+			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/PartsService/DeleteSupplierResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/IPartsService/DeleteSupplierResponse")}
 		method DeleteSupplier, TestClient.PartsService.MethodStatus
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/PartsService/DeleteSupplierResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/DeleteSupplier", ReplyAction = "http://tempuri.org/IPartsService/DeleteSupplierResponse")}
 		method DeleteSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aGrfa, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/SupplierExists", ReplyAction = "http://tempuri.org/PartsService/SupplierExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/SupplierExists", ReplyAction = "http://tempuri.org/IPartsService/SupplierExistsResponse")}
 		method SupplierExists, TestClient.PartsService.MethodStatus
 			aSupplierId, string 
 			endparams
 		endmethod
 
-		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/PartsService/SupplierExists", ReplyAction = "http://tempuri.org/PartsService/SupplierExistsResponse")}
+		{System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IPartsService/SupplierExists", ReplyAction = "http://tempuri.org/IPartsService/SupplierExistsResponse")}
 		method SupplierExistsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.MethodStatus>
 			aSupplierId, string 
 			endparams
 		endmethod
 	endinterface
 
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
 	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadPart", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadPartRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aId, string
-
-		public method ReadPartRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadPartRequest
-			aId, string 
-			endparams
-		proc
-			this.aId = aId
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadPartResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadPartResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadPartResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aPart, @TestClient.PartsService.Part
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method ReadPartResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadPartResponse
-			ReadPartResult, TestClient.PartsService.MethodStatus 
-			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
-			endparams
-		proc
-			this.ReadPartResult = ReadPartResult
-			this.aPart = aPart
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllParts", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllPartsRequest
-
-		public method ReadAllPartsRequest
-			endparams
-		proc
-
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllPartsResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllPartsResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadAllPartsResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
-
-		public method ReadAllPartsResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadAllPartsResponse
-			ReadAllPartsResult, TestClient.PartsService.MethodStatus 
-			aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
-			endparams
-		proc
-			this.ReadAllPartsResult = ReadAllPartsResult
-			this.aParts = aParts
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdatePart", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdatePartRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aPart, @TestClient.PartsService.Part
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aGrfa, string
-
-		public method UpdatePartRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdatePartRequest
-			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
-			endparams
-		proc
-			this.aPart = aPart
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdatePartResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdatePartResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public UpdatePartResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aPart, @TestClient.PartsService.Part
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method UpdatePartResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdatePartResponse
-			UpdatePartResult, TestClient.PartsService.MethodStatus 
-			aPart, @TestClient.PartsService.Part 
-			aGrfa, string 
-			endparams
-		proc
-			this.UpdatePartResult = UpdatePartResult
-			this.aPart = aPart
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplierParts", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadSupplierPartsRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aSupplierId, string
-
-		public method ReadSupplierPartsRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadSupplierPartsRequest
-			aSupplierId, string 
-			endparams
-		proc
-			this.aSupplierId = aSupplierId
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplierPartsResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadSupplierPartsResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadSupplierPartsResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part>
-
-		public method ReadSupplierPartsResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadSupplierPartsResponse
-			ReadSupplierPartsResult, TestClient.PartsService.MethodStatus 
-			aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
-			endparams
-		proc
-			this.ReadSupplierPartsResult = ReadSupplierPartsResult
-			this.aParts = aParts
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadProductGroup", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadProductGroupRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aGroupId, string
-
-		public method ReadProductGroupRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadProductGroupRequest
-			aGroupId, string 
-			endparams
-		proc
-			this.aGroupId = aGroupId
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadProductGroupResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadProductGroupResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadProductGroupResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aProductGroup, @TestClient.PartsService.ProductGroup
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method ReadProductGroupResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadProductGroupResponse
-			ReadProductGroupResult, TestClient.PartsService.MethodStatus 
-			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
-			endparams
-		proc
-			this.ReadProductGroupResult = ReadProductGroupResult
-			this.aProductGroup = aProductGroup
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllProductGroups", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllProductGroupsRequest
-
-		public method ReadAllProductGroupsRequest
-			endparams
-		proc
-
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllProductGroupsResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllProductGroupsResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadAllProductGroupsResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aProductGroups, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.ProductGroup>
-
-		public method ReadAllProductGroupsResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadAllProductGroupsResponse
-			ReadAllProductGroupsResult, TestClient.PartsService.MethodStatus 
-			aProductGroups, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.ProductGroup> 
-			endparams
-		proc
-			this.ReadAllProductGroupsResult = ReadAllProductGroupsResult
-			this.aProductGroups = aProductGroups
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdateProductGroup", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdateProductGroupRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aProductGroup, @TestClient.PartsService.ProductGroup
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aGrfa, string
-
-		public method UpdateProductGroupRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdateProductGroupRequest
-			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
-			endparams
-		proc
-			this.aProductGroup = aProductGroup
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdateProductGroupResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdateProductGroupResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public UpdateProductGroupResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aProductGroup, @TestClient.PartsService.ProductGroup
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method UpdateProductGroupResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdateProductGroupResponse
-			UpdateProductGroupResult, TestClient.PartsService.MethodStatus 
-			aProductGroup, @TestClient.PartsService.ProductGroup 
-			aGrfa, string 
-			endparams
-		proc
-			this.UpdateProductGroupResult = UpdateProductGroupResult
-			this.aProductGroup = aProductGroup
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplier", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadSupplierRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aSupplierId, string
-
-		public method ReadSupplierRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadSupplierRequest
-			aSupplierId, string 
-			endparams
-		proc
-			this.aSupplierId = aSupplierId
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadSupplierResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadSupplierResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadSupplierResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aSupplier, @TestClient.PartsService.Supplier
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method ReadSupplierResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadSupplierResponse
-			ReadSupplierResult, TestClient.PartsService.MethodStatus 
-			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
-			endparams
-		proc
-			this.ReadSupplierResult = ReadSupplierResult
-			this.aSupplier = aSupplier
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllSuppliers", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllSuppliersRequest
-
-		public method ReadAllSuppliersRequest
-			endparams
-		proc
-
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "ReadAllSuppliersResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class ReadAllSuppliersResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public ReadAllSuppliersResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aSuppliers, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Supplier>
-
-		public method ReadAllSuppliersResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method ReadAllSuppliersResponse
-			ReadAllSuppliersResult, TestClient.PartsService.MethodStatus 
-			aSuppliers, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Supplier> 
-			endparams
-		proc
-			this.ReadAllSuppliersResult = ReadAllSuppliersResult
-			this.aSuppliers = aSuppliers
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdateSupplier", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdateSupplierRequest
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public aSupplier, @TestClient.PartsService.Supplier
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aGrfa, string
-
-		public method UpdateSupplierRequest
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdateSupplierRequest
-			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
-			endparams
-		proc
-			this.aSupplier = aSupplier
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.Diagnostics.DebuggerStepThroughAttribute()}
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	{System.ServiceModel.MessageContractAttribute(WrapperName = "UpdateSupplierResponse", WrapperNamespace = "http://tempuri.org/", IsWrapped = true)}
-	public partial class UpdateSupplierResponse
-
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 0)}
-		public UpdateSupplierResult, TestClient.PartsService.MethodStatus
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 1)}
-		public aSupplier, @TestClient.PartsService.Supplier
-		{System.ServiceModel.MessageBodyMemberAttribute(Namespace = "http://tempuri.org/", Order = 2)}
-		public aGrfa, string
-
-		public method UpdateSupplierResponse
-			endparams
-		proc
-
-		endmethod
-
-		public method UpdateSupplierResponse
-			UpdateSupplierResult, TestClient.PartsService.MethodStatus 
-			aSupplier, @TestClient.PartsService.Supplier 
-			aGrfa, string 
-			endparams
-		proc
-			this.UpdateSupplierResult = UpdateSupplierResult
-			this.aSupplier = aSupplier
-			this.aGrfa = aGrfa
-		endmethod
-	endclass
-
-	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	public interface PartsServiceChannel extends TestClient.PartsService.PartsService, System.ServiceModel.IClientChannel
+	public interface IPartsServiceChannel extends TestClient.PartsService.IPartsService, System.ServiceModel.IClientChannel
 	endinterface
 
 	{System.Diagnostics.DebuggerStepThroughAttribute()}
 	{System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")}
-	public partial class PartsServiceClient inherits System.ServiceModel.ClientBase<TestClient.PartsService.PartsService>, TestClient.PartsService.PartsService
+	public partial class PartsServiceClient inherits System.ServiceModel.ClientBase<TestClient.PartsService.IPartsService>, TestClient.PartsService.IPartsService
 
 		public method PartsServiceClient
 			endparams
@@ -1234,6 +1562,20 @@ namespace TestClient.PartsService
 
 		endmethod
 
+		public method ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
+			aSupplierId, string 
+			endparams
+		proc
+			mreturn parent.Channel.ReadSupplierParts(aSupplierId)
+		endmethod
+
+		public method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
+			aSupplierId, string 
+			endparams
+		proc
+			mreturn parent.Channel.ReadSupplierPartsAsync(aSupplierId)
+		endmethod
+
 		public method CreatePart, TestClient.PartsService.MethodStatus
 			aPart, @TestClient.PartsService.Part 
 			endparams
@@ -1248,87 +1590,46 @@ namespace TestClient.PartsService
 			mreturn parent.Channel.CreatePartAsync(aPart)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadPart, @TestClient.PartsService.ReadPartResponse
-			request, @TestClient.PartsService.ReadPartRequest 
-			endparams
-		proc
-			mreturn parent.Channel.ReadPart(request)
-		endmethod
-
-		public method ReadPart, TestClient.PartsService.MethodStatus
+		public method ReadPart, @TestClient.PartsService.PartReadResponse
 			aId, string 
-			out aPart, @TestClient.PartsService.Part 
-			out aGrfa, string 
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadPartRequest, new TestClient.PartsService.ReadPartRequest()
-			inValue.aId = aId
-			data retVal, @TestClient.PartsService.ReadPartResponse, ((@TestClient.PartsService.PartsService)this).ReadPart(inValue)
-			aPart = retVal.aPart
-			aGrfa = retVal.aGrfa
-			mreturn retVal.ReadPartResult
+			mreturn parent.Channel.ReadPart(aId)
 		endmethod
 
-		public method ReadPartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadPartResponse>
-			request, @TestClient.PartsService.ReadPartRequest 
+		public method ReadPartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartReadResponse>
+			aId, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadPartAsync(request)
+			mreturn parent.Channel.ReadPartAsync(aId)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadAllParts, @TestClient.PartsService.ReadAllPartsResponse
-			request, @TestClient.PartsService.ReadAllPartsRequest 
+		public method ReadAllParts, @TestClient.PartsService.PartReadAllResponse
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllParts(request)
+			mreturn parent.Channel.ReadAllParts()
 		endmethod
 
-		public method ReadAllParts, TestClient.PartsService.MethodStatus
-			out aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
+		public method ReadAllPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartReadAllResponse>
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadAllPartsRequest, new TestClient.PartsService.ReadAllPartsRequest()
-			data retVal, @TestClient.PartsService.ReadAllPartsResponse, ((@TestClient.PartsService.PartsService)this).ReadAllParts(inValue)
-			aParts = retVal.aParts
-			mreturn retVal.ReadAllPartsResult
+			mreturn parent.Channel.ReadAllPartsAsync()
 		endmethod
 
-		public method ReadAllPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllPartsResponse>
-			request, @TestClient.PartsService.ReadAllPartsRequest 
+		public method UpdatePart, @TestClient.PartsService.PartUpdateResponse
+			aPart, @TestClient.PartsService.Part 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllPartsAsync(request)
+			mreturn parent.Channel.UpdatePart(aPart, aGrfa)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.UpdatePart, @TestClient.PartsService.UpdatePartResponse
-			request, @TestClient.PartsService.UpdatePartRequest 
+		public method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.PartUpdateResponse>
+			aPart, @TestClient.PartsService.Part 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.UpdatePart(request)
-		endmethod
-
-		public method UpdatePart, TestClient.PartsService.MethodStatus
-			byref inout aPart, @TestClient.PartsService.Part 
-			byref inout aGrfa, string 
-			endparams
-		proc
-			data inValue, @TestClient.PartsService.UpdatePartRequest, new TestClient.PartsService.UpdatePartRequest()
-			inValue.aPart = aPart
-			inValue.aGrfa = aGrfa
-			data retVal, @TestClient.PartsService.UpdatePartResponse, ((@TestClient.PartsService.PartsService)this).UpdatePart(inValue)
-			aPart = retVal.aPart
-			aGrfa = retVal.aGrfa
-			mreturn retVal.UpdatePartResult
-		endmethod
-
-		public method UpdatePartAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdatePartResponse>
-			request, @TestClient.PartsService.UpdatePartRequest 
-			endparams
-		proc
-			mreturn parent.Channel.UpdatePartAsync(request)
+			mreturn parent.Channel.UpdatePartAsync(aPart, aGrfa)
 		endmethod
 
 		public method DeletePart, TestClient.PartsService.MethodStatus
@@ -1359,33 +1660,6 @@ namespace TestClient.PartsService
 			mreturn parent.Channel.PartExistsAsync(aId)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadSupplierParts, @TestClient.PartsService.ReadSupplierPartsResponse
-			request, @TestClient.PartsService.ReadSupplierPartsRequest 
-			endparams
-		proc
-			mreturn parent.Channel.ReadSupplierParts(request)
-		endmethod
-
-		public method ReadSupplierParts, TestClient.PartsService.MethodStatus
-			aSupplierId, string 
-			out aParts, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Part> 
-			endparams
-		proc
-			data inValue, @TestClient.PartsService.ReadSupplierPartsRequest, new TestClient.PartsService.ReadSupplierPartsRequest()
-			inValue.aSupplierId = aSupplierId
-			data retVal, @TestClient.PartsService.ReadSupplierPartsResponse, ((@TestClient.PartsService.PartsService)this).ReadSupplierParts(inValue)
-			aParts = retVal.aParts
-			mreturn retVal.ReadSupplierPartsResult
-		endmethod
-
-		public method ReadSupplierPartsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierPartsResponse>
-			request, @TestClient.PartsService.ReadSupplierPartsRequest 
-			endparams
-		proc
-			mreturn parent.Channel.ReadSupplierPartsAsync(request)
-		endmethod
-
 		public method CreateProductGroup, TestClient.PartsService.MethodStatus
 			aProductGroup, @TestClient.PartsService.ProductGroup 
 			endparams
@@ -1400,87 +1674,46 @@ namespace TestClient.PartsService
 			mreturn parent.Channel.CreateProductGroupAsync(aProductGroup)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadProductGroup, @TestClient.PartsService.ReadProductGroupResponse
-			request, @TestClient.PartsService.ReadProductGroupRequest 
-			endparams
-		proc
-			mreturn parent.Channel.ReadProductGroup(request)
-		endmethod
-
-		public method ReadProductGroup, TestClient.PartsService.MethodStatus
+		public method ReadProductGroup, @TestClient.PartsService.ProductGroupReadResponse
 			aGroupId, string 
-			out aProductGroup, @TestClient.PartsService.ProductGroup 
-			out aGrfa, string 
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadProductGroupRequest, new TestClient.PartsService.ReadProductGroupRequest()
-			inValue.aGroupId = aGroupId
-			data retVal, @TestClient.PartsService.ReadProductGroupResponse, ((@TestClient.PartsService.PartsService)this).ReadProductGroup(inValue)
-			aProductGroup = retVal.aProductGroup
-			aGrfa = retVal.aGrfa
-			mreturn retVal.ReadProductGroupResult
+			mreturn parent.Channel.ReadProductGroup(aGroupId)
 		endmethod
 
-		public method ReadProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadProductGroupResponse>
-			request, @TestClient.PartsService.ReadProductGroupRequest 
+		public method ReadProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupReadResponse>
+			aGroupId, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadProductGroupAsync(request)
+			mreturn parent.Channel.ReadProductGroupAsync(aGroupId)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadAllProductGroups, @TestClient.PartsService.ReadAllProductGroupsResponse
-			request, @TestClient.PartsService.ReadAllProductGroupsRequest 
+		public method ReadAllProductGroups, @TestClient.PartsService.ProductGroupReadAllResponse
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllProductGroups(request)
+			mreturn parent.Channel.ReadAllProductGroups()
 		endmethod
 
-		public method ReadAllProductGroups, TestClient.PartsService.MethodStatus
-			out aProductGroups, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.ProductGroup> 
+		public method ReadAllProductGroupsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupReadAllResponse>
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadAllProductGroupsRequest, new TestClient.PartsService.ReadAllProductGroupsRequest()
-			data retVal, @TestClient.PartsService.ReadAllProductGroupsResponse, ((@TestClient.PartsService.PartsService)this).ReadAllProductGroups(inValue)
-			aProductGroups = retVal.aProductGroups
-			mreturn retVal.ReadAllProductGroupsResult
+			mreturn parent.Channel.ReadAllProductGroupsAsync()
 		endmethod
 
-		public method ReadAllProductGroupsAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllProductGroupsResponse>
-			request, @TestClient.PartsService.ReadAllProductGroupsRequest 
+		public method UpdateProductGroup, @TestClient.PartsService.ProductGroupUpdateResponse
+			aProductGroup, @TestClient.PartsService.ProductGroup 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllProductGroupsAsync(request)
+			mreturn parent.Channel.UpdateProductGroup(aProductGroup, aGrfa)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.UpdateProductGroup, @TestClient.PartsService.UpdateProductGroupResponse
-			request, @TestClient.PartsService.UpdateProductGroupRequest 
+		public method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ProductGroupUpdateResponse>
+			aProductGroup, @TestClient.PartsService.ProductGroup 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.UpdateProductGroup(request)
-		endmethod
-
-		public method UpdateProductGroup, TestClient.PartsService.MethodStatus
-			byref inout aProductGroup, @TestClient.PartsService.ProductGroup 
-			byref inout aGrfa, string 
-			endparams
-		proc
-			data inValue, @TestClient.PartsService.UpdateProductGroupRequest, new TestClient.PartsService.UpdateProductGroupRequest()
-			inValue.aProductGroup = aProductGroup
-			inValue.aGrfa = aGrfa
-			data retVal, @TestClient.PartsService.UpdateProductGroupResponse, ((@TestClient.PartsService.PartsService)this).UpdateProductGroup(inValue)
-			aProductGroup = retVal.aProductGroup
-			aGrfa = retVal.aGrfa
-			mreturn retVal.UpdateProductGroupResult
-		endmethod
-
-		public method UpdateProductGroupAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdateProductGroupResponse>
-			request, @TestClient.PartsService.UpdateProductGroupRequest 
-			endparams
-		proc
-			mreturn parent.Channel.UpdateProductGroupAsync(request)
+			mreturn parent.Channel.UpdateProductGroupAsync(aProductGroup, aGrfa)
 		endmethod
 
 		public method DeleteProductGroup, TestClient.PartsService.MethodStatus
@@ -1525,87 +1758,46 @@ namespace TestClient.PartsService
 			mreturn parent.Channel.CreateSupplierAsync(aSupplier)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadSupplier, @TestClient.PartsService.ReadSupplierResponse
-			request, @TestClient.PartsService.ReadSupplierRequest 
-			endparams
-		proc
-			mreturn parent.Channel.ReadSupplier(request)
-		endmethod
-
-		public method ReadSupplier, TestClient.PartsService.MethodStatus
+		public method ReadSupplier, @TestClient.PartsService.SupplierReadResponse
 			aSupplierId, string 
-			out aSupplier, @TestClient.PartsService.Supplier 
-			out aGrfa, string 
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadSupplierRequest, new TestClient.PartsService.ReadSupplierRequest()
-			inValue.aSupplierId = aSupplierId
-			data retVal, @TestClient.PartsService.ReadSupplierResponse, ((@TestClient.PartsService.PartsService)this).ReadSupplier(inValue)
-			aSupplier = retVal.aSupplier
-			aGrfa = retVal.aGrfa
-			mreturn retVal.ReadSupplierResult
+			mreturn parent.Channel.ReadSupplier(aSupplierId)
 		endmethod
 
-		public method ReadSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadSupplierResponse>
-			request, @TestClient.PartsService.ReadSupplierRequest 
+		public method ReadSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierReadResponse>
+			aSupplierId, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadSupplierAsync(request)
+			mreturn parent.Channel.ReadSupplierAsync(aSupplierId)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.ReadAllSuppliers, @TestClient.PartsService.ReadAllSuppliersResponse
-			request, @TestClient.PartsService.ReadAllSuppliersRequest 
+		public method ReadAllSuppliers, @TestClient.PartsService.SupplierReadAllResponse
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllSuppliers(request)
+			mreturn parent.Channel.ReadAllSuppliers()
 		endmethod
 
-		public method ReadAllSuppliers, TestClient.PartsService.MethodStatus
-			out aSuppliers, @System.Collections.ObjectModel.ObservableCollection<TestClient.PartsService.Supplier> 
+		public method ReadAllSuppliersAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierReadAllResponse>
 			endparams
 		proc
-			data inValue, @TestClient.PartsService.ReadAllSuppliersRequest, new TestClient.PartsService.ReadAllSuppliersRequest()
-			data retVal, @TestClient.PartsService.ReadAllSuppliersResponse, ((@TestClient.PartsService.PartsService)this).ReadAllSuppliers(inValue)
-			aSuppliers = retVal.aSuppliers
-			mreturn retVal.ReadAllSuppliersResult
+			mreturn parent.Channel.ReadAllSuppliersAsync()
 		endmethod
 
-		public method ReadAllSuppliersAsync, @System.Threading.Tasks.Task<TestClient.PartsService.ReadAllSuppliersResponse>
-			request, @TestClient.PartsService.ReadAllSuppliersRequest 
+		public method UpdateSupplier, @TestClient.PartsService.SupplierUpdateResponse
+			aSupplier, @TestClient.PartsService.Supplier 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.ReadAllSuppliersAsync(request)
+			mreturn parent.Channel.UpdateSupplier(aSupplier, aGrfa)
 		endmethod
 
-		{System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)}
-		public method TestClient.PartsService.PartsService.UpdateSupplier, @TestClient.PartsService.UpdateSupplierResponse
-			request, @TestClient.PartsService.UpdateSupplierRequest 
+		public method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.SupplierUpdateResponse>
+			aSupplier, @TestClient.PartsService.Supplier 
+			aGrfa, string 
 			endparams
 		proc
-			mreturn parent.Channel.UpdateSupplier(request)
-		endmethod
-
-		public method UpdateSupplier, TestClient.PartsService.MethodStatus
-			byref inout aSupplier, @TestClient.PartsService.Supplier 
-			byref inout aGrfa, string 
-			endparams
-		proc
-			data inValue, @TestClient.PartsService.UpdateSupplierRequest, new TestClient.PartsService.UpdateSupplierRequest()
-			inValue.aSupplier = aSupplier
-			inValue.aGrfa = aGrfa
-			data retVal, @TestClient.PartsService.UpdateSupplierResponse, ((@TestClient.PartsService.PartsService)this).UpdateSupplier(inValue)
-			aSupplier = retVal.aSupplier
-			aGrfa = retVal.aGrfa
-			mreturn retVal.UpdateSupplierResult
-		endmethod
-
-		public method UpdateSupplierAsync, @System.Threading.Tasks.Task<TestClient.PartsService.UpdateSupplierResponse>
-			request, @TestClient.PartsService.UpdateSupplierRequest 
-			endparams
-		proc
-			mreturn parent.Channel.UpdateSupplierAsync(request)
+			mreturn parent.Channel.UpdateSupplierAsync(aSupplier, aGrfa)
 		endmethod
 
 		public method DeleteSupplier, TestClient.PartsService.MethodStatus

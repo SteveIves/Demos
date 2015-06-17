@@ -88,15 +88,15 @@ namespace TestClient
 		private method getSuppliers, void
 			endparams
 		proc
-			data newSuppliersCollection, @ObservableCollection<Supplier>, new ObservableCollection<Supplier>()
-			data client, @PartsServiceClient , new PartsServiceClient()
+			data newSuppliersCollection = new ObservableCollection<Supplier>()
+			data client = new PartsServiceClient()
 			
 			try
 			begin
 				ErrorMessage = ""
-				data response, @Task<ReadAllSuppliersResponse>, client.ReadAllSuppliersAsync(new ReadAllSuppliersRequest())
-				if (response.Result.ReadAllSuppliersResult==MethodStatus.Success)
-					newSuppliersCollection = response.Result.aSuppliers
+				data response = client.ReadAllSuppliers()
+				if (response.Status == MethodStatus.Success)
+					newSuppliersCollection = response.Result
 				client.Close()
 			end
 			catch (ex, @Exception)
@@ -122,9 +122,9 @@ namespace TestClient
 			try
 			begin
 				ErrorMessage = ""
-				data response, @Task<ReadSupplierPartsResponse>, client.ReadSupplierPartsAsync(new ReadSupplierPartsRequest(mSelectedSupplier.Supplierid))
-				if (response.Result.ReadSupplierPartsResult==MethodStatus.Success)
-					newPartsCollection = response.Result.aParts
+				data response = client.ReadSupplierParts(mSelectedSupplier.Supplierid)
+				if (response.Status == MethodStatus.Success)
+					newPartsCollection = response.Result
 				client.Close()
 			end
 			catch (ex, @Exception)
