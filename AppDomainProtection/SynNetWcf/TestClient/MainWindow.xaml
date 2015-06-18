@@ -1,11 +1,13 @@
 ﻿<Window x:Class="TestClient.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:TestClient"
-    Title="Parts System Part Browser" Height="700" Width="900" WindowStartupLocation="CenterScreen">
+    xmlns:local="clr-namespace:TestClient"
+    Title="{Binding AppTitle}" Height="700" Width="900" WindowStartupLocation="CenterScreen">
+
     <Window.DataContext>
         <local:ViewModel />
     </Window.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -13,12 +15,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <StackPanel Margin="10" Orientation="Horizontal">
             <Label Content="Supplier" />
             <ComboBox ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="Name" Width="300" />
         </StackPanel>
-        
+
         <DataGrid Grid.Row="1" ItemsSource="{Binding Parts}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="10">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Part ID" Binding="{Binding Id}" />
@@ -39,7 +41,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -65,8 +67,9 @@
             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding TechnicalInfo}" IsReadOnly="True"/>
 
         </Grid>
-        
+
         <TextBlock Grid.Row="3" Foreground="Red" Margin="10" Text="{Binding ErrorMessage}" />
 
     </Grid>
+
 </Window>

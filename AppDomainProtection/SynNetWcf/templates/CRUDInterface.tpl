@@ -19,7 +19,7 @@ namespace <NAMESPACE>
     public partial interface I<WCF_SERVICE>
 
         {OperationContract}
-        method Create<StructureName>, @Task<MethodStatus>
+        method Create<StructureName>, @Task<<WCF_SERVICE>Response>
             required in a<StructureName>, @<StructureName>
         endmethod
 
@@ -43,13 +43,13 @@ namespace <NAMESPACE>
         endmethod
 
         {OperationContract}
-        method Delete<StructureName>, @Task<MethodStatus>
+        method Delete<StructureName>, @Task<<WCF_SERVICE>Response>
             required in aGrfa, [#]byte
         endmethod
 
         <PRIMARY_KEY>
         {OperationContract}
-        method <StructureName>Exists, @Task<MethodStatus>
+        method <StructureName>Exists, @Task<<WCF_SERVICE>Response>
             <SEGMENT_LOOP>
             required in a<SegmentName>, <SEGMENT_CSTYPE>
             </SEGMENT_LOOP>
@@ -60,14 +60,7 @@ namespace <NAMESPACE>
 
     {DataContract}
     {Serializable}
-    public class <StructureName>ReadResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class <StructureName>ReadResponse extends <WCF_SERVICE>Response
         {DataMember}
         public property Result, @<StructureName>
             method get
@@ -86,14 +79,7 @@ namespace <NAMESPACE>
 
     {DataContract}
     {Serializable}
-    public class <StructureName>ReadAllResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class <StructureName>ReadAllResponse extends <WCF_SERVICE>Response
         {DataMember}
         public property Result, @List<<StructureName>>
             method get
@@ -105,14 +91,7 @@ namespace <NAMESPACE>
 
     {DataContract}
     {Serializable}
-    public class <StructureName>UpdateResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class <StructureName>UpdateResponse extends <WCF_SERVICE>Response
         {DataMember}
         public property Result, @<StructureName>
             method get

@@ -14,14 +14,15 @@ namespace WcfServiceLibrary
 
     public partial class PartsService
 
-        public method CreatePart, @Task<MethodStatus>
+        public method CreatePart, @Task<PartsServiceResponse>
             required in aPart, @Part
         proc
-            data completionSource = new TaskCompletionSource<MethodStatus>()
+            data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
+                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(api.CreatePart(aPart))
+                completionSource.SetResult(new PartsServiceResponse() { Status = api.CreatePart(aPart,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -34,20 +35,22 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<PartReadResponse>()
             lambda curryParams()
             begin
-                data api = new PartsSystemAPI()
                 data tmpPart, @Part
                 data tmpGrfa, [#]byte
-				;------
-				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-				;completionSource.SetResult(new PartReadResponse() { Status = api.ReadPart(aId,tmpPart,tmpGrfa), Result = tmpPart, Grfa = tmpGrfa } )
-				;------
-				;WORKAROUND:
-				data r = new PartReadResponse()
-				r.Status = api.ReadPart(aId,tmpPart,tmpGrfa)
-				r.Result = tmpPart
-				r.Grfa = tmpGrfa
-				completionSource.SetResult(r)
-				;------
+                data tmpErrorMessage, string
+                data api = new PartsSystemAPI()
+                ;------
+                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+                ;completionSource.SetResult(new PartReadResponse() { Status = api.ReadPart(aId,tmpPart,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpPart, Grfa = tmpGrfa } )
+                ;------
+                ;WORKAROUND:
+                data r = new PartReadResponse()
+                r.Status = api.ReadPart(aId,tmpPart,tmpGrfa,tmpErrorMessage)
+                r.ErrorMessage = tmpErrorMessage
+                r.Result = tmpPart
+                r.Grfa = tmpGrfa
+                completionSource.SetResult(r)
+                ;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -59,9 +62,10 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<PartReadAllResponse>()
             lambda curryParams()
             begin
-                data api = new PartsSystemAPI()
                 data tmpParts, @List<Part>
-                completionSource.SetResult(new PartReadAllResponse() {Status = api.ReadAllParts(tmpParts), Result = tmpParts} )
+                data tmpErrorMessage, string
+                data api = new PartsSystemAPI()
+                completionSource.SetResult(new PartReadAllResponse() { Status = api.ReadAllParts(tmpParts,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpParts} )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -73,50 +77,54 @@ namespace WcfServiceLibrary
             endparams
         proc
             data completionSource = new TaskCompletionSource<PartUpdateResponse>()
-            data tmpPart, @Part, aPart
-            data tmpGrfa, [#]byte, aGrfa
             lambda curryParams()
             begin
+                data tmpPart, @Part, aPart
+                data tmpGrfa, [#]byte, aGrfa
+                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-				;------
-				;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new PartUpdateResponse() {Status = api.UpdatePart(tmpPart,tmpGrfa), Result = tmpPart, Grfa = tmpGrfa} )
-				;------
-				;WORKAROUND:
-				data r = new PartUpdateResponse()
-				r.Status = api.UpdatePart(tmpPart,tmpGrfa)
-				r.Result = tmpPart
-				r.Grfa = tmpGrfa
-				completionSource.SetResult(r)
-				;------
+                ;------
+                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
+                ;completionSource.SetResult(new PartUpdateResponse() { Status = api.UpdatePart(tmpPart,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpPart, Grfa = tmpGrfa} )
+                ;------
+                ;WORKAROUND:
+                data r = new PartUpdateResponse()
+                r.Status = api.UpdatePart(tmpPart,tmpGrfa,tmpErrorMessage)
+                r.ErrorMessage = tmpErrorMessage
+                r.Result = tmpPart
+                r.Grfa = tmpGrfa
+                completionSource.SetResult(r)
+                ;------
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
-        public method DeletePart, @Task<MethodStatus>
+        public method DeletePart, @Task<PartsServiceResponse>
             required in aGrfa, [#]byte
             endparams
         proc
-            data completionSource = new TaskCompletionSource<MethodStatus>()
+            data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
+                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(api.DeletePart(aGrfa))
+                completionSource.SetResult(new PartsServiceResponse() { Status = api.DeletePart(aGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
-        public method PartExists, @Task<MethodStatus>
+        public method PartExists, @Task<PartsServiceResponse>
             required in aId, string
             endparams
         proc
-            data completionSource = new TaskCompletionSource<MethodStatus>()
+            data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
+                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(api.PartExists(aId))
+                completionSource.SetResult(new PartsServiceResponse() { Status = api.PartExists(aId,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task

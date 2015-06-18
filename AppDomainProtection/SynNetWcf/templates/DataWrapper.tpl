@@ -17,7 +17,6 @@ namespace <NAMESPACE>
         internal m<StructureName>, str<StructureName>
 
         public method <StructureName>Wrapper
-            endparams
         proc
             init m<StructureName>
         endmethod
@@ -25,7 +24,6 @@ namespace <NAMESPACE>
         public method <StructureName>Wrapper
             info, @SerializationInfo
             context, StreamingContext
-            endparams
             this()
         proc
             data myType = ^typeof([#]byte)
@@ -35,7 +33,6 @@ namespace <NAMESPACE>
         public method GetObjectData, void
             info, @SerializationInfo 
             context, StreamingContext 
-            endparams
         proc
             data bytes, [#]byte, (a)m<StructureName>
             info.AddValue("Record",bytes)

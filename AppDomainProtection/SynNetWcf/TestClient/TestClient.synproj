@@ -22,7 +22,13 @@
     <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <Name>TestClient</Name>
-    <ProjEnvVars>RPSMFIL=$(SolutionDir)rps\rpsmain.ism;RPSTFIL=$(SolutionDir)rps\rpstext.ism;DAT=$(SolutionDir)data;</ProjEnvVars>
+    <ProjEnvVars>RPSMFIL=$(SolutionDir)rps\rpsmain.ism;RPSTFIL=$(SolutionDir)rps\rpstext.ism;</ProjEnvVars>
+    <StartupObject>(Not set)</StartupObject>
+    <ApplicationIcon>dbr8.ico</ApplicationIcon>
+    <ResourceType>Icon</ResourceType>
+    <ResourceName />
+    <NoWin32Manifest />
+    <TargetPlatform>v45</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +60,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.dll" />
     <Reference Include="System.Runtime.Serialization.dll" />
@@ -107,32 +114,23 @@
       <DependentUpon>Properties\Resources.resx</DependentUpon>
     </Compile>
     <None Include="App.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.dbl</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.dbl">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Properties\Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <AppDesigner Include="Properties\" />
     <None Include="Service References\PartsService\configuration.svcinfo" />
     <None Include="Service References\PartsService\configuration91.svcinfo" />
-    <None Include="Service References\PartsService\item.disco" />
-    <None Include="Service References\PartsService\item.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PartsService\item1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PartsService\item2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PartsService\item3.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Service References\PartsService\PartsService.disco" />
     <None Include="Service References\PartsService\PartsService.wsdl" />
+    <None Include="Service References\PartsService\PartsService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\PartsService\PartsService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\PartsService\PartsService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\PartsService\PartsService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\PartsService\Reference.config" />
     <None Include="Service References\PartsService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
@@ -145,15 +143,18 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Service References\PartsService\TestClient.PartsService.MethodStatus.datasource">
-      <SubType>Content</SubType>
-      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
-    </Content>
+    <Resource Include="dbr8.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Service References\PartsService\TestClient.PartsService.PartReadAllResponse.datasource">
       <SubType>Content</SubType>
       <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
     </Content>
     <Content Include="Service References\PartsService\TestClient.PartsService.PartReadResponse.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\PartsService\TestClient.PartsService.PartsServiceResponse.datasource">
       <SubType>Content</SubType>
       <DependentUpon>Service References\PartsService\Reference.svcmap</DependentUpon>
     </Content>

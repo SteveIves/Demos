@@ -19,7 +19,7 @@
     <Language>Synergy</Language>
     <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-    <ProjEnvVars>RPSMFIL=$(SolutionDir)rps\rpsmain.ism;RPSTFIL=$(SolutionDir)rps\rpstext.ism;DAT=$(SolutionDir)data;</ProjEnvVars>
+    <ProjEnvVars>RPSMFIL=$(SolutionDir)rps\rpsmain.ism;RPSTFIL=$(SolutionDir)rps\rpstext.ism;</ProjEnvVars>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -43,6 +43,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
@@ -64,6 +65,10 @@
     <ProjectReference Include="..\AppDomainProtection\AppDomainProtection.synproj">
       <Name>AppDomainProtection</Name>
       <Project>{730cac09-e5cf-441c-80d0-f0623ed1adbb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PartsSystem\PartsSystem.synproj">
+      <Name>PartsSystem</Name>
+      <Project>{ec5ade07-8b6a-461a-98bb-f5c09874ff40}</Project>
     </ProjectReference>
     <ProjectReference Include="..\WcfServiceLibrary\WcfServiceLibrary.synproj">
       <Name>WcfServiceLibrary</Name>

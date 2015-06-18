@@ -10,34 +10,24 @@ import PartsSystem
 namespace WcfServiceLibrary
 
     public partial interface IPartsService
-	
+
         {OperationContract}
         method ReadSupplierParts, @Task<ReadSupplierPartsResponse>
             required in  aSupplierId, String
-		endmethod
+        endmethod
 
     endinterface
 
-	{DataContract}
-	{Serializable}
-	public class ReadSupplierPartsResponse
-		
-		{DataMember}
-		public property Status, MethodStatus
-			method get
-			endmethod
-			method set
-			endmethod
-		endproperty
-		
-		{DataMember}
-		public property Result, @List<Part>
-			method get
-			endmethod
-			method set
-			endmethod
-		endproperty
-		
-	endclass
+    {DataContract}
+    {Serializable}
+    public class ReadSupplierPartsResponse extends PartsServiceResponse
+        {DataMember}
+        public property Result, @List<Part>
+            method get
+            endmethod
+            method set
+            endmethod
+        endproperty
+    endclass
 
 endnamespace

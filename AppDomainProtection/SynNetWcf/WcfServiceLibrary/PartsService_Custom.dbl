@@ -19,7 +19,8 @@ namespace WcfServiceLibrary
 			begin
 				data api, @PartsSystemAPI, new PartsSystemAPI()
 				data tmpParts, @List<Part>
-				completionSource.SetResult(new ReadSupplierPartsResponse() { Status = api.ReadSupplierParts(aSupplierId,tmpParts), Result = tmpParts} )
+				data tmpErrorMessage, String
+				completionSource.SetResult(new ReadSupplierPartsResponse() { Status = api.ReadSupplierParts(aSupplierId,tmpParts,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpParts} )
 			end
 			this.ServiceDispatcher.Dispatch(curryParams)
 			mreturn completionSource.Task

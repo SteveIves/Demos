@@ -20,7 +20,6 @@ namespace <NAMESPACE>
         ;;; Construct an empty <StructureName> object
         ;;; </summary>
         public method <StructureName>
-            endparams
         proc
             wrapper = new <StructureName>Wrapper()
         endmethod
@@ -31,7 +30,6 @@ namespace <NAMESPACE>
         ;;; <param name="a<StructureName>">Passed <StructureName> record</param>
         internal method <StructureName>
             required in a<StructureName>, String
-            endparams
             this()
         proc
             ;;Save the record
@@ -47,7 +45,6 @@ namespace <NAMESPACE>
         {OnDeserializing}
         private method SetValuesOnDeserializing, void
             context, StreamingContext
-            endparams
         proc
             wrapper = new <StructureName>Wrapper()
         endmethod

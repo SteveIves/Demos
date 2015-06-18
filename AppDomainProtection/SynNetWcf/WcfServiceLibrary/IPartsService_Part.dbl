@@ -15,7 +15,7 @@ namespace WcfServiceLibrary
     public partial interface IPartsService
 
         {OperationContract}
-        method CreatePart, @Task<MethodStatus>
+        method CreatePart, @Task<PartsServiceResponse>
             required in aPart, @Part
         endmethod
 
@@ -35,12 +35,12 @@ namespace WcfServiceLibrary
         endmethod
 
         {OperationContract}
-        method DeletePart, @Task<MethodStatus>
+        method DeletePart, @Task<PartsServiceResponse>
             required in aGrfa, [#]byte
         endmethod
 
         {OperationContract}
-        method PartExists, @Task<MethodStatus>
+        method PartExists, @Task<PartsServiceResponse>
             required in aId, string
         endmethod
 
@@ -48,14 +48,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class PartReadResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class PartReadResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @Part
             method get
@@ -74,14 +67,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class PartReadAllResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class PartReadAllResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @List<Part>
             method get
@@ -93,14 +79,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class PartUpdateResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class PartUpdateResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @Part
             method get

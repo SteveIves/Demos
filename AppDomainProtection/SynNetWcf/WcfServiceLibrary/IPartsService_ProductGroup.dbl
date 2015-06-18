@@ -15,7 +15,7 @@ namespace WcfServiceLibrary
     public partial interface IPartsService
 
         {OperationContract}
-        method CreateProductGroup, @Task<MethodStatus>
+        method CreateProductGroup, @Task<PartsServiceResponse>
             required in aProductGroup, @ProductGroup
         endmethod
 
@@ -35,12 +35,12 @@ namespace WcfServiceLibrary
         endmethod
 
         {OperationContract}
-        method DeleteProductGroup, @Task<MethodStatus>
+        method DeleteProductGroup, @Task<PartsServiceResponse>
             required in aGrfa, [#]byte
         endmethod
 
         {OperationContract}
-        method ProductGroupExists, @Task<MethodStatus>
+        method ProductGroupExists, @Task<PartsServiceResponse>
             required in aGroupId, string
         endmethod
 
@@ -48,14 +48,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class ProductGroupReadResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class ProductGroupReadResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @ProductGroup
             method get
@@ -74,14 +67,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class ProductGroupReadAllResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class ProductGroupReadAllResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @List<ProductGroup>
             method get
@@ -93,14 +79,7 @@ namespace WcfServiceLibrary
 
     {DataContract}
     {Serializable}
-    public class ProductGroupUpdateResponse
-        {DataMember}
-        public property Status, MethodStatus
-            method get
-            endmethod
-            method set
-            endmethod
-        endproperty
+    public class ProductGroupUpdateResponse extends PartsServiceResponse
         {DataMember}
         public property Result, @ProductGroup
             method get

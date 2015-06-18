@@ -2,11 +2,13 @@
 import System
 import System.Collections.ObjectModel
 import System.ComponentModel
+import System.Configuration
 import System.ServiceModel
 import System.Threading.Tasks
 import System.Windows.Input
 import TestClient.PartsService
 
+import System.Windows
 namespace TestClient
 
 	public class ViewModel implements INotifyPropertyChanged
@@ -14,9 +16,15 @@ namespace TestClient
 .region "Constructors"
 
 		public method ViewModel
-			endparams
 		proc
+			endPointName = "SELF_HOSTED"	;Self-hosted service        (configure the solution to start ServiceHost AND TestClient)
+			;endPointName = "IIS_EXPRESS"	;IIS Express hosted service (configure WebHost to use IIS Express and the solution to start TestClient)
+			;endPointName = "IIS"			;IIS hosted service         (configure WebHost to use IIS and the solution to start TestClient)
+
+			AppTitle = String.Format("Parts System Parts Browser [Endpoint: {0} URL: {1}]",endPointName,getClient().Endpoint.Address)
+
 			getSuppliers()
+
 		endmethod
 
 .endregion
@@ -82,22 +90,46 @@ namespace TestClient
 			endmethod
 		endproperty
 
+		private mAppTitle, String
+		
+		public property AppTitle, String
+			method get
+			proc
+				mreturn mAppTitle
+			endmethod
+			method set
+			proc
+				mAppTitle = value
+				NotifyPropertyChanged("AppTitle")
+			endmethod
+		endproperty
+		
+
 .endregion
 
 .region "Logic"
 
+		private endPointName, string
+
+		private method getClient, @PartsServiceClient
+		proc
+			mreturn new PartsServiceClient(endPointName)
+		endmethod
+
 		private method getSuppliers, void
 			endparams
 		proc
+			ErrorMessage = ""
 			data newSuppliersCollection = new ObservableCollection<Supplier>()
-			data client = new PartsServiceClient()
+			data client = getClient()
 			
 			try
 			begin
-				ErrorMessage = ""
 				data response = client.ReadAllSuppliers()
-				if (response.Status == MethodStatus.Success)
+				if (response.Status == MethodStatus.Success) then
 					newSuppliersCollection = response.Result
+				else
+					ErrorMessage = response.ErrorMessage					
 				client.Close()
 			end
 			catch (ex, @Exception)
@@ -115,17 +147,18 @@ namespace TestClient
 		endmethod
 
 		private method getSupplierParts, void
-			endparams
 		proc
+			ErrorMessage = ""
 			data newPartsCollection, @ObservableCollection<Part>, new ObservableCollection<Part>()
-			data client, @PartsServiceClient , new PartsServiceClient()
+			data client = getClient()
 
 			try
 			begin
-				ErrorMessage = ""
 				data response = client.ReadSupplierParts(mSelectedSupplier.Supplierid)
-				if (response.Status == MethodStatus.Success)
+				if (response.Status == MethodStatus.Success) then
 					newPartsCollection = response.Result
+				else
+					ErrorMessage = response.ErrorMessage
 				client.Close()
 			end
 			catch (ex, @Exception)
@@ -143,32 +176,28 @@ namespace TestClient
 		endmethod
 
 		private method getSelectedPart, void
-			endparams
-
 		proc
-
 			if (SelectedPart == ^null)
 				mreturn
 
 			;Not really required, just for testing.
 
 ;			data newPart, @Part
-;			data client = new PartsServiceClient()
+;			data client = getClient()
 ;			
 ;			try
 ;			begin
-;				ErrorMessage = ""
 ;				data response = client.ReadPart(mSelectedPart.Id)
 ;				if (response.Status == MethodStatus.Success) then
 ;				begin
-;					nop
 ;					;;Test the update method
 ;					data response2 = client.UpdatePart(response.Result,response.Grfa)
 ;					if (response2.Status != MethodStatus.Success)
-;						ErrorMessage = "Failed to update selected part!"
+;						ErrorMessage = response2.ErrorMessage
+;					ErrorMessage = ""
 ;				end
 ;				else
-;					ErrorMessage = "Failed to read selected part!"
+;					ErrorMessage = response.ErrorMessage
 ;				client.Close()
 ;			end
 ;			catch (ex, @Exception)

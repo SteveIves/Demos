@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		templates\DataUtils.tpl = templates\DataUtils.tpl
 		templates\DataWrapper.tpl = templates\DataWrapper.tpl
 		templates\MethodStatus.tpl = templates\MethodStatus.tpl
+		templates\SynergyEnvironment.tpl = templates\SynergyEnvironment.tpl
 	EndProjectSection
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ServiceHost", "ServiceHost\ServiceHost.synproj", "{4BC136BC-6707-4222-B156-1554E244B4EF}"
@@ -31,8 +32,13 @@ EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "AppDomainProtection", "AppDomainProtection\AppDomainProtection.synproj", "{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}"
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "TestClient", "TestClient\TestClient.synproj", "{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D84232C-7220-4FDE-B006-796667D515A3} = {1D84232C-7220-4FDE-B006-796667D515A3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainProtectionCore", "AppDomainProtectionCore\AppDomainProtectionCore.csproj", "{7169E122-BCEE-43CB-81E9-DB45C7937475}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHost", "WebHost\WebHost.csproj", "{1D84232C-7220-4FDE-B006-796667D515A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +70,10 @@ Global
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D84232C-7220-4FDE-B006-796667D515A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D84232C-7220-4FDE-B006-796667D515A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D84232C-7220-4FDE-B006-796667D515A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D84232C-7220-4FDE-B006-796667D515A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
