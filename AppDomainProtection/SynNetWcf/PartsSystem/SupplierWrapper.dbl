@@ -15,7 +15,6 @@ namespace PartsSystem
         internal mSupplier, strSupplier
 
         public method SupplierWrapper
-            endparams
         proc
             init mSupplier
         endmethod
@@ -23,7 +22,6 @@ namespace PartsSystem
         public method SupplierWrapper
             info, @SerializationInfo
             context, StreamingContext
-            endparams
             this()
         proc
             data myType = ^typeof([#]byte)
@@ -33,7 +31,6 @@ namespace PartsSystem
         public method GetObjectData, void
             info, @SerializationInfo 
             context, StreamingContext 
-            endparams
         proc
             data bytes, [#]byte, (a)mSupplier
             info.AddValue("Record",bytes)

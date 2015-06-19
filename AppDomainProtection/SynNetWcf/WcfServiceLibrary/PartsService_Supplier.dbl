@@ -20,9 +20,12 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.CreateSupplier(aSupplier,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.CreateSupplier(aSupplier,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -30,42 +33,38 @@ namespace WcfServiceLibrary
 
         public method ReadSupplier, @Task<SupplierReadResponse>
             required in  aSupplierId, string
-            endparams
         proc
             data completionSource = new TaskCompletionSource<SupplierReadResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpSupplier, @Supplier
                 data tmpGrfa, [#]byte
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new SupplierReadResponse() { Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpSupplier, Grfa = tmpGrfa } )
-                ;------
-                ;WORKAROUND:
-                data r = new SupplierReadResponse()
-                r.Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmpSupplier
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new SupplierReadResponse()
+                response.Status = api.ReadSupplier(aSupplierId,tmpSupplier,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpSupplier
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
         public method ReadAllSuppliers, @Task<SupplierReadAllResponse>
-            endparams
         proc
             data completionSource = new TaskCompletionSource<SupplierReadAllResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpSuppliers, @List<Supplier>
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                completionSource.SetResult(new SupplierReadAllResponse() { Status = api.ReadAllSuppliers(tmpSuppliers,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpSuppliers} )
+                data response = new SupplierReadAllResponse()
+                response.Status = api.ReadAllSuppliers(tmpSuppliers,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpSuppliers
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -74,27 +73,20 @@ namespace WcfServiceLibrary
         public method UpdateSupplier, @Task<SupplierUpdateResponse>
             required in aSupplier, @Supplier
             required in aGrfa, [#]byte
-            endparams
         proc
             data completionSource = new TaskCompletionSource<SupplierUpdateResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpSupplier, @Supplier, aSupplier
                 data tmpGrfa, [#]byte, aGrfa
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new SupplierUpdateResponse() { Status = api.UpdateSupplier(tmpSupplier,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpSupplier, Grfa = tmpGrfa} )
-                ;------
-                ;WORKAROUND:
-                data r = new SupplierUpdateResponse()
-                r.Status = api.UpdateSupplier(tmpSupplier,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmpSupplier
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new SupplierUpdateResponse()
+                response.Status = api.UpdateSupplier(tmpSupplier,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpSupplier
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -102,14 +94,16 @@ namespace WcfServiceLibrary
 
         public method DeleteSupplier, @Task<PartsServiceResponse>
             required in aGrfa, [#]byte
-            endparams
         proc
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.DeleteSupplier(aGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.DeleteSupplier(aGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -117,14 +111,16 @@ namespace WcfServiceLibrary
 
         public method SupplierExists, @Task<PartsServiceResponse>
             required in aSupplierId, string
-            endparams
         proc
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.SupplierExists(aSupplierId,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.SupplierExists(aSupplierId,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task

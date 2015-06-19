@@ -18,7 +18,6 @@ namespace PartsSystem
         ;;; Construct an empty ProductGroup object
         ;;; </summary>
         public method ProductGroup
-            endparams
         proc
             wrapper = new ProductGroupWrapper()
         endmethod
@@ -29,7 +28,6 @@ namespace PartsSystem
         ;;; <param name="aProductGroup">Passed ProductGroup record</param>
         internal method ProductGroup
             required in aProductGroup, String
-            endparams
             this()
         proc
             ;;Save the record
@@ -45,7 +43,6 @@ namespace PartsSystem
         {OnDeserializing}
         private method SetValuesOnDeserializing, void
             context, StreamingContext
-            endparams
         proc
             wrapper = new ProductGroupWrapper()
         endmethod

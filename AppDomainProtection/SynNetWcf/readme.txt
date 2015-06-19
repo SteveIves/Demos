@@ -86,7 +86,7 @@ process level, and AppDomain protection DOES NOT CHANGE THAT!
 IMPORTANT: The instance of Visual Studio that is used to open and run this
 demo code MUST be "Run as Administrator". If you don't do this then the server
 application will fail to start because it won't have permissions to bind to
-your network adapter.
+your network adapter, and the WebHost project may also fail to load.
 
 The solution has been configured so that when you run the application BOTH
 the ServiceHost and TestClient applications will be launched. You will see
@@ -97,48 +97,12 @@ and also because there is generally a brief delay in response from a WCF
 service the first time a client connects after the service starts.
 
 ================================================================================
-AppDomainProtection Project
+AppDomainProtection and AppDomainProtectionCore Projects
 
-The most important code in this example is in the AppDomainProtection project.
-It has been distributed this way so that you can easily re-use it with your own
-WCF services.
-
-Included in the AppDomainProtection project are:
-
-AppDomainPoolManager        This class implments a simple pooling mechanism
-                            which allows AppDomains to be re-used. This is
-                            a way of optimising performance, because creating
-                            an AppDomain is a relatively "expensive" operation.
-
-BackgroundDispatcher        This class controls the processing of background
-                            tasks on different threads.
-
-IAppDomainPoolable          This interface can be implemented by classes whose
-                            functionality is to be executed inside an AppDomain
-                            pooling environment such as that provided by
-                            AppDomainPoolManager. Implementing this interface
-                            enables AppDomain pooling, and provides several
-                            call-back methods that are called during the
-                            lifetime of an object.
-
-IsolatableServiceBase       This class is a base class to be used for WCF services
-                            whose code is to be isolated by being loaded into
-                            an AppDomain.
-
-ServiceInstanceProvider     This class implements a custom provider that will be
-                            called by WCF whenever a new instance of the WCF
-                            service is required. This functionality is implemented
-                            by attributing your WCF service class or interface
-                            with SingletonBehaviorAttribute.
-
-SingletonBehaviorAttribute  This class implements an attribute that can be applied
-                            to a WCF service class (or interface) in order to
-                            implement a custom WCF service instance provider
-                            that provides AppDomain and multi-threading
-                            protection for any Synergy .NET code that executes
-                            within the service. The custom service instance
-                            provider is implemented in the ServiceInstanceProvider
-                            class.
+These two projects contain standard utility code that we have developed that is
+responsible for implementing the AppDomain and thread locking protections that
+Synergy .NET code can require. You should be able to simply add copies of these
+projects to your development solutions.
 
 ================================================================================
 PartsSystem Project
@@ -155,22 +119,40 @@ in the "Solution Items" solution folder.
 ================================================================================
 WcfServiceLibrary Project
 
-This project is again a Synergy .NET class library. It contains classes that
+This project is a Synergy .NET WCF Service Library. It contains classes that
 "wrap" the business logic in the previous project in a WCF service.
 
-Again, most of the code in this project was code generated using CodeGen.
+The source files that begin with an I are used to define an "Interface" that
+defines the "contract" exposed by the WCF Service. The other source files
+define a class that implements the contract interface.
+
+The external interface of the sample WCF service uses an asychronous pattern in
+which each of the service operations (methods) returns a Task containing a
+response object. The response object in turn contains any and all data returned
+by the operation. All operations return at least two pieces of data:
+
+1. A return status defined by the ENUM MethodStatus.
+2. An error message, which is populated whenever the return status is anything
+   other than success.
+
+A base response class named PartsServiceResponse is defined and conains properties
+for these two "standard" return values. This class can be used for any methods
+that only return status and error message, and can be extended by other return
+type classes that need to contain additional data. You will see examples of this
+in various response classes defined in files such as IPartsService_Part.dbl.
+
+Again, most of the code in this project was code generated using CodeGen. Some
+of the code is "hand crafted", you can find this code in the source files
+IPartsService_Custom.dbl and PartsService_Custom.dbl
 
 ================================================================================
 ServiceHost Project
 
 This project is a Synergy .NET console application that is used to host the
-WCF service. To start the service make sure this project is set as the "Startup
-Project" and then use Debug > Start Without Debugging" to start the service.
+WCF service. When using this self-hosting project to host the service you will
+see a console window apper containing this text:
 
-When you start the service you should see a console window apper, and it should
-contain text similar to this:
-
-The service is ready at http://localhost:56565
+The service is ready at http://localhost:50074
 
 Press a key to terminate the service
 
@@ -178,8 +160,14 @@ Press a key to terminate the service
 TestClient Project
 
 This project is a very simple Synergy .NET WPF application. It has a service
-reference to the WCF service exposed by the server solution, and uses some of
-the WCF services methods
+reference to the WCF service exposed by the WcfServiceLibrary, and uses some of
+the WCF services methods.
+
+================================================================================
+WebHost Project
+
+This project is a very simple Synergy ASP.NET Web application that can be used
+to host the WCF services using IIS Express or IIS.
 
 ================================================================================
 Strong Name Signing
@@ -188,3 +176,52 @@ If you intend to host your Synergy .NET WCF services in Internet Information
 Server (IIS) then all assemblies that will be loaded in IIS (in the case of
 this example that would be AppDomainProtection.dll, PartsSystem.dll and
 WcfServiceLibrary.dll) must be strong name signed.
+
+================================================================================
+Testing the environment
+
+You can test the environment in one of three ways:
+
+1. SelfhHosting the WCF service 
+   ----------------------------
+   
+   Configure the solution to start BOTH the ServiceHost and TestClient projects,
+   this is done by right-clicking the SynNetWcf solution, selecting "Set Startup
+   Projects", selecting "Multiple Startup Projects" and setting both of the
+   required projects to an Action of Start.
+   
+   Near the top of TestClient\ViewModel.dbl make sure that
+   endPointName = "SELF_HOSTED" is enabled.
+   
+   Select Debug > Start Debugging
+
+2. Hosting the WCF service in the WebHost web application using IIS Express
+   ------------------------------------------------------------------------
+
+   Configure the Web projects properties to use "IIS Express" with the URL
+   http://localhost:50075/
+
+   Configure the solution to start onlt the TestClient project, right-click on
+   the project and select Set as Startup Project.
+   
+   Near the top of TestClient\ViewModel.dbl make sure that
+   endPointName = "IIS_EXPRESS" is enabled.
+   
+   Select Debug > Start Debugging
+
+3. Hosting the WCF service in the WebHost web application using IIS
+   ----------------------------------------------------------------
+
+   Configure the Web projects properties to use "Local IIS" with the URL
+   http://localhost/WebHost
+
+   If it is the first time you have done this, click the "Create Virtual Directory"
+   button to configure the application in your local IIS server.
+
+   Configure the solution to start onlt the TestClient project, right-click on
+   the project and select Set as Startup Project.
+   
+   Near the top of TestClient\ViewModel.dbl make sure that
+   endPointName = "IIS" is enabled.
+   
+   Select Debug > Start Debugging

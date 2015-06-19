@@ -15,7 +15,6 @@ namespace PartsSystem
         internal mPart, strPart
 
         public method PartWrapper
-            endparams
         proc
             init mPart
         endmethod
@@ -23,7 +22,6 @@ namespace PartsSystem
         public method PartWrapper
             info, @SerializationInfo
             context, StreamingContext
-            endparams
             this()
         proc
             data myType = ^typeof([#]byte)
@@ -33,7 +31,6 @@ namespace PartsSystem
         public method GetObjectData, void
             info, @SerializationInfo 
             context, StreamingContext 
-            endparams
         proc
             data bytes, [#]byte, (a)mPart
             info.AddValue("Record",bytes)

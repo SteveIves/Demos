@@ -18,7 +18,6 @@ namespace PartsSystem
         ;;; Construct an empty Part object
         ;;; </summary>
         public method Part
-            endparams
         proc
             wrapper = new PartWrapper()
         endmethod
@@ -29,7 +28,6 @@ namespace PartsSystem
         ;;; <param name="aPart">Passed Part record</param>
         internal method Part
             required in aPart, String
-            endparams
             this()
         proc
             ;;Save the record
@@ -45,7 +43,6 @@ namespace PartsSystem
         {OnDeserializing}
         private method SetValuesOnDeserializing, void
             context, StreamingContext
-            endparams
         proc
             wrapper = new PartWrapper()
         endmethod

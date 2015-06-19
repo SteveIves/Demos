@@ -20,9 +20,12 @@ namespace WcfServiceLibrary
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.CreateProductGroup(aProductGroup,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.CreateProductGroup(aProductGroup,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -30,42 +33,38 @@ namespace WcfServiceLibrary
 
         public method ReadProductGroup, @Task<ProductGroupReadResponse>
             required in  aGroupId, string
-            endparams
         proc
             data completionSource = new TaskCompletionSource<ProductGroupReadResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpProductGroup, @ProductGroup
                 data tmpGrfa, [#]byte
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new ProductGroupReadResponse() { Status = api.ReadProductGroup(aGroupId,tmpProductGroup,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpProductGroup, Grfa = tmpGrfa } )
-                ;------
-                ;WORKAROUND:
-                data r = new ProductGroupReadResponse()
-                r.Status = api.ReadProductGroup(aGroupId,tmpProductGroup,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmpProductGroup
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new ProductGroupReadResponse()
+                response.Status = api.ReadProductGroup(aGroupId,tmpProductGroup,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpProductGroup
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
         endmethod
 
         public method ReadAllProductGroups, @Task<ProductGroupReadAllResponse>
-            endparams
         proc
             data completionSource = new TaskCompletionSource<ProductGroupReadAllResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpProductGroups, @List<ProductGroup>
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                completionSource.SetResult(new ProductGroupReadAllResponse() { Status = api.ReadAllProductGroups(tmpProductGroups,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpProductGroups} )
+                data response = new ProductGroupReadAllResponse()
+                response.Status = api.ReadAllProductGroups(tmpProductGroups,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpProductGroups
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -74,27 +73,20 @@ namespace WcfServiceLibrary
         public method UpdateProductGroup, @Task<ProductGroupUpdateResponse>
             required in aProductGroup, @ProductGroup
             required in aGrfa, [#]byte
-            endparams
         proc
             data completionSource = new TaskCompletionSource<ProductGroupUpdateResponse>()
             lambda curryParams()
             begin
+                data api = new PartsSystemAPI()
                 data tmpProductGroup, @ProductGroup, aProductGroup
                 data tmpGrfa, [#]byte, aGrfa
                 data tmpErrorMessage, string
-                data api = new PartsSystemAPI()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new ProductGroupUpdateResponse() { Status = api.UpdateProductGroup(tmpProductGroup,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmpProductGroup, Grfa = tmpGrfa} )
-                ;------
-                ;WORKAROUND:
-                data r = new ProductGroupUpdateResponse()
-                r.Status = api.UpdateProductGroup(tmpProductGroup,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmpProductGroup
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new ProductGroupUpdateResponse()
+                response.Status = api.UpdateProductGroup(tmpProductGroup,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmpProductGroup
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -102,14 +94,16 @@ namespace WcfServiceLibrary
 
         public method DeleteProductGroup, @Task<PartsServiceResponse>
             required in aGrfa, [#]byte
-            endparams
         proc
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.DeleteProductGroup(aGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.DeleteProductGroup(aGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -117,14 +111,16 @@ namespace WcfServiceLibrary
 
         public method ProductGroupExists, @Task<PartsServiceResponse>
             required in aGroupId, string
-            endparams
         proc
             data completionSource = new TaskCompletionSource<PartsServiceResponse>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new PartsSystemAPI()
-                completionSource.SetResult(new PartsServiceResponse() { Status = api.ProductGroupExists(aGroupId,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new PartsServiceResponse()
+                response.Status = api.ProductGroupExists(aGroupId,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task

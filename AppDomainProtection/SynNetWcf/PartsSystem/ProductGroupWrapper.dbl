@@ -15,7 +15,6 @@ namespace PartsSystem
         internal mProductGroup, strProductGroup
 
         public method ProductGroupWrapper
-            endparams
         proc
             init mProductGroup
         endmethod
@@ -23,7 +22,6 @@ namespace PartsSystem
         public method ProductGroupWrapper
             info, @SerializationInfo
             context, StreamingContext
-            endparams
             this()
         proc
             data myType = ^typeof([#]byte)
@@ -33,7 +31,6 @@ namespace PartsSystem
         public method GetObjectData, void
             info, @SerializationInfo 
             context, StreamingContext 
-            endparams
         proc
             data bytes, [#]byte, (a)mProductGroup
             info.AddValue("Record",bytes)

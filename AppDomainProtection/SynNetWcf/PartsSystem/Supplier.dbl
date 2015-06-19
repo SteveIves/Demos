@@ -18,7 +18,6 @@ namespace PartsSystem
         ;;; Construct an empty Supplier object
         ;;; </summary>
         public method Supplier
-            endparams
         proc
             wrapper = new SupplierWrapper()
         endmethod
@@ -29,7 +28,6 @@ namespace PartsSystem
         ;;; <param name="aSupplier">Passed Supplier record</param>
         internal method Supplier
             required in aSupplier, String
-            endparams
             this()
         proc
             ;;Save the record
@@ -45,7 +43,6 @@ namespace PartsSystem
         {OnDeserializing}
         private method SetValuesOnDeserializing, void
             context, StreamingContext
-            endparams
         proc
             wrapper = new SupplierWrapper()
         endmethod

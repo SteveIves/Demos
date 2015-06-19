@@ -26,9 +26,12 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<WCF_SERVICE>Response>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new <API_CLASS>()
-                completionSource.SetResult(new <WCF_SERVICE>Response() { Status = api.Create<StructureName>(a<StructureName>,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new <WCF_SERVICE>Response()
+                response.Status = api.Create<StructureName>(a<StructureName>,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -43,22 +46,16 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<StructureName>ReadResponse>()
             lambda curryParams()
             begin
+                data api = new <API_CLASS>()
                 data tmp<StructureName>, @<StructureName>
                 data tmpGrfa, [#]byte
                 data tmpErrorMessage, string
-                data api = new <API_CLASS>()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new <StructureName>ReadResponse() { Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmp<StructureName>, Grfa = tmpGrfa } )
-                ;------
-                ;WORKAROUND:
-                data r = new <StructureName>ReadResponse()
-                r.Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmp<StructureName>
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new <StructureName>ReadResponse()
+                response.Status = api.Read<StructureName>(<SEGMENT_LOOP>a<SegmentName>,</SEGMENT_LOOP>tmp<StructureName>,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmp<StructureName>
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -70,10 +67,14 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<StructureName>ReadAllResponse>()
             lambda curryParams()
             begin
+                data api = new <API_CLASS>()
                 data tmp<StructureName>s, @List<<StructureName>>
                 data tmpErrorMessage, string
-                data api = new <API_CLASS>()
-                completionSource.SetResult(new <StructureName>ReadAllResponse() { Status = api.ReadAll<StructureName>s(tmp<StructureName>s,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmp<StructureName>s} )
+                data response = new <StructureName>ReadAllResponse()
+                response.Status = api.ReadAll<StructureName>s(tmp<StructureName>s,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmp<StructureName>s
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -86,22 +87,16 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<StructureName>UpdateResponse>()
             lambda curryParams()
             begin
+                data api = new <API_CLASS>()
                 data tmp<StructureName>, @<StructureName>, a<StructureName>
                 data tmpGrfa, [#]byte, aGrfa
                 data tmpErrorMessage, string
-                data api = new <API_CLASS>()
-                ;------
-                ;TODO: Compiler Bug: Type mismatch between System.Byte and System.Byte!
-                ;completionSource.SetResult(new <StructureName>UpdateResponse() { Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage, Result = tmp<StructureName>, Grfa = tmpGrfa} )
-                ;------
-                ;WORKAROUND:
-                data r = new <StructureName>UpdateResponse()
-                r.Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa,tmpErrorMessage)
-                r.ErrorMessage = tmpErrorMessage
-                r.Result = tmp<StructureName>
-                r.Grfa = tmpGrfa
-                completionSource.SetResult(r)
-                ;------
+                data response = new <StructureName>UpdateResponse()
+                response.Status = api.Update<StructureName>(tmp<StructureName>,tmpGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                response.Result = tmp<StructureName>
+                response.Grfa = tmpGrfa
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -113,9 +108,12 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<WCF_SERVICE>Response>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new <API_CLASS>()
-                completionSource.SetResult(new <WCF_SERVICE>Response() { Status = api.Delete<StructureName>(aGrfa,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new <WCF_SERVICE>Response()
+                response.Status = api.Delete<StructureName>(aGrfa,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
@@ -130,9 +128,12 @@ namespace <NAMESPACE>
             data completionSource = new TaskCompletionSource<<WCF_SERVICE>Response>()
             lambda curryParams()
             begin
-                data tmpErrorMessage, string
                 data api = new <API_CLASS>()
-                completionSource.SetResult(new <WCF_SERVICE>Response() { Status = api.<StructureName>Exists(<SEGMENT_LOOP>a<SegmentName><,></SEGMENT_LOOP>,tmpErrorMessage), ErrorMessage = tmpErrorMessage } )
+                data tmpErrorMessage, string
+                data response = new <WCF_SERVICE>Response()
+                response.Status = api.<StructureName>Exists(<SEGMENT_LOOP>a<SegmentName><,></SEGMENT_LOOP>,tmpErrorMessage)
+                response.ErrorMessage = tmpErrorMessage
+                completionSource.SetResult(response)
             end
             this.ServiceDispatcher.Dispatch(curryParams)
             mreturn completionSource.Task
