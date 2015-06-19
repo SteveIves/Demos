@@ -1038,13 +1038,13 @@ namespace SqlUploadDemo
             recordSpec.fields[7].fieldType     = "D" ;;Price
             recordSpec.fields[7].fieldSize     = 6
             recordSpec.fields[7].fieldDecimals = 2
-        recordSpec.fields[8].fieldType     = "D" ;;LineValue
+            recordSpec.fields[8].fieldType     = "D" ;;LineValue
             recordSpec.fields[8].fieldSize     = 6
             recordSpec.fields[8].fieldDecimals = 2
-        recordSpec.fields[9].fieldType     = "D" ;;Tax
+            recordSpec.fields[9].fieldType     = "D" ;;Tax
             recordSpec.fields[9].fieldSize     = 6
             recordSpec.fields[9].fieldDecimals = 2
-    endmethod
+        endmethod
 
         ;;; <summary>
         ;;; Loads various SQL statements into "shared" static variables

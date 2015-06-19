@@ -779,8 +779,8 @@ namespace SqlUploadDemo
         public method Load, boolean
             endparams
             record
-                rows            ,int
-                failrows        ,int
+                rows        ,int
+                failrows    ,int
             endrecord
         proc
             mreturn Load(false,0,rows=0,failrows)
@@ -798,8 +798,8 @@ namespace SqlUploadDemo
             required in    a_logex      ,boolean
             endparams
             record
-                rows            ,int
-                failrows        ,int
+                rows        ,int
+                failrows    ,int
             endrecord
         proc
             mreturn Load(a_logex,0,rows=0,failrows)
@@ -924,7 +924,7 @@ namespace SqlUploadDemo
             a_rows = goodrows
 
             ;;Return number of failed rows
-                a_failrows = failrows
+            a_failrows = failrows
 
             mreturn ok
 
