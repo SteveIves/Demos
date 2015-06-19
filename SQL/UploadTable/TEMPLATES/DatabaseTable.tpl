@@ -1030,7 +1030,7 @@ namespace <NAMESPACE>
             recordSpec.fields[<FIELD#LOGICAL>].fieldType     = "<FIELD_TYPE>" ;;<FieldSqlName>
             </IF DATEORTIME>
             recordSpec.fields[<FIELD#LOGICAL>].fieldSize     = <FIELD_SIZE>
-            recordSpec.fields[<FIELD#LOGICAL>].fieldDecimals = <IF PRECISION><FIELD_PRECISION></IF PRECISION><IF NOPRECISION>0</IF NOPRECISION>
+            recordSpec.fields[<FIELD#LOGICAL>].fieldDecimals = <FIELD_PRECISION0>
             </FIELD_LOOP>
         endmethod
 
