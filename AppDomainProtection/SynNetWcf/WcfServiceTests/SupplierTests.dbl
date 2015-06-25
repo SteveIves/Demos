@@ -1,0 +1,86 @@
+import System
+import Microsoft.VisualStudio.TestTools.UnitTesting
+import WcfServiceClient
+
+namespace WcfServiceTests
+
+	{TestClass}
+	public class SupplierTests
+		
+		private static mFirstSupplierId, String
+			
+		private static mBadSupplierId, String, ""
+			
+		{ClassInitialize}
+		public static method ClassInitialize, void
+			context, @TestContext
+		proc
+			data response = TestClient.Client.ReadAllSuppliers()
+			if (response.Status == MethodStatus.Success && response.Result.Count > 0) then
+			begin
+				data firstSupplier = response.Result[0]
+				mFirstSupplierId = firstSupplier.SupplierId
+			end
+			else
+				throw new ApplicationException("SupplierTests.ClassInitialize failed!")
+        endmethod
+
+		{TestMethod}
+		public method ReadAllSuppliers, void
+		proc
+			data r = TestClient.Client.ReadAllSuppliers()
+			Assert.IsTrue(r.Status == MethodStatus.Success && r.Result.Count > 0)
+		endmethod
+
+		{TestMethod}
+		public method ReadSupplier_Sucess, void
+		proc
+			data r = TestClient.Client.ReadSupplier(mFirstSupplierId)
+			Assert.IsTrue(r.Status == MethodStatus.Success  && r.Result.SupplierId == mFirstSupplierId)
+		endmethod
+
+		{TestMethod}
+		public method ReadSupplier_Fail, void
+		proc
+			data r = TestClient.Client.ReadSupplier(mBadSupplierId)
+			Assert.IsTrue(r.Status == MethodStatus.Fail)
+		endmethod
+
+		{TestMethod}
+		public method UpdateSupplier, void
+		proc
+			data r1 = TestClient.Client.ReadSupplier(mFirstSupplierId)
+			if (r1.Status == MethodStatus.Success) then
+			begin
+				data r2 = TestClient.Client.UpdateSupplier(r1.Result,r1.Grfa)
+				Assert.IsTrue(r2.Status == MethodStatus.Success)
+			end
+			else
+				Assert.Fail("ReadSupplier failed in test UpdateSupplier")
+		endmethod
+		
+		{TestMethod}
+		public method CreateSupplier, void
+		proc
+			data newSupplier = new Supplier()
+			newSupplier.SupplierId = mBadSupplierId
+			data response = TestClient.Client.CreateSupplier(newSupplier)
+			Assert.IsTrue(response.Status == MethodStatus.Success)
+		endmethod
+		
+		{TestMethod}
+		public method DeleteSupplier, void
+		proc
+			data r1 = TestClient.Client.ReadSupplier(mFirstSupplierId)
+			if (r1.Status == MethodStatus.Success) then
+			begin
+				data r2 = TestClient.Client.DeleteSupplier(r1.Grfa)
+				Assert.IsTrue(r2.Status == MethodStatus.Success)
+			end
+			else
+				Assert.Fail("ReadSupplier failed in test DeleteSupplier")
+		endmethod
+
+	endclass
+
+endnamespace

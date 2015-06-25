@@ -1,4 +1,4 @@
-﻿import System
+import System
 import Microsoft.VisualStudio.TestTools.UnitTesting
 import WcfServiceClient
 
@@ -6,12 +6,79 @@ namespace WcfServiceTests
 
 	{TestClass}
 	public class PartTests
+		
+		private static mFirstId, String
+			
+		private static mBadId, String, ""
+			
+		{ClassInitialize}
+		public static method ClassInitialize, void
+			context, @TestContext
+		proc
+			data response = TestClient.Client.ReadAllParts()
+			if (response.Status == MethodStatus.Success && response.Result.Count > 0) then
+			begin
+				data firstPart = response.Result[0]
+				mFirstId = firstPart.Id
+			end
+			else
+				throw new ApplicationException("PartTests.ClassInitialize failed!")
+        endmethod
 
 		{TestMethod}
 		public method ReadAllParts, void
 		proc
-			data response = TestClient.Client.ReadAllParts()
-			Assert.IsTrue(((response.Status == MethodStatus.Success) && (response.Result.Count > 0)))
+			data r = TestClient.Client.ReadAllParts()
+			Assert.IsTrue(r.Status == MethodStatus.Success && r.Result.Count > 0)
+		endmethod
+
+		{TestMethod}
+		public method ReadPart_Sucess, void
+		proc
+			data r = TestClient.Client.ReadPart(mFirstId)
+			Assert.IsTrue(r.Status == MethodStatus.Success  && r.Result.Id == mFirstId)
+		endmethod
+
+		{TestMethod}
+		public method ReadPart_Fail, void
+		proc
+			data r = TestClient.Client.ReadPart(mBadId)
+			Assert.IsTrue(r.Status == MethodStatus.Fail)
+		endmethod
+
+		{TestMethod}
+		public method UpdatePart, void
+		proc
+			data r1 = TestClient.Client.ReadPart(mFirstId)
+			if (r1.Status == MethodStatus.Success) then
+			begin
+				data r2 = TestClient.Client.UpdatePart(r1.Result,r1.Grfa)
+				Assert.IsTrue(r2.Status == MethodStatus.Success)
+			end
+			else
+				Assert.Fail("ReadPart failed in test UpdatePart")
+		endmethod
+		
+		{TestMethod}
+		public method CreatePart, void
+		proc
+			data newPart = new Part()
+			newPart.Id = mBadId
+			data response = TestClient.Client.CreatePart(newPart)
+			Assert.IsTrue(response.Status == MethodStatus.Success)
+		endmethod
+		
+		{TestMethod}
+		public method DeletePart, void
+		proc
+			data r1 = TestClient.Client.ReadPart(mFirstId)
+			if (r1.Status == MethodStatus.Success) then
+			begin
+				data r2 = TestClient.Client.DeletePart(r1.Grfa)
+				Assert.IsTrue(r2.Status == MethodStatus.Success)
+			end
+			else
+				Assert.Fail("ReadPart failed in test DeletePart")
 		endmethod
 
 	endclass

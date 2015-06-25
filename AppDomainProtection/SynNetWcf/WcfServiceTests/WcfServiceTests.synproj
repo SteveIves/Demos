@@ -63,7 +63,9 @@
   <ItemGroup>
     <Compile Include="CustomTests.dbl" />
     <Compile Include="PartTests.dbl" />
+    <Compile Include="ProductGroupTests.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
+    <Compile Include="SupplierTests.dbl" />
     <Compile Include="TestClient.dbl" />
   </ItemGroup>
   <ItemGroup>

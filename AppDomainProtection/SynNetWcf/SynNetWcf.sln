@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		templates\CRUDInterfaceBase.tpl = templates\CRUDInterfaceBase.tpl
 		templates\CRUDService.tpl = templates\CRUDService.tpl
 		templates\CRUDServiceBase.tpl = templates\CRUDServiceBase.tpl
+		templates\CRUDUnitTests.tpl = templates\CRUDUnitTests.tpl
 		templates\DataClass.tpl = templates\DataClass.tpl
 		templates\DataUtils.tpl = templates\DataUtils.tpl
 		templates\DataWrapper.tpl = templates\DataWrapper.tpl
@@ -30,11 +31,6 @@ EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "PartsSystem", "PartsSystem\PartsSystem.synproj", "{EC5ADE07-8B6A-461A-98BB-F5C09874FF40}"
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "AppDomainProtection", "AppDomainProtection\AppDomainProtection.synproj", "{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}"
-EndProject
-Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "TestClient", "TestClient\TestClient.synproj", "{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1D84232C-7220-4FDE-B006-796667D515A3} = {1D84232C-7220-4FDE-B006-796667D515A3}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainProtectionCore", "AppDomainProtectionCore\AppDomainProtectionCore.csproj", "{7169E122-BCEE-43CB-81E9-DB45C7937475}"
 EndProject
@@ -66,10 +62,6 @@ Global
 		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{730CAC09-E5CF-441C-80D0-F0623ED1ADBB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A562EF76-4746-4B0B-8AA0-BE4C81F3CBD7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7169E122-BCEE-43CB-81E9-DB45C7937475}.Release|Any CPU.ActiveCfg = Release|Any CPU

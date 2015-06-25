@@ -16,6 +16,9 @@ codegen -e -s PART PRODUCT_GROUP SUPPLIER -t CRUD -n PartsSystem -ut MAIN_CLASS=
 echo Generating WCF Service code...
 codegen -e -s PART PRODUCT_GROUP SUPPLIER -t CRUDService -n WcfServiceLibrary -ut WCF_SERVICE=PartsService API_NAMESPACE=PartsSystem API_CLASS=PartsSystemAPI -o WcfServiceLibrary -r
 
+echo Generating Unit Tests code...
+codegen -e -s PART PRODUCT_GROUP SUPPLIER -t CRUDUnitTests -n WcfServiceTests -o WcfServiceTests -r
+
 echo Code generation complete
 
 endlocal
