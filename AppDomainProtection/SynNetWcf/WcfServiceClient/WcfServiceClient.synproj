@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>"WcfServiceClient"</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{639bd381-781f-4dc7-bc24-bafdd3a82d2f}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WcfServiceClient</RootNamespace>
+    <AssemblyName>WcfServiceClient</AssemblyName>
+    <MainFile>Class.dbl</MainFile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetPlatform>v45</TargetPlatform>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <DBL_qWarnLevel>3 - Don't display warning levels higher than 3</DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -W3 -qstack</DBLCmdOptions>
+    <Language>Synergy</Language>
+    <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <RunPostBuildEvent>On successful build</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Debug</DebugOptimize>
+    <DocumentationFile>bin\Debug\WcfServiceClient.xml</DocumentationFile>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>bin\Release\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Optimize</DebugOptimize>
+    <DocumentationFile>bin\Release\WcfServiceClient.xml</DocumentationFile>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="synrnt">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PartsService.dbl" />
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CreateClient.bat">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="output.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)CreateClient.bat</PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

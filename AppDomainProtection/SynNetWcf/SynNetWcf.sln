@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainProtectionCore", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHost", "WebHost\WebHost.csproj", "{1D84232C-7220-4FDE-B006-796667D515A3}"
 EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "WcfServiceClient", "WcfServiceClient\WcfServiceClient.synproj", "{639BD381-781F-4DC7-BC24-BAFDD3A82D2F}"
+EndProject
+Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "WcfServiceTests", "WcfServiceTests\WcfServiceTests.synproj", "{F73C3E53-F3AA-48C0-8165-232D464C12FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,13 @@ Global
 		{1D84232C-7220-4FDE-B006-796667D515A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D84232C-7220-4FDE-B006-796667D515A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D84232C-7220-4FDE-B006-796667D515A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{639BD381-781F-4DC7-BC24-BAFDD3A82D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{639BD381-781F-4DC7-BC24-BAFDD3A82D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{639BD381-781F-4DC7-BC24-BAFDD3A82D2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F73C3E53-F3AA-48C0-8165-232D464C12FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F73C3E53-F3AA-48C0-8165-232D464C12FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F73C3E53-F3AA-48C0-8165-232D464C12FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F73C3E53-F3AA-48C0-8165-232D464C12FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

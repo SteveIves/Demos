@@ -1,0 +1,26 @@
+import System
+import Microsoft.VisualStudio.TestTools.UnitTesting
+import WcfServiceClient
+
+namespace WcfServiceTests
+	
+	{TestClass}
+	public class CustomTests
+		
+		{TestMethod}
+		public method ReadSupplierParts1, void
+		proc
+			data response = TestClient.Client.ReadSupplierParts("BREMBO")
+			Assert.IsTrue(response.Status == MethodStatus.Success && response.Result.Count > 0)
+		endmethod
+		
+		{TestMethod}
+		public method ReadSupplierParts2, void
+		proc
+			data response = TestClient.Client.ReadSupplierParts("BAD_SUPPLIER")
+			Assert.IsTrue(response.Status == MethodStatus.Success && response.Result.Count == 0)
+		endmethod
+
+	endclass
+	
+endnamespace

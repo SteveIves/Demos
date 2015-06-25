@@ -1,0 +1,28 @@
+import System
+import Microsoft.VisualStudio.TestTools.UnitTesting
+import WcfServiceClient
+
+namespace WcfServiceTests
+
+	{TestClass}
+	public class TestClient
+	
+		public static Client, @PartsServiceClient
+
+		{AssemblyInitialize}
+		public static method AssemblyInitialize, void
+			context, @TestContext
+		proc
+			client = new PartsServiceClient()
+		endmethod
+		
+		{AssemblyCleanup}
+		public static method AssemblyCleanup, void
+		proc
+			Client.Close()
+			clear client
+		endmethod
+
+	endclass
+
+endnamespace

@@ -1,0 +1,19 @@
+﻿import System
+import Microsoft.VisualStudio.TestTools.UnitTesting
+import WcfServiceClient
+
+namespace WcfServiceTests
+
+	{TestClass}
+	public class PartTests
+
+		{TestMethod}
+		public method ReadAllParts, void
+		proc
+			data response = TestClient.Client.ReadAllParts()
+			Assert.IsTrue(((response.Status == MethodStatus.Success) && (response.Result.Count > 0)))
+		endmethod
+
+	endclass
+
+endnamespace
