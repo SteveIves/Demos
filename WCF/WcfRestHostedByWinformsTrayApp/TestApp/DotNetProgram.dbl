@@ -1,0 +1,130 @@
+;
+;import System
+;import System.Collections.Generic
+;import System.IO
+;import System.Linq
+;import System.Net
+;import System.Text
+;import System.Threading.Tasks
+;
+;.array 0
+;
+;namespace LocalTestApp
+;
+;	main DotNetProgram
+;	proc
+;		Program.Main(Environment.GetCommandLineArgs())
+;	endmain
+;
+;	class Program
+;		
+;		public static method Main, void
+;			args, [#]string 
+;		proc
+;			repeat
+;			begin
+;				Console.WriteLine("")
+;				Console.Write("Message ID: ")
+;
+;				data messageId = Console.ReadLine().ToUpper()
+;
+;				;;Exit?
+;				if (String.IsNullOrWhiteSpace(messageId))
+;					exitloop
+;
+;				data messageData = String.Empty
+;				if (messageId != "PING")
+;				begin
+;					Console.Write("Send data : ")
+;					messageData = Console.ReadLine()
+;				end
+;
+;				data status = doPost(messageId, messageData)
+;
+;				Console.WriteLine(status ? "Response  : OK" : "Response  : ERROR")
+;				Console.WriteLine("Received  : " + messageData)
+;			end
+;		endmethod
+;		
+;		private static method doPost, boolean
+;			required in messageId, String 
+;			required inout messageData, String 
+;		proc
+;			data ok = true
+;			
+;			;;Define the request
+;			data url = String.Format("http://{0}:8088/LocalAppService/message/{1}", Dns.GetHostName(), messageId)
+;			data request, @HttpWebRequest, (@HttpWebRequest)WebRequest.Create(url)
+;			request.KeepAlive = false
+;			request.ProtocolVersion = HttpVersion.Version11
+;			request.Method = "POST"
+;
+;			;;Wrap the message data as JSON (put double quotes around it)
+;			;;and turn it into a byte stream
+;			data json = String.Format("""{0}""", messageData)
+;			data postBytes, [#]byte, Encoding.UTF8.GetBytes(json)
+;
+;			;;Configure the request headers
+;			request.ContentType = "application/json; charset=UTF-8"
+;			request.Accept = "application/json"
+;			request.ContentLength = postBytes.Length
+;
+;			;;Send the request
+;			try
+;			begin
+;				data requestStream, @Stream, request.GetRequestStream()
+;				requestStream.Write(postBytes, 0, postBytes.Length)
+;				requestStream.Close()
+;			end
+;			catch (ex, @WebException)
+;			begin
+;				ok = false
+;				messageData = ex.Message
+;			end
+;			endtry
+;
+;			if (ok)
+;			begin
+;				;;Grab the response and print it out to the console along with the status code
+;				try
+;				begin
+;					data response = (@HttpWebResponse)request.GetResponse()
+;					ok = (response.StatusCode == HttpStatusCode.OK)
+;					;;If we got a good response then get any returned data
+;					if (ok) then
+;					begin
+;						disposable data rdr = new StreamReader(response.GetResponseStream())
+;						messageData = rdr.ReadToEnd()
+;						;;The response will be wrapped in double quotes, so strip them off
+;						if (messageData.StartsWith('"'))
+;							messageData = messageData.Remove(0,1)
+;						if (messageData.EndsWith('"'))
+;							messageData = messageData.Remove(messageData.Length-1,1)
+;					end
+;					else
+;						messageData = response.StatusCode.ToString()
+;				end
+;				catch (ex, @WebException)
+;				begin
+;					ok = false
+;					using ex.Message select
+;					("The remote server returned an error: (404) Not Found."),
+;						messageData = "Unsupported message ID"
+;					("The remote server returned an error: (400) Bad Request."),
+;						messageData = "Invalid DATA for message ID"
+;					(),
+;						messageData = ex.Message
+;					endusing
+;				end
+;				endtry
+;			end
+;
+;			mreturn ok
+;
+;		endmethod
+;
+;	endclass
+;
+;endnamespace
+;
+;

@@ -1,0 +1,169 @@
+
+import System
+import System.Linq
+import System.Net
+import System.ServiceModel
+import System.ServiceModel.Description
+import System.Threading
+import System.Windows.Threading
+import System.ServiceModel.Channels
+
+.array 0
+
+namespace TrayListenerApp.WcfService
+
+	;; 
+	;; In order to be able to self-wcfServiceHost a WCF service in a .NET application, without
+	;; requiring administrator rights, it is necessary to reserve a portion of the HTTP
+	;; namespace that the service will use. This is done by issuing NETSH commands.
+	;; 
+	;; Add a reservation:
+	;;  
+	;; netsh http add urlacl url=http://+:8088/LocalAppService user=DOMAIN\user
+	;; 
+	;; View reservations:
+	;; 
+	;; netsh http show urlacl url=http://+:8088/LocalAppService/
+	;; 
+	;; Delete a reservation:
+	;; 
+	;; netsh http delete urlacl url=http://+:8088/LocalAppService/
+	;; 
+	;; Note that including the trailing / for the SHOW and DELETE commands is important, even
+	;; if the trailing / was not included on the ADD statement.
+	;; 
+	;; If a reservation is not made then you must start Visual Studio "As Administrator" in
+	;; order to run the application that hosts the service. Failing to do so will result in
+	;; an AddressAccessDeniedException exception (HTTP could not register URL XXXXXX). Your
+	;; process does not have access rights to this namespace) being thrown when you call the
+	;; Open() method of your ServiceHost object.
+	;; 
+	;; More information at https://msdn.microsoft.com/en-us/library/ms733768.aspx
+	;;      
+	
+	public class LocalServicesHost
+		
+		wcfServiceHost, @ServiceHost
+		wcfServiceThread, @Thread
+		uiThreadDispatcher, @Dispatcher
+		
+		public method LocalServicesHost
+		proc
+			LocalServicesUrl = String.Empty
+		endmethod
+		
+		public method StartServices, void
+		proc
+
+			;; Save the current (UI thread dispatcher) so we can use it later
+			uiThreadDispatcher = Dispatcher.CurrentDispatcher
+			
+			;; Determine the URL that our WCF service will listen at
+			LocalServicesUrl = String.Format("http://{0}:8088/LocalAppService/", Dns.GetHostName())
+			
+			lambda doStartService()
+			begin
+				;; Create an instance of our WCF service implementation
+				;; and hook up an event handler to "MessageReceived"
+				data wcfServiceInstance = new LocalAppService()
+				addhandler(wcfServiceInstance.MessageReceived,wcfServiceInstance_MessageReceived)
+				addhandler(wcfServiceInstance.LogMessage,wcfServiceInstance_LogMessage)
+				
+				;;Service host
+				wcfServiceHost = new ServiceHost(wcfServiceInstance, new Uri(LocalServicesUrl))
+
+				;;Binding
+				data wcfBinding = new WebHttpBinding() { MaxReceivedMessageSize = 1000000 }
+				
+				;;Endpoint
+				data wcfEndpoint, @ServiceEndpoint, wcfServiceHost.AddServiceEndpoint(^typeof(ILocalAppService), wcfBinding, "")
+				
+				;;Service behavior
+				;Works
+				data wcfServiceBehavior = new WebHttpBehavior()
+				wcfServiceBehavior.HelpEnabled = true
+				wcfServiceBehavior.AutomaticFormatSelectionEnabled = true
+				wcfEndpoint.Behaviors.Add(wcfServiceBehavior)
+;				;Works
+;				wcfEndpoint.Behaviors.Add(new WebHttpBehavior() {HelpEnabled = true, AutomaticFormatSelectionEnabled = true})
+;				;Doesn't work
+;				data wcfServiceBehavior = new WebHttpBehavior() {HelpEnabled = true, AutomaticFormatSelectionEnabled = true}
+;				wcfEndpoint.Behaviors.Add(wcfServiceBehavior)
+				
+				;;ServiceDebugBehavior
+				data sdb, @ServiceDebugBehavior, wcfServiceHost.Description.Behaviors.OfType<ServiceDebugBehavior>().First()
+				sdb.IncludeExceptionDetailInFaults = true
+				sdb.HttpHelpPageEnabled = true
+
+				;; Start the service
+				wcfServiceHost.Open()
+
+			end
+
+			;; Start the new thread
+			wcfServiceThread = new Thread(doStartService)
+			wcfServiceThread.Start()
+
+		endmethod
+		
+		method wcfServiceInstance_MessageReceived, void
+			required in messageId, string 
+			required in messageData, string 
+		proc
+			lambda doProcessMessage()
+			begin
+				raiseevent(MessageReceived,messageId,messageData)
+			end
+			;; Raise our NewMessage event back on the UI thread
+			uiThreadDispatcher.BeginInvoke((@Action)doProcessMessage)
+		endmethod
+		
+		method wcfServiceInstance_LogMessage, void
+			required in messageId, string 
+			required in messageData, string 
+		proc
+			lambda doLogMessage()
+			begin
+				raiseevent(LogMessage,messageId,messageData)
+			end
+			;; Raise our NewMessage event back on the UI thread
+			uiThreadDispatcher.BeginInvoke((@Action)doLogMessage)
+		endmethod
+		
+		public method StopServices, void
+		proc
+			try
+			begin
+				wcfServiceHost.Close()
+			end
+			catch (ex)
+			begin
+				
+			end
+			finally
+			begin
+				LocalServicesUrl = String.Empty
+				wcfServiceHost = ^null
+			end
+			endtry
+
+		endmethod
+		
+		public delegate MessageHandler, void
+			id, string 
+			message, string
+		enddelegate
+		
+		public event MessageReceived, @MessageHandler
+		public event LogMessage, @MessageHandler
+		
+		public property LocalServicesUrl, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+
+	endclass
+
+endnamespace

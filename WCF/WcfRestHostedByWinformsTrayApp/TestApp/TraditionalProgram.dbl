@@ -1,0 +1,145 @@
+
+main TraditionalProgram
+
+	.include "DBLDIR:synxml.def"	
+
+	record
+		msgid		,a10
+		message		,a60
+		ok  		,d1
+		errmsg		,a80
+	endrecord
+
+proc
+
+	xcall flags(7004000,1)
+	open(1,i,'tt:')
+	
+	;;Process messages
+	repeat
+	begin
+		;;Get a message ID
+		writes(1,'')
+		display(1,'Message ID : ')
+		reads(1,msgid)
+		
+		if (!msgid)
+			exitloop
+		
+		clear message
+		
+		if (msgid=="PING") then 
+			clear message
+		else
+		begin
+			;;Get message data
+			display(1,'Send Data  : ')
+			reads(1,message)
+		end
+		
+		ok = %send_command("LOCALHOST",(string)msgid,(string)message)
+		
+		if (ok) then 
+		begin
+			writes(1,'Result     : OK')
+		end
+		else
+			writes(1,'Result     : ERROR')
+		writes(1,'Response   : ' + %atrim(message))
+	end
+	
+	close 1
+	stop
+	
+endmain
+
+function send_command, ^val
+	required in    ip_address	,string
+	required in    msgid		,string
+	required inout msgdata		,string
+	endparams
+	
+	.include 'DBLDIR:synxml.def'
+	
+	record
+		ok			,i4
+		errnum  	,int
+		timeout		,int
+		errtxt		,string
+		url     	,string			;;URL for operation
+		request		,string			;;String sent
+		response	,string			;;String received
+		hdr     	,[#]string		;;Headers sent
+		rhdr    	,[#]string		;;Headers received
+	endrecord
+	
+proc
+
+	url = "http://"+ip_address+":8088/LocalAppService/message/" + msgid
+
+	timeout = 5
+	
+	if (msgid=="EXIT") then 
+		request = '""'
+	else
+	begin
+		data tmpmsg, string, %atrim(msgdata)
+		tmpmsg = tmpmsg.Replace('\','\\').Replace('"','\"')
+		request = '"' + tmpmsg + '"'
+	end
+	
+	;;Configure HTTP headers
+	hdr = new string[4]
+	hdr[1] = 'Host: ' + ip_address + ':8088'
+	hdr[2] = 'Content-Type: application/json'
+	hdr[3] = 'Content-Length: ' + %string(request.Length)
+	hdr[4] = 'Accept: application/json'
+	
+	;;Send the HTTP POST request
+	errnum = http_post(url,timeout,request,response,errtxt,hdr,rhdr,'http.log',,,,,HTTP_RELURI,'1.1')
+	
+	;;Process the return value from the service
+	using errnum select
+	(0),
+	begin
+		ok = 1
+		if (response==^null) then
+			msgdata = ""
+		else
+		begin
+			msgdata = response.Trim()
+			if (msgdata.Length > 2)
+				msgdata = msgdata.Substring(1,msgdata.Length-2)
+		end
+	end
+	(400),
+	begin
+		ok = 0
+		msgdata = "Invalid DATA for message ID"
+	end
+	(404),
+	begin
+		ok = 0
+		msgdata = "Invalid message ID"
+	end
+	(10054),
+	begin
+		ok = 0
+		msgdata = 'ERROR 10054 ' + errtxt
+	end
+	(10061),
+	begin
+		ok = 0
+		msgdata = 'ERROR 10061 ' + errtxt
+	end
+	(),
+	begin
+		ok = 0
+		msgdata = 'ERROR ' + %string(errnum) + ' ' + errtxt
+	end
+	endusing
+	
+	freturn ok
+	
+endfunction
+
