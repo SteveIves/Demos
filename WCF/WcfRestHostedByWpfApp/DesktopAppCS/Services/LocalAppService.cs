@@ -23,48 +23,6 @@ namespace DesktopAppCS.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LocalAppService : ILocalAppService
     {
-        private Dictionary<string, string> items = new Dictionary<string, string> { { "BEER", "Stella Artois" }, { "COLOR", "Blue" }, { "FOOD", "Chicken Vindaloo" } };
-
-        public Dictionary<string, string> FavoritesQuery()
-        {
-            return items;
-        }
-
-        public void FavoritesCreate(string id, string data)
-        {
-            try
-            {
-                items.Add(id.ToUpper(), data);
-            }
-            catch (Exception)
-            {
-                throw new WebFaultException(HttpStatusCode.Found);
-            }
-        }
-
-        public string FavoritesRead(string id)
-        {
-            string key = id.ToUpper();
-            if (items.ContainsKey(key))
-                return items[key];
-            else
-                throw new WebFaultException(HttpStatusCode.NotFound);
-        }
-
-        public void FavoritesUpdate(string id, string data)
-        {
-            if (items[id.ToUpper()] != null)
-                items[id.ToUpper()] = data;
-            else
-                throw new WebFaultException(HttpStatusCode.NotFound);
-        }
-
-        public void FavoritesDelete(string id)
-        {
-            if (!items.Remove(id.ToUpper()))
-                throw new WebFaultException(HttpStatusCode.NotFound);
-        }
-
         public void MessagesCreate(string id, string data)
         {
             //Validate the message that was received
