@@ -9,7 +9,7 @@
 ;//             create and interact with a table in a SQL Server database
 ;//             whose columns match the fields defined in a Synergy
 ;//             repository structure.
-;//             
+;//
 ;// Author:     Steve Ives, Synergex Professional Services Group
 ;//
 ;// Copyright   © 2009 Synergex International Corporation.  All rights reserved.
@@ -750,7 +750,7 @@ proc
                 endusing
             end
             else
-                errtxt="Failed to execute SQL statement"                
+                errtxt="Failed to execute SQL statement"
         end
     end
 
@@ -1189,13 +1189,13 @@ proc
         a_added = ttl_added
     if (^passed(a_failed))
         a_failed = ttl_failed
-    
+
     freturn ok
 
 insert_data,
 
     attempted = (%mem_proc(DM_GETSIZE,mh)/^size(<structure_name>))
-    
+
     if (%<structure_name>_insert_rows(a_dbchn,mh,errtxt,ex_mh,a_terminal))
     begin
         ;;Any exceptions?
