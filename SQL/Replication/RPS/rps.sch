@@ -1,13 +1,13 @@
  
 ;  SYNERGY DATA LANGUAGE OUTPUT
 ;
-;  REPOSITORY     : D:\Dev\Demos\SQL\Replication\RPS\rpsmain.ism
-;                 : D:\Dev\Demos\SQL\Replication\RPS\rpstext.ism
-;                 : Version 8.1.7
-;
-;  GENERATED      : 02-JUL-2014, 12:08:43
+;  REPOSITORY     : C:\Dev\Demos\SQL\Replication\RPS\rpsmain.ism
+;                 : C:\Dev\Demos\SQL\Replication\RPS\rpstext.ism
 ;                 : Version 10.2.3
-;  EXPORT OPTIONS : [ALL-K-R-A] 
+;
+;  GENERATED      : 06-OCT-2015, 12:15:24
+;                 : Version 10.3.1b
+;  EXPORT OPTIONS : [ALL] 
  
  
 Format PHONE   Type NUMERIC   "(XXX) XXX-XXXX"   Justify LEFT
@@ -16,7 +16,8 @@ Enumeration REPLICATION_INSTRUCTION
    Description "SQL Replication Instruction"
    Members CREATE_ROW 1, UPDATE_ROW 2, DELETE_ROW 3, CREATE_TABLE 4,
           LOAD_TABLE 5, CREATE_AND_LOAD_TABLE 6, DELETE_ALL_ROWS 7,
-          DELETE_TABLE 8, SHUTDOWN 9
+          DELETE_TABLE 8, SHUTDOWN 9, DELETE_ALL_INSTRUCTIONS 20,
+          CLOSE_FILE 21
  
 Template DEPARTMENT_ID   Type ALPHA   Size 15
    Description "Department ID"
