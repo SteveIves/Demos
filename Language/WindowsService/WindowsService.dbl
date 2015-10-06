@@ -2,13 +2,18 @@ main WinService
 
 proc
 
+	;;(Optional) Resister a subroutine to be called when the Windows service is stopped
 	xcall syn_atexit(%xaddr("WinServiceShutdown"))
 	
+	;;(Optional)Record that we are starting in the windows event log
 	xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService started.")
 
+	;;Start whatever processing we need to do. This processing will just continue until the
+	;;service is stopped. Try not to do long-running critical things because the service
+	;;COULD be stopped at any time.
 	repeat
 	begin
-		sleep 5
+		sleep 60
 		xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService is processing.")
 	end
 
@@ -19,7 +24,10 @@ endmain
 subroutine WinServiceShutdown
 	
 proc
-
+	;;This is the subroutine that we registered to be called when the service is stopped.
+	;;But there isn't much you can do here other than logging, because DBR is single-threaded.
+	;;As soon as this subroutine returns, the process is going to be killed.
+	
 	xcall syn_reportevent(D_EVENTLOG_INFORMATION_TYPE,"WinService is closing down.")
 
 	xreturn
