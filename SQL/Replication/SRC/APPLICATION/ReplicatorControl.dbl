@@ -2,112 +2,48 @@
 .include "REPLICATION_INSTRUCTION" repository, enum, end
 
 subroutine ReplicatorMenuItem
-	required in menuItem, a
-	endparams
-	.include "REPLICATION" repository, record="instruction"
+    required in menuItem, a
+    endparams
+
+    .include "REPLICATION" repository, record="instruction"
+
 proc
 
-	init instruction
-	instruction.transaction_id = %datetime
+    using menuItem select
 
-	using menuItem select
-	("R_CREATE"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.CREATE_TABLE
-		instruction.structure_name = "EMPLOYEE"
-		call writeInstruction
-	end
-	("R_LOAD"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE
-		instruction.structure_name = "EMPLOYEE"
-		call writeInstruction
-	end
-	("R_DELETE"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.DELETE_TABLE
-		instruction.structure_name = "EMPLOYEE"
-		call writeInstruction
-	end
-	("R_RELOAD"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.LOAD_TABLE
-		instruction.structure_name = "EMPLOYEE"
-		call writeInstruction
-	end
-	("R_TRUNCATE"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.DELETE_ALL_ROWS
-		instruction.structure_name = "EMPLOYEE"
-		call writeInstruction
-	end
-	("R_STOP"),
-	begin
-		instruction.action = (i)REPLICATION_INSTRUCTION.SHUTDOWN
-		call writeInstruction
-	end
-	("R_START"),
-	begin
-		data sts, i4
-		xcall setlog("REPLICATOR_INTERVAL","5",sts)
-		xcall setlog("REPLICATOR_FULL_LOG","YES",sts)
-		xcall setlog("REPLICATOR_LOG_KEYS","YES",sts)
-		xcall spawn("dbr EXE:replicator.dbr",D_NOWINDOW|D_NOWAIT)
-	end
-	("R_CLEAR"),
-	begin
-		data tmpch, i4
-		try 
-		begin
-			open(tmpch=0,u:i,"DAT:REPLICATION.ISM")
-			repeat
-			begin
-				reads(tmpch,instruction)
-				delete(tmpch)
-			end
-		end
-		catch (ex, @EndOfFileException)
-		begin
-			nop
-		end
-		catch (ex)
-		begin
-			xcall u_message("Failed to clear replicator instructions!")
-		end
-		finally
-		begin
-			if (tmpch&&%chopen(tmpch))
-				close tmpch
-		end
-		endtry
-	end
-	endusing
-	
-	xreturn
-	
-writeInstruction,
-	
-	begin
-		data ch, i4, 0
-		try 
-		begin
-			open(ch,u:i,"DAT:REPLICATION.ISM")
-			store(ch,instruction)
-		end
-		catch (ex)
-		begin
-			xcall u_message("Failed to write replicator instruction! Error was " + ex.Message)
-		end
-		finally
-		begin
-			if (ch&&%chopen(ch))
-				close ch
-		end
-		endtry
-		close(ch)
-	end
+    ("R_START"),
+    begin
+        data sts, i4
+        xcall setlog("REPLICATOR_INTERVAL","5",sts)
+        xcall setlog("REPLICATOR_FULL_LOG","YES",sts)
+        xcall setlog("REPLICATOR_LOG_KEYS","YES",sts)
+        xcall spawn("dbr EXE:replicator.dbr",D_NOWINDOW|D_NOWAIT)
+    end
 
-	return
-	
+    ("R_CREATE"),
+        xcall replicate(REPLICATION_INSTRUCTION.CREATE_TABLE,"EMPLOYEE")
+
+    ("R_LOAD"),
+        xcall replicate(REPLICATION_INSTRUCTION.CREATE_AND_LOAD_TABLE,"EMPLOYEE")
+
+    ("R_DELETE"),
+        xcall replicate(REPLICATION_INSTRUCTION.DELETE_TABLE,"EMPLOYEE")
+
+    ("R_RELOAD"),
+        xcall replicate(REPLICATION_INSTRUCTION.LOAD_TABLE,"EMPLOYEE")
+
+    ("R_TRUNCATE"),
+        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ALL_ROWS,"EMPLOYEE")
+
+    ("R_STOP"),
+        xcall replicate(REPLICATION_INSTRUCTION.SHUTDOWN)
+
+    ("R_CLEAR"),
+        xcall replicate(REPLICATION_INSTRUCTION.DELETE_ALL_INSTRUCTIONS)
+
+    endusing
+
+    xreturn
+
 endsubroutine
 
