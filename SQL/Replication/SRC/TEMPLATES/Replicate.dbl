@@ -55,7 +55,7 @@ proc
             end
             catch (ex, @Exception)
             begin
-                sleep 0.1
+                sleep 0.01
             end
             endtry
         end
@@ -85,7 +85,7 @@ proc
             end
             catch (ex, @DuplicateException)
             begin
-                sleep 0.1
+                sleep 0.01
             end
             endtry
         end
