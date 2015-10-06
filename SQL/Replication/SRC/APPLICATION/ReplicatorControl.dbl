@@ -5,19 +5,47 @@ subroutine ReplicatorMenuItem
     required in menuItem, a
     endparams
 
+    .include "WND:tools.def"
+    .include "INC:system.def"
     .include "REPLICATION" repository, record="instruction"
 
 proc
 
     using menuItem select
 
-    ("R_START"),
+    ("R_START_T"),
     begin
         data sts, i4
         xcall setlog("REPLICATOR_INTERVAL","5",sts)
         xcall setlog("REPLICATOR_FULL_LOG","YES",sts)
         xcall setlog("REPLICATOR_LOG_KEYS","YES",sts)
         xcall spawn("dbr EXE:replicator.dbr",D_NOWINDOW|D_NOWAIT)
+
+        xcall m_disable(D_LIST,idc_replicator,"STOPPED")
+        xcall m_enable (D_LIST,idc_replicator,"STARTED")
+    end
+
+    ("R_START_N"),
+    begin
+        data sts, i4
+        data exeFile, a128
+        xcall setlog("REPLICATOR_INTERVAL","5",sts)
+        xcall setlog("REPLICATOR_FULL_LOG","YES",sts)
+        xcall setlog("REPLICATOR_LOG_KEYS","YES",sts)
+        xcall getlog("EXE",exeFile,sts)
+        exeFile = %atrim(exeFile)+"\replicator.exe"
+        xcall spawn(%atrim(exeFile),D_NOWAIT)
+
+        xcall m_disable(D_LIST,idc_replicator,"STOPPED")
+        xcall m_enable (D_LIST,idc_replicator,"STARTED")
+    end
+
+    ("R_STOP"),
+    begin
+        xcall replicate(REPLICATION_INSTRUCTION.SHUTDOWN)
+
+        xcall m_enable (D_LIST,idc_replicator,"STOPPED")
+        xcall m_disable (D_LIST,idc_replicator,"STARTED")
     end
 
     ("R_CREATE"),
@@ -34,9 +62,6 @@ proc
 
     ("R_TRUNCATE"),
         xcall replicate(REPLICATION_INSTRUCTION.DELETE_ALL_ROWS,"EMPLOYEE")
-
-    ("R_STOP"),
-        xcall replicate(REPLICATION_INSTRUCTION.SHUTDOWN)
 
     ("R_CLEAR"),
         xcall replicate(REPLICATION_INSTRUCTION.DELETE_ALL_INSTRUCTIONS)

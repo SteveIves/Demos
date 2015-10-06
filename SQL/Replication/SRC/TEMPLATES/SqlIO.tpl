@@ -58,7 +58,7 @@
 ;;
 function <structure_name>_create ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     optional out a_errtxt   ,a      ;;Error text
     endparams
 
@@ -237,7 +237,7 @@ endfunction
 ;;
 function <structure_name>_drop ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     optional out a_errtxt   ,a      ;;Error text
     endparams
 
@@ -368,7 +368,7 @@ endfunction
 ;;
 function <structure_name>_delete_row ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     required in  a_repkey   ,a      ;;Replication key of row to delete
     optional out a_errtxt   ,a      ;;Error text
     endparams
@@ -496,7 +496,7 @@ endfunction
 ;;
 function <structure_name>_exists ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     optional out a_errtxt   ,a      ;;Error text
     endparams
 
@@ -593,7 +593,7 @@ endfunction
 ;;
 function <structure_name>_insert_row ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     required in  a_data     ,a      ;;Record containing data to insert
     optional out a_errtxt   ,a      ;;Error text
     endparams
@@ -825,8 +825,8 @@ endfunction
 ;;
 function <structure_name>_insert_rows ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
-    required in  a_data     ,int    ;;Memory handle with records to insert
+    required in  a_dbchn    ,i      ;;Connected database channel
+    required in  a_data     ,i      ;;Memory handle with records to insert
     optional out a_errtxt   ,a      ;;Error text
     optional out a_exception,i    ;;Handle to return exception records
     optional in  a_terminal ,i    ;;Terminal number channel to log errors on
@@ -1087,7 +1087,7 @@ endfunction
 ;;
 function <structure_name>_load ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     optional out a_errtxt   ,a      ;;Error text
     optional in  a_logex    ,i      ;;Log exception records
     optional in  a_terminal ,i      ;;Terminal channel to log errors on
@@ -1106,10 +1106,10 @@ function <structure_name>_load ,^val
     stack record local_data
         ok          ,boolean    ;;Return status
         filechn     ,int        ;;Data file channel
-        mh          ,int        ;;Memory handle containing data to insert
+        mh          ,D_HANDLE   ;;Memory handle containing data to insert
         ms          ,int        ;;Size of memory buffer in rows
         mc          ,int        ;;Memory buffer rows currently used
-        ex_mh       ,int        ;;Memory buffer for exception records
+        ex_mh       ,D_HANDLE   ;;Memory buffer for exception records
         ex_mc       ,int        ;;Number of records in returned exception array
         ex_ch       ,int        ;;Exception log file channel
         cnt         ,int        ;;Loop counter
@@ -1261,9 +1261,9 @@ endfunction
 ;;
 function <structure_name>_update_row ,^val
 
-    required in  a_dbchn    ,int    ;Connected database channel
+    required in  a_dbchn    ,i      ;Connected database channel
     required in  a_data     ,a      ;Record containing data to insert
-    optional out a_rows     ,i    ;Number of rows affected
+    optional out a_rows     ,i      ;Number of rows affected
     optional out a_errtxt   ,a      ;Error text
     endparams
 
@@ -1479,7 +1479,7 @@ endfunction
 ;;
 function <structure_name>_clear ,^val
 
-    required in  a_dbchn    ,int    ;;Connected database channel
+    required in  a_dbchn    ,i      ;;Connected database channel
     optional out a_errtxt   ,a      ;;Error text
     endparams
 

@@ -90,7 +90,8 @@ setup,
 
         ;;Build the replicator menu
         xcall mb_column(mbcontrol,"TOLS","Replicator")
-        xcall mb_entry(mbcontrol,"R_START","Start Replicator")
+        xcall mb_entry(mbcontrol,"R_START_T","Start Replicator (Traditional)")
+        xcall mb_entry(mbcontrol,"R_START_N","Start Replicator (.NET)")
         xcall mb_entry(mbcontrol,"R_STOP","Stop Replicator")
         xcall mb_line(mbcontrol)
         xcall mb_entry(mbcontrol,"R_CREATE","Create Employee Table")
@@ -100,7 +101,11 @@ setup,
         xcall mb_entry(mbcontrol,"R_TRUNCATE","Truncate Employee Table")
         xcall mb_line(mbcontrol)
         xcall mb_entry(mbcontrol,"R_CLEAR","Clear Replicator Instructions")
+        xcall mb_list(mbcontrol,"STOPPED",2,"R_START_T","R_START_N")
+        xcall mb_list(mbcontrol,"STARTED",6,"R_STOP","R_CREATE","R_LOAD","R_DELETE","R_RELOAD","R_TRUNCATE")
         xcall mb_end(mbcontrol,idc_replicator)
+
+        xcall m_disable(D_LIST,idc_replicator,"STARTED")
 
     end
 

@@ -87,10 +87,14 @@ proc
 
     xcall flags(7004020,1)
 
+    .ifdef DBLNET
+    xcall openelb("EXE:library.dll")
+    .else
     .ifdef OS_VMS
     xcall openelb("LIBRARY_SH")
     .else
-    xcall openelb("EXE:LIBRARY.ELB")
+    xcall openelb("EXE:library.elb")
+    .endc
     .endc
 
     ;;Are we running on a terminal?
@@ -120,7 +124,10 @@ proc
     begin
         open(logch=0,log_mode,log_file) [ERR=logerr]
         exit
-logerr, xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Replicator failed to open log file " + %atrim(log_file)+". Error number " + %string(%ernum))
+    logerr,
+        .ifndef DBLNET
+        xcall syn_reportevent(D_EVENTLOG_ERROR_TYPE,"Replicator failed to open log file " + %atrim(log_file)+". Error number " + %string(%ernum))
+        .endc
         ok = false
     end
 

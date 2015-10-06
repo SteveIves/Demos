@@ -2,8 +2,9 @@
 <Project
     Version="10.0"
     VendorName="SlickEdit"
-    WorkingDir="../"
-    VCSProject="Subversion:">
+    TemplateName="Synergy/DE Application"
+    Customized="1"
+    WorkingDir="%wp">
     <Config
         Name="Debug32"
         OutputFile=""
@@ -61,14 +62,14 @@
                 MenuCaption="&amp;Debug"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr -d EXE:menu.dbr"/>
+                <Exec CmdLine="dbr -d EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Execute"
                 MenuCaption="E&amp;xecute"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:menu.dbr"/>
+                <Exec CmdLine="dbr EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Synergy/DE Options"
@@ -100,30 +101,6 @@
                     CmdLine="SynSetupCompileScripts"
                     Type="Slick-C"/>
             </Target>
-            <Target
-                Name="Reload Data"
-                MenuCaption="&amp;Reload Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-            <Target
-                Name="Import Repository from Schema"
-                MenuCaption="&amp;Import Repository from Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_import.bat"/>
-            </Target>
-            <Target
-                Name="Export Repository to Schema"
-                MenuCaption="&amp;Export Repository to Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_export.bat"/>
-            </Target>
         </Menu>
         <SynSettings>
             <SynSetting
@@ -137,10 +114,10 @@
                 Value="dblproto %p%n%e"/>
             <SynSetting
                 Name="compile_command_line"
-                Value='dbl -X -T -d -qcheck -qalign -o OBJ:menu.dbo "%p%n%e"'/>
+                Value='dbl -X -T -d -qcheck -qalign -o OBJ: "%p%n%e"'/>
             <SynSetting
                 Name="linklibr_command_line"
-                Value="dblink -d -o EXE:menu.dbr OBJ:menu.dbo EXE:library.elb RPSLIB:ddlib.elb WND:tklib.elb"/>
+                Value="dblink -d -o EXE:%n.dbr OBJ:%n EXE:library.elb"/>
             <SynSetting
                 Name="proto_clear_dbh"
                 Value="1"/>
@@ -152,10 +129,10 @@
                 Value="0"/>
             <SynSetting
                 Name="compile_single"
-                Value="1"/>
+                Value="0"/>
             <SynSetting
                 Name="object_name"
-                Value="menu.dbo"/>
+                Value="%rn.dbo"/>
             <SynSetting
                 Name="proto_namespace_sequence"
                 Value="namespace1.namespace2.namespace3"/>
@@ -169,69 +146,39 @@
                 Name="qvariant"
                 Value=""/>
             <SynSetting
+                Name="qimpdir"
+                Value=""/>
+            <SynSetting
                 Name="qrelax_end"
                 Value="0"/>
             <SynSetting
                 Name="object_dir"
                 Value="OBJ:"/>
             <SynSetting
-                Name="qimpdir"
-                Value=""/>
-            <SynSetting
                 Name="build_complink_single"
-                Value="0"/>
+                Value="1"/>
         </SynSettings>
     </Config>
     <Files>
         <Folder
+            Name="Templates"
+            Filters="*.tpl">
+            <F N="../SRC/TEMPLATES/AddReplicationKey.tpl"/>
+        </Folder>
+        <Folder
             Name="Source Files"
-            Filters="*.dbl;*.tpl;*.dbc">
-            <F N="../SRC/APPLICATION/department_change.dbl"/>
-            <F N="../SRC/APPLICATION/department_drill.dbl"/>
-            <F N="../SRC/APPLICATION/department_lookup.dbl"/>
-            <F N="../SRC/APPLICATION/display_local_fields.dbl"/>
-            <F N="../SRC/APPLICATION/employee_maint_tab.dbl"/>
-            <F N="../SRC/APPLICATION/entrst_method.dbl"/>
-            <F N="../SRC/APPLICATION/headings_from_window.dbl"/>
-            <F N="../SRC/APPLICATION/i_checkdata.dbl"/>
-            <F N="../SRC/APPLICATION/menu.dbl"/>
-            <F N="../SRC/APPLICATION/position_window.dbl"/>
-            <F N="../SRC/APPLICATION/ReplicatorControl.dbl"/>
-            <F N="../SRC/APPLICATION/wndevent_close.dbl"/>
+            Filters="*.dbl">
+            <F N="../SRC/LOAD/employee_repkey.dbl"/>
         </Folder>
         <Folder
             Name="Header Files"
-            Filters="*.def;*.dbh">
-            <F N="../SRC/INC/system.def"/>
-        </Folder>
+            Filters="*.def;*.dbh"/>
         <Folder
             Name="Toolkit Script Files"
-            Filters="*.wsc">
-            <F N="../SRC/APPLICATION/employee_maint_tab.wsc"/>
-        </Folder>
-        <Folder
-            Name="File Definitions"
-            Filters="*.xdl">
-            <F N="../XDL/department.xdl"/>
-            <F N="../XDL/employee.xdl"/>
-            <F N="../XDL/replication.xdl"/>
-        </Folder>
-        <Folder
-            Name="Batch Files"
-            Filters="*.bat">
-            <F N="../BAT/load_data.bat"/>
-            <F N="../BAT/remove_service.bat"/>
-            <F N="../BAT/rps_export.bat"/>
-            <F N="../BAT/rps_import.bat"/>
-        </Folder>
+            Filters="*.wsc"/>
         <Folder
             Name="Other Files"
-            Filters="">
-            <F N="../DAT/DEPARTMENT.SEQ"/>
-            <F N="../DAT/EMPLOYEE.SEQ"/>
-            <F N="../readme.txt"/>
-            <F N="../RPS/rps.sch"/>
-        </Folder>
+            Filters=""/>
     </Files>
     <Config
         Name="Debug64"
@@ -290,14 +237,14 @@
                 MenuCaption="&amp;Debug"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr -d EXE:menu.dbr"/>
+                <Exec CmdLine="dbr -d EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Execute"
                 MenuCaption="E&amp;xecute"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:menu.dbr"/>
+                <Exec CmdLine="dbr EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Synergy/DE Options"
@@ -329,30 +276,6 @@
                     CmdLine="SynSetupCompileScripts"
                     Type="Slick-C"/>
             </Target>
-            <Target
-                Name="Reload Data"
-                MenuCaption="&amp;Reload Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-            <Target
-                Name="Import Repository from Schema"
-                MenuCaption="&amp;Import Repository from Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_import.bat"/>
-            </Target>
-            <Target
-                Name="Export Repository to Schema"
-                MenuCaption="&amp;Export Repository to Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_export.bat"/>
-            </Target>
         </Menu>
         <SynSettings>
             <SynSetting
@@ -366,10 +289,10 @@
                 Value="dblproto %p%n%e"/>
             <SynSetting
                 Name="compile_command_line"
-                Value='dbl -X -T -d -qcheck -qalign -o OBJ:menu.dbo "%p%n%e"'/>
+                Value='dbl -X -T -d -qcheck -qalign -o OBJ: "%p%n%e"'/>
             <SynSetting
                 Name="linklibr_command_line"
-                Value="dblink -d -o EXE:menu.dbr OBJ:menu.dbo EXE:library.elb RPSLIB:ddlib.elb WND:tklib.elb"/>
+                Value="dblink -d -o EXE:%n.dbr OBJ:%n EXE:library.elb"/>
             <SynSetting
                 Name="proto_clear_dbh"
                 Value="1"/>
@@ -381,10 +304,10 @@
                 Value="0"/>
             <SynSetting
                 Name="compile_single"
-                Value="1"/>
+                Value="0"/>
             <SynSetting
                 Name="object_name"
-                Value="menu.dbo"/>
+                Value="%rn.dbo"/>
             <SynSetting
                 Name="proto_namespace_sequence"
                 Value="namespace1.namespace2.namespace3"/>
@@ -398,17 +321,17 @@
                 Name="qvariant"
                 Value=""/>
             <SynSetting
+                Name="qimpdir"
+                Value=""/>
+            <SynSetting
                 Name="qrelax_end"
                 Value="0"/>
             <SynSetting
                 Name="object_dir"
                 Value="OBJ:"/>
             <SynSetting
-                Name="qimpdir"
-                Value=""/>
-            <SynSetting
                 Name="build_complink_single"
-                Value="0"/>
+                Value="1"/>
         </SynSettings>
     </Config>
     <Config
@@ -468,14 +391,14 @@
                 MenuCaption="&amp;Debug"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr -d EXE:menu.dbr"/>
+                <Exec CmdLine="dbr -d EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Execute"
                 MenuCaption="E&amp;xecute"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:menu.dbr"/>
+                <Exec CmdLine="dbr EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Synergy/DE Options"
@@ -507,30 +430,6 @@
                     CmdLine="SynSetupCompileScripts"
                     Type="Slick-C"/>
             </Target>
-            <Target
-                Name="Reload Data"
-                MenuCaption="&amp;Reload Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-            <Target
-                Name="Import Repository from Schema"
-                MenuCaption="&amp;Import Repository from Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_import.bat"/>
-            </Target>
-            <Target
-                Name="Export Repository to Schema"
-                MenuCaption="&amp;Export Repository to Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_export.bat"/>
-            </Target>
         </Menu>
         <SynSettings>
             <SynSetting
@@ -544,10 +443,10 @@
                 Value="dblproto %p%n%e"/>
             <SynSetting
                 Name="compile_command_line"
-                Value='dbl -X -T -qstrict -qalign -o OBJ:menu.dbo "%p%n%e"'/>
+                Value='dbl -X -T -qstrict -qalign -o OBJ: "%p%n%e"'/>
             <SynSetting
                 Name="linklibr_command_line"
-                Value="dblink -o EXE:menu.dbr OBJ:menu.dbo EXE:library.elb RPSLIB:ddlib.elb WND:tklib.elb"/>
+                Value="dblink -o EXE:%n.dbr OBJ:%n EXE:library.elb"/>
             <SynSetting
                 Name="proto_clear_dbh"
                 Value="1"/>
@@ -559,10 +458,10 @@
                 Value="0"/>
             <SynSetting
                 Name="compile_single"
-                Value="1"/>
+                Value="0"/>
             <SynSetting
                 Name="object_name"
-                Value="menu.dbo"/>
+                Value="%rn.dbo"/>
             <SynSetting
                 Name="proto_namespace_sequence"
                 Value="namespace1.namespace2.namespace3"/>
@@ -576,17 +475,17 @@
                 Name="qvariant"
                 Value=""/>
             <SynSetting
+                Name="qimpdir"
+                Value=""/>
+            <SynSetting
                 Name="qrelax_end"
                 Value="0"/>
             <SynSetting
                 Name="object_dir"
                 Value="OBJ:"/>
             <SynSetting
-                Name="qimpdir"
-                Value=""/>
-            <SynSetting
                 Name="build_complink_single"
-                Value="0"/>
+                Value="1"/>
         </SynSettings>
     </Config>
     <Config
@@ -646,14 +545,14 @@
                 MenuCaption="&amp;Debug"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr -d EXE:menu.dbr"/>
+                <Exec CmdLine="dbr -d EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Execute"
                 MenuCaption="E&amp;xecute"
                 SaveOption="SaveCurrent"
                 RunFromDir="%rw">
-                <Exec CmdLine="dbr EXE:menu.dbr"/>
+                <Exec CmdLine="dbr EXE:%n.dbr"/>
             </Target>
             <Target
                 Name="Synergy/DE Options"
@@ -685,30 +584,6 @@
                     CmdLine="SynSetupCompileScripts"
                     Type="Slick-C"/>
             </Target>
-            <Target
-                Name="Reload Data"
-                MenuCaption="&amp;Reload Data"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="load_data.bat"/>
-            </Target>
-            <Target
-                Name="Import Repository from Schema"
-                MenuCaption="&amp;Import Repository from Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_import.bat"/>
-            </Target>
-            <Target
-                Name="Export Repository to Schema"
-                MenuCaption="&amp;Export Repository to Schema"
-                RunFromDir="%(BAT)"
-                CaptureOutputWith="ProcessBuffer"
-                SaveOption="SaveAll">
-                <Exec CmdLine="rps_export.bat"/>
-            </Target>
         </Menu>
         <SynSettings>
             <SynSetting
@@ -722,10 +597,10 @@
                 Value="dblproto %p%n%e"/>
             <SynSetting
                 Name="compile_command_line"
-                Value='dbl -X -T -qstrict -qalign -o OBJ:menu.dbo "%p%n%e"'/>
+                Value='dbl -X -T -qstrict -qalign -o OBJ: "%p%n%e"'/>
             <SynSetting
                 Name="linklibr_command_line"
-                Value="dblink -o EXE:menu.dbr OBJ:menu.dbo EXE:library.elb RPSLIB:ddlib.elb WND:tklib.elb"/>
+                Value="dblink -o EXE:%n.dbr OBJ:%n EXE:library.elb"/>
             <SynSetting
                 Name="proto_clear_dbh"
                 Value="1"/>
@@ -737,10 +612,10 @@
                 Value="0"/>
             <SynSetting
                 Name="compile_single"
-                Value="1"/>
+                Value="0"/>
             <SynSetting
                 Name="object_name"
-                Value="menu.dbo"/>
+                Value="%rn.dbo"/>
             <SynSetting
                 Name="proto_namespace_sequence"
                 Value="namespace1.namespace2.namespace3"/>
@@ -754,22 +629,22 @@
                 Name="qvariant"
                 Value=""/>
             <SynSetting
+                Name="qimpdir"
+                Value=""/>
+            <SynSetting
                 Name="qrelax_end"
                 Value="0"/>
             <SynSetting
                 Name="object_dir"
                 Value="OBJ:"/>
             <SynSetting
-                Name="qimpdir"
-                Value=""/>
-            <SynSetting
                 Name="build_complink_single"
-                Value="0"/>
+                Value="1"/>
         </SynSettings>
     </Config>
     <Macro>
         <ExecMacro CmdLine="syn_set ROOT=%wp"/>
-        <ExecMacro CmdLine="syn_set GENSRC=%(ROOT)SRC\LIBRARY"/>
+        <ExecMacro CmdLine="syn_set GENSRC=%(ROOT)\SRC\LIBRARY"/>
         <ExecMacro CmdLine="syn_set INC=%(ROOT)SRC\INC"/>
         <ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
         <ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
@@ -779,5 +654,9 @@
         <ExecMacro CmdLine="syn_set XDL=%(ROOT)XDL"/>
         <ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
         <ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+        <ExecMacro CmdLine="syn_set REPLICATOR_LOGFILE=EXE:REPLICATOR.LOG"/>
+        <ExecMacro CmdLine="syn_set REPLICATOR_INTERVAL=5"/>
+        <ExecMacro CmdLine="syn_set REPLICATOR_FULL_LOG=YES"/>
+        <ExecMacro CmdLine="syn_set REPLICATOR_LOG_KEYS=YES"/>
     </Macro>
 </Project>

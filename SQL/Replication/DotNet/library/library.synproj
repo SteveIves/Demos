@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>"library"</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{e1d7441a-6103-45a9-988c-08ee6d5abf95}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>library</RootNamespace>
+    <AssemblyName>library</AssemblyName>
+    <MainFile>Class.dbl</MainFile>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetPlatform>v452</TargetPlatform>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <DBL_qWarnLevel>3 - Don't display warning levels higher than 3</DBL_qWarnLevel>
+    <DBL_qWarn>True</DBL_qWarn>
+    <DBLCmdOptions> -W3 -qstack</DBLCmdOptions>
+    <Language>Synergy</Language>
+    <DBL_unQulRecStm>Stack</DBL_unQulRecStm>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <ProjEnvVars>RPSMFIL=$(SolutionDir)..\RPS\rpsmain.ism;RPSTFIL=$(SolutionDir)..\RPS\rpstext.ism;GENSRC=$(SolutionDir)..\SRC\LIBRARY;</ProjEnvVars>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>..\..\EXE\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Debug</DebugOptimize>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit Condition=" '$(TargetFrameworkVersion)'  != 'v4.0' AND '$(Prefer32Bit)' != 'false' ">true</Prefer32Bit>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <SerializeAssembly>Auto</SerializeAssembly>
+    <Prefer32bit>false</Prefer32bit>
+    <LanguageCompatibilityLevel>100301</LanguageCompatibilityLevel>
+    <TargetRuntimeLevel>100301</TargetRuntimeLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+    <OutputPath>..\..\EXE\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DebugOptimize>Optimize</DebugOptimize>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit Condition=" '$(TargetFrameworkVersion)'  != 'v4.0' AND '$(Prefer32Bit)' != 'false' ">true</Prefer32Bit>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <SerializeAssembly>Auto</SerializeAssembly>
+    <Prefer32bit>false</Prefer32bit>
+    <LanguageCompatibilityLevel>100301</LanguageCompatibilityLevel>
+    <TargetRuntimeLevel>100301</TargetRuntimeLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="synrnt">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../SRC/LIBRARY/ChannelCache.dbl">
+      <Link>ChannelCache.dbl</Link>
+    </Compile>
+    <Compile Include="../../SRC/LIBRARY/DepartmentIO.dbl">
+      <Link>DepartmentIO.dbl</Link>
+    </Compile>
+    <Compile Include="../../SRC/LIBRARY/EmployeeIO.dbl">
+      <Link>EmployeeIO.dbl</Link>
+    </Compile>
+    <Compile Include="../../SRC/LIBRARY/EmployeeSqlIO.dbl">
+      <Link>EmployeeSqlIO.dbl</Link>
+    </Compile>
+    <Compile Include="../../SRC/LIBRARY/IsNumeric.dbl">
+      <Link>IsNumeric.dbl</Link>
+    </Compile>
+    <Compile Include="../../SRC/LIBRARY/Replicate.dbl">
+      <Link>Replicate.dbl</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.dbl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../SRC/LIBRARY/StructureIO.def">
+      <SubType>Content</SubType>
+      <Link>StructureIO.def</Link>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
