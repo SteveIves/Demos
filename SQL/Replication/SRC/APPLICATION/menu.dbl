@@ -101,12 +101,7 @@ setup,
         xcall mb_entry(mbcontrol,"R_TRUNCATE","Truncate Employee Table")
         xcall mb_line(mbcontrol)
         xcall mb_entry(mbcontrol,"R_CLEAR","Clear Replicator Instructions")
-        xcall mb_list(mbcontrol,"STOPPED",2,"R_START_T","R_START_N")
-        xcall mb_list(mbcontrol,"STARTED",6,"R_STOP","R_CREATE","R_LOAD","R_DELETE","R_RELOAD","R_TRUNCATE")
         xcall mb_end(mbcontrol,idc_replicator)
-
-        xcall m_disable(D_LIST,idc_replicator,"STARTED")
-
     end
 
     ;Set menu dropdown mode
