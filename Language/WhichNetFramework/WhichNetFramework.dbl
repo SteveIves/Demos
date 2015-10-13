@@ -1,0 +1,218 @@
+
+.define REG_SZ              1   ;Unicode null terminated string
+.define REG_BINARY          3   ;Free form binary
+.define REG_DWORD           4   ;32-bit number
+.define REG_SUCCESS         0   ;Successful return status
+.define REG_ERR_OPNKEY      2   ;Failed to open key
+.define REG_ERR_CLSKEY      3   ;Failed to close key
+.define REG_ERR_GETVAL      5   ;Failed to get value
+.define REG_ERR_VALTYP      8   ;Incorrect key type
+.define REG_ERR_DLLOPN      10  ;Failed to open DLL
+.define HKEY_LOCAL_MACHINE  %x(80000002)
+
+main WhichNetFramework
+    record
+        reg,    D_ADDR
+        data,   a40
+        achar, a1
+    endrecord
+    external function
+        RegStartSession             ,^VAL
+        RegGetString                ,^VAL
+        RegEndSession               ,^VAL
+    endexternal
+proc
+    open(1,i,"tt:")
+    xcall flags(7004020,1)
+    xcall RegStartSession(reg)
+    if (%RegGetString(reg,HKEY_LOCAL_MACHINE,"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client","Version",data)==REG_SUCCESS) then
+        writes(1,"Framework 4 client version: " + %atrim(data))
+    else
+        writes(1,"Framework 4 client version: NOT FOUND!")
+    if (%RegGetString(reg,HKEY_LOCAL_MACHINE,"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full","Version",data)==REG_SUCCESS) then
+        writes(1,"Framework 4 full version:   " + %atrim(data))
+    else
+        writes(1,"Framework 4 full version:   NOT FOUND")
+    display(1,"Press a key: ")
+    accept(1,achar)
+    xcall RegEndSession(reg)
+    close 1
+    stop
+endmain
+
+;;; <summary>
+;;; All of the WIN32 API routines which communicate with the
+;;; Windows Registry are found in ADVAPI32.DLL in the Windows
+;;; System directory. This routine opens the DLL ready for use,
+;;; returning the handle of the DLL for use in subsequent calls.
+;;; </summary>
+;;; <param name="a_reghdl">Returned registry DLL handle (D_ADDR)</param>
+;;; <returns></returns>
+function RegStartSession, ^VAL
+    required out a_reghdl, D_ADDR
+    endparams
+    .align
+    stack record
+        status      ,i4     ;;Return status
+    endrecord
+proc
+    .ifdef D_GUI
+    status = REG_SUCCESS
+    onerror error
+    a_reghdl = dll_open("advapi32.dll")
+    if (%FALSE)
+    begin
+Error,  clear a_reghdl
+        status = REG_ERR_DLLOPN
+    end
+    .else
+    status = REG_ERR_DLLOPN
+    .endc
+    freturn status
+endfunction
+
+;;; <summary>
+;;; This routine ends a Registry session by closing the DLL which
+;;; was opened in the RegStartSession routine.  It should be the
+;;; last routine called in the Registry session.
+;;; </summary>
+;;; <param name="a_reghdl"></param>
+;;; <returns></returns>
+function RegEndSession, ^VAL
+    required inout a_reghdl, D_ADDR
+    endparams
+proc
+    onerror error
+    a_reghdl = dll_close(a_reghdl)
+    clear a_reghdl
+Error,
+    freturn REG_SUCCESS
+endfunction
+
+;;; <summary>
+;;; This routine retrieves a REG_SZ (string) value from the
+;;; specified key in the Registry.  If the specified key or value
+;;; is not found then a failure status is returned, otherwise the
+;;; data from the   registry value is returned.
+;;; </summary>
+;;; <param name="a_reghdl"></param>
+;;; <param name="a_hive"></param>
+;;; <param name="a_key"></param>
+;;; <param name="a_value"></param>
+;;; <param name="a_data"></param>
+;;; <returns></returns>
+function RegGetString, ^VAL
+    a_reghdl    ,D_ADDR ;;Registry handle    (Returned by RegStartSession)
+    a_hive      ,n      ;;Registry hive      (e.g. HKEY_LOCAL_MACHINE)
+    a_key       ,a      ;;Path below hive    (e.g. "Software\Somecompany\Someproduct")
+    a_value     ,a      ;;Value name         (e.g. "LastProcessDate")
+    a_data      ,a      ;;Value data         (returned)
+    endparams
+    .align
+    stack record ivars
+        status      ,i4     ;;Return status
+        kh          ,i4     ;;Handle to currently open key
+        type        ,i4     ;;Type of value found in registry
+        size        ,i4     ;;Size of value found in registry
+        pos         ,i4     ;;Position of first null in return value
+        null        ,i4     ;;A null character
+    endrecord
+    stack record avars
+        key         ,a255   ;;a_key in a null-terminated string
+        value       ,a255   ;;a_value in a null-terminated string
+        data        ,a255   ;;Value data from registry
+    endrecord
+    .ifdef DBLNET
+    stack record
+        dllArgs     ,[#]@Object
+    endrecord
+    .endc
+proc
+    clear ^i(ivars), avars
+    status = REG_SUCCESS
+    fill(char(0),key)
+    key(1:trim(a_key)) = a_key
+    ;;Open requested key
+    .ifdef DBLNET
+    dllArgs = new Object[3]
+    dllArgs[1] = (Object)a_hive
+    dllArgs[2] = (Object)^addr(key)
+    dllArgs[3] = (Object)^addr(kh)
+    if (dll_netcall(a_reghdl,DLL_TYPE_WINAPI,"RegOpenKeyA",dllArgs)) then
+    .else
+    if (dll_call(a_reghdl,DLL_TYPE_WINAPI,"RegOpenKeyA",a_hive,^addr(key),^addr(kh))) then
+    .endc
+        status = REG_ERR_OPNKEY
+    else
+    begin
+        fill(char(0),value)
+        if (^passed(a_value))
+            value(1:trim(a_value)) = a_value
+        ;;Get the value's data type & size
+        .ifdef DBLNET
+        dllArgs = new Object[6]
+        dllArgs[1] = (Object)kh
+        dllArgs[2] = (Object)^addr(value)
+        dllArgs[3] = ^null
+        dllArgs[4] = (Object)^addr(type)
+        dllArgs[5] = ^null
+        dllArgs[6] = (Object)^addr(size)
+        if (dll_netcall(a_reghdl,DLL_TYPE_WINAPI,"RegQueryValueExA",dllArgs)) then
+        .else
+        if (dll_call(a_reghdl,DLL_TYPE_WINAPI,"RegQueryValueExA",kh,^addr(value),null,^addr(type),null,^addr(size))) then
+        .endc
+            status = REG_ERR_GETVAL
+        else
+        begin
+            case type of
+            begincase
+            REG_SZ:
+            begin
+                ;;It's a string key, get the value
+                clear data(1:size)
+                .ifdef DBLNET
+                dllArgs = new Object[6]
+                dllArgs[1] = (Object)kh
+                dllArgs[2] = (Object)^addr(value)
+                dllArgs[3] = ^null
+                dllArgs[4] = ^null
+                dllArgs[5] = (Object)^addr(data)
+                dllArgs[6] = (Object)^addr(size)
+                if (dll_netcall(a_reghdl,DLL_TYPE_WINAPI,"RegQueryValueExA",dllArgs)) then
+                .else
+                if (dll_call(a_reghdl,DLL_TYPE_WINAPI,"RegQueryValueExA",kh,^addr(value),null,null,^addr(data),^addr(size))) then
+                .endc
+                    status = REG_ERR_GETVAL
+                else
+                begin
+                    ;;Look for a Null in the returned string
+                    pos = instr(1,data, char(0))
+                    ;;Return data up to the first null
+                    using pos select
+                    (0),    ;;No null, it's all data
+                        a_data = data
+                    (1),    ;;Null in position 1, it's an empty string
+                        clear a_data
+                    (),     ;;Return data before the null
+                        a_data = data(1:pos-1)
+                    endusing
+                end
+            end
+            REG_DWORD:
+                status = REG_ERR_VALTYP
+            REG_BINARY:
+                status = REG_ERR_VALTYP
+            endcase
+        end
+        .ifdef DBLNET
+        dllArgs = new Object[1]
+        dllArgs[1] = (Object)kh
+        if (dll_netcall(a_reghdl,DLL_TYPE_WINAPI,"RegCloseKey",dllArgs))
+        .else
+        if (dll_call(a_reghdl,DLL_TYPE_WINAPI,"RegCloseKey",kh))
+        .endc
+            status = REG_ERR_CLSKEY
+    end
+    freturn status
+endfunction
+
