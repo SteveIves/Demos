@@ -296,19 +296,22 @@ namespace IsamEdit.Forms
                 closedFileName		,@String
                 ix					,int
             endrecord
-        proc
-            closedFileName = ((RpsFile)mainTabControl.SelectedTab.Tag).Name
-            ;;Go looking for the corresponding item in the View menu
-            for ix from 5 thru mnuView.DropDownItems.Count - 1
-            begin
-                if (mnuView.DropDownItems[ix].Tag.ToString() == closedFileName )
-                begin
-                    ;;Yep, that's the one, remove it
-                    mnuView.DropDownItems.Remove(mnuView.DropDownItems[ix])
-                    exitloop
-                end
-            end
-            mainTabControl.TabPages.Remove(mainTabControl.SelectedTab)
+		proc
+			if (mainTabControl.SelectedTab.Tag != ^null)
+			begin
+				closedFileName = ((RpsFile)mainTabControl.SelectedTab.Tag).Name
+				;;Go looking for the corresponding item in the View menu
+				for ix from 5 thru mnuView.DropDownItems.Count - 1
+				begin
+					if (mnuView.DropDownItems[ix].Tag.ToString() == closedFileName )
+					begin
+						;;Yep, that's the one, remove it
+						mnuView.DropDownItems.Remove(mnuView.DropDownItems[ix])
+						exitloop
+					end
+				end
+				mainTabControl.TabPages.Remove(mainTabControl.SelectedTab)
+			end
         endmethod
         
         private method mnuHelpAbout_Click, void
