@@ -76,13 +76,13 @@ function <structure_noalias>_io ,^val
         .include "<STRUCTURE_NOALIAS>" repository, group="tmp_<structure_noalias>"
     endrecord
 
-	<TAG_LOOP>
-	<IF FIRST>
-	.define TAG_VALUE "<TAGLOOP_TAG_VALUE>"
-	.define TAG_MATCH <structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>
-	.define TAG_NO_MATCH !(<structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>)
-	</IF FIRST>
-	</TAG_LOOP>
+    <TAG_LOOP>
+    <IF FIRST>
+    .define TAG_VALUE "<TAGLOOP_TAG_VALUE>"
+    .define TAG_MATCH <structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>
+    .define TAG_NO_MATCH !(<structure_noalias>.<TAGLOOP_FIELD_NAME><TAGLOOP_OPERATOR_DBL><TAGLOOP_TAG_VALUE>)
+    </IF FIRST>
+    </TAG_LOOP>
 
 proc
 
@@ -134,20 +134,20 @@ proc
 
     (IO_FIND_FIRST),
     begin
-		.ifdef TAG_VALUE
-		find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-		.else
-		find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-		.endc
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .else
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .endc
     end
 
     (IO_READ_FIRST),
     begin
-		.ifdef TAG_VALUE
-		find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-		.else
-		find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-		.endc
+        .ifdef TAG_VALUE
+        find(a_channel,,TAG_VALUE,KEYNUM:keyno) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .else
+        find(a_channel,,^FIRST,KEYNUM:keyno)    [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .endc
     end
 
     (IO_READ),
@@ -155,14 +155,14 @@ proc
 
     (IO_READ_NEXT),
     begin
-		reads(a_channel,<structure_name>,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
-		.ifdef TAG_VALUE
-		if (TAG_NO_MATCH)
-		begin
-			unlock a_channel
-			goto endOfFile
-		end
-		.endc
+        reads(a_channel,<structure_name>,LOCK:lock) [$ERR_EOF=endOfFile,$ERR_LOCKED=recordLocked,$ERR_KEYNOT=keyNotFound]
+        .ifdef TAG_VALUE
+        if (TAG_NO_MATCH)
+        begin
+            unlock a_channel
+            goto endOfFile
+        end
+        .endc
     end
 
     (IO_CREATE),
@@ -185,8 +185,8 @@ proc
         store(a_channel,<structure_name>) [$ERR_NODUPS=duplicateKey]
     end
 
-	(IO_UPDATE),
-		write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
+    (IO_UPDATE),
+        write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
 
     (IO_DELETE),
         delete(a_channel) [$ERR_NOCURR=noCurrentRecord]
@@ -201,13 +201,13 @@ proc
             close a_channel
             clear a_channel
         end
-	end
+    end
 
     (),
     begin
         if (^passed(a_errtxt))
             a_errtxt = "Invalid file access mode"
-		freturn IO_FATAL
+        freturn IO_FATAL
     end
 
     endusing
@@ -299,9 +299,9 @@ fatalIoError,
 
     if (^passed(a_errtxt))
     begin
-		xcall error(err,line)
-		xcall ertxt(err,errmsg)
-		xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
+        xcall error(err,line)
+        xcall ertxt(err,errmsg)
+        xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
         a_errtxt = message
     end
 

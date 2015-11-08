@@ -204,13 +204,13 @@ proc
 
     (IO_UPDATE),
     begin
-		if (%ChannelCacheChanged(a_channel,<structure_name>)) then
-		begin
-			write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
-			xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
-		end
-		else
-			unlock a_channel
+        if (%ChannelCacheChanged(a_channel,<structure_name>)) then
+        begin
+            write(a_channel,<structure_name>) [$ERR_NOCURR=noCurrentRecord]
+            xcall replicate(REPLICATION_INSTRUCTION.UPDATE_ROW,"<STRUCTURE_NAME>",<structure_name>.replication_key)
+        end
+        else
+            unlock a_channel
     end
 
     (IO_DELETE),
@@ -317,9 +317,9 @@ fatalIoError,
 
     if (^passed(a_errtxt))
     begin
-		xcall error(err,line)
-		xcall ertxt(err,errmsg)
-		xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
+        xcall error(err,line)
+        xcall ertxt(err,errmsg)
+        xcall s_bld(message,,'Error : %d, %a, at line : %d',err,errmsg,line)
         a_errtxt = message
     end
 

@@ -2,7 +2,7 @@
 ;;
 ;; Routine:     ChannelCacheInit
 ;;
-;; Description:	Initializes and resizes an array of dynamic memory handles which
+;; Description: Initializes and resizes an array of dynamic memory handles which
 ;;              are used to cache the last record read and locked on a channel.
 ;;              The cache can then be used on subsequent update operations to
 ;;              determine if a record has been updated since it was read.
@@ -11,15 +11,15 @@
 ;;
 subroutine ChannelCacheInit
 
-    required in a_channel	,n			;;Channel number
+    required in a_channel   ,n          ;;Channel number
     endparams
 
     global common
-        cc$cache			,[1024]i4	;;Channel cache
+        cc$cache            ,[1024]i4   ;;Channel cache
     endcommon
 
     stack record
-        recsize     		,i4     	;;Record size
+        recsize             ,i4         ;;Record size
     endrecord
 
 proc
@@ -47,13 +47,13 @@ endsubroutine
 ;;
 subroutine ChannelCacheUpdate
 
-	required in a_channel	,n			;;Channel number
-    required in a_data		,a			;;Data buffer
+    required in a_channel   ,n          ;;Channel number
+    required in a_data      ,a          ;;Data buffer
     endparams
 
-	external common
-		cc$cache			,[1024]i4	;;Channel cache
-	endcommon
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
 
 proc
 
@@ -74,13 +74,13 @@ endsubroutine
 ;;
 function ChannelCacheChanged, ^val
 
-	required in a_channel	,n			;;Channel number
-    required in a_data		,a			;;Data buffer
+    required in a_channel   ,n          ;;Channel number
+    required in a_data      ,a          ;;Data buffer
     endparams
 
-	external common
-		cc$cache			,[1024]i4	;;Channel cache
-	endcommon
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
 
 proc
 
@@ -98,13 +98,13 @@ endfunction
 ;;
 subroutine ChannelCacheRetrieve
 
-	required in  a_channel	,n			;;Channel number
-    required out a_data		,a			;;Data buffer
+    required in  a_channel  ,n          ;;Channel number
+    required out a_data     ,a          ;;Data buffer
     endparams
 
-	external common
-		cc$cache			,[1024]i4	;;Channel cache
-	endcommon
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
 
 proc
 
@@ -124,12 +124,12 @@ endsubroutine
 ;;
 subroutine ChannelCacheRelease
 
-	required in a_channel	,n			;;Channel number
+    required in a_channel   ,n          ;;Channel number
     endparams
 
-	external common
-		cc$cache			,[1024]i4	;;Channel cache
-	endcommon
+    external common
+        cc$cache            ,[1024]i4   ;;Channel cache
+    endcommon
 
 proc
 
