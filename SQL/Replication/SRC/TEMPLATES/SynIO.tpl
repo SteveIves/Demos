@@ -9,7 +9,7 @@
 ;//
 ;// Author:      Steve Ives, Synergex Professional Services Group
 ;//
-;// Copyright © 2009 Synergex International Corporation.  All rights reserved.
+;// Copyright    ©2009 Synergex International Corporation.  All rights reserved.
 ;//
 ;// WARNING:    All content constituting or related to this code ("Code") is the
 ;//             property of Synergex International Corporation ("Synergex") and
