@@ -8,7 +8,7 @@ import System.Reflection
 
 namespace BusinessLogic
 
-	public class SynergyEnvironment
+	public static class SynergyEnvironment
 
 		public static environmentSet, boolean, false
 
