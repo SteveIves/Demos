@@ -1,5 +1,4 @@
-;; Generated on 10-Sep-2014 12:56:34 by SynergyTasks, Version=1.0.0.0, Culture=neutral, PublicKeyToken=114c5dbb1312a8bc
-;; 
+;; ;; 
 ;; The contents of this file are auto-generated. Only add modifications to the end of this file.
 ;; Any modifications will be lost when the file is re-generated.
 ;; 
@@ -17,13 +16,6 @@ namespace BusinessLogic
 	{ServiceContract()}
 	public partial class Services
 	
-		;;; <summary>
-		;;; constructor
-		;;; </summary>
-		public method Services
-		endparams
-		proc
-		endmethod
 		;;; <summary>
 		;;; *** To Do ***
 		;;; </summary>
@@ -77,6 +69,10 @@ namespace BusinessLogic
 			begin
 				data xfStr2    ,@BusinessLogic.part,new BusinessLogic.part()
 				data tStr2     ,^Global.strPart
+				.ifdef _DEBUG
+				if(^as(s_aParts[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr2 = (@^Global.strPart)s_aParts[i]
 				xfStr2.SynergyToStruct(tStr2)
 				aParts.Add(xfStr2)
@@ -127,6 +123,10 @@ namespace BusinessLogic
 			begin
 				data xfStr1    ,@BusinessLogic.part,new BusinessLogic.part()
 				data tStr1     ,^Global.strPart
+				.ifdef _DEBUG
+				if(^as(s_aParts[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr1 = (@^Global.strPart)s_aParts[i]
 				xfStr1.SynergyToStruct(tStr1)
 				aParts.Add(xfStr1)
@@ -276,6 +276,10 @@ namespace BusinessLogic
 			begin
 				data xfStr1    ,@BusinessLogic.product_group,new BusinessLogic.product_group()
 				data tStr1     ,^Global.strProductGroup
+				.ifdef _DEBUG
+				if(^as(s_aProductGroups[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr1 = (@^Global.strProductGroup)s_aProductGroups[i]
 				xfStr1.SynergyToStruct(tStr1)
 				aProductGroups.Add(xfStr1)
@@ -425,6 +429,10 @@ namespace BusinessLogic
 			begin
 				data xfStr1    ,@BusinessLogic.supplier,new BusinessLogic.supplier()
 				data tStr1     ,^Global.strSupplier
+				.ifdef _DEBUG
+				if(^as(s_aSuppliers[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr1 = (@^Global.strSupplier)s_aSuppliers[i]
 				xfStr1.SynergyToStruct(tStr1)
 				aSuppliers.Add(xfStr1)
