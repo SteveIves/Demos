@@ -1,0 +1,254 @@
+import System
+import System.Collections.Generic
+import System.Text
+
+namespace SpoolToPrintAPI
+	
+	;;; <summary>
+	;;; The main entry point for the application.
+	;;; </summary>
+	main
+		
+	proc
+		;;example calls
+		
+		;;just print preview the spool file
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "", true, false, "", false, false, "", 0)
+		
+		;;Install Win2PDF and auto create PDF file
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "", false, true, "C:\Users\Richard\SL16000001.PDF", false, false, "", 0)
+		
+		;;force a paticualr printer, no preview
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "Microsoft XPS Document Writer", false, false, "", false, false, "", 0)
+		
+		;;print forcing landscape
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "", true, false, "", false, true, "", 0)
+	
+		;;change the default font name and size
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "", true, false, "", false, false, "Arial", 8)
+
+		;;the default is to print to DWPP_FANFOLD_US - you can force A4 by passing the ForceA4 flag
+		xcall SpoolToPrintAPI("C:\Users\Richard\SL16000001.SPL", "", true, false, "", false, true, "Courier", 6)
+		
+	endmain
+	
+	subroutine SpoolToPrintAPI
+		in req spoolFileName		,a				;;the file to spool/print
+		in req forceQueueName		,a				;;pass in the que name to forfce without asking!
+		in req previewPrint			,boolean		;;show print preview window
+		in req printToPDF			,boolean		;;true if we want to print o a PDF file
+		in req pdfFileName			,a				;;file name of the PDF file
+		in req doInLandscape		,boolean		;;true then change to landscape!
+		in req forceA4				,boolean		;;force A4 paper size
+		in req setFontName			,a				;;required font size
+		in req setFontSize			,n				;;required font size
+		endparams
+		
+		.include 'DBLDIR:winprint.def'
+		
+		record
+			ij						,i4
+			moduleName				,a30
+			group systemDateTime	,a22
+				year				,d4
+				mon					,d2
+				day					,d2
+				rest				,a14
+			endgroup
+			quename					,a255
+			tmpFont    				,font_specs
+			tmpDialog				,dialog_specs
+			tmpLine					,a256
+			tmpPos					,i4
+			tmpLen					,i4
+			choosePrt				,boolean
+			doPreview				,boolean
+			firstTime				,boolean
+			pdfPrinting				,boolean
+			printHandle				,i4
+			inChan					,i4
+			inChar					,a1
+			posX					,i4
+			posY					,i4
+		endrecord
+		
+	proc
+		if (previewPRint) then
+			doPreview = true
+		else
+			doPreview = false
+		choosePrt = false
+		
+		quename = forceQueueName
+		
+		;;this logic allow you to send the spool file to the Win2PDF print dirver and produce a PDF document
+		if (printToPDF  == true)
+		begin
+.define REG_STRING	"HKEY_CURRENT_USER\Software\Dane Prairie Systems\Win2PDF"
+			
+			delet(pdfFileName)
+			
+.ifndef DBLNET
+			;;using the .NET API let's set some registry settings.
+			microsoftWin32 = new DotNetAssembly('mscorlib')
+			regObject = (DotNetObject)((DotNetObject)microsoftWin32).Call('Microsoft.Win32.Registry.SetValue', (string)REG_STRING, (string)"PDFFileName", (string)%atrim(pdfFileName))
+			regObject = (DotNetObject)((DotNetObject)microsoftWin32).Call('Microsoft.Win32.Registry.SetValue', (string)REG_STRING, (string)"PDFTitle", (string)%atrim(pdfFileName))
+			regObject = (DotNetObject)((DotNetObject)microsoftWin32).Call('Microsoft.Win32.Registry.SetValue', (string)REG_STRING, (string)"PDFSubject", (string)%atrim(pdfFileName))
+			regObject = (DotNetObject)((DotNetObject)microsoftWin32).Call('Microsoft.Win32.Registry.SetValue', (string)REG_STRING, (string)"PDFAuthor", (string)%atrim(""))
+.else
+			Microsoft.Win32.Registry.SetValue((string)REG_STRING, (string)"PDFFileName", (string)%atrim(pdfFileName))
+			Microsoft.Win32.Registry.SetValue((string)REG_STRING, (string)"PDFTitle", (string)%atrim(pdfFileName))
+			Microsoft.Win32.Registry.SetValue((string)REG_STRING, (string)"PDFSubject", (string)%atrim(pdfFileName))
+			Microsoft.Win32.Registry.SetValue((string)REG_STRING, (string)"PDFAuthor", (string)%atrim(""))
+.endc
+			pdfPrinting = true
+			quename = "Win2PDF"
+			choosePrt = false
+			doPreview = false
+		end
+		
+		if (quename != "   ") then
+			wpr_info(printHandle, DWP_GETPRINTER, quename) ;Get the report handle
+		else
+			wpr_info(printHandle, DWP_GETPRINTER) ;Get the report handle
+		
+		if ((!choosePrt ) || (choosePrt && wpr_info(printHandle, DWP_PRINTDLG) == DWP_PRINTDLG_PRINT))
+		begin
+			if (quename != "Win2PDF" && choosePrt)
+			begin
+				init tmpDialog
+				
+				tmpDialog.flags = DWP_PRINTDLG_STYLEPRINT|
+				&	DWP_PRINTDLG_DISABLECURPAGE |
+				&	DWP_PRINTDLG_DISABLEPAGENUMS |
+				&	DWP_PRINTDLG_DISABLESELECT |
+				&	DWP_PRINTDLG_COLLATE
+				
+				wpr_info(printHandle, DWP_PRINTDLG, tmpDialog)
+				
+				wpr_setdevice(printHandle, DWP_COPIES, tmpDialog.copies)
+			end
+			
+			if (%passed(doInLandscape) && doInLandscape) then
+			begin
+				wpr_setdevice(printHandle, DWP_ORIENTATION, DWPO_LANDSCAPE)
+				wpr_setdevice(printHandle, DWP_PAPERSIZE, DWPP_A4)
+			end
+			else
+			begin
+				wpr_setdevice(printHandle, DWP_ORIENTATION, DWPO_PORTRAIT)
+				if (%passed(forceA4) && forceA4) then 
+					wpr_setdevice(printHandle, DWP_PAPERSIZE, DWPP_A4)
+				else
+					wpr_setdevice(printHandle, DWP_PAPERSIZE, DWPP_FANFOLD_US)
+			end
+			
+			wpr_print(printHandle, DWP_BEGINJOB) ;Create the metafile
+			
+			wpr_print(printHandle, DWP_BEGINPAGE)
+			
+			;;sort out the fonts
+			init tmpFont
+			tmpFont.facename="Courier"
+			tmpFont.weight=DWPFW_NORMAL
+			if (%passed(doInLandscape) && doInLandscape) then
+				tmpFont.pointsize=8
+			else
+				tmpFont.pointsize=10
+
+			if (%passed(setFontName) && setFontName)
+				tmpFont.facename=setFontName
+			
+			if (%passed(setFontSize) && setFontSize)
+				tmpFont.pointsize=setFontSize
+			
+			tmpFont.fixed=true
+			
+			wpr_setdevice(printHandle, DWP_FONT, tmpFont)
+			
+			;;start at the top!
+			posX=1
+			posY=1
+			clear tmpLine
+			firstTime = true
+			
+			open(inChan = syn_freechn(), i, spoolFileName)
+			
+			tmpPos = 1
+			
+			repeat
+			begin
+				gets(inChan, inChar, eof)
+				using (decml(inChar)) select
+				(12),
+				begin
+					clear tmpLine
+					;;do page processing
+					if (firstTime)
+					begin
+						firstTime = false
+						nextloop	;FF character!
+					end
+					xcall wpr_print(printHandle, DWP_ENDPAGE)
+					posY=1
+					xcall wpr_print(printHandle, DWP_BEGINPAGE)
+					nextloop
+				end
+				(32 thru 126),
+				begin
+					tmpLine(tmpPos:1) = inChar
+					incr tmpPos
+				end
+				(10),
+				begin
+					nop
+				end
+				(),
+				begin
+					wpr_print(printHandle, DWP_WRITEOUT, posX, posY, %atrim(tmpLine))
+					posY += wpr_info(printHandle, DWP_TEXTHEIGHT, "X")
+					posY -= 1
+					clear tmpLine
+					tmpPos = 1
+				end
+				endusing
+			end
+		eof,
+			close(inChan)
+			wpr_print(printHandle, DWP_ENDPAGE)
+			
+			wpr_print(printHandle, DWP_ENDJOB) ;Close the metafile
+			
+			try
+			begin
+				if (doPreview) then
+				begin
+					if (wpr_execute(printHandle, DWP_PREVIEW) == DWP_PREVIEW_PRINT)
+					begin
+						wpr_execute(printHandle, DWP_PRINT)
+					end
+				end
+				else
+				begin
+					wpr_execute(printHandle, DWP_PRINT)
+				end
+			end
+			catch (e, @Exception)
+			begin
+				nop;this happens if they cancel the print.
+			end
+			finally
+			begin
+				wpr_info(printHandle, DWP_DELPRINTER) ;Release the printer
+			end
+			endtry
+			
+		end
+		
+		xreturn
+		
+		
+	endsubroutine
+	
+	
+endnamespace
