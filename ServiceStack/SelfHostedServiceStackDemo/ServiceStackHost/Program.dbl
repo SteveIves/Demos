@@ -1,0 +1,71 @@
+import System
+import ServiceStack
+
+namespace ServiceStackHost
+
+	{RouteAttribute("/hello/{Name}")}
+	public class Hello
+		public property Name, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+	endclass
+	
+	public class HelloResponse
+		public property Result, string
+			method get
+			endmethod
+			method set
+			endmethod
+		endproperty
+	endclass
+	
+	public class HelloService extends Service
+		public method Any, @Object
+			request, @Hello 
+			endparams
+		proc
+			mreturn new HelloResponse() { Result = "Hello, " + request.Name }
+		endmethod
+	endclass
+
+	;; Define the Web Services AppHost
+	
+	public class AppHost extends AppSelfHostBase
+		
+		public method AppHost
+			endparams
+			parent("HttpListener Self-Host", ^typeof(HelloService).Assembly)
+			;;No Assemblies provided in your AppHost's base constructor.
+		proc
+			
+		endmethod
+		
+		public override method Configure, void
+			container, @Funq.Container 
+			endparams
+		proc
+			
+		endmethod
+
+	endclass
+			
+	main
+		
+	proc
+		data listeningOn, String, "http://*:1337/"
+		
+		data apHost, @AppHost, new AppHost()
+		data ssHost, @ServiceStackHost, apHost.Init()
+		data host, @ServiceStackHost, ssHost.Start(listeningOn)
+		
+		;data host = new AppHost().Init().Start(listeningOn)
+		
+		Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, listeningOn)
+		Console.ReadKey()
+		
+	endmain
+	
+endnamespace
