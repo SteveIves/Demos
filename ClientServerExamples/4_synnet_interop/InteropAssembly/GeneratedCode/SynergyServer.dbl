@@ -29,8 +29,8 @@ namespace xfpldemo
 			inout  Message    ,string
 		endparams
 		record
-			s_CustomerID	,i4
-			s_AddressID	,i4
+			s_CustomerID	,int
+			s_AddressID	,int
 			s_3_Address	,^global.straddress
 			s_GRFA	,D_HANDLE
 			s_Message	,string
@@ -65,6 +65,10 @@ namespace xfpldemo
 			begin
 				data xfStr1    ,@xfpldemo.customer,new xfpldemo.customer()
 				data tStr1     ,^Global.strCustomer
+				.ifdef _DEBUG
+				if(^as(s_Customers[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr1 = (@^Global.strCustomer)s_Customers[i]
 				xfStr1.SynergyToStruct(tStr1)
 				Customers.Add(xfStr1)
@@ -87,8 +91,8 @@ namespace xfpldemo
 			inout  Message    ,string
 		endparams
 		record
-			s_CustomerID	,i4
-			s_ContactID	,i4
+			s_CustomerID	,int
+			s_ContactID	,int
 			s_3_Contact	,^global.strcontact
 			s_GRFA	,D_HANDLE
 			s_Message	,string
@@ -115,7 +119,7 @@ namespace xfpldemo
 			inout  Addresses    ,@ArrayList
 		endparams
 		record
-			s_CustomerID	,i4
+			s_CustomerID	,int
 			s_Addresses	,@ArrayList
 		proc
 			s_CustomerID = CustomerID
@@ -127,6 +131,10 @@ namespace xfpldemo
 			begin
 				data xfStr2    ,@xfpldemo.address,new xfpldemo.address()
 				data tStr2     ,^Global.strAddress
+				.ifdef _DEBUG
+				if(^as(s_Addresses[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr2 = (@^Global.strAddress)s_Addresses[i]
 				xfStr2.SynergyToStruct(tStr2)
 				Addresses.Add(xfStr2)
@@ -142,7 +150,7 @@ namespace xfpldemo
 			inout  Contacts    ,@ArrayList
 		endparams
 		record
-			s_CustomerID	,i4
+			s_CustomerID	,int
 			s_Contacts	,@ArrayList
 		proc
 			s_CustomerID = CustomerID
@@ -154,6 +162,10 @@ namespace xfpldemo
 			begin
 				data xfStr2    ,@xfpldemo.contact,new xfpldemo.contact()
 				data tStr2     ,^Global.strContact
+				.ifdef _DEBUG
+				if(^as(s_Contacts[i], @a) != ^null)
+				throw new InvalidCastException("Array List contains alpha when a structure was expected")
+				.endc
 				tStr2 = (@^Global.strContact)s_Contacts[i]
 				xfStr2.SynergyToStruct(tStr2)
 				Contacts.Add(xfStr2)
@@ -174,7 +186,7 @@ namespace xfpldemo
 			inout  Message    ,string
 		endparams
 		record
-			s_CustomerID	,i4
+			s_CustomerID	,int
 			s_2_Customer	,^global.strcustomer
 			s_GRFA	,D_HANDLE
 			s_Message	,string

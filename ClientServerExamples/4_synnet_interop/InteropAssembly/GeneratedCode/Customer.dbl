@@ -255,8 +255,8 @@ namespace xfpldemo
 			Tmp_Customer = structIn
 			f_Customer_id = Tmp_Customer.tCustomer_id
 			f_Name = %atrim(Tmp_Customer.tName)
-			f_Date_created = new System.DateTime(%DecToDateTime(Tmp_Customer.tDate_created, "YYYYMMDD"))
-			f_Date_modified = new System.DateTime(%DecToDateTime(Tmp_Customer.tDate_modified, "YYYYMMDD"))
+			f_Date_created= new System.DateTime(%DecToDateTime(Tmp_Customer.tDate_created,"YYYYMMDD"))
+			f_Date_modified= new System.DateTime(%DecToDateTime(Tmp_Customer.tDate_modified,"YYYYMMDD"))
 			f_Status = %atrim(Tmp_Customer.tStatus)
 			f_Replication_key = %atrim(Tmp_Customer.tReplication_key)
 			f_Noname_001 = %atrim(Tmp_Customer.tNoname_001)

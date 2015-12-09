@@ -492,7 +492,7 @@ namespace xfpldemo
 			f_Billing_address = Tmp_Address.tBilling_address
 			f_Main_address = Tmp_Address.tMain_address
 			f_Satellite_office = Tmp_Address.tSatellite_office
-			f_Active_date = new System.DateTime(%DecToDateTime(Tmp_Address.tActive_date, "YYYYMMDD"))
+			f_Active_date= new System.DateTime(%DecToDateTime(Tmp_Address.tActive_date,"YYYYMMDD"))
 			f_Replication_key = %atrim(Tmp_Address.tReplication_key)
 			mreturn
 		endmethod
