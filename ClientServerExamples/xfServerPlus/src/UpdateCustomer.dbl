@@ -25,6 +25,7 @@ function UpdateCustomer, METHOD_STATUS
         sts         ,METHOD_STATUS
         tmpCustomer ,strCustomer
         tmpGRFA     ,a10
+		grfa2		,a10
     endrecord
 
 proc
@@ -36,10 +37,12 @@ proc
         open(ch=syn_freechn(),u:i,"DAT:customer.ism")
 
         ;;Use the original GRFA to lock the record
-        read(ch,tmpCustomer,,RFA:^m(a_grfa),GETRFA:tmpGRFA)
+		grfa2 = ^m(a_grfa)
+        read(ch,tmpCustomer,,RFA:grfa2,GETRFA:tmpGRFA)
 
         ;;Update the record and get the new gRFA
-        write(ch,a_customer,,GETRFA:^m(a_grfa))
+        write(ch,a_customer,,GETRFA:tmpGRFA)
+		^m(a_grfa) = tmpGRFA
 
         ;;Good to go!
         sts = METHOD_STATUS.SUCCESS

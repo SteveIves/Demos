@@ -27,6 +27,7 @@ function GetCustomerForUpdate, METHOD_STATUS
     stack record local_data
         ch      ,int
         sts     ,METHOD_STATUS
+		tmpgrfa	,a10
     endrecord
 
 proc
@@ -40,7 +41,8 @@ proc
     try
     begin
         open(ch=syn_freechn(),i:i,"DAT:customer.ism")
-        read(ch,a_customer,keyval(ch,a_customer,0),KEYNUM:0,GETRFA:^m(a_grfa))
+        read(ch,a_customer,keyval(ch,a_customer,0),KEYNUM:0,GETRFA:tmpgrfa)
+		^m(a_grfa)=tmpgrfa
         sts = METHOD_STATUS.SUCCESS
         clear a_message
     end
