@@ -1,4 +1,2 @@
-
-COMPONENT/**/xfpldemo.bat
-COMPONENT/**/xfpldemo.xml
-COMPONENT/**/xfpldemo
+EXAMPLE3/GENSRC
+EXAMPLE5/src/NetWrappers*.*
