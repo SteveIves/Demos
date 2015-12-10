@@ -1,0 +1,45 @@
+
+import System
+import System.Collections.Generic
+
+namespace DesktopApp.Model
+
+	public class PeopleLogic
+
+		private static mPeople, @List<Person>
+
+		static method PeopleLogic
+			endparams
+		proc
+			mPeople = new List<Person>() {
+			&new Person() { ID=1, FirstName="John", LastName="Doe", DateOfBirth=new DateTime(1964,7,19) },
+			&new Person() { ID=2, FirstName="Jane", LastName="Doe", DateOfBirth=new DateTime(1958,11,26) }
+			&}
+		endmethod
+
+		public static method GetAllPeople, @List<Person>
+			endparams
+		proc
+			mreturn mPeople
+		endmethod
+
+		public static method CreatePerson, boolean
+			required in aPerson, @Person
+			endparams
+		proc
+			mPeople.Add(aPerson)
+			mreturn true
+		endmethod
+
+		public static method ReadPerson, boolean
+			required in aID, int
+			required out aPerson, @Person
+			endparams
+		proc
+
+			mreturn true
+		endmethod
+
+	endclass
+
+endnamespace

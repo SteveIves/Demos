@@ -1,0 +1,154 @@
+;******************************************************************************
+;
+; Title:        XmlValidation.dbl
+;
+; Description:  An example of using the Synergy .NET Assembly API to access
+;               .NET Framework classes capable of validating an XML file
+;               against an XML Schema.
+;
+; Author:       Jeff Greene, Synergex
+;
+; Created:      30th July 2008
+;
+; Requirements: This code will only work with Synergy/DE V9.1.3 or higher
+;               (V9.1.5 or higher is strongly recommended) on a Microsoft
+;               Windows System, and with the Microsoft .NET Framework V2.0
+;               or higher installed
+;
+;******************************************************************************
+;
+; This code is supplied as seen and without warranty or support, and is used
+; at your own risk. Neither the author or Synergex accept any responsability
+; for any loss or damage which may result from the use of this code. This text
+; must remain unaltered in this file at all times. Possession or use of this
+; code, or any modified version of this code, indicates your acceptance of
+; these conditions.
+;
+;******************************************************************************
+;
+.include "SRC:NetWrappers.inc"
+
+main XmlValidation
+
+.include "DBLDIR:synxml.def"
+
+record 
+	tt			,int
+	parser		,XML_PARSER_TYPE
+	xmldoc		,XML_DOC_TYPE
+	xmlstr		,XML_STRING_TYPE
+	obj			,@XmlValidator
+	XmlData		,string
+	akey		,a1
+endrecord
+
+.define D_XML_SCHEMA "http://psgapps.synergex.com/XmlSchemas/PurchaseOrder.xsd"
+
+structure chr
+	,a1
+endstructure
+
+.define D_DOC_TO_VALIDATE "PurchaseOrderGood.xml"
+;.define D_DOC_TO_VALIDATE "PurchaseOrderBad.xml"
+
+proc
+
+	open(tt = 1,i,"tt:")
+	
+	;Create a Synergy XML parser and parse an XML file.  This will validate
+	;that the XML file is syntactically correct, but will NOT validate the XML
+	;file content against an schema.
+	parser = xml_parser_create()
+	if (xmldoc = xml_parser_parsefile(parser,D_DOC_TO_VALIDATE)) then
+	begin
+		;The XML file parsed OK for structure, now let's attempt to validate
+		;the content of the file against an XML schema.  The schema file being
+		;used is actually on a web server, but a local copy can be found in
+		;PurchaseOrder.xsd.
+		
+		;Convert the XML document to an XML string and delete the document
+        xmlstr = xml_doc_tostring(xmldoc)
+		xml_doc_delete(xmldoc)
+
+		;Extract the actual XML data from the XML String, and delete the XML string
+		XmlData = ^m(chr(1:xml_string_getsize(xmlstr)),xml_string_gethandle(xmlstr))
+		xml_string_delete(xmlstr)
+		
+		;Create an XmlValidator object
+		obj = new XmlValidator()
+
+		;Validate the XML data against the schema
+		try 
+		begin
+			obj.Validate(XmlData,D_XML_SCHEMA)
+			writes(tt,"The XML document is valid.")
+		end
+		catch (ex)
+		begin
+			writes(tt,"The XML document is NOT valid!")
+			writes(tt,ex.Message)
+		end
+		endtry
+	end
+	else
+		writes(tt,"Invalid XML document strcuture!")
+	
+	xml_parser_delete(parser)
+	
+	close tt
+	stop
+	
+endmain
+
+namespace SnnPSG.Examples
+
+	class XmlValidator
+
+        private ErrorCount			,int	;Validation error Count
+	    private ErrorMessage		,string ;Validation error Message
+		
+		;Validate method
+	    public method Validate, void
+			required in XmlData		,string
+			required in SchemaUrl	,string
+			endparams
+			record 
+				xsc					,@XmlSchemaCollection
+				vr					,@XmlValidatingReader
+			endrecord
+	    proc
+			;Reset our error counters
+			ErrorCount = 0
+			ErrorMessage = ""
+			;Create a schema collection and add our schema to it
+			xsc = new XmlSchemaCollection()
+			xsc.Add(^null,SchemaUrl);
+			;Create an XmlValidatingReader and tell it to validate against the
+			;schema collection
+			vr = new System.Xml.XmlValidatingReader(XmlData,System.Xml.XmlNodeType.Document,^null)
+			vr.ValidationType = ValidationType.Schema
+			vr.Schemas.Add(xsc)
+			;Add an event handler to trap validation failures
+			addhandler(vr.ValidationEventHandler, this.ValidationHandler)
+			;Validate the XML data against the schema
+			while(vr.Read())
+				nop
+			vr.Close()
+			;If we got errors, throw an exception back to the host application
+			if (ErrorCount)
+				throw new Exception(ErrorMessage)
+		endmethod
+		
+		;Event handler for validation failures
+		public method ValidationHandler, void
+			required in sender		,@*
+			required in args		,@System.Xml.Schema.ValidationEventArgs
+			endparams
+		proc
+			ErrorCount += 1
+			ErrorMessage = ErrorMessage + args.Message + ". "
+		endmethod
+
+	endclass
+
+endnamespace

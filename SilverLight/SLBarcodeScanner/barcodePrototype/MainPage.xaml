@@ -1,0 +1,1605 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+	x:Class="barcodePrototype.MainPage"
+	d:DesignWidth="1000"
+	d:DesignHeight="700"
+	>
+	<UserControl.Resources>
+		<Style x:Key="scanBtnStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF1F3B53"/>
+			<Setter Property="Foreground" Value="#FF000000"/>
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#FFA3AEB9" Offset="0"/>
+						<GradientStop Color="#FF8399A9" Offset="0.375"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="00:00:00.5000000">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard RepeatBehavior="Forever">
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[5].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="Black"/>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="Black">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="Black">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[4].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF240000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF4D0000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE330000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="Maroon">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE330000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE590000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FFA60000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE590000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path1" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path2" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path3" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path4" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="TextBlock1" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Color)" Duration="00:00:00.0010000">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path1" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path2" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path3" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path4" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.735">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="TextBlock1" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" Duration="00:00:00.0010000">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed"/>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused"/>
+									<VisualState x:Name="Unfocused"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Path x:Name="path" Stretch="Fill" Height="33.999" HorizontalAlignment="Left" Margin="0.5,0.5,0,0" VerticalAlignment="Top" Width="117.667" UseLayoutRounding="False" Data="F1M438.514,551.174C435.765,551.174,433.515,553.424,433.515,556.174L433.515,556.174L433.515,580.174C433.515,582.923,435.765,585.173,438.514,585.173L438.514,585.173L546.183,585.173C548.932,585.173,551.182,582.923,551.182,580.174L551.182,580.174L551.182,556.174C551.182,553.424,548.932,551.174,546.183,551.174L546.183,551.174z">
+								<Path.Fill>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="Red" Offset="0"/>
+										<GradientStop Color="sc#1, 0.703555465, 0, 0" Offset="0.074432373046875"/>
+										<GradientStop Color="sc#1, 0.4479413, 0, 0" Offset="0.16609090566635132"/>
+										<GradientStop Color="sc#1, 0.24126184, 0, 0" Offset="0.28974699974060059"/>
+										<GradientStop Color="sc#1, 0.100487471, 0, 0" Offset="0.5042881965637207"/>
+										<GradientStop Color="sc#1, 0.0722718239, 0, 0" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Fill>
+							</Path>
+							<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="35" HorizontalAlignment="Left" VerticalAlignment="Top" Width="118.668" UseLayoutRounding="False" Data="M551.1826,580.1738C551.1826,582.9238,548.9326,585.1738,546.1826,585.1738L438.5146,585.1738C435.7646,585.1738,433.5146,582.9238,433.5146,580.1738L433.5146,556.1738C433.5146,553.4238,435.7646,551.1738,438.5146,551.1738L546.1826,551.1738C548.9326,551.1738,551.1826,553.4238,551.1826,556.1738L551.1826,580.1738z"/>
+							<Canvas x:Name="TextBlock1" Height="13" HorizontalAlignment="Center" Margin="0,12,0,0" VerticalAlignment="Top" Width="34">
+								<Canvas.Effect>
+									<DropShadowEffect Color="White" ShadowDepth="0" Opacity="0"/>
+								</Canvas.Effect>
+								<Path x:Name="path1" Fill="White" Stretch="Fill" Height="13" Width="7" Canvas.Left="0.424" Canvas.Top="0" Data="F1M502.3965,563.132775C501.537125,562.820275,500.537125,562.67965,499.709,562.67965C497.443375,562.67965,495.67775,563.86715,495.67775,566.101525C495.67775,570.007775,501.084,569.226525,501.084,572.039025C501.084,573.5234,499.6465,574.0859,498.61525,574.0859C497.693375,574.0859,496.61525,573.726525,496.005875,573.476525L495.818375,575.1484C496.6465,575.42965,497.5215,575.67965,498.3965,575.67965C500.912125,575.67965,502.99025,574.61715,502.99025,571.92965C502.99025,567.789025,497.584,568.351525,497.584,565.945275C497.584,564.632775,498.7715,564.257775,499.787125,564.257775C500.724625,564.257775,501.224625,564.42965,502.1465,564.789025L502.3965,563.132775" UseLayoutRounding="False"/>
+								<Path x:Name="path2" Fill="White" Stretch="Fill" Height="10" Width="7" Canvas.Left="9.111" Canvas.Top="3.391" Data="F1M511.255875,566.42965C510.7715,566.226525,509.880875,566.070275,509.193375,566.070275C506.3965,566.070275,504.5215,568.0859,504.5215,570.86715C504.5215,573.49215,506.42775,575.67965,509.193375,575.67965C509.80275,575.67965,510.61525,575.61715,511.318375,575.30465L511.193375,573.789025C510.67775,574.132775,509.959,574.30465,509.380875,574.30465C507.193375,574.30465,506.318375,572.507775,506.318375,570.86715C506.318375,569.11715,507.380875,567.42965,509.2715,567.42965C509.80275,567.42965,510.459,567.55465,511.099625,567.8359L511.255875,566.42965" UseLayoutRounding="False"/>
+								<Path x:Name="path3" Fill="White" Stretch="Fill" Height="10" Width="8" Canvas.Left="17.244" Canvas.Top="3.391" Data="F1M513.79475,568.36715C514.466625,567.789025,515.497875,567.42965,516.451,567.42965C518.1385,567.42965,518.716625,568.24215,518.716625,569.820275C518.060375,569.789025,517.591625,569.789025,516.91975,569.789025C515.16975,569.789025,512.654125,570.507775,512.654125,572.820275C512.654125,574.820275,514.04475,575.67965,516.0135,575.67965C517.560375,575.67965,518.466625,574.8359,518.85725,574.2734L518.904125,574.2734L518.904125,575.4609L520.48225,575.4609C520.451,575.195275,520.41975,574.7109,520.41975,573.664025L520.41975,569.86715C520.41975,567.36715,519.35725,566.070275,516.716625,566.070275C515.54475,566.070275,514.54475,566.42965,513.701,566.92965L513.79475,568.36715 M518.716625,571.8984C518.716625,573.257775,517.841625,574.30465,516.16975,574.30465C515.3885,574.30465,514.451,573.789025,514.451,572.820275C514.451,571.195275,516.716625,571.05465,517.6385,571.05465C517.997875,571.05465,518.35725,571.0859,518.716625,571.0859L518.716625,571.8984" UseLayoutRounding="False"/>
+								<Path x:Name="path4" Fill="White" Stretch="Fill" Height="9" Width="8" Canvas.Left="27.924" Canvas.Top="3.586" Data="F1M523.2715,575.4609L524.959,575.4609L524.959,571.2109C524.959,568.976525,525.834,567.42965,527.755875,567.42965C529.224625,567.5234,529.693375,568.570275,529.693375,570.7109L529.693375,575.4609L531.3965,575.4609L531.3965,570.007775C531.3965,567.539025,530.334,566.070275,527.959,566.070275C526.67775,566.070275,525.459,566.695275,524.943375,567.74215L524.912125,567.74215L524.912125,566.2734L523.2715,566.2734L523.2715,575.4609" UseLayoutRounding="False"/>
+							</Canvas>
+							<Path Stretch="Fill" Height="17" Data="F1M438.514,551.174C435.765,551.174,433.515,553.424,433.515,556.174L433.515,556.174L433.515,563.142C433.515,565.892,435.756,567.939,438.494,567.689L438.494,567.689C438.494,567.689,480.907,563.841,494.083,563.841L494.083,563.841C505.795,563.841,546.197,566.906,546.197,566.906L546.197,566.906C548.94,567.114,551.182,565.034,551.182,562.284L551.182,562.284L551.182,556.174C551.182,553.424,548.932,551.174,546.183,551.174L546.183,551.174z" Margin="0.985,0.136,0.015,0" VerticalAlignment="Top" UseLayoutRounding="False">
+								<Path.OpacityMask>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="Black" Offset="0"/>
+										<GradientStop Color="Black" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.OpacityMask>
+								<Path.Fill>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="#19FFFFFF" Offset="0"/>
+										<GradientStop Color="#7FFFFFFF" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Fill>
+							</Path>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="newScanBtnStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF1F3B53"/>
+			<Setter Property="Foreground" Value="#FF000000"/>
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush">
+				<Setter.Value>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#FFA3AEB9" Offset="0"/>
+						<GradientStop Color="#FF8399A9" Offset="0.375"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualStateGroup.Transitions>
+										<VisualTransition GeneratedDuration="00:00:00.5000000">
+											<VisualTransition.GeneratedEasingFunction>
+												<CircleEase EasingMode="EaseOut"/>
+											</VisualTransition.GeneratedEasingFunction>
+										</VisualTransition>
+									</VisualStateGroup.Transitions>
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard RepeatBehavior="Forever">
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[5].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="Black"/>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="Black">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="Black">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[4].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF240000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[3].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF4D0000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE000000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[2].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE330000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="Maroon">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE330000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FE590000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:00.5000000" Value="#FFA60000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+												<EasingColorKeyFrame KeyTime="00:00:01" Value="#FE590000">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="TextBlock1" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Color)" Duration="00:00:00.0010000">
+												<EasingColorKeyFrame KeyTime="00:00:00" Value="#FEFFFFFF">
+													<EasingColorKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseInOut"/>
+													</EasingColorKeyFrame.EasingFunction>
+												</EasingColorKeyFrame>
+											</ColorAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="TextBlock1" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" Duration="00:00:00.0010000">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path5" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path6" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path7" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path8" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path9" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path10" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+											<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path11" Storyboard.TargetProperty="(UIElement.Opacity)">
+												<EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.74"/>
+												<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+												<EasingDoubleKeyFrame KeyTime="00:00:01" Value="0.74">
+													<EasingDoubleKeyFrame.EasingFunction>
+														<CircleEase EasingMode="EaseOut"/>
+													</EasingDoubleKeyFrame.EasingFunction>
+												</EasingDoubleKeyFrame>
+											</DoubleAnimationUsingKeyFrames>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed"/>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused"/>
+									<VisualState x:Name="Unfocused"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Path x:Name="path" Stretch="Fill" Height="33.999" HorizontalAlignment="Left" Margin="0.5,0.5,0,0" VerticalAlignment="Top" Width="117.667" UseLayoutRounding="False" Data="F1M438.514,551.174C435.765,551.174,433.515,553.424,433.515,556.174L433.515,556.174L433.515,580.174C433.515,582.923,435.765,585.173,438.514,585.173L438.514,585.173L546.183,585.173C548.932,585.173,551.182,582.923,551.182,580.174L551.182,580.174L551.182,556.174C551.182,553.424,548.932,551.174,546.183,551.174L546.183,551.174z">
+								<Path.Fill>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="Red" Offset="0"/>
+										<GradientStop Color="sc#1, 0.703555465, 0, 0" Offset="0.074432373046875"/>
+										<GradientStop Color="sc#1, 0.4479413, 0, 0" Offset="0.16609090566635132"/>
+										<GradientStop Color="sc#1, 0.24126184, 0, 0" Offset="0.28974699974060059"/>
+										<GradientStop Color="sc#1, 0.100487471, 0, 0" Offset="0.5042881965637207"/>
+										<GradientStop Color="sc#1, 0.0722718239, 0, 0" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Fill>
+							</Path>
+							<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="35" HorizontalAlignment="Left" VerticalAlignment="Top" Width="118.668" UseLayoutRounding="False" Data="M551.1826,580.1738C551.1826,582.9238,548.9326,585.1738,546.1826,585.1738L438.5146,585.1738C435.7646,585.1738,433.5146,582.9238,433.5146,580.1738L433.5146,556.1738C433.5146,553.4238,435.7646,551.1738,438.5146,551.1738L546.1826,551.1738C548.9326,551.1738,551.1826,553.4238,551.1826,556.1738L551.1826,580.1738z"/>
+							<Canvas x:Name="TextBlock1" Height="13" HorizontalAlignment="Center" Margin="0,12,0,0" VerticalAlignment="Top" Width="34">
+								<Canvas.Effect>
+									<DropShadowEffect Color="White" Opacity="0" ShadowDepth="0"/>
+								</Canvas.Effect>
+								<Path x:Name="path5" Fill="White" Stretch="Fill" Height="12.562" Width="9.828" Canvas.Top="0.219" Data="F1M453.410125,575.4609L455.222625,575.4609L455.222625,565.132775L455.253875,565.132775L460.941375,575.4609L463.23825,575.4609L463.23825,562.8984L461.441375,562.8984L461.441375,573.007775L461.410125,573.007775L455.86325,562.8984L453.410125,562.8984L453.410125,575.4609" UseLayoutRounding="False" Canvas.Left="-21"/>
+								<Path x:Name="path6" Fill="White" Stretch="Fill" Height="9.609" Width="8.359" Canvas.Left="-8.575" Canvas.Top="3.391" Data="F1M473.312375,573.3984C472.8905,573.726525,471.593625,574.30465,470.48425,574.30465C468.874875,574.30465,467.453,573.070275,467.453,571.24215L474.0155,571.24215C474.0155,568.30465,473.0155,566.070275,469.953,566.070275C467.35925,566.070275,465.656125,567.99215,465.656125,570.7109C465.656125,573.695275,467.156125,575.67965,470.406125,575.67965C471.92175,575.67965,472.656125,575.320275,473.312375,575.0859L473.312375,573.3984 M467.453,569.99215C467.578,568.80465,468.2655,567.42965,469.92175,567.42965C471.374875,567.42965,472.203,568.5859,472.203,569.99215L467.453,569.99215" UseLayoutRounding="False"/>
+								<Path x:Name="path7" Fill="White" Stretch="Fill" Height="9.188" Width="14.562" Canvas.Left="0.645" Canvas.Top="3.688" Data="F1M489.61725,566.2734L487.961,566.2734L485.726625,573.882775L485.695375,573.882775L483.382875,566.2734L481.382875,566.2734L479.05475,573.882775L479.007875,573.882775L476.8985,566.2734L475.05475,566.2734L478.007875,575.4609L479.961,575.4609L482.289125,567.757775L482.320375,567.757775L484.695375,575.4609L486.664125,575.4609L489.61725,566.2734" UseLayoutRounding="False"/>
+								<Path x:Name="path8" Fill="White" Stretch="Fill" Height="13" Width="7.312" Canvas.Left="21.424" Canvas.Top="0" Data="F1M502.3965,563.132775C501.537125,562.820275,500.537125,562.67965,499.709,562.67965C497.443375,562.67965,495.67775,563.86715,495.67775,566.101525C495.67775,570.007775,501.084,569.226525,501.084,572.039025C501.084,573.5234,499.6465,574.0859,498.61525,574.0859C497.693375,574.0859,496.61525,573.726525,496.005875,573.476525L495.818375,575.1484C496.6465,575.42965,497.5215,575.67965,498.3965,575.67965C500.912125,575.67965,502.99025,574.61715,502.99025,571.92965C502.99025,567.789025,497.584,568.351525,497.584,565.945275C497.584,564.632775,498.7715,564.257775,499.787125,564.257775C500.724625,564.257775,501.224625,564.42965,502.1465,564.789025L502.3965,563.132775" UseLayoutRounding="False"/>
+								<Path x:Name="path9" Fill="White" Stretch="Fill" Height="9.609" Width="6.797" Canvas.Left="30.111" Canvas.Top="3.391" Data="F1M511.255875,566.42965C510.7715,566.226525,509.880875,566.070275,509.193375,566.070275C506.3965,566.070275,504.5215,568.0859,504.5215,570.86715C504.5215,573.49215,506.42775,575.67965,509.193375,575.67965C509.80275,575.67965,510.61525,575.61715,511.318375,575.30465L511.193375,573.789025C510.67775,574.132775,509.959,574.30465,509.380875,574.30465C507.193375,574.30465,506.318375,572.507775,506.318375,570.86715C506.318375,569.11715,507.380875,567.42965,509.2715,567.42965C509.80275,567.42965,510.459,567.55465,511.099625,567.8359L511.255875,566.42965" UseLayoutRounding="False"/>
+								<Path x:Name="path10" Fill="White" Stretch="Fill" Height="9.609" Width="7.828" Canvas.Left="38.244" Canvas.Top="3.391" Data="F1M513.79475,568.36715C514.466625,567.789025,515.497875,567.42965,516.451,567.42965C518.1385,567.42965,518.716625,568.24215,518.716625,569.820275C518.060375,569.789025,517.591625,569.789025,516.91975,569.789025C515.16975,569.789025,512.654125,570.507775,512.654125,572.820275C512.654125,574.820275,514.04475,575.67965,516.0135,575.67965C517.560375,575.67965,518.466625,574.8359,518.85725,574.2734L518.904125,574.2734L518.904125,575.4609L520.48225,575.4609C520.451,575.195275,520.41975,574.7109,520.41975,573.664025L520.41975,569.86715C520.41975,567.36715,519.35725,566.070275,516.716625,566.070275C515.54475,566.070275,514.54475,566.42965,513.701,566.92965L513.79475,568.36715 M518.716625,571.8984C518.716625,573.257775,517.841625,574.30465,516.16975,574.30465C515.3885,574.30465,514.451,573.789025,514.451,572.820275C514.451,571.195275,516.716625,571.05465,517.6385,571.05465C517.997875,571.05465,518.35725,571.0859,518.716625,571.0859L518.716625,571.8984" UseLayoutRounding="False"/>
+								<Path x:Name="path11" Fill="White" Stretch="Fill" Height="9.391" Width="8.125" Canvas.Left="48.923" Canvas.Top="3.586" Data="F1M523.2715,575.4609L524.959,575.4609L524.959,571.2109C524.959,568.976525,525.834,567.42965,527.755875,567.42965C529.224625,567.5234,529.693375,568.570275,529.693375,570.7109L529.693375,575.4609L531.3965,575.4609L531.3965,570.007775C531.3965,567.539025,530.334,566.070275,527.959,566.070275C526.67775,566.070275,525.459,566.695275,524.943375,567.74215L524.912125,567.74215L524.912125,566.2734L523.2715,566.2734L523.2715,575.4609" UseLayoutRounding="False"/>
+							</Canvas>
+							<Path Stretch="Fill" Height="17" Data="F1M438.514,551.174C435.765,551.174,433.515,553.424,433.515,556.174L433.515,556.174L433.515,563.142C433.515,565.892,435.756,567.939,438.494,567.689L438.494,567.689C438.494,567.689,480.907,563.841,494.083,563.841L494.083,563.841C505.795,563.841,546.197,566.906,546.197,566.906L546.197,566.906C548.94,567.114,551.182,565.034,551.182,562.284L551.182,562.284L551.182,556.174C551.182,553.424,548.932,551.174,546.183,551.174L546.183,551.174z" Margin="0.985,0.136,0.015,0" VerticalAlignment="Top" UseLayoutRounding="False">
+								<Path.OpacityMask>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="Black" Offset="0"/>
+										<GradientStop Color="Black" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.OpacityMask>
+								<Path.Fill>
+									<LinearGradientBrush EndPoint="0.5,-0.013" StartPoint="0.5,1">
+										<GradientStop Color="#19FFFFFF" Offset="0"/>
+										<GradientStop Color="#7FFFFFFF" Offset="1"/>
+									</LinearGradientBrush>
+								</Path.Fill>
+							</Path>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid x:Name="LayoutRoot" Background="#FF010307">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="appStates">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="00:00:00">
+						<VisualTransition.GeneratedEasingFunction>
+							<CircleEase EasingMode="EaseInOut"/>
+						</VisualTransition.GeneratedEasingFunction>
+					</VisualTransition>
+					<VisualTransition From="results" GeneratedDuration="00:00:00.6000000" To="scanner">
+						<VisualTransition.GeneratedEasingFunction>
+							<CircleEase EasingMode="EaseInOut"/>
+						</VisualTransition.GeneratedEasingFunction>
+						<Storyboard>
+							<DoubleAnimation Duration="00:00:00.6000000" Storyboard.TargetName="scanner1_hidden" Storyboard.TargetProperty="(UIElement.Opacity)"/>
+						</Storyboard>
+					</VisualTransition>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="scanner"/>
+				<VisualState x:Name="results">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="appShape" Storyboard.TargetProperty="(FrameworkElement.Height)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="395"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="511">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="mainResult" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="0.995">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsPanel" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsPanel" Storyboard.TargetProperty="(FrameworkElement.Height)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="195">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsGloss" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsHighlight" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="datagridHeader_Copy" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0.005"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="datagridHeader_Copy" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="195">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PreviewScreen" Storyboard.TargetProperty="(FrameworkElement.Width)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="400"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="161">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PreviewScreen" Storyboard.TargetProperty="(FrameworkElement.Height)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="300"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="155">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="220">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsItem_Copy" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsItem_Copy1" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsItem_Copy2" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Rescan" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ScanButton" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="appShape" Storyboard.TargetProperty="(FrameworkElement.Width)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="440"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="440">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsGloss" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="overlay" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.5"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.3000000" Value="0.5"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanner1_hidden" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:01" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:01" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:01.5000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseIn"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:02" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseIn"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:01" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="2">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:01" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="2">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning_Copy" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.3000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning_Copy" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="2"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.3000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="2">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanning_Copy" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+							<EasingDoubleKeyFrame KeyTime="00:00:02.5000000" Value="2"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.3000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<ElasticEase EasingMode="EaseOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="2">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridScanner" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.3000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0.4">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="1"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="0.4">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="-120">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="-114">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+						<PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.Clip).(PathGeometry.Figures)[0].(PathFigure.StartPoint)">
+							<EasingPointKeyFrame KeyTime="00:00:03.8000000" Value="0,104.00146484375"/>
+							<EasingPointKeyFrame KeyTime="00:00:04.3000000" Value="0,26.00146484375">
+								<EasingPointKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingPointKeyFrame.EasingFunction>
+							</EasingPointKeyFrame>
+						</PointAnimationUsingKeyFrames>
+						<PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.Clip).(PathGeometry.Figures)[0].(PathFigure.Segments)[0].(LineSegment.Point)">
+							<EasingPointKeyFrame KeyTime="00:00:03.8000000" Value="396,104.00146484375"/>
+							<EasingPointKeyFrame KeyTime="00:00:04.3000000" Value="396,26.00146484375">
+								<EasingPointKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseInOut"/>
+								</EasingPointKeyFrame.EasingFunction>
+							</EasingPointKeyFrame>
+						</PointAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="resultsHighlight" Storyboard.TargetProperty="(FrameworkElement.Height)">
+							<EasingDoubleKeyFrame KeyTime="00:00:03.8000000" Value="11.001"/>
+							<EasingDoubleKeyFrame KeyTime="00:00:04.3000000" Value="11.001"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path2" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="0.2"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path3" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="0.2"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="path4" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:04.9000000" Value="0.2"/>
+						</DoubleAnimationUsingKeyFrames>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="Rescan">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>True</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+							<DiscreteObjectKeyFrame KeyTime="0:0:3.8">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>False</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+							<DiscreteObjectKeyFrame KeyTime="0:0:4.3">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>False</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+							<DiscreteObjectKeyFrame KeyTime="0:0:4.9">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>True</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="resultsItem_Copy3">
+							<EasingDoubleKeyFrame KeyTime="0:0:4.3" Value="0"/>
+							<EasingDoubleKeyFrame KeyTime="0:0:4.9" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+			<VisualStateGroup x:Name="scannerFlicker">
+				<VisualState x:Name="flicker">
+					<Storyboard RepeatBehavior="Forever">
+						<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="scanner1_hidden" Storyboard.TargetProperty="(UIElement.Opacity)">
+							<EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.8">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseIn"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+							<EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1">
+								<EasingDoubleKeyFrame.EasingFunction>
+									<CircleEase EasingMode="EaseIn"/>
+								</EasingDoubleKeyFrame.EasingFunction>
+							</EasingDoubleKeyFrame>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<Image Margin="0" Source="blue-streaks3.jpg" Stretch="Fill" Width="1115" Height="1919" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+		<Path Stretch="Fill" Margin="0" UseLayoutRounding="False" Data="M1.284,700L1000,700L1000,0.408000000000015L1.284,0.408000000000015z">
+			<Path.Fill>
+				<LinearGradientBrush EndPoint="0.501,0.998" StartPoint="0.501,0">
+					<GradientStop Color="#FF002644" Offset="0"/>
+					<GradientStop Color="#FF002644" Offset="0.0061340299434959888"/>
+					<GradientStop Color="#96006FCC" Offset="1"/>
+				</LinearGradientBrush>
+			</Path.Fill>
+		</Path>
+		<Grid x:Name="appShape" Margin="0,-5,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="440" Height="395">
+			<Grid.Effect>
+				<DropShadowEffect BlurRadius="20" Opacity="0.65" Direction="-90"/>
+			</Grid.Effect>
+			<Rectangle Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" RadiusX="10" RadiusY="10">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0.00499999988824129">
+						<GradientStop Color="#FF494949" Offset="0"/>
+						<GradientStop Color="White" Offset="1"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Path x:Name="path" Stretch="Fill" Width="440.001" Data="F1M283.794,237.947C278.293,237.947,273.793,242.447,273.793,247.947L273.793,247.947L273.793,389.559C317.656,350.885,398.378,324.948,490.719,324.948L490.719,324.948C587.383,324.948,671.316,353.37,713.56,395.075L713.56,395.075C713.71,394.388,713.794,393.678,713.794,392.947L713.794,392.947L713.794,247.947C713.794,242.447,709.294,237.947,703.794,237.947L703.794,237.947z" Margin="0,0.064,-0.001,0" UseLayoutRounding="False" Height="157.128" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+				<Path.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Path.RenderTransform>
+				<Path.Fill>
+					<LinearGradientBrush EndPoint="0.5,0.821" StartPoint="0.5,0.013">
+						<GradientStop Color="White" Offset="0"/>
+						<GradientStop Color="#19FFFFFF" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.Fill>
+			</Path>
+			<Border x:Name="resultsPanel" Height="0" VerticalAlignment="Top" CornerRadius="10,10,0,0" Opacity="0">
+				<Border.Background>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="Black" Offset="0"/>
+						<GradientStop Color="#FF272727" Offset="0.948"/>
+						<GradientStop Color="Black" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+			</Border>
+			<Path x:Name="resultsHighlight" Stretch="Fill" Height="11.001" Width="440.001" Data="F1M283.794,95.947C278.293,95.947,273.793,100.447,273.793,105.947L273.793,105.947L273.793,106.948C273.793,101.447,278.293,96.947,283.794,96.947L283.794,96.947L703.794,96.947C709.277,96.947,713.764,101.42,713.791,106.897L713.791,106.897L713.794,105.947C713.794,100.447,709.294,95.947,703.794,95.947L703.794,95.947z" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top" UseLayoutRounding="False" d:LayoutOverrides="Width" Opacity="0">
+				<Path.OpacityMask>
+					<LinearGradientBrush EndPoint="0.5,0.821" StartPoint="0.5,0.013">
+						<GradientStop Color="Black" Offset="0"/>
+						<GradientStop Color="Black" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.OpacityMask>
+				<Path.Fill>
+					<LinearGradientBrush EndPoint="0.5,0.821" StartPoint="0.5,0.013">
+						<GradientStop Color="#4CFFFFFF" Offset="0"/>
+						<GradientStop Color="#0CFFFFFF" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.Fill>
+			</Path>
+			<Path x:Name="resultsGloss" Stretch="Fill" Height="97.127" Width="440.001" Data="F1M283.794,95.947C278.293,95.947,273.793,100.447,273.793,105.947L273.793,105.947L273.793,187.56C320.908,173.511,398.378,152.948,490.719,152.948L490.719,152.948C587.383,152.948,672.899,168.627,713.56,193.074L713.56,193.074L713.794,105.947C713.794,100.447,709.294,95.947,703.794,95.947L703.794,95.947z" Margin="0,0,-0.001,0" VerticalAlignment="Top" UseLayoutRounding="False" d:LayoutOverrides="Height" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Path.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Path.RenderTransform>
+				<Path.OpacityMask>
+					<LinearGradientBrush EndPoint="0.5,0.821" StartPoint="0.5,0.013">
+						<GradientStop Color="Black" Offset="0"/>
+						<GradientStop Color="Black" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.OpacityMask>
+				<Path.Fill>
+					<LinearGradientBrush EndPoint="0.5,0.821" StartPoint="0.5,0.013">
+						<GradientStop Color="#4CFFFFFF" Offset="0"/>
+						<GradientStop Color="#0CFFFFFF" Offset="1"/>
+					</LinearGradientBrush>
+				</Path.Fill>
+			</Path>
+			<Grid x:Name="datagridHeader_Copy" Height="40" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Center" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<Path Stretch="Fill" Margin="0" UseLayoutRounding="False" Data="M272,246.984L714.794,246.984L714.794,226.997L272,226.997z" Height="35" VerticalAlignment="Top">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,0.002" StartPoint="0.5,1">
+							<GradientStop Color="#FF4C4C4C" Offset="0"/>
+							<GradientStop Color="Black" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="5" Data="M272,251.984L714.794,251.984L714.794,246.996L272,246.996z" Margin="0" VerticalAlignment="Bottom" UseLayoutRounding="False">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,0.003" StartPoint="0.5,1">
+							<GradientStop Offset="0"/>
+							<GradientStop Offset="1" Color="#4C000000"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="16" Data="F1M272,226.997L272,231.991C272,234.737,274.25,236.984,277,236.984L277,236.984L708.794,236.984C711.544,236.984,713.794,234.737,713.794,231.991L713.794,231.991L713.794,226.997z" Margin="0" VerticalAlignment="Top" UseLayoutRounding="False">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,0.002" StartPoint="0.5,1">
+							<GradientStop Color="#33FFFFFF" Offset="0"/>
+							<GradientStop Color="#7FFFFFFF" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<TextBlock Text="Site" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18.667" HorizontalAlignment="Left" Margin="20,3,0,6" Foreground="Black" d:LayoutOverrides="Height"/>
+				<TextBlock Text="Price" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18.667" Margin="157,3,0,6" Foreground="Black" d:LayoutOverrides="Height" HorizontalAlignment="Left"/>
+				<TextBlock Text="Site" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18.667" HorizontalAlignment="Left" Margin="20,4,0,5" Foreground="#FFE4E4E4" d:LayoutOverrides="Height"/>
+				<TextBlock Text="Price" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18.667" Margin="157,4,0,5" Foreground="#FFE4E4E4" d:LayoutOverrides="Height" HorizontalAlignment="Left"/>
+			</Grid>
+			<Grid x:Name="resultsItem_Copy" HorizontalAlignment="Left" Margin="0,246,0,0" VerticalAlignment="Top" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock VerticalAlignment="Top" Text="Amazon.com" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF333333"/>
+				<TextBlock Margin="157,0,0,0" VerticalAlignment="Top" Text="$31.49" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#FF285B27" Height="40"/>
+				<TextBlock Margin="325,1,0,0" VerticalAlignment="Top" Text="BUY NOW" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Foreground="#FF7F0000" FontWeight="Bold" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Stretch="Fill" Height="12" Margin="418,5,0,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="F1M606.8994,460.5684L602.8994,464.2344L602.8994,456.9014L606.8994,460.5684L602.8994,464.2344L602.8994,456.9014z" Fill="#FF7F0000" HorizontalAlignment="Left" Width="10" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.80000299215316772" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,37,0,0"/>
+				<Path x:Name="path2" Stretch="Fill" Stroke="Black" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.5" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,36,0,0"/>
+			</Grid>
+			<Grid x:Name="resultsItem_Copy1" HorizontalAlignment="Left" Margin="0,299,0,0" VerticalAlignment="Top" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock VerticalAlignment="Top" Text="Bing" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF333333"/>
+				<TextBlock Margin="157,0,0,0" VerticalAlignment="Top" Text="$39.99" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#FF285B27" Height="40"/>
+				<TextBlock Margin="325,1,0,0" VerticalAlignment="Top" Text="BUY NOW" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Foreground="#FF7F0000" FontWeight="Bold"/>
+				<Path Stretch="Fill" Height="12" Margin="418,5,0,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="F1M606.8994,460.5684L602.8994,464.2344L602.8994,456.9014L606.8994,460.5684L602.8994,464.2344L602.8994,456.9014z" Fill="#FF7F0000" HorizontalAlignment="Left" Width="10" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.80000299215316772" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,37,0,0"/>
+				<Path x:Name="path3" Stretch="Fill" Stroke="Black" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.5" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,36,0,0"/>
+			</Grid>
+			<Grid x:Name="resultsItem_Copy2" HorizontalAlignment="Left" Margin="0,357,0,0" VerticalAlignment="Top" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock VerticalAlignment="Top" Text="Google" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF333333"/>
+				<TextBlock Margin="157,0,0,0" VerticalAlignment="Top" Text="$49.99" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#FF285B27" Height="40"/>
+				<TextBlock Margin="325,1,0,0" VerticalAlignment="Top" Text="BUY NOW" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Foreground="#FF7F0000" FontWeight="Bold"/>
+				<Path Stretch="Fill" Height="12" Margin="418,5,0,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="F1M606.8994,460.5684L602.8994,464.2344L602.8994,456.9014L606.8994,460.5684L602.8994,464.2344L602.8994,456.9014z" Fill="#FF7F0000" HorizontalAlignment="Left" Width="10" d:LayoutOverrides="VerticalAlignment"/>
+				<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.80000299215316772" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,37,0,0"/>
+				<Path x:Name="path4" Stretch="Fill" Stroke="Black" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="1" Height="1" VerticalAlignment="Top" Opacity="0.5" UseLayoutRounding="False" Data="M275.5488,532.4473L711.8438,532.4473" Margin="0,36,0,0"/>
+			</Grid>
+			<Grid x:Name="resultsItem_Copy3" HorizontalAlignment="Left" Margin="0,414,0,0" VerticalAlignment="Top" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock VerticalAlignment="Top" Text="Ebay" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF333333"/>
+				<TextBlock Margin="157,0,0,0" VerticalAlignment="Top" Text="$43.99" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" FontWeight="Bold" Foreground="#FF285B27" Height="40"/>
+				<TextBlock Margin="325,1,0,0" VerticalAlignment="Top" Text="BUY NOW" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" HorizontalAlignment="Left" Foreground="#FF7F0000" FontWeight="Bold"/>
+				<Path Stretch="Fill" Height="12" Margin="418,5,0,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="F1M606.8994,460.5684L602.8994,464.2344L602.8994,456.9014L606.8994,460.5684L602.8994,464.2344L602.8994,456.9014z" Fill="#FF7F0000" HorizontalAlignment="Left" Width="10" d:LayoutOverrides="VerticalAlignment"/>
+			</Grid>
+			<Grid x:Name="mainResult" Margin="159,16,20,0" VerticalAlignment="Top" Opacity="0">
+				<StackPanel Margin="30,0,0,64">
+					<TextBlock x:Name="BookTitle" Text="Professional ASP.NET MVC 1.0" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18" Foreground="White" VerticalAlignment="Top">
+						<TextBlock.Effect>
+							<DropShadowEffect Direction="-90" ShadowDepth="2"/>
+						</TextBlock.Effect>
+					</TextBlock>
+					<TextBlock x:Name="Authors" Margin="1,0,0,0" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="14.667" VerticalAlignment="Top" Foreground="#FF999999" Text="Rob Conery, Scott Hanselman, Phil Haack, Scott Guthrie"/>
+				</StackPanel>
+				<TextBlock Margin="32,138,0,0" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="14.667" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" Text="Lowest Price:" d:LayoutOverrides="HorizontalAlignment"/>
+				<TextBlock Margin="141,134,0,0" TextWrapping="Wrap" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF51C94D" Text="$31.49"/>
+			</Grid>
+			<Rectangle x:Name="PreviewScreen" Fill="#FF828282" Stroke="Black" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" Height="300" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Width="400"/>
+			<Button x:Name="ScanButton" Height="35" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom" Width="119" Content="Button" Style="{StaticResource scanBtnStyle}">
+				<Button.Effect>
+					<DropShadowEffect BlurRadius="3" ShadowDepth="1" Direction="-90"/>
+				</Button.Effect>
+			</Button>
+			<Button x:Name="Rescan" Height="35" HorizontalAlignment="Center" Margin="0,0,0,20" Style="{StaticResource newScanBtnStyle}" VerticalAlignment="Bottom" Width="119" Content="Button" Opacity="0" Click="showScanner" IsHitTestVisible="False">
+				<Button.Effect>
+					<DropShadowEffect BlurRadius="3" Direction="-90" ShadowDepth="1"/>
+				</Button.Effect>
+			</Button>
+			<Grid x:Name="logo" HorizontalAlignment="Center" Margin="0,-27,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<Grid.Effect>
+					<DropShadowEffect Direction="-90" ShadowDepth="1"/>
+				</Grid.Effect>
+				<Path Stretch="Fill" Height="11.556" HorizontalAlignment="Left" Margin="0.239,0.998,0,0" VerticalAlignment="Top" Width="6.499" UseLayoutRounding="False" Data="F1M392.49,74.851C392.49,78.324,397.293,77.636,397.293,80.133L397.293,80.133C397.293,81.4450000000001,396.012,81.957,395.1,81.957L395.1,81.957C394.283,81.957,393.322,81.6369999999999,392.779,81.413L392.779,81.413L392.619,82.902C393.356,83.1420000000001,394.123,83.365,394.908,83.365L394.908,83.365C397.148,83.365,398.989,82.422,398.989,80.037L398.989,80.037C398.989,76.356,394.187,76.852,394.187,74.707L394.187,74.707C394.187,73.538,395.244,73.218,396.14,73.218L396.14,73.218C396.973,73.218,397.42,73.362,398.236,73.682L398.236,73.682L398.461,72.2089999999999C397.693,71.938,396.813,71.809,396.077,71.809L396.077,71.809C394.059,71.809,392.49,72.866,392.49,74.851">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.3" StartPoint="0.5,0.015">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="11.685" HorizontalAlignment="Left" Margin="8.616,0.679,0,0" VerticalAlignment="Top" Width="1.696" UseLayoutRounding="False" Data="F1M401.116,73.186L402.812,73.186L402.812,71.489L401.116,71.489z M401.211,83.174L402.715,83.174L402.715,75.011L401.211,75.011z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.313" StartPoint="0.5,0.042">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="12.005" HorizontalAlignment="Left" Margin="13.159,0.361,0,0" VerticalAlignment="Top" Width="1.506" UseLayoutRounding="False" Data="M405.659,83.174L407.165,83.174L407.165,71.169L405.659,71.169z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.305" StartPoint="0.5,0.067">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.163" HorizontalAlignment="Left" Margin="16.311,4.282,0,0" VerticalAlignment="Top" Width="7.65" UseLayoutRounding="False" Data="F1M414.957,75.011L412.699,81.67L412.668,81.67L410.459,75.011L408.811,75.011L411.74,83.174L413.532,83.174L416.461,75.011z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.449" StartPoint="0.5,-0.372">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="25.084,4.008,0,0" VerticalAlignment="Top" Width="7.426" UseLayoutRounding="False" Data="F1M417.371,78.949C417.371,81.606,418.699,83.365,421.596,83.365L421.596,83.365C422.941,83.365,423.598,83.046,424.174,82.838L424.174,82.838L424.174,81.333C423.805,81.6369999999999,422.653,82.149,421.66,82.149L421.66,82.149C420.236,82.149,418.971,81.045,418.971,79.427L418.971,79.427L424.797,79.427C424.797,76.803,423.917,74.819,421.196,74.819L421.196,74.819C418.891,74.819,417.371,76.5309999999999,417.371,78.949 M421.164,76.035C422.461,76.035,423.197,77.0599999999999,423.197,78.308L423.197,78.308L418.971,78.308C419.084,77.252,419.692,76.035,421.164,76.035">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.355" HorizontalAlignment="Left" Margin="34.311,4.186,0,0" VerticalAlignment="Top" Width="4.562" UseLayoutRounding="False" Data="F1M428.251,76.276L428.219,76.276L428.219,75.011L426.811,75.011L426.811,83.174L428.315,83.174L428.315,79.461C428.315,77.412,429.196,76.131,430.541,76.131L430.541,76.131C430.797,76.131,431.101,76.163,431.373,76.276L431.373,76.276L431.373,74.931C431.052,74.867,430.828,74.819,430.381,74.819L430.381,74.819C429.516,74.819,428.651,75.427,428.251,76.276">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.438" StartPoint="0.5,-0.34">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="12.005" HorizontalAlignment="Left" Margin="40.727,0.361,0,0" VerticalAlignment="Top" Width="1.504" UseLayoutRounding="False" Data="M433.227,83.174L434.731,83.174L434.731,71.169L433.227,71.169z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.305" StartPoint="0.5,0.067">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="11.685" HorizontalAlignment="Left" Margin="45.078,0.679,0,0" VerticalAlignment="Top" Width="1.697" UseLayoutRounding="False" Data="F1M437.578,73.186L439.275,73.186L439.275,71.489L437.578,71.489z M437.674,83.174L439.179,83.174L439.179,75.011L437.674,75.011z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.313" StartPoint="0.5,0.042">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="11.908" HorizontalAlignment="Left" Margin="48.887,4.008,0,0" VerticalAlignment="Top" Width="7.763" UseLayoutRounding="False" Data="F1M441.387,79.157C441.387,81.27,442.539,83.174,444.876,83.174L444.876,83.174C445.916,83.174,446.972,82.758,447.613,81.909L447.613,81.909L447.645,81.909L447.645,82.7089999999999C447.645,84.439,446.702,85.511,445.117,85.511L445.117,85.511C444.011,85.511,443.323,85.303,442.171,84.774L442.171,84.774L442.011,86.167C443.323,86.615,444.076,86.727,444.939,86.727L444.939,86.727C447.869,86.727,449.15,85.303,449.15,82.822L449.15,82.822L449.15,75.011L447.758,75.011L447.758,76.226L447.725,76.226C447.277,75.347,446.477,74.819,445.036,74.819L445.036,74.819C442.571,74.819,441.387,77.0599999999999,441.387,79.157 M442.987,79.077C442.987,77.683,443.741,76.035,445.26,76.035L445.26,76.035C446.862,76.035,447.645,77.492,447.645,79.187L447.645,79.187C447.645,80.7089999999999,446.669,81.957,445.26,81.957L445.26,81.957C443.851,81.957,442.987,80.614,442.987,79.077">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.009" StartPoint="0.5,-0.239">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="12.005" HorizontalAlignment="Left" Margin="59.316,0.361,0,0" VerticalAlignment="Top" Width="7.22" UseLayoutRounding="False" Data="F1M451.706,71.169L451.706,83.174L453.211,83.174L453.211,79.397C453.211,77.412,453.979,76.035,455.692,76.035L455.692,76.035C457.004,76.116,457.42,77.043,457.42,78.949L457.42,78.949L457.42,83.174L458.926,83.174L458.926,78.324C458.926,76.131,457.98,74.819,455.868,74.819L455.868,74.819C454.731,74.819,453.787,75.3150000000001,453.244,76.179L453.244,76.179L453.211,76.179L453.211,71.169z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.305" StartPoint="0.5,0.067">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="10.723" HorizontalAlignment="Left" Margin="67.814,1.831,0,0" VerticalAlignment="Top" Width="5.634" UseLayoutRounding="False" Data="F1M462.155,73.121L462.155,75.011L460.314,75.011L460.314,76.226L462.155,76.226L462.155,80.997C462.155,82.629,463.115,83.365,464.668,83.365L464.668,83.365C465.149,83.365,465.612,83.2380000000001,465.948,83.1420000000001L465.948,83.1420000000001L465.948,81.861C465.725,82.006,465.389,82.149,464.924,82.149L464.924,82.149C464.236,82.149,463.66,81.6369999999999,463.66,80.694L463.66,80.694L463.66,76.226L465.82,76.226L465.82,75.011L463.66,75.011L463.66,72.6420000000001z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.324" StartPoint="0.5,-0.062">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="11.172" HorizontalAlignment="Left" Margin="79.82,1.278,0,0" VerticalAlignment="Top" Width="7.234" UseLayoutRounding="False" Data="F1M472.203,72.002L472.203,83.174L475.179,83.174C477.453,83.174,479.437,82.597,479.437,80.197L479.437,80.197C479.437,78.628,478.365,77.636,476.843,77.508L476.843,77.508L476.843,77.475C478.253,77.124,479.149,76.356,479.149,74.819L479.149,74.819C479.149,72.754,477.549,72.002,475.228,72.002L475.228,72.002z M473.802,73.3150000000001L475.484,73.3150000000001C476.412,73.3150000000001,477.549,73.65,477.549,74.979L477.549,74.979C477.549,76.627,476.236,76.772,474.683,76.772L474.683,76.772L473.802,76.772z M473.802,78.0839999999999L474.844,78.0839999999999C476.221,78.0839999999999,477.74,78.324,477.74,80.053L477.74,80.053C477.74,81.557,476.445,81.861,475.004,81.861L475.004,81.861L473.802,81.861z">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.328" StartPoint="0.5,-0.002">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="88.886,4.008,0,0" VerticalAlignment="Top" Width="6.963" UseLayoutRounding="False" Data="F1M482.314,75.587L482.395,76.867C483.002,76.356,483.914,76.035,484.763,76.035L484.763,76.035C486.267,76.035,486.779,76.756,486.779,78.164L486.779,78.164C486.187,78.1319999999999,485.771,78.1319999999999,485.18,78.1319999999999L485.18,78.1319999999999C483.627,78.1319999999999,481.386,78.771,481.386,80.821L481.386,80.821C481.386,82.597,482.618,83.365,484.379,83.365L484.379,83.365C485.756,83.365,486.555,82.614,486.908,82.1180000000001L486.908,82.1180000000001L486.94,82.1180000000001L486.94,83.174L488.349,83.174C488.317,82.934,488.285,82.502,488.285,81.573L488.285,81.573L488.285,78.1950000000001C488.285,75.971,487.34,74.819,485.003,74.819L485.003,74.819C483.963,74.819,483.066,75.139,482.314,75.587 M482.986,80.821C482.986,79.381,485.003,79.252,485.819,79.252L485.819,79.252C486.139,79.252,486.46,79.284,486.779,79.284L486.779,79.284L486.779,80.004C486.779,81.22,485.996,82.149,484.507,82.149L484.507,82.149C483.818,82.149,482.986,81.686,482.986,80.821" d:LayoutOverrides="HorizontalAlignment">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.355" HorizontalAlignment="Left" Margin="98.326,4.186,0,0" VerticalAlignment="Top" Width="4.563" UseLayoutRounding="False" Data="F1M492.268,76.276L492.234,76.276L492.234,75.011L490.826,75.011L490.826,83.174L492.331,83.174L492.331,79.461C492.331,77.412,493.211,76.131,494.556,76.131L494.556,76.131C494.813,76.131,495.116,76.163,495.389,76.276L495.389,76.276L495.389,74.931C495.068,74.867,494.843,74.819,494.396,74.819L494.396,74.819C493.531,74.819,492.667,75.427,492.268,76.276">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.438" StartPoint="0.5,-0.34">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="103.903,4.008,0,0" VerticalAlignment="Top" Width="6.05" UseLayoutRounding="False" Data="F1M496.378,79.092C496.378,81.43,498.074,83.365,500.539,83.365L500.539,83.365C501.084,83.365,501.805,83.318,502.428,83.029L502.428,83.029L502.316,81.686C501.852,81.989,501.212,82.149,500.699,82.149L500.699,82.149C498.763,82.149,497.978,80.549,497.978,79.092L497.978,79.092C497.978,77.539,498.923,76.035,500.603,76.035L500.603,76.035C501.084,76.035,501.66,76.146,502.236,76.386L502.236,76.386L502.364,75.139C501.932,74.963,501.147,74.819,500.539,74.819L500.539,74.819C498.043,74.819,496.378,76.611,496.378,79.092">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="111.262,4.008,0,0" VerticalAlignment="Top" Width="8.307" UseLayoutRounding="False" Data="F1M503.609,79.092C503.609,81.43,505.307,83.365,507.772,83.365L507.772,83.365C510.221,83.365,511.916,81.43,511.916,79.092L511.916,79.092C511.916,76.611,510.252,74.819,507.772,74.819L507.772,74.819C505.273,74.819,503.609,76.611,503.609,79.092 M505.21,79.092C505.21,77.539,506.155,76.035,507.772,76.035L507.772,76.035C509.371,76.035,510.316,77.539,510.316,79.092L510.316,79.092C510.316,80.549,509.531,82.149,507.772,82.149L507.772,82.149C505.994,82.149,505.21,80.549,505.21,79.092">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="12.196" HorizontalAlignment="Left" Margin="120.886,0.457,0,0" VerticalAlignment="Top" Width="7.763" UseLayoutRounding="False" Data="F1M519.645,71.169L519.645,76.131L519.612,76.131C519.149,75.379,518.332,74.819,516.907,74.819L516.907,74.819C514.538,74.819,513.386,76.756,513.386,78.949L513.386,78.949C513.386,81.173,514.426,83.365,516.891,83.365L516.891,83.365C518.348,83.365,519.276,82.629,519.676,82.021L519.676,82.021L519.709,82.021L519.709,83.174L521.149,83.174L521.149,71.169z M514.986,79.0599999999999C514.954,77.573,515.595,76.035,517.226,76.035L517.226,76.035C518.859,76.035,519.645,77.588,519.645,79.1079999999999L519.645,79.1079999999999C519.645,80.4690000000001,518.939,82.149,517.243,82.149L517.243,82.149C515.627,82.149,514.954,80.341,514.986,79.0599999999999">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.285" StartPoint="0.5,0.066">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="130.874,4.008,0,0" VerticalAlignment="Top" Width="7.427" UseLayoutRounding="False" Data="F1M523.161,78.949C523.161,81.606,524.49,83.365,527.386,83.365L527.386,83.365C528.731,83.365,529.388,83.046,529.964,82.838L529.964,82.838L529.964,81.333C529.596,81.6369999999999,528.443,82.149,527.451,82.149L527.451,82.149C526.027,82.149,524.762,81.045,524.762,79.427L524.762,79.427L530.588,79.427C530.588,76.803,529.707,74.819,526.986,74.819L526.986,74.819C524.682,74.819,523.161,76.5309999999999,523.161,78.949 M526.955,76.035C528.251,76.035,528.988,77.0599999999999,528.988,78.308L528.988,78.308L524.762,78.308C524.874,77.252,525.482,76.035,526.955,76.035">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="11.556" HorizontalAlignment="Left" Margin="144.27,0.998,0,0" VerticalAlignment="Top" Width="6.498" UseLayoutRounding="False" Data="F1M536.521,74.851C536.521,78.324,541.323,77.636,541.323,80.133L541.323,80.133C541.323,81.4450000000001,540.043,81.957,539.131,81.957L539.131,81.957C538.314,81.957,537.353,81.6369999999999,536.81,81.413L536.81,81.413L536.649,82.902C537.385,83.1420000000001,538.154,83.365,538.939,83.365L538.939,83.365C541.18,83.365,543.019,82.422,543.019,80.037L543.019,80.037C543.019,76.356,538.218,76.852,538.218,74.707L538.218,74.707C538.218,73.538,539.275,73.218,540.171,73.218L540.171,73.218C541.003,73.218,541.451,73.362,542.268,73.682L542.268,73.682L542.492,72.2089999999999C541.724,71.938,540.842,71.809,540.106,71.809L540.106,71.809C538.09,71.809,536.521,72.866,536.521,74.851">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.3" StartPoint="0.5,0.015">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="151.902,4.008,0,0" VerticalAlignment="Top" Width="6.049" UseLayoutRounding="False" Data="F1M544.378,79.092C544.378,81.43,546.074,83.365,548.539,83.365L548.539,83.365C549.084,83.365,549.804,83.318,550.427,83.029L550.427,83.029L550.317,81.686C549.851,81.989,549.211,82.149,548.699,82.149L548.699,82.149C546.763,82.149,545.979,80.549,545.979,79.092L545.979,79.092C545.979,77.539,546.923,76.035,548.603,76.035L548.603,76.035C549.084,76.035,549.66,76.146,550.237,76.386L550.237,76.386L550.364,75.139C549.931,74.963,549.148,74.819,548.539,74.819L548.539,74.819C546.042,74.819,544.378,76.611,544.378,79.092">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="159.109,4.008,0,0" VerticalAlignment="Top" Width="6.963" UseLayoutRounding="False" Data="F1M552.538,75.587L552.618,76.867C553.225,76.356,554.139,76.035,554.986,76.035L554.986,76.035C556.492,76.035,557.004,76.756,557.004,78.164L557.004,78.164C556.411,78.1319999999999,555.995,78.1319999999999,555.404,78.1319999999999L555.404,78.1319999999999C553.851,78.1319999999999,551.609,78.771,551.609,80.821L551.609,80.821C551.609,82.597,552.842,83.365,554.602,83.365L554.602,83.365C555.979,83.365,556.78,82.614,557.131,82.1180000000001L557.131,82.1180000000001L557.164,82.1180000000001L557.164,83.174L558.572,83.174C558.54,82.934,558.508,82.502,558.508,81.573L558.508,81.573L558.508,78.1950000000001C558.508,75.971,557.563,74.819,555.226,74.819L555.226,74.819C554.187,74.819,553.29,75.139,552.538,75.587 M553.21,80.821C553.21,79.381,555.226,79.252,556.043,79.252L556.043,79.252C556.363,79.252,556.683,79.284,557.004,79.284L557.004,79.284L557.004,80.004C557.004,81.22,556.219,82.149,554.73,82.149L554.73,82.149C554.042,82.149,553.21,81.686,553.21,80.821">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.355" HorizontalAlignment="Left" Margin="168.658,4.186,0,0" VerticalAlignment="Top" Width="7.218" UseLayoutRounding="False" Data="F1M562.538,76.306L562.505,76.306L562.505,75.011L561.049,75.011L561.049,83.174L562.554,83.174L562.554,79.397C562.554,77.412,563.323,76.035,565.035,76.035L565.035,76.035C566.347,76.116,566.763,77.043,566.763,78.949L566.763,78.949L566.763,83.174L568.267,83.174L568.267,78.324C568.267,76.131,567.323,74.819,565.211,74.819L565.211,74.819C564.074,74.819,562.986,75.379,562.538,76.306">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.438" StartPoint="0.5,-0.34">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.355" HorizontalAlignment="Left" Margin="178.434,4.186,0,0" VerticalAlignment="Top" Width="7.219" UseLayoutRounding="False" Data="F1M572.314,76.306L572.282,76.306L572.282,75.011L570.825,75.011L570.825,83.174L572.33,83.174L572.33,79.397C572.33,77.412,573.098,76.035,574.811,76.035L574.811,76.035C576.124,76.116,576.54,77.043,576.54,78.949L576.54,78.949L576.54,83.174L578.044,83.174L578.044,78.324C578.044,76.131,577.1,74.819,574.987,74.819L574.987,74.819C573.851,74.819,572.763,75.379,572.314,76.306">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.438" StartPoint="0.5,-0.34">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.546" HorizontalAlignment="Left" Margin="187.769,4.008,0,0" VerticalAlignment="Top" Width="7.427" UseLayoutRounding="False" Data="F1M580.056,78.949C580.056,81.606,581.385,83.365,584.282,83.365L584.282,83.365C585.627,83.365,586.283,83.046,586.859,82.838L586.859,82.838L586.859,81.333C586.491,81.6369999999999,585.339,82.149,584.347,82.149L584.347,82.149C582.922,82.149,581.657,81.045,581.657,79.427L581.657,79.427L587.483,79.427C587.483,76.803,586.604,74.819,583.882,74.819L583.882,74.819C581.577,74.819,580.056,76.5309999999999,580.056,78.949 M583.851,76.035C585.147,76.035,585.883,77.0599999999999,585.883,78.308L585.883,78.308L581.657,78.308C581.77,77.252,582.378,76.035,583.851,76.035">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.406" StartPoint="0.5,-0.332">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+				<Path Stretch="Fill" Height="8.355" HorizontalAlignment="Left" Margin="196.997,4.186,0,0" VerticalAlignment="Top" Width="4.562" UseLayoutRounding="False" Data="F1M590.937,76.276L590.906,76.276L590.906,75.011L589.497,75.011L589.497,83.174L591.002,83.174L591.002,79.461C591.002,77.412,591.881,76.131,593.227,76.131L593.227,76.131C593.483,76.131,593.787,76.163,594.059,76.276L594.059,76.276L594.059,74.931C593.739,74.867,593.515,74.819,593.067,74.819L593.067,74.819C592.202,74.819,591.338,75.427,590.937,76.276">
+					<Path.Fill>
+						<LinearGradientBrush EndPoint="0.5,1.438" StartPoint="0.5,-0.34">
+							<GradientStop Color="White" Offset="0"/>
+							<GradientStop Color="#FF999999" Offset="1"/>
+						</LinearGradientBrush>
+					</Path.Fill>
+				</Path>
+			</Grid>
+			<Image x:Name="image" HorizontalAlignment="Center" Width="397" Source="9780470549223_9780470549223[1].jpg" Stretch="Fill" Opacity="0" RenderTransformOrigin="0.5,0.5" Margin="0,-82,0,-23" Height="500">
+				<Image.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Image.RenderTransform>
+				<Image.Clip>
+					<PathGeometry FillRule="EvenOdd">
+						<PathFigure IsClosed="True" StartPoint="0,104.00146484375">
+							<LineSegment Point="396,104.00146484375"/>
+							<LineSegment Point="396,400.00146484375"/>
+							<LineSegment Point="0,400.00146484375"/>
+						</PathFigure>
+					</PathGeometry>
+				</Image.Clip>
+			</Image>
+			<Rectangle x:Name="overlay" Fill="Black" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" Height="300" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Width="400" Opacity="0"/>
+			<Grid x:Name="scanner1_hidden" Height="16" Margin="120,162,120,0" VerticalAlignment="Top" Visibility="Collapsed">
+				<Rectangle Fill="#FFFF956E" Stroke="#FFFF6E6E" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" RadiusX="5" RadiusY="5" HorizontalAlignment="Center" Margin="0,3" Width="200">
+					<Rectangle.Effect>
+						<BlurEffect Radius="29"/>
+					</Rectangle.Effect>
+				</Rectangle>
+				<Rectangle Fill="#FFFF956E" Stroke="#FFFF6E6E" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" RadiusX="5" RadiusY="5" HorizontalAlignment="Center" Margin="0,3" Width="200"/>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Center" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Left" Margin="72,0,0,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Left" Margin="52,0,0,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Left" Margin="32,0,0,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Left" Margin="12,0,0,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,72,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,52,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,32,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+				<Ellipse StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" HorizontalAlignment="Right" Margin="0,0,12,0" Width="16" RenderTransformOrigin="0.5,0.5">
+					<Ellipse.Fill>
+						<RadialGradientBrush>
+							<GradientStop Color="#FFFEB478"/>
+							<GradientStop Color="#00FF0000" Offset="1"/>
+							<GradientStop Color="#43FF4F00" Offset="0.647"/>
+						</RadialGradientBrush>
+					</Ellipse.Fill>
+				</Ellipse>
+			</Grid>
+			<Grid x:Name="scanning" Margin="171,120,171,175" Opacity="0" RenderTransformOrigin="0.5,0.5">
+				<Grid.Effect>
+					<DropShadowEffect Color="#FFFF3B00" ShadowDepth="0" BlurRadius="30" Opacity="0.41"/>
+				</Grid.Effect>
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock x:Name="textBlock" Margin="0,39,0,38" Text="SEARCHING" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="14.5" d:LayoutOverrides="Width, Height"/>
+				<Grid Margin="2,0,0,0">
+					<Grid.Effect>
+						<BlurEffect Radius="6"/>
+					</Grid.Effect>
+					<Path x:Name="path1" Fill="#FFFF4400" Stretch="Fill" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" Margin="0,0,-0.578,0" UseLayoutRounding="False">
+						<Path.Clip>
+							<PathGeometry FillRule="EvenOdd">
+								<PathFigure IsClosed="True" StartPoint="-0.71099853515625,-19">
+									<LineSegment Point="140.289001464844,-19"/>
+									<LineSegment Point="140.289001464844,110"/>
+									<LineSegment Point="-0.71099853515625,110"/>
+								</PathFigure>
+								<PathFigure IsClosed="True" StartPoint="-52.7109985351563,-19">
+									<LineSegment Point="-11.7109985351563,-19"/>
+									<LineSegment Point="-11.7109985351563,110"/>
+									<LineSegment Point="-52.7109985351563,110"/>
+								</PathFigure>
+							</PathGeometry>
+						</Path.Clip>
+						<Path.Data>
+							<PathGeometry FillRule="EvenOdd">
+								<PathFigure IsClosed="True" StartPoint="0,63">
+									<LineSegment Point="9.49058055877686,63"/>
+									<LineSegment Point="9.5297794342041,63.1207389831543"/>
+									<BezierSegment Point1="14.99755859375,79.2784957885742" Point2="30.2852573394775,90.9090957641602" Point3="48.2894248962402,90.9090957641602"/>
+									<BezierSegment Point1="66.2936019897461,90.9090957641602" Point2="81.581298828125,79.2784957885742" Point3="87.0490798950195,63.1207389831543"/>
+									<LineSegment Point="87.0882797241211,63"/>
+									<LineSegment Point="96.5788497924805,63"/>
+									<LineSegment Point="96.3926467895508,63.6881141662598"/>
+									<BezierSegment Point1="90.4398727416992,84.6480484008789" Point2="71.157470703125,100" Point3="48.2894248962402,100"/>
+									<BezierSegment Point1="25.4213848114014,100" Point2="6.13898611068726,84.6480484008789" Point3="0.186205506324768,63.6881141662598"/>
+								</PathFigure>
+								<PathFigure IsClosed="True" StartPoint="48.2894248962402,0">
+									<BezierSegment Point1="71.157470703125,2.38418579101563E-07" Point2="90.4398727416992,15.3519554138184" Point3="96.3926467895508,36.3118858337402"/>
+									<LineSegment Point="96.5788497924805,37"/>
+									<LineSegment Point="87.0882797241211,37"/>
+									<LineSegment Point="87.0490798950195,36.879264831543"/>
+									<BezierSegment Point1="81.581298828125,20.7215099334717" Point2="66.2936019897461,9.09090900421143" Point3="48.2894248962402,9.09090995788574"/>
+									<BezierSegment Point1="30.2852573394775,9.09090900421143" Point2="14.99755859375,20.7215099334717" Point3="9.5297794342041,36.879264831543"/>
+									<LineSegment Point="9.49058055877686,37"/>
+									<LineSegment Point="4.76837158203125E-07,37"/>
+									<LineSegment Point="0.186205506324768,36.3118858337402"/>
+									<BezierSegment Point1="6.13898611068726,15.3519554138184" Point2="25.4213848114014,2.38418579101563E-07" Point3="48.2894248962402,0"/>
+								</PathFigure>
+							</PathGeometry>
+						</Path.Data>
+					</Path>
+				</Grid>
+			</Grid>
+			<Grid x:Name="scanning_Copy" Margin="171,120,171,175" RenderTransformOrigin="0.5,0.5" Opacity="0">
+				<Grid.Effect>
+					<DropShadowEffect BlurRadius="30" Color="#FFFF3B00" Opacity="0.41" ShadowDepth="0"/>
+				</Grid.Effect>
+				<Grid.RenderTransform>
+					<TransformGroup>
+						<ScaleTransform/>
+						<SkewTransform/>
+						<RotateTransform/>
+						<TranslateTransform/>
+					</TransformGroup>
+				</Grid.RenderTransform>
+				<TextBlock x:Name="textBlock1" Margin="0,39,0,38" Text="FOUND" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="14.5" d:LayoutOverrides="Width, Height" TextAlignment="Center"/>
+			</Grid>
+			<Grid x:Name="gridScanner" Margin="0,20,0,0" HorizontalAlignment="Center" Height="300" VerticalAlignment="Top" Width="400">
+				<Grid.Effect>
+					<DropShadowEffect ShadowDepth="0"/>
+				</Grid.Effect>
+				<Rectangle Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" StrokeThickness="2" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200"/>
+				<Path Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" HorizontalAlignment="Left" Margin="101,2,0,2" Width="1" UseLayoutRounding="False" Data="M1,1 L1,285.01584" Stretch="Fill" Opacity="0.5"/>
+				<Path Stretch="Fill" Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" HorizontalAlignment="Left" Margin="298,2,0,2" Width="1" UseLayoutRounding="False" Data="M1,1 L1,285.01584" Opacity="0.5"/>
+				<Path Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" Height="1" Margin="2,101,2,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="M0,0 L400.00125,0" Opacity="0.5"/>
+				<Path Stroke="White" StrokeEndLineCap="Flat" StrokeLineJoin="Miter" StrokeMiterLimit="4" StrokeStartLineCap="Flat" Height="1" Margin="2,198,2,0" VerticalAlignment="Top" UseLayoutRounding="False" Data="M0,0 L400.00125,0" Opacity="0.5"/>
+				<Grid x:Name="TurnOnCameraBtn" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+					<Rectangle Fill="#7E262626" Stroke="#3FFFFFFF" StrokeThickness="2" RadiusX="5" RadiusY="5" Margin="0"/>
+					<TextBlock HorizontalAlignment="Left" Margin="20" Text="TURN ON CAMERA" TextWrapping="Wrap" Foreground="#4CFFFFFF" FontFamily="Fonts/Fonts.zip#Frutiger LT Std" FontSize="16" Height="24" VerticalAlignment="Top"/>
+				</Grid>
+			</Grid>
+		</Grid>
+		<Image x:Name="ArchetypeLogo" Cursor="Hand" HorizontalAlignment="Left" Height="85" Margin="-22,0,0,-10" Source="archlogo.png" Stretch="Fill" VerticalAlignment="Bottom" Width="187"/>
+	</Grid>
+</UserControl>

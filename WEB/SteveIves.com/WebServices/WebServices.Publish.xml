@@ -1,0 +1,8 @@
+<publishData>
+  <publishTarget publishUrl="ftp://ftp.steveives.com/WebServices/">
+    <file relUrl="bin/WebServices.dll" publishTime="03/10/2010 20:17:42" />
+    <file relUrl="bin/WebServices.pdb" publishTime="03/10/2010 20:17:42" />
+    <file relUrl="FlightTrackerService.asmx" publishTime="03/10/2010 00:36:08" />
+    <file relUrl="Web.config" publishTime="03/10/2010 17:05:11" />
+  </publishTarget>
+</publishData>
