@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp_CS", "ClientApp_CS\ClientApp_CS.csproj", "{1C0E2AE8-1BDB-4C90-84B5-B172894F4F8F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2EB725D6-35EE-4FE8-A510-57153602F382} = {2EB725D6-35EE-4FE8-A510-57153602F382}
@@ -9,6 +11,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp_CS", "WebApp_CS\WebApp_CS.csproj", "{2EB725D6-35EE-4FE8-A510-57153602F382}"
 EndProject
 Project("{BBD0F5D1-1CC4-42FD-BA4C-A96779C64378}") = "ClientApp_SN", "ClientApp_SN\ClientApp_SN.synproj", "{944AA66A-2D18-4FA3-9E34-3C8CA9767BB9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2EB725D6-35EE-4FE8-A510-57153602F382} = {2EB725D6-35EE-4FE8-A510-57153602F382}
+	EndProjectSection
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ClientApp_VB", "ClientApp_VB\ClientApp_VB.vbproj", "{8EC5F091-9FBD-4757-8375-3083677BD2A4}"
 	ProjectSection(ProjectDependencies) = postProject

@@ -96,7 +96,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Service References\spc2011\Reference.vb">
+    <Compile Include="Service References\WebService\Reference.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -124,34 +124,34 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="Service References\spc2011\ClientApp.spc2011.Contact.datasource">
+    <None Include="Service References\WebService\ClientApp.WebService.Contact.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\spc2011\ClientApp.spc2011.Customer.datasource">
+    <None Include="Service References\WebService\ClientApp.WebService.Customer.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\spc2011\ClientApp.spc2011.Method_status.datasource">
+    <None Include="Service References\WebService\ClientApp.WebService.Method_status.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\spc2011\WebService.wsdl" />
+    <None Include="Service References\WebService\WebService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\spc2011\" />
+    <WCFMetadataStorage Include="Service References\WebService\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\spc2011\WebService.disco" />
+    <None Include="Service References\WebService\WebService.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\spc2011\configuration91.svcinfo" />
+    <None Include="Service References\WebService\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\spc2011\configuration.svcinfo" />
+    <None Include="Service References\WebService\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\spc2011\Reference.svcmap">
+    <None Include="Service References\WebService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.vb</LastGenOutput>
     </None>

@@ -64,7 +64,11 @@
     </Compile>
     <Compile Include="Program.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
-    <Compile Include="WebService.dbl" />
+    <Compile Include="Service References\WebService\Reference.dbl">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.dbl</DependentUpon>
     </EmbeddedResource>
@@ -86,19 +90,36 @@
       <DependentUpon>Properties\Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Service References\WebService\configuration.svcinfo" />
+    <None Include="Service References\WebService\configuration91.svcinfo" />
+    <None Include="Service References\WebService\Reference.config" />
+    <None Include="Service References\WebService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.dbl</LastGenOutput>
+    </None>
+    <None Include="Service References\WebService\WebService.disco" />
+    <None Include="Service References\WebService\WebService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <WCFMetadataStorage Include="Service References\WebService\" />
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="MakeServiceProxy.bat">
+    <Content Include="Service References\WebService\ClientApp.WebService.Contact.datasource">
       <SubType>Content</SubType>
+      <DependentUpon>Service References\WebService\Reference.svcmap</DependentUpon>
     </Content>
-    <Content Include="output.config">
+    <Content Include="Service References\WebService\ClientApp.WebService.Customer.datasource">
       <SubType>Content</SubType>
+      <DependentUpon>Service References\WebService\Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\WebService\ClientApp.WebService.Method_status.datasource">
+      <SubType>Content</SubType>
+      <DependentUpon>Service References\WebService\Reference.svcmap</DependentUpon>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Synergex\VS2010\Synergex.SynergyDE.targets" />

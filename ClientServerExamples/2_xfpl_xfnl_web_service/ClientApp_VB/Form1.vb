@@ -1,4 +1,4 @@
-﻿Imports ClientApp.spc2011
+﻿Imports ClientApp.WebService
 
 Public Class Form1
 

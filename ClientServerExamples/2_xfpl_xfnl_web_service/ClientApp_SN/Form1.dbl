@@ -6,16 +6,17 @@ import System.Data
 import System.Drawing
 import System.Text
 import System.Windows.Forms
+import ClientApp.WebService
 
 .array 0
 namespace ClientApp
 	
 	public partial class Form1 extends System.Windows.Forms.Form
 		
-		svr				,@spc2011.WebServiceSoapClient, ^null
-		savedContact	,@spc2011.Contact
-		savedGrfa		,[#]byte
-		msg				,@String
+		svr, @WebServiceSoapClient
+		savedContact, @Contact
+		savedGrfa, [#]byte
+		msg, @String
 		
 		public method Form1
 			endparams
@@ -23,7 +24,7 @@ namespace ClientApp
 			this.InitializeComponent()
 			gridCustomers.AutoGenerateColumns = false
 			gridContacts.AutoGenerateColumns = false
-			svr = new spc2011.WebServiceSoapClient("WebServiceSoap")
+			svr = new WebServiceSoapClient("WebServiceSoap")
 			savedGrfa = new byte[10] 
 		endmethod
 		
@@ -34,14 +35,14 @@ namespace ClientApp
 		proc
 			try
 			begin
-				data c, @List<spc2011.Customer>
+				data c, @List<Customer>
 				c = svr.GetAllCustomers()
 				gridCustomers.DataSource = c
 				;; If we have customers then load the contacts for the one that is now selected
 				if (gridCustomers.SelectedRows.Count > 0)
 				begin
-					data tmpCustomer, @spc2011.Customer
-					tmpCustomer = (spc2011.Customer)gridCustomers.Rows[gridCustomers.SelectedRows[0].Index].DataBoundItem
+					data tmpCustomer, @Customer
+					tmpCustomer = (Customer)gridCustomers.Rows[gridCustomers.SelectedRows[0].Index].DataBoundItem
 					loadContacts(tmpCustomer.Customer_id)
 				end
 			end
@@ -61,10 +62,10 @@ namespace ClientApp
 			if (gridCustomers.SelectedRows.Count > 0)
 			begin
 				displayBlankContact()
-				data cus, @List<spc2011.Customer>
-				data c, @spc2011.Customer
-				cus = (List<spc2011.Customer>)gridCustomers.DataSource
-				c = (spc2011.Customer)cus[gridCustomers.SelectedRows[0].Index]
+				data cus, @List<Customer>
+				data c, @Customer
+				cus = (List<Customer>)gridCustomers.DataSource
+				c = (Customer)cus[gridCustomers.SelectedRows[0].Index]
 				loadContacts(c.Customer_id)
 			end
 		endmethod
@@ -75,13 +76,13 @@ namespace ClientApp
 		proc
 			try
 			begin
-				data c, @List<spc2011.Contact>
+				data c, @List<Contact>
 				c = svr.GetCustomerContacts(customer_id)
 				gridContacts.DataSource = c
 				;; If we have a selected contact then display it
 				if (gridContacts.SelectedRows.Count > 0)
 				begin
-					savedContact = (spc2011.Contact)gridContacts.Rows[gridContacts.SelectedRows[0].Index].DataBoundItem
+					savedContact = (Contact)gridContacts.Rows[gridContacts.SelectedRows[0].Index].DataBoundItem
 					try
 					begin
 						svr.GetContactForUpdate(savedContact.Customer_id, savedContact.Contact_id, savedContact, savedGrfa, msg)
@@ -107,16 +108,16 @@ namespace ClientApp
 		proc
 			if (gridContacts.SelectedRows.Count > 0)
 			begin
-				savedContact = (spc2011.Contact)gridContacts.Rows[e.RowIndex].DataBoundItem
+				savedContact = (Contact)gridContacts.Rows[e.RowIndex].DataBoundItem
 				;; Get the latest version of the contact, and it's current GRFA
-				data currentContact, @spc2011.Contact, new spc2011.Contact()
+				data currentContact, @Contact, new Contact()
 				try
 				begin
 					svr.GetContactForUpdate(savedContact.Customer_id, savedContact.Contact_id, currentContact, savedGrfa, msg)
 					savedContact = currentContact
 					;; Update the contact in the grids datasource
-					data cts, @List<spc2011.Contact>
-					cts = (List<spc2011.Contact>)gridContacts.DataSource
+					data cts, @List<Contact>
+					cts = (List<Contact>)gridContacts.DataSource
 					cts[e.RowIndex] = currentContact
 					displaySavedContact()
 				end
@@ -229,8 +230,8 @@ namespace ClientApp
 			begin
 				svr.UpdateContact(savedContact, savedGrfa, msg)
 				;; Update the contact in the grids datasource
-				data cts, @List<spc2011.Contact>
-				cts = (List<spc2011.Contact>)gridContacts.DataSource
+				data cts, @List<Contact>
+				cts = (List<Contact>)gridContacts.DataSource
 				cts[gridContacts.SelectedRows[0].Index] = savedContact
 				gridContacts.Refresh()
 			end
