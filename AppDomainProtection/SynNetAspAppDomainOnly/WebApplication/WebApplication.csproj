@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,7 +61,6 @@
   <ItemGroup>
     <Content Include="Default.aspx" />
     <Content Include="FatalError.aspx" />
-    <Content Include="Global.asax" />
     <Content Include="Logout.aspx" />
     <Content Include="MainMenu.aspx" />
     <Content Include="PartsList.aspx" />
@@ -86,9 +86,6 @@
     </Compile>
     <Compile Include="FatalError.aspx.designer.cs">
       <DependentUpon>FatalError.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="LoggedIn.Master.cs">
       <DependentUpon>LoggedIn.Master</DependentUpon>

@@ -114,7 +114,7 @@ pattern in CRITICAL!!!
 ================================================================================
 Running the project in IIS
 
-As shipped, both assemblies are configured to builf for "AnyCPU" and the
+As shipped, both assemblies are configured to build for "AnyCPU" and the
 WebApplicationProject is configured to run under IIS Express. If you want to
 run the example code under full IIS on a 64-bit system, you will need to
 change both prjects to build for x64. To do this edit the project properties
