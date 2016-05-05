@@ -48,6 +48,11 @@
     <UseApplicationTrust>False</UseApplicationTrust>
     <BootstrapperEnabled>True</BootstrapperEnabled>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <XFPL_SupportMethods>True</XFPL_SupportMethods>
+    <XFPL_GenPropertyChanged>False</XFPL_GenPropertyChanged>
+    <XFPL_GenEmptyConstructor>False</XFPL_GenEmptyConstructor>
+    <XFPL_GenMarshalByRefObject>False</XFPL_GenMarshalByRefObject>
+    <XFPL_GenerateDisposable>False</XFPL_GenerateDisposable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
