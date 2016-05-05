@@ -21,7 +21,7 @@ function GetAddressForUpdate, METHOD_STATUS
     required out a_address, strAddress
 
     {xfParameter(name="GRFA",type=SynType.binaryhandle)}
-    required out a_grfa, D_ADDR
+    required out a_grfa, D_HANDLE
 
     {xfParameter(name="Message")}
     required out a_message, string
@@ -31,7 +31,7 @@ function GetAddressForUpdate, METHOD_STATUS
     stack record local_data
         ch      ,int
         sts     ,METHOD_STATUS
-		tmpgrfa	,a10
+        tmpgrfa ,a10
     endrecord
 
 proc
@@ -47,7 +47,7 @@ proc
     begin
         open(ch=syn_freechn(),i:i,"DAT:address.ism")
         read(ch,a_address,keyval(ch,a_address,1),KEYNUM:1,GETRFA:tmpgrfa)
-		^m(a_grfa) = tmpgrfa
+        ^m(a_grfa) = tmpgrfa
         sts = METHOD_STATUS.SUCCESS
         clear a_message
     end

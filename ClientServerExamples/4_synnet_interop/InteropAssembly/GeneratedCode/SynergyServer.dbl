@@ -13,6 +13,32 @@ namespace xfpldemo
 	public partial class SynergyServer
 	
 		;;; <summary>
+		;;;  Copies a file on the server
+		;;; 
+		;;; </summary>
+		;;; <param name="fromFile"></param>
+		;;; <param name="toFile"></param>
+		;;; <param name="ok"></param>
+		;;; <param name="errorMessage"></param>
+		public method CopyFile   ,void
+			fromFile    ,string
+			toFile    ,string
+			inout  ok    ,int
+			inout  errorMessage    ,string
+		endparams
+		record
+			s_fromFile	,string
+			s_toFile	,string
+			s_ok	,i4
+			s_errorMessage	,string
+		proc
+			s_fromFile = fromFile
+			s_toFile = toFile
+			xcall CopyFile(s_fromFile,s_toFile,s_ok,s_errorMessage)
+			ok = s_ok
+			errorMessage = s_errorMessage
+		endmethod
+		;;; <summary>
 		;;; Returns an address record and current GRFA
 		;;; </summary>
 		;;; <param name="CustomerID">Passed customer ID</param>
@@ -48,7 +74,8 @@ namespace xfpldemo
 			mreturn ret
 		endmethod
 		;;; <summary>
-		;;; Returns a collection of all customers
+		;;;  Returns a collection of all customers
+		;;; 
 		;;; </summary>
 		;;; <param name="Customers">Returned ArrayList of boxed customer structures</param>
 		public method GetAllCustomers   ,void
@@ -236,8 +263,10 @@ namespace xfpldemo
 		;;; </summary>
 		;;; <param name="Customer">Customer structure</param>
 		;;; <param name="GRFA">Previous GRFA</param>
-		;;; <param name="Message">Returned message text for non success status</param>
-		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		;;; <param name="Message">Returned error message text if return status is
+		;;; not METHOD_STATUS.SUCCESS</param>
+		;;; <returns>Returns a member of the METHOD_STATUS enumeration
+		;;; to indicate completion status</returns>
 		public method UpdateCustomer   ,Method_status
 			inout  Customer    ,@xfpldemo.Customer
 			inout  GRFA    ,[#]byte

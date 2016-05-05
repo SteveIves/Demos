@@ -53,7 +53,8 @@ namespace xfpldemo
 			mreturn ret
 		endmethod
 		;;; <summary>
-		;;; Returns a collection of all customers
+		;;;  Returns a collection of all customers
+		;;; 
 		;;; </summary>
 		;;; <param name="Customers">Returned ArrayList of boxed customer structures</param>
 		{OperationContract()}
@@ -247,8 +248,10 @@ namespace xfpldemo
 		;;; </summary>
 		;;; <param name="Customer">Customer structure</param>
 		;;; <param name="GRFA">Previous GRFA</param>
-		;;; <param name="Message">Returned message text for non success status</param>
-		;;; <returns>Return value defined by METHOD_STATUS enumeration</returns>
+		;;; <param name="Message">Returned error message text if return status is
+		;;; not METHOD_STATUS.SUCCESS</param>
+		;;; <returns>Returns a member of the METHOD_STATUS enumeration
+		;;; to indicate completion status</returns>
 		{OperationContract()}
 		public method UpdateCustomer   ,Method_status
 			inout  Customer    ,@xfpldemo.Customer

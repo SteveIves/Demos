@@ -74,15 +74,33 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Methods\DataDefinitions.dbl" />
-    <Compile Include="Methods\GetAddressForUpdate.dbl" />
-    <Compile Include="Methods\GetAllCustomers.dbl" />
-    <Compile Include="Methods\GetContactForUpdate.dbl" />
-    <Compile Include="Methods\GetCustomerAddresses.dbl" />
-    <Compile Include="Methods\GetCustomerContacts.dbl" />
-    <Compile Include="Methods\GetCustomerForUpdate.dbl" />
-    <Compile Include="Methods\UpdateContact.dbl" />
-    <Compile Include="Methods\UpdateCustomer.dbl" />
+    <Compile Include="..\..\xfServerPlus\src\DataDefinitions.dbl">
+      <Link>Methods\DataDefinitions.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetAddressForUpdate.dbl">
+      <Link>Methods\GetAddressForUpdate.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetAllCustomers.dbl">
+      <Link>Methods\GetAllCustomers.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetContactForUpdate.dbl">
+      <Link>Methods\GetContactForUpdate.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetCustomerAddresses.dbl">
+      <Link>Methods\GetCustomerAddresses.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetCustomerContacts.dbl">
+      <Link>Methods\GetCustomerContacts.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\GetCustomerForUpdate.dbl">
+      <Link>Methods\GetCustomerForUpdate.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\UpdateContact.dbl">
+      <Link>Methods\UpdateContact.dbl</Link>
+    </Compile>
+    <Compile Include="..\..\xfServerPlus\src\UpdateCustomer.dbl">
+      <Link>Methods\UpdateCustomer.dbl</Link>
+    </Compile>
     <Compile Include="SynergyRoutines.dbl" />
     <Compile Include="Properties\AssemblyInfo.dbl" />
   </ItemGroup>
