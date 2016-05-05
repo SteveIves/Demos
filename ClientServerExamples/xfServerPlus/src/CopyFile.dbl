@@ -1,13 +1,12 @@
-
 {xfMethod(interface="SynergyServer",elb="EXE:SynergyServer")}
 ;;; <summary>
 ;;; Copies a file on the server
 ;;; </summary>
 subroutine CopyFile
-    required in  fromFile		,a128
-	required in  toFile			,a128
+    required in  fromFile		,string
+	required in  toFile			,string
 	required out ok				,i4
-	required out errorMessage	,a128
+	required out errorMessage	,string
     endparams
 proc
 	try 
