@@ -5,6 +5,7 @@ import System.Drawing
 import System.Windows.Forms
 import SynPsg.Rps
 import IsamEdit.Profiles
+import IsamEdit.Controls
 
 .Array 0
 namespace IsamEdit.Forms

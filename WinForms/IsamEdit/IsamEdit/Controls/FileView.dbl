@@ -6,6 +6,7 @@ import System.Data
 import System.Drawing
 import System.Windows.Forms
 import SynPsg.Rps
+import IsamEdit.Tools
 
 .Array 0
 namespace IsamEdit.Controls
@@ -16,7 +17,7 @@ namespace IsamEdit.Controls
 		private mStructure		,@RpsStructure				;;Files first (or only) structure
 		private mClassFactory	,@DynamicClassFactory		;;Class factory for data
 		
-		private ch				,i4						;;File channel number
+		private ch				,i4							;;File channel number
 		
 		private mFieldsCtl		,@FieldListControl			;;Field list control
 		private mFieldCtrl		,@FieldViewControl			;;Field view control
