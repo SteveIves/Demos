@@ -1,3 +1,6 @@
+
+import System.Collections
+
 namespace DPC2013.Examples
 
     main ContactServiceTest
