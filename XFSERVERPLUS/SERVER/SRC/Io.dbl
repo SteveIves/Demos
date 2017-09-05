@@ -33,7 +33,7 @@ function io, ^val
 
     required in a_operation ,n                   ;Operation
     required in a_channel   ,n                   ;Channel number
-    required in a_keynum    ,n                   ;Key number
+    optional in a_keynum    ,n                   ;Key number
     optional inout a_record ,a                   ;Data area
     optional in a_keyval    ,a                   ;Key value (FIND/READ)
     optional in a_partial   ,n                   ;Partial key match (FIND/READ)
@@ -110,7 +110,7 @@ Find,
             &       $ERR_KEYNOT = KeyNot
             &   ]
         end
-    end     
+    end
 
     return
 

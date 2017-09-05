@@ -47,27 +47,23 @@ function DeleteProduct, ^VAL
     endrecord
 
 proc
-            
+
     clear retval
-    
-    if (^passed(a_errtxt))
-        clear a_errtxt
-    
+    clear a_errtxt
+
     if (%io(IO_READ,idf_product,0,product,a_product.sku,,1)==IO_OK) then
     begin
         if (product==a_product) then
         begin
             if (%io(IO_DELETE,idf_group)==IO_OK) then
             begin
-                if (^passed(a_errtxt))
-                    a_errtxt = "Product has been deleted."
+                a_errtxt = "Product has been deleted."
                 clear a_product
             end
             else
             begin
                 retval=3
-                if (^passed(a_errtxt))
-                    a_errtxt = "Failed to delete product."
+                a_errtxt = "Failed to delete product."
             end
 
         end
@@ -75,17 +71,15 @@ proc
         begin
             unlock idf_product
             retval=2
-            if (^passed(a_errtxt))
-                a_errtxt = "Product has been changed by another user!"
+            a_errtxt = "Product has been changed by another user!"
             a_product = product
         end
-            
+
     end
     else
     begin
         retval=1
-        if (^passed(a_errtxt))
-            a_errtxt = "Failed to lock product prior to deletion!"
+        a_errtxt = "Failed to lock product prior to deletion!"
     end
 
     freturn retval

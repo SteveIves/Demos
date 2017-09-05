@@ -47,9 +47,7 @@ function GetCustomer, ^VAL
 proc
 
     init local_data
-
-    if (^passed(a_errmsg))
-        clear a_errmsg
+    clear a_errmsg
 
     if (%io(IO_READ,idf_customer,0,a_customer)!=IO_OK)
     begin

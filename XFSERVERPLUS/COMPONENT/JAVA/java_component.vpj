@@ -1,103 +1,103 @@
 <!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
 <Project
-	Version="10.0"
-	VendorName="SlickEdit"
-	WorkingDir=".">
-	<Macro>
-		<ExecMacro CmdLine="syn_set ROOT=%rp..\..\SERVER\"/>
-		<ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
-		<ExecMacro CmdLine="syn_set INC=%(ROOT)INC"/>
-		<ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
-		<ExecMacro CmdLine="syn_set LIB=%(ROOT)LIB"/>
-		<ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
-		<ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
-		<ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
-		<ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
-		<ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)XFPL"/>
-		<ExecMacro CmdLine="syn_set PATH=%(PATH);C:\Program Files\Java\jdk1.6.0_01\bin"/>
-	</Macro>
-	<Config Name="Release">
-		<Menu>
-			<Target
-				Name="Compile"
-				MenuCaption="&amp;Compile"
-				RunFromDir="%rw"
-				ShowOnMenu="HideIfNoCmdLine">
-				<Exec/>
-			</Target>
-			<Target
-				Name="Build"
-				MenuCaption="&amp;Build Jar File"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynBuildJar"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Rebuild"
-				MenuCaption="&amp;Rebuild"
-				RunFromDir="%rw"
-				ShowOnMenu="HideIfNoCmdLine">
-				<Exec/>
-			</Target>
-			<Target
-				Name="Debug"
-				MenuCaption="&amp;Debug"
-				RunFromDir="%rw"
-				ShowOnMenu="HideIfNoCmdLine">
-				<Exec/>
-			</Target>
-			<Target
-				Name="Execute"
-				MenuCaption="E&amp;xecute"
-				RunFromDir="%rw"
-				ShowOnMenu="HideIfNoCmdLine">
-				<Exec/>
-			</Target>
-			<Target
-				Name="Component Information"
-				MenuCaption="Component &amp;Information..."
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="show_com_info"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Generate Class Wrappers"
-				MenuCaption="Generate Class &amp;Wrappers"
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynGenerateClassWrappers"
-					Type="Slick-C"/>
-			</Target>
-			<Target
-				Name="Generate Synergy Test Skeletons"
-				MenuCaption="Generate Synergy Test S&amp;keletons..."
-				RunFromDir="%rw">
-				<Exec
-					CmdLine="SynStartSkeletonGen"
-					Type="Slick-C"/>
-			</Target>
-		</Menu>
-	</Config>
-	<Files>
-		<Folder
-			Name="Source Files"
-			Filters="*.java">
-			<F N="xfpldemo/Customer.java"/>
-			<F N="xfpldemo/Order_header.java"/>
-			<F N="xfpldemo/Order_line.java"/>
-			<F N="xfpldemo/Product.java"/>
-			<F N="xfpldemo/Product_group.java"/>
-			<F N="xfpldemo/User.java"/>
-			<F N="xfpldemo/utils.java"/>
-		</Folder>
-		<Folder
-			Name="Batch Files"
-			Filters="*.bat"/>
-		<Folder
-			Name="Other Files"
-			Filters="">
-		</Folder>
-	</Files>
+    Version="10.0"
+    VendorName="SlickEdit"
+    WorkingDir=".">
+    <Macro>
+        <ExecMacro CmdLine="syn_set ROOT=%rp..\..\SERVER\"/>
+        <ExecMacro CmdLine="syn_set SRC=%(ROOT)SRC"/>
+        <ExecMacro CmdLine="syn_set INC=%(ROOT)INC"/>
+        <ExecMacro CmdLine="syn_set OBJ=%(ROOT)OBJ"/>
+        <ExecMacro CmdLine="syn_set LIB=%(ROOT)LIB"/>
+        <ExecMacro CmdLine="syn_set EXE=%(ROOT)EXE"/>
+        <ExecMacro CmdLine="syn_set DAT=%(ROOT)DAT"/>
+        <ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)RPS\rpsmain.ism"/>
+        <ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)RPS\rpstext.ism"/>
+        <ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)XFPL"/>
+        <ExecMacro CmdLine="syn_set PATH=%(PATH);C:\Program Files\Java\jdk1.6.0_01\bin"/>
+    </Macro>
+    <Config Name="Release">
+        <Menu>
+            <Target
+                Name="Compile"
+                MenuCaption="&amp;Compile"
+                RunFromDir="%rw"
+                ShowOnMenu="HideIfNoCmdLine">
+                <Exec/>
+            </Target>
+            <Target
+                Name="Build"
+                MenuCaption="&amp;Build Jar File"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynBuildJar"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Rebuild"
+                MenuCaption="&amp;Rebuild"
+                RunFromDir="%rw"
+                ShowOnMenu="HideIfNoCmdLine">
+                <Exec/>
+            </Target>
+            <Target
+                Name="Debug"
+                MenuCaption="&amp;Debug"
+                RunFromDir="%rw"
+                ShowOnMenu="HideIfNoCmdLine">
+                <Exec/>
+            </Target>
+            <Target
+                Name="Execute"
+                MenuCaption="E&amp;xecute"
+                RunFromDir="%rw"
+                ShowOnMenu="HideIfNoCmdLine">
+                <Exec/>
+            </Target>
+            <Target
+                Name="Component Information"
+                MenuCaption="Component &amp;Information..."
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="show_com_info"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Generate Class Wrappers"
+                MenuCaption="Generate Class &amp;Wrappers"
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynGenerateClassWrappers"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Generate Synergy Test Skeletons"
+                MenuCaption="Generate Synergy Test S&amp;keletons..."
+                RunFromDir="%rw">
+                <Exec
+                    CmdLine="SynStartSkeletonGen"
+                    Type="Slick-C"/>
+            </Target>
+        </Menu>
+    </Config>
+    <Files>
+        <Folder
+            Name="Source Files"
+            Filters="*.java">
+            <F N="xfpldemo/Customer.java"/>
+            <F N="xfpldemo/Order_header.java"/>
+            <F N="xfpldemo/Order_line.java"/>
+            <F N="xfpldemo/Product.java"/>
+            <F N="xfpldemo/Product_group.java"/>
+            <F N="xfpldemo/User.java"/>
+            <F N="xfpldemo/utils.java"/>
+        </Folder>
+        <Folder
+            Name="Batch Files"
+            Filters="*.bat"/>
+        <Folder
+            Name="Other Files"
+            Filters="">
+        </Folder>
+    </Files>
 </Project>

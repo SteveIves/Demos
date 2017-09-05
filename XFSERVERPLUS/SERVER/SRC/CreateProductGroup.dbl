@@ -38,15 +38,15 @@ function CreateProductGroup, ^VAL
 
     .include "INC:remote.def"
     .include "INC:io.def"
-    
+
     stack record
         retval, int
     endrecord
 
 proc
-            
+
     clear retval
-    
+
     if (%io(IO_STORE,idf_group,,a_group)!=IO_OK)
         retval=1
 
