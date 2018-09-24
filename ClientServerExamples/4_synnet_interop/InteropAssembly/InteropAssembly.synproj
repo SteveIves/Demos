@@ -22,7 +22,7 @@
     <ApplicationIcon />
     <ResourceType>Icon</ResourceType>
     <ResourceName />
-    <ProjEnvVars>RPSMFIL=$(SolutionDir)..\xfServerPlus\rps\rpsmain.ism;RPSTFIL=$(SolutionDir)..\xfServerPlus\rps\rpstext.ism;DAT=$(SolutionDir)..\xfServerPlus\dat;</ProjEnvVars>
+    <ProjEnvVars>RPSMFIL=$(SolutionDir)..\xfServerPlus\rps\rpsmain.ism;RPSTFIL=$(SolutionDir)..\xfServerPlus\rps\rpstext.ism;DAT=$(SolutionDir)..\xfServerPlus\dat</ProjEnvVars>
     <XFPL_StrPubFlds>False</XFPL_StrPubFlds>
     <XFPL_BinFldString>False</XFPL_BinFldString>
     <XFPL_AltFldNme>False</XFPL_AltFldNme>
@@ -57,7 +57,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
     <OutputPath>bin\Debug\</OutputPath>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <DebugOptimize>Debug</DebugOptimize>
   </PropertyGroup>

@@ -10,7 +10,7 @@ namespace xfpldemo
 ;;; Structural Interface Class InteropAssemblyTmp
 ;;; </summary>
 	{Serializable}
-	public class Address
+	public partial class Address
 	 
 		private f_Address_id    ,int
 		 
