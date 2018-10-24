@@ -1,9 +1,0 @@
-import System
-
-namespace DataContracts
-
-	.include "CUSTOMER" repository, public structure="StrCustomer" ,end
-	.include "CONTACT"  repository, public structure="StrContact"  ,end
-	
-endnamespace
-
