@@ -22,7 +22,7 @@ proc
     foreach customer in new Select(new From("DAT:customer.ism",customer),OrderBy.AscendingKey(1))
         customers.Add((@strCustomer)customer)
 
-	xreturn
+    xreturn
 
 endsubroutine
 
