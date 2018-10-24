@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Results>
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://localhost/spc2010/SPC2010WebService.asmx?disco" filename="SPC2010WebService.disco" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://localhost/spc2010/SPC2010WebService.asmx?wsdl" filename="SPC2010WebService.wsdl" />
-  </Results>
-</DiscoveryClientResultsFile>

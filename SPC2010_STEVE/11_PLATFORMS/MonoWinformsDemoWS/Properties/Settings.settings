@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="webServiceClientApp.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="webServiceClientApp_spc2010_SPC2010WebService" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://localhost/spc2010/SPC2010WebService.asmx</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>

@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="SilverlightDemo.Web.SPC2010WcfJsonService" CodeBehind="SPC2010WcfJsonService.svc.cs" %>
