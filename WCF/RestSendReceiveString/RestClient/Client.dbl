@@ -35,7 +35,7 @@ namespace RestClient
 		proc
 			disposable data requestBody, @ByteArrayContent, new ByteArrayContent(UTF8Encoding.UTF8.GetBytes(requestData))
 			disposable data client, @HttpClient, new HttpClient()
-			disposable data response, @HttpResponseMessage, await client.PostAsync("http://localhost:8086/Service/SendReceiveString",requestBody)
+			disposable data response, @HttpResponseMessage, await client.PostAsync("http://localhost:8082/Service/SendReceiveString",requestBody)
 			mreturn await response.Content.ReadAsStringAsync()
 		endmethod
 		

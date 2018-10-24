@@ -36,6 +36,7 @@
     </DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <SerializeAssembly>Auto</SerializeAssembly>
+    <Prefer32Bit>False</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -47,6 +48,7 @@
     </DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <SerializeAssembly>Auto</SerializeAssembly>
+    <Prefer32Bit>False</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
