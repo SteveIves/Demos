@@ -18,6 +18,8 @@
 ;
 ;*******************************************************************************
 
+import System.Collections
+
 namespace SynPsg.Demos
 
     structure FILETIME
