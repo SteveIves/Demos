@@ -1,12 +1,12 @@
  
 ;  SYNERGY DATA LANGUAGE OUTPUT
 ;
-;  REPOSITORY     : D:\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
-;                 : D:\ClientServerExamples\xfServerPlus\rps\rpstext.ism
+;  REPOSITORY     : D:\Demos\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
+;                 : D:\Demos\ClientServerExamples\xfServerPlus\rps\rpstext.ism
 ;                 : Version 9.3.1a
 ;
-;  GENERATED      : 04-FEB-2013, 21:16:00
-;                 : Version 10.1.1
+;  GENERATED      : 01-MAY-2019, 16:08:25
+;                 : Version 10.3.3g
 ;  EXPORT OPTIONS : [ALL] 
  
  
@@ -121,6 +121,9 @@ Structure CONTACT   DBL ISAM
    Description "Contact master"
  
 Field CONTACT_ID   Template T_CONTACT_ID
+   Prompt "Contact ID"   Info Line "Enter or select a contact ID"
+   Required
+   Drill Method "lookup_contact"   Change Method "validate_contact"
  
 Field CUSTOMER_ID   Template T_CUSTOMER_ID
  
@@ -128,12 +131,17 @@ Field ADDRESS_ID   Template T_ADDRESS_ID
  
 Field SALUTATION   Type ALPHA   Size 5
    Description "Contact salutation"
+   Null Allowed
  
 Field FIRST_NAME   Type ALPHA   Size 30
    Description "Contact first name"
+   Prompt "First name"   Info Line "Enter the contacts first namer"
+   Required
  
 Field LAST_NAME   Type ALPHA   Size 30
    Description "Contact last name"
+   Prompt "Last name"   Info Line "Enter the contacts last name"
+   Required
  
 Field FRIENDLY_NAME   Type ALPHA   Size 60
    Description "Contact friendly/printable name"
@@ -143,6 +151,8 @@ Field TITLE   Type ALPHA   Size 25
  
 Field DEPARTMENT   Type ALPHA   Size 15
    Description "Department name"
+   Prompt "Department"
+   Drill Method "department_loopup"
  
 Field WORK_PHONE   Type DECIMAL   Size 12
    Description "Work phone"
