@@ -40,7 +40,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <SignAssembly>false</SignAssembly>
-    <ManifestCertificateThumbprint>5A8661A05FBD2B28C4F4838891FB90D20588F53C</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>F1319369E6767C4128AF0566969E4C35E29BB40D</ManifestCertificateThumbprint>
     <ManifestKeyFile>xfplIniManager_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
@@ -190,10 +190,10 @@
     <Content Include="xfmdu7.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="xfplIniManager_TemporaryKey.pfx" />
+    <Folder Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="My Project\" />
+    <None Include="xfplIniManager_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
