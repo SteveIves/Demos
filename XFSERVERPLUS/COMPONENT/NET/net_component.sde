@@ -5,16 +5,16 @@ Framework_SDK=2.0
 
 [COMPONENT INFORMATION]
 Component_Name=xfpldemo
-Component_Directory=C:\DEV\PRIVATE\Demos\XFSERVERPLUS\COMPONENT\NET
+Component_Directory=D:\Demos\XFSERVERPLUS\COMPONENT\NET
 Generate_API_Documentation=1
 Pooling=0
 Namespace=xfpldemo
 Strong_Name_Key_File=
 Delay_Sign_Assembly=0
 Use_Alternate_Field_Names=0
-Repository_Main_File=C:\DEV\PRIVATE\Demos\XFSERVERPLUS\SERVER\RPS\rpsmain.ism
-Repository_Text_File=C:\DEV\PRIVATE\Demos\XFSERVERPLUS\SERVER\RPS\rpstext.ism
-SMC_Directory=C:\DEV\PRIVATE\Demos\XFSERVERPLUS\SERVER\XFPL
+Repository_Main_File=D:\Demos\XFSERVERPLUS\SERVER\RPS\rpsmain.ism
+Repository_Text_File=D:\Demos\XFSERVERPLUS\SERVER\RPS\rpstext.ism
+SMC_Directory=d:\Demos\XFSERVERPLUS\SERVER\XFPL
 Generate_Structure_Members_As=Properties
 Net_Env_Batch=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat
 Generate_WCF_Contracts=0

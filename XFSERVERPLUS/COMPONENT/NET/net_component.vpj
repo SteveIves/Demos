@@ -68,6 +68,7 @@
             Filters="*.cs;*.java">
             <F N="xfpldemo/AssemblyInfo.cs"/>
             <F N="xfpldemo/Customer.cs"/>
+            <F N="xfpldemo/Group_field.cs"/>
             <F N="xfpldemo/Iutils.cs"/>
             <F N="xfpldemo/Order_header.cs"/>
             <F N="xfpldemo/Order_headerDT.cs"/>
@@ -77,6 +78,8 @@
             <F N="xfpldemo/Product_group.cs"/>
             <F N="xfpldemo/Product_groupDT.cs"/>
             <F N="xfpldemo/ProductDT.cs"/>
+            <F N="xfpldemo/Struct_field.cs"/>
+            <F N="xfpldemo/Test1.cs"/>
             <F N="xfpldemo/User.cs"/>
             <F N="xfpldemo/utils.cs"/>
         </Folder>

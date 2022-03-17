@@ -152,6 +152,7 @@
             <F N="SRC/GetProductGroupsV9.dbl"/>
             <F N="SRC/GetProductsV8.dbl"/>
             <F N="SRC/GetProductsV9.dbl"/>
+            <F N="SRC/GroupStructTest.dbl"/>
             <F N="SRC/HandleToFile.dbl"/>
             <F N="SRC/Initialize.dbl"/>
             <F N="SRC/Io.dbl"/>
