@@ -68,6 +68,7 @@
             Filters="*.cs">
             <F N="SynergyComponent/Address.cs"/>
             <F N="SynergyComponent/Address_type.cs"/>
+            <F N="SynergyComponent/AddressDT.cs"/>
             <F N="SynergyComponent/AssemblyInfo.cs"/>
             <F N="SynergyComponent/Contact.cs"/>
             <F N="SynergyComponent/Customer.cs"/>

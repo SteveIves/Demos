@@ -90,7 +90,6 @@
         <ExecMacro CmdLine="syn_set RPSMFIL=%(ROOT)xfServerPlus\rps\rpsmain.ism"/>
         <ExecMacro CmdLine="syn_set RPSTFIL=%(ROOT)xfServerPlus\rps\rpstext.ism"/>
         <ExecMacro CmdLine="syn_set XFPL_SMCPATH=%(ROOT)xfServerPlus\xfpl"/>
-        <ExecMacro CmdLine="syn_set PATH=%(PATH);C:\Program Files\Java\jdk1.7.0_15\bin\"/>
         <ExecMacro CmdLine="syn_set CLASSPATH=%(XFNLJAVA)xfnljav.jar;%(XFNLJAVA)xml-apis.jar;%(XFNLJAVA)xercesImpl.jar"/>
     </Macro>
 </Project>

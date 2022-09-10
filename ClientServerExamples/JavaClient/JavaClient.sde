@@ -4,16 +4,16 @@ Synergy=JAVA
 
 [COMPONENT INFORMATION]
 Component_Name=JavaClient
-Component_Directory=c:\DEV\PRIVATE\Demos\ClientServerExamples\JavaClient
+Component_Directory=C:\DEV\Demos\ClientServerExamples\JavaClient
 Generate_Javadoc=1
 Read_Only_Properties=0
 Jar_Java_Version=Default
 Class_Java_Version=1.5
 Package_Name=JavaClient
 Use_Alternate_Field_Names=0
-Repository_Main_File=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
-Repository_Text_File=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\rps\rpstext.ism
-SMC_Directory=c:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\xfpl
+Repository_Main_File=C:\DEV\Demos\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
+Repository_Text_File=C:\DEV\Demos\ClientServerExamples\xfServerPlus\rps\rpstext.ism
+SMC_Directory=c:\DEV\Demos\ClientServerExamples\xfServerPlus\xfpl
 
 [SMC Interfaces]
 Interface_0=SynergyServer:

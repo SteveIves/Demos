@@ -5,7 +5,7 @@ Synergy=NET
 [COMPONENT INFORMATION]
 Net_Env_Batch=%VS140COMNTOOLS%vsvars32.bat
 Component_Name=SynergyComponentWcf
-Component_Directory=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfNetLink_wcf
+Component_Directory=C:\DEV\Demos\ClientServerExamples\xfNetLink_wcf
 Generate_API_Documentation=0
 Pooling=0
 Namespace=xfpldemo
@@ -14,9 +14,9 @@ Delay_Sign_Assembly=0
 Generate_Structure_Members_As=Properties
 Generate_Output_Params_As=Ref
 Use_Alternate_Field_Names=0
-Repository_Main_File=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
-Repository_Text_File=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\rps\rpstext.ism
-SMC_Directory=C:\DEV\PRIVATE\Demos\ClientServerExamples\xfServerPlus\xfpl
+Repository_Main_File=C:\DEV\Demos\ClientServerExamples\xfServerPlus\rps\rpsmain.ism
+Repository_Text_File=C:\DEV\Demos\ClientServerExamples\xfServerPlus\rps\rpstext.ism
+SMC_Directory=c:\DEV\Demos\ClientServerExamples\xfServerPlus\xfpl
 Generate_WCF_Contracts=1
 Generate_INotifyPropertyChanged=0
 
